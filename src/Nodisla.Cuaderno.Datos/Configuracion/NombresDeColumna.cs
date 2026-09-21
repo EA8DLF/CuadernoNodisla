@@ -25,6 +25,7 @@ public static class NombresDeColumna
         ["Qso.Comentario"] = "comment",
         ["Qso.Notas"] = "notes",
         ["Qso.Submodo"] = "submode",
+        ["Qso.QslMsg"] = "qslmsg",
         ["QsoConfirmacion.Medio"] = "servicio",
         ["QsoConfirmacion.Enviado"] = "enviada",
         ["QsoConfirmacion.Recibido"] = "recibida",
@@ -48,7 +49,7 @@ public static class NombresDeColumna
         "cont", "country", "pfx", "state", "cnty", "region", "darc_dok", "eq_call",
         "contacted_op", "qsl_via", "station_callsign", "operator", "owner_callsign",
         "my_gridsquare", "my_state", "my_cnty", "my_country", "my_iota", "contest_id",
-        "sat_name", "sat_mode", "prop_mode", "origen", "nombre_perfil", "servicio",
+        "sat_name", "sat_mode", "prop_mode", "origen", "qso_complete", "nombre_perfil", "servicio",
         "award_code", "referencia", "programa", "campo",
     };
 
@@ -82,14 +83,18 @@ public static class NombresDeColumna
 
     private static string ADenominacionDeTabla(string nombreEntidad) => AGuionBajo(nombreEntidad);
 
-    /// <summary>Convierte <c>MyCqZone</c> en <c>my_cq_zone</c>.</summary>
+    /// <summary>Convierte <c>MyCqZone</c> en <c>my_cq_zone</c> y <c>AIndex</c> en <c>a_index</c>.</summary>
     private static string AGuionBajo(string nombre)
     {
         var destino = new StringBuilder(nombre.Length + 8);
         for (var i = 0; i < nombre.Length; i++)
         {
             var c = nombre[i];
-            if (char.IsUpper(c) && i > 0 && (char.IsLower(nombre[i - 1]) || char.IsDigit(nombre[i - 1])))
+            var arrancaPalabra = char.IsUpper(c) && i > 0
+                && (char.IsLower(nombre[i - 1])
+                    || char.IsDigit(nombre[i - 1])
+                    || (i + 1 < nombre.Length && char.IsLower(nombre[i + 1])));
+            if (arrancaPalabra)
             {
                 destino.Append('_');
             }

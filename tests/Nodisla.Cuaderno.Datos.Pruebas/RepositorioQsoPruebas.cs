@@ -302,21 +302,12 @@ public sealed class RepositorioQsoPruebas(ITestOutputHelper salida) : IAsyncLife
         tercera.Elementos.Should().NotContain(q => primera.Elementos.Any(p => p.Id == q.Id));
 
         var ascendente = await repositorio.BuscarAsync(
-            new CriterioQso { OrdenarPor = nameof(Qso.InicioUtc), Descendente = false }, 0, 3);
+            new CriterioQso { OrdenarPor = CampoDeOrden.Fecha, Descendente = false }, 0, 3);
         ascendente.Elementos[0].InicioUtc.Should().Be(FabricaDeContactos.Instante);
 
         var porIndicativo = await repositorio.BuscarAsync(
-            new CriterioQso { OrdenarPor = "Call", Descendente = false }, 0, 25);
+            new CriterioQso { OrdenarPor = CampoDeOrden.Indicativo, Descendente = false }, 0, 25);
         porIndicativo.Elementos.Select(q => q.Call.Valor).Should().BeInAscendingOrder();
-    }
-
-    [Fact]
-    public async Task BuscarConUnCampoDeOrdenDesconocidoAvisa()
-    {
-        var buscar = async () =>
-            await repositorio.BuscarAsync(new CriterioQso { OrdenarPor = "Inventado" }, 0, 10);
-
-        await buscar.Should().ThrowAsync<ArgumentException>();
     }
 
     [Fact]
@@ -335,14 +326,17 @@ public sealed class RepositorioQsoPruebas(ITestOutputHelper salida) : IAsyncLife
         var contactos = FabricaDeContactos.Generar(cuantos).ToList();
 
         var reloj = Stopwatch.StartNew();
-        var guardados = await repositorio.AnadirLoteAsync(contactos);
+        var resultado = await repositorio.AnadirLoteAsync(contactos);
         reloj.Stop();
 
         salida.WriteLine(
             $"Alta en lote de {cuantos} contactos: {reloj.ElapsedMilliseconds} ms " +
             $"({cuantos * 1000.0 / Math.Max(1, reloj.ElapsedMilliseconds):F0} contactos/s)");
 
-        guardados.Should().Be(cuantos);
+        resultado.Anadidos.Should().Be(cuantos);
+        resultado.OmitidosPorDuplicado.Should().Be(0);
+        resultado.Total.Should().Be(cuantos);
+        resultado.Duracion.Should().BeGreaterThan(TimeSpan.Zero);
         (await repositorio.ContarAsync()).Should().Be(cuantos);
         reloj.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(30));
 
@@ -355,19 +349,94 @@ public sealed class RepositorioQsoPruebas(ITestOutputHelper salida) : IAsyncLife
     }
 
     [Fact]
-    public async Task AnadirLoteNoDejaNadaSiUnContactoRepiteLaClaveNatural()
+    public async Task AnadirLoteSinOmitirDuplicadosNoDejaNadaSiUnoRepiteLaClaveNatural()
     {
         var contactos = FabricaDeContactos.Generar(10).ToList();
-        contactos.Add(FabricaDeContactos.Crear(
-            call: contactos[0].Call.Valor,
-            banda: contactos[0].Band.Nombre,
-            modo: contactos[0].Mode.Principal,
-            submodo: contactos[0].Mode.Submodo,
-            inicio: contactos[0].InicioUtc));
+        contactos.Add(Copiar(contactos[0]));
 
-        var importar = async () => await repositorio.AnadirLoteAsync(contactos);
+        var importar = async () => await repositorio.AnadirLoteAsync(contactos, omitirDuplicados: false);
 
         await importar.Should().ThrowAsync<DbUpdateException>();
         (await repositorio.ContarAsync()).Should().Be(0);
     }
+
+    [Fact]
+    public async Task AnadirLoteSaltaLosQueYaEstabanEnElCuaderno()
+    {
+        var primeros = FabricaDeContactos.Generar(10).ToList();
+        (await repositorio.AnadirLoteAsync(primeros)).Anadidos.Should().Be(10);
+
+        // Reimportar el mismo respaldo con cinco contactos nuevos al final.
+        var reimportado = FabricaDeContactos.Generar(15).ToList();
+
+        var resultado = await repositorio.AnadirLoteAsync(reimportado);
+
+        resultado.Anadidos.Should().Be(5);
+        resultado.OmitidosPorDuplicado.Should().Be(10);
+        resultado.Total.Should().Be(15);
+        (await repositorio.ContarAsync()).Should().Be(15);
+    }
+
+    [Fact]
+    public async Task AnadirLoteSaltaTambienLosRepetidosDentroDelPropioFichero()
+    {
+        var contactos = FabricaDeContactos.Generar(5).ToList();
+        contactos.Add(Copiar(contactos[0]));
+        contactos.Add(Copiar(contactos[3]));
+
+        var resultado = await repositorio.AnadirLoteAsync(contactos);
+
+        resultado.Anadidos.Should().Be(5);
+        resultado.OmitidosPorDuplicado.Should().Be(2);
+        (await repositorio.ContarAsync()).Should().Be(5);
+    }
+
+    [Fact]
+    public async Task LaPaginacionNoRepiteNiSaltaContactosDelMismoSegundo()
+    {
+        // Cien contactos con el mismo instante: sin desempate por Id, la paginacion miente.
+        var mismoSegundo = Enumerable.Range(0, 100)
+            .Select(i => FabricaDeContactos.Crear(
+                call: $"EA8T{i:00}", banda: "20m", inicio: FabricaDeContactos.Instante))
+            .ToList();
+        (await repositorio.AnadirLoteAsync(mismoSegundo)).Anadidos.Should().Be(100);
+
+        foreach (var descendente in new[] { true, false })
+        {
+            var vistos = new List<long>();
+            for (var desplazamiento = 0; desplazamiento < 100; desplazamiento += 10)
+            {
+                var pagina = await repositorio.BuscarAsync(
+                    new CriterioQso { OrdenarPor = CampoDeOrden.Fecha, Descendente = descendente },
+                    desplazamiento,
+                    10);
+                vistos.AddRange(pagina.Elementos.Select(q => q.Id));
+            }
+
+            vistos.Should().HaveCount(100);
+            vistos.Should().OnlyHaveUniqueItems();
+        }
+    }
+
+    [Fact]
+    public async Task TrabajadoAntesRespetaElTopePedido()
+    {
+        var contactos = Enumerable.Range(0, 8)
+            .Select(i => FabricaDeContactos.Crear(
+                banda: "20m", inicio: FabricaDeContactos.Instante.AddMinutes(i)))
+            .ToList();
+        await repositorio.AnadirLoteAsync(contactos);
+
+        (await repositorio.TrabajadoAntesAsync(Indicativo.Parse("DL1ABC"), maximo: 3))
+            .Should().HaveCount(3);
+        (await repositorio.TrabajadoAntesAsync(Indicativo.Parse("DL1ABC")))
+            .Should().HaveCount(8);
+    }
+
+    private static Qso Copiar(Qso qso) => FabricaDeContactos.Crear(
+        call: qso.Call.Valor,
+        banda: qso.Band.Nombre,
+        modo: qso.Mode.Principal,
+        submodo: qso.Mode.Submodo,
+        inicio: qso.InicioUtc);
 }

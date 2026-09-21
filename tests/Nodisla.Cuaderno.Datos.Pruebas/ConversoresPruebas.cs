@@ -176,4 +176,91 @@ public sealed class ConversoresPruebas : IAsyncLifetime
         leido.Referencias[0].Lado.Should().Be(LadoDeReferencia.Propia);
         leido.CamposExtra[0].Valor.Should().Be("1234");
     }
+
+    [Fact]
+    public async Task LosCamposDeAntenaCondicionesYNaturalezaVuelvenIgual()
+    {
+        var original = FabricaDeContactos.Crear();
+        original.AntAz = 312.5;
+        original.AntEl = 7.25;
+        original.Distance = 2841.3;
+        original.AIndex = 12;
+        original.KIndex = 3;
+        original.Sfi = 148.7;
+        original.Swl = true;
+        original.QsoComplete = "NIL";
+        original.QsoRandom = false;
+        original.QslMsg = "Gracias por el contacto";
+        original.MyName = "Jose";
+        original.IotaIslandId = "1591";
+
+        await using (var escritura = cuaderno.CrearContexto())
+        {
+            escritura.Qsos.Add(original);
+            await escritura.SaveChangesAsync();
+        }
+
+        await using var lectura = cuaderno.CrearContexto();
+        var leido = await lectura.Qsos.SingleAsync();
+
+        leido.AntAz.Should().Be(312.5);
+        leido.AntEl.Should().Be(7.25);
+        leido.Distance.Should().Be(2841.3);
+        leido.AIndex.Should().Be(12);
+        leido.KIndex.Should().Be(3);
+        leido.Sfi.Should().Be(148.7);
+        leido.Swl.Should().BeTrue();
+        leido.QsoComplete.Should().Be("NIL");
+        leido.QsoRandom.Should().BeFalse();
+        leido.QslMsg.Should().Be("Gracias por el contacto");
+        leido.MyName.Should().Be("Jose");
+        leido.IotaIslandId.Should().Be("1591");
+    }
+
+    [Fact]
+    public async Task ElEstadoVerificadoSeGuardaComoVSinTocarLosCodigosYaEscritos()
+    {
+        var qso = FabricaDeContactos.Crear();
+        qso.Confirmaciones.Add(new QsoConfirmacion
+        {
+            Medio = MedioDeConfirmacion.Lotw,
+            Enviado = EstadoDeConfirmacion.Confirmado,
+            Recibido = EstadoDeConfirmacion.Verificado,
+        });
+
+        await using (var escritura = cuaderno.CrearContexto())
+        {
+            escritura.Qsos.Add(qso);
+            await escritura.SaveChangesAsync();
+        }
+
+        await using var conexion = await cuaderno.AbrirConexionAsync();
+        await using (var orden = conexion.CreateCommand())
+        {
+            orden.CommandText = "SELECT enviada, recibida FROM qso_confirmacion";
+            await using var lector = await orden.ExecuteReaderAsync();
+            (await lector.ReadAsync()).Should().BeTrue();
+            lector.GetString(0).Should().Be("Y");
+            lector.GetString(1).Should().Be("V");
+        }
+
+        // Una fila escrita por la version anterior, con los codigos de siempre.
+        await using (var orden = conexion.CreateCommand())
+        {
+            orden.CommandText = """
+                INSERT INTO qso_confirmacion (qso_id, servicio, enviada, recibida, via_envio)
+                VALUES ((SELECT id FROM qso), 'QSL', 'R', 'Y', 'B')
+                """;
+            await orden.ExecuteNonQueryAsync();
+        }
+
+        await using var lectura = cuaderno.CrearContexto();
+        var confirmaciones = await lectura.Confirmaciones.OrderBy(c => c.Id).ToListAsync();
+
+        confirmaciones[0].Recibido.Should().Be(EstadoDeConfirmacion.Verificado);
+        confirmaciones[0].EstaConfirmada.Should().BeTrue();
+        confirmaciones[1].Enviado.Should().Be(EstadoDeConfirmacion.Solicitado);
+        confirmaciones[1].Recibido.Should().Be(EstadoDeConfirmacion.Confirmado);
+        confirmaciones[1].Via.Should().Be(ViaDeEnvio.Buro);
+    }
 }

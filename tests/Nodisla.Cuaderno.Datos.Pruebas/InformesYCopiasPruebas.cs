@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
+using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Datos.Informes;
 using Nodisla.Cuaderno.Datos.Repositorios;
 using Nodisla.Cuaderno.Dominio.Entidades;
@@ -53,6 +54,29 @@ public sealed class InformesYCopiasPruebas : IAsyncLifetime
         filas.Single(f => f.Band == "20m").Contactos.Should().Be(2);
         filas.Single(f => f.Band == "20m").Confirmados.Should().Be(1);
         filas.Single(f => f.Band == "40m").Confirmados.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task UnaConfirmacionVerificadaCuentaComoConfirmada()
+    {
+        var repositorio = new RepositorioQso(contexto);
+        var verificado = FabricaDeContactos.Crear(banda: "17m");
+        verificado.Confirmaciones.Add(new QsoConfirmacion
+        {
+            Medio = MedioDeConfirmacion.Lotw,
+            Recibido = EstadoDeConfirmacion.Verificado,
+        });
+        await repositorio.AnadirAsync(verificado);
+
+        var informes = new ConsultasDeInforme(contexto);
+        var filas = await informes.PorBandaAsync();
+
+        filas.Single(f => f.Band == "17m").Confirmados.Should().Be(1);
+
+        // Y tambien lo encuentra el filtro de busqueda por confirmacion.
+        var encontrados = await repositorio.BuscarAsync(
+            new CriterioQso { ConfirmadoPor = MedioDeConfirmacion.Lotw }, 0, 20);
+        encontrados.TotalFiltrado.Should().Be(1);
     }
 
     [Fact]
@@ -110,7 +134,7 @@ public sealed class InformesYCopiasPruebas : IAsyncLifetime
         totales.Contactos.Should().Be(3);
         totales.Indicativos.Should().Be(3);
         totales.Entidades.Should().Be(3);
-        totales.PrimeroUtc.Should().Be("2026-05-23 09:56:31");
+        totales.PrimeroUtc.Should().Be(FabricaDeContactos.Instante);
     }
 
     [Fact]

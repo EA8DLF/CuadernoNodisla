@@ -1,87 +1,12 @@
 using System.Data.Common;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Datos.Conversores;
+using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
 
 namespace Nodisla.Cuaderno.Datos.Informes;
-
-/// <summary>Contactos y confirmaciones agrupados por banda.</summary>
-/// <remarks>
-/// Los tipos de los informes se leen por propiedad y no por constructor: SQLite devuelve
-/// todos los enteros como INTEGER de 64 bits y asi Dapper los ajusta al tipo declarado.
-/// </remarks>
-public sealed record ResumenPorBanda
-{
-    /// <summary>Banda ADIF.</summary>
-    public string Band { get; init; } = string.Empty;
-
-    /// <summary>Contactos hechos en esa banda.</summary>
-    public int Contactos { get; init; }
-
-    /// <summary>Contactos con alguna confirmacion recibida.</summary>
-    public int Confirmados { get; init; }
-}
-
-/// <summary>Contactos y confirmaciones agrupados por modo.</summary>
-public sealed record ResumenPorModo
-{
-    /// <summary>Modo principal ADIF.</summary>
-    public string Mode { get; init; } = string.Empty;
-
-    /// <summary>Contactos hechos en ese modo.</summary>
-    public int Contactos { get; init; }
-
-    /// <summary>Contactos con alguna confirmacion recibida.</summary>
-    public int Confirmados { get; init; }
-}
-
-/// <summary>Una casilla de la matriz de entidades DXCC por banda.</summary>
-public sealed record CasillaDxcc
-{
-    /// <summary>Numero de entidad DXCC.</summary>
-    public int Dxcc { get; init; }
-
-    /// <summary>Banda ADIF.</summary>
-    public string Band { get; init; } = string.Empty;
-
-    /// <summary>Contactos con esa entidad en esa banda.</summary>
-    public int Trabajados { get; init; }
-
-    /// <summary>Cuantos estan confirmados por el servicio consultado.</summary>
-    public int Confirmados { get; init; }
-}
-
-/// <summary>Respuesta al «esto es nuevo?» que se muestra al teclear un indicativo.</summary>
-public sealed record Novedad
-{
-    /// <summary>La entidad ya estaba en el cuaderno.</summary>
-    public bool Visto { get; init; }
-
-    /// <summary>Ya estaba en esa banda.</summary>
-    public bool VistoEnBanda { get; init; }
-
-    /// <summary>Ya estaba en esa banda y ese modo.</summary>
-    public bool VistoEnHueco { get; init; }
-}
-
-/// <summary>Cifras generales del cuaderno.</summary>
-public sealed record TotalesDelCuaderno
-{
-    /// <summary>Contactos registrados.</summary>
-    public int Contactos { get; init; }
-
-    /// <summary>Indicativos distintos.</summary>
-    public int Indicativos { get; init; }
-
-    /// <summary>Entidades DXCC distintas.</summary>
-    public int Entidades { get; init; }
-
-    /// <summary>Fecha del contacto mas antiguo.</summary>
-    public string? PrimeroUtc { get; init; }
-
-    /// <summary>Fecha del contacto mas reciente.</summary>
-    public string? UltimoUtc { get; init; }
-}
 
 /// <summary>
 /// Las consultas de informe, escritas a mano y leidas con Dapper.
@@ -91,67 +16,68 @@ public sealed record TotalesDelCuaderno
 /// agregaciones sobre decenas de miles de filas, y materializar entidades con seguimiento para
 /// luego contarlas cuesta mucho mas que leer un <c>record</c> plano. Se usa la misma conexion
 /// que EF Core, asi que comparte transaccion y ajustes de SQLite.
+/// <para>
+/// Cuenta como confirmado tanto <c>Y</c> como <c>V</c>: una confirmacion verificada por el
+/// servicio vale para diplomas igual o mas que una simple, como dice
+/// <see cref="QsoConfirmacion.EstaConfirmada"/>.
+/// </para>
 /// </remarks>
 /// <param name="contexto">Contexto del cuaderno, del que se toma la conexion.</param>
-public sealed class ConsultasDeInforme(ContextoCuaderno contexto)
+public sealed class ConsultasDeInforme(ContextoCuaderno contexto) : IConsultasDeInforme
 {
+    /// <summary>Condicion SQL de «esta confirmada», alineada con el dominio.</summary>
+    private const string Confirmada = "c.recibida IN ('Y','V')";
+
     private DbConnection Conexion => contexto.Database.GetDbConnection();
 
-    /// <summary>Contactos y confirmaciones por banda, de la banda mas usada a la que menos.</summary>
-    /// <param name="ct">Testigo de cancelacion.</param>
-    /// <returns>Una fila por banda.</returns>
+    /// <inheritdoc/>
     public async Task<IReadOnlyList<ResumenPorBanda>> PorBandaAsync(CancellationToken ct = default)
     {
-        const string sql = """
-            SELECT q.band                                        AS Band,
-                   COUNT(*)                                      AS Contactos,
-                   COUNT(DISTINCT CASE WHEN c.recibida = 'Y' THEN q.id END) AS Confirmados
+        const string sql = $"""
+            SELECT q.band                                               AS Band,
+                   COUNT(*)                                             AS Contactos,
+                   COUNT(DISTINCT CASE WHEN {Confirmada} THEN q.id END) AS Confirmados
               FROM qso q
               LEFT JOIN qso_confirmacion c ON c.qso_id = q.id
              GROUP BY q.band
              ORDER BY Contactos DESC
             """;
 
-        var filas = await Conexion.QueryAsync<ResumenPorBanda>(
+        var filas = await Conexion.QueryAsync<FilaResumen>(
             new CommandDefinition(sql, cancellationToken: ct)).ConfigureAwait(false);
-        return filas.ToList();
+        return filas.Select(f => new ResumenPorBanda(f.Band ?? string.Empty, f.Contactos, f.Confirmados))
+            .ToList();
     }
 
-    /// <summary>Contactos y confirmaciones por modo principal.</summary>
-    /// <param name="ct">Testigo de cancelacion.</param>
-    /// <returns>Una fila por modo.</returns>
+    /// <inheritdoc/>
     public async Task<IReadOnlyList<ResumenPorModo>> PorModoAsync(CancellationToken ct = default)
     {
-        const string sql = """
-            SELECT q.mode                                        AS Mode,
-                   COUNT(*)                                      AS Contactos,
-                   COUNT(DISTINCT CASE WHEN c.recibida = 'Y' THEN q.id END) AS Confirmados
+        const string sql = $"""
+            SELECT q.mode                                               AS Mode,
+                   COUNT(*)                                             AS Contactos,
+                   COUNT(DISTINCT CASE WHEN {Confirmada} THEN q.id END) AS Confirmados
               FROM qso q
               LEFT JOIN qso_confirmacion c ON c.qso_id = q.id
              GROUP BY q.mode
              ORDER BY Contactos DESC
             """;
 
-        var filas = await Conexion.QueryAsync<ResumenPorModo>(
+        var filas = await Conexion.QueryAsync<FilaResumen>(
             new CommandDefinition(sql, cancellationToken: ct)).ConfigureAwait(false);
-        return filas.ToList();
+        return filas.Select(f => new ResumenPorModo(f.Mode ?? string.Empty, f.Contactos, f.Confirmados))
+            .ToList();
     }
 
-    /// <summary>
-    /// Matriz de entidades DXCC por banda con el estado de confirmacion de un servicio.
-    /// </summary>
-    /// <param name="servicio">Codigo del servicio, por ejemplo <c>LOTW</c>.</param>
-    /// <param name="ct">Testigo de cancelacion.</param>
-    /// <returns>Una fila por entidad y banda.</returns>
+    /// <inheritdoc/>
     public async Task<IReadOnlyList<CasillaDxcc>> MatrizDxccPorBandaAsync(
-        string servicio = "LOTW",
+        MedioDeConfirmacion medio = MedioDeConfirmacion.Lotw,
         CancellationToken ct = default)
     {
-        const string sql = """
-            SELECT q.dxcc                                        AS Dxcc,
-                   q.band                                        AS Band,
-                   COUNT(*)                                      AS Trabajados,
-                   COUNT(DISTINCT CASE WHEN c.recibida = 'Y' THEN q.id END) AS Confirmados
+        const string sql = $"""
+            SELECT q.dxcc                                               AS Dxcc,
+                   q.band                                               AS Band,
+                   COUNT(*)                                             AS Trabajados,
+                   COUNT(DISTINCT CASE WHEN {Confirmada} THEN q.id END) AS Confirmados
               FROM qso q
               LEFT JOIN qso_confirmacion c
                      ON c.qso_id = q.id AND c.servicio = @servicio
@@ -160,20 +86,15 @@ public sealed class ConsultasDeInforme(ContextoCuaderno contexto)
              ORDER BY q.dxcc, q.band
             """;
 
-        var filas = await Conexion.QueryAsync<CasillaDxcc>(
-            new CommandDefinition(sql, new { servicio }, cancellationToken: ct)).ConfigureAwait(false);
-        return filas.ToList();
+        var parametros = new { servicio = ConversorDeMedio.CodigoDe(medio) };
+        var filas = await Conexion.QueryAsync<FilaCasilla>(
+            new CommandDefinition(sql, parametros, cancellationToken: ct)).ConfigureAwait(false);
+        return filas
+            .Select(f => new CasillaDxcc(f.Dxcc, f.Band ?? string.Empty, f.Trabajados, f.Confirmados))
+            .ToList();
     }
 
-    /// <summary>
-    /// Responde de una vez si una entidad DXCC es nueva, nueva en la banda o nueva en el hueco
-    /// de banda y modo. Es lo que colorea el aviso mientras se registra el contacto.
-    /// </summary>
-    /// <param name="dxcc">Entidad DXCC.</param>
-    /// <param name="banda">Banda del contacto.</param>
-    /// <param name="modo">Modo del contacto.</param>
-    /// <param name="ct">Testigo de cancelacion.</param>
-    /// <returns>Que partes ya estaban en el cuaderno.</returns>
+    /// <inheritdoc/>
     public async Task<Novedad> ConsultarNovedadAsync(
         int dxcc,
         Banda banda,
@@ -186,26 +107,75 @@ public sealed class ConsultasDeInforme(ContextoCuaderno contexto)
                    EXISTS(SELECT 1 FROM qso WHERE dxcc = @dxcc AND band = @band AND mode = @mode) AS VistoEnHueco
             """;
 
-        var parametros = new { dxcc, band = banda.Nombre ?? string.Empty, mode = modo.Principal ?? string.Empty };
-        return await Conexion.QuerySingleAsync<Novedad>(
+        var parametros = new
+        {
+            dxcc,
+            band = banda.Nombre ?? string.Empty,
+            mode = modo.Principal ?? string.Empty,
+        };
+
+        var fila = await Conexion.QuerySingleAsync<FilaNovedad>(
             new CommandDefinition(sql, parametros, cancellationToken: ct)).ConfigureAwait(false);
+        return new Novedad(fila.Visto, fila.VistoEnBanda, fila.VistoEnHueco);
     }
 
-    /// <summary>Cifras generales para la pantalla de resumen.</summary>
-    /// <param name="ct">Testigo de cancelacion.</param>
-    /// <returns>Los totales del cuaderno.</returns>
+    /// <inheritdoc/>
     public async Task<TotalesDelCuaderno> TotalesAsync(CancellationToken ct = default)
     {
         const string sql = """
-            SELECT COUNT(*)                                      AS Contactos,
-                   COUNT(DISTINCT call)                          AS Indicativos,
+            SELECT COUNT(*)                                         AS Contactos,
+                   COUNT(DISTINCT call)                             AS Indicativos,
                    COUNT(DISTINCT CASE WHEN dxcc > 0 THEN dxcc END) AS Entidades,
-                   MIN(qso_inicio_utc)                           AS PrimeroUtc,
-                   MAX(qso_inicio_utc)                           AS UltimoUtc
+                   MIN(qso_inicio_utc)                              AS PrimeroUtc,
+                   MAX(qso_inicio_utc)                              AS UltimoUtc
               FROM qso
             """;
 
-        return await Conexion.QuerySingleAsync<TotalesDelCuaderno>(
+        var fila = await Conexion.QuerySingleAsync<FilaTotales>(
             new CommandDefinition(sql, cancellationToken: ct)).ConfigureAwait(false);
+
+        return new TotalesDelCuaderno(
+            fila.Contactos,
+            fila.Indicativos,
+            fila.Entidades,
+            AInstante(fila.PrimeroUtc),
+            AInstante(fila.UltimoUtc));
+    }
+
+    private static DateTimeOffset? AInstante(string? texto) =>
+        string.IsNullOrEmpty(texto) ? null : ConversoresDeValor.AFecha(texto);
+
+    // Los tipos que lee Dapper van con propiedades y no con constructor: SQLite devuelve todos
+    // los enteros como INTEGER de 64 bits y asi se ajustan al tipo declarado.
+    private sealed class FilaResumen
+    {
+        public string? Band { get; init; }
+        public string? Mode { get; init; }
+        public int Contactos { get; init; }
+        public int Confirmados { get; init; }
+    }
+
+    private sealed class FilaCasilla
+    {
+        public int Dxcc { get; init; }
+        public string? Band { get; init; }
+        public int Trabajados { get; init; }
+        public int Confirmados { get; init; }
+    }
+
+    private sealed class FilaNovedad
+    {
+        public bool Visto { get; init; }
+        public bool VistoEnBanda { get; init; }
+        public bool VistoEnHueco { get; init; }
+    }
+
+    private sealed class FilaTotales
+    {
+        public int Contactos { get; init; }
+        public int Indicativos { get; init; }
+        public int Entidades { get; init; }
+        public string? PrimeroUtc { get; init; }
+        public string? UltimoUtc { get; init; }
     }
 }

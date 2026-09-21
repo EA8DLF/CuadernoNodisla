@@ -154,6 +154,11 @@ public sealed class ConversorDeMedio : ValueConverter<MedioDeConfirmacion, strin
     {
     }
 
+    /// <summary>Codigo con el que se guarda el servicio, por ejemplo <c>LOTW</c>.</summary>
+    /// <param name="medio">Servicio de confirmacion.</param>
+    /// <returns>El codigo de texto.</returns>
+    public static string CodigoDe(MedioDeConfirmacion medio) => ATexto(medio);
+
     private static string ATexto(MedioDeConfirmacion medio) => medio switch
     {
         MedioDeConfirmacion.Papel => "QSL",
@@ -185,19 +190,33 @@ public sealed class ConversorDeMedio : ValueConverter<MedioDeConfirmacion, strin
 /// Estado de una confirmacion. Se guardan codigos de una letra parecidos a los de ADIF pero
 /// propios: ADIF no distingue «rechazado» de «devuelto» y el dominio si.
 /// </summary>
+/// <remarks>
+/// Los codigos ya escritos no se tocan nunca: <c>Y</c> sigue siendo confirmado y <c>V</c>, que
+/// es el de ADIF para verificado, se anade sin mover ninguno de los demas. Una base antigua se
+/// lee igual despues del cambio.
+/// </remarks>
 public sealed class ConversorDeEstado : ValueConverter<EstadoDeConfirmacion, string>
 {
+    /// <summary>Codigos que cuentan como confirmacion valida para un diploma.</summary>
+    public static IReadOnlyList<string> CodigosConfirmados { get; } = ["Y", "V"];
+
     /// <summary>Crea el conversor.</summary>
     public ConversorDeEstado()
         : base(v => ATexto(v), v => AEstado(v))
     {
     }
 
+    /// <summary>Codigo con el que se guarda el estado.</summary>
+    /// <param name="estado">Estado de la confirmacion.</param>
+    /// <returns>El codigo de texto.</returns>
+    public static string CodigoDe(EstadoDeConfirmacion estado) => ATexto(estado);
+
     private static string ATexto(EstadoDeConfirmacion estado) => estado switch
     {
         EstadoDeConfirmacion.Ninguno => "N",
         EstadoDeConfirmacion.Pendiente => "Q",
         EstadoDeConfirmacion.Confirmado => "Y",
+        EstadoDeConfirmacion.Verificado => "V",
         EstadoDeConfirmacion.Solicitado => "R",
         EstadoDeConfirmacion.Rechazado => "X",
         EstadoDeConfirmacion.Devuelto => "D",
@@ -209,6 +228,7 @@ public sealed class ConversorDeEstado : ValueConverter<EstadoDeConfirmacion, str
     {
         "Q" => EstadoDeConfirmacion.Pendiente,
         "Y" => EstadoDeConfirmacion.Confirmado,
+        "V" => EstadoDeConfirmacion.Verificado,
         "R" => EstadoDeConfirmacion.Solicitado,
         "X" => EstadoDeConfirmacion.Rechazado,
         "D" => EstadoDeConfirmacion.Devuelto,

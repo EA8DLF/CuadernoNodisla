@@ -1,4 +1,4 @@
-using System.Globalization;
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Datos.Configuracion;
@@ -11,9 +11,6 @@ namespace Nodisla.Cuaderno.Datos.Repositorios;
 /// <param name="contexto">Contexto del cuaderno.</param>
 public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
 {
-    /// <summary>Cuantos contactos anteriores se devuelven en el aviso de «trabajado antes».</summary>
-    public const int MaximoTrabajadoAntes = 50;
-
     /// <summary>Cuantos contactos se escriben por tanda en el alta en lote.</summary>
     private const int TamanoDeTanda = 2000;
 
@@ -62,10 +59,14 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
     }
 
     /// <inheritdoc/>
-    public async Task<int> AnadirLoteAsync(IEnumerable<Qso> qsos, CancellationToken ct = default)
+    public async Task<ResultadoDeLote> AnadirLoteAsync(
+        IEnumerable<Qso> qsos,
+        bool omitirDuplicados = true,
+        CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(qsos);
 
+        var reloj = Stopwatch.StartNew();
         var deteccionAutomatica = contexto.ChangeTracker.AutoDetectChangesEnabled;
         contexto.ChangeTracker.AutoDetectChangesEnabled = false;
 
@@ -74,7 +75,8 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
         try
         {
             var tanda = new List<Qso>(TamanoDeTanda);
-            var total = 0;
+            var anadidos = 0;
+            var omitidos = 0;
 
             foreach (var qso in qsos)
             {
@@ -84,13 +86,19 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
 
                 if (tanda.Count >= TamanoDeTanda)
                 {
-                    total += await GuardarTandaAsync(tanda, ct).ConfigureAwait(false);
+                    var llena = await GuardarTandaAsync(tanda, omitirDuplicados, ct).ConfigureAwait(false);
+                    anadidos += llena.Anadidos;
+                    omitidos += llena.Omitidos;
                 }
             }
 
-            total += await GuardarTandaAsync(tanda, ct).ConfigureAwait(false);
+            var ultima = await GuardarTandaAsync(tanda, omitirDuplicados, ct).ConfigureAwait(false);
+            anadidos += ultima.Anadidos;
+            omitidos += ultima.Omitidos;
+
             await transaccion.CommitAsync(ct).ConfigureAwait(false);
-            return total;
+            reloj.Stop();
+            return new ResultadoDeLote(anadidos, omitidos, reloj.Elapsed);
         }
         finally
         {
@@ -156,8 +164,11 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
     /// <inheritdoc/>
     public async Task<IReadOnlyList<Qso>> TrabajadoAntesAsync(
         Indicativo indicativo,
+        int maximo = 50,
         CancellationToken ct = default)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maximo);
+
         if (indicativo.EsVacio)
         {
             return [];
@@ -169,7 +180,7 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
             .AsNoTracking()
             .Where(q => q.Call == indicativo)
             .OrderByDescending(q => q.InicioUtc)
-            .Take(MaximoTrabajadoAntes)
+            .Take(maximo)
             .ToListAsync(ct)
             .ConfigureAwait(false);
     }
@@ -257,8 +268,11 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
 
         if (criterio.ConfirmadoPor is { } medio)
         {
+            // Verificada cuenta igual que confirmada, como en QsoConfirmacion.EstaConfirmada.
             consulta = consulta.Where(q => q.Confirmaciones.Any(
-                c => c.Medio == medio && c.Recibido == EstadoDeConfirmacion.Confirmado));
+                c => c.Medio == medio
+                     && (c.Recibido == EstadoDeConfirmacion.Confirmado
+                         || c.Recibido == EstadoDeConfirmacion.Verificado)));
         }
 
         return consulta;
@@ -267,41 +281,37 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
     private static IQueryable<Qso> Ordenar(IQueryable<Qso> consulta, CriterioQso criterio)
     {
         var descendente = criterio.Descendente;
-        var campo = string.IsNullOrWhiteSpace(criterio.OrdenarPor)
-            ? nameof(Qso.InicioUtc)
-            : criterio.OrdenarPor.Trim();
 
-        IOrderedQueryable<Qso> ordenada = campo.ToUpperInvariant() switch
+        IOrderedQueryable<Qso> ordenada = criterio.OrdenarPor switch
         {
-            "INICIOUTC" => descendente
+            CampoDeOrden.Indicativo => descendente
+                ? consulta.OrderByDescending(q => q.Call)
+                : consulta.OrderBy(q => q.Call),
+            CampoDeOrden.Banda => descendente
+                ? consulta.OrderByDescending(q => q.Band)
+                : consulta.OrderBy(q => q.Band),
+            CampoDeOrden.Modo => descendente
+                ? consulta.OrderByDescending(q => q.Mode)
+                : consulta.OrderBy(q => q.Mode),
+            CampoDeOrden.Frecuencia => descendente
+                ? consulta.OrderByDescending(q => q.Freq)
+                : consulta.OrderBy(q => q.Freq),
+            CampoDeOrden.Nombre => descendente
+                ? consulta.OrderByDescending(q => q.Name)
+                : consulta.OrderBy(q => q.Name),
+            CampoDeOrden.Qth => descendente
+                ? consulta.OrderByDescending(q => q.Qth)
+                : consulta.OrderBy(q => q.Qth),
+            CampoDeOrden.Dxcc => descendente
+                ? consulta.OrderByDescending(q => q.Dxcc)
+                : consulta.OrderBy(q => q.Dxcc),
+            _ => descendente
                 ? consulta.OrderByDescending(q => q.InicioUtc)
                 : consulta.OrderBy(q => q.InicioUtc),
-            "CALL" => descendente ? consulta.OrderByDescending(q => q.Call) : consulta.OrderBy(q => q.Call),
-            "BAND" => descendente ? consulta.OrderByDescending(q => q.Band) : consulta.OrderBy(q => q.Band),
-            "MODE" => descendente ? consulta.OrderByDescending(q => q.Mode) : consulta.OrderBy(q => q.Mode),
-            "FREQ" => descendente ? consulta.OrderByDescending(q => q.Freq) : consulta.OrderBy(q => q.Freq),
-            "DXCC" => descendente ? consulta.OrderByDescending(q => q.Dxcc) : consulta.OrderBy(q => q.Dxcc),
-            "COUNTRY" => descendente
-                ? consulta.OrderByDescending(q => q.Country)
-                : consulta.OrderBy(q => q.Country),
-            "NAME" => descendente ? consulta.OrderByDescending(q => q.Name) : consulta.OrderBy(q => q.Name),
-            "QTH" => descendente ? consulta.OrderByDescending(q => q.Qth) : consulta.OrderBy(q => q.Qth),
-            "CREADOUTC" => descendente
-                ? consulta.OrderByDescending(q => q.CreadoUtc)
-                : consulta.OrderBy(q => q.CreadoUtc),
-            "MODIFICADOUTC" => descendente
-                ? consulta.OrderByDescending(q => q.ModificadoUtc)
-                : consulta.OrderBy(q => q.ModificadoUtc),
-            "ID" => descendente ? consulta.OrderByDescending(q => q.Id) : consulta.OrderBy(q => q.Id),
-            _ => throw new ArgumentException(
-                string.Format(
-                    CultureInfo.CurrentCulture,
-                    "No se puede ordenar el cuaderno por «{0}».",
-                    campo),
-                nameof(criterio)),
         };
 
-        // Desempate estable: sin el, dos contactos del mismo segundo pueden saltar de pagina.
+        // Desempate obligatorio por Id, en el mismo sentido: sin el, dos contactos del mismo
+        // segundo se repiten o se saltan al pasar de pagina.
         return descendente ? ordenada.ThenByDescending(q => q.Id) : ordenada.ThenBy(q => q.Id);
     }
 
@@ -312,21 +322,83 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
         return $"\"{limpio}\"*";
     }
 
-    private async Task<int> GuardarTandaAsync(List<Qso> tanda, CancellationToken ct)
+    /// <summary>
+    /// Guarda una tanda. Si se piden omitir duplicados, antes consulta de una sola vez que
+    /// claves naturales de la tanda ya estan en el cuaderno y descarta esos contactos.
+    /// </summary>
+    private async Task<(int Anadidos, int Omitidos)> GuardarTandaAsync(
+        List<Qso> tanda,
+        bool omitirDuplicados,
+        CancellationToken ct)
     {
         if (tanda.Count == 0)
         {
-            return 0;
+            return (0, 0);
         }
 
-        contexto.Qsos.AddRange(tanda);
-        await contexto.SaveChangesAsync(ct).ConfigureAwait(false);
+        var omitidos = 0;
+        if (omitirDuplicados)
+        {
+            var yaEstan = await ClavesExistentesAsync(tanda, ct).ConfigureAwait(false);
+            var aGuardar = new List<Qso>(tanda.Count);
+            foreach (var qso in tanda)
+            {
+                // El conjunto descarta tambien los repetidos dentro del propio fichero.
+                if (yaEstan.Add(qso.ClaveNatural))
+                {
+                    aGuardar.Add(qso);
+                }
+                else
+                {
+                    omitidos++;
+                }
+            }
+
+            tanda.Clear();
+            tanda.AddRange(aGuardar);
+        }
 
         var guardados = tanda.Count;
+        if (guardados > 0)
+        {
+            contexto.Qsos.AddRange(tanda);
+            await contexto.SaveChangesAsync(ct).ConfigureAwait(false);
+        }
+
         tanda.Clear();
         contexto.ChangeTracker.Clear();
-        return guardados;
+        return (guardados, omitidos);
     }
+
+    /// <summary>
+    /// Claves naturales de la tanda que ya existen en el cuaderno. Se consulta por indicativo,
+    /// que es la primera columna de <c>ux_qso_natural</c>, y se comparan sin distinguir
+    /// mayusculas igual que hace la propia columna.
+    /// </summary>
+    private async Task<HashSet<string>> ClavesExistentesAsync(List<Qso> tanda, CancellationToken ct)
+    {
+        var indicativos = tanda.Select(q => q.Call).Distinct().ToList();
+
+        var candidatos = await contexto.Qsos
+            .AsNoTracking()
+            .Where(q => indicativos.Contains(q.Call))
+            .Select(q => new { q.Call, q.Band, q.Mode, q.InicioUtc })
+            .ToListAsync(ct)
+            .ConfigureAwait(false);
+
+        var claves = new HashSet<string>(candidatos.Count, StringComparer.OrdinalIgnoreCase);
+        foreach (var candidato in candidatos)
+        {
+            claves.Add(ClaveNatural(candidato.Call, candidato.Band, candidato.Mode, candidato.InicioUtc));
+        }
+
+        return claves;
+    }
+
+    /// <summary>Misma forma que <see cref="Qso.ClaveNatural"/> sin materializar el contacto.</summary>
+    private static string ClaveNatural(Indicativo call, Banda band, Modo mode, DateTimeOffset inicio) =>
+        FormattableString.Invariant(
+            $"{call.Valor}|{band.Nombre}|{mode.Principal}|{inicio.UtcDateTime:yyyy-MM-dd HH:mm:ss}");
 
     private static void Sellar(Qso qso, bool esAlta)
     {

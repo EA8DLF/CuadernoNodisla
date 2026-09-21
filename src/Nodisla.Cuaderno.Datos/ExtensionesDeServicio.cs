@@ -33,7 +33,7 @@ public static class ExtensionesDeServicio
 
         servicios.AddScoped<IRepositorioQso, RepositorioQso>();
         servicios.AddScoped<IRepositorioEstacion, RepositorioEstacion>();
-        servicios.AddScoped<ConsultasDeInforme>();
+        servicios.AddScoped<IConsultasDeInforme, ConsultasDeInforme>();
         servicios.AddScoped<MigradorDeCuaderno>();
 
         return servicios;
