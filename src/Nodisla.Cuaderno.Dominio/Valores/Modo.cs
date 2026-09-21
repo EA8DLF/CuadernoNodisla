@@ -2,8 +2,9 @@ namespace Nodisla.Cuaderno.Dominio.Valores;
 
 /// <summary>
 /// Modo de emision segun ADIF. En ADIF el par correcto es <c>MODE</c> + <c>SUBMODE</c>:
-/// FT8 no es un modo, es un submodo de MFSK. Aqui se guarda el par y se resuelve
-/// automaticamente cuando el usuario escribe solo el submodo.
+/// FT4, por ejemplo, no es un modo sino un submodo de MFSK, mientras que FT8 si es modo
+/// principal por decision del propio estandar. Aqui se guarda el par y se resuelve
+/// automaticamente cuando el operador escribe solo el submodo.
 /// </summary>
 public readonly record struct Modo
 {

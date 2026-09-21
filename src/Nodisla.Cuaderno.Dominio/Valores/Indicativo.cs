@@ -12,23 +12,41 @@ public readonly record struct Indicativo
 
     public bool EsVacio => string.IsNullOrEmpty(Valor);
 
+    /// <summary>
+    /// Longitud a partir de la cual se deja de usar la pila. Un indicativo real no pasa de 24
+    /// caracteres, pero <see cref="Normalizar"/> es publico y lo llama la importacion de ADIF
+    /// ajeno, donde un campo puede venir con cualquier tamano.
+    /// </summary>
+    private const int MaximoEnPila = 256;
+
     /// <summary>Normaliza el texto: mayusculas, sin espacios y con las barras unificadas.</summary>
     public static string Normalizar(string? texto)
     {
         if (string.IsNullOrWhiteSpace(texto)) return string.Empty;
-        Span<char> destino = stackalloc char[texto.Length];
-        var n = 0;
-        foreach (var c in texto)
+
+        char[]? prestado = null;
+        var destino = texto.Length <= MaximoEnPila
+            ? stackalloc char[MaximoEnPila]
+            : (prestado = System.Buffers.ArrayPool<char>.Shared.Rent(texto.Length));
+        try
         {
-            if (char.IsWhiteSpace(c)) continue;
-            destino[n++] = c switch
+            var n = 0;
+            foreach (var c in texto)
             {
-                '\\' => '/',
-                '-' => '/',
-                _ => char.ToUpperInvariant(c),
-            };
+                if (char.IsWhiteSpace(c)) continue;
+                destino[n++] = c switch
+                {
+                    '\\' => '/',
+                    '-' => '/',
+                    _ => char.ToUpperInvariant(c),
+                };
+            }
+            return new string(destino[..n]);
         }
-        return new string(destino[..n]);
+        finally
+        {
+            if (prestado is not null) System.Buffers.ArrayPool<char>.Shared.Return(prestado);
+        }
     }
 
     public static bool TryParse(string? texto, out Indicativo indicativo)

@@ -17,4 +17,8 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Banco de pruebas de oro: QSOs reales ya resueltos por Log4OM. -->
+    <EmbeddedResource Include="Datos\qsos-log4om.tsv" />
+  </ItemGroup>
 </Project>
