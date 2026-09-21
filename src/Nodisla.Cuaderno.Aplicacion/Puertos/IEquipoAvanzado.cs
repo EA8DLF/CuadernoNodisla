@@ -113,6 +113,23 @@ public sealed record RangoDeMando(
     string? Unidad = null,
     IReadOnlyList<string>? Etiquetas = null)
 {
+    /// <summary>
+    /// El mando se puede leer pero no accionar. La interfaz debe ensenarlo apagado, no
+    /// ofrecerlo y dejar que falle.
+    /// </summary>
+    public bool SoloLectura { get; init; }
+
+    /// <summary>
+    /// Accionar este mando <b>pone el equipo en antena</b>. El acoplador de antena es el caso
+    /// tipico: sintonizar emite portadora.
+    /// </summary>
+    /// <remarks>
+    /// Un mando asi no se acciona nunca directamente: hay que pedir antes una transmision a
+    /// <see cref="IVigilantePtt"/> y accionarlo dentro de ella, para que algo lo suelte si la
+    /// cosa se tuerce. La interfaz debe avisar al operador antes de tocarlo.
+    /// </remarks>
+    public bool TransmiteAlAccionar { get; init; }
+
     /// <summary>El mando solo admite apagado y encendido.</summary>
     public bool EsInterruptor => Minimo == 0 && Maximo == 1 && Paso == 1 && Etiquetas is null;
 

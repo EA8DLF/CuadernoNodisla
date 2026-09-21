@@ -42,9 +42,26 @@ public sealed record EstadoDelEquipo(
 /// <summary>Por que via se controla el equipo.</summary>
 public enum ViaDeControl
 {
-    /// <summary>Demonio <c>rigctld</c> de Hamlib por TCP. Es la via preferida.</summary>
+    /// <summary>
+    /// Juego de ordenes propio del fabricante, hablado directamente por el puerto serie.
+    /// Es la via que da acceso a todo lo que el equipo sabe hacer.
+    /// </summary>
+    CatNativo,
+    /// <summary>
+    /// Demonio <c>rigctld</c> de Hamlib por TCP. Vale para casi cualquier equipo, a cambio
+    /// de quedarse en el minimo comun de todos ellos.
+    /// </summary>
     Rigctld,
-    /// <summary>OmniRig por COM. Requiere un proceso de 32 bits.</summary>
+    /// <summary>
+    /// OmniRig por COM.
+    /// </summary>
+    /// <remarks>
+    /// OmniRig es de 32 bits, pero esta registrado como servidor <c>LocalServer32</c>, es
+    /// decir <b>fuera de proceso</b>: COM cruza la frontera de arquitectura y se le puede
+    /// hablar desde un proceso de 64 bits. Comprobado en vivo contra la instalacion de Jose.
+    /// Por eso la aplicacion no tiene que compilarse en 32 bits, lo que habria estrangulado
+    /// al modem digital de la Fase 4.
+    /// </remarks>
     OmniRig,
     /// <summary>Sin equipo: la frecuencia y el modo los pone el operador a mano.</summary>
     Ninguna,
@@ -105,6 +122,13 @@ public enum MotivoDeSuelta
     Excepcion,
     /// <summary>La aplicacion se esta cerrando.</summary>
     Cierre,
+    /// <summary>Se cancelo la transmision.</summary>
+    Cancelado,
+    /// <summary>
+    /// Se perdio la comunicacion con el equipo en plena transmision. Es el caso peligroso:
+    /// si el equipo desaparece con el PTT puesto, nadie va a soltarlo salvo nosotros.
+    /// </summary>
+    EquipoPerdido,
     /// <summary>El operador ha pedido parar.</summary>
     Panico,
 }

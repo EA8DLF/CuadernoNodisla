@@ -15,6 +15,9 @@
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.1" />
     <PackageVersion Include="Dapper" Version="2.1.66" />
+    <!-- Los modulos de infraestructura trazan contra la abstraccion, no contra Serilog:
+         asi no arrastran una implementacion concreta ni se atan a ella. -->
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
     <PackageVersion Include="Serilog" Version="4.4.0" />
     <PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
@@ -22,6 +25,7 @@
     <PackageVersion Include="FluentValidation" Version="11.11.0" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+    <PackageVersion Include="System.IO.Ports" Version="8.0.0" />
     <!-- Mapas. Mapsui y no GMap.NET: el paquete WPF de GMap no se publica desde junio de 2022. -->
     <PackageVersion Include="Mapsui.Wpf" Version="5.1.0" />
   </ItemGroup>
