@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nodisla.Cuaderno.Aplicacion\Nodisla.Cuaderno.Aplicacion.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Datos\Nodisla.Cuaderno.Datos.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Adif\Nodisla.Cuaderno.Adif.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Infraestructura\Nodisla.Cuaderno.Infraestructura.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+</Project>

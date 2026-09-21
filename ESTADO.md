@@ -8,7 +8,7 @@ Fase 0 — reconocimiento. Tres especialistas analizando el original.
 ## Decisiones tomadas (2026-09-21)
 - **Stack**: C# .NET 8 + WPF, escritorio Windows.
 - **Alcance**: paridad completa con Log4OM, por fases.
-- **Servicios**: LoTW, QRZ.com, ClubLog, eQSL, cluster DX, WSJT-X.
+- **Servicios**: LoTW, QRZ.com, ClubLog, eQSL, cluster DX, WSJT-X y JTDX.
 - **Modo de trabajo**: team lead con especialistas; planificar y construir la v1.
 
 ## Entorno
