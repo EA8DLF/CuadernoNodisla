@@ -1,11 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <ProjectReference Include="..\Nodisla.Cuaderno.Aplicacion\Nodisla.Cuaderno.Aplicacion.csproj" />
-    <ProjectReference Include="..\Nodisla.Cuaderno.Datos\Nodisla.Cuaderno.Datos.csproj" />
-    <ProjectReference Include="..\Nodisla.Cuaderno.Adif\Nodisla.Cuaderno.Adif.csproj" />
-    <ProjectReference Include="..\Nodisla.Cuaderno.Infraestructura\Nodisla.Cuaderno.Infraestructura.csproj" />
-  </ItemGroup>
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -14,5 +7,22 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nodisla.Cuaderno.Aplicacion\Nodisla.Cuaderno.Aplicacion.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Datos\Nodisla.Cuaderno.Datos.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Adif\Nodisla.Cuaderno.Adif.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Infraestructura\Nodisla.Cuaderno.Infraestructura.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.File" />
+  </ItemGroup>
 
 </Project>

@@ -1,0 +1,37 @@
+<!-- Paleta del tema oscuro. Mismas claves que el tema claro, nada mas. -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="FondoVentana" Color="#FF14181F" />
+    <SolidColorBrush x:Key="FondoPanel" Color="#FF1C222C" />
+    <SolidColorBrush x:Key="FondoCampo" Color="#FF262E3A" />
+    <SolidColorBrush x:Key="FondoCabecera" Color="#FF29313E" />
+    <SolidColorBrush x:Key="FondoAlterno" Color="#FF20272F" />
+    <SolidColorBrush x:Key="FondoResalte" Color="#FF323C4B" />
+
+    <SolidColorBrush x:Key="Texto" Color="#FFE8ECF2" />
+    <SolidColorBrush x:Key="TextoTenue" Color="#FFA3AEBE" />
+    <SolidColorBrush x:Key="TextoSobreAcento" Color="#FF0C141E" />
+
+    <SolidColorBrush x:Key="Borde" Color="#FF3B4756" />
+    <SolidColorBrush x:Key="BordeSuave" Color="#FF2C3542" />
+
+    <SolidColorBrush x:Key="Acento" Color="#FF69B4F5" />
+    <SolidColorBrush x:Key="AcentoSuave" Color="#FF4A90D0" />
+
+    <SolidColorBrush x:Key="SeleccionFondo" Color="#FF2F4F72" />
+    <SolidColorBrush x:Key="SeleccionTexto" Color="#FFFFFFFF" />
+
+    <SolidColorBrush x:Key="AvisoFondo" Color="#FF3E3218" />
+    <SolidColorBrush x:Key="AvisoBorde" Color="#FFB98D2A" />
+    <SolidColorBrush x:Key="AvisoTexto" Color="#FFF5D98A" />
+
+    <SolidColorBrush x:Key="ErrorFondo" Color="#FF3E1E1E" />
+    <SolidColorBrush x:Key="ErrorBorde" Color="#FFC05252" />
+    <SolidColorBrush x:Key="ErrorTexto" Color="#FFF7B4B4" />
+
+    <SolidColorBrush x:Key="CorrectoFondo" Color="#FF1C3A26" />
+    <SolidColorBrush x:Key="CorrectoBorde" Color="#FF4F9E6B" />
+    <SolidColorBrush x:Key="CorrectoTexto" Color="#FFA9E5BE" />
+
+</ResourceDictionary>

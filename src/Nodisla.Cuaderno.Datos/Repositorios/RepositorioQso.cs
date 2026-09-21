@@ -37,9 +37,9 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
 
         // El recuento y la pagina se resuelven en SQL; a memoria solo llega la pagina.
         var total = await consulta.CountAsync(ct).ConfigureAwait(false);
-        var elementos = await Ordenar(consulta, criterio)
-            .Skip(desplazamiento)
-            .Take(limite)
+        var elementos = await ConHijasEnPagina(Ordenar(consulta, criterio)
+                .Skip(desplazamiento)
+                .Take(limite))
             .AsNoTracking()
             .ToListAsync(ct)
             .ConfigureAwait(false);
@@ -124,7 +124,9 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
             contexto.Entry(existente).CurrentValues.SetValues(qso);
             contexto.Entry(existente).Property<string?>(NombresDeColumna.PropiedadSubmodo).CurrentValue =
                 qso.Mode.Submodo;
-            CopiarHijas(existente, qso);
+            ConciliarConfirmaciones(existente, qso);
+            ConciliarReferencias(existente, qso);
+            ConciliarCamposExtra(existente, qso);
         }
 
         Sellar(existente, esAlta: false);
@@ -149,8 +151,10 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
     {
         ArgumentNullException.ThrowIfNull(candidato);
 
-        // Mismas columnas y mismo orden que ux_qso_natural.
-        return await contexto.Qsos
+        // Mismas columnas y mismo orden que ux_qso_natural. Vuelve con sus filas hijas
+        // porque quien busca un duplicado va a fundirlo: sin las confirmaciones que ya
+        // tiene guardadas, la fusion las daria por perdidas y las volveria a escribir.
+        return await ConHijas(contexto.Qsos)
             .AsNoTracking()
             .Where(q => q.Call == candidato.Call
                         && q.Band == candidato.Band
@@ -175,12 +179,16 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
         }
 
         // Va por ix_qso_call (call, qso_inicio_utc DESC): se dispara con cada tecla que escribe
-        // el operador, asi que no puede hacer nada mas que recorrer el indice.
-        return await contexto.Qsos
+        // el operador, asi que no puede hacer nada mas que recorrer el indice. Aun asi trae
+        // las filas hijas: son como mucho «maximo» contactos y el aviso ensena si la QSL
+        // quedo confirmada. Devolver contactos a medias costaria mas caro de lo que ahorra,
+        // que es justo lo que ya paso una vez.
+        return await ConHijasEnPagina(contexto.Qsos
+                .Where(q => q.Call == indicativo)
+                .OrderByDescending(q => q.InicioUtc)
+                .ThenByDescending(q => q.Id)
+                .Take(maximo))
             .AsNoTracking()
-            .Where(q => q.Call == indicativo)
-            .OrderByDescending(q => q.InicioUtc)
-            .Take(maximo)
             .ToListAsync(ct)
             .ConfigureAwait(false);
     }
@@ -188,7 +196,28 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
     /// <inheritdoc/>
     public Task<int> ContarAsync(CancellationToken ct = default) => contexto.Qsos.CountAsync(ct);
 
+    /// <summary>
+    /// Anade las tres colecciones hijas a una consulta de <b>un solo</b> contacto.
+    /// </summary>
+    /// <remarks>
+    /// Aqui no se parte la consulta: para un contacto el producto cartesiano son unas pocas
+    /// decenas de filas y sale mas barato que cuatro viajes a la base.
+    /// </remarks>
     private static IQueryable<Qso> ConHijas(IQueryable<Qso> consulta) => consulta
+        .Include(q => q.Confirmaciones)
+        .Include(q => q.Referencias)
+        .Include(q => q.CamposExtra);
+
+    /// <summary>
+    /// Anade las tres colecciones hijas a una consulta de <b>muchos</b> contactos.
+    /// </summary>
+    /// <remarks>
+    /// Con varias colecciones a la vez, una sola consulta multiplicaria cada contacto por sus
+    /// confirmaciones, por sus referencias y por sus campos extra: una pagina de 200 contactos
+    /// con una decena de campos cada uno son miles de filas anchas repetidas. Partida en
+    /// cuatro consultas, cada fila viaja una vez.
+    /// </remarks>
+    private static IQueryable<Qso> ConHijasEnPagina(IQueryable<Qso> consulta) => consulta
         .Include(q => q.Confirmaciones)
         .Include(q => q.Referencias)
         .Include(q => q.CamposExtra)
@@ -416,55 +445,192 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
     }
 
     /// <summary>
-    /// Sustituye las filas hijas del contacto guardado por las del grafo que llega de fuera.
-    /// Son pocas filas por contacto y asi no hay que cuadrar identificadores ajenos.
+    /// Deja las confirmaciones guardadas como las del contacto que llega de fuera: actualiza
+    /// las que siguen, anade las que faltan y <b>borra las que ya no estan</b>.
     /// </summary>
-    private void CopiarHijas(Qso destino, Qso origen)
+    /// <remarks>
+    /// El emparejamiento es por identificador cuando llega y, si no, por servicio, que es la
+    /// clave de <c>ux_conf_qso_servicio</c>. Un grafo desconectado —el que sale de fundir un
+    /// ADIF con lo guardado— trae unas filas con identificador y otras sin el, y las dos
+    /// tienen que acabar en la fila que les toca en vez de duplicarse.
+    /// </remarks>
+    private void ConciliarConfirmaciones(Qso destino, Qso origen)
     {
-        contexto.Confirmaciones.RemoveRange(destino.Confirmaciones);
-        contexto.Referencias.RemoveRange(destino.Referencias);
-        contexto.CamposExtra.RemoveRange(destino.CamposExtra);
-        destino.Confirmaciones.Clear();
-        destino.Referencias.Clear();
-        destino.CamposExtra.Clear();
-
-        foreach (var confirmacion in origen.Confirmaciones)
+        var porId = PorIdentificador(destino.Confirmaciones, c => c.Id);
+        var porServicio = new Dictionary<MedioDeConfirmacion, QsoConfirmacion>();
+        foreach (var c in destino.Confirmaciones)
         {
-            destino.Confirmaciones.Add(new QsoConfirmacion
-            {
-                QsoId = destino.Id,
-                Medio = confirmacion.Medio,
-                Enviado = confirmacion.Enviado,
-                Recibido = confirmacion.Recibido,
-                EnviadoUtc = confirmacion.EnviadoUtc,
-                RecibidoUtc = confirmacion.RecibidoUtc,
-                Via = confirmacion.Via,
-                Nota = confirmacion.Nota,
-            });
+            porServicio.TryAdd(c.Medio, c);
         }
 
-        foreach (var referencia in origen.Referencias)
+        var conservadas = new HashSet<long>();
+        foreach (var entrante in origen.Confirmaciones)
         {
-            destino.Referencias.Add(new QsoReferencia
+            var actual = Emparejar(entrante.Id, porId);
+            if (actual is null && porServicio.TryGetValue(entrante.Medio, out var porMedio)
+                && !conservadas.Contains(porMedio.Id))
             {
-                QsoId = destino.Id,
-                Tipo = referencia.Tipo,
-                NombrePrograma = referencia.NombrePrograma,
-                Codigo = referencia.Codigo,
-                Lado = referencia.Lado,
-                Descripcion = referencia.Descripcion,
-            });
+                actual = porMedio;
+            }
+
+            if (actual is null)
+            {
+                destino.Confirmaciones.Add(new QsoConfirmacion
+                {
+                    QsoId = destino.Id,
+                    Medio = entrante.Medio,
+                    Enviado = entrante.Enviado,
+                    Recibido = entrante.Recibido,
+                    EnviadoUtc = entrante.EnviadoUtc,
+                    RecibidoUtc = entrante.RecibidoUtc,
+                    Via = entrante.Via,
+                    Nota = entrante.Nota,
+                });
+                continue;
+            }
+
+            actual.Medio = entrante.Medio;
+            actual.Enviado = entrante.Enviado;
+            actual.Recibido = entrante.Recibido;
+            actual.EnviadoUtc = entrante.EnviadoUtc;
+            actual.RecibidoUtc = entrante.RecibidoUtc;
+            actual.Via = entrante.Via;
+            actual.Nota = entrante.Nota;
+            conservadas.Add(actual.Id);
         }
 
-        foreach (var campo in origen.CamposExtra)
+        Retirar(destino.Confirmaciones, contexto.Confirmaciones, c => c.Id, conservadas);
+    }
+
+    /// <summary>
+    /// Deja las referencias guardadas como las del contacto que llega, borrando las que ya no
+    /// estan. Se emparejan por identificador o por programa, codigo y lado.
+    /// </summary>
+    private void ConciliarReferencias(Qso destino, Qso origen)
+    {
+        var porId = PorIdentificador(destino.Referencias, r => r.Id);
+        var porClave = new Dictionary<string, QsoReferencia>(StringComparer.OrdinalIgnoreCase);
+        foreach (var r in destino.Referencias)
         {
-            destino.CamposExtra.Add(new QsoCampoExtra
+            porClave.TryAdd(ClaveDeReferencia(r), r);
+        }
+
+        var conservadas = new HashSet<long>();
+        foreach (var entrante in origen.Referencias)
+        {
+            var actual = Emparejar(entrante.Id, porId);
+            if (actual is null && porClave.TryGetValue(ClaveDeReferencia(entrante), out var porTexto)
+                && !conservadas.Contains(porTexto.Id))
             {
-                QsoId = destino.Id,
-                Nombre = campo.Nombre,
-                Valor = campo.Valor,
-                TipoAdif = campo.TipoAdif,
-            });
+                actual = porTexto;
+            }
+
+            if (actual is null)
+            {
+                destino.Referencias.Add(new QsoReferencia
+                {
+                    QsoId = destino.Id,
+                    Tipo = entrante.Tipo,
+                    NombrePrograma = entrante.NombrePrograma,
+                    Codigo = entrante.Codigo,
+                    Lado = entrante.Lado,
+                    Descripcion = entrante.Descripcion,
+                });
+                continue;
+            }
+
+            actual.Tipo = entrante.Tipo;
+            actual.NombrePrograma = entrante.NombrePrograma;
+            actual.Codigo = entrante.Codigo;
+            actual.Lado = entrante.Lado;
+            actual.Descripcion = entrante.Descripcion;
+            conservadas.Add(actual.Id);
+        }
+
+        Retirar(destino.Referencias, contexto.Referencias, r => r.Id, conservadas);
+    }
+
+    /// <summary>
+    /// Deja los campos ADIF no modelados como los del contacto que llega, borrando los que ya
+    /// no estan. Se emparejan por identificador o por nombre de campo, que es la clave de
+    /// <c>ux_campo_extra</c>.
+    /// </summary>
+    private void ConciliarCamposExtra(Qso destino, Qso origen)
+    {
+        var porId = PorIdentificador(destino.CamposExtra, c => c.Id);
+        var porNombre = new Dictionary<string, QsoCampoExtra>(StringComparer.OrdinalIgnoreCase);
+        foreach (var c in destino.CamposExtra)
+        {
+            porNombre.TryAdd(c.Nombre, c);
+        }
+
+        var conservados = new HashSet<long>();
+        foreach (var entrante in origen.CamposExtra)
+        {
+            var actual = Emparejar(entrante.Id, porId);
+            if (actual is null && porNombre.TryGetValue(entrante.Nombre, out var porTexto)
+                && !conservados.Contains(porTexto.Id))
+            {
+                actual = porTexto;
+            }
+
+            if (actual is null)
+            {
+                destino.CamposExtra.Add(new QsoCampoExtra
+                {
+                    QsoId = destino.Id,
+                    Nombre = entrante.Nombre,
+                    Valor = entrante.Valor,
+                    TipoAdif = entrante.TipoAdif,
+                });
+                continue;
+            }
+
+            actual.Nombre = entrante.Nombre;
+            actual.Valor = entrante.Valor;
+            actual.TipoAdif = entrante.TipoAdif;
+            conservados.Add(actual.Id);
+        }
+
+        Retirar(destino.CamposExtra, contexto.CamposExtra, c => c.Id, conservados);
+    }
+
+    private static string ClaveDeReferencia(QsoReferencia referencia) =>
+        $"{referencia.Tipo}|{referencia.NombrePrograma}|{referencia.Codigo}|{referencia.Lado}";
+
+    private static Dictionary<long, T> PorIdentificador<T>(List<T> filas, Func<T, long> identificador)
+    {
+        var indice = new Dictionary<long, T>(filas.Count);
+        foreach (var fila in filas)
+        {
+            var id = identificador(fila);
+            if (id != 0)
+            {
+                indice[id] = fila;
+            }
+        }
+
+        return indice;
+    }
+
+    private static T? Emparejar<T>(long id, Dictionary<long, T> porId)
+        where T : class =>
+        id != 0 && porId.TryGetValue(id, out var fila) ? fila : null;
+
+    /// <summary>Borra de la base las filas hijas que ya no vienen en el contacto.</summary>
+    private static void Retirar<T>(
+        List<T> coleccion,
+        DbSet<T> tabla,
+        Func<T, long> identificador,
+        HashSet<long> conservadas)
+        where T : class
+    {
+        var sobrantes = coleccion.Where(f => !conservadas.Contains(identificador(f))
+                                             && identificador(f) != 0).ToList();
+        foreach (var sobrante in sobrantes)
+        {
+            coleccion.Remove(sobrante);
+            tabla.Remove(sobrante);
         }
     }
 }
