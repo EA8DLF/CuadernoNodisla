@@ -71,6 +71,48 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
     /// <summary>Perfil de estacion con el que se registra. Lo fija la ventana principal.</summary>
     public long? EstacionId { get; set; }
 
+    /// <summary>
+    /// La frecuencia, la banda y el modo los esta poniendo el equipo, no el operador.
+    /// </summary>
+    /// <remarks>
+    /// Se ensena en el formulario a proposito. El error mas caro del cuaderno es registrar
+    /// veinte contactos en la frecuencia equivocada creyendo que el programa seguia al dial
+    /// cuando el equipo llevaba un rato desconectado.
+    /// </remarks>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(OrigenDeLaSintonia))]
+    private bool _siguiendoAlEquipo;
+
+    /// <summary>De donde salen la frecuencia y el modo, escrito para el operador.</summary>
+    public string OrigenDeLaSintonia => SiguiendoAlEquipo
+        ? "Siguiendo al equipo"
+        : "Los pone usted";
+
+    /// <summary>
+    /// Prepara el formulario para trabajar a una estacion anunciada en el cluster.
+    /// </summary>
+    /// <param name="indicativo">Indicativo anunciado.</param>
+    /// <param name="frecuencia">Frecuencia del anuncio.</param>
+    /// <param name="modo">Modo del anuncio, si lo trae.</param>
+    public void PonerDesdeElSpot(string indicativo, DominioFrecuencia frecuencia, string? modo)
+    {
+        _silencio = true;
+        Indicativo = DominioIndicativo.Normalizar(indicativo);
+
+        if (!frecuencia.EsCero)
+        {
+            Frecuencia = TextoDeFrecuencia.Escribir(frecuencia);
+            var banda = DominioBanda.DesdeFrecuencia(frecuencia);
+            Banda = banda.EsVacia ? string.Empty : banda.Nombre;
+        }
+
+        if (modo is { Length: > 0 } && DominioModo.TryParse(modo, null, out var m)) Modo = m.NombreUsual;
+        _silencio = false;
+
+        PonerInformesPorOmision(forzar: false);
+        LanzarConsultaDeTrabajadoAntes(Indicativo);
+    }
+
     [ObservableProperty]
     private string _indicativo = string.Empty;
 
@@ -145,6 +187,38 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         FechaUtc = utc.UtcDateTime.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
         HoraUtc = utc.UtcDateTime.ToString("HH:mm", CultureInfo.InvariantCulture);
         _silencio = false;
+    }
+
+    /// <summary>
+    /// Sigue al dial del equipo: pone en el formulario la frecuencia, la banda y el modo que
+    /// tiene puestos la radio.
+    /// </summary>
+    /// <remarks>
+    /// <b>No toda frecuencia tiene banda.</b> El dia que se capturo el CAT del FT-710 de Jose,
+    /// el dial estaba en 27.555 MHz, que no esta en la tabla de bandas de ADIF. Cuando pasa
+    /// eso, la banda se deja vacia a proposito —no se conserva la anterior, que seria mentira—
+    /// y el contacto se registra igual: el nucleo admite banda vacia mientras haya frecuencia.
+    ///
+    /// Mientras se esta modificando un contacto del cuaderno, el dial no toca nada: lo que hay
+    /// en el formulario es lo que se grabo aquel dia, no lo que la radio tiene ahora.
+    /// </remarks>
+    /// <param name="frecuencia">Frecuencia del VFO activo.</param>
+    /// <param name="modo">Modo que tiene puesto el equipo.</param>
+    public void SeguirAlDial(DominioFrecuencia frecuencia, DominioModo modo)
+    {
+        if (EnEdicion || frecuencia.EsCero) return;
+
+        _silencio = true;
+        Frecuencia = TextoDeFrecuencia.Escribir(frecuencia);
+
+        var banda = DominioBanda.DesdeFrecuencia(frecuencia);
+        Banda = banda.EsVacia ? string.Empty : banda.Nombre;
+
+        var cambiaElModo = !modo.EsVacio && !string.Equals(Modo, modo.NombreUsual, StringComparison.Ordinal);
+        if (cambiaElModo) Modo = modo.NombreUsual;
+        _silencio = false;
+
+        if (cambiaElModo) PonerInformesPorOmision(forzar: false);
     }
 
     /// <summary>Carga un contacto del cuaderno en el formulario para modificarlo.</summary>

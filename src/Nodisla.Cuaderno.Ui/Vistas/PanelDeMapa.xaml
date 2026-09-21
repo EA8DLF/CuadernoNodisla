@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PanelDeMapa"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mapa="clr-namespace:Nodisla.Cuaderno.Ui.Mapa;assembly=Nodisla.Cuaderno.Ui.Mapa"
+             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        Panel del mapa.
+
+        El control del mapa vive en su propio proyecto y no deja salir de allí nada del motor
+        que lo dibuja: aquí solo se le pasan marcas, trayectos y una hora. Si algún día hay
+        que cambiar de motor de mapas, este fichero no se toca.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+        <conversores:NoEsVacio x:Key="NoEsVacio" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" MinHeight="220" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ══ Qué se ve ══ -->
+        <WrapPanel Grid.Row="0" Margin="0,0,0,8">
+            <CheckBox Content="Contactos" IsChecked="{Binding MostrarContactos}" Margin="0,0,14,4" />
+            <CheckBox Content="Spots" IsChecked="{Binding MostrarSpots}" Margin="0,0,14,4" />
+            <CheckBox Content="{Binding TextoDelPasoGris}"
+                      IsChecked="{Binding MostrarPasoGris}"
+                      Margin="0,0,14,4"
+                      ToolTip="La línea de día y noche, que se mueve con el reloj" />
+            <CheckBox Content="Mapa de fondo"
+                      IsChecked="{Binding MostrarFondo}"
+                      Margin="0,0,14,4"
+                      ToolTip="Descarga los mosaicos. Sin conexión, el mapa se queda en fondo liso y sigue funcionando." />
+        </WrapPanel>
+
+        <!-- ══ El mapa ══ -->
+        <Border Grid.Row="1"
+                BorderBrush="{DynamicResource Borde}"
+                BorderThickness="1"
+                CornerRadius="4"
+                ClipToBounds="True">
+            <mapa:ControlDeMapa x:Name="Mapa"
+                                Marcas="{Binding Marcas}"
+                                Trayectos="{Binding Trayectos}"
+                                EstacionPropia="{Binding EstacionPropia}"
+                                IndicativoPropio="{Binding IndicativoPropio}"
+                                MostrarPasoGris="{Binding MostrarPasoGris}"
+                                InstanteDelPasoGris="{Binding InstanteDelPasoGris}"
+                                MostrarFondo="{Binding MostrarFondo}"
+                                MarcaElegida="AlElegirUnaMarca" />
+        </Border>
+
+        <!-- ══ Resumen y botones ══ -->
+        <DockPanel Grid.Row="2" Margin="0,8,0,0">
+            <Button DockPanel.Dock="Right"
+                    Content="Ver el mundo"
+                    Click="AlPedirElMundo"
+                    Margin="8,0,0,0" />
+            <Button DockPanel.Dock="Right"
+                    Content="Quitar trayecto"
+                    Command="{Binding QuitarTrayectoCommand}"
+                    Margin="8,0,0,0" />
+
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="{Binding Resumen}" Style="{StaticResource TextoTenueEstilo}" />
+                <TextBlock Text="Cargando el cuaderno en el mapa…"
+                           Style="{StaticResource TextoTenueEstilo}"
+                           Visibility="{Binding Cargando, Converter={StaticResource BooleanoAVisible}}" />
+                <TextBlock Text="{Binding Aviso}"
+                           Style="{StaticResource TextoTenueEstilo}"
+                           Foreground="{DynamicResource ErrorTexto}"
+                           Visibility="{Binding Aviso, Converter={StaticResource NoEsVacio}}" />
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</UserControl>

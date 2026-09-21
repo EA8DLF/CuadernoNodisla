@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.MandoGiratorio"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="True"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        Un mando giratorio del frontal.
+
+        Lleva el ROTULO REAL del equipo —«RF GAIN/SQL», no «Ganancia de RF»—, que es lo que
+        Jose ve serigrafiado en su radio; la explicación en español va en la ayuda emergente y
+        en el nombre accesible. Debajo, el valor: un dibujo de un mando sin su número no sirve
+        para operar, porque el operador no sabe dónde lo ha dejado.
+
+        Un mando que el equipo tiene pero no ofrece por CAT se dibuja igual, apagado y con su
+        explicación. Que esté y no se pueda tocar es información; que no esté sería un frontal
+        incompleto.
+
+        La marca gira en el arco útil de un potenciómetro de verdad —270 grados, de las siete a
+        las cinco— en vez de dar la vuelta entera.
+    -->
+
+    <StackPanel x:Name="Cuerpo">
+        <Grid Width="46" Height="46" HorizontalAlignment="Center">
+            <Ellipse Stroke="{DynamicResource Borde}"
+                     StrokeThickness="2"
+                     Fill="{DynamicResource FondoPanel}" />
+
+            <!-- Estrías del mando, como las del equipo. -->
+            <Ellipse Width="34" Height="34"
+                     Stroke="{DynamicResource BordeSuave}"
+                     StrokeThickness="1"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center" />
+
+            <!-- La marca que dice por dónde va el mando. -->
+            <Rectangle x:Name="Marca"
+                       Width="3"
+                       Height="15"
+                       Fill="{DynamicResource Acento}"
+                       RadiusX="1.5"
+                       RadiusY="1.5"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Margin="0,4,0,0"
+                       RenderTransformOrigin="0.5,1.3">
+                <Rectangle.RenderTransform>
+                    <RotateTransform Angle="{Binding Giro, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                </Rectangle.RenderTransform>
+            </Rectangle>
+        </Grid>
+
+        <!-- El rótulo, tal y como está serigrafiado en el equipo. -->
+        <TextBlock Text="{Binding Rotulo, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                   FontSize="9"
+                   FontWeight="Bold"
+                   Foreground="{DynamicResource TextoTenue}"
+                   HorizontalAlignment="Center"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
+                   TextTrimming="None"
+                   Margin="0,3,0,0" />
+
+        <TextBlock Text="{Binding ValorTexto, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                   FontSize="10"
+                   FontWeight="Bold"
+                   FontFamily="Consolas, Cascadia Mono, Courier New"
+                   HorizontalAlignment="Center"
+                   TextTrimming="None" />
+    </StackPanel>
+</UserControl>

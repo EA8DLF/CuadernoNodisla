@@ -188,31 +188,80 @@ public sealed class PuenteDigitalUdp : IPuenteDigital
         return await EnviarAsync(instancia, datagrama, ct).ConfigureAwait(false);
     }
 
-    /// <summary>Fija el desplazamiento de transmision. Solo lo atiende JTDX.</summary>
+    /// <summary>
+    /// Cambia el tono de transmision. Mensaje 50, que solo tiene JTDX.
+    /// </summary>
+    /// <remarks>
+    /// <b>Es el unico de estos tres que afecta a lo que se emite.</b> No pone la radio a
+    /// transmitir por si solo —solo mueve el tono dentro del ancho de banda de audio— pero si
+    /// el programa esta en mitad de una transmision el cambio se oye en el aire y la estacion
+    /// de enfrente puede perder el resto del periodo. La interfaz deberia pensarselo antes de
+    /// ofrecerlo con la transmision en curso.
+    ///
+    /// JTDX comprueba por su cuenta que el tono cae dentro de su ventana de audio y lo ignora
+    /// si no; por eso aqui solo se rechaza lo imposible y del resto responde el.
+    /// </remarks>
     /// <param name="identificador">Instancia a la que se le pide.</param>
-    /// <param name="hercios">Desplazamiento dentro del ancho de banda de audio.</param>
+    /// <param name="tonoHz">Tono en hercios.</param>
     /// <param name="ct">Testigo de cancelacion.</param>
-    public async Task<bool> FijarTxDeltaFreqAsync(
-        string identificador, uint hercios, CancellationToken ct = default)
+    public async Task<bool> PonerTonoTxAsync(
+        string identificador, int tonoHz, CancellationToken ct = default)
     {
+        if (tonoHz < 0) return false;
         if (!_receptor.TryInstancia(identificador, out var instancia)) return false;
         if (!instancia.Capacidades.PuedeCambiarTonoTx) return false;
-        var datagrama = ConstructorDeMensajesWsjt.FijarTxDeltaFreq(identificador, hercios);
+
+        var datagrama = ConstructorDeMensajesWsjt.FijarTxDeltaFreq(identificador, (uint)tonoHz);
         return await EnviarAsync(instancia, datagrama, ct).ConfigureAwait(false);
     }
 
-    /// <summary>Fija la llamada general y opcionalmente la dispara. Solo lo atiende JTDX.</summary>
+    /// <summary>
+    /// Pide al programa que lance una llamada general. Mensaje 51, que solo tiene JTDX.
+    /// </summary>
+    /// <remarks>
+    /// El mensaje lleva tres cosas y el metodo no expone ninguna, a proposito:
+    ///
+    /// La <b>direccion</b> va vacia, que en JTDX significa llamada general sin dirigir. Un
+    /// boton que pone «llamar CQ» tiene que llamar a todo el mundo; dirigirla a <c>DX</c> o a
+    /// <c>EU</c> es una decision de operacion que se toma en la ventana del programa, no de
+    /// refilon desde el cuaderno.
+    ///
+    /// El <b>periodo</b> se manda tal y como la propia instancia lo tiene ahora mismo, que se
+    /// sabe porque JTDX lo informa en su mensaje de estado. Asi el boton no le cambia al
+    /// operador el periodo que habia elegido: solo llama.
+    ///
+    /// El <b>enviar</b> va cierto, porque es lo que el nombre promete. Ojo: aqui empieza una
+    /// transmision de verdad.
+    /// </remarks>
     /// <param name="identificador">Instancia a la que se le pide.</param>
-    /// <param name="direccion">Direccion de la llamada: <c>DX</c>, <c>EU</c>…</param>
-    /// <param name="periodoTx">Periodo en el que transmitir.</param>
-    /// <param name="enviar">Cierto para que empiece a llamar ya.</param>
     /// <param name="ct">Testigo de cancelacion.</param>
-    public async Task<bool> DispararCqAsync(
-        string identificador, string direccion, bool periodoTx, bool enviar, CancellationToken ct = default)
+    public async Task<bool> LlamarCqAsync(string identificador, CancellationToken ct = default)
     {
         if (!_receptor.TryInstancia(identificador, out var instancia)) return false;
         if (!instancia.Capacidades.PuedeLlamarCq) return false;
-        var datagrama = ConstructorDeMensajesWsjt.DispararCq(identificador, direccion, periodoTx, enviar);
+
+        var datagrama = ConstructorDeMensajesWsjt.DispararCq(
+            identificador,
+            string.Empty,
+            instancia.Estado.TransmiteElPrimero ?? false,
+            true);
+        return await EnviarAsync(instancia, datagrama, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Cambia la configuracion activa del programa. Mensaje 14, que JTDX nunca implemento.
+    /// </summary>
+    /// <param name="identificador">Instancia a la que se le pide.</param>
+    /// <param name="configuracion">Nombre de la configuracion, tal y como el programa la llama.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    public async Task<bool> CambiarConfiguracionAsync(
+        string identificador, string configuracion, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(configuracion)) return false;
+        if (!_receptor.TryInstancia(identificador, out var instancia)) return false;
+        if (!instancia.Capacidades.PuedeCambiarConfiguracion) return false;
+
+        var datagrama = ConstructorDeMensajesWsjt.CambiarConfiguracion(identificador, configuracion);
         return await EnviarAsync(instancia, datagrama, ct).ConfigureAwait(false);
     }
 

@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using FluentAssertions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Dominio.Valores;
 using Nodisla.Cuaderno.Integraciones.Digital;
 
 namespace Nodisla.Cuaderno.Integraciones.Pruebas.Digital;
@@ -285,7 +286,7 @@ public class PuenteDigitalPruebas
         puente.Admitir(Datagramas.Latido("JTDX"), new IPEndPoint(IPAddress.Loopback, 2237));
 
         var resultado = await puente.ResaltarAsync(
-            "JTDX", Nodisla.Cuaderno.Dominio.Valores.Indicativo.Parse("EA8DLF"), true);
+            "JTDX", Indicativo.Parse("EA8DLF"), true);
 
         resultado.Should().BeFalse("JTDX nunca tuvo el mensaje de resaltado");
         puente.Capacidades("JTDX").PuedeResaltar.Should().BeFalse();
@@ -297,7 +298,7 @@ public class PuenteDigitalPruebas
         await using var puente = new PuenteDigitalUdp(new OpcionesPuenteDigital { Puerto = PuertoLibre() });
 
         var resultado = await puente.ResaltarAsync(
-            "nadie", Nodisla.Cuaderno.Dominio.Valores.Indicativo.Parse("EA8DLF"), true);
+            "nadie", Indicativo.Parse("EA8DLF"), true);
 
         resultado.Should().BeFalse();
     }
@@ -381,7 +382,7 @@ public class PuenteDigitalPruebas
         -12,
         0.2,
         1234,
-        Nodisla.Cuaderno.Dominio.Valores.Modo.Parse("FT8"),
+        Modo.Parse("FT8"),
         new DateTimeOffset(2026, 9, 21, 10, 30, 15, TimeSpan.Zero),
         DialectoDigital.WsjtX)
     {
@@ -398,14 +399,101 @@ public class PuenteDigitalPruebas
         cincuentaYUno.Should().Equal(Datagramas.DispararCq("JTDX", "DX"));
     }
 
+    /// <summary>
+    /// La prueba que impide que la interfaz ofrezca botones muertos: para cada dialecto, lo
+    /// que declara <c>Capacidades</c> tiene que ser exactamente lo que hacen los metodos. Si
+    /// se desincronizan, el operador pulsa y no pasa nada, que es justo lo que se queria
+    /// evitar al poner la negociacion.
+    /// </summary>
+    [Theory]
+    [InlineData("WSJT-X")]
+    [InlineData("JTDX")]
+    [InlineData("MSHV")]
+    [InlineData("JS8Call")]
+    [InlineData("Radio del garaje")]
+    public async Task Lo_que_declaran_las_capacidades_es_lo_que_hacen_los_metodos(string identificador)
+    {
+        using var sumidero = new UdpClient(new IPEndPoint(IPAddress.Loopback, 0));
+        var destino = (IPEndPoint)sumidero.Client.LocalEndPoint!;
+
+        await using var puente = new PuenteDigitalUdp(new OpcionesPuenteDigital { Puerto = PuertoLibre() });
+        await puente.ArrancarAsync();
+        puente.Admitir(Datagramas.Latido(identificador), destino);
+
+        var capacidades = puente.Capacidades(identificador);
+
+        (await puente.ResponderAAsync(Decodificacion(identificador)))
+            .Should().Be(capacidades.PuedeResponder, "responder");
+        (await puente.ResaltarAsync(identificador, Indicativo.Parse("EA8DLF"), true))
+            .Should().Be(capacidades.PuedeResaltar, "resaltar");
+        (await puente.PonerTonoTxAsync(identificador, 1500))
+            .Should().Be(capacidades.PuedeCambiarTonoTx, "poner el tono de transmision");
+        (await puente.LlamarCqAsync(identificador))
+            .Should().Be(capacidades.PuedeLlamarCq, "llamar CQ");
+        (await puente.CambiarConfiguracionAsync(identificador, "Default"))
+            .Should().Be(capacidades.PuedeCambiarConfiguracion, "cambiar de configuracion");
+
+        await puente.PararAsync();
+    }
+
     [Fact]
     public async Task Los_mensajes_propios_de_jtdx_no_se_le_mandan_a_wsjtx()
     {
         await using var puente = new PuenteDigitalUdp(new OpcionesPuenteDigital { Puerto = PuertoLibre() });
         puente.Admitir(Datagramas.Latido("WSJT-X"), new IPEndPoint(IPAddress.Loopback, 2237));
 
-        (await puente.FijarTxDeltaFreqAsync("WSJT-X", 1500)).Should().BeFalse();
-        (await puente.DispararCqAsync("WSJT-X", "DX", true, true)).Should().BeFalse();
+        (await puente.PonerTonoTxAsync("WSJT-X", 1500)).Should().BeFalse();
+        (await puente.LlamarCqAsync("WSJT-X")).Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task El_cambio_de_configuracion_no_se_le_manda_a_jtdx()
+    {
+        await using var puente = new PuenteDigitalUdp(new OpcionesPuenteDigital { Puerto = PuertoLibre() });
+        puente.Admitir(Datagramas.Latido("JTDX"), new IPEndPoint(IPAddress.Loopback, 2237));
+
+        (await puente.CambiarConfiguracionAsync("JTDX", "Default")).Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Sin_instancia_o_con_argumentos_imposibles_no_se_manda_nada()
+    {
+        await using var puente = new PuenteDigitalUdp(new OpcionesPuenteDigital { Puerto = PuertoLibre() });
+        puente.Admitir(Datagramas.Latido("JTDX"), new IPEndPoint(IPAddress.Loopback, 2237));
+
+        (await puente.PonerTonoTxAsync("nadie", 1500)).Should().BeFalse();
+        (await puente.LlamarCqAsync("nadie")).Should().BeFalse();
+        (await puente.CambiarConfiguracionAsync("nadie", "Default")).Should().BeFalse();
+
+        (await puente.PonerTonoTxAsync("JTDX", -1)).Should().BeFalse("un tono negativo no existe");
+        (await puente.CambiarConfiguracionAsync("WSJT-X", "  ")).Should().BeFalse();
+    }
+
+    [Fact]
+    public void El_mensaje_14_es_el_de_wsjtx_y_lleva_el_nombre_de_la_configuracion()
+    {
+        var datagrama = ConstructorDeMensajesWsjt.CambiarConfiguracion("WSJT-X", "Concurso");
+
+        var mensaje = AnalizadorWsjt.Analizar(datagrama).Mensaje
+            .Should().BeOfType<MensajeSinDetallar>().Subject;
+
+        mensaje.Tipo.Should().Be(TipoMensajeWsjt.CambiarConfiguracion);
+        mensaje.Id.Should().Be("WSJT-X");
+        System.Text.Encoding.UTF8.GetString(mensaje.Cuerpo).Should().EndWith("Concurso");
+    }
+
+    [Fact]
+    public void La_llamada_general_respeta_el_periodo_que_el_operador_tiene_puesto()
+    {
+        // El mensaje 51 obliga a mandar un periodo; se manda el que la instancia ya informa,
+        // para que pulsar «llamar CQ» no le cambie al operador lo que habia elegido.
+        var conPrimero = ConstructorDeMensajesWsjt.DispararCq("JTDX", string.Empty, true, true);
+        var conSegundo = ConstructorDeMensajesWsjt.DispararCq("JTDX", string.Empty, false, true);
+
+        conPrimero.Should().NotEqual(conSegundo);
+        conPrimero[^2].Should().Be(1, "el periodo");
+        conSegundo[^2].Should().Be(0, "el periodo");
+        conPrimero[^1].Should().Be(1, "el boton llama de verdad");
     }
 
     [Fact]

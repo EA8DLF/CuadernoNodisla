@@ -1,0 +1,326 @@
+﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.FrontalFt710"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
+             xmlns:puertos="clr-namespace:Nodisla.Cuaderno.Aplicacion.Puertos;assembly=Nodisla.Cuaderno.Aplicacion"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        EL FRONTAL DEL EQUIPO, DIBUJADO.
+
+        VERIFICADO con el manual de instrucciones oficial del FT-710:
+          · «Front Panel Controls & Switches», páginas impresas 30 a 39: la lista numerada de
+            los 25 mandos y las tres láminas con sus llamadas. De ahí sale DÓNDE va cada cosa.
+          · «Specifications», página impresa 106: dimensiones 239 × 80 × 247 mm. De ahí sale la
+            PROPORCIÓN del frente, que es de casi tres a uno — por eso este dibujo mide
+            1000 × 335 y no una franja apaisada.
+
+        Están los 25 mandos del manual menos el ⑧ WIRE STAND, que es la pata abatible y no un
+        control. Los rótulos son los del equipo —«NB», «RF GAIN/SQL»—, que es lo que está
+        serigrafiado en la radio; la explicación en español va en la ayuda emergente y en el
+        nombre accesible.
+
+        Lo que el equipo no ofrece por CAT se dibuja DESACTIVADO y lo dice en su ayuda: que
+        esté y no se pueda tocar es información; que no estuviera sería un frontal incompleto.
+
+        Lo que NO se reproduce, a propósito: el logotipo y el nombre del fabricante. Esto es una
+        herramienta propia para uso particular, no una imitación del producto; se reconoce por
+        la disposición. El hueco de la pantalla táctil lo ocupa el visor del cuaderno, que
+        enseña lo que hace falta para operar desde el ordenador.
+
+        LA APARIENCIA ES APROXIMADA. Las láminas del manual son esquemáticas: dan la posición y
+        el rótulo de cada mando, no sus tamaños ni sus formas exactas.
+    -->
+
+    <UserControl.Resources>
+        <!-- Un botón del frontal, con el rótulo del equipo. -->
+        <Style x:Key="BotonDelFrontal" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Padding" Value="2,4" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Background" Value="{DynamicResource FondoPanel}" />
+        </Style>
+
+        <!-- Las dos barras que flanquean el dial: el indicador de VFO. -->
+        <Style x:Key="BarraDeVfo" TargetType="Border">
+            <Setter Property="Width" Value="7" />
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="Margin" Value="0,10" />
+            <Setter Property="Background" Value="{DynamicResource Borde}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding EsElActivo}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource Acento}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Transmite}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource ErrorBorde}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Conectores y ranuras: se dibujan, no se accionan. -->
+        <Style x:Key="PiezaDelFrontal" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource FondoVentana}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Margin" Value="2" />
+        </Style>
+    </UserControl.Resources>
+
+    <Viewbox Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Border Width="1000"
+                Height="335"
+                Background="{DynamicResource FondoCabecera}"
+                BorderBrush="{DynamicResource Borde}"
+                BorderThickness="2"
+                CornerRadius="10"
+                Padding="12,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="96" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="410" />
+                </Grid.ColumnDefinitions>
+
+                <!-- ══ ①②③④⑤⑥ Columna izquierda ══ -->
+                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                    <Button Style="{StaticResource BotonDelFrontal}"
+                            Content="LOCK"
+                            IsEnabled="False"
+                            AutomationProperties.Name="Encendido y bloqueo del dial (LOCK)"
+                            ToolTip="LOCK — Encendido y bloqueo del dial. El equipo no lo ofrece por CAT." />
+
+                    <Border Style="{StaticResource PiezaDelFrontal}" Height="16" CornerRadius="2"
+                            AutomationProperties.Name="Ranura de tarjeta SD"
+                            ToolTip="Ranura de tarjeta SD">
+                        <TextBlock Text="SD" FontSize="8" HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextoTenue}" />
+                    </Border>
+
+                    <Button Style="{StaticResource BotonDelFrontal}"
+                            Content="TUNE"
+                            Command="{Binding AlternarMandoCommand}"
+                            CommandParameter="{x:Static puertos:MandoDeEquipo.Sintonizador}"
+                            AutomationProperties.Name="Acoplador de antena (TUNE)"
+                            AutomationProperties.HelpText="Sintonizar emite portadora: se avisa antes y se acciona dentro de una transmisión vigilada."
+                            ToolTip="TUNE — Acoplador de antena. Sintonizar EMITE: se pide confirmación antes." />
+
+                    <Button Style="{StaticResource BotonDelFrontal}"
+                            Content="VOX/MOX"
+                            Command="{Binding AlternarMandoCommand}"
+                            CommandParameter="{x:Static puertos:MandoDeEquipo.Vox}"
+                            AutomationProperties.Name="Paso a transmisión por voz (VOX/MOX)"
+                            ToolTip="VOX/MOX — Paso a transmisión por voz" />
+
+                    <Border Style="{StaticResource PiezaDelFrontal}" Height="24" CornerRadius="12"
+                            AutomationProperties.Name="Toma de auriculares (PHONES)"
+                            ToolTip="PHONES — Toma de auriculares">
+                        <TextBlock Text="PHONES" FontSize="8" HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextoTenue}" />
+                    </Border>
+
+                    <Border Style="{StaticResource PiezaDelFrontal}" Height="26" CornerRadius="3"
+                            AutomationProperties.Name="Conector de micrófono (MIC)"
+                            ToolTip="MIC — Conector de micrófono">
+                        <TextBlock Text="MIC" FontSize="8" HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" Foreground="{DynamicResource TextoTenue}" />
+                    </Border>
+                </StackPanel>
+
+                <!-- ══ El visor: donde el equipo tiene su pantalla táctil ══ -->
+                <Border Grid.Column="1"
+                        Background="{DynamicResource FondoCampo}"
+                        BorderBrush="{DynamicResource Borde}"
+                        BorderThickness="2"
+                        CornerRadius="4"
+                        Padding="10,8"
+                        Margin="0,0,10,0">
+                    <vistas:VisorDeVfos />
+                </Border>
+
+                <!-- ══ Sección derecha: los mandos, donde están en el equipo ══ -->
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- ㉑㉒㉓㉔㉕ Canto superior -->
+                    <UniformGrid Grid.Row="0" Columns="5">
+                        <Button Style="{StaticResource BotonDelFrontal}" Content="MODE"
+                                Command="{Binding SiguienteModoCommand}"
+                                AutomationProperties.Name="Selección de modo (MODE)"
+                                ToolTip="MODE — Pasa al modo siguiente" />
+                        <Button Style="{StaticResource BotonDelFrontal}" Content="ZIN/SPOT"
+                                IsEnabled="False"
+                                AutomationProperties.Name="Ajuste a cero y escucha lateral en telegrafía (ZIN/SPOT)"
+                                ToolTip="ZIN/SPOT — Ajuste a cero en telegrafía. El equipo no lo ofrece por CAT." />
+                        <Button Style="{StaticResource BotonDelFrontal}" Content="SPLIT"
+                                Command="{Binding AlternarMandoCommand}"
+                                CommandParameter="{x:Static puertos:MandoDeEquipo.Split}"
+                                AutomationProperties.Name="Trabajo en dos frecuencias (SPLIT)"
+                                ToolTip="SPLIT — Trabajo en dos frecuencias" />
+                        <Button Style="{StaticResource BotonDelFrontal}" Content="CLAR"
+                                Command="{Binding AlternarMandoCommand}"
+                                CommandParameter="{x:Static puertos:MandoDeEquipo.Rit}"
+                                AutomationProperties.Name="Clarificador: desplazamiento de recepción (CLAR)"
+                                ToolTip="CLAR — Clarificador: desplaza la recepción" />
+                        <Button Style="{StaticResource BotonDelFrontal}" Content="NB"
+                                Command="{Binding AlternarMandoCommand}"
+                                CommandParameter="{x:Static puertos:MandoDeEquipo.SupresorDeRuido}"
+                                AutomationProperties.Name="Supresor de ruido de impulsos (NB)"
+                                ToolTip="NB — Supresor de ruido de impulsos" />
+                    </UniformGrid>
+
+                    <!-- ⑫⑬⑭ Fila de botones -->
+                    <UniformGrid Grid.Row="1" Columns="5" Margin="0,3,0,0">
+                        <Button Style="{StaticResource BotonDelFrontal}" Content="M▸V"
+                                IsEnabled="False"
+                                AutomationProperties.Name="Pasar la memoria al VFO (M a V)"
+                                ToolTip="M▸V — Pasa la memoria al VFO. El equipo no lo ofrece por CAT." />
+                        <Button Style="{StaticResource BotonDelFrontal}" Content="V/M"
+                                IsEnabled="False"
+                                AutomationProperties.Name="Alternar entre VFO y memorias (V/M)"
+                                ToolTip="V/M — Alterna entre el VFO y las memorias. El equipo no lo ofrece por CAT." />
+                        <Button Style="{StaticResource BotonDelFrontal}" Content="A/B"
+                                Command="{Binding IntercambiarVfosCommand}"
+                                AutomationProperties.Name="Intercambiar VFO A y VFO B (A/B)"
+                                ToolTip="A/B — Intercambia el contenido de los dos VFO" />
+                        <Button Style="{StaticResource BotonDelFrontal}" Content="BAND"
+                                Command="{Binding SiguienteBandaCommand}"
+                                AutomationProperties.Name="Cambio de banda (BAND)"
+                                ToolTip="BAND — Pasa a la banda siguiente" />
+                        <Button Style="{StaticResource BotonDelFrontal}" Content="QMB"
+                                IsEnabled="False"
+                                AutomationProperties.Name="Memoria rápida (QMB)"
+                                ToolTip="QMB — Memoria rápida. El equipo no lo ofrece por CAT." />
+                    </UniformGrid>
+
+                    <!-- ⑦⑨⑪⑮⑯⑰⑲⑳ Mandos y dial -->
+                    <Grid Grid.Row="2" Margin="0,4,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="84" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="84" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- ⑪ DNR, ⑯ BUSY/TX y ⑰ NAR, sobre el dial -->
+                        <UniformGrid Grid.Row="0" Grid.Column="1" Columns="3" Margin="2,0,2,2">
+                            <Button Style="{StaticResource BotonDelFrontal}" Content="DNR"
+                                    Command="{Binding AlternarMandoCommand}"
+                                    CommandParameter="{x:Static puertos:MandoDeEquipo.ReductorDeRuido}"
+                                    AutomationProperties.Name="Reductor de ruido digital (DNR)"
+                                    ToolTip="DNR — Reductor de ruido digital" />
+
+                            <Border CornerRadius="3" Margin="4,2"
+                                    AutomationProperties.Name="Indicador de ocupado y transmisión (BUSY/TX)"
+                                    ToolTip="BUSY/TX — Verde con el silenciador abierto, rojo en transmisión">
+                                <Border.Style>
+                                    <Style TargetType="Border" BasedOn="{StaticResource PiezaDelFrontal}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Transmitiendo}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource ErrorBorde}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="BUSY/TX" FontSize="7" HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" TextTrimming="None"
+                                           Foreground="{DynamicResource TextoTenue}" />
+                            </Border>
+
+                            <Button Style="{StaticResource BotonDelFrontal}" Content="NAR"
+                                    IsEnabled="False"
+                                    AutomationProperties.Name="Filtro estrecho (NAR)"
+                                    ToolTip="NAR — Pone el filtro en estrecho. El equipo no lo ofrece por CAT." />
+                        </UniformGrid>
+
+                        <!-- ⑦ MAIN dial, con ⑮ las barras del indicador de VFO -->
+                        <Grid Grid.Row="1" Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" DataContext="{Binding A}"
+                                    Style="{StaticResource BarraDeVfo}"
+                                    AutomationProperties.Name="Indicador del VFO A"
+                                    ToolTip="Indicador del VFO A" />
+
+                            <Viewbox Grid.Column="1" Stretch="Uniform" Margin="4,0">
+                                <Grid Width="130" Height="130"
+                                      ToolTip="MAIN — Dial principal. Lo gira el operador en el equipo."
+                                      AutomationProperties.Name="Dial principal (MAIN)">
+                                    <Ellipse Stroke="{DynamicResource Borde}" StrokeThickness="3"
+                                             Fill="{DynamicResource FondoPanel}" />
+                                    <Ellipse Width="108" Height="108"
+                                             Stroke="{DynamicResource BordeSuave}" StrokeThickness="1"
+                                             HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <Ellipse Width="26" Height="26"
+                                             Stroke="{DynamicResource Borde}" StrokeThickness="2"
+                                             Fill="{DynamicResource FondoVentana}"
+                                             HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <TextBlock Text="MAIN" FontSize="9" FontWeight="Bold"
+                                               Foreground="{DynamicResource TextoTenue}"
+                                               HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                                               Margin="0,0,0,8" />
+                                </Grid>
+                            </Viewbox>
+
+                            <Border Grid.Column="2" DataContext="{Binding B}"
+                                    Style="{StaticResource BarraDeVfo}"
+                                    AutomationProperties.Name="Indicador del VFO B"
+                                    ToolTip="Indicador del VFO B" />
+                        </Grid>
+
+                        <!-- ⑨ FUNC arriba a la izquierda, ⑲ RF GAIN/SQL arriba a la derecha -->
+                        <vistas:MandoGiratorio Grid.Row="0" Grid.Column="0"
+                                               Rotulo="FUNC"
+                                               Explicacion="Menú de ajustes del equipo" />
+                        <vistas:MandoGiratorio Grid.Row="0" Grid.Column="2"
+                                               Rotulo="RF GAIN/SQL"
+                                               Explicacion="Ganancia de radiofrecuencia y silenciador"
+                                               Mando="{Binding MandoDeGananciaRf}" />
+
+                        <!-- ⑨ STEP·MCH/DSP abajo a la izquierda, ⑳ AF GAIN abajo a la derecha -->
+                        <vistas:MandoGiratorio Grid.Row="1" Grid.Column="0"
+                                               VerticalAlignment="Top"
+                                               Rotulo="STEP/MCH · DSP"
+                                               Explicacion="Paso de sintonía, canal de memoria y filtros de interferencia" />
+                        <vistas:MandoGiratorio Grid.Row="1" Grid.Column="2"
+                                               VerticalAlignment="Top"
+                                               Rotulo="AF GAIN"
+                                               Explicacion="Volumen de audio"
+                                               Mando="{Binding MandoDeVolumen}" />
+                    </Grid>
+
+                    <!-- ⑩ DSP RESET y ⑱ FINE/FAST, bajo los mandos -->
+                    <Grid Grid.Row="3" Margin="0,2,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="84" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="84" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0" Style="{StaticResource BotonDelFrontal}" Content="DSP RESET"
+                                IsEnabled="False"
+                                AutomationProperties.Name="Devolver los filtros de interferencia a su sitio (DSP RESET)"
+                                ToolTip="DSP RESET — Devuelve los filtros de interferencia a su posición. El equipo no lo ofrece por CAT." />
+
+                        <Button Grid.Column="2" Style="{StaticResource BotonDelFrontal}" Content="FINE/FAST"
+                                IsEnabled="False"
+                                AutomationProperties.Name="Sintonía fina y rápida (FINE/FAST)"
+                                ToolTip="FINE/FAST — Sintonía de 1 Hz o por pasos de diez veces. El equipo no lo ofrece por CAT." />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Border>
+    </Viewbox>
+</UserControl>

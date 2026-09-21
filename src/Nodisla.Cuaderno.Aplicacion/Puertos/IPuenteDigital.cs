@@ -202,4 +202,30 @@ public interface IPuenteDigital : IAsyncDisposable
 
     /// <summary>Resalta un indicativo en la ventana del programa, si el dialecto lo admite.</summary>
     Task<bool> ResaltarAsync(string identificador, Indicativo indicativo, bool esNuevo, CancellationToken ct = default);
+
+    /// <summary>
+    /// Cambia el tono de transmision dentro del ancho de banda de audio.
+    /// </summary>
+    /// <param name="identificador">Instancia a la que se le pide.</param>
+    /// <param name="tonoHz">Tono en hercios.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>Falso si el programa al otro lado no sabe hacerlo.</returns>
+    Task<bool> PonerTonoTxAsync(string identificador, int tonoHz, CancellationToken ct = default);
+
+    /// <summary>
+    /// Pide al programa que lance una llamada general.
+    /// </summary>
+    /// <param name="identificador">Instancia a la que se le pide.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>Falso si el programa al otro lado no sabe hacerlo.</returns>
+    Task<bool> LlamarCqAsync(string identificador, CancellationToken ct = default);
+
+    /// <summary>
+    /// Cambia la configuracion activa del programa.
+    /// </summary>
+    /// <param name="identificador">Instancia a la que se le pide.</param>
+    /// <param name="configuracion">Nombre de la configuracion.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>Falso si el programa al otro lado no sabe hacerlo.</returns>
+    Task<bool> CambiarConfiguracionAsync(string identificador, string configuracion, CancellationToken ct = default);
 }

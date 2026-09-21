@@ -1,0 +1,239 @@
+﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PanelDeCluster"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        Panel del cluster de DX.
+
+        Lo que hace útil esta lista no es tener muchos anuncios: es que se vea de un vistazo
+        cuál de ellos aporta algo. Un spot que sería entidad nueva se marca en verde y con
+        letra gruesa; uno que solo llena un hueco de banda y modo, más discreto. Lo demás es
+        ruido, y para eso están los filtros y el interruptor que esconde las estaciones
+        automáticas de escucha, que anuncian lo mismo decenas de veces por minuto.
+
+        Debajo va la consola con todo lo que el nodo manda y no es un anuncio. Se puede plegar.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+        <conversores:NoEsVacio x:Key="NoEsVacio" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" MinHeight="120" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ══ Conexión y resumen ══ -->
+        <DockPanel Grid.Row="0" Margin="0,0,0,8">
+            <Button DockPanel.Dock="Right"
+                    Content="{Binding TextoDelBotonDeConexion}"
+                    Margin="8,0,0,0">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                        <Setter Property="Command" Value="{Binding ConectarCommand}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding EstadoTexto}" Value="Conectado">
+                                <Setter Property="Command" Value="{Binding DesconectarCommand}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding EstadoTexto}" Value="Conectando…">
+                                <Setter Property="Command" Value="{Binding DesconectarCommand}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding EstadoTexto}" Value="Reintentando…">
+                                <Setter Property="Command" Value="{Binding DesconectarCommand}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="{Binding Nombre}" FontWeight="Bold" />
+                <TextBlock Style="{StaticResource TextoTenueEstilo}">
+                    <Run Text="{Binding EstadoTexto, Mode=OneWay}" />
+                    <Run Text="·" />
+                    <Run Text="{Binding Resumen, Mode=OneWay}" />
+                </TextBlock>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- ══ Filtros ══ -->
+        <Expander Grid.Row="1" Header="Filtros" IsExpanded="False" Margin="0,0,0,6">
+            <WrapPanel Margin="0,6,0,0">
+                <StackPanel Margin="0,0,8,6" MinWidth="96">
+                    <TextBlock Text="Banda" Style="{StaticResource EtiquetaDeCampo}" />
+                    <ComboBox ItemsSource="{Binding Bandas}" SelectedItem="{Binding BandaFiltro}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,0,8,6" MinWidth="100">
+                    <TextBlock Text="Modo" Style="{StaticResource EtiquetaDeCampo}" />
+                    <ComboBox ItemsSource="{Binding Modos}" SelectedItem="{Binding ModoFiltro}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,0,8,6" MinWidth="104">
+                    <TextBlock Text="Continente" Style="{StaticResource EtiquetaDeCampo}" />
+                    <ComboBox ItemsSource="{Binding Continentes}" SelectedItem="{Binding ContinenteFiltro}" />
+                </StackPanel>
+
+                <CheckBox Content="Solo lo nuevo"
+                          IsChecked="{Binding SoloNuevos}"
+                          VerticalAlignment="Bottom"
+                          Margin="0,0,12,10"
+                          ToolTip="Deja únicamente las entidades nuevas y los huecos de banda y modo" />
+                <CheckBox Content="Sin escucha automática"
+                          IsChecked="{Binding SinEscuchaAutomatica}"
+                          VerticalAlignment="Bottom"
+                          Margin="0,0,12,10"
+                          ToolTip="Esconde los anuncios de las redes de escucha automática, que repiten la misma estación decenas de veces por minuto" />
+
+                <Button Content="Quitar filtros"
+                        Command="{Binding QuitarFiltroCommand}"
+                        VerticalAlignment="Bottom"
+                        Margin="0,0,8,6" />
+                <Button Content="Vaciar"
+                        Command="{Binding LimpiarCommand}"
+                        VerticalAlignment="Bottom"
+                        Margin="0,0,0,6" />
+            </WrapPanel>
+        </Expander>
+
+        <!-- ══ Lista de anuncios ══ -->
+        <ListBox Grid.Row="2"
+                 x:Name="ListaDeSpots"
+                 ItemsSource="{Binding Spots}"
+                 SelectedItem="{Binding SpotSeleccionado}"
+                 MouseDoubleClick="AlPulsarDosVeces">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid ToolTip="{Binding Detalle}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                   Text="{Binding Hora}"
+                                   Style="{StaticResource TextoTenueEstilo}"
+                                   FontFamily="Consolas, Cascadia Mono, Courier New"
+                                   Margin="0,0,10,0"
+                                   VerticalAlignment="Center" />
+
+                        <WrapPanel Grid.Row="0" Grid.Column="1">
+                            <TextBlock Text="{Binding Indicativo}"
+                                       FontFamily="Consolas, Cascadia Mono, Courier New"
+                                       Margin="0,0,10,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding EsEntidadNueva}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource CorrectoTexto}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <TextBlock Text="{Binding Frecuencia}"
+                                       FontFamily="Consolas, Cascadia Mono, Courier New"
+                                       Margin="0,0,10,0" />
+                            <TextBlock Text="{Binding Banda}" Style="{StaticResource TextoTenueEstilo}" Margin="0,0,8,0" />
+                            <TextBlock Text="{Binding Modo}" Style="{StaticResource TextoTenueEstilo}" Margin="0,0,8,0" />
+
+                            <Border Style="{StaticResource MarcaDeNovedad}"
+                                    Visibility="{Binding Novedad, Converter={StaticResource NoEsVacio}}">
+                                <TextBlock Text="{Binding Novedad}"
+                                           Foreground="{DynamicResource CorrectoTexto}"
+                                           FontWeight="Bold"
+                                           TextTrimming="None" />
+                            </Border>
+
+                            <!--
+                                Cuántas estaciones la están oyendo. Que la oigan diez desde
+                                tres continentes es la señal de que está entrando bien, y por
+                                eso se junta el anuncio repetido en vez de tirarlo.
+                            -->
+                            <TextBlock Style="{StaticResource TextoTenueEstilo}"
+                                       Visibility="{Binding QuienesLoOyen, Converter={StaticResource NoEsVacio}}"
+                                       ToolTip="Estaciones distintas que la están anunciando ahora mismo">
+                                <Run Text="·" />
+                                <Run Text="{Binding QuienesLoOyen, Mode=OneWay}" />
+                                <Run Text="{Binding DesdeDonde, Mode=OneWay}" FontWeight="Bold" />
+                            </TextBlock>
+                        </WrapPanel>
+
+                        <WrapPanel Grid.Row="1" Grid.Column="1">
+                            <TextBlock Text="{Binding Pais}" Style="{StaticResource TextoTenueEstilo}" Margin="0,0,8,0" />
+                            <TextBlock Text="{Binding Continente}" Style="{StaticResource TextoTenueEstilo}" Margin="0,0,8,0" />
+                            <TextBlock Text="{Binding Referencias}"
+                                       Style="{StaticResource TextoTenueEstilo}"
+                                       Foreground="{DynamicResource Acento}"
+                                       Margin="0,0,8,0" />
+                            <TextBlock Text="{Binding Comentario}" Style="{StaticResource TextoTenueEstilo}" />
+                        </WrapPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Row="3" Margin="0,8,0,0">
+            <WrapPanel>
+                <Button Content="Ir a este spot"
+                        Command="{Binding IrAlSpotCommand}"
+                        Style="{StaticResource BotonPrincipal}"
+                        Margin="0,0,8,6"
+                        ToolTip="Lleva el equipo a esa frecuencia y pone el indicativo en el formulario. Doble clic hace lo mismo." />
+                <TextBlock Text="Doble clic en un anuncio hace lo mismo."
+                           Style="{StaticResource TextoTenueEstilo}"
+                           VerticalAlignment="Center" />
+            </WrapPanel>
+
+            <!-- ══ Consola cruda ══ -->
+            <Expander Header="Consola del cluster" IsExpanded="True" Margin="0,6,0,0">
+                <Grid Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Background="{DynamicResource FondoCampo}"
+                            BorderBrush="{DynamicResource Borde}"
+                            BorderThickness="1"
+                            CornerRadius="3"
+                            MaxHeight="150">
+                        <ScrollViewer x:Name="DesplazamientoDeLaConsola" VerticalScrollBarVisibility="Auto" Padding="8,6">
+                            <ItemsControl ItemsSource="{Binding Consola}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" Style="{StaticResource TextoDeConsola}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+
+                    <DockPanel Grid.Row="1" Margin="0,6,0,0">
+                        <Button DockPanel.Dock="Right"
+                                Content="Enviar"
+                                Command="{Binding EnviarOrdenCommand}"
+                                Margin="8,0,0,0" />
+                        <TextBox Text="{Binding Orden, UpdateSourceTrigger=PropertyChanged}"
+                                 FontFamily="Consolas, Cascadia Mono, Courier New"
+                                 ToolTip="Orden para el nodo, por ejemplo sh/dx"
+                                 KeyDown="AlTeclearLaOrden" />
+                    </DockPanel>
+                </Grid>
+            </Expander>
+        </StackPanel>
+    </Grid>
+</UserControl>

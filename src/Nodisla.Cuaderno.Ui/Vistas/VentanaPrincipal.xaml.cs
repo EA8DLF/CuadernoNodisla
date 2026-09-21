@@ -1,11 +1,8 @@
-using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
-using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Ui.Recursos;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 using Serilog;
@@ -13,9 +10,20 @@ using Serilog;
 namespace Nodisla.Cuaderno.Ui.Vistas;
 
 /// <summary>
-/// Ventana principal del cuaderno. El codigo de aqui se limita a lo que es propio de la vista:
-/// mover el foco, ordenar al pulsar una cabecera y preguntar antes de borrar.
+/// Ventana principal del cuaderno.
 /// </summary>
+/// <remarks>
+/// <para>
+/// La pantalla principal es la <b>cabina de operación</b>: el equipo, la entrada de contacto,
+/// el cluster y los modos digitales. El cuaderno tiene su propia pestaña. En la Fase 1 ocupaba
+/// la ventana entera porque no habia nada mas, y esa herencia era justo lo que hacia que la
+/// pantalla no sirviera para operar.
+/// </para>
+/// <para>
+/// El codigo de aqui se limita a lo que es propio de la vista: mover el foco, repartir el alto
+/// y preguntar antes de borrar o de transmitir.
+/// </para>
+/// </remarks>
 public partial class VentanaPrincipal : Window
 {
     private readonly VistaModeloPrincipal _vistaModelo;
@@ -39,23 +47,14 @@ public partial class VentanaPrincipal : Window
         DataContext = vistaModelo;
 
         _vistaModelo.Cuaderno.ConfirmarBorrado = PreguntarSiBorrar;
+        _vistaModelo.Equipo.ConfirmarQueVaATransmitir = PreguntarSiTransmite;
         ContentRendered += AlTerminarElPrimerDibujado;
 
-        // Lo que cambia el alto que pide la zona de entrada obliga a repartir de nuevo.
+        // Lo que cambia el alto que piden los bloques obliga a repartir de nuevo.
         _vistaModelo.PropertyChanged += (_, args) =>
         {
             if (args.PropertyName is nameof(VistaModeloPrincipal.TamanoDeLetra)
-                or nameof(VistaModeloPrincipal.EntradaPlegada)
                 or nameof(VistaModeloPrincipal.DatosAmpliadosPedidos))
-            {
-                Dispatcher.BeginInvoke(AjustarComposicion, DispatcherPriority.Loaded);
-            }
-        };
-
-        _vistaModelo.Entrada.PropertyChanged += (_, args) =>
-        {
-            if (args.PropertyName is nameof(VistaModeloEntradaQso.HayTrabajadoAntes)
-                or nameof(VistaModeloEntradaQso.Tono))
             {
                 Dispatcher.BeginInvoke(AjustarComposicion, DispatcherPriority.Loaded);
             }
@@ -69,8 +68,9 @@ public partial class VentanaPrincipal : Window
             if (!await PedirPerfilSiHaceFaltaAsync().ConfigureAwait(true)) return;
 
             await _vistaModelo.InicializarAsync().ConfigureAwait(true);
-            MarcarOrdenEnLasCabeceras();
-            CampoIndicativo.Focus();
+            Cuaderno.MarcarOrdenEnLasCabeceras();
+            PonerLaEstacionEnElMapa();
+            Operar.EnfocarIndicativo();
         }
         catch (Exception ex)
         {
@@ -130,22 +130,31 @@ public partial class VentanaPrincipal : Window
         }
     }
 
-    private void AlCerrar(object sender, EventArgs e) => _vistaModelo.Detener();
+    /// <summary>Pone en el mapa la estacion propia, sacada del localizador del perfil activo.</summary>
+    private void PonerLaEstacionEnElMapa()
+    {
+        if (_vistaModelo.EstacionActiva is not { } estacion) return;
+
+        _vistaModelo.Mapa.FijarEstacion(estacion.MyGridsquare, estacion.StationCallsign.Valor);
+    }
+
+    private void AlCerrar(object sender, EventArgs e)
+    {
+        _vistaModelo.GuardarEstadoDeLosPaneles(App.CarpetaDeDatos);
+        _vistaModelo.Detener();
+    }
 
     private void AlCambiarDeTamano(object sender, SizeChangedEventArgs e) => AjustarComposicion();
 
     /// <summary>
-    /// Reparte el alto de la ventana. La regla es que la zona de entrada nunca se corta a media
-    /// fila: o un bloque se ve entero, o se pliega entero. Por eso no se mide con formulas sino
-    /// con la composicion real: se enciende todo, se mide, y si al cuaderno no le queda sitio
-    /// para sus contactos se va plegando por orden de menos util a mas util.
+    /// Reparte el alto de la ventana.
     /// </summary>
     /// <remarks>
-    /// Orden de prioridad, de mas a menos: la primera fila de entrada —indicativo, banda, modo,
-    /// frecuencia e informes— no se toca nunca; despues, tres contactos del cuaderno; y lo demas
-    /// cede: primero la leyenda de atajos, luego la lista de contactos previos del aviso, luego
-    /// la segunda fila de la entrada y por ultimo la cabecera, cuyo contenido —perfil, hora y
-    /// escala— sigue disponible en la barra de estado y con Ctrl + «+» y Ctrl + «−».
+    /// La regla no ha cambiado desde la Fase 1: un bloque se ve entero o se pliega entero,
+    /// nunca se corta a media fila. Lo que ceden son los que tienen su contenido repetido en
+    /// otro sitio: primero la leyenda de atajos, que es una ayuda y no un dato; despues los
+    /// contactos previos del aviso; despues la segunda fila de la entrada; y por ultimo la
+    /// cabecera, cuyo perfil y reloj siguen en la barra de estado.
     /// </remarks>
     private void AjustarComposicion()
     {
@@ -157,25 +166,21 @@ public partial class VentanaPrincipal : Window
 
             _vistaModelo.OlvidarPliegueAutomatico();
             UpdateLayout();
-            if (LeCabeAlCuaderno()) return;
+            if (LeCabeALaCabina()) return;
 
             _vistaModelo.LeyendaSinSitio = true;
             UpdateLayout();
-            if (LeCabeAlCuaderno()) return;
+            if (LeCabeALaCabina()) return;
 
             _vistaModelo.ContactosPreviosSinSitio = true;
             UpdateLayout();
-            if (LeCabeAlCuaderno()) return;
+            if (LeCabeALaCabina()) return;
 
             _vistaModelo.DatosAmpliadosSinSitio = true;
             UpdateLayout();
-            if (LeCabeAlCuaderno()) return;
+            if (LeCabeALaCabina()) return;
 
             _vistaModelo.CabeceraSinSitio = true;
-            UpdateLayout();
-            if (LeCabeAlCuaderno()) return;
-
-            _vistaModelo.AvisoCompacto = true;
             UpdateLayout();
         }
         finally
@@ -185,19 +190,22 @@ public partial class VentanaPrincipal : Window
     }
 
     /// <summary>
-    /// El cuaderno tiene sitio para su cabecera y al menos tres contactos. Se mide en letras
-    /// para que la cuenta siga valiendo con la escala al 200 %.
+    /// La cabina tiene alto para lo suyo.
     /// </summary>
-    private bool LeCabeAlCuaderno()
+    /// <remarks>
+    /// Se mide en letras, no en pixeles, para que la cuenta siga valiendo con la escala al
+    /// 200 %: a esa escala todo pide el doble de alto, y una cuenta en pixeles dejaria la
+    /// ventana partida.
+    /// </remarks>
+    private bool LeCabeALaCabina()
     {
-        const double LetrasPorFila = 2.6;
-        const double LetrasDeCabecera = 3.4;
+        // Lo que necesita la cabina para que se vean las cuatro franjas: el equipo, una fila
+        // de entrada, unos cuantos spots y unas cuantas decodificaciones. Por debajo de esto
+        // hay que empezar a plegar lo accesorio.
+        const double LetrasDeAltoMinimo = 46.0;
 
-        // Tres es el minimo que se exige; se pide uno mas para que el ultimo no quede a medias.
-        const int ContactosMinimos = 4;
-
-        var minimo = _vistaModelo.TamanoDeLetra * (LetrasDeCabecera + (ContactosMinimos * LetrasPorFila));
-        return RejillaDelCuaderno.ActualHeight >= minimo;
+        return Operar.ActualHeight >= _vistaModelo.TamanoDeLetra * LetrasDeAltoMinimo
+               || _vistaModelo.IndiceDeLaPestana != 0;
     }
 
     /// <summary>Atajos que necesitan mover el foco, que es cosa de la ventana y no del modelo.</summary>
@@ -206,82 +214,20 @@ public partial class VentanaPrincipal : Window
         switch (e.Key)
         {
             case Key.F3:
-                CampoBusqueda.Focus();
-                CampoBusqueda.SelectAll();
+                _vistaModelo.VerElCuaderno();
+                Dispatcher.BeginInvoke(Cuaderno.EnfocarBusqueda, DispatcherPriority.Input);
                 e.Handled = true;
                 break;
 
             case Key.F4:
-                CampoIndicativo.Focus();
-                CampoIndicativo.SelectAll();
+                _vistaModelo.VerOperar();
+                Dispatcher.BeginInvoke(Operar.EnfocarIndicativo, DispatcherPriority.Input);
                 e.Handled = true;
                 break;
         }
     }
 
-    private async void AlTeclearEnLaRejilla(object sender, KeyEventArgs e)
-    {
-        try
-        {
-            if (e.Key == Key.Delete)
-            {
-                e.Handled = true;
-                await _vistaModelo.Cuaderno.EliminarSeleccionadoAsync().ConfigureAwait(true);
-            }
-            else if (e.Key == Key.Enter)
-            {
-                e.Handled = true;
-                _vistaModelo.Cuaderno.EditarSeleccionado();
-            }
-        }
-        catch (Exception ex)
-        {
-            MostrarFallo(ex);
-        }
-    }
-
-    private void AlPulsarDosVeces(object sender, MouseButtonEventArgs e) =>
-        _vistaModelo.Cuaderno.EditarSeleccionado();
-
-    /// <summary>
-    /// La rejilla solo tiene una pagina cargada, asi que ordenarla por su cuenta daria un
-    /// resultado falso: se cancela y se vuelve a pedir el cuaderno ya ordenado.
-    /// </summary>
-    private async void AlOrdenar(object sender, DataGridSortingEventArgs e)
-    {
-        try
-        {
-            ArgumentNullException.ThrowIfNull(e);
-            e.Handled = true;
-
-            // La cabecera lleva en SortMemberPath el nombre del campo de CampoDeOrden; una
-            // columna sin nombre valido —o que no se puede ordenar— simplemente no ordena.
-            if (!Enum.TryParse<CampoDeOrden>(e.Column.SortMemberPath, out var campo)) return;
-
-            await _vistaModelo.Cuaderno.OrdenarPorCampoAsync(campo).ConfigureAwait(true);
-            MarcarOrdenEnLasCabeceras();
-        }
-        catch (Exception ex)
-        {
-            MostrarFallo(ex);
-        }
-    }
-
-    /// <summary>Pone la flecha de orden en la columna por la que se esta ordenando.</summary>
-    private void MarcarOrdenEnLasCabeceras()
-    {
-        var campo = _vistaModelo.Cuaderno.OrdenarPor.ToString();
-        var sentido = _vistaModelo.Cuaderno.Descendente
-            ? ListSortDirection.Descending
-            : ListSortDirection.Ascending;
-
-        foreach (var columna in RejillaDelCuaderno.Columns)
-        {
-            columna.SortDirection = string.Equals(columna.SortMemberPath, campo, StringComparison.Ordinal)
-                ? sentido
-                : null;
-        }
-    }
+    private void AlFallarElCuaderno(object? origen, Exception ex) => MostrarFallo(ex);
 
     private bool PreguntarSiBorrar(FilaDeQso fila)
     {
@@ -292,6 +238,30 @@ public partial class VentanaPrincipal : Window
             Detalle = $"Se va a borrar el contacto con {fila.Indicativo} del {fila.Fecha} a las " +
                       $"{fila.Hora} UTC en {fila.Banda} {fila.Modo}.\n\nEsta operación no se puede deshacer.",
             TextoDeAceptar = "Sí, borrar el contacto",
+        };
+
+        return dialogo.ShowDialog() == true;
+    }
+
+    /// <summary>
+    /// Avisa antes de accionar un mando que pone el equipo en antena.
+    /// </summary>
+    /// <remarks>
+    /// El acoplador de antena es el caso tipico: sintonizar emite portadora. El operador tiene
+    /// que saber que va a salir al aire <b>antes</b> de que salga, no enterarse por el
+    /// medidor de potencia.
+    /// </remarks>
+    private bool PreguntarSiTransmite(string mando)
+    {
+        var dialogo = new VentanaDeConfirmacion
+        {
+            Owner = this,
+            Titulo = "Se va a transmitir",
+            Detalle = $"Accionar «{mando}» pone el equipo EN ANTENA: se emite portadora.\n\n" +
+                      "Compruebe que hay una antena o una carga artificial conectada antes de seguir.\n\n" +
+                      "La transmisión va vigilada: se suelta sola si algo va mal, y el botón «SOLTAR PTT» " +
+                      "la corta en cualquier momento.",
+            TextoDeAceptar = "Sí, transmitir",
         };
 
         return dialogo.ShowDialog() == true;

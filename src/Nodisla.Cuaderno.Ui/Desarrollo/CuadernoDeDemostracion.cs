@@ -1,3 +1,4 @@
+using Nodisla.Cuaderno.Dominio.Dxcc;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
 
@@ -83,7 +84,7 @@ public static class CuadernoDeDemostracion
                 RstRcvd = InformeDe(m, azar),
                 Name = Nombres[azar.Next(Nombres.Length)],
                 Qth = Localidades[azar.Next(Localidades.Length)],
-                Gridsquare = Locator.DesdeCoordenadas(azar.Next(-60, 70), azar.Next(-170, 175)),
+                Gridsquare = DondeCae(Indicativo.Crudo(call), instante, azar),
                 StationCallsign = Indicativo.Parse("EA8DLF"),
                 Operator = "EA8DLF",
                 MyGridsquare = Locator.Parse("IL18SN"),
@@ -108,6 +109,37 @@ public static class CuadernoDeDemostracion
 
         return lista;
     }
+
+    /// <summary>
+    /// Localizador del corresponsal, sacado de la entidad DXCC de su indicativo.
+    /// </summary>
+    /// <remarks>
+    /// Repartir los contactos al azar por todo el globo daba un cuaderno imposible —la mitad
+    /// de los contactos en mitad del oceano— y, sobre el mapa, una reja de puntos que no
+    /// decia nada. Situar cada indicativo en su pais, con unos grados de dispersion, da un
+    /// cuaderno que se parece al de verdad: apelotonado en Europa, disperso en el Pacifico.
+    /// Es tambien lo que pone a prueba la agrupacion del mapa, que es para lo que existe.
+    /// </remarks>
+    private static Locator DondeCae(Indicativo indicativo, DateTimeOffset cuando, Random azar)
+    {
+        var entidad = Resolutor
+            .Resolver(indicativo, DateOnly.FromDateTime(cuando.UtcDateTime))
+            .Entidad;
+
+        if (entidad is null) return Locator.Vacio;
+
+        // Dos grados largos de dispersion alrededor del centro del pais: lo justo para que
+        // dos estaciones del mismo prefijo no caigan exactamente en el mismo punto.
+        var latitud = Math.Clamp(entidad.Latitud + ((azar.NextDouble() - 0.5) * 4.0), -89, 89);
+        var longitud = entidad.Longitud + ((azar.NextDouble() - 0.5) * 6.0);
+
+        if (longitud > 180) longitud -= 360;
+        if (longitud < -180) longitud += 360;
+
+        return Locator.DesdeCoordenadas(latitud, longitud);
+    }
+
+    private static readonly ResolutorDxcc Resolutor = ResolutorDxcc.Predeterminado;
 
     private static Informe InformeDe(Modo modo, Random azar) => modo.UsaInformeEnDecibelios
         ? Informe.DesdeDecibelios(azar.Next(-24, 12))

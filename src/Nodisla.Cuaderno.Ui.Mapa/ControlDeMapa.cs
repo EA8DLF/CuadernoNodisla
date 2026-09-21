@@ -1,0 +1,526 @@
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using Mapsui;
+using Mapsui.Layers;
+using Mapsui.Tiling;
+using Mapsui.UI.Wpf;
+using Nodisla.Cuaderno.Dominio.Valores;
+
+namespace Nodisla.Cuaderno.Ui.Mapa;
+
+/// <summary>
+/// El mapa del cuaderno.
+/// </summary>
+/// <remarks>
+/// Este control es la unica puerta al motor de mapas. Ni la ventana principal ni los modelos
+/// de vista saben que por debajo hay Mapsui: le pasan marcas, trayectos y una hora, y el mapa
+/// se las apana. Esa frontera no es un capricho: los controles de mapa son la dependencia que
+/// mas se rompe entre versiones, y mantenerla aqui permite cambiar de motor sin tocar una
+/// sola linea de la interfaz.
+///
+/// El mapa tiene que funcionar sin conexion. Los mosaicos del fondo se descargan de un
+/// servidor; cuando no hay red, no se cuelga ni se queda esperando: se queda el fondo liso y
+/// encima siguen viendose los contactos, los trayectos y el paso gris, que es lo que de
+/// verdad importa. La atribucion del servidor de mosaicos se ensena siempre que se usan.
+/// </remarks>
+public class ControlDeMapa : UserControl, IDisposable
+{
+    /// <summary>Marcas que se pintan sobre el mapa.</summary>
+    public static readonly DependencyProperty MarcasProperty = DependencyProperty.Register(
+        nameof(Marcas),
+        typeof(IReadOnlyList<MarcaDelMapa>),
+        typeof(ControlDeMapa),
+        new PropertyMetadata(null, AlCambiarLasMarcas));
+
+    /// <summary>Trayectos de circulo maximo que se dibujan.</summary>
+    public static readonly DependencyProperty TrayectosProperty = DependencyProperty.Register(
+        nameof(Trayectos),
+        typeof(IReadOnlyList<TrayectoDelMapa>),
+        typeof(ControlDeMapa),
+        new PropertyMetadata(null, AlCambiarLosTrayectos));
+
+    /// <summary>Donde esta la estacion propia, o nulo si todavia no se sabe.</summary>
+    public static readonly DependencyProperty EstacionPropiaProperty = DependencyProperty.Register(
+        nameof(EstacionPropia),
+        typeof(Coordenada?),
+        typeof(ControlDeMapa),
+        new PropertyMetadata(null, AlCambiarLaEstacion));
+
+    /// <summary>Indicativo propio, para escribirlo al lado de la marca.</summary>
+    public static readonly DependencyProperty IndicativoPropioProperty = DependencyProperty.Register(
+        nameof(IndicativoPropio),
+        typeof(string),
+        typeof(ControlDeMapa),
+        new PropertyMetadata(string.Empty, AlCambiarLaEstacion));
+
+    /// <summary>Se pinta la sombra de la noche y la linea del paso gris.</summary>
+    public static readonly DependencyProperty MostrarPasoGrisProperty = DependencyProperty.Register(
+        nameof(MostrarPasoGris),
+        typeof(bool),
+        typeof(ControlDeMapa),
+        new PropertyMetadata(true, AlCambiarElPasoGris));
+
+    /// <summary>Hora para la que se dibuja el paso gris.</summary>
+    public static readonly DependencyProperty InstanteDelPasoGrisProperty = DependencyProperty.Register(
+        nameof(InstanteDelPasoGris),
+        typeof(DateTimeOffset),
+        typeof(ControlDeMapa),
+        new PropertyMetadata(DateTimeOffset.UtcNow, AlCambiarElPasoGris));
+
+    /// <summary>Se descargan los mosaicos del mapa de fondo.</summary>
+    public static readonly DependencyProperty MostrarFondoProperty = DependencyProperty.Register(
+        nameof(MostrarFondo),
+        typeof(bool),
+        typeof(ControlDeMapa),
+        new PropertyMetadata(true, AlCambiarElFondo));
+
+    /// <summary>El mapa se pinta con los colores del tema oscuro.</summary>
+    public static readonly DependencyProperty TemaOscuroProperty = DependencyProperty.Register(
+        nameof(TemaOscuro),
+        typeof(bool),
+        typeof(ControlDeMapa),
+        new PropertyMetadata(false, AlCambiarElTema));
+
+    /// <summary>Marcas que se pintan como mucho; de ahi para arriba se agrupan.</summary>
+    public static readonly DependencyProperty MaximoDeMarcasProperty = DependencyProperty.Register(
+        nameof(MaximoDeMarcas),
+        typeof(int),
+        typeof(ControlDeMapa),
+        new PropertyMetadata(1200, AlCambiarLasMarcas));
+
+    /// <summary>Como de tupido se dibuja todo.</summary>
+    public static readonly DependencyProperty DetalleProperty = DependencyProperty.Register(
+        nameof(Detalle),
+        typeof(DetalleDelMapa),
+        typeof(ControlDeMapa),
+        new PropertyMetadata(DetalleDelMapa.Normal, AlCambiarElTema));
+
+    private readonly MapControl _mapa = new();
+    private readonly TextBlock _atribucion = new();
+    private readonly TextBlock _aviso = new();
+
+    private readonly MemoryLayer _capaDelPasoGris = new("Paso gris");
+    private readonly MemoryLayer _capaDeTrayectos = new("Trayectos");
+    private readonly MemoryLayer _capaDeMarcas = new("Contactos y spots");
+    private readonly MemoryLayer _capaDeLaEstacion = new("Estación propia");
+
+    private ILayer? _capaDeMosaicos;
+    private CancellationTokenSource? _dibujoEnCurso;
+    private bool _liberado;
+    private bool _encuadrado;
+
+    /// <summary>Monta el mapa con sus capas y lo deja mirando al mundo entero.</summary>
+    public ControlDeMapa()
+    {
+        var lienzo = new Grid();
+
+        _atribucion.Margin = new Thickness(0, 0, 8, 6);
+        _atribucion.HorizontalAlignment = HorizontalAlignment.Right;
+        _atribucion.VerticalAlignment = VerticalAlignment.Bottom;
+        _atribucion.IsHitTestVisible = false;
+        _atribucion.Text = "Mosaicos © colaboradores de OpenStreetMap";
+        _atribucion.Opacity = 0.75;
+
+        _aviso.Margin = new Thickness(8, 8, 8, 8);
+        _aviso.HorizontalAlignment = HorizontalAlignment.Center;
+        _aviso.VerticalAlignment = VerticalAlignment.Top;
+        _aviso.IsHitTestVisible = false;
+        _aviso.TextWrapping = TextWrapping.Wrap;
+        _aviso.Visibility = Visibility.Collapsed;
+
+        lienzo.Children.Add(_mapa);
+        lienzo.Children.Add(_atribucion);
+        lienzo.Children.Add(_aviso);
+        Content = lienzo;
+
+        _mapa.Map.Layers.Add(_capaDelPasoGris);
+        _mapa.Map.Layers.Add(_capaDeTrayectos);
+        _mapa.Map.Layers.Add(_capaDeMarcas);
+        _mapa.Map.Layers.Add(_capaDeLaEstacion);
+        _mapa.MapTapped += AlTocarElMapa;
+
+        AplicarTema();
+        RehacerElFondo();
+
+        // Encuadrar antes de que el control tenga tamano no hace nada: el motor de mapas
+        // necesita saber cuantos puntos de pantalla tiene para calcular la escala. Por eso se
+        // espera a la primera medida de verdad y se encuadra entonces, una sola vez.
+        SizeChanged += AlCambiarDeTamano;
+    }
+
+    /// <summary>Salta cuando el operador toca una marca del mapa.</summary>
+    public event EventHandler<MarcaDelMapa>? MarcaElegida;
+
+    /// <summary>Marcas que se pintan sobre el mapa.</summary>
+    public IReadOnlyList<MarcaDelMapa>? Marcas
+    {
+        get => (IReadOnlyList<MarcaDelMapa>?)GetValue(MarcasProperty);
+        set => SetValue(MarcasProperty, value);
+    }
+
+    /// <summary>Trayectos de circulo maximo que se dibujan.</summary>
+    public IReadOnlyList<TrayectoDelMapa>? Trayectos
+    {
+        get => (IReadOnlyList<TrayectoDelMapa>?)GetValue(TrayectosProperty);
+        set => SetValue(TrayectosProperty, value);
+    }
+
+    /// <summary>Donde esta la estacion propia.</summary>
+    public Coordenada? EstacionPropia
+    {
+        get => (Coordenada?)GetValue(EstacionPropiaProperty);
+        set => SetValue(EstacionPropiaProperty, value);
+    }
+
+    /// <summary>Indicativo propio, para escribirlo al lado de la marca.</summary>
+    public string IndicativoPropio
+    {
+        get => (string)GetValue(IndicativoPropioProperty);
+        set => SetValue(IndicativoPropioProperty, value);
+    }
+
+    /// <summary>Se pinta la sombra de la noche y la linea del paso gris.</summary>
+    public bool MostrarPasoGris
+    {
+        get => (bool)GetValue(MostrarPasoGrisProperty);
+        set => SetValue(MostrarPasoGrisProperty, value);
+    }
+
+    /// <summary>Hora para la que se dibuja el paso gris.</summary>
+    public DateTimeOffset InstanteDelPasoGris
+    {
+        get => (DateTimeOffset)GetValue(InstanteDelPasoGrisProperty);
+        set => SetValue(InstanteDelPasoGrisProperty, value);
+    }
+
+    /// <summary>Se descargan los mosaicos del mapa de fondo.</summary>
+    public bool MostrarFondo
+    {
+        get => (bool)GetValue(MostrarFondoProperty);
+        set => SetValue(MostrarFondoProperty, value);
+    }
+
+    /// <summary>El mapa se pinta con los colores del tema oscuro.</summary>
+    public bool TemaOscuro
+    {
+        get => (bool)GetValue(TemaOscuroProperty);
+        set => SetValue(TemaOscuroProperty, value);
+    }
+
+    /// <summary>Marcas que se pintan como mucho antes de empezar a agrupar.</summary>
+    public int MaximoDeMarcas
+    {
+        get => (int)GetValue(MaximoDeMarcasProperty);
+        set => SetValue(MaximoDeMarcasProperty, value);
+    }
+
+    /// <summary>Como de tupido se dibuja todo.</summary>
+    public DetalleDelMapa Detalle
+    {
+        get => (DetalleDelMapa)GetValue(DetalleProperty);
+        set => SetValue(DetalleProperty, value);
+    }
+
+    /// <summary>Borde del mundo en la proyeccion del mapa, en metros.</summary>
+    private const double BordeDelMundo = 20_037_508.34;
+
+    /// <summary>
+    /// Encuadra el mundo entero.
+    /// </summary>
+    /// <remarks>
+    /// La escala se calcula aqui y no se le pide al motor de mapas que la deduzca de un
+    /// rectangulo: encuadrar por rectangulo necesita que el motor ya sepa de que tamano es el
+    /// control, y eso no se cumple mientras la ventana se esta montando. Con la cuenta hecha a
+    /// mano —cuantos metros de mundo caben en cada punto de pantalla— el encuadre sale bien a
+    /// la primera, tenga el mapa el tamano que tenga.
+    /// </remarks>
+    public void VerElMundo()
+    {
+        if (_liberado) return;
+
+        var ancho = _mapa.ActualWidth > 1 ? _mapa.ActualWidth : ActualWidth;
+        var alto = _mapa.ActualHeight > 1 ? _mapa.ActualHeight : ActualHeight;
+        if (ancho < 1 || alto < 1) return;
+
+        // La mayor de las dos escalas es la que hace que el mundo quepa entero.
+        var resolucion = Math.Max(2 * BordeDelMundo / ancho, 2 * BordeDelMundo / alto);
+        _mapa.Map.Navigator.CenterOnAndZoomTo(new MPoint(0, 0), resolucion);
+    }
+
+    /// <summary>Lleva el mapa a un punto concreto.</summary>
+    /// <param name="donde">Punto al que se va.</param>
+    /// <param name="metrosPorPunto">Cuanto terreno cabe en cada punto de pantalla.</param>
+    public void Centrar(Coordenada donde, double metrosPorPunto = 4_000)
+    {
+        if (_liberado) return;
+
+        var punto = Proyeccion.A(donde);
+        _mapa.Map.Navigator.CenterOnAndZoomTo(new MPoint(punto.X, punto.Y), metrosPorPunto);
+    }
+
+    /// <summary>Suelta el motor de mapas y sus descargas pendientes.</summary>
+    public void Dispose()
+    {
+        Dispose(liberando: true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>Suelta el motor de mapas y sus descargas pendientes.</summary>
+    /// <param name="liberando">Cierto cuando lo llama <see cref="Dispose()"/>.</param>
+    protected virtual void Dispose(bool liberando)
+    {
+        if (_liberado || !liberando) return;
+        _liberado = true;
+
+        _mapa.MapTapped -= AlTocarElMapa;
+        SizeChanged -= AlCambiarDeTamano;
+        _dibujoEnCurso?.Cancel();
+        _dibujoEnCurso?.Dispose();
+        _mapa.Dispose();
+    }
+
+    private static void AlCambiarLasMarcas(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+        ((ControlDeMapa)d).RehacerLasMarcas();
+
+    private static void AlCambiarLosTrayectos(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+        ((ControlDeMapa)d).RehacerLosTrayectos();
+
+    private static void AlCambiarLaEstacion(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+        ((ControlDeMapa)d).RehacerLaEstacion();
+
+    private static void AlCambiarElPasoGris(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+        ((ControlDeMapa)d).RehacerElPasoGris();
+
+    private static void AlCambiarElFondo(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+        ((ControlDeMapa)d).RehacerElFondo();
+
+    private static void AlCambiarElTema(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var control = (ControlDeMapa)d;
+        control.AplicarTema();
+        control.RehacerloTodo();
+    }
+
+    /// <summary>Paleta que toca segun el tema.</summary>
+    private PaletaDelMapa Paleta => PaletaDelMapa.Para(TemaOscuro);
+
+    /// <summary>
+    /// Tamano de letra heredado de la ventana. El mapa escribe con el mismo cuerpo que el
+    /// resto del programa, asi que al 200 % de escala sus etiquetas crecen tambien.
+    /// </summary>
+    private double LetraDeLaVentana => FontSize > 0 ? FontSize : 14.0;
+
+    private void AplicarTema()
+    {
+        var paleta = Paleta;
+        _mapa.Map.BackColor = paleta.Fondo;
+
+        var texto = Color.FromArgb(
+            (byte)paleta.Texto.A,
+            (byte)paleta.Texto.R,
+            (byte)paleta.Texto.G,
+            (byte)paleta.Texto.B);
+
+        _atribucion.Foreground = new SolidColorBrush(texto);
+        _aviso.Foreground = new SolidColorBrush(texto);
+        _mapa.RefreshGraphics();
+    }
+
+    private void RehacerloTodo()
+    {
+        RehacerElPasoGris();
+        RehacerLosTrayectos();
+        RehacerLasMarcas();
+        RehacerLaEstacion();
+    }
+
+    /// <summary>
+    /// Monta o quita la capa de mosaicos.
+    /// </summary>
+    /// <remarks>
+    /// Crear la capa no descarga nada: los mosaicos se piden despues, cada uno por su cuenta y
+    /// en segundo plano. Si no hay red, las peticiones fallan calladas y el mapa se queda con
+    /// el fondo liso. Lo unico que se vigila aqui es que montar la capa no reviente, porque
+    /// eso si dejaria la ventana sin mapa.
+    /// </remarks>
+    private void RehacerElFondo()
+    {
+        if (_capaDeMosaicos is { } vieja)
+        {
+            _mapa.Map.Layers.Remove(vieja);
+            (vieja as IDisposable)?.Dispose();
+            _capaDeMosaicos = null;
+        }
+
+        if (!MostrarFondo)
+        {
+            _atribucion.Visibility = Visibility.Collapsed;
+            MostrarAviso(null);
+            return;
+        }
+
+        try
+        {
+            var capa = OpenStreetMap.CreateTileLayer("CuadernoNodisla/0.1 (+https://nodisla.org)");
+
+            // El motor de mapas pinta su propia atribucion, en ingles y encima de la nuestra.
+            // Se apaga la suya y se deja la de este control, que esta en espanol y dice lo
+            // mismo: la atribucion se sigue viendo, que es lo que pide OpenStreetMap.
+            capa.Attribution.Enabled = false;
+
+            _capaDeMosaicos = capa;
+            _mapa.Map.Layers.Insert(0, capa);
+            _atribucion.Visibility = Visibility.Visible;
+            MostrarAviso(null);
+        }
+        catch (Exception)
+        {
+            // Sin mosaicos el mapa sigue sirviendo: los contactos, los trayectos y el paso
+            // gris se pintan igual sobre el fondo liso.
+            _atribucion.Visibility = Visibility.Collapsed;
+            MostrarAviso("Sin mapa de fondo: no se han podido cargar los mosaicos. Los contactos y el paso gris se siguen viendo.");
+        }
+    }
+
+    private void RehacerElPasoGris()
+    {
+        if (_liberado) return;
+
+        if (!MostrarPasoGris)
+        {
+            Colgar(_capaDelPasoGris, []);
+            return;
+        }
+
+        var instante = InstanteDelPasoGris;
+        var paleta = Paleta;
+        var detalle = Detalle;
+
+        EnSegundoPlano(
+            () => CapasDelMapa.PasoGrisDelMapa(instante, paleta, detalle),
+            figuras => Colgar(_capaDelPasoGris, figuras));
+    }
+
+    private void RehacerLosTrayectos()
+    {
+        if (_liberado) return;
+
+        var trayectos = Trayectos ?? [];
+        var paleta = Paleta;
+        var detalle = Detalle;
+
+        EnSegundoPlano(
+            () => CapasDelMapa.Trayectos(trayectos, paleta, detalle),
+            figuras => Colgar(_capaDeTrayectos, figuras));
+    }
+
+    private void RehacerLasMarcas()
+    {
+        if (_liberado) return;
+
+        var marcas = Marcas ?? [];
+        var paleta = Paleta;
+        var maximo = MaximoDeMarcas;
+        var letra = LetraDeLaVentana;
+
+        EnSegundoPlano(
+            () => CapasDelMapa.Marcas(marcas, paleta, maximo, letra),
+            figuras => Colgar(_capaDeMarcas, figuras));
+    }
+
+    private void RehacerLaEstacion()
+    {
+        if (_liberado) return;
+
+        if (EstacionPropia is not { } donde)
+        {
+            Colgar(_capaDeLaEstacion, []);
+            return;
+        }
+
+        Colgar(
+            _capaDeLaEstacion,
+            CapasDelMapa.EstacionPropia(donde, IndicativoPropio ?? string.Empty, Paleta, LetraDeLaVentana));
+    }
+
+    /// <summary>
+    /// Calcula las figuras fuera del hilo de la interfaz y las cuelga cuando estan listas.
+    /// </summary>
+    /// <remarks>
+    /// Agrupar veinte mil contactos y trazar noventa y seis puntos por curva cuesta decimas de
+    /// segundo. Hacerlo en el hilo de la ventana se notaria como un tiron cada vez que se mueve
+    /// el mapa o pasa un minuto del reloj, asi que se hace aparte. Cada peticion nueva cancela
+    /// la anterior: lo que importa es lo ultimo que pidio el operador, no lo que pidio antes.
+    /// </remarks>
+    private void EnSegundoPlano(
+        Func<IReadOnlyList<IFeature>> calcular,
+        Action<IReadOnlyList<IFeature>> colgar)
+    {
+        var anterior = _dibujoEnCurso;
+        var testigo = new CancellationTokenSource();
+        _dibujoEnCurso = testigo;
+        anterior?.Cancel();
+        anterior?.Dispose();
+
+        var ct = testigo.Token;
+        _ = Task.Run(
+            () =>
+            {
+                IReadOnlyList<IFeature> figuras;
+                try
+                {
+                    figuras = calcular();
+                }
+                catch (Exception)
+                {
+                    // Un dato imposible no puede dejar la ventana sin mapa: se deja la capa
+                    // como estaba y se sigue.
+                    return;
+                }
+
+                if (ct.IsCancellationRequested) return;
+                _ = Dispatcher.InvokeAsync(() =>
+                {
+                    if (ct.IsCancellationRequested || _liberado) return;
+                    colgar(figuras);
+                });
+            },
+            ct);
+    }
+
+    private void Colgar(MemoryLayer capa, IReadOnlyList<IFeature> figuras)
+    {
+        capa.Features = figuras;
+        capa.DataHasChanged();
+        _mapa.RefreshGraphics();
+    }
+
+    private void MostrarAviso(string? texto)
+    {
+        _aviso.Text = texto ?? string.Empty;
+        _aviso.Visibility = texto is { Length: > 0 } ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void AlCambiarDeTamano(object origen, SizeChangedEventArgs args)
+    {
+        if (_encuadrado || _liberado) return;
+        if (args.NewSize.Width < 1 || args.NewSize.Height < 1) return;
+
+        _encuadrado = true;
+        _ = Dispatcher.BeginInvoke(
+            System.Windows.Threading.DispatcherPriority.Loaded,
+            new Action(VerElMundo));
+    }
+
+    private void AlTocarElMapa(object? origen, MapEventArgs args)
+    {
+        if (_liberado || MarcaElegida is null) return;
+
+        var info = args.GetMapInfo([_capaDeLaEstacion, _capaDeMarcas]);
+        if (info.Feature?[CapasDelMapa.ClaveDeLaMarca] is MarcaDelMapa marca)
+        {
+            MarcaElegida.Invoke(this, marca);
+        }
+    }
+}

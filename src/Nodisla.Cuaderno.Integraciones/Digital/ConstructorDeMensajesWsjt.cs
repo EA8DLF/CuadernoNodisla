@@ -111,6 +111,22 @@ public static class ConstructorDeMensajesWsjt
         return escritor.ABytes();
     }
 
+    /// <summary>
+    /// Cambia la configuracion activa del programa por su nombre. Mensaje 14, solo de WSJT-X.
+    /// </summary>
+    /// <remarks>
+    /// JTDX dejo este numero reservado y nunca lo implemento, asi que mandarselo no da error:
+    /// lo ignora en silencio.
+    /// </remarks>
+    /// <param name="identificador">Instancia a la que se le pide.</param>
+    /// <param name="configuracion">Nombre de la configuracion, tal y como el programa la llama.</param>
+    public static byte[] CambiarConfiguracion(string identificador, string configuracion)
+    {
+        var escritor = Cabecera(TipoMensajeWsjt.CambiarConfiguracion, identificador);
+        escritor.Texto(configuracion);
+        return escritor.ABytes();
+    }
+
     /// <summary>Fija el desplazamiento de transmision en hercios. Mensaje 50, solo de JTDX.</summary>
     /// <param name="identificador">Instancia a la que se le pide.</param>
     /// <param name="hercios">Desplazamiento dentro del ancho de banda de audio.</param>

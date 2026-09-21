@@ -1,9 +1,10 @@
-<Window x:Class="Nodisla.Cuaderno.Ui.Vistas.VentanaPrincipal"
+﻿<Window x:Class="Nodisla.Cuaderno.Ui.Vistas.VentanaPrincipal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+        xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
         Title="Cuaderno NODISLA"
-        Height="900" Width="1440" MinHeight="520" MinWidth="760"
+        Height="1000" Width="1460" MinHeight="560" MinWidth="820"
         WindowStartupLocation="CenterScreen"
         UseLayoutRounding="True"
         TextOptions.TextFormattingMode="Ideal"
@@ -19,15 +20,12 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
         <conversores:AnchoEnLetras x:Key="AnchoEnLetras" />
-        <conversores:AnchoDeColumnaEnLetras x:Key="AnchoDeColumna" />
-        <conversores:Puente x:Key="PuenteDeDatos" Datos="{Binding}" />
     </Window.Resources>
 
     <Window.InputBindings>
         <KeyBinding Key="Escape" Command="{Binding Entrada.LimpiarCommand}" />
         <KeyBinding Key="F2" Command="{Binding Cuaderno.EditarSeleccionadoCommand}" />
         <KeyBinding Key="F5" Command="{Binding Cuaderno.RefrescarCommand}" />
-        <KeyBinding Key="F6" Command="{Binding AlternarEntradaCommand}" />
         <KeyBinding Key="F7" Command="{Binding AlternarDatosAmpliadosCommand}" />
         <KeyBinding Key="F8" Command="{Binding Entrada.PonerHoraActualCommand}" />
         <KeyBinding Key="F9" Command="{Binding AlternarTemaCommand}" />
@@ -37,23 +35,30 @@
         <KeyBinding Key="Subtract" Modifiers="Control" Command="{Binding ReducirLetraCommand}" />
         <KeyBinding Key="D0" Modifiers="Control" Command="{Binding LetraNormalCommand}" />
         <KeyBinding Key="NumPad0" Modifiers="Control" Command="{Binding LetraNormalCommand}" />
+        <KeyBinding Key="D1" Modifiers="Control" Command="{Binding VerOperarCommand}" />
+        <KeyBinding Key="D2" Modifiers="Control" Command="{Binding VerElCuadernoCommand}" />
+        <KeyBinding Key="D3" Modifiers="Control" Command="{Binding VerElMapaCommand}" />
     </Window.InputBindings>
 
     <!--
-        Todas las filas de arriba son de alto automatico: nunca se recorta media fila. Cuando
-        no cabe todo, la ventana pliega bloques enteros por orden de menos util a mas util
-        (contactos previos, segunda fila de entrada, cabecera) hasta que el cuaderno recupera
-        su alto minimo. Lo hace AjustarComposicion, en el codigo de la vista.
+        LA PANTALLA PRINCIPAL ES LA CABINA DE OPERACIÓN.
+
+        En la Fase 1 el cuaderno ocupaba toda la ventana porque no había nada más. Ahora que
+        hay equipo, cluster y modos digitales, el cuaderno se ha mudado a su propia pestaña y
+        la principal es «Operar», que es donde se está mientras se trabaja.
+
+        La cabecera —perfil, escala de letra, tema y reloj UTC— se queda fuera de las pestañas:
+        vale para todas. Se pliega la primera cuando falta alto, porque lo suyo está repetido
+        en la barra de estado.
     -->
     <Grid Margin="12,12,12,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- ══ Cabecera: perfil de estación, hora UTC y ajustes de presentación ══ -->
+        <!-- ══ Cabecera ══ -->
         <Border x:Name="TarjetaDeCabecera" Grid.Row="0" Style="{StaticResource Tarjeta}"
                 Visibility="{Binding CabeceraVisible, Converter={StaticResource BooleanoAVisible}}">
             <Grid>
@@ -122,415 +127,49 @@
             </Grid>
         </Border>
 
-        <!-- ══ Entrada de contactos ══ -->
-        <Border x:Name="TarjetaDeEntrada" Grid.Row="1" Style="{StaticResource Tarjeta}"
-                Visibility="{Binding EntradaVisible, Converter={StaticResource BooleanoAVisible}}">
-            <Grid>
-                <Grid.InputBindings>
-                    <KeyBinding Key="Return" Command="{Binding Entrada.GuardarCommand}" />
-                </Grid.InputBindings>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+        <!-- ══ Las cinco pestañas ══ -->
+        <TabControl Grid.Row="1" SelectedIndex="{Binding IndiceDeLaPestana}" Margin="0,0,0,8">
+            <TabItem Header="Operar">
+                <vistas:PanelOperar x:Name="Operar" />
+            </TabItem>
 
-                <DockPanel Grid.Row="0">
-                    <Button DockPanel.Dock="Right"
-                            Content="{Binding TextoDeDatosAmpliados}"
-                            Command="{Binding AlternarDatosAmpliadosCommand}"
-                            Padding="10,3"
-                            ToolTip="Muestra u oculta fecha, hora, nombre, QTH, localizador y comentario" />
-                    <TextBlock Text="{Binding Entrada.TituloDelPanel}" Style="{StaticResource TituloDeSeccion}" />
-                </DockPanel>
+            <TabItem Header="Cuaderno">
+                <Border Style="{StaticResource Tarjeta}" Margin="0">
+                    <vistas:PanelDelCuaderno x:Name="Cuaderno" Fallo="AlFallarElCuaderno" />
+                </Border>
+            </TabItem>
 
-                <!--
-                    Fila imprescindible: con esto solo ya se puede registrar un contacto.
-                    Nunca se oculta ni se recorta.
-                -->
-                <WrapPanel Grid.Row="1">
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=12}">
-                        <TextBlock Text="Indicativo" Style="{StaticResource EtiquetaDeCampo}" />
-                        <TextBox x:Name="CampoIndicativo"
-                                 Style="{StaticResource CampoDeIndicativo}"
-                                 Text="{Binding Entrada.Indicativo, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="Indicativo del corresponsal. F4 trae el foco aquí." />
-                    </StackPanel>
+            <TabItem Header="Mapa">
+                <Border Style="{StaticResource Tarjeta}" Margin="0">
+                    <vistas:PanelDeMapa DataContext="{Binding Mapa}" />
+                </Border>
+            </TabItem>
 
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=8}">
-                        <TextBlock Text="Banda" Style="{StaticResource EtiquetaDeCampo}" />
-                        <ComboBox ItemsSource="{Binding Entrada.Bandas}" SelectedItem="{Binding Entrada.Banda}" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=10}">
-                        <TextBlock Text="Modo" Style="{StaticResource EtiquetaDeCampo}" />
-                        <ComboBox ItemsSource="{Binding Entrada.Modos}" SelectedItem="{Binding Entrada.Modo}" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=10}">
-                        <TextBlock Text="Frecuencia (MHz)" Style="{StaticResource EtiquetaDeCampo}" />
-                        <TextBox Text="{Binding Entrada.Frecuencia, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="Siempre con punto decimal, como en el dial. La coma también vale." />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=7}">
-                        <TextBlock Text="Informe env." Style="{StaticResource EtiquetaDeCampo}" />
-                        <TextBox Text="{Binding Entrada.InformeEnviado, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="Informe enviado al corresponsal" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=7}">
-                        <TextBlock Text="Informe rec." Style="{StaticResource EtiquetaDeCampo}" />
-                        <TextBox Text="{Binding Entrada.InformeRecibido, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="Informe recibido del corresponsal" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}" Orientation="Horizontal" VerticalAlignment="Bottom">
-                        <Button Content="{Binding Entrada.TextoDelBotonGuardar}"
-                                Command="{Binding Entrada.GuardarCommand}"
-                                Style="{StaticResource BotonPrincipal}"
-                                Margin="0,0,8,0" />
-                        <Button Content="Limpiar (Esc)" Command="{Binding Entrada.LimpiarCommand}" />
-                    </StackPanel>
-                </WrapPanel>
-
-                <!-- Segunda fila: se pliega entera con F7 o cuando el cuaderno necesita el sitio. -->
-                <WrapPanel Grid.Row="2"
-                           Visibility="{Binding DatosAmpliadosVisibles, Converter={StaticResource BooleanoAVisible}}">
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=9}">
-                        <TextBlock Text="Fecha UTC" Style="{StaticResource EtiquetaDeCampo}" />
-                        <TextBox Text="{Binding Entrada.FechaUtc, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="Desmarque «Hora automática» para escribir otra fecha" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=8}">
-                        <TextBlock Text="Hora UTC" Style="{StaticResource EtiquetaDeCampo}" />
-                        <TextBox Text="{Binding Entrada.HoraUtc, UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}" VerticalAlignment="Bottom">
-                        <CheckBox Content="Hora automática" IsChecked="{Binding Entrada.HoraAutomatica}"
-                                  ToolTip="Mientras esté marcada, la fecha y la hora siguen al reloj UTC" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}" VerticalAlignment="Bottom">
-                        <Button Content="Ahora (F8)" Command="{Binding Entrada.PonerHoraActualCommand}" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=12}">
-                        <TextBlock Text="Nombre" Style="{StaticResource EtiquetaDeCampo}" />
-                        <TextBox Text="{Binding Entrada.Nombre, UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=13}">
-                        <TextBlock Text="QTH" Style="{StaticResource EtiquetaDeCampo}" />
-                        <TextBox Text="{Binding Entrada.Qth, UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=9}">
-                        <TextBlock Text="Localizador" Style="{StaticResource EtiquetaDeCampo}" />
-                        <TextBox Text="{Binding Entrada.Localizador, UpdateSourceTrigger=PropertyChanged}"
-                                 CharacterCasing="Upper" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=20}">
-                        <TextBlock Text="Comentario" Style="{StaticResource EtiquetaDeCampo}" />
-                        <TextBox Text="{Binding Entrada.Comentario, UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>
-                </WrapPanel>
-
-                <!-- Aviso de «trabajado antes» -->
-                <Border Grid.Row="3"
-                        Margin="0,4,0,0"
-                        Padding="12,8"
-                        CornerRadius="4"
-                        Background="{DynamicResource AvisoFondo}"
-                        BorderBrush="{DynamicResource AvisoBorde}"
-                        BorderThickness="1"
-                        Visibility="{Binding Entrada.HayTrabajadoAntes, Converter={StaticResource BooleanoAVisible}}">
-                    <StackPanel>
-                        <TextBlock Text="{Binding Entrada.AvisoTrabajadoAntes}"
-                                   FontWeight="Bold"
-                                   ToolTip="{Binding Entrada.AvisoTrabajadoAntes}"
-                                   Foreground="{DynamicResource AvisoTexto}">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                                    <Setter Property="TextWrapping" Value="Wrap" />
-                                    <Setter Property="TextTrimming" Value="None" />
-                                    <Style.Triggers>
-                                        <DataTrigger Value="True"
-                                                     Binding="{Binding DataContext.AvisoCompacto, RelativeSource={RelativeSource AncestorType=Window}}">
-                                            <Setter Property="TextWrapping" Value="NoWrap" />
-                                            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                        <ItemsControl ItemsSource="{Binding Entrada.ContactosPrevios}"
-                                      Margin="0,6,0,0"
-                                      Visibility="{Binding DataContext.ContactosPreviosVisibles, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanoAVisible}}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Margin="0,0,8,4"
-                                            Padding="8,3"
-                                            CornerRadius="3"
-                                            Background="{DynamicResource FondoPanel}"
-                                            BorderBrush="{DynamicResource AvisoBorde}"
-                                            BorderThickness="1">
-                                        <TextBlock Foreground="{DynamicResource Texto}">
-                                            <Run Text="{Binding Fecha, Mode=OneWay}" />
-                                            <Run Text="{Binding Hora, Mode=OneWay}" />
-                                            <Run Text="·" />
-                                            <Run Text="{Binding Banda, Mode=OneWay}" FontWeight="Bold" />
-                                            <Run Text="{Binding Modo, Mode=OneWay}" FontWeight="Bold" />
-                                            <Run Text="·" />
-                                            <Run Text="{Binding InformeEnviado, Mode=OneWay}" />
-                                            <Run Text="/" />
-                                            <Run Text="{Binding InformeRecibido, Mode=OneWay}" />
-                                        </TextBlock>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+            <TabItem Header="Diplomas">
+                <Border Style="{StaticResource Tarjeta}" Margin="0">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="520">
+                        <TextBlock Text="Diplomas" Style="{StaticResource TituloDeSeccion}" HorizontalAlignment="Center" />
+                        <TextBlock Style="{StaticResource TextoTenueEstilo}"
+                                   TextAlignment="Center"
+                                   Text="El seguimiento de diplomas llega en la Fase 3. Aquí irán las matrices de entidades por banda y modo, y lo que falta para cerrar cada diploma." />
                     </StackPanel>
                 </Border>
+            </TabItem>
 
-                <!-- Resultado de la última operación -->
-                <Border Grid.Row="4" Margin="0,8,0,0" Padding="12,8" CornerRadius="4" BorderThickness="1">
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Entrada.Tono}" Value="Correcto">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Entrada.Tono}" Value="Aviso">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Entrada.Tono}" Value="Error">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Setter Property="Background" Value="{DynamicResource ErrorFondo}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorde}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                    <TextBlock Text="{Binding Entrada.Mensaje}" FontWeight="SemiBold"
-                               TextWrapping="Wrap" TextTrimming="None">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Entrada.Tono}" Value="Correcto">
-                                        <Setter Property="Foreground" Value="{DynamicResource CorrectoTexto}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Entrada.Tono}" Value="Aviso">
-                                        <Setter Property="Foreground" Value="{DynamicResource AvisoTexto}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Entrada.Tono}" Value="Error">
-                                        <Setter Property="Foreground" Value="{DynamicResource ErrorTexto}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
+            <TabItem Header="Ajustes">
+                <Border Style="{StaticResource Tarjeta}" Margin="0">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="520">
+                        <TextBlock Text="Ajustes" Style="{StaticResource TituloDeSeccion}" HorizontalAlignment="Center" />
+                        <TextBlock Style="{StaticResource TextoTenueEstilo}"
+                                   TextAlignment="Center"
+                                   Text="Los ajustes llegan en la Fase 3. De momento, el perfil de estación, la escala de letra y el tema están en la cabecera, y se recuerdan de una sesión a la siguiente." />
+                    </StackPanel>
                 </Border>
-            </Grid>
-        </Border>
-
-        <!-- ══ Cuaderno ══ -->
-        <Border Grid.Row="2" Style="{StaticResource Tarjeta}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <WrapPanel x:Name="FiltrosDelCuaderno" Grid.Row="0">
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=20}">
-                        <TextBlock Text="Buscar en el cuaderno (F3)" Style="{StaticResource EtiquetaDeCampo}" />
-                        <TextBox x:Name="CampoBusqueda"
-                                 Text="{Binding Cuaderno.TextoBuscado, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="Indicativo, nombre, QTH, localizador, país o comentario" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=9}">
-                        <TextBlock Text="Banda" Style="{StaticResource EtiquetaDeCampo}" />
-                        <ComboBox ItemsSource="{Binding Cuaderno.Bandas}" SelectedItem="{Binding Cuaderno.BandaFiltro}" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=10}">
-                        <TextBlock Text="Modo" Style="{StaticResource EtiquetaDeCampo}" />
-                        <ComboBox ItemsSource="{Binding Cuaderno.Modos}" SelectedItem="{Binding Cuaderno.ModoFiltro}" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=8}">
-                        <TextBlock Text="Por página" Style="{StaticResource EtiquetaDeCampo}" />
-                        <ComboBox ItemsSource="{Binding Cuaderno.TamanosDePagina}" SelectedItem="{Binding Cuaderno.TamanoDePagina}" />
-                    </StackPanel>
-
-                    <StackPanel Style="{StaticResource BloqueDeCampo}" Orientation="Horizontal" VerticalAlignment="Bottom">
-                        <Button Content="Quitar filtro" Command="{Binding Cuaderno.QuitarFiltroCommand}" Margin="0,0,8,0" />
-                        <Button Content="Modificar (F2)" Command="{Binding Cuaderno.EditarSeleccionadoCommand}" Margin="0,0,8,0" />
-                        <Button Content="Borrar (Supr)" Command="{Binding Cuaderno.EliminarSeleccionadoCommand}" Margin="0,0,8,0" />
-                        <Button Content="{Binding TextoDelPliegue}" Command="{Binding AlternarEntradaCommand}"
-                                ToolTip="Pliega la entrada de contactos para dejarle toda la ventana al cuaderno" />
-                    </StackPanel>
-                </WrapPanel>
-
-                <Expander x:Name="SelectorDeColumnas" Grid.Row="1" Header="Columnas del cuaderno" Margin="0,0,0,8"
-                          Foreground="{DynamicResource TextoTenue}">
-                    <WrapPanel Margin="8,8,0,4">
-                        <CheckBox Content="Frecuencia" IsChecked="{Binding Cuaderno.VerFrecuencia}" Margin="0,0,18,0" />
-                        <CheckBox Content="Informes" IsChecked="{Binding Cuaderno.VerInformes}" Margin="0,0,18,0" />
-                        <CheckBox Content="Nombre" IsChecked="{Binding Cuaderno.VerNombre}" Margin="0,0,18,0" />
-                        <CheckBox Content="QTH" IsChecked="{Binding Cuaderno.VerQth}" Margin="0,0,18,0" />
-                        <CheckBox Content="Localizador" IsChecked="{Binding Cuaderno.VerLocalizador}" Margin="0,0,18,0" />
-                        <CheckBox Content="Distancia" IsChecked="{Binding Cuaderno.VerDistancia}" Margin="0,0,18,0" />
-                        <CheckBox Content="Comentario" IsChecked="{Binding Cuaderno.VerComentario}" Margin="0,0,18,0" />
-                        <CheckBox Content="Mi indicativo" IsChecked="{Binding Cuaderno.VerEstacion}" Margin="0,0,18,0" />
-                        <CheckBox Content="Confirmado" IsChecked="{Binding Cuaderno.VerConfirmado}" Margin="0,0,18,0" />
-                        <CheckBox Content="Antena" IsChecked="{Binding Cuaderno.VerAntena}" Margin="0,0,18,0" />
-                        <CheckBox Content="Propagación" IsChecked="{Binding Cuaderno.VerPropagacion}" Margin="0,0,18,0" />
-                        <CheckBox Content="Radioescucha" IsChecked="{Binding Cuaderno.VerSwl}" Margin="0,0,18,0" />
-                        <CheckBox Content="Completado" IsChecked="{Binding Cuaderno.VerCompletado}" Margin="0,0,18,0" />
-                        <CheckBox Content="Casual" IsChecked="{Binding Cuaderno.VerCasual}" Margin="0,0,18,0" />
-                        <CheckBox Content="Mensaje QSL" IsChecked="{Binding Cuaderno.VerMensajeQsl}" Margin="0,0,18,0" />
-                        <CheckBox Content="Mi nombre" IsChecked="{Binding Cuaderno.VerMiNombre}" Margin="0,0,18,0" />
-                        <CheckBox Content="IOTA" IsChecked="{Binding Cuaderno.VerIota}" Margin="0,0,18,0" />
-                    </WrapPanel>
-                </Expander>
-
-                <DataGrid Grid.Row="2"
-                          x:Name="RejillaDelCuaderno"
-                          ItemsSource="{Binding Cuaderno.Filas}"
-                          SelectedItem="{Binding Cuaderno.FilaSeleccionada}"
-                          CanUserSortColumns="True"
-                          CanUserReorderColumns="True"
-                          CanUserResizeColumns="True"
-                          Sorting="AlOrdenar"
-                          MouseDoubleClick="AlPulsarDosVeces"
-                          PreviewKeyDown="AlTeclearEnLaRejilla">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Fecha UTC" Binding="{Binding Fecha}" SortMemberPath="Fecha"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7.2}" />
-                        <DataGridTextColumn Header="Hora" Binding="{Binding Hora}" SortMemberPath="Fecha"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=6}" />
-                        <DataGridTextColumn Header="Indicativo" Binding="{Binding Indicativo}" SortMemberPath="Indicativo"
-                                            FontWeight="Bold"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                        <DataGridTextColumn Header="Banda" Binding="{Binding Banda}" SortMemberPath="Banda"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=5.5}" />
-                        <DataGridTextColumn Header="Modo" Binding="{Binding Modo}" SortMemberPath="Modo"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=5.5}" />
-                        <DataGridTextColumn Header="Frecuencia" Binding="{Binding Frecuencia}" SortMemberPath="Frecuencia"
-                                            Visibility="{Binding Datos.Cuaderno.VerFrecuencia, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7}" />
-                        <DataGridTextColumn Header="Env." Binding="{Binding InformeEnviado}"
-                                            Visibility="{Binding Datos.Cuaderno.VerInformes, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=4.5}" />
-                        <DataGridTextColumn Header="Rec." Binding="{Binding InformeRecibido}"
-                                            Visibility="{Binding Datos.Cuaderno.VerInformes, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=4.5}" />
-                        <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" SortMemberPath="Nombre"
-                                            Visibility="{Binding Datos.Cuaderno.VerNombre, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                        <DataGridTextColumn Header="QTH" Binding="{Binding Qth}" SortMemberPath="Qth"
-                                            Visibility="{Binding Datos.Cuaderno.VerQth, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=9}" />
-                        <DataGridTextColumn Header="Localizador" Binding="{Binding Localizador}"
-                                            Visibility="{Binding Datos.Cuaderno.VerLocalizador, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7}" />
-                        <DataGridTextColumn Header="Distancia" Binding="{Binding Distancia}"
-                                            Visibility="{Binding Datos.Cuaderno.VerDistancia, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7}" />
-                        <DataGridTextColumn Header="Antena" Binding="{Binding Antena}"
-                                            Visibility="{Binding Datos.Cuaderno.VerAntena, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                        <DataGridTextColumn Header="Propagación" Binding="{Binding Propagacion}"
-                                            Visibility="{Binding Datos.Cuaderno.VerPropagacion, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=11}" />
-                        <DataGridTextColumn Header="Radioescucha" Binding="{Binding Swl}"
-                                            Visibility="{Binding Datos.Cuaderno.VerSwl, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                        <DataGridTextColumn Header="Completado" Binding="{Binding Completado}"
-                                            Visibility="{Binding Datos.Cuaderno.VerCompletado, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                        <DataGridTextColumn Header="Casual" Binding="{Binding Casual}"
-                                            Visibility="{Binding Datos.Cuaderno.VerCasual, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=6}" />
-                        <DataGridTextColumn Header="Mensaje QSL" Binding="{Binding MensajeQsl}"
-                                            Visibility="{Binding Datos.Cuaderno.VerMensajeQsl, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=14}" />
-                        <DataGridTextColumn Header="Mi nombre" Binding="{Binding MiNombre}"
-                                            Visibility="{Binding Datos.Cuaderno.VerMiNombre, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                        <DataGridTextColumn Header="IOTA" Binding="{Binding Iota}"
-                                            Visibility="{Binding Datos.Cuaderno.VerIota, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=6}" />
-                        <DataGridTextColumn Header="Mi indicativo" Binding="{Binding Estacion}"
-                                            Visibility="{Binding Datos.Cuaderno.VerEstacion, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                        <DataGridTextColumn Header="Confirmado" Binding="{Binding Confirmado}"
-                                            Visibility="{Binding Datos.Cuaderno.VerConfirmado, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                        <DataGridTextColumn Header="Comentario" Binding="{Binding Comentario}"
-                                            Visibility="{Binding Datos.Cuaderno.VerComentario, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                            Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=16}" />
-                    </DataGrid.Columns>
-                </DataGrid>
-
-                <DockPanel Grid.Row="3" Margin="0,8,0,0">
-                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                        <Button Content="&#x23EE; Primera" Command="{Binding Cuaderno.PrimeraPaginaCommand}" Margin="0,0,6,0" />
-                        <Button Content="&#x25C0; Anterior" Command="{Binding Cuaderno.PaginaAnteriorCommand}" Margin="0,0,6,0" />
-                        <Button Content="Siguiente &#x25B6;" Command="{Binding Cuaderno.PaginaSiguienteCommand}" Margin="0,0,6,0" />
-                        <Button Content="Última &#x23ED;" Command="{Binding Cuaderno.UltimaPaginaCommand}" />
-                    </StackPanel>
-                    <TextBlock DockPanel.Dock="Right"
-                               Text="Cargando…"
-                               Margin="12,0,0,0"
-                               Style="{StaticResource TextoTenueEstilo}"
-                               Visibility="{Binding Cuaderno.Cargando, Converter={StaticResource BooleanoAVisible}}" />
-                    <TextBlock Text="{Binding Cuaderno.TextoDePagina}"
-                               Margin="16,0,0,0"
-                               VerticalAlignment="Center"
-                               Style="{StaticResource TextoTenueEstilo}" />
-                </DockPanel>
-            </Grid>
-        </Border>
+            </TabItem>
+        </TabControl>
 
         <!-- ══ Barra de estado ══ -->
-        <Border Grid.Row="3"
+        <Border Grid.Row="2"
                 Background="{DynamicResource FondoCabecera}"
                 BorderBrush="{DynamicResource Borde}"
                 BorderThickness="0,1,0,0"
@@ -551,8 +190,8 @@
                 </TextBlock>
                 <TextBlock Style="{StaticResource TextoTenueEstilo}"
                            Visibility="{Binding LeyendaVisible, Converter={StaticResource BooleanoAVisible}}"
-                           ToolTip="Atajos de teclado del cuaderno"
-                           Text="Intro registra · Esc limpia · F2 modifica · F3 buscar · F4 indicativo · F5 refresca · F6 plegar entrada · F7 más datos · F8 hora · F9 tema · Supr borra · Ctrl+ y Ctrl− escala, Ctrl0 normal" />
+                           ToolTip="Atajos de teclado"
+                           Text="Intro registra · Esc limpia · F2 modifica · F3 buscar · F4 indicativo · F5 refresca · F7 más datos · F8 hora · F9 tema · Ctrl1 operar · Ctrl2 cuaderno · Ctrl3 mapa · Ctrl+ y Ctrl− escala" />
             </WrapPanel>
         </Border>
     </Grid>

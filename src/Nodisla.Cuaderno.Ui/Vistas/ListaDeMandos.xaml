@@ -1,0 +1,86 @@
+﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.ListaDeMandos"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        TODOS LOS MANDOS DEL EQUIPO, construidos a partir de lo que el equipo DECLARA.
+
+        Aquí no hay ni un mando escrito a mano: se recorre lo que el control dice que admite y
+        se pinta el tipo de control que toca —casilla si es interruptor, lista si tiene
+        posiciones, deslizador si es una escala—, con su unidad al lado. Un FT-710 llena la
+        lista entera; un equipo modesto enseña sólo los cuatro que tiene, y añadir un equipo
+        nuevo no toca ni una línea de este fichero.
+
+        Es la vista que TOMA EL RELEVO del frontal dibujado cuando aquél no cabe: un dibujo no
+        se repliega, una lista sí. Las dos accionan el mismo objeto, así que girar un mando en
+        el frontal mueve el deslizador de aquí, y al revés.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+    </UserControl.Resources>
+
+    <ItemsControl ItemsSource="{Binding MandosPorGrupo}">
+        <ItemsControl.GroupStyle>
+            <GroupStyle>
+                <GroupStyle.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"
+                                   Style="{StaticResource TituloDeSeccion}"
+                                   Margin="0,10,0,6" />
+                    </DataTemplate>
+                </GroupStyle.HeaderTemplate>
+            </GroupStyle>
+        </ItemsControl.GroupStyle>
+
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <!--
+                    Un bloque por mando. Los tres tipos están los tres en el árbol y sólo se ve
+                    el que toca: así el bloque se ve entero o no se ve, nunca cortado a media
+                    fila, que es la regla de esta interfaz.
+                -->
+                <StackPanel Margin="0,0,0,8">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Right"
+                                   Text="{Binding ValorTexto}"
+                                   FontWeight="Bold"
+                                   Margin="8,0,0,0"
+                                   TextTrimming="None"
+                                   Foreground="{DynamicResource Texto}" />
+                        <TextBlock Text="{Binding Nombre}"
+                                   Style="{StaticResource EtiquetaDeCampo}"
+                                   ToolTip="{Binding Nombre}" />
+                    </DockPanel>
+
+                    <!-- El mando que pone el equipo en antena se avisa aquí mismo. -->
+                    <TextBlock Text="Accionarlo pone el equipo EN ANTENA: se avisa antes."
+                               Style="{StaticResource TextoTenueEstilo}"
+                               Foreground="{DynamicResource AvisoTexto}"
+                               Visibility="{Binding TransmiteAlAccionar, Converter={StaticResource BooleanoAVisible}}" />
+
+                    <CheckBox Content="Encendido"
+                              IsChecked="{Binding Encendido}"
+                              IsEnabled="{Binding Disponible}"
+                              Visibility="{Binding EsInterruptor, Converter={StaticResource BooleanoAVisible}}" />
+
+                    <ComboBox ItemsSource="{Binding Posiciones}"
+                              SelectedIndex="{Binding Posicion}"
+                              IsEnabled="{Binding Disponible}"
+                              Visibility="{Binding EsDePosiciones, Converter={StaticResource BooleanoAVisible}}" />
+
+                    <Slider Value="{Binding Valor}"
+                            Minimum="{Binding Minimo}"
+                            Maximum="{Binding Maximo}"
+                            TickFrequency="{Binding Paso}"
+                            SmallChange="{Binding Paso}"
+                            LargeChange="{Binding Paso}"
+                            IsEnabled="{Binding Disponible}"
+                            AutomationProperties.Name="{Binding Nombre}"
+                            Visibility="{Binding EsEscala, Converter={StaticResource BooleanoAVisible}}" />
+                </StackPanel>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>

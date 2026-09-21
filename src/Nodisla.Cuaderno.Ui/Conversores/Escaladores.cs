@@ -72,6 +72,85 @@ public sealed class AlturaDeLaZonaSuperior : IMultiValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>
+/// Ensena un elemento solo cuando el texto que lleva tiene algo que decir.
+/// </summary>
+/// <remarks>
+/// Es la unica manera de que un aviso ocupe cero cuando no hay aviso: con un panel siempre
+/// visible, el bloque deja un hueco muerto que en escalas grandes se lleva una fila entera
+/// del cuaderno.
+/// </remarks>
+public sealed class NoEsVacio : IValueConverter
+{
+    /// <inheritdoc />
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is string texto && texto.Length > 0
+            ? System.Windows.Visibility.Visible
+            : System.Windows.Visibility.Collapsed;
+
+    /// <inheritdoc />
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>
+/// Convierte una fraccion de cero a uno en un ancho, para pintar barras de medidor.
+/// </summary>
+/// <remarks>
+/// El canal de la barra tiene un ancho fijo dentro del frontal dibujado, que se escala entero
+/// con el resto del dibujo. Por eso el ancho se calcula sobre ese tamano y no sobre el ancho
+/// real en pantalla: si se midiera en pantalla, la barra daria un salto cada vez que la
+/// ventana cambia de tamano.
+/// </remarks>
+public sealed class FraccionDeAncho : IValueConverter
+{
+    /// <inheritdoc />
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var fraccion = value is double d && !double.IsNaN(d) ? Math.Clamp(d, 0, 1) : 0;
+        var canal = AnchoEnLetras.LeerFactor(parameter);
+        return Math.Round(canal * fraccion, 1);
+    }
+
+    /// <inheritdoc />
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>
+/// Da alto a una fila de la rejilla solo cuando su contenido esta a la vista.
+/// </summary>
+/// <remarks>
+/// Una fila proporcional —de las que llevan asterisco— <b>sigue reservando su sitio aunque su
+/// contenido este plegado</b>: el bloque desaparece y deja un hueco del mismo tamano. Por eso
+/// el alto de la fila tiene que seguir al mismo interruptor que la visibilidad del bloque.
+/// El parametro dice cuantas partes se lleva la fila cuando si esta a la vista.
+/// </remarks>
+public sealed class AltoDeFila : IValueConverter
+{
+    /// <inheritdoc />
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is bool visible && visible
+            ? new System.Windows.GridLength(AnchoEnLetras.LeerFactor(parameter), System.Windows.GridUnitType.Star)
+            : new System.Windows.GridLength(0);
+
+    /// <inheritdoc />
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>Invierte un booleano, para las visibilidades que van al reves.</summary>
+public sealed class Negacion : IValueConverter
+{
+    /// <inheritdoc />
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is bool cierto && !cierto;
+
+    /// <inheritdoc />
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is bool cierto && !cierto;
+}
+
 /// <summary>Lo mismo que <see cref="AnchoEnLetras"/>, pero para el ancho de una columna.</summary>
 public sealed class AnchoDeColumnaEnLetras : IValueConverter
 {
