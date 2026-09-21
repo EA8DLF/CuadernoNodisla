@@ -42,6 +42,7 @@ internal static class JsonLog4Om
         (texto ?? string.Empty).Trim().ToUpperInvariant() switch
         {
             "YES" => EstadoDeConfirmacion.Confirmado,
+            "VERIFIED" => EstadoDeConfirmacion.Verificado,
             "NO" => EstadoDeConfirmacion.Ninguno,
             "REQUESTED" => EstadoDeConfirmacion.Solicitado,
             "QUEUED" => EstadoDeConfirmacion.Pendiente,

@@ -62,7 +62,7 @@ public static class MapeoAdif
                     numeroDeRegistro, c.Nombre,
                     $"El campo «{c.Nombre}» aparece repetido en el registro; manda el primer valor y "
                     + "el otro se conserva aparte.",
-                    false));
+                    NivelDeAviso.Advertencia));
                 continue;
             }
             orden.Add(c);
@@ -117,7 +117,7 @@ public static class MapeoAdif
             avisos.Add(new AvisoAdif(
                 numero, "QSO_DATE",
                 $"No se entiende la fecha u hora de inicio («{fecha}» «{hora}»); el contacto queda sin fecha.",
-                false));
+                NivelDeAviso.Advertencia));
         }
 
         valores.TryGetValue("QSO_DATE_OFF", out var fechaFin);
@@ -135,7 +135,7 @@ public static class MapeoAdif
                 avisos.Add(new AvisoAdif(
                     numero, "TIME_OFF",
                     $"No se entiende la fecha u hora de fin («{fechaFin}» «{horaFin}»); se ignora.",
-                    false));
+                    NivelDeAviso.Advertencia));
             }
         }
 
@@ -165,7 +165,7 @@ public static class MapeoAdif
             avisos.Add(new AvisoAdif(
                 numero, JsonLog4Om.CampoConfirmaciones,
                 "El JSON de confirmaciones no se entiende; se conserva tal cual pero no se interpreta.",
-                false));
+                NivelDeAviso.Advertencia));
         }
 
         if (valores.TryGetValue(JsonLog4Om.CampoReferencias, out var referencias)
@@ -174,7 +174,7 @@ public static class MapeoAdif
             avisos.Add(new AvisoAdif(
                 numero, JsonLog4Om.CampoReferencias,
                 "El JSON de referencias no se entiende; se conserva tal cual pero no se interpreta.",
-                false));
+                NivelDeAviso.Advertencia));
         }
 
         if (valores.TryGetValue(JsonLog4Om.CampoMisReferencias, out var mias))
@@ -285,6 +285,31 @@ public static class MapeoAdif
             case "MY_RIG": qso.MyRig = Texto(valor); return true;
             case "MY_ANTENNA":
             case "ANTENNA": qso.MyAntenna = Texto(valor); return true;
+            case "MY_NAME": qso.MyName = Texto(valor); return true;
+
+            // ── Antena y condiciones ─────────────────────────────────────────
+            case "ANT_AZ": qso.AntAz = LeerReal(valor, campo, numero, avisos); return true;
+            case "ANT_EL": qso.AntEl = LeerReal(valor, campo, numero, avisos); return true;
+            // La distancia declarada en el fichero es la del corresponsal y no se toca: la
+            // nuestra se calcula aparte en Qso.DistanciaKm.
+            case "DISTANCE": qso.Distance = LeerReal(valor, campo, numero, avisos); return true;
+            case "A_INDEX": qso.AIndex = LeerReal(valor, campo, numero, avisos); return true;
+            case "K_INDEX": qso.KIndex = LeerReal(valor, campo, numero, avisos); return true;
+            case "SFI": qso.Sfi = LeerReal(valor, campo, numero, avisos); return true;
+
+            // ── Naturaleza del contacto ──────────────────────────────────────
+            case "SWL":
+                if (ConversionesAdif.TryLeerLogico(valor, out var swl)) qso.Swl = swl;
+                else if (!vacio) Aviso(avisos, numero, campo, "no es un si o un no de ADIF");
+                return true;
+            // Se queda como texto: ADIF admite Y, N, NIL y ?, que no es un si o un no.
+            case "QSO_COMPLETE": qso.QsoComplete = Texto(valor); return true;
+            case "QSO_RANDOM":
+                if (ConversionesAdif.TryLeerLogico(valor, out var azar)) qso.QsoRandom = azar;
+                else if (!vacio) Aviso(avisos, numero, campo, "no es un si o un no de ADIF");
+                return true;
+            case "QSLMSG": qso.QslMsg = Texto(valor); return true;
+            case "IOTA_ISLAND_ID": qso.IotaIslandId = Texto(valor); return true;
 
             // ── Concurso ─────────────────────────────────────────────────────
             case "CONTEST_ID": qso.ContestId = Texto(valor); return true;
@@ -354,7 +379,7 @@ public static class MapeoAdif
         avisos.Add(new AvisoAdif(
             numero, campo.Nombre,
             $"El campo «{campo.Nombre}» con valor «{campo.Valor}» {problema}; se conserva sin interpretar.",
-            false));
+            NivelDeAviso.Advertencia));
 
     private static void LeerBanda(
         string valor, Action<Banda> asignar, CampoAdif campo, int numero, List<AvisoAdif> avisos)
@@ -447,6 +472,12 @@ public static class MapeoAdif
         Poner("PROP_MODE", qso.PropMode);
         Poner("SAT_NAME", qso.SatName);
         Poner("SAT_MODE", qso.SatMode);
+        if (qso.AntAz is { } antAz) Poner("ANT_AZ", ConversionesAdif.EscribirReal(antAz));
+        if (qso.AntEl is { } antEl) Poner("ANT_EL", ConversionesAdif.EscribirReal(antEl));
+        if (qso.Distance is { } distancia) Poner("DISTANCE", ConversionesAdif.EscribirReal(distancia));
+        if (qso.AIndex is { } aIndex) Poner("A_INDEX", ConversionesAdif.EscribirReal(aIndex));
+        if (qso.KIndex is { } kIndex) Poner("K_INDEX", ConversionesAdif.EscribirReal(kIndex));
+        if (qso.Sfi is { } sfi) Poner("SFI", ConversionesAdif.EscribirReal(sfi));
 
         Poner("NAME", qso.Name);
         Poner("ADDRESS", qso.Address);
@@ -491,6 +522,7 @@ public static class MapeoAdif
         if (qso.MyAltitude is { } myalt) Poner("MY_ALTITUDE", ConversionesAdif.EscribirReal(myalt));
         Poner("MY_RIG", qso.MyRig);
         Poner("MY_ANTENNA", qso.MyAntenna);
+        Poner("MY_NAME", qso.MyName);
 
         Poner("CONTEST_ID", qso.ContestId);
         if (qso.Stx is { } stx) Poner("STX", ConversionesAdif.EscribirEntero(stx));
@@ -498,11 +530,19 @@ public static class MapeoAdif
         if (qso.Srx is { } srx) Poner("SRX", ConversionesAdif.EscribirEntero(srx));
         Poner("SRX_STRING", qso.SrxString);
 
+        // SWL no es opcional en el modelo, asi que siempre se escribe: es lo que hacen los
+        // cuadernos al uso y evita que la ida y vuelta tenga que conservarlo aparte.
+        Poner("SWL", ConversionesAdif.EscribirLogico(qso.Swl));
+        Poner("QSO_COMPLETE", qso.QsoComplete);
+        if (qso.QsoRandom is { } azar) Poner("QSO_RANDOM", ConversionesAdif.EscribirLogico(azar));
+
         Poner("COMMENT", qso.Comentario);
         Poner("NOTES", qso.Notas);
+        Poner("QSLMSG", qso.QslMsg);
 
         EscribirConfirmaciones(qso, Poner);
         EscribirReferencias(qso, Poner);
+        Poner("IOTA_ISLAND_ID", qso.IotaIslandId);
 
         return incluirExtras ? Superponer(campos, qso.CamposExtra) : campos;
     }

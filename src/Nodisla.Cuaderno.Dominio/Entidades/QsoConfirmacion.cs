@@ -37,5 +37,9 @@ public sealed class QsoConfirmacion
     public string? Nota { get; set; }
 
     /// <summary>La confirmacion cuenta para diplomas.</summary>
-    public bool EstaConfirmada => Recibido == EstadoDeConfirmacion.Confirmado;
+    public bool EstaConfirmada =>
+        Recibido is EstadoDeConfirmacion.Confirmado or EstadoDeConfirmacion.Verificado;
+
+    /// <summary>El servicio verifico la confirmacion, no solo la registro.</summary>
+    public bool EstaVerificada => Recibido == EstadoDeConfirmacion.Verificado;
 }

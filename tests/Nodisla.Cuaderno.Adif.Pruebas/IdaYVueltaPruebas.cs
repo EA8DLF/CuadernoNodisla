@@ -22,6 +22,9 @@ public class IdaYVueltaPruebas
         lectura.Qsos.Should().HaveCount(crudos.Count);
         lectura.Qsos.Should().HaveCountGreaterThan(1000, "el cuaderno de EA8DLF tiene casi dos mil contactos");
         lectura.Avisos.Should().NotContain(a => a.EsFatal);
+        lectura.Avisos.Should().OnlyContain(
+            a => a.Nivel == NivelDeAviso.Informativo,
+            "un respaldo sano de Log4OM solo levanta avisos de tramite");
         lectura.ProgramaOrigen.Should().Be("LOG4OM2");
     }
 

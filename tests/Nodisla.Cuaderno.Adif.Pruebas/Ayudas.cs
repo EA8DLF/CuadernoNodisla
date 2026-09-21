@@ -51,7 +51,7 @@ internal static class Ayudas
         var registros = new List<List<CampoAdif>>();
         var actual = new List<CampoAdif>();
         var enCabecera = true;
-        var analizador = new AnalizadorAdi(origen, (_, _) => { });
+        var analizador = new AnalizadorAdi(origen, (_, _, _) => { });
 
         while (await analizador.SiguienteAsync(CancellationToken.None) is { } token)
         {

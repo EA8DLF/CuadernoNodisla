@@ -179,6 +179,53 @@ public sealed class Qso
     public string? MyRig { get; set; }
     public string? MyAntenna { get; set; }
 
+    // ── Antena y condiciones ─────────────────────────────────────────────────
+
+    /// <summary>Azimut de la antena en grados (<c>ANT_AZ</c>).</summary>
+    public double? AntAz { get; set; }
+
+    /// <summary>Elevacion de la antena en grados (<c>ANT_EL</c>).</summary>
+    public double? AntEl { get; set; }
+
+    /// <summary>
+    /// Distancia del contacto en kilometros tal y como venia en el fichero (<c>DISTANCE</c>).
+    /// Se guarda aparte de <see cref="DistanciaKm"/>, que es la calculada: si el corresponsal
+    /// declaro una distancia, esa es la suya y no se pisa con la nuestra.
+    /// </summary>
+    public double? Distance { get; set; }
+
+    /// <summary>Indice A geomagnetico en el momento del contacto (<c>A_INDEX</c>).</summary>
+    public double? AIndex { get; set; }
+
+    /// <summary>Indice K geomagnetico (<c>K_INDEX</c>).</summary>
+    public double? KIndex { get; set; }
+
+    /// <summary>Flujo solar a 10,7 cm (<c>SFI</c>).</summary>
+    public double? Sfi { get; set; }
+
+    // ── Naturaleza del contacto ──────────────────────────────────────────────
+
+    /// <summary>El contacto fue con un radioescucha, no con una estacion transmisora (<c>SWL</c>).</summary>
+    public bool Swl { get; set; }
+
+    /// <summary>
+    /// El contacto se completo (<c>QSO_COMPLETE</c>): <c>Y</c>, <c>N</c>, <c>NIL</c> o <c>?</c>.
+    /// Se conserva el codigo de ADIF porque no es un si o un no.
+    /// </summary>
+    public string? QsoComplete { get; set; }
+
+    /// <summary>El contacto fue casual y no concertado de antemano (<c>QSO_RANDOM</c>).</summary>
+    public bool? QsoRandom { get; set; }
+
+    /// <summary>Mensaje que se imprime en la tarjeta QSL (<c>QSLMSG</c>).</summary>
+    public string? QslMsg { get; set; }
+
+    /// <summary>Mi nombre tal y como se declaro en el contacto (<c>MY_NAME</c>).</summary>
+    public string? MyName { get; set; }
+
+    /// <summary>Identificador numerico de la isla IOTA (<c>IOTA_ISLAND_ID</c>).</summary>
+    public string? IotaIslandId { get; set; }
+
     // ── Concurso ─────────────────────────────────────────────────────────────
 
     /// <summary>Identificador del concurso (<c>CONTEST_ID</c>).</summary>

@@ -56,7 +56,8 @@ public sealed class LectorAdif : ILectorAdif
 
         var analizador = new AnalizadorAdi(
             flujo,
-            (mensaje, campo) => avisos.Add(new AvisoAdif(cabeceraCerrada ? numero + 1 : 0, campo, mensaje, false)));
+            (mensaje, campo, nivel) =>
+                avisos.Add(new AvisoAdif(cabeceraCerrada ? numero + 1 : 0, campo, mensaje, nivel)));
 
         while (await analizador.SiguienteAsync(ct).ConfigureAwait(false) is { } token)
         {
@@ -90,13 +91,13 @@ public sealed class LectorAdif : ILectorAdif
             avisos.Add(new AvisoAdif(
                 numero, null,
                 "El fichero termina con un registro sin cerrar; se importa igualmente con lo que trae.",
-                false));
+                NivelDeAviso.Advertencia));
             AnadirRegistro(qsos, pendientes, numero, avisos);
         }
 
         if (!cabeceraCerrada && qsos.Count == 0 && avisos.Count == 0)
         {
-            avisos.Add(new AvisoAdif(0, null, "El fichero no contiene ningun contacto.", false));
+            avisos.Add(new AvisoAdif(0, null, "El fichero no contiene ningun contacto.", NivelDeAviso.Advertencia));
         }
 
         MarcarOrigen(qsos, cabecera);
@@ -108,7 +109,7 @@ public sealed class LectorAdif : ILectorAdif
     {
         if (campos.Count == 0)
         {
-            avisos.Add(new AvisoAdif(numero, null, "Registro vacio; se descarta.", true));
+            avisos.Add(new AvisoAdif(numero, null, "Registro vacio; se descarta.", NivelDeAviso.Error));
             return;
         }
 
@@ -123,7 +124,7 @@ public sealed class LectorAdif : ILectorAdif
             avisos.Add(new AvisoAdif(
                 numero, null,
                 $"No se ha podido leer el registro y se descarta: {ex.Message}",
-                true));
+                NivelDeAviso.Error));
         }
     }
 

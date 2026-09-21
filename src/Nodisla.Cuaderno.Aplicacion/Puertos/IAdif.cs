@@ -2,12 +2,37 @@ using Nodisla.Cuaderno.Dominio.Entidades;
 
 namespace Nodisla.Cuaderno.Aplicacion.Puertos;
 
+/// <summary>Gravedad de un aviso de lectura de ADIF.</summary>
+public enum NivelDeAviso
+{
+    /// <summary>
+    /// Algo digno de mencion que no afecta al dato: una rareza del programa que genero el
+    /// fichero, corregida al vuelo. La interfaz puede ocultarlos por omision.
+    /// </summary>
+    Informativo,
+
+    /// <summary>El dato se ha leido, pero con una interpretacion que conviene revisar.</summary>
+    Advertencia,
+
+    /// <summary>El registro no se ha podido leer y se descarta.</summary>
+    Error,
+}
+
 /// <summary>Un problema encontrado al leer un fichero ADIF.</summary>
 /// <param name="NumeroDeRegistro">Registro del fichero, empezando en 1.</param>
 /// <param name="Campo">Campo afectado, si se conoce.</param>
 /// <param name="Mensaje">Explicacion en espanol, pensada para el operador.</param>
-/// <param name="EsFatal">El registro no se ha podido leer y se descarta.</param>
-public sealed record AvisoAdif(int NumeroDeRegistro, string? Campo, string Mensaje, bool EsFatal);
+/// <param name="Nivel">Gravedad del aviso.</param>
+/// <remarks>
+/// El nivel existe porque un respaldo normal de Log4OM genera decenas de avisos rutinarios
+/// (rotulos de adorno en el condado, por ejemplo). Sin niveles, la interfaz tendria que
+/// elegir entre enterrar al operador en ruido o esconderle los problemas de verdad.
+/// </remarks>
+public sealed record AvisoAdif(int NumeroDeRegistro, string? Campo, string Mensaje, NivelDeAviso Nivel)
+{
+    /// <summary>El registro se descarto.</summary>
+    public bool EsFatal => Nivel == NivelDeAviso.Error;
+}
 
 /// <summary>Resultado de leer un fichero ADIF.</summary>
 public sealed record LecturaAdif

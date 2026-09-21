@@ -83,9 +83,7 @@ internal static class ConfirmacionesAdif
         estado = c switch
         {
             'Y' => EstadoDeConfirmacion.Confirmado,
-            // «V» es «verificado»: cuenta igual que «Y» para los diplomas. La letra original se
-            // conserva aparte para que la exportacion devuelva el fichero tal y como entro.
-            'V' => EstadoDeConfirmacion.Confirmado,
+            'V' => EstadoDeConfirmacion.Verificado,
             'N' => EstadoDeConfirmacion.Ninguno,
             'R' => EstadoDeConfirmacion.Solicitado,
             'Q' => EstadoDeConfirmacion.Pendiente,
@@ -95,17 +93,21 @@ internal static class ConfirmacionesAdif
         return c is 'Y' or 'V' or 'N' or 'R' or 'Q' or 'I';
     }
 
-    /// <summary>Letra ADIF que corresponde a un estado.</summary>
+    /// <summary>
+    /// Letra ADIF que corresponde a un estado. La enumeracion de las subidas no tiene una letra
+    /// para lo verificado, asi que ahi se escribe como confirmado.
+    /// </summary>
     public static string EscribirEstado(EstadoDeConfirmacion estado, bool esSubida) => esSubida
         ? estado switch
         {
-            EstadoDeConfirmacion.Confirmado => "Y",
+            EstadoDeConfirmacion.Confirmado or EstadoDeConfirmacion.Verificado => "Y",
             EstadoDeConfirmacion.Pendiente => "M",
             _ => "N",
         }
         : estado switch
         {
             EstadoDeConfirmacion.Confirmado => "Y",
+            EstadoDeConfirmacion.Verificado => "V",
             EstadoDeConfirmacion.Solicitado => "R",
             EstadoDeConfirmacion.Pendiente => "Q",
             EstadoDeConfirmacion.Rechazado => "I",

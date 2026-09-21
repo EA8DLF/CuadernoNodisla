@@ -23,6 +23,11 @@ public enum EstadoDeConfirmacion
     Pendiente,
     /// <summary>Enviado o recibido y valido.</summary>
     Confirmado,
+    /// <summary>
+    /// Confirmado y ademas verificado por el servicio (la <c>V</c> de ADIF). Los diplomas que
+    /// exigen verificacion solo aceptan este estado, no el mero <see cref="Confirmado"/>.
+    /// </summary>
+    Verificado,
     /// <summary>Solicitado a la otra parte.</summary>
     Solicitado,
     /// <summary>La otra parte no lo quiere, o se decide no enviarlo.</summary>

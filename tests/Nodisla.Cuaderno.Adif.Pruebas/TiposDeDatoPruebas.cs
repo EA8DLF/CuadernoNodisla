@@ -97,7 +97,7 @@ public class TiposDeDatoPruebas
     [InlineData("R", EstadoDeConfirmacion.Solicitado)]
     [InlineData("Q", EstadoDeConfirmacion.Pendiente)]
     [InlineData("I", EstadoDeConfirmacion.Rechazado)]
-    [InlineData("V", EstadoDeConfirmacion.Confirmado)]
+    [InlineData("V", EstadoDeConfirmacion.Verificado)]
     public void Los_estados_de_qsl_se_traducen(string letra, EstadoDeConfirmacion esperado)
     {
         ConfirmacionesAdif.TryLeerEstado(letra, esSubida: false, out var estado).Should().BeTrue();
@@ -135,12 +135,79 @@ public class TiposDeDatoPruebas
     }
 
     [Fact]
-    public async Task La_qsl_verificada_conserva_su_letra_al_exportar()
+    public async Task La_qsl_verificada_se_distingue_de_la_meramente_confirmada()
     {
         var lectura = await Ayudas.LeerAsync(Cabecera + "<CALL:6>EA8DLF <LOTW_QSL_RCVD:1>V <EOR>\n");
 
-        lectura.Qsos[0].Confirmaciones.Single().EstaConfirmada.Should().BeTrue();
+        var confirmacion = lectura.Qsos[0].Confirmaciones.Single();
+        confirmacion.Recibido.Should().Be(EstadoDeConfirmacion.Verificado);
+        confirmacion.EstaConfirmada.Should().BeTrue();
+        confirmacion.EstaVerificada.Should().BeTrue();
+
+        // Y la «V» vuelve sola, sin necesidad de conservar la letra aparte.
+        lectura.Qsos[0].CamposExtra.Should().NotContain(c => c.Nombre == "LOTW_QSL_RCVD");
         (await Ayudas.ExportarAsync(lectura.Qsos)).Should().Contain("<LOTW_QSL_RCVD:1>V");
+    }
+
+    [Fact]
+    public async Task La_qsl_confirmada_sin_verificar_sigue_saliendo_como_y()
+    {
+        var lectura = await Ayudas.LeerAsync(Cabecera + "<CALL:6>EA8DLF <LOTW_QSL_RCVD:1>Y <EOR>\n");
+
+        var confirmacion = lectura.Qsos[0].Confirmaciones.Single();
+        confirmacion.EstaConfirmada.Should().BeTrue();
+        confirmacion.EstaVerificada.Should().BeFalse();
+        (await Ayudas.ExportarAsync(lectura.Qsos)).Should().Contain("<LOTW_QSL_RCVD:1>Y");
+    }
+
+    [Fact]
+    public async Task Los_campos_de_antena_condiciones_y_naturaleza_del_contacto_van_y_vuelven()
+    {
+        const string adif =
+            "<ADIF_VER:5>3.1.5 <EOH>\n"
+            + "<CALL:6>EA8DLF <ANT_AZ:2>22 <ANT_EL:1>0 <DISTANCE:7>1785.37 <A_INDEX:1>6 "
+            + "<K_INDEX:4>1.33 <SFI:3>124 <SWL:1>N <QSO_COMPLETE:3>NIL <QSO_RANDOM:1>Y "
+            + "<QSLMSG:12>Gracias Jose <MY_NAME:10>JOSE MARIA <IOTA:6>AF-004 "
+            + "<IOTA_ISLAND_ID:4>1234 <EOR>\n";
+
+        var lectura = await Ayudas.LeerAsync(adif);
+        var qso = lectura.Qsos.Should().ContainSingle().Subject;
+
+        qso.AntAz.Should().Be(22);
+        qso.AntEl.Should().Be(0);
+        qso.Distance.Should().Be(1785.37);
+        qso.AIndex.Should().Be(6);
+        qso.KIndex.Should().Be(1.33);
+        qso.Sfi.Should().Be(124);
+        qso.Swl.Should().BeFalse();
+        qso.QsoComplete.Should().Be("NIL", "ADIF admite NIL y ? ademas de Y y N");
+        qso.QsoRandom.Should().BeTrue();
+        qso.QslMsg.Should().Be("Gracias Jose");
+        qso.MyName.Should().Be("JOSE MARIA");
+        qso.IotaIslandId.Should().Be("1234");
+
+        // Ninguno de estos campos necesita ya conservarse aparte.
+        qso.CamposExtra.Should().BeEmpty();
+
+        var originales = await Ayudas.CamposCrudosAsync(adif);
+        var devueltos = await Ayudas.CamposCrudosAsync(await Ayudas.ExportarAsync(lectura.Qsos));
+        foreach (var campo in originales[0])
+        {
+            devueltos[0].Valor(campo.Nombre).Should().Be(campo.Valor, "el campo {0}", campo.Nombre);
+        }
+    }
+
+    [Fact]
+    public async Task La_distancia_declarada_en_el_fichero_no_pisa_a_la_calculada()
+    {
+        var lectura = await Ayudas.LeerAsync(
+            Cabecera
+            + "<CALL:6>EA8DLF <DISTANCE:3>999 <LAT:11>N027 58.950 <LON:11>W015 23.583 "
+            + "<MY_LAT:11>N028 58.950 <MY_LON:11>W015 23.583 <EOR>\n");
+
+        var qso = lectura.Qsos[0];
+        qso.Distance.Should().Be(999, "es lo que declaraba el fichero");
+        qso.DistanciaKm.Should().BeApproximately(111.2, 1.0, "es la que sale de las coordenadas");
     }
 
     [Fact]

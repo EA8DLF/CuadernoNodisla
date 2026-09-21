@@ -52,7 +52,7 @@ internal static class AnalizadorAdx
                     numero++;
                     if (campos.Count == 0)
                     {
-                        avisos.Add(new AvisoAdif(numero, null, "Registro vacio; se descarta.", true));
+                        avisos.Add(new AvisoAdif(numero, null, "Registro vacio; se descarta.", NivelDeAviso.Error));
                         continue;
                     }
                     qsos.Add(MapeoAdif.LeerContacto(campos, numero, avisos));
@@ -64,7 +64,7 @@ internal static class AnalizadorAdx
             avisos.Add(new AvisoAdif(
                 numero + 1, null,
                 $"El fichero ADX esta mal formado y se deja de leer aqui: {ex.Message}",
-                true));
+                NivelDeAviso.Error));
         }
 
         LectorAdif.MarcarOrigen(qsos, cabecera);

@@ -1,5 +1,6 @@
 using System.Text;
 using FluentAssertions;
+using Nodisla.Cuaderno.Aplicacion.Puertos;
 
 namespace Nodisla.Cuaderno.Adif.Pruebas;
 
@@ -92,8 +93,9 @@ public class FicherosSuciosPruebas
 
         lectura.Qsos[0].Cnty.Should().Be("CA,VENTURA");
         lectura.Qsos[0].Name.Should().Be("JOSE");
+        // Informativo: no hay nada que revisar, el dato sale entero y el fichero vuelve igual.
         lectura.Avisos.Should().Contain(a =>
-            a.Campo == "CNTY" && !a.EsFatal && a.Mensaje.Contains("// Ventura"));
+            a.Campo == "CNTY" && a.Nivel == NivelDeAviso.Informativo && a.Mensaje.Contains("// Ventura"));
 
         // Descartado para el dato, pero no perdido: al exportar sale igual que entro.
         (await Ayudas.ExportarAsync(lectura.Qsos)).Should().Contain("<CNTY:10>CA,VENTURA // Ventura");
@@ -179,6 +181,24 @@ public class FicherosSuciosPruebas
         var lectura = await Ayudas.LeerAsync(Encoding.UTF8.GetBytes(adx));
         lectura.Qsos.Should().ContainSingle();
         lectura.Avisos.Should().Contain(a => a.EsFatal && a.Mensaje.Contains("mal formado"));
+    }
+
+    [Fact]
+    public async Task Cada_aviso_sale_con_el_nivel_que_le_toca()
+    {
+        var lectura = await Ayudas.LeerAsync(
+            Cabecera
+            + "<EOR>\n"
+            + "<CALL:6>EA8DLF <CNTY:10>CA,VENTURA // Ventura <NAME:4>JOSE <NAME:5>MARIA <EOR>\n");
+
+        lectura.Avisos.Should().Contain(a => a.Nivel == NivelDeAviso.Error && a.Mensaje.Contains("vacio"));
+        lectura.Avisos.Should().Contain(a =>
+            a.Nivel == NivelDeAviso.Informativo && a.Campo == "CNTY");
+        lectura.Avisos.Should().Contain(a =>
+            a.Nivel == NivelDeAviso.Advertencia && a.Campo == "NAME");
+
+        // «EsFatal» sigue queriendo decir «este registro no esta».
+        lectura.Avisos.Where(a => a.EsFatal).Should().OnlyContain(a => a.Nivel == NivelDeAviso.Error);
     }
 
     [Fact]

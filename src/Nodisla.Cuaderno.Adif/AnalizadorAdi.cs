@@ -1,3 +1,5 @@
+using Nodisla.Cuaderno.Aplicacion.Puertos;
+
 namespace Nodisla.Cuaderno.Adif;
 
 /// <summary>
@@ -9,7 +11,7 @@ namespace Nodisla.Cuaderno.Adif;
 /// longitud —unos la cuentan en caracteres y otros directamente se equivocan— y la unica forma
 /// de recuperarse es mirar si detras del valor hay de verdad una etiqueta.
 /// </remarks>
-internal sealed class AnalizadorAdi(Stream origen, Action<string, string?> avisar)
+internal sealed class AnalizadorAdi(Stream origen, Action<string, string?, NivelDeAviso> avisar)
 {
     /// <summary>Longitud maxima admitida para el interior de una etiqueta.</summary>
     private const int MaximoDeEtiqueta = 512;
@@ -40,7 +42,10 @@ internal sealed class AnalizadorAdi(Stream origen, Action<string, string?> avisa
             var cierra = await _ventana.BuscarAsync((byte)'>', 1, ct).ConfigureAwait(false);
             if (cierra < 0)
             {
-                avisar("Hay una etiqueta sin cerrar al final del fichero; se descarta lo que quedaba.", null);
+                avisar(
+                    "Hay una etiqueta sin cerrar al final del fichero; se descarta lo que quedaba.",
+                    null,
+                    NivelDeAviso.Advertencia);
                 _ventana.Avanzar(_ventana.Disponible);
                 return null;
             }
@@ -67,7 +72,10 @@ internal sealed class AnalizadorAdi(Stream origen, Action<string, string?> avisa
 
             if (longitud < 0)
             {
-                avisar($"El campo «{nombre}» no declara longitud; se lee hasta la etiqueta siguiente.", nombre);
+                avisar(
+                    $"El campo «{nombre}» no declara longitud; se lee hasta la etiqueta siguiente.",
+                    nombre,
+                    NivelDeAviso.Advertencia);
             }
 
             var (finDelValor, consumir) = await DeterminarFinDelValorAsync(nombre, longitud, ct)
@@ -161,16 +169,20 @@ internal sealed class AnalizadorAdi(Stream origen, Action<string, string?> avisa
                 var hasta = await BuscarFinPorEtiquetaAsync(longitud, ct).ConfigureAwait(false);
                 var sobrante = TextoAdif.Decodificar(_ventana.Trozo(longitud, hasta - longitud)).Trim();
                 if (sobrante.Length > 40) sobrante = sobrante[..40] + "…";
+                // Informativo y no advertencia: el dato bueno sale entero, el rotulo se
+                // conserva aparte y el fichero se reescribe igual. No hay nada que revisar.
                 avisar(
                     $"El campo «{nombre}» lleva «{sobrante}» detras de los {longitud} bytes que declara; "
-                    + "manda la longitud declarada y lo demas se descarta.",
-                    nombre);
+                    + "manda la longitud declarada y el resto se conserva aparte.",
+                    nombre,
+                    NivelDeAviso.Informativo);
                 return (longitud, hasta);
             }
 
             avisar(
                 $"El campo «{nombre}» dice ocupar {longitud} bytes pero el fichero se acaba antes.",
-                nombre);
+                nombre,
+                NivelDeAviso.Advertencia);
         }
 
         var fin = await BuscarFinPorEtiquetaAsync(0, ct).ConfigureAwait(false);
