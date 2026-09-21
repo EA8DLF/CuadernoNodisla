@@ -439,4 +439,217 @@ public sealed class RepositorioQsoPruebas(ITestOutputHelper salida) : IAsyncLife
         modo: qso.Mode.Principal,
         submodo: qso.Mode.Submodo,
         inicio: qso.InicioUtc);
+
+    [Fact]
+    public async Task TodosLosMetodosQueDevuelvenContactosTraenSusColeccionesHijas()
+    {
+        var qso = ConHijas();
+        var id = await repositorio.AnadirAsync(qso);
+
+        await using var otro = cuaderno.CrearContexto();
+        var repoLectura = new RepositorioQso(otro);
+
+        Comprobar(await repoLectura.ObtenerAsync(id), "ObtenerAsync");
+        Comprobar(await repoLectura.ObtenerPorUuidAsync(qso.Uuid), "ObtenerPorUuidAsync");
+        Comprobar((await repoLectura.BuscarAsync(new CriterioQso(), 0, 10)).Elementos.Single(), "BuscarAsync");
+        Comprobar(
+            (await repoLectura.BuscarAsync(new CriterioQso { Texto = "Koln" }, 0, 10)).Elementos.Single(),
+            "BuscarAsync con texto libre");
+        Comprobar(await repoLectura.BuscarDuplicadoAsync(ConHijas()), "BuscarDuplicadoAsync");
+        Comprobar(
+            (await repoLectura.TrabajadoAntesAsync(Indicativo.Parse("DL1ABC"))).Single(),
+            "TrabajadoAntesAsync");
+
+        static void Comprobar(Qso? leido, string metodo)
+        {
+            leido.Should().NotBeNull($"{metodo} tiene que devolver el contacto");
+            leido!.Confirmaciones.Should().HaveCount(2, $"{metodo} debe traer las confirmaciones");
+            leido.Confirmaciones.Should().ContainSingle(c => c.Medio == MedioDeConfirmacion.Lotw
+                                                            && c.EstaConfirmada);
+            leido.Referencias.Should().HaveCount(2, $"{metodo} debe traer las referencias");
+            leido.CamposExtra.Should().HaveCount(3, $"{metodo} debe traer los campos extra");
+            leido.CamposExtra.Should().ContainSingle(c => c.Nombre == "APP_LOG4OM_QSO_ID"
+                                                         && c.Valor == "4711");
+        }
+    }
+
+    [Fact]
+    public async Task ActualizarModificaUnaConfirmacionYBorraLaQueYaNoEsta()
+    {
+        var id = await repositorio.AnadirAsync(ConHijas());
+
+        await using (var edicion = cuaderno.CrearContexto())
+        {
+            var repoEdicion = new RepositorioQso(edicion);
+            var cargado = await repoEdicion.ObtenerAsync(id);
+
+            var lotw = cargado!.Confirmaciones.Single(c => c.Medio == MedioDeConfirmacion.Lotw);
+            lotw.Recibido = EstadoDeConfirmacion.Verificado;
+            lotw.Nota = "Verificada por el servicio";
+
+            var papel = cargado.Confirmaciones.Single(c => c.Medio == MedioDeConfirmacion.Papel);
+            cargado.Confirmaciones.Remove(papel);
+
+            cargado.Referencias.Remove(cargado.Referencias.Last());
+            cargado.CamposExtra.Single(c => c.Nombre == "APP_LOG4OM_QSO_ID").Valor = "9999";
+            cargado.CamposExtra.Add(new QsoCampoExtra { Nombre = "APP_NODISLA_ORIGEN", Valor = "prueba" });
+
+            // Se guarda desde otro contexto: el grafo llega desconectado, como en la rejilla.
+            await using var otro = cuaderno.CrearContexto();
+            await new RepositorioQso(otro).ActualizarAsync(cargado);
+        }
+
+        await using var lectura = cuaderno.CrearContexto();
+        var leido = await new RepositorioQso(lectura).ObtenerAsync(id);
+
+        leido!.Confirmaciones.Should().HaveCount(1);
+        leido.Confirmaciones[0].Medio.Should().Be(MedioDeConfirmacion.Lotw);
+        leido.Confirmaciones[0].Recibido.Should().Be(EstadoDeConfirmacion.Verificado);
+        leido.Confirmaciones[0].Nota.Should().Be("Verificada por el servicio");
+        leido.Referencias.Should().HaveCount(1);
+        leido.CamposExtra.Should().HaveCount(4);
+        leido.CamposExtra.Single(c => c.Nombre == "APP_LOG4OM_QSO_ID").Valor.Should().Be("9999");
+        leido.CamposExtra.Should().ContainSingle(c => c.Nombre == "APP_NODISLA_ORIGEN");
+
+        // Y no se han quedado filas huerfanas en las tablas hijas.
+        (await lectura.Confirmaciones.CountAsync()).Should().Be(1);
+        (await lectura.Referencias.CountAsync()).Should().Be(1);
+        (await lectura.CamposExtra.CountAsync()).Should().Be(4);
+    }
+
+    [Fact]
+    public async Task ActualizarNoDuplicaLasHijasDeUnGrafoSinIdentificadores()
+    {
+        var id = await repositorio.AnadirAsync(ConHijas());
+
+        // Asi queda un contacto recien fundido con un ADIF: las hijas no traen identificador.
+        var fundido = ConHijas();
+        fundido.Id = id;
+        fundido.CamposExtra.Add(new QsoCampoExtra { Nombre = "APP_NUEVO", Valor = "1" });
+
+        await using (var otro = cuaderno.CrearContexto())
+        {
+            await new RepositorioQso(otro).ActualizarAsync(fundido);
+        }
+
+        await using var lectura = cuaderno.CrearContexto();
+        var leido = await new RepositorioQso(lectura).ObtenerAsync(id);
+
+        leido!.Confirmaciones.Should().HaveCount(2);
+        leido.Referencias.Should().HaveCount(2);
+        leido.CamposExtra.Should().HaveCount(4);
+    }
+
+    [Fact]
+    public async Task UnaPaginaDeDoscientosContactosConHijasNoMultiplicaLasFilas()
+    {
+        const int cuantos = 200;
+        var contactos = FabricaDeContactos.Generar(cuantos).ToList();
+        foreach (var qso in contactos)
+        {
+            qso.Confirmaciones.Add(new QsoConfirmacion
+            {
+                Medio = MedioDeConfirmacion.Lotw,
+                Recibido = EstadoDeConfirmacion.Confirmado,
+            });
+            qso.Confirmaciones.Add(new QsoConfirmacion { Medio = MedioDeConfirmacion.Papel });
+            qso.Confirmaciones.Add(new QsoConfirmacion { Medio = MedioDeConfirmacion.Eqsl });
+            qso.Referencias.Add(new QsoReferencia { Tipo = TipoDeReferencia.Pota, Codigo = "EA-0001" });
+            for (var i = 0; i < 6; i++)
+            {
+                qso.CamposExtra.Add(new QsoCampoExtra { Nombre = $"APP_X{i}", Valor = i.ToString() });
+            }
+        }
+
+        await repositorio.AnadirLoteAsync(contactos);
+
+        await using var otro = cuaderno.CrearContexto();
+        var reloj = Stopwatch.StartNew();
+        var pagina = await new RepositorioQso(otro).BuscarAsync(new CriterioQso(), 0, cuantos);
+        reloj.Stop();
+
+        salida.WriteLine($"Pagina de {cuantos} contactos con 3 confirmaciones, 1 referencia y "
+            + $"6 campos extra: {reloj.Elapsed.TotalMilliseconds:F0} ms");
+
+        pagina.Elementos.Should().HaveCount(cuantos);
+        pagina.Elementos.Select(q => q.Id).Should().OnlyHaveUniqueItems();
+        pagina.Elementos.Should().OnlyContain(q => q.Confirmaciones.Count == 3);
+        pagina.Elementos.Should().OnlyContain(q => q.Referencias.Count == 1);
+        pagina.Elementos.Should().OnlyContain(q => q.CamposExtra.Count == 6);
+        reloj.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public async Task BuscarDuplicadoAguantaElRitmoDeUnaImportacion()
+    {
+        const int cuantos = 1838;
+        var contactos = FabricaDeContactos.Generar(cuantos).ToList();
+        foreach (var qso in contactos)
+        {
+            qso.Confirmaciones.Add(new QsoConfirmacion
+            {
+                Medio = MedioDeConfirmacion.Lotw,
+                Recibido = EstadoDeConfirmacion.Confirmado,
+            });
+            qso.CamposExtra.Add(new QsoCampoExtra { Nombre = "APP_LOG4OM_QSO_ID", Valor = "1" });
+        }
+
+        await repositorio.AnadirLoteAsync(contactos);
+
+        await using var otro = cuaderno.CrearContexto();
+        var repoLectura = new RepositorioQso(otro);
+
+        // Los candidatos son contactos recien leidos de un ADIF: sin identificador todavia.
+        var candidatos = contactos.Select(Copiar).ToList();
+
+        // Se calienta la consulta antes de medir: el primer viaje paga el plan de EF Core.
+        await repoLectura.BuscarDuplicadoAsync(candidatos[0]);
+
+        var reloj = Stopwatch.StartNew();
+        var encontrados = 0;
+        foreach (var candidato in candidatos)
+        {
+            if (await repoLectura.BuscarDuplicadoAsync(candidato) is not null)
+            {
+                encontrados++;
+            }
+        }
+
+        reloj.Stop();
+        salida.WriteLine($"BuscarDuplicadoAsync sobre {cuantos} contactos con hijas: "
+            + $"{reloj.ElapsedMilliseconds} ms en total, "
+            + $"{reloj.Elapsed.TotalMilliseconds / cuantos:F2} ms por contacto");
+
+        encontrados.Should().Be(cuantos);
+        (reloj.Elapsed.TotalMilliseconds / cuantos).Should().BeLessThan(10);
+    }
+
+    private static Qso ConHijas()
+    {
+        var qso = FabricaDeContactos.Crear();
+        qso.Confirmaciones.Add(new QsoConfirmacion
+        {
+            Medio = MedioDeConfirmacion.Lotw,
+            Enviado = EstadoDeConfirmacion.Confirmado,
+            Recibido = EstadoDeConfirmacion.Confirmado,
+            RecibidoUtc = FabricaDeContactos.Instante.AddDays(3),
+        });
+        qso.Confirmaciones.Add(new QsoConfirmacion
+        {
+            Medio = MedioDeConfirmacion.Papel,
+            Enviado = EstadoDeConfirmacion.Solicitado,
+            Via = ViaDeEnvio.Buro,
+        });
+        qso.Referencias.Add(new QsoReferencia { Tipo = TipoDeReferencia.Pota, Codigo = "EA-0001" });
+        qso.Referencias.Add(new QsoReferencia
+        {
+            Tipo = TipoDeReferencia.Sota,
+            Codigo = "EA8/GC-001",
+            Lado = LadoDeReferencia.Propia,
+        });
+        qso.CamposExtra.Add(new QsoCampoExtra { Nombre = "APP_LOG4OM_QSO_ID", Valor = "4711" });
+        qso.CamposExtra.Add(new QsoCampoExtra { Nombre = "APP_LOG4OM_EQSL", Valor = "N" });
+        qso.CamposExtra.Add(new QsoCampoExtra { Nombre = "MY_ANTENNA_AZ", Valor = "180" });
+        return qso;
+    }
 }
