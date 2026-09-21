@@ -13,6 +13,9 @@
     <ProjectReference Include="..\Nodisla.Cuaderno.Datos\Nodisla.Cuaderno.Datos.csproj" />
     <ProjectReference Include="..\Nodisla.Cuaderno.Adif\Nodisla.Cuaderno.Adif.csproj" />
     <ProjectReference Include="..\Nodisla.Cuaderno.Infraestructura\Nodisla.Cuaderno.Infraestructura.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Radio\Nodisla.Cuaderno.Radio.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Integraciones\Nodisla.Cuaderno.Integraciones.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Ui.Mapa\Nodisla.Cuaderno.Ui.Mapa.csproj" />
   </ItemGroup>
 
   <ItemGroup>
