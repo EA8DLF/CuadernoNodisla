@@ -7,7 +7,25 @@ Clon en español de Log4OM NextGen 2.40.0.0, para uso particular de EA8DLF.
 **Fase 1 (núcleo del cuaderno) completada.** La aplicación arranca, registra contactos,
 importa y exporta ADIF, y el cuaderno real de EA8DLF entra entero.
 
-Prueba de integración sobre el respaldo real (`EA8DLF_20260903_135046_backup.adi`, 3,63 MB):
+**Fase 2 (operar) casi cerrada.** Control del FT-710, vigilante de PTT, cluster de DX,
+bandplan, FLDigi y puente con WSJT-X y JTDX, todo terminado y probado. Queda la interfaz,
+en rediseño: el cuaderno se muda a su pestaña y la pantalla principal pasa a ser una cabina
+de operación con el FT-710 dibujado y los dos VFO a la vista.
+
+### Cifras
+
+| Capa | Pruebas | Medido |
+|---|---|---|
+| Dominio y DXCC | 550 | 99,67 % de acierto en entidad DXCC · 1,5 µs por resolución |
+| ADIF | 87 | 1.838 QSOs en 1,3 s · ida y vuelta byte a byte en los 8 respaldos |
+| Datos | 53 | alta en lote 3,8 s · duplicado 1,2 ms · página de 200 con hijas 150 ms |
+| Aplicación | 92 | — |
+| Integraciones | 160 | 8 variantes de anuncio · 426 tramos de bandplan |
+| Radio | 80 | 296 entradas del menú del FT-710 leídas del equipo real |
+
+Compilación de la solución entera: **0 avisos, 0 errores**.
+
+### Prueba de integración sobre el respaldo real
 
 ```
 1.838 registros leídos → 1.795 contactos, ninguno perdido
@@ -17,25 +35,36 @@ Reimportar: 0 nuevos, 0 cambios
 TODO CORRECTO
 ```
 
-### Cifras
-
-| Capa | Pruebas | Medido |
-|---|---|---|
-| Dominio y DXCC | 544 | 99,67 % de acierto en entidad DXCC · 1,5 µs por resolución |
-| ADIF | 87 | 1.838 QSOs en 1,3 s · ida y vuelta byte a byte en los 8 respaldos |
-| Datos | 53 | alta en lote 3,8 s · duplicado 1,2 ms · página de 200 con hijas 150 ms |
-| Aplicación | 92 | — |
-
-Compilación de la solución entera: **0 avisos, 0 errores**.
-
 ### Lo que se aprendió por el camino
 
-- **Tu cuaderno de Log4OM tiene 43 contactos duplicados.** Las dos copias de cada par difieren
-  en las confirmaciones: una da la QSL por recibida y la otra no. Por eso la importación funde
-  en vez de descartar; descartar habría costado 41 confirmaciones.
-- El fallo más grave lo encontró la prueba de punta a punta, no las 550 pruebas por capas:
-  los repositorios devolvían los contactos sin sus colecciones hijas, así que un respaldo ADIF
+- **El cuaderno de Log4OM de EA8DLF tiene 43 contactos duplicados.** Las dos copias de cada
+  par difieren en las confirmaciones. Por eso la importación funde en vez de descartar;
+  descartar habría costado 41 confirmaciones.
+- El fallo más grave lo encontró la prueba de punta a punta, no las 550 por capas: los
+  repositorios devolvían los contactos sin sus colecciones hijas, así que un respaldo ADIF
   hecho desde el programa habría salido **sin ninguna QSL**.
+- **OmniRig es servidor COM fuera de proceso**, así que la aplicación no tiene que compilarse
+  en 32 bits. El módem digital de la Fase 4 se salva de un estrangulamiento.
+- En el FT-710, **preguntar por el PTT es ponerlo**, y `SV;` no es una consulta sino una
+  acción que intercambia los VFO. La lista de órdenes seguras se escribe a mano.
+- `NA`, `AF` y `OC` son **localizadores Maidenhead válidos** además de continentes: sin
+  exigir 4 caracteres, un spot pondría al corresponsal en mitad del Atlántico.
+- El campo que el protocolo de WSJT-X llama «modo» **no es un modo**: es el carácter que el
+  programa pinta en su ventana y hay que devolvérselo intacto.
+
+## Equipo de Jose
+
+- **Yaesu FT-710** por USB (CP2105 dual). CAT en **COM3 a 115200**; COM4 a 4800 también
+  responde. `ID;` → `ID0800;`. Ver `docs/04-ft710-cat.md`.
+- Cuidado: **COM8 no es la radio**, es un Meshtastic. Identificar siempre por `ID;`.
+- OmniRig 1.20 instalado · Hamlib 4.6.2 con `rigctld.exe` viene con Log4OM.
+
+## Pendiente de comprobar con el equipo encendido
+
+- Tabla de `SH` (ancho de filtro) y de `VD` (retardo de VOX): hoy van como índice, sin
+  inventar la conversión.
+- Orden de lectura del banco de memorias, que no está en la captura.
+- Una escritura de prueba (leer `SH0;`, mover un paso, devolverlo) **previa autorización**.
 
 ## Decisiones tomadas (2026-09-21)
 
