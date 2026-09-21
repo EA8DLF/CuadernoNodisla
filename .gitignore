@@ -1,0 +1,14 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+# Publicación
+publish/
+artefactos/
+# Datos locales
+*.sqlite
+*.SQLite
+*.db
+config.local.*
