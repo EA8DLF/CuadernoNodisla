@@ -653,45 +653,78 @@ CuadernoNodisla/
 
 **Nunca escribir junto al ejecutable**: en `Program Files` no hay permiso, y rompe la actualización.
 
-### 7.3 Idioma: **código en inglés, todo lo visible en español**
+### 7.3 Idioma: **español en el código propio, inglés solo donde es normativo**
 
-**Recomendación: código en inglés técnico, interfaz y mensajes íntegramente en español.** Salvo un matiz importante.
+> **Corregido el 21-09-2026 por el team lead.** La redacción anterior recomendaba el código
+> íntegramente en inglés y fijaba un glosario que contradecía lo que después se decidió y se
+> construyó. Manda lo que dice esta versión.
 
-**Por qué el código en inglés:**
-- Todo el vocabulario del dominio ya es inglés y es **internacional**: `Callsign`, `Band`, `Mode`, `Grid`, `Report`, `QSL`, `DXCC`, `ADIF`, `Spot`. Traducirlos (`Indicativo`, `Banda`, `Rejilla`) crea una capa de traducción mental permanente y complica cruzar el código con la especificación ADIF, con el protocolo de WSJT-X y con el código de referencia de `ft8_lib`.
-- Los nombres de campo ADIF (`CALL`, `QSO_DATE`, `TIME_ON`, `RST_SENT`, `GRIDSQUARE`) son normativos. Si las propiedades se llaman igual, el mapeo es trivial; si se traducen, hace falta un diccionario que se desincroniza.
-- Todo lo que rodea al código (BCL, EF Core, ejemplos, errores de compilador, respuestas de la comunidad) está en inglés. Mezclar idiomas dentro de una misma expresión —`var listaDeQsos = context.Qsos.Where(...)`— produce el conocido "espanglish de código", que es peor que cualquiera de los dos idiomas puros.
-- Si algún día se busca ayuda externa o se publica el código, el inglés no cierra ninguna puerta.
+**Regla: identificadores y comentarios del código propio en español; los nombres de campo ADIF,
+en inglés y literales; todo lo visible por el operador, en español correcto y con tildes.**
 
-**La excepción que sí merece español**: los **nombres de proyecto y de espacio de nombres** (`Nodisla.Cuaderno.Integraciones`, `Nodisla.Cuaderno.Propagacion`). Ahí el español marca identidad del producto y no se mezcla con la lógica. Es lo que se ha usado en la sección 2. **Dentro** de esos ensamblados, tipos y miembros en inglés.
+**Por qué el código propio en español**: lo escribe y lo mantiene Jose, y el proyecto es suyo.
+`RegistrarQso`, `TrabajadoAntesAsync`, `ResolutorDxcc` o `EscritorAdif` se leen igual de bien que
+su equivalente inglés y no obligan a traducir mentalmente al hablar del programa. Los
+identificadores van **sin tildes ni eñes** (`Estacion`, no `Estación`; `ResolucionAnio`, no
+`ResoluciónAño`) para no depender de la codificación de ninguna herramienta.
+
+**Por qué los campos ADIF se quedan en inglés**: `CALL`, `QSO_DATE`, `TIME_ON`, `RST_SENT`,
+`GRIDSQUARE` son **normativos**. Si las propiedades se llaman igual que el campo, el mapeo es
+trivial y se puede leer la especificación al lado del código; si se traducen, hace falta un
+diccionario que se desincroniza con cada revisión del estándar. Por eso `Qso` tiene `Call`,
+`Band`, `Freq` y `RstSent`, y no se traducen. La misma excepción vale para lo que venga impuesto
+por un protocolo ajeno (WSJT-X, Hamlib, `ft8_lib`).
+
+**Espacios de nombres en español** (`Nodisla.Cuaderno.Integraciones`, `Nodisla.Cuaderno.Propagacion`),
+por identidad de producto.
 
 **Qué va obligatoriamente en español:**
-- **Toda cadena que el usuario pueda ver**: etiquetas, botones, menús, títulos, encabezados de columna, tooltips, mensajes de error, textos de confirmación, avisos de la barra de estado, nombres de informes, textos de la ayuda.
-- **Los comentarios del código y los documentos de `docs/`**, porque los escribe y los lee Jose.
+- **Toda cadena que el operador pueda ver**: etiquetas, botones, menús, títulos, encabezados de
+  columna, ayudas emergentes, mensajes de error, confirmaciones, barra de estado, informes, ayuda.
+- **Los comentarios del código y los documentos de `docs/`**.
 - **Los mensajes de los commits**.
-- Las cadenas en ficheros **`.resx`** (`Textos.resx`), nunca incrustadas en el XAML. Aunque hoy sólo haya español, esto cuesta lo mismo, mantiene todos los textos en un sitio revisable, y deja la puerta abierta a un `Textos.en.resx` sin refactorizar nada.
+
+**Dónde viven los textos de la interfaz**: hoy, directamente en el XAML. La recomendación anterior
+de meterlos en `Textos.resx` se descarta mientras solo haya un idioma: añade una indirección que
+hay que mantener a cambio de un beneficio que nadie ha pedido. Si alguna vez se quiere una segunda
+lengua, se extraen entonces, que es trabajo mecánico.
+
+**Formatos numéricos — la trampa de la cultura española.** La aplicación corre en `es-ES`, así que
+los millares llevan punto y los decimales coma: **20.000 contactos**. Con dos excepciones
+deliberadas, que se escriben y se muestran **siempre con punto decimal**, en cultura invariante:
+
+- **La frecuencia** (`14.200 MHz`). Es la convención de la radio, la del dial del equipo, la de
+  ADIF y la de todos los cuadernos del mundo. Escribirla `14,200` sería ilegible para un operador
+  y ambiguo al exportar.
+- **Los informes en decibelios** de FT8 y similares (`-15`, `+03`).
+
+Al teclear, los dos campos aceptan también la coma: quien escribe `14,200` quiere decir `14.200`.
+Esta regla está fijada con pruebas a propósito, porque es de las que alguien «corrige» más
+adelante sin conocer el motivo.
 
 **Terminología de la interfaz — glosario fijo, para no decir lo mismo de dos maneras:**
 
 | Concepto | Término en la interfaz | **No** usar |
 |---|---|---|
 | Callsign | **Indicativo** | Distintivo, señal |
-| Logbook | **Cuaderno de guardia** (largo) / **Cuaderno** (corto) | Diario, bitácora, log |
-| QSO / contact | **QSO** (se deja tal cual) | Contacto |
+| Logbook | **Cuaderno** (o *cuaderno de guardia* al presentarlo) | Diario, bitácora, log |
+| QSO / contact | **Contacto** en textos corridos; **QSO** cuando hace falta el término técnico | — |
 | Band | **Banda** | — |
 | Mode | **Modo** | Modalidad |
-| Grid square | **Locator** (se deja tal cual) | Cuadrícula, rejilla |
-| Report (RST) | **Reporte** | Informe, señal |
-| Spot | **Spot** (se deja tal cual, es el término usado) | Anuncio, aviso |
+| Grid square | **Localizador** | Cuadrícula, rejilla, locator |
+| Report (RST) | **Informe** | Reporte, señal |
+| Spot | **Spot** | Anuncio, aviso |
 | Rig / transceiver | **Equipo** | Radio, transceptor, rig |
 | Rig control (CAT) | **Control del equipo (CAT)** | — |
 | Award | **Diploma** | Premio, galardón |
 | Worked before | **Trabajado antes** | Ya contactado |
 | Upload / Download | **Subir** / **Descargar** | Cargar, bajar |
 | Settings | **Ajustes** | Configuración, preferencias, opciones |
-| Waterfall | **Cascada** o **Waterfall** — **elegir uno y no mezclar**. Recomendado: **Waterfall** | — |
+| Waterfall | **Cascada** | Waterfall |
 
-**Nombres de fichero y rutas**: sin tildes ni eñes en nombres de fichero del repositorio (`03-arquitectura.md`, no `03-arquitectura-técnica.md`), para evitar problemas de codificación entre herramientas y en git. En cambio los ficheros que genera el usuario sí pueden llevar acentos.
+**Nombres de fichero y rutas**: sin tildes ni eñes en los ficheros del repositorio
+(`03-arquitectura.md`), para evitar problemas de codificación entre herramientas y en git. Los
+ficheros que genera el usuario sí pueden llevar acentos.
 
 ### 7.4 Convenciones de código
 

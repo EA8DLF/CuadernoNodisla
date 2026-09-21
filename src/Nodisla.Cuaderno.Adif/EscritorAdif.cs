@@ -78,13 +78,18 @@ public sealed class EscritorAdif : IEscritorAdif
     }
 
     /// <summary>Escribe un campo en la sintaxis de ADI, con la longitud contada en bytes.</summary>
+    /// <remarks>
+    /// La longitud que se declara es siempre la del valor. Si el campo arrastra un literal —un
+    /// rotulo de adorno que el fichero de origen llevaba detras del dato— se vuelca el literal
+    /// entero pero la longitud sigue siendo la del valor, que es justo como venia.
+    /// </remarks>
     internal static void EscribirCampoAdi(StringBuilder destino, CampoAdif campo)
     {
         var valor = campo.Valor ?? string.Empty;
         destino.Append('<').Append(campo.Nombre).Append(':');
         destino.Append(Utf8SinMarca.GetByteCount(valor).ToString(CultureInfo.InvariantCulture));
         if (!string.IsNullOrEmpty(campo.TipoAdif)) destino.Append(':').Append(campo.TipoAdif);
-        destino.Append('>').Append(valor).Append(' ');
+        destino.Append('>').Append(campo.TextoParaEscribir).Append(' ');
     }
 
     // ── ADX ──────────────────────────────────────────────────────────────────
@@ -145,6 +150,9 @@ public sealed class EscritorAdif : IEscritorAdif
     private static async Task EscribirElementoAdxAsync(XmlWriter escritor, CampoAdif campo)
     {
         var nombre = campo.Nombre;
+
+        // Aqui va el valor y no el literal: en XML no hay longitudes declaradas, asi que un
+        // rotulo de adorno detras del dato no seria adorno, seria parte del dato.
         var valor = campo.Valor ?? string.Empty;
 
         if (nombre.StartsWith("APP_", StringComparison.OrdinalIgnoreCase))

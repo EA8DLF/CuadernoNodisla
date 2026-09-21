@@ -94,6 +94,9 @@ public class FicherosSuciosPruebas
         lectura.Qsos[0].Name.Should().Be("JOSE");
         lectura.Avisos.Should().Contain(a =>
             a.Campo == "CNTY" && !a.EsFatal && a.Mensaje.Contains("// Ventura"));
+
+        // Descartado para el dato, pero no perdido: al exportar sale igual que entro.
+        (await Ayudas.ExportarAsync(lectura.Qsos)).Should().Contain("<CNTY:10>CA,VENTURA // Ventura");
     }
 
     [Fact]
@@ -149,6 +152,11 @@ public class FicherosSuciosPruebas
 
         lectura.Qsos[0].Name.Should().Be("JOSE");
         lectura.Avisos.Should().Contain(a => a.Campo == "NAME" && a.Mensaje.Contains("repetido"));
+
+        // El valor descartado tampoco se pierde: se guarda con un nombre que no colisiona.
+        lectura.Qsos[0].CamposExtra.Should().Contain(c =>
+            c.Nombre == "APP_NODISLA_REPETIDO_2_NAME" && c.Valor == "MARIA");
+        (await Ayudas.ExportarAsync(lectura.Qsos)).Should().Contain("<APP_NODISLA_REPETIDO_2_NAME:5>MARIA");
     }
 
     [Fact]

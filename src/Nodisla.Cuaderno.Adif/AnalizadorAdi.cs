@@ -73,9 +73,19 @@ internal sealed class AnalizadorAdi(Stream origen, Action<string, string?> avisa
             var (finDelValor, consumir) = await DeterminarFinDelValorAsync(nombre, longitud, ct)
                 .ConfigureAwait(false);
             var valor = TextoAdif.Decodificar(_ventana.Trozo(0, finDelValor));
+
+            // Si se ha descartado texto por respetar la longitud declarada, el literal completo
+            // viaja aparte: el modelo se queda con el valor limpio y el fichero se puede
+            // reescribir tal y como entro.
+            var literal = consumir > finDelValor
+                ? TextoAdif.Decodificar(_ventana.Trozo(0, consumir))
+                : null;
+
             _ventana.Avanzar(consumir);
 
-            return new TokenAdi(ClaseDeToken.Campo, new CampoAdif(nombre.ToUpperInvariant(), valor, tipo));
+            return new TokenAdi(
+                ClaseDeToken.Campo,
+                new CampoAdif(nombre.ToUpperInvariant(), valor, tipo, literal));
         }
     }
 

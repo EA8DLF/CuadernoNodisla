@@ -59,7 +59,59 @@ public class IdaYVueltaPruebas
         using var flujo = new MemoryStream(adi);
         var devuelto = await Ayudas.CamposCrudosAsync(flujo);
 
-        ComprobarSinPerdida(original, devuelto, "ADX");
+        // Por ADX se compara el valor y no el literal: el XML no declara longitudes, asi que un
+        // rotulo de adorno detras del dato no tiene donde meterse sin volverse parte del dato.
+        ComprobarSinPerdida(original, devuelto, "ADX", conLiteral: false);
+    }
+
+    [Fact]
+    public async Task El_rotulo_de_adorno_del_condado_ni_ensucia_el_dato_ni_se_pierde()
+    {
+        if (RespaldosReales.MasReciente is not { } ruta) return;
+
+        var crudos = await Ayudas.CamposCrudosDeFicheroAsync(ruta);
+        var indice = crudos.FindIndex(r => r.Any(c =>
+            c.Nombre == "CNTY" && c.Literal is not null && c.Literal.Contains("//", StringComparison.Ordinal)));
+        indice.Should().BeGreaterThanOrEqualTo(0, "el respaldo real trae condados con rotulo de adorno");
+
+        var campoOriginal = crudos[indice].Single(c => c.Nombre == "CNTY");
+        campoOriginal.Valor.Should().NotContain("//");
+        campoOriginal.Literal.Should().Contain("//");
+
+        var lectura = await LeerFicheroAsync(ruta);
+        var qso = lectura.Qsos[indice];
+
+        // El dato que llega al cuaderno es el codigo limpio: es lo que cuenta para los diplomas.
+        qso.Cnty.Should().Be(campoOriginal.Valor);
+        qso.Cnty.Should().NotContain("//");
+
+        // Y el fichero sale con el campo tal y como entro, longitud declarada incluida.
+        var salida = Encoding.UTF8.GetString(await Ayudas.ExportarBytesAsync([qso]));
+        var comoEntro = $"<CNTY:{Encoding.UTF8.GetByteCount(campoOriginal.Valor)}>{campoOriginal.Literal}";
+        salida.Should().Contain(comoEntro);
+
+        // Y leerlo otra vez devuelve exactamente el mismo reparto, sin ensuciarse por el camino.
+        var vuelta = await Ayudas.LeerAsync(Encoding.UTF8.GetBytes(salida));
+        vuelta.Qsos.Single().Cnty.Should().Be(campoOriginal.Valor);
+    }
+
+    [Fact]
+    public async Task Todos_los_condados_con_rotulo_del_respaldo_real_vuelven_enteros()
+    {
+        if (RespaldosReales.MasReciente is not { } ruta) return;
+
+        var crudos = await Ayudas.CamposCrudosDeFicheroAsync(ruta);
+        var conRotulo = crudos.Count(r => r.Any(c => c.Nombre == "CNTY" && c.Literal is not null));
+        conRotulo.Should().BeGreaterThan(0);
+
+        var lectura = await LeerFicheroAsync(ruta);
+        var salida = await Ayudas.ExportarBytesAsync(lectura.Qsos);
+        using var flujo = new MemoryStream(salida);
+        var devuelto = await Ayudas.CamposCrudosAsync(flujo);
+
+        devuelto.Count(r => r.Any(c => c.Nombre == "CNTY" && c.Literal is not null))
+            .Should().Be(conRotulo, "ningun rotulo se queda por el camino");
+        lectura.Qsos.Should().NotContain(q => q.Cnty != null && q.Cnty.Contains("//"));
     }
 
     [Fact]
@@ -103,16 +155,25 @@ public class IdaYVueltaPruebas
         return await new LectorAdif().LeerAsync(flujo);
     }
 
-    /// <summary>Comprueba que cada campo del fichero original sigue estando, con el mismo valor.</summary>
+    /// <summary>
+    /// Comprueba que cada campo del fichero original sigue estando y con el mismo texto. Se
+    /// compara el literal, no el valor interpretado: si el fichero traia un rotulo de adorno
+    /// detras del dato, el rotulo tiene que volver tambien.
+    /// </summary>
     private static void ComprobarSinPerdida(
-        List<List<CampoAdif>> original, List<List<CampoAdif>> devuelto, string etiqueta)
+        List<List<CampoAdif>> original,
+        List<List<CampoAdif>> devuelto,
+        string etiqueta,
+        bool conLiteral = true)
     {
         devuelto.Should().HaveCount(original.Count, "el fichero {0} tiene esos registros", etiqueta);
+
+        static string Texto(CampoAdif c, bool conLiteral) => conLiteral ? c.TextoParaEscribir : c.Valor;
 
         for (var i = 0; i < original.Count; i++)
         {
             var salida = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var c in devuelto[i]) salida[c.Nombre] = c.Valor;
+            foreach (var c in devuelto[i]) salida[c.Nombre] = Texto(c, conLiteral);
 
             foreach (var campo in original[i])
             {
@@ -120,7 +181,7 @@ public class IdaYVueltaPruebas
                     campo.Nombre,
                     "el registro {0} de {1} traia el campo {2}", i + 1, etiqueta, campo.Nombre);
                 salida[campo.Nombre].Should().Be(
-                    campo.Valor,
+                    Texto(campo, conLiteral),
                     "el campo {0} del registro {1} de {2} ha de volver igual", campo.Nombre, i + 1, etiqueta);
             }
         }

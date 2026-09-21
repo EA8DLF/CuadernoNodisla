@@ -43,13 +43,25 @@ public static class MapeoAdif
         var valores = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var orden = new List<CampoAdif>(campos.Count);
 
+        var repeticiones = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
         foreach (var c in campos)
         {
             if (!valores.TryAdd(c.Nombre, c.Valor))
             {
+                // ADIF no dice que hacer con un campo repetido. Manda el primero, pero el otro
+                // valor tampoco se tira: se guarda con un nombre propio que no colisiona.
+                repeticiones[c.Nombre] = repeticiones.TryGetValue(c.Nombre, out var n) ? n + 1 : 2;
+                qso.CamposExtra.Add(new QsoCampoExtra
+                {
+                    Nombre = $"APP_NODISLA_REPETIDO_{repeticiones[c.Nombre]}_{c.Nombre}",
+                    Valor = c.TextoParaEscribir,
+                    TipoAdif = c.TipoAdif,
+                });
                 avisos.Add(new AvisoAdif(
                     numeroDeRegistro, c.Nombre,
-                    $"El campo «{c.Nombre}» aparece repetido en el registro; se conserva el primer valor.",
+                    $"El campo «{c.Nombre}» aparece repetido en el registro; manda el primer valor y "
+                    + "el otro se conserva aparte.",
                     false));
                 continue;
             }
@@ -66,7 +78,7 @@ public static class MapeoAdif
             qso.CamposExtra.Add(new QsoCampoExtra
             {
                 Nombre = campo.Nombre,
-                Valor = campo.Valor,
+                Valor = campo.TextoParaEscribir,
                 TipoAdif = campo.TipoAdif,
             });
             nombresExtra.Add(campo.Nombre);
@@ -185,8 +197,10 @@ public static class MapeoAdif
         {
             if (Alias.Contains(campo.Nombre)) continue;
             if (nombresExtra.Contains(campo.Nombre)) continue;
+
+            var literal = campo.TextoParaEscribir;
             if (generados.TryGetValue(campo.Nombre, out var v)
-                && string.Equals(v, campo.Valor, StringComparison.Ordinal))
+                && string.Equals(v, literal, StringComparison.Ordinal))
             {
                 continue;
             }
@@ -194,7 +208,7 @@ public static class MapeoAdif
             qso.CamposExtra.Add(new QsoCampoExtra
             {
                 Nombre = campo.Nombre,
-                Valor = campo.Valor,
+                Valor = literal,
                 TipoAdif = campo.TipoAdif,
             });
             nombresExtra.Add(campo.Nombre);
@@ -546,6 +560,12 @@ public static class MapeoAdif
     }
 
     /// <summary>Coloca los campos conservados encima de los generados, sustituyendo por nombre.</summary>
+    /// <remarks>
+    /// Cuando lo conservado es exactamente lo generado mas un rabo de texto detras —el caso del
+    /// <c>&lt;CNTY:10&gt;CA,VENTURA // Ventura</c> de Log4OM— no se sustituye el valor: se
+    /// escribe el texto completo pero declarando la longitud del valor bueno. Asi el fichero
+    /// sale igual que entro y volver a leerlo devuelve otra vez el condado limpio.
+    /// </remarks>
     private static List<CampoAdif> Superponer(List<CampoAdif> campos, IReadOnlyList<QsoCampoExtra> extras)
     {
         if (extras.Count == 0) return campos;
@@ -555,9 +575,20 @@ public static class MapeoAdif
 
         foreach (var extra in extras)
         {
-            var campo = new CampoAdif(extra.Nombre.ToUpperInvariant(), extra.Valor, extra.TipoAdif);
-            if (indice.TryGetValue(campo.Nombre, out var i)) campos[i] = campo;
-            else { indice[campo.Nombre] = campos.Count; campos.Add(campo); }
+            var nombre = extra.Nombre.ToUpperInvariant();
+            if (!indice.TryGetValue(nombre, out var i))
+            {
+                indice[nombre] = campos.Count;
+                campos.Add(new CampoAdif(nombre, extra.Valor, extra.TipoAdif));
+                continue;
+            }
+
+            var generado = campos[i].Valor;
+            campos[i] = generado.Length > 0
+                && extra.Valor.Length > generado.Length
+                && extra.Valor.StartsWith(generado, StringComparison.Ordinal)
+                    ? new CampoAdif(nombre, generado, extra.TipoAdif, extra.Valor)
+                    : new CampoAdif(nombre, extra.Valor, extra.TipoAdif);
         }
         return campos;
     }

@@ -107,6 +107,9 @@ public class TrampasPruebas
         lectura.Qsos[0].Qth.Should().Be("LA");
         lectura.Qsos[0].Name.Should().Be("JOSE");
         lectura.Avisos.Should().Contain(a => a.Campo == "QTH" && !a.EsFatal);
+
+        // El sobrante no cuenta como dato, pero el fichero se devuelve tal cual.
+        (await Ayudas.ExportarAsync(lectura.Qsos)).Should().Contain("<QTH:2>LAS PALMAS");
     }
 
     [Fact]
