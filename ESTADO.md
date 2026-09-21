@@ -3,7 +3,7 @@
 Clon en español de Log4OM NextGen 2.40.0.0, para uso particular de EA8DLF.
 
 ## Estado
-Fase 0 — reconocimiento. Tres especialistas analizando el original.
+Fase 1 — núcleo del cuaderno. Esqueleto de solución compilando; cuatro especialistas trabajando en ADIF, datos, DXCC e interfaz.
 
 ## Decisiones tomadas (2026-09-21)
 - **Stack**: C# .NET 8 + WPF, escritorio Windows.
@@ -16,6 +16,7 @@ Fase 0 — reconocimiento. Tres especialistas analizando el original.
 - Original instalado en `D:\Log4OM NextGen\`; datos en `%AppData%\Log4OM2\`
 
 ## Documentos
+- `docs/00-plan-maestro.md` — fases, riesgos y decisiones
 - `docs/01-inventario-funcional.md`
 - `docs/02-modelo-datos.md`
 - `docs/03-arquitectura.md`
