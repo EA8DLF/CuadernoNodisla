@@ -122,12 +122,20 @@ public sealed class SeguirElCluster : IAsyncDisposable
     private readonly IFuenteSpots _fuente;
     private readonly IConsultasDeInforme _consultas;
     private readonly IResolutorDxcc _dxcc;
+    private readonly JuntaDeRepetidos _repetidos;
 
     /// <summary>Monta el seguimiento sobre una fuente concreta.</summary>
     /// <param name="fuente">De donde llegan los anuncios.</param>
     /// <param name="consultas">Consultas del cuaderno que dicen si algo es nuevo.</param>
     /// <param name="dxcc">Resolutor de entidades, para saber el pais y el continente.</param>
-    public SeguirElCluster(IFuenteSpots fuente, IConsultasDeInforme consultas, IResolutorDxcc dxcc)
+    /// <param name="ventanaDeRepetidos">
+    /// Cuanto tiempo se considera repetido el mismo anuncio. Diez minutos por omision.
+    /// </param>
+    public SeguirElCluster(
+        IFuenteSpots fuente,
+        IConsultasDeInforme consultas,
+        IResolutorDxcc dxcc,
+        TimeSpan? ventanaDeRepetidos = null)
     {
         ArgumentNullException.ThrowIfNull(fuente);
         ArgumentNullException.ThrowIfNull(consultas);
@@ -136,14 +144,18 @@ public sealed class SeguirElCluster : IAsyncDisposable
         _fuente = fuente;
         _consultas = consultas;
         _dxcc = dxcc;
+        _repetidos = new JuntaDeRepetidos(ventanaDeRepetidos);
 
         _fuente.SpotRecibido += AlLlegarUnSpot;
         _fuente.LineaRecibida += AlLlegarUnaLinea;
         _fuente.EstadoCambiado += AlCambiarElEstado;
     }
 
-    /// <summary>Salta con cada spot ya enriquecido con lo que sabe el cuaderno.</summary>
-    public event EventHandler<Spot>? SpotMarcado;
+    /// <summary>
+    /// Salta con cada anuncio ya enriquecido con lo que sabe el cuaderno y con sus
+    /// repeticiones juntas.
+    /// </summary>
+    public event EventHandler<AnuncioDelCluster>? AnuncioRecibido;
 
     /// <summary>Salta con cada linea del cluster que no es un anuncio.</summary>
     public event EventHandler<string>? LineaRecibida;
@@ -156,6 +168,12 @@ public sealed class SeguirElCluster : IAsyncDisposable
 
     /// <summary>Estado de la conexion con la fuente.</summary>
     public EstadoDeConexion Estado => _fuente.Estado;
+
+    /// <summary>Cuanto tiempo se considera repetido el mismo anuncio.</summary>
+    public TimeSpan VentanaDeRepetidos => _repetidos.Ventana;
+
+    /// <summary>Olvida las repeticiones que se estaban siguiendo.</summary>
+    public void OlvidarRepetidos() => _repetidos.Vaciar();
 
     /// <summary>Conecta con la fuente y empieza a recibir.</summary>
     /// <param name="ct">Testigo de cancelacion.</param>
@@ -229,7 +247,7 @@ public sealed class SeguirElCluster : IAsyncDisposable
         try
         {
             var marcado = await MarcarAsync(spot).ConfigureAwait(false);
-            SpotMarcado?.Invoke(this, marcado);
+            AnuncioRecibido?.Invoke(this, _repetidos.Juntar(marcado));
         }
         catch (OperationCanceledException)
         {
@@ -238,7 +256,7 @@ public sealed class SeguirElCluster : IAsyncDisposable
         catch (Exception)
         {
             // Si no se ha podido resolver la entidad, el spot vale igual: se ensena en crudo.
-            SpotMarcado?.Invoke(this, spot);
+            AnuncioRecibido?.Invoke(this, _repetidos.Juntar(spot));
         }
     }
 
