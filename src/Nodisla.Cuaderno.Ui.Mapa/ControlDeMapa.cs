@@ -120,6 +120,32 @@ public class ControlDeMapa : UserControl, IDisposable
     private ILayer? _capaDeMosaicos;
     /// <summary>Calculo en curso de cada capa, para poder cancelar solo el suyo.</summary>
     private readonly Dictionary<MemoryLayer, CancellationTokenSource> _dibujosEnCurso = [];
+
+    /// <summary>Cuantos recalculos se han pedido y cuantos han llegado a colgarse.</summary>
+    private int _recalculosPedidos;
+    private int _recalculosColgados;
+    private int _recalculosCancelados;
+    private int _recalculosRotos;
+
+    /// <summary>
+    /// Espera antes de rehacer las marcas, para juntar las rafagas del cluster.
+    /// </summary>
+    /// <remarks>
+    /// Cada anuncio que llega cambia la lista de marcas, y con el cuaderno entero encima cada
+    /// recalculo reparte veinte mil puntos en casillas. En una rafaga eso son decenas de
+    /// repartos identicos seguidos. Esperando a que la rafaga pare se hace uno solo, y que el
+    /// mapa ensene los spots con medio segundo de retraso no se lo nota nadie.
+    /// </remarks>
+    private readonly System.Windows.Threading.DispatcherTimer _esperaDeMarcas = new()
+    {
+        Interval = TimeSpan.FromMilliseconds(400),
+    };
+
+    /// <summary>Latido de diagnostico: cuenta lo que hay en cada capa cada pocos segundos.</summary>
+    private readonly System.Windows.Threading.DispatcherTimer _latido = new()
+    {
+        Interval = TimeSpan.FromSeconds(15),
+    };
     private bool _liberado;
     private bool _encuadrado;
 
@@ -164,6 +190,15 @@ public class ControlDeMapa : UserControl, IDisposable
 
         AplicarTema();
         RehacerElFondo();
+
+        _esperaDeMarcas.Tick += (_, _) =>
+        {
+            _esperaDeMarcas.Stop();
+            RehacerLasMarcas();
+        };
+
+        _latido.Tick += (_, _) => Contar();
+        _latido.Start();
 
         // Encuadrar antes de que el control tenga tamano no hace nada: el motor de mapas
         // necesita saber cuantos puntos de pantalla tiene para calcular la escala. Por eso se
@@ -295,6 +330,8 @@ public class ControlDeMapa : UserControl, IDisposable
         if (_liberado || !liberando) return;
         _liberado = true;
 
+        _latido.Stop();
+        _esperaDeMarcas.Stop();
         _mapa.MapTapped -= AlTocarElMapa;
         SizeChanged -= AlCambiarDeTamano;
         foreach (var testigo in _dibujosEnCurso.Values)
@@ -308,7 +345,7 @@ public class ControlDeMapa : UserControl, IDisposable
     }
 
     private static void AlCambiarLasMarcas(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
-        ((ControlDeMapa)d).RehacerLasMarcas();
+        ((ControlDeMapa)d).PedirLasMarcas();
 
     private static void AlCambiarLosTrayectos(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
         ((ControlDeMapa)d).RehacerLosTrayectos();
@@ -467,6 +504,15 @@ public class ControlDeMapa : UserControl, IDisposable
         return Math.Clamp(PuntosEntreBurbujas * resolucion * 360.0 / VueltaAlMundoEnMetros, 0.05, 90.0);
     }
 
+    /// <summary>Pide rehacer las marcas cuando pare la rafaga de cambios.</summary>
+    private void PedirLasMarcas()
+    {
+        if (_liberado) return;
+
+        _esperaDeMarcas.Stop();
+        _esperaDeMarcas.Start();
+    }
+
     private void RehacerLasMarcas()
     {
         if (_liberado) return;
@@ -507,7 +553,7 @@ public class ControlDeMapa : UserControl, IDisposable
 
         _ = Dispatcher.BeginInvoke(
             System.Windows.Threading.DispatcherPriority.Background,
-            new Action(RehacerLasMarcas));
+            new Action(PedirLasMarcas));
     }
 
     private void RehacerLaEstacion()
@@ -556,6 +602,7 @@ public class ControlDeMapa : UserControl, IDisposable
 
         var testigo = new CancellationTokenSource();
         _dibujosEnCurso[capa] = testigo;
+        System.Threading.Interlocked.Increment(ref _recalculosPedidos);
 
         var ct = testigo.Token;
         _ = Task.Run(
@@ -566,17 +613,30 @@ public class ControlDeMapa : UserControl, IDisposable
                 {
                     figuras = calcular();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     // Un dato imposible no puede dejar la ventana sin mapa: se deja la capa
-                    // como estaba y se sigue.
+                    // como estaba y se sigue. Pero SE ANOTA: tragarse el fallo en silencio fue
+                    // lo que dejo el mapa en negro sin una sola linea en el registro.
+                    System.Threading.Interlocked.Increment(ref _recalculosRotos);
+                    Serilog.Log.Error(ex, "No se ha podido calcular la capa {Capa} del mapa.", capa.Name);
                     return;
                 }
 
-                if (ct.IsCancellationRequested) return;
+                if (ct.IsCancellationRequested)
+                {
+                    System.Threading.Interlocked.Increment(ref _recalculosCancelados);
+                    return;
+                }
                 _ = Dispatcher.InvokeAsync(() =>
                 {
-                    if (ct.IsCancellationRequested || _liberado) return;
+                    if (ct.IsCancellationRequested || _liberado)
+                    {
+                        System.Threading.Interlocked.Increment(ref _recalculosCancelados);
+                        return;
+                    }
+
+                    System.Threading.Interlocked.Increment(ref _recalculosColgados);
                     Colgar(capa, figuras);
                 });
             },
@@ -590,21 +650,92 @@ public class ControlDeMapa : UserControl, IDisposable
         _mapa.RefreshGraphics();
     }
 
+    /// <summary>
+    /// Deja en el registro que hay en cada capa. Diagnostico del mapa en negro.
+    /// </summary>
+    private void Contar()
+    {
+        // El latido solo cuesta algo si alguien lo va a leer. En marcha normal el registro va
+        // a nivel de informacion y esto no hace nada.
+        if (_liberado || !Serilog.Log.IsEnabled(Serilog.Events.LogEventLevel.Debug)) return;
+
+        var capas = string.Join(
+            " · ",
+            _mapa.Map.Layers.Select(c => $"{c.Name}={(c is MemoryLayer m ? (m.Features?.Count() ?? -1) : -2)}"));
+
+        Serilog.Log.Debug(
+            "MAPA capas: {Capas} | resolucion={Resolucion} | vista={VistaAncho}x{VistaAlto}"
+            + " centro=({CentroX},{CentroY}) | tamano={Ancho}x{Alto} | "
+            + "recalculos pedidos={Pedidos} colgados={Colgados} cancelados={Cancelados} rotos={Rotos} | "
+            + "marcas entrantes={Marcas} | memoria={MemoriaMb} MB | trabajo={TrabajoMb} MB",
+            capas,
+            _mapa.Map.Navigator.Viewport.Resolution,
+            _mapa.Map.Navigator.Viewport.Width,
+            _mapa.Map.Navigator.Viewport.Height,
+            Math.Round(_mapa.Map.Navigator.Viewport.CenterX),
+            Math.Round(_mapa.Map.Navigator.Viewport.CenterY),
+            ActualWidth,
+            ActualHeight,
+            _recalculosPedidos,
+            _recalculosColgados,
+            _recalculosCancelados,
+            _recalculosRotos,
+            Marcas?.Count ?? -1,
+            GC.GetTotalMemory(false) / (1024 * 1024),
+            System.Diagnostics.Process.GetCurrentProcess().WorkingSet64 / (1024 * 1024));
+    }
+
     private void MostrarAviso(string? texto)
     {
         _aviso.Text = texto ?? string.Empty;
         _aviso.Visibility = texto is { Length: > 0 } ? Visibility.Visible : Visibility.Collapsed;
     }
 
+    /// <summary>
+    /// Encuadra la primera vez y revisa el encuadre cada vez que cambia el tamano.
+    /// </summary>
+    /// <remarks>
+    /// La revision hace falta porque el panel vive en una pestana: si la ventana se maximiza
+    /// mientras se esta mirando otra, el motor de mapas se entera del tamano nuevo cuando ya
+    /// no cuadra con el encuadre que tenia. Se le vuelve a dar el mismo centro y la misma
+    /// escala —no se mueve lo que el operador estuviera mirando— y con eso recalcula la vista
+    /// con el tamano bueno. Si lo que tiene no sirve para nada, se vuelve al mundo entero.
+    /// </remarks>
     private void AlCambiarDeTamano(object origen, SizeChangedEventArgs args)
     {
-        if (_encuadrado || _liberado) return;
+        if (_liberado) return;
         if (args.NewSize.Width < 1 || args.NewSize.Height < 1) return;
 
-        _encuadrado = true;
+        if (!_encuadrado)
+        {
+            _encuadrado = true;
+            _ = Dispatcher.BeginInvoke(
+                System.Windows.Threading.DispatcherPriority.Loaded,
+                new Action(VerElMundo));
+            return;
+        }
+
         _ = Dispatcher.BeginInvoke(
             System.Windows.Threading.DispatcherPriority.Loaded,
-            new Action(VerElMundo));
+            new Action(RevisarElEncuadre));
+    }
+
+    /// <summary>Devuelve la vista a un estado utilizable sin mover lo que se estaba mirando.</summary>
+    private void RevisarElEncuadre()
+    {
+        if (_liberado) return;
+
+        var vista = _mapa.Map.Navigator.Viewport;
+
+        if (double.IsNaN(vista.Resolution) || vista.Resolution <= 0
+            || double.IsNaN(vista.CenterX) || double.IsNaN(vista.CenterY))
+        {
+            VerElMundo();
+            return;
+        }
+
+        _mapa.Map.Navigator.CenterOnAndZoomTo(new MPoint(vista.CenterX, vista.CenterY), vista.Resolution);
+        _mapa.RefreshGraphics();
     }
 
     /// <summary>
