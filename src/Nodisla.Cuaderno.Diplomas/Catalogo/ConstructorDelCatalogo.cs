@@ -97,7 +97,6 @@ public sealed class ConstructorDelCatalogo(
     /// <summary>Indices, que se crean al final para no pagarlos en cada insercion.</summary>
     private const string Indices = """
         CREATE INDEX ix_pref_busqueda ON premio_referencia (referencia);
-        CREATE INDEX ix_pref_grupo    ON premio_referencia (award_code, grupo, subgrupo);
         CREATE INDEX ix_pdxcc_dxcc    ON premio_dxcc_permitido (dxcc, award_code);
         CREATE INDEX ix_ppatron_pfx   ON premio_patron (award_code, prefijo);
         """;

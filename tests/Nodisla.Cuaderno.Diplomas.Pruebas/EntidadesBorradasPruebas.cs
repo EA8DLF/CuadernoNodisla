@@ -66,7 +66,7 @@ public sealed class EntidadesBorradasPruebas : IAsyncLifetime
     [Fact]
     public async Task Las_entidades_borradas_siguen_apareciendo_en_el_detalle_del_dxcc()
     {
-        var detalle = await _cuaderno.Motor().DetalleAsync("DXCC", "MIXED");
+        var detalle = (await _cuaderno.Motor().DetalleAsync("DXCC", "MIXED", 0, 1000)).Elementos;
 
         detalle.Should().Contain(
             d => d.Referencia == Texto(Borrada.Value.Numero),
@@ -84,8 +84,8 @@ public sealed class EntidadesBorradasPruebas : IAsyncLifetime
 
         retiradas.Should().BeGreaterThanOrEqualTo(0);
 
-        var detalle = await _cuaderno.Motor().DetalleAsync("WAS", "WAS");
-        detalle.Should().OnlyContain(d => d.Referencia.Length == 2);
+        var detalle = await _cuaderno.Motor().DetalleAsync("WAS", "WAS", 0, 100);
+        detalle.Elementos.Should().OnlyContain(d => d.Referencia.Length == 2);
     }
 
     [Fact]

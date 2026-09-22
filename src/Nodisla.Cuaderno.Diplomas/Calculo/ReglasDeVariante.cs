@@ -62,6 +62,25 @@ public sealed class ReglasDeVariante
     /// </summary>
     public IReadOnlyList<string> Avisos { get; }
 
+    /// <summary>
+    /// Largos de la parte fija de los patrones de un diploma por indicativo.
+    /// </summary>
+    /// <remarks>
+    /// La consulta genera una rama por cada largo para poder entrar por indice. Sin saber cuales
+    /// hay se generan todos los posibles, que da el mismo resultado pero tarda mas; el motor los
+    /// consulta al catalogo una vez y los fija aqui.
+    /// </remarks>
+    public IReadOnlyList<int> LargosDePrefijo { get; private set; } =
+        [.. Enumerable.Range(0, ConstructorDelCatalogo.LargoMaximoDePrefijo + 1)];
+
+    /// <summary>Fija los largos de prefijo que de verdad existen en el catalogo.</summary>
+    /// <param name="largos">Largos distintos, sin repetir.</param>
+    public void FijarLargosDePrefijo(IReadOnlyCollection<int> largos)
+    {
+        ArgumentNullException.ThrowIfNull(largos);
+        if (largos.Count > 0) LargosDePrefijo = [.. largos.Distinct().OrderBy(n => n)];
+    }
+
     /// <summary>Construye las reglas de una variante.</summary>
     /// <param name="premio">Diploma del catalogo.</param>
     /// <param name="variante">Variante del catalogo.</param>
@@ -107,8 +126,12 @@ public sealed class ReglasDeVariante
                        $"OR COALESCE(q.submode, '') IN ({Lista(variante.Modos)}))");
         }
 
-        var emision = Emision(premio, variante, avisos);
-        if (emision is not null) sql.Append(emision);
+        var clases = ClasesEfectivas(premio, variante);
+        if (clases.Count > 0)
+        {
+            var condiciones = clases.Select(ClasesDeModo.Condicion).Where(c => c is not null);
+            sql.Append($" AND ({string.Join(" OR ", condiciones)})");
+        }
 
         // ── continentes ──────────────────────────────────────────────────────
         if (variante.Continentes.Count > 0)
@@ -159,71 +182,27 @@ public sealed class ReglasDeVariante
             if (!vale) return false;
         }
 
-        var emision = TipoDeEmision.De(modo.Principal);
-        if (TipoDeEmision.EsConocido(Variante.TipoDeEmision) &&
-            !emision.Equals(Variante.TipoDeEmision, StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        if (Premio.EmisionPermitida.Count > 0)
-        {
-            var vale = false;
-            foreach (var e in Premio.EmisionPermitida)
-            {
-                if (e.Equals(emision, StringComparison.OrdinalIgnoreCase)) { vale = true; break; }
-            }
-            if (!vale) return false;
-        }
-
-        return true;
+        var clase = ClasesDeModo.De(modo.Principal);
+        var exigidas = ClasesEfectivas(Premio, Variante);
+        return exigidas.Count == 0 || exigidas.Contains(clase);
     }
 
     // ── piezas ───────────────────────────────────────────────────────────────
 
-    private static string? Emision(
-        PremioDelCatalogo premio, VarianteDelCatalogo variante, List<string> avisos)
+    /// <summary>
+    /// Familias de modos que de verdad cuentan: la de la variante si la declara y, si no, las
+    /// que permita el diploma. Vacio significa que no hay que filtrar por modo.
+    /// </summary>
+    private static IReadOnlyList<ClaseDeModo> ClasesEfectivas(
+        PremioDelCatalogo premio, VarianteDelCatalogo variante)
     {
-        var tipos = new List<string>();
-        if (TipoDeEmision.EsConocido(variante.TipoDeEmision))
-        {
-            tipos.Add(variante.TipoDeEmision!);
-        }
-        else if (!string.IsNullOrWhiteSpace(variante.TipoDeEmision))
-        {
-            avisos.Add($"Tipo de emisión «{variante.TipoDeEmision}» desconocido; no se filtra por él.");
-        }
+        if (variante.Clase != ClaseDeModo.Cualquiera) return [variante.Clase];
 
-        if (tipos.Count == 0 && premio.EmisionPermitida.Count is > 0 and < 3)
-        {
-            foreach (var e in premio.EmisionPermitida)
-            {
-                if (TipoDeEmision.EsConocido(e)) tipos.Add(e);
-            }
-        }
-
-        if (tipos.Count == 0) return null;
-
-        var condiciones = new List<string>();
-        foreach (var tipo in tipos)
-        {
-            if (tipo.Equals(TipoDeEmision.Cw, StringComparison.OrdinalIgnoreCase))
-            {
-                condiciones.Add($"q.mode IN ({Lista(TipoDeEmision.ModosDeCw)})");
-            }
-            else if (tipo.Equals(TipoDeEmision.Fonia, StringComparison.OrdinalIgnoreCase))
-            {
-                condiciones.Add($"q.mode IN ({Lista(TipoDeEmision.ModosDeFonia)})");
-            }
-            else
-            {
-                var noDigitales = new List<string>(TipoDeEmision.ModosDeCw);
-                noDigitales.AddRange(TipoDeEmision.ModosDeFonia);
-                condiciones.Add($"q.mode NOT IN ({Lista(noDigitales)})");
-            }
-        }
-
-        return $" AND ({string.Join(" OR ", condiciones)})";
+        var permitidas = premio.ClasesDeModoPermitidas
+            .Where(c => c != ClaseDeModo.Cualquiera)
+            .Distinct()
+            .ToList();
+        return permitidas.Count is 0 or 3 ? [] : permitidas;
     }
 
     private static string Confirmacion(PremioDelCatalogo premio)

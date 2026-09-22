@@ -62,7 +62,9 @@ MEDIOS = {
 }
 
 # Campos del QSO que sabe leer el motor. Los que no estan aqui dejan el diploma
-# marcado como no calculable, que es mejor que calcularlo mal.
+# marcado como no calculable, que es mejor que calcularlo mal. Que el campo este
+# aqui no basta: el motor comprueba ademas que la columna exista de verdad en el
+# cuaderno, porque el esquema puede ser mas viejo que el catalogo.
 CAMPOS = {
     "DXCC": "Dxcc",
     "STATE": "State",
@@ -74,6 +76,7 @@ CAMPOS = {
     "CNTY": "Cnty",
     "QTH": "Qth",
     "ADDRESS": "Address",
+    "SIGINFO": "SigInfo",
 }
 
 NOMBRE_VARIANTE_UNICA = "GENERAL"

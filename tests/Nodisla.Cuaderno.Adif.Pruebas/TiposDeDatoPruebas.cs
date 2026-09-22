@@ -238,6 +238,72 @@ public class TiposDeDatoPruebas
     }
 
     [Fact]
+    public async Task El_cajon_de_sastre_sig_llega_a_su_columna_y_a_la_tabla_de_referencias()
+    {
+        var lectura = await Ayudas.LeerAsync(
+            Cabecera + "<CALL:6>EA8DLF <SIG:4>POTA <SIG_INFO:7>ES-0123 <EOR>\n");
+
+        var qso = lectura.Qsos.Should().ContainSingle().Subject;
+
+        // La columna, que es por donde lo busca el motor de diplomas.
+        qso.Sig.Should().Be("POTA");
+        qso.SigInfo.Should().Be("ES-0123");
+
+        // Y ademas la referencia, para que los diplomas por referencia no necesiten un caso
+        // especial para el cajon de sastre.
+        qso.Referencias.Should().ContainSingle();
+        qso.Referencias[0].Tipo.Should().Be(TipoDeReferencia.Otra);
+        qso.Referencias[0].NombrePrograma.Should().Be("POTA");
+        qso.Referencias[0].Codigo.Should().Be("ES-0123");
+        qso.Referencias[0].Lado.Should().Be(LadoDeReferencia.Corresponsal);
+
+        qso.CamposExtra.Should().BeEmpty("SIG y SIG_INFO ya no son campos sin modelar");
+
+        var salida = await Ayudas.ExportarAsync(lectura.Qsos);
+        salida.Should().Contain("<SIG:4>POTA").And.Contain("<SIG_INFO:7>ES-0123");
+    }
+
+    [Fact]
+    public async Task El_sig_del_corresponsal_y_el_mio_no_se_cruzan()
+    {
+        var lectura = await Ayudas.LeerAsync(
+            Cabecera
+            + "<CALL:6>EA8DLF <SIG:4>WWFF <SIG_INFO:9>EAFF-0123 "
+            + "<MY_SIG:4>POTA <MY_SIG_INFO:7>ES-0456 <EOR>\n");
+
+        var qso = lectura.Qsos[0];
+        qso.Sig.Should().Be("WWFF", "SIG es el del corresponsal");
+        qso.SigInfo.Should().Be("EAFF-0123");
+
+        qso.Referencias.Should().HaveCount(2);
+        qso.Referencias.Should().ContainSingle(r =>
+            r.Lado == LadoDeReferencia.Corresponsal && r.NombrePrograma == "WWFF" && r.Codigo == "EAFF-0123");
+        qso.Referencias.Should().ContainSingle(r =>
+            r.Lado == LadoDeReferencia.Propia && r.NombrePrograma == "POTA" && r.Codigo == "ES-0456");
+
+        var salida = await Ayudas.ExportarAsync(lectura.Qsos);
+        salida.Should().Contain("<SIG:4>WWFF").And.Contain("<SIG_INFO:9>EAFF-0123");
+        salida.Should().Contain("<MY_SIG:4>POTA").And.Contain("<MY_SIG_INFO:7>ES-0456");
+    }
+
+    [Fact]
+    public async Task El_sig_no_sustituye_a_los_programas_con_campo_propio()
+    {
+        var lectura = await Ayudas.LeerAsync(
+            Cabecera + "<CALL:6>EA8DLF <IOTA:6>AF-004 <SIG:3>WCA <SIG_INFO:8>EA-00123 <EOR>\n");
+
+        var qso = lectura.Qsos[0];
+        qso.Sig.Should().Be("WCA");
+        qso.Referencias.Should().HaveCount(2, "IOTA tiene campo propio y WCA va por el cajon");
+        qso.Referencias.Should().ContainSingle(r => r.Tipo == TipoDeReferencia.Iota);
+        qso.Referencias.Should().ContainSingle(r => r.Tipo == TipoDeReferencia.Otra);
+
+        var salida = await Ayudas.ExportarAsync(lectura.Qsos);
+        salida.Should().Contain("<IOTA:6>AF-004");
+        salida.Should().Contain("<SIG:3>WCA");
+    }
+
+    [Fact]
     public async Task Los_campos_del_estandar_que_el_modelo_cubre_van_y_vuelven()
     {
         const string adif =

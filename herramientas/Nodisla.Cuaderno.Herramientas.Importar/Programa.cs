@@ -17,6 +17,10 @@ namespace Nodisla.Cuaderno.Herramientas.Importar;
 /// un cuaderno de Log4OM al nuestro. Recorre el camino entero —leer ADIF, migrar la base,
 /// guardar, volver a leer y exportar— y compara las cifras en cada paso, que es la unica
 /// forma de saber que las capas encajan de verdad y no solo por separado.
+///
+/// La cuenta que hay que cuadrar no es «registros del fichero = contactos del cuaderno»: un
+/// respaldo real trae pares de registros que son el mismo contacto visto dos veces, y esos se
+/// funden. Lo que tiene que cuadrar es «registros leidos = anadidos + fundidos + ya estaban».
 /// </remarks>
 public static class Programa
 {
@@ -76,6 +80,7 @@ public static class Programa
         using var ambito = servicios.CreateScope();
         var repositorio = ambito.ServiceProvider.GetRequiredService<IRepositorioQso>();
         var migrador = ambito.ServiceProvider.GetRequiredService<MigradorDeCuaderno>();
+        var importar = new ImportarAdif(new LectorAdif(), repositorio);
 
         Titulo("Cuaderno NODISLA · importacion de ADIF");
         Console.WriteLine($"Fichero   : {ficheroAdif}");
@@ -88,20 +93,10 @@ public static class Programa
         Paso("Base preparada", reloj.Elapsed);
         if (copia is not null) Console.WriteLine($"           copia previa en {copia}");
 
-        // ── 2. Importar, fundiendo los contactos repetidos ───────────────────
-        var importar = new ImportarAdif(new LectorAdif(), repositorio);
-
-        ResultadoDeImportacion primera;
-        await using (var flujo = File.OpenRead(ficheroAdif))
-        {
-            primera = await importar.DesdeAsync(flujo);
-        }
-        Paso($"Importado: {primera.RegistrosLeidos:N0} registros leidos", primera.Duracion);
-        Console.WriteLine($"           {primera.Anadidos:N0} nuevos · "
-            + $"{primera.FundidosEnElFichero:N0} fundidos dentro del fichero · "
-            + $"{primera.FundidosConElCuaderno:N0} fundidos con el cuaderno · "
-            + $"{primera.YaEstaban:N0} ya estaban");
-        Console.WriteLine($"           {primera.ConfirmacionesRecuperadas:N0} fusiones recuperan confirmaciones");
+        // ── 2. Importar ──────────────────────────────────────────────────────
+        var primera = await EjecutarAsync(importar, ficheroAdif);
+        Paso($"ADIF leido: {primera.RegistrosLeidos:N0} registros", primera.Duracion);
+        Console.WriteLine($"           generado por {primera.ProgramaOrigen ?? "(sin declarar)"}");
 
         foreach (var grupo in primera.Avisos.GroupBy(a => a.Nivel).OrderByDescending(g => g.Key))
         {
@@ -118,44 +113,44 @@ public static class Programa
             return 2;
         }
 
-        MostrarChoques(primera.Choques);
+        ResumirImportacion("Primera pasada", primera);
 
-        // ── 3. Reimportar el mismo fichero: no debe entrar nada ──────────────
-        ResultadoDeImportacion segunda;
-        await using (var flujo = File.OpenRead(ficheroAdif))
-        {
-            segunda = await importar.DesdeAsync(flujo);
-        }
-        Paso($"Reimportado: {segunda.Anadidos:N0} nuevos, {segunda.YaEstaban:N0} ya estaban", segunda.Duracion);
+        // ── 3. Reimportar el mismo fichero: no debe entrar nada nuevo ─────────
+        var segunda = await EjecutarAsync(importar, ficheroAdif);
+        ResumirImportacion("Segunda pasada", segunda);
 
         // ── 4. Comprobar lo guardado ─────────────────────────────────────────
         var enCuaderno = await repositorio.ContarAsync();
+        var unicosDelFichero = primera.RegistrosLeidos - primera.FundidosEnElFichero;
+
         Console.WriteLine();
         Titulo("Comprobaciones");
 
         var correcto = true;
-        correcto &= Comprobar("Ningun registro del fichero se pierde",
-            primera.SinPerdidas, $"{primera.ContactosDistintos:N0} distintos, "
-                + $"{primera.Anadidos + primera.FundidosConElCuaderno + primera.YaEstaban:N0} colocados");
-        correcto &= Comprobar("El cuaderno tiene los contactos distintos del fichero",
-            enCuaderno == primera.ContactosDistintos,
-            $"{enCuaderno:N0} de {primera.ContactosDistintos:N0}");
+        correcto &= Comprobar("Ningun registro del fichero se pierde (leidos = anadidos + fundidos + ya estaban)",
+            primera.NoSePierdeNada,
+            $"{primera.RegistrosLeidos:N0} leidos frente a {primera.Anadidos:N0} + {primera.Fundidos:N0} + {primera.YaEstaban:N0}");
+        correcto &= Comprobar("Todos los contactos distintos del fichero estan en el cuaderno",
+            enCuaderno == unicosDelFichero, $"{enCuaderno:N0} de {unicosDelFichero:N0}");
         correcto &= Comprobar("Reimportar no duplica nada",
             segunda.Anadidos == 0, $"{segunda.Anadidos:N0} nuevos en la segunda pasada");
-        correcto &= Comprobar("Reimportar no cambia el cuaderno",
+        correcto &= Comprobar("Reimportar no cambia nada (la fusion es idempotente)",
             segunda.FundidosConElCuaderno == 0,
-            $"{segunda.FundidosConElCuaderno:N0} contactos modificados sin motivo");
+            $"{segunda.FundidosConElCuaderno:N0} contactos modificados al repetir la importacion");
+        correcto &= Comprobar("La segunda pasada tampoco pierde registros",
+            segunda.NoSePierdeNada, "las cifras de la segunda pasada no cuadran");
 
-        // ── 6. Exportar y volver a leer ──────────────────────────────────────
+        // ── 5. Exportar y volver a leer ──────────────────────────────────────
         var rutaExportada = Path.Combine(Path.GetTempPath(), $"exportado-{Guid.NewGuid():N}.adi");
-        Pagina<Qso> pagina;
+        IReadOnlyList<Qso> delCuaderno;
         try
         {
             reloj.Restart();
-            pagina = await repositorio.BuscarAsync(new CriterioQso(), 0, int.MaxValue);
+            var pagina = await repositorio.BuscarAsync(new CriterioQso(), 0, int.MaxValue);
+            delCuaderno = pagina.Elementos;
             await using (var salida = File.Create(rutaExportada))
             {
-                await new EscritorAdif().EscribirAsync(Enumerar(pagina.Elementos), salida);
+                await new EscritorAdif().EscribirAsync(Enumerar(delCuaderno), salida);
             }
 
             LecturaAdif revuelta;
@@ -166,13 +161,13 @@ public static class Programa
             Paso($"Exportado y releido: {revuelta.Qsos.Count:N0} contactos", reloj.Elapsed);
 
             correcto &= Comprobar("La exportacion conserva el numero de contactos",
-                revuelta.Qsos.Count == primera.ContactosDistintos,
-                $"{revuelta.Qsos.Count:N0} de {primera.ContactosDistintos:N0}");
+                revuelta.Qsos.Count == enCuaderno,
+                $"{revuelta.Qsos.Count:N0} de {enCuaderno:N0}");
             correcto &= Comprobar("Ningun contacto pierde el indicativo al pasar por la base",
                 revuelta.Qsos.All(q => !q.Call.EsVacio), "hay indicativos vacios");
             correcto &= Comprobar("Las claves naturales coinciden una a una",
                 revuelta.Qsos.Select(q => q.ClaveNatural).ToHashSet()
-                    .SetEquals(pagina.Elementos.Select(q => q.ClaveNatural)),
+                    .SetEquals(delCuaderno.Select(q => q.ClaveNatural)),
                 "el conjunto de claves no es el mismo");
         }
         finally
@@ -180,10 +175,12 @@ public static class Programa
             if (File.Exists(rutaExportada)) File.Delete(rutaExportada);
         }
 
-        // ── 7. Resumen del cuaderno ──────────────────────────────────────────
+        correcto &= ComprobarQueLaFusionEsConmutativa(ficheroAdif, out var paresProbados);
+        Console.WriteLine($"         ({paresProbados:N0} pares del fichero fundidos en los dos sentidos)");
+
+        // ── 6. Resumen del cuaderno ──────────────────────────────────────────
         Console.WriteLine();
         Titulo("Resumen del cuaderno");
-        var delCuaderno = pagina.Elementos;
         ResumirPorClave("Bandas", delCuaderno.Where(q => !q.Band.EsVacia).Select(q => q.Band.Nombre));
         ResumirPorClave("Modos", delCuaderno.Select(q => q.Mode.NombreUsual));
         Console.WriteLine($"  Entidades DXCC distintas : {delCuaderno.Select(q => q.Dxcc).Where(d => d > 0).Distinct().Count():N0}");
@@ -198,6 +195,127 @@ public static class Programa
         Console.WriteLine(correcto ? "TODO CORRECTO" : "HAY COMPROBACIONES QUE FALLAN");
         return correcto ? 0 : 3;
     }
+
+    private static async Task<ResultadoDeImportacion> EjecutarAsync(ImportarAdif importar, string fichero)
+    {
+        await using var flujo = File.OpenRead(fichero);
+        return await importar.EjecutarAsync(flujo);
+    }
+
+    /// <summary>Cuenta lo que ha pasado en una pasada de importacion.</summary>
+    private static void ResumirImportacion(string titulo, ResultadoDeImportacion r)
+    {
+        Console.WriteLine();
+        Console.WriteLine($"  {titulo}");
+        Console.WriteLine($"    Anadidos                     : {r.Anadidos:N0}");
+        Console.WriteLine($"    Fundidos dentro del fichero  : {r.FundidosEnElFichero:N0}");
+        Console.WriteLine($"    Fundidos con el cuaderno     : {r.FundidosConElCuaderno:N0}");
+        Console.WriteLine($"    Ya estaban sin nada nuevo    : {r.YaEstaban:N0}");
+        Console.WriteLine($"    Confirmaciones recuperadas   : {r.ConfirmacionesRecuperadas:N0}");
+
+        if (r.Choques.Count == 0) return;
+
+        var porCampo = r.Choques.GroupBy(c => c.Campo, StringComparer.Ordinal)
+            .OrderByDescending(g => g.Count())
+            .ToList();
+        Console.WriteLine($"    Datos en discordia           : {r.Choques.Count:N0} en {porCampo.Count:N0} campos");
+
+        // Un cero no es un hueco para la fusion, asi que si la copia que manda trae cero y la
+        // otra un valor de verdad, se conserva el cero. Conviene que el operador lo sepa.
+        var ceros = r.Choques.Count(c => c.Conservado is "0" or "0.0" && c.Descartado is not ("0" or "0.0"));
+        if (ceros > 0)
+        {
+            Console.WriteLine($"      (de ellos {ceros:N0} conservan un cero frente a un valor; revisar)");
+        }
+        foreach (var g in porCampo.Take(12))
+        {
+            var ejemplo = g.First();
+            Console.WriteLine(
+                $"      · {g.Key,-32} {g.Count(),4:N0}  p.ej. «{Recortar(ejemplo.Conservado)}» frente a «{Recortar(ejemplo.Descartado)}»");
+        }
+        if (porCampo.Count > 12) Console.WriteLine($"      · … y {porCampo.Count - 12:N0} campos mas");
+    }
+
+    /// <summary>
+    /// Comprueba sobre los pares de verdad del fichero que fundir A con B y B con A deja las
+    /// mismas confirmaciones. Si dependiera del orden, el cuaderno cambiaria segun como
+    /// estuviera ordenado el fichero, que es justo lo que no puede pasar con los diplomas.
+    /// </summary>
+    private static bool ComprobarQueLaFusionEsConmutativa(string ficheroAdif, out int pares)
+    {
+        pares = 0;
+        LecturaAdif lectura;
+        using (var flujo = File.OpenRead(ficheroAdif))
+        {
+            lectura = new LectorAdif().LeerAsync(flujo).GetAwaiter().GetResult();
+        }
+
+        var porClave = new Dictionary<string, Qso>(StringComparer.Ordinal);
+        var iguales = true;
+
+        foreach (var qso in lectura.Qsos)
+        {
+            if (!porClave.TryGetValue(qso.ClaveNatural, out var primero))
+            {
+                porClave[qso.ClaveNatural] = qso;
+                continue;
+            }
+
+            pares++;
+            var haciaDelante = Clonar(primero);
+            FusionDeQso.Fundir(haciaDelante, qso);
+            var haciaAtras = Clonar(qso);
+            FusionDeQso.Fundir(haciaAtras, primero);
+
+            if (!MismasConfirmaciones(haciaDelante, haciaAtras)) iguales = false;
+            porClave[qso.ClaveNatural] = haciaDelante;
+        }
+
+        return Comprobar("Fundir en un sentido o en el otro deja las mismas confirmaciones",
+            iguales, "hay pares cuyo resultado depende del orden");
+    }
+
+    private static bool MismasConfirmaciones(Qso a, Qso b)
+    {
+        static IOrderedEnumerable<QsoConfirmacion> Ordenadas(Qso q) => q.Confirmaciones.OrderBy(c => c.Medio);
+
+        if (a.Confirmaciones.Count != b.Confirmaciones.Count) return false;
+        return Ordenadas(a).Zip(Ordenadas(b)).All(p =>
+            p.First.Medio == p.Second.Medio
+            && p.First.Enviado == p.Second.Enviado
+            && p.First.Recibido == p.Second.Recibido
+            && p.First.EnviadoUtc == p.Second.EnviadoUtc
+            && p.First.RecibidoUtc == p.Second.RecibidoUtc);
+    }
+
+    /// <summary>Copia lo justo para poder fundir sin tocar el contacto original.</summary>
+    private static Qso Clonar(Qso original)
+    {
+        var copia = new Qso
+        {
+            Call = original.Call,
+            Band = original.Band,
+            Mode = original.Mode,
+            InicioUtc = original.InicioUtc,
+        };
+        foreach (var c in original.Confirmaciones)
+        {
+            copia.Confirmaciones.Add(new QsoConfirmacion
+            {
+                Medio = c.Medio,
+                Enviado = c.Enviado,
+                Recibido = c.Recibido,
+                EnviadoUtc = c.EnviadoUtc,
+                RecibidoUtc = c.RecibidoUtc,
+                Via = c.Via,
+                Nota = c.Nota,
+            });
+        }
+        return copia;
+    }
+
+    private static string Recortar(string texto) =>
+        texto.Length <= 24 ? texto : texto[..24] + "…";
 
     private static async IAsyncEnumerable<Qso> Enumerar(IReadOnlyList<Qso> qsos)
     {
@@ -216,34 +334,6 @@ public static class Programa
         var muestra = string.Join(", ", cuenta.Take(6).Select(g => $"{g.Key} ({g.Count():N0})"));
         Console.WriteLine($"  {titulo,-24} : {cuenta.Count:N0} distintos — {muestra}");
     }
-
-    /// <summary>
-    /// Enseña los datos que venian distintos en dos copias del mismo contacto.
-    /// </summary>
-    /// <remarks>
-    /// Son los unicos casos donde la fusion ha tenido que elegir, asi que son los unicos que
-    /// el operador necesita mirar. Se agrupan por campo porque en un cuaderno real el mismo
-    /// campo choca una y otra vez por el mismo motivo.
-    /// </remarks>
-    private static void MostrarChoques(IReadOnlyList<ChoqueDeFusion> choques)
-    {
-        if (choques.Count == 0)
-        {
-            Console.WriteLine("           sin datos en discordia");
-            return;
-        }
-
-        Console.WriteLine($"           {choques.Count:N0} datos en discordia, por campo:");
-        foreach (var grupo in choques.GroupBy(c => c.Campo).OrderByDescending(g => g.Count()).Take(10))
-        {
-            var ejemplo = grupo.First();
-            Console.WriteLine($"             · {grupo.Key,-24} {grupo.Count(),4} — "
-                + $"se queda «{Recortar(ejemplo.Conservado)}», se descarta «{Recortar(ejemplo.Descartado)}»");
-        }
-    }
-
-    private static string Recortar(string texto) =>
-        texto.Length <= 28 ? texto : string.Concat(texto.AsSpan(0, 27), "…");
 
     private static void Titulo(string texto)
     {

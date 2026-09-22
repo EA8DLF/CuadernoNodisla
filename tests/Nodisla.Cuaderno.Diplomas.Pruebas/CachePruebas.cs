@@ -73,7 +73,7 @@ public sealed class CachePruebas : IAsyncLifetime
         // hace que teclear un indicativo no cueste una consulta.
         (await motor.ProgresoAsync("DXCC", "MIXED")).Trabajadas.Should().Be(1);
 
-        motor.AvisarDeCambioEnContactos();
+        motor.CuadernoCambiado();
 
         (await motor.ProgresoAsync("DXCC", "MIXED")).Trabajadas.Should().Be(2);
     }
@@ -95,7 +95,7 @@ public sealed class CachePruebas : IAsyncLifetime
         antes.Should().Contain(a => a.Contains("sin confirmar"));
 
         _cuaderno.AnadirConfirmacion(qso, "LOTW", "Y");
-        motor.AvisarDeCambioEnConfirmaciones();
+        motor.CuadernoCambiado();
 
         var despues = await motor.QueAportaAsync(
             Dominio.Valores.Indicativo.Crudo("EA8DLF"),

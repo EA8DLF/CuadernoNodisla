@@ -80,12 +80,33 @@ public sealed class CatalogoPruebas
     }
 
     [Fact]
-    public void El_diploma_que_cuenta_por_un_campo_no_guardado_se_marca_como_no_calculable()
+    public void Todos_los_campos_que_pide_el_catalogo_se_saben_leer()
     {
-        // SIOTA cuenta por SIG_INFO, que el modelo del cuaderno no tiene en columna.
+        // Si el original trae un diploma que cuenta por un campo que el motor no sabe leer, se
+        // marca y se dice por que, en vez de sacar un numero que parece un dato y no lo es.
+        var sinCampo = Catalogo.Diplomas.Values
+            .Where(p => p.Clase == ClaseDeDiploma.PorCampo && !p.Calculable)
+            .ToList();
+
+        sinCampo.Should().OnlyContain(p => !string.IsNullOrWhiteSpace(p.MotivoNoCalculable));
+    }
+
+    [Fact]
+    public void El_siota_cuenta_por_el_campo_sig_info()
+    {
         var siota = Catalogo.Diplomas["SIOTA"];
-        siota.Calculable.Should().BeFalse();
-        siota.MotivoNoCalculable.Should().NotBeNullOrWhiteSpace();
+        siota.Clase.Should().Be(ClaseDeDiploma.PorCampo);
+        siota.Campo.Should().Be(CampoDeQso.SigInfo);
+        siota.Calculable.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Las_variantes_declaran_la_familia_de_modos_y_no_un_modo_suelto()
+    {
+        Variante("DXCC", "CW").Clase.Should().Be(ClaseDeModo.Telegrafia);
+        Variante("DXCC", "Phone").Clase.Should().Be(ClaseDeModo.Fonia);
+        Variante("DXCC", "DIGITAL").Clase.Should().Be(ClaseDeModo.Digital);
+        Variante("DXCC", "MIXED").Clase.Should().Be(ClaseDeModo.Cualquiera);
     }
 
     [Fact]

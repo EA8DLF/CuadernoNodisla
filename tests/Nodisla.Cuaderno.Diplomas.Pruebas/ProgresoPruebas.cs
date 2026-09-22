@@ -120,15 +120,16 @@ public sealed class ProgresoPruebas : IAsyncLifetime
         var qso = _cuaderno.AnadirQso("K1ABC", dxcc: 291, state: "CA");
         _cuaderno.AnadirConfirmacion(qso, "LOTW", "Y");
 
-        var detalle = await Motor().DetalleAsync("WAS", "WAS");
+        var detalle = await Motor().DetalleAsync("WAS", "WAS", 0, 100);
 
-        detalle.Should().HaveCount(50, "el catálogo trae los 50 estados");
-        var california = detalle.Single(d => d.Referencia == "CA");
+        detalle.TotalFiltrado.Should().Be(50, "el catálogo trae los 50 estados");
+        detalle.Elementos.Should().HaveCount(50);
+        var california = detalle.Elementos.Single(d => d.Referencia == "CA");
         california.Trabajada.Should().BeTrue();
         california.Confirmada.Should().BeTrue();
         california.PrimerQsoId.Should().Be(qso);
         california.Nombre.Should().Be("California");
-        detalle.Count(d => !d.Trabajada).Should().Be(49);
+        detalle.Elementos.Count(d => !d.Trabajada).Should().Be(49);
     }
 
     [Fact]
@@ -175,14 +176,50 @@ public sealed class ProgresoPruebas : IAsyncLifetime
     }
 
     [Fact]
-    public async Task El_diploma_que_no_se_sabe_calcular_cuenta_cero_y_dice_por_que()
+    public async Task El_detalle_va_paginado_y_dice_cuantas_hay_en_total()
     {
-        var motivo = await Motor().PorQueNoSeCalculaAsync("SIOTA", "GENERAL");
-        motivo.Should().NotBeNullOrWhiteSpace();
+        var primera = await Motor().DetalleAsync("WAS", "WAS", 0, 10);
+        var segunda = await Motor().DetalleAsync("WAS", "WAS", 10, 10);
+        var ultima = await Motor().DetalleAsync("WAS", "WAS", 45, 10);
 
-        var progreso = await Motor().ProgresoAsync("SIOTA", "GENERAL");
-        progreso.Trabajadas.Should().Be(0);
-        progreso.Confirmadas.Should().Be(0);
+        primera.Elementos.Should().HaveCount(10);
+        primera.TotalFiltrado.Should().Be(50);
+        primera.Desplazamiento.Should().Be(0);
+        segunda.Elementos.Should().HaveCount(10);
+        segunda.Elementos.Should().NotIntersectWith(primera.Elementos);
+        ultima.Elementos.Should().HaveCount(5, "quedan cinco desde el estado 45");
+    }
+
+    [Fact]
+    public async Task Un_progreso_que_cuenta_de_menos_lo_dice_en_el_propio_progreso()
+    {
+        // El IOTA lo valida su gestor contra su propia base, que el cuaderno no puede consultar.
+        var progreso = await Motor().ProgresoAsync("IOTA", "IOTA_BASICS");
+
+        progreso.EsFirme.Should().BeFalse();
+        progreso.PorQueNoEsFirme.Should().Contain("gestor");
+    }
+
+    [Fact]
+    public async Task Un_progreso_firme_no_lleva_advertencia()
+    {
+        var progreso = await Motor().ProgresoAsync("DXCC", "MIXED");
+
+        progreso.EsFirme.Should().BeTrue();
+        progreso.PorQueNoEsFirme.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task Sin_diplomas_marcados_no_se_calcula_nada()
+    {
+        _cuaderno.AnadirQso("K1ABC", dxcc: 291);
+
+        var motor = _cuaderno.Motor(o => o.MisDiplomas.Clear());
+
+        // Calcular los 87 del catálogo por si acaso enseñaría cifras que nadie ha pedido.
+        (await motor.ProgresoDeMisDiplomasAsync()).Should().BeEmpty();
+        (await motor.QueAportaAsync(
+            Indicativo.Crudo("EA8DLF"), Banda.Parse("20m"), Modo.Crudo("SSB"))).Should().BeEmpty();
     }
 
     [Theory]

@@ -142,15 +142,35 @@ public static class MapeoAdif
         static string? valorDe(Dictionary<string, string> v, string n) => v.TryGetValue(n, out var r) ? r : null;
     }
 
+    /// <summary>
+    /// Coloca el par generico <c>SIG</c> / <c>SIG_INFO</c>, que es el cajon de ADIF para los
+    /// programas de actividad sin campo propio.
+    /// </summary>
+    /// <remarks>
+    /// Van a dos sitios a la vez y a proposito. A <see cref="Qso.Sig"/> y
+    /// <see cref="Qso.SigInfo"/> porque hay diplomas que cuentan por el codigo del programa y
+    /// necesitan la columna; y ademas a la tabla de referencias como
+    /// <see cref="TipoDeReferencia.Otra"/>, para que el motor de diplomas por referencia los
+    /// vea igual que ve un IOTA o un POTA, sin un caso especial para el cajon de sastre.
+    ///
+    /// <c>SIG</c> es del corresponsal y <c>MY_SIG</c> es mio: no se cruzan nunca. Los mios no
+    /// tienen columna en <see cref="Qso"/> —viven en el perfil de <c>Estacion</c>— asi que se
+    /// quedan solo en la tabla de referencias, del lado propio.
+    /// </remarks>
     private static void AplicarSig(Qso qso, Dictionary<string, string> valores)
     {
-        Par(qso, valores, "SIG", "SIG_INFO", LadoDeReferencia.Corresponsal);
-        Par(qso, valores, "MY_SIG", "MY_SIG_INFO", LadoDeReferencia.Propia);
+        valores.TryGetValue("SIG", out var programa);
+        valores.TryGetValue("SIG_INFO", out var codigo);
+        if (!string.IsNullOrWhiteSpace(programa)) qso.Sig = programa;
+        if (!string.IsNullOrWhiteSpace(codigo)) qso.SigInfo = codigo;
+        Par(qso, programa, codigo, LadoDeReferencia.Corresponsal);
 
-        static void Par(Qso qso, Dictionary<string, string> valores, string sig, string info, LadoDeReferencia lado)
+        valores.TryGetValue("MY_SIG", out var miPrograma);
+        valores.TryGetValue("MY_SIG_INFO", out var miCodigo);
+        Par(qso, miPrograma, miCodigo, LadoDeReferencia.Propia);
+
+        static void Par(Qso qso, string? programa, string? codigo, LadoDeReferencia lado)
         {
-            valores.TryGetValue(sig, out var programa);
-            valores.TryGetValue(info, out var codigo);
             if (string.IsNullOrWhiteSpace(programa) && string.IsNullOrWhiteSpace(codigo)) return;
             ReferenciasAdif.Anadir(qso, TipoDeReferencia.Otra, programa, codigo ?? string.Empty, lado);
         }
@@ -536,6 +556,11 @@ public static class MapeoAdif
         Poner("QSO_COMPLETE", qso.QsoComplete);
         if (qso.QsoRandom is { } azar) Poner("QSO_RANDOM", ConversionesAdif.EscribirLogico(azar));
 
+        // El cajon de sastre de los programas de actividad del corresponsal. Va antes que las
+        // referencias para que salga junto al resto de datos del contacto.
+        Poner("SIG", qso.Sig);
+        Poner("SIG_INFO", qso.SigInfo);
+
         Poner("COMMENT", qso.Comentario);
         Poner("NOTES", qso.Notas);
         Poner("QSLMSG", qso.QslMsg);
@@ -586,16 +611,27 @@ public static class MapeoAdif
             }
         }
 
-        foreach (var lado in new[] { LadoDeReferencia.Corresponsal, LadoDeReferencia.Propia })
+        // El par del corresponsal sale de las columnas «Sig» y «SigInfo», que son su sitio.
+        // Aqui solo se rescata el de la tabla de referencias cuando las columnas estan vacias,
+        // por si el contacto se compuso por ese camino.
+        if (string.IsNullOrWhiteSpace(qso.Sig) && string.IsNullOrWhiteSpace(qso.SigInfo))
         {
             var suelta = qso.Referencias.FirstOrDefault(r =>
-                r.Lado == lado && r.Tipo is TipoDeReferencia.Otra or TipoDeReferencia.Wca or TipoDeReferencia.Dme);
-            if (suelta is null) continue;
+                r.Lado == LadoDeReferencia.Corresponsal && r.Tipo == TipoDeReferencia.Otra);
+            if (suelta is not null)
+            {
+                poner("SIG", suelta.NombrePrograma);
+                poner("SIG_INFO", suelta.Codigo);
+            }
+        }
 
-            var programa = suelta.NombrePrograma
-                ?? (suelta.Tipo == TipoDeReferencia.Otra ? null : suelta.Tipo.ToString().ToUpperInvariant());
-            poner(lado == LadoDeReferencia.Corresponsal ? "SIG" : "MY_SIG", programa);
-            poner(lado == LadoDeReferencia.Corresponsal ? "SIG_INFO" : "MY_SIG_INFO", suelta.Codigo);
+        // Los mios no tienen columna en el contacto: viven solo en la tabla de referencias.
+        var mia = qso.Referencias.FirstOrDefault(r =>
+            r.Lado == LadoDeReferencia.Propia && r.Tipo == TipoDeReferencia.Otra);
+        if (mia is not null)
+        {
+            poner("MY_SIG", mia.NombrePrograma);
+            poner("MY_SIG_INFO", mia.Codigo);
         }
     }
 

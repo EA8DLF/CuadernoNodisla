@@ -1,5 +1,3 @@
-using Microsoft.Data.Sqlite;
-
 namespace Nodisla.Cuaderno.Diplomas;
 
 /// <summary>Como se configura el motor de diplomas.</summary>
@@ -7,12 +5,6 @@ public sealed class OpcionesDeDiplomas
 {
     /// <summary>Nombre del fichero donde se compila el catalogo de diplomas.</summary>
     public const string NombreDelCatalogo = "diplomas.sqlite";
-
-    /// <summary>
-    /// Cadena de conexion del cuaderno del operador. Es la misma que usa la capa de datos:
-    /// el motor abre su propia conexion de solo lectura y adjunta el catalogo.
-    /// </summary>
-    public string CadenaDeConexionDelCuaderno { get; set; } = string.Empty;
 
     /// <summary>
     /// Ruta del catalogo compilado. Si no se indica, se deja junto al cuaderno. El fichero se
@@ -40,23 +32,16 @@ public sealed class OpcionesDeDiplomas
     /// </summary>
     public TimeSpan IntervaloDeComprobacion { get; set; } = TimeSpan.FromMilliseconds(500);
 
-    /// <summary>
-    /// Tope de referencias que devuelve el detalle de una variante. Por encima de este numero
-    /// solo se devuelven las referencias trabajadas, no el universo entero: SOTA tiene 182.279
-    /// cimas y una lista asi no la usa nadie.
-    /// </summary>
-    public int MaximoDeDetalle { get; set; } = 5000;
-
     /// <summary>Ruta efectiva del catalogo compilado.</summary>
+    /// <param name="rutaDelCuaderno">Fichero del cuaderno, junto al que se deja por omision.</param>
     /// <returns>La ruta completa del fichero.</returns>
-    public string RutaDelCatalogoEfectiva()
+    public string RutaDelCatalogoEfectiva(string? rutaDelCuaderno)
     {
         if (!string.IsNullOrWhiteSpace(RutaDelCatalogo)) return Path.GetFullPath(RutaDelCatalogo);
 
-        var cuaderno = new SqliteConnectionStringBuilder(CadenaDeConexionDelCuaderno).DataSource;
-        var carpeta = string.IsNullOrWhiteSpace(cuaderno)
+        var carpeta = string.IsNullOrWhiteSpace(rutaDelCuaderno)
             ? Directory.GetCurrentDirectory()
-            : Path.GetDirectoryName(Path.GetFullPath(cuaderno)) ?? Directory.GetCurrentDirectory();
+            : Path.GetDirectoryName(Path.GetFullPath(rutaDelCuaderno)) ?? Directory.GetCurrentDirectory();
         return Path.Combine(carpeta, NombreDelCatalogo);
     }
 }

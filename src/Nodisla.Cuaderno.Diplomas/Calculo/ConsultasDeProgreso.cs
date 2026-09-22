@@ -18,12 +18,6 @@ public sealed class RecuentoDeVariante
     public int Confirmadas { get; set; }
 }
 
-/// <summary>Una referencia alcanzada y si esta confirmada.</summary>
-/// <param name="Valor">Codigo de la referencia.</param>
-/// <param name="Confirmada">Esta confirmada como el diploma exige.</param>
-/// <param name="PrimerQsoId">Contacto mas antiguo que la aporto.</param>
-public sealed record ReferenciaAlcanzada(string Valor, bool Confirmada, long? PrimerQsoId);
-
 /// <summary>
 /// Genera el SQL que resuelve el progreso de una variante.
 /// </summary>
@@ -70,6 +64,47 @@ public static class ConsultasDeProgreso
         return !reglas.Premio.ReferenciaLibre;
     }
 
+    /// <summary>
+    /// Columnas de <c>qso</c> que necesita un diploma para poder calcularse.
+    /// </summary>
+    /// <remarks>
+    /// El catalogo puede pedir un campo que el esquema del cuaderno todavia no tenga: el
+    /// catalogo se actualiza por su cuenta y la base del operador puede ser mas vieja. Antes de
+    /// consultar hay que comprobar que la columna existe, porque un diploma que revienta la
+    /// consulta es peor que uno que dice que no se puede calcular.
+    /// </remarks>
+    /// <param name="premio">Diploma del catalogo.</param>
+    /// <returns>Los nombres de columna, sin repetir.</returns>
+    public static IReadOnlyList<string> ColumnasQueNecesita(PremioDelCatalogo premio)
+    {
+        ArgumentNullException.ThrowIfNull(premio);
+        if (premio.Clase != ClaseDeDiploma.PorCampo) return [];
+
+        var columnas = new List<string>();
+        foreach (var campo in new[] { premio.Campo, premio.CampoLider })
+        {
+            var columna = NombreDeColumna(campo);
+            if (columna is not null && !columnas.Contains(columna)) columnas.Add(columna);
+        }
+        return columnas;
+    }
+
+    private static string? NombreDeColumna(CampoDeQso campo) => campo switch
+    {
+        CampoDeQso.Dxcc => "dxcc",
+        CampoDeQso.State => "state",
+        CampoDeQso.CqZone => "cqz",
+        CampoDeQso.ItuZone => "ituz",
+        CampoDeQso.Continent => "cont",
+        CampoDeQso.Pfx => "pfx",
+        CampoDeQso.Gridsquare4 => "gridsquare",
+        CampoDeQso.Cnty => "cnty",
+        CampoDeQso.Qth => "qth",
+        CampoDeQso.Address => "address",
+        CampoDeQso.SigInfo => "sig_info",
+        _ => null,
+    };
+
     /// <summary>Consulta que devuelve el recuento de trabajadas y confirmadas.</summary>
     /// <param name="reglas">Reglas de la variante.</param>
     /// <returns>El SQL completo.</returns>
@@ -95,14 +130,20 @@ public static class ConsultasDeProgreso
 
     /// <summary>
     /// Consulta del detalle: el universo de referencias del catalogo con lo trabajado y lo
-    /// confirmado al lado.
+    /// confirmado al lado, paginado.
     /// </summary>
     /// <param name="reglas">Reglas de la variante.</param>
-    /// <param name="limite">Tope de filas.</param>
+    /// <param name="desplazamiento">Cuantas referencias saltar.</param>
+    /// <param name="limite">Cuantas devolver.</param>
     /// <returns>El SQL completo.</returns>
-    public static string Detalle(ReglasDeVariante reglas, int limite)
+    public static string Detalle(ReglasDeVariante reglas, int desplazamiento, int limite)
     {
         ArgumentNullException.ThrowIfNull(reglas);
+        ArgumentOutOfRangeException.ThrowIfNegative(desplazamiento);
+        ArgumentOutOfRangeException.ThrowIfNegative(limite);
+
+        var salto = ReglasDeVariante.Numero(desplazamiento);
+        var tope = ReglasDeVariante.Numero(limite);
 
         if (!TieneUniverso(reglas))
         {
@@ -116,7 +157,7 @@ public static class ConsultasDeProgreso
                        primero    AS PrimerQsoId
                   FROM alcanzadas
                  ORDER BY valor
-                 LIMIT {ReglasDeVariante.Numero(limite)}
+                 LIMIT {tope} OFFSET {salto}
                 """;
         }
 
@@ -133,17 +174,27 @@ public static class ConsultasDeProgreso
                {(reglas.Premio.CuentanLasBorradas ? string.Empty : "AND pr.valido = 1")}
              GROUP BY pr.referencia
              ORDER BY pr.referencia
-             LIMIT {ReglasDeVariante.Numero(limite)}
+             LIMIT {tope} OFFSET {salto}
             """;
     }
 
-    /// <summary>Cuantas referencias tiene el universo de un diploma en el catalogo.</summary>
+    /// <summary>
+    /// Cuantas filas tiene el detalle en total, para poder paginar sin mentir sobre el tamano
+    /// de la lista.
+    /// </summary>
     /// <param name="reglas">Reglas de la variante.</param>
-    /// <returns>El SQL completo, o nulo si el diploma no tiene universo cerrado.</returns>
-    public static string? TamanoDelUniverso(ReglasDeVariante reglas)
+    /// <returns>El SQL completo.</returns>
+    public static string TotalDelDetalle(ReglasDeVariante reglas)
     {
         ArgumentNullException.ThrowIfNull(reglas);
-        if (!TieneUniverso(reglas)) return null;
+
+        if (!TieneUniverso(reglas))
+        {
+            return $"""
+                {Alcanzadas(reglas)}
+                SELECT COUNT(*) FROM alcanzadas
+                """;
+        }
 
         return $"""
             SELECT COUNT(DISTINCT referencia)
@@ -164,7 +215,7 @@ public static class ConsultasDeProgreso
         return reglas.Premio.Clase switch
         {
             ClaseDeDiploma.PorReferencia => PorReferencia(reglas, confirmada),
-            ClaseDeDiploma.PorIndicativo => PorIndicativo(reglas, confirmada),
+            ClaseDeDiploma.PorIndicativo => PorIndicativo(reglas, reglas.CondicionDeConfirmacion),
             _ => PorCampo(reglas, confirmada),
         };
     }
@@ -201,30 +252,69 @@ public static class ConsultasDeProgreso
     {
         var codigo = ReglasDeVariante.Literal(reglas.Premio.Codigo);
 
-        // Algunos diplomas por indicativo listan indicativos completos (160MMI) y otros
-        // patrones con asterisco (CCC: 3B8*). Hay que admitir las dos formas, y tambien el
-        // alias, que a veces trae un segundo patron.
-        const string Coincide = """
-            (q.call = pr.referencia
-             OR (INSTR(pr.referencia, '*') > 0 AND UPPER(q.call) GLOB UPPER(pr.referencia))
-             OR (COALESCE(pr.alias, '') <> '' AND
-                 (q.call = pr.alias
-                  OR (INSTR(pr.alias, '*') > 0 AND UPPER(q.call) GLOB UPPER(pr.alias)))))
-            """;
+        // Los diplomas por indicativo listan unas veces indicativos enteros (160MMI: II0MMI) y
+        // otras patrones con comodin (CCC: 3B8*), mas un alias que puede traer un segundo
+        // patron. Comparar cada indicativo del cuaderno con cada patron cuesta el producto de
+        // los dos: con 50.000 contactos y 135 patrones tardaba mas de veinte segundos.
+        //
+        // El catalogo guarda ya la parte fija de cada patron, asi que aqui se genera una rama
+        // por cada largo de parte fija que exista y cada rama entra por el indice
+        // (award_code, prefijo) con una igualdad. El CROSS JOIN esta puesto a proposito: fija el
+        // orden de los bucles para que el cuaderno sea el de fuera y el catalogo el de dentro.
+        var ramas = string.Join(
+            Environment.NewLine + "              UNION ALL" + Environment.NewLine,
+            reglas.LargosDePrefijo.Select(n => $"""
+                      SELECT pp.referencia AS valor, l.id AS id, l.fecha AS fecha,
+                             l.confirmado AS confirmado
+                        FROM llamadas l
+                        CROSS JOIN {AliasDelCatalogo}.premio_patron pp
+                             ON pp.award_code = {codigo}
+                            AND pp.prefijo = substr(l.indicativo, 1, {ReglasDeVariante.Numero(n)})
+                            AND l.indicativo GLOB pp.patron
+                """));
 
         return $"""
-            WITH alcanzadas AS (
-              SELECT pr.referencia AS valor,
-                     MIN(q.id)     AS primero,
-                     {confirmada}  AS confirmada
-                FROM {AliasDelCatalogo}.premio_referencia pr
-                JOIN qso q ON {Coincide}
-               WHERE pr.award_code = {codigo}
-                 AND pr.valido = 1
-                 {VentanaDeLaReferencia()}
+            WITH llamadas AS (
+              SELECT q.id             AS id,
+                     UPPER(q.call)    AS indicativo,
+                     q.qso_inicio_utc AS fecha,
+                     CASE WHEN {confirmada} THEN 1 ELSE 0 END AS confirmado
+                FROM qso q
+               WHERE q.call <> ''
                  {reglas.Filtro}
-               GROUP BY pr.referencia
+            ),
+            casadas AS (
+            {ramas}
+            ),
+            alcanzadas AS (
+              SELECT ca.valor          AS valor,
+                     MIN(ca.id)        AS primero,
+                     MAX(ca.confirmado) AS confirmada
+                FROM casadas ca
+                JOIN {AliasDelCatalogo}.premio_referencia pr
+                     ON pr.award_code = {codigo}
+                    AND pr.referencia = ca.valor
+                    AND pr.valido = 1
+                    {VentanaDeLaReferencia("ca.fecha")}
+               GROUP BY ca.valor
             )
+            """;
+    }
+
+    /// <summary>
+    /// Consulta que devuelve los largos de la parte fija de los patrones de un diploma por
+    /// indicativo, para poder generar una rama por cada uno.
+    /// </summary>
+    /// <param name="codigo">Codigo del diploma.</param>
+    /// <returns>El SQL completo.</returns>
+    public static string LargosDePrefijo(string codigo)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(codigo);
+
+        return $"""
+            SELECT DISTINCT LENGTH(prefijo)
+              FROM {AliasDelCatalogo}.premio_patron
+             WHERE award_code = {ReglasDeVariante.Literal(codigo)}
             """;
     }
 
@@ -239,9 +329,9 @@ public static class ConsultasDeProgreso
         ArgumentException.ThrowIfNullOrEmpty(codigo);
 
         return $"""
-            SELECT referencia AS Referencia, COALESCE(alias, '') AS Alias
-              FROM {AliasDelCatalogo}.premio_referencia
-             WHERE award_code = {ReglasDeVariante.Literal(codigo)} AND valido = 1
+            SELECT referencia AS Referencia, patron AS Patron
+              FROM {AliasDelCatalogo}.premio_patron
+             WHERE award_code = {ReglasDeVariante.Literal(codigo)}
             """;
     }
 
@@ -292,10 +382,10 @@ public static class ConsultasDeProgreso
     /// los de despues. Las ventanas de las entidades las pone el resolutor del dominio al
     /// compilar el catalogo.
     /// </summary>
-    private static string VentanaDeLaReferencia() =>
-        """
-            AND (pr.valido_desde = '' OR q.qso_inicio_utc >= pr.valido_desde)
-                AND (pr.valido_hasta = '' OR q.qso_inicio_utc <= pr.valido_hasta || ' 23:59:59')
+    private static string VentanaDeLaReferencia(string columnaDeFecha = "q.qso_inicio_utc") =>
+        $"""
+            AND (pr.valido_desde = '' OR {columnaDeFecha} >= pr.valido_desde)
+                AND (pr.valido_hasta = '' OR {columnaDeFecha} <= pr.valido_hasta || ' 23:59:59')
         """;
 
     /// <summary>Expresion SQL que saca del contacto la referencia de un diploma por campo.</summary>
@@ -328,6 +418,7 @@ public static class ConsultasDeProgreso
         CampoDeQso.Cnty => "TRIM(COALESCE(q.cnty, ''))",
         CampoDeQso.Qth => "TRIM(COALESCE(q.qth, ''))",
         CampoDeQso.Address => "TRIM(COALESCE(q.address, ''))",
+        CampoDeQso.SigInfo => "TRIM(COALESCE(q.sig_info, ''))",
         _ => "''",
     };
 

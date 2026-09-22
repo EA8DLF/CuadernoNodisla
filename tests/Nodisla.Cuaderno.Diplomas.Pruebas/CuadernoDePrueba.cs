@@ -1,5 +1,7 @@
 using System.Globalization;
 using Microsoft.Data.Sqlite;
+using System.Data.Common;
+using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Diplomas;
 using Nodisla.Cuaderno.Diplomas.Calculo;
 using Nodisla.Cuaderno.Dominio.Dxcc;
@@ -27,7 +29,7 @@ public sealed class CuadernoDePrueba : IAsyncDisposable
     /// (por indicativo).
     /// </remarks>
     public static IReadOnlyList<string> DiplomasDePrueba { get; } =
-        ["DXCC", "WAS", "H26", "WPX", "IOTA", "AA", "CCC"];
+        ["DXCC", "WAS", "H26", "WPX", "IOTA", "AA", "CCC", "SIOTA"];
 
     private const string Esquema = """
         CREATE TABLE qso (
@@ -49,6 +51,8 @@ public sealed class CuadernoDePrueba : IAsyncDisposable
             address          TEXT,
             gridsquare       TEXT NOT NULL DEFAULT '' COLLATE NOCASE,
             prop_mode        TEXT COLLATE NOCASE,
+            sig              TEXT COLLATE NOCASE,
+            sig_info         TEXT COLLATE NOCASE,
             station_callsign TEXT NOT NULL DEFAULT '' COLLATE NOCASE,
             creado_utc       TEXT NOT NULL DEFAULT '',
             modificado_utc   TEXT NOT NULL DEFAULT ''
@@ -113,6 +117,9 @@ public sealed class CuadernoDePrueba : IAsyncDisposable
     /// <summary>Cadena de conexion del cuaderno.</summary>
     public string CadenaDeConexion { get; }
 
+    /// <summary>Fabrica de conexiones, la misma que usa la aplicacion de verdad.</summary>
+    public IFabricaDeConexion Fabrica => new FabricaDePrueba(Ruta, CadenaDeConexion);
+
     /// <summary>
     /// Carpeta donde se compila el catalogo. Es la misma para todas las pruebas: el catalogo se
     /// compila una vez y se reaprovecha mientras no cambie el recurso.
@@ -130,13 +137,12 @@ public sealed class CuadernoDePrueba : IAsyncDisposable
         Directory.CreateDirectory(CarpetaDelCatalogo);
         var opciones = new OpcionesDeDiplomas
         {
-            CadenaDeConexionDelCuaderno = CadenaDeConexion,
             RutaDelCatalogo = Path.Combine(CarpetaDelCatalogo, "diplomas.sqlite"),
         };
         foreach (var codigo in DiplomasDePrueba) opciones.DiplomasIncluidos.Add(codigo);
         ajustar?.Invoke(opciones);
 
-        _motor = new MotorDeDiplomas(opciones, ResolutorDxcc.Predeterminado);
+        _motor = new MotorDeDiplomas(opciones, Fabrica, ResolutorDxcc.Predeterminado);
         return _motor;
     }
 
@@ -253,6 +259,27 @@ public sealed class CuadernoDePrueba : IAsyncDisposable
         orden.Parameters.AddWithValue("@ref", referencia);
         orden.Parameters.AddWithValue("@propia", propia ? 1 : 0);
         orden.ExecuteNonQuery();
+    }
+
+    /// <summary>
+    /// Fabrica de conexiones para las pruebas, con los mismos ajustes que pone la capa de datos.
+    /// </summary>
+    /// <param name="ruta">Fichero del cuaderno.</param>
+    /// <param name="cadena">Cadena de conexion.</param>
+    private sealed class FabricaDePrueba(string ruta, string cadena) : IFabricaDeConexion
+    {
+        public string RutaDelCuaderno => ruta;
+
+        public async Task<DbConnection> AbrirAsync(CancellationToken ct = default)
+        {
+            var conexion = new SqliteConnection(cadena);
+            await conexion.OpenAsync(ct).ConfigureAwait(false);
+
+            await using var orden = conexion.CreateCommand();
+            orden.CommandText = "PRAGMA busy_timeout=5000; PRAGMA foreign_keys=ON;";
+            await orden.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
+            return conexion;
+        }
     }
 
     /// <summary>Ejecuta SQL suelto contra el cuaderno.</summary>

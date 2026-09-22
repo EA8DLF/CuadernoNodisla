@@ -145,7 +145,7 @@ public static class LectorDelRecurso
 
     private static PremioDelCatalogo LeerPremio(string[] c) => new(
         Codigo: Campo(c, 1),
-        Clase: AClase(Campo(c, 2)),
+        Clase: AClaseDeDiploma(Campo(c, 2)),
         Nombre: Campo(c, 3),
         NombreEspanol: Opcional(c, 4),
         Gestor: Opcional(c, 5),
@@ -164,7 +164,7 @@ public static class LectorDelRecurso
         ValidoDesde: Opcional(c, 20),
         ValidoHasta: Opcional(c, 21),
         BandasPermitidas: Trozos(Campo(c, 23)),
-        EmisionPermitida: Trozos(Campo(c, 24)),
+        ClasesDeModoPermitidas: AClases(Campo(c, 24)),
         SoloEntidadesVigentes: Bandera(c, 25),
         Calculable: Bandera(c, 26),
         MotivoNoCalculable: Opcional(c, 27),
@@ -176,7 +176,7 @@ public static class LectorDelRecurso
         Descripcion: Opcional(c, 3),
         Modos: Trozos(Campo(c, 5)),
         Bandas: Trozos(Campo(c, 6)),
-        TipoDeEmision: Opcional(c, 7),
+        Clase: AClaseDeModo(Campo(c, 7)),
         Continentes: Trozos(Campo(c, 8)),
         Anual: Bandera(c, 9),
         ExigeSatelite: Bandera(c, 10),
@@ -240,7 +240,33 @@ public static class LectorDelRecurso
         return numeros;
     }
 
-    private static ClaseDeDiploma AClase(string texto) => texto switch
+    /// <summary>
+    /// Traduce el tipo de emision del catalogo original a la familia de modos del contrato.
+    /// Lo que no se reconozca se lee como «cualquiera», que es la lectura que no descarta nada
+    /// sin motivo; el aviso de que no se ha entendido lo da <c>ReglasDeVariante</c>.
+    /// </summary>
+    private static ClaseDeModo AClaseDeModo(string texto) => texto.ToUpperInvariant() switch
+    {
+        "CW" => ClaseDeModo.Telegrafia,
+        "PHONE" => ClaseDeModo.Fonia,
+        "DIGITAL" => ClaseDeModo.Digital,
+        _ => ClaseDeModo.Cualquiera,
+    };
+
+    private static IReadOnlyList<ClaseDeModo> AClases(string texto)
+    {
+        if (string.IsNullOrWhiteSpace(texto)) return [];
+        var clases = new List<ClaseDeModo>();
+        foreach (var t in Trozos(texto))
+        {
+            var clase = AClaseDeModo(t);
+            if (clase != ClaseDeModo.Cualquiera && !clases.Contains(clase)) clases.Add(clase);
+        }
+        // Las tres familias equivalen a «sin restriccion»: no merece la pena filtrar por ellas.
+        return clases.Count == 3 ? [] : clases;
+    }
+
+    private static ClaseDeDiploma AClaseDeDiploma(string texto) => texto switch
     {
         "PorIndicativo" => ClaseDeDiploma.PorIndicativo,
         "PorCampo" => ClaseDeDiploma.PorCampo,

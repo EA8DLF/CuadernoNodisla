@@ -34,6 +34,8 @@ public enum CampoDeQso
     Qth,
     /// <summary>Direccion postal (<c>ADDRESS</c>).</summary>
     Address,
+    /// <summary>Referencia del programa declarado en <c>SIG</c> (<c>SIG_INFO</c>).</summary>
+    SigInfo,
 }
 
 /// <summary>Un diploma del catalogo, con todo lo que el motor necesita para calcularlo.</summary>
@@ -60,7 +62,7 @@ public enum CampoDeQso
 /// <param name="ValidoDesde">Primera fecha que cuenta para el diploma.</param>
 /// <param name="ValidoHasta">Ultima fecha que cuenta.</param>
 /// <param name="BandasPermitidas">Bandas que admite el diploma; vacio, todas.</param>
-/// <param name="EmisionPermitida">Tipos de emision que admite; vacio, todos.</param>
+/// <param name="ClasesDeModoPermitidas">Familias de modos que admite; vacio, todas.</param>
 /// <param name="SoloEntidadesVigentes">Las entidades DXCC borradas no cuentan.</param>
 /// <param name="Calculable">El motor sabe calcularlo.</param>
 /// <param name="MotivoNoCalculable">Por que no lo sabe calcular.</param>
@@ -86,7 +88,7 @@ public sealed record PremioDelCatalogo(
     string? ValidoDesde,
     string? ValidoHasta,
     IReadOnlyList<string> BandasPermitidas,
-    IReadOnlyList<string> EmisionPermitida,
+    IReadOnlyList<ClaseDeModo> ClasesDeModoPermitidas,
     bool SoloEntidadesVigentes,
     bool Calculable,
     string? MotivoNoCalculable,
@@ -109,7 +111,7 @@ public sealed record PremioDelCatalogo(
 /// <param name="Descripcion">Reglamento de la variante.</param>
 /// <param name="Modos">Modos o submodos exigidos; vacio, cualquiera.</param>
 /// <param name="Bandas">Bandas exigidas; vacio, cualquiera.</param>
-/// <param name="TipoDeEmision">Tipo de emision exigido: <c>CW</c>, <c>PHONE</c> o <c>DIGITAL</c>.</param>
+/// <param name="Clase">Familia de modos exigida: telegrafia, fonia, digitales o cualquiera.</param>
 /// <param name="Continentes">Continentes exigidos; vacio, cualquiera.</param>
 /// <param name="Anual">Solo cuenta lo trabajado dentro del ano en curso.</param>
 /// <param name="ExigeSatelite">Solo cuentan los contactos por satelite.</param>
@@ -127,7 +129,7 @@ public sealed record VarianteDelCatalogo(
     string? Descripcion,
     IReadOnlyList<string> Modos,
     IReadOnlyList<string> Bandas,
-    string? TipoDeEmision,
+    ClaseDeModo Clase,
     IReadOnlyList<string> Continentes,
     bool Anual,
     bool ExigeSatelite,

@@ -2,10 +2,10 @@ using Nodisla.Cuaderno.Dominio.Valores;
 
 namespace Nodisla.Cuaderno.Diplomas.Calculo;
 
-/// <summary>Una referencia de un diploma por indicativo y los patrones con los que casa.</summary>
+/// <summary>Un patron de un diploma por indicativo y la referencia a la que pertenece.</summary>
 /// <param name="Referencia">Codigo de la referencia.</param>
-/// <param name="Alias">Segundo patron, si el catalogo lo trae.</param>
-public sealed record PatronDeIndicativo(string Referencia, string Alias);
+/// <param name="Patron">Patron con el que casa, con <c>*</c> y <c>?</c> como comodines.</param>
+public sealed record PatronDeIndicativo(string Referencia, string Patron);
 
 /// <summary>
 /// Decide a que referencia de un diploma por indicativo corresponde un indicativo.
@@ -29,7 +29,7 @@ public static class CoincidenciaDeIndicativo
         var valor = indicativo.Valor;
         foreach (var patron in patrones)
         {
-            if (Casa(patron.Referencia, valor) || Casa(patron.Alias, valor)) return patron.Referencia;
+            if (Casa(patron.Patron, valor)) return patron.Referencia;
         }
         return null;
     }
