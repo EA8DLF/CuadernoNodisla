@@ -2,28 +2,48 @@
 
 Clon en español de Log4OM NextGen 2.40.0.0, para uso particular de EA8DLF.
 
-## Estado — 21-09-2026
+## Estado — 22-09-2026
 
-**Fase 1 (núcleo del cuaderno) completada.** La aplicación arranca, registra contactos,
-importa y exporta ADIF, y el cuaderno real de EA8DLF entra entero.
-
-**Fase 2 (operar) casi cerrada.** Control del FT-710, vigilante de PTT, cluster de DX,
-bandplan, FLDigi y puente con WSJT-X y JTDX, todo terminado y probado. Queda la interfaz,
-en rediseño: el cuaderno se muda a su pestaña y la pantalla principal pasa a ser una cabina
-de operación con el FT-710 dibujado y los dos VFO a la vista.
+**Fase 1 (núcleo del cuaderno) completada.**
+**Fase 2 (operar) completada**: control nativo del FT-710, vigilante de PTT, cluster de DX,
+bandplan, FLDigi, puente con WSJT-X y JTDX, mapa y cabina de operación.
+**Fase 3 (servicios y diplomas) en curso**: servicios de QSL y propagación cerrados; falta el
+motor de diplomas.
 
 ### Cifras
 
-| Capa | Pruebas | Medido |
-|---|---|---|
-| Dominio y DXCC | 550 | 99,67 % de acierto en entidad DXCC · 1,5 µs por resolución |
-| ADIF | 87 | 1.838 QSOs en 1,3 s · ida y vuelta byte a byte en los 8 respaldos |
-| Datos | 53 | alta en lote 3,8 s · duplicado 1,2 ms · página de 200 con hijas 150 ms |
-| Aplicación | 92 | — |
-| Integraciones | 160 | 8 variantes de anuncio · 426 tramos de bandplan |
-| Radio | 80 | 296 entradas del menú del FT-710 leídas del equipo real |
+| Capa | Pruebas |
+|---|---|
+| Dominio y DXCC | 550 |
+| Integraciones | 169 |
+| Aplicación | 152 |
+| Servicios | 98 |
+| Propagación | 95 |
+| Radio | 90 |
+| ADIF | 87 |
+| Datos | 53 |
 
 Compilación de la solución entera: **0 avisos, 0 errores**.
+
+### Decisiones de la Fase 3
+
+- **Credenciales cifradas con DPAPI.** El `config.ini` del original guarda una clave de ClubLog
+  en claro; aquí no.
+- **LoTW descarga con `qso_qslsince`**, no `qso_qsorxsince`: con el segundo, un contacto subido
+  hace años y confirmado ayer no aparecería nunca.
+- **ClubLog no ofrece descarga de confirmaciones** y se dice, en vez de devolver vacío fingiendo.
+- **Las confirmaciones sin pareja se devuelven al operador**: suelen significar que el cuaderno
+  tiene mal la hora, la banda o el modo.
+- **La predicción de bandas es una aproximación propia y lo declara.** Cada predicción firma su
+  motor, porque un motor real también cae en la estimación cuando falla o se sale de rango.
+- **El paso gris exige el Sol a ±6° en los dos extremos**; «cruza el terminador» a secas sería
+  cierto casi siempre y no serviría de nada.
+
+### Pendiente de decisión de Jose
+
+- Instalar un motor de predicción real (**ITURHFProp** o el paquete **VOACAP/ITSHFBC**) o
+  quedarse con la aproximación honesta.
+- Dos escrituras en el FT-710 para resolver las tablas de ancho de filtro y retardo de VOX.
 
 ### Prueba de integración sobre el respaldo real
 
