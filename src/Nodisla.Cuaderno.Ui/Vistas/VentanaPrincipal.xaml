@@ -60,7 +60,18 @@
         </Grid.RowDefinitions>
 
         <!-- ══ Cabecera ══ -->
-        <Border x:Name="TarjetaDeCabecera" Grid.Row="0" Style="{StaticResource Tarjeta}"
+        <!--
+            La cabecera es CROMO, no contenido: fondo casi negro, como la barra de estado. El
+            contraste entre el marco oscuro y los paneles de dentro es lo primero que se ve de
+            una cabina, y es lo que hacia que la nuestra pareciera mas pobre de lo que es.
+        -->
+        <Border x:Name="TarjetaDeCabecera" Grid.Row="0"
+                Background="{DynamicResource FondoCromo}"
+                BorderBrush="{DynamicResource BordeCromo}"
+                BorderThickness="0,0,0,1"
+                Padding="12,7"
+                Margin="-12,-12,-12,8"
+                TextElement.Foreground="{DynamicResource TextoCromo}"
                 Visibility="{Binding CabeceraVisible, Converter={StaticResource BooleanoAVisible}}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -105,8 +116,9 @@
                     </StackPanel>
                 </WrapPanel>
 
-                <Border Grid.Column="1"
-                        Background="{DynamicResource FondoCabecera}"
+                <!-- El reloj y, debajo, la franja solar: lo que se mira de reojo. -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <Border Background="{DynamicResource FondoCabecera}"
                         BorderBrush="{DynamicResource Borde}"
                         BorderThickness="1"
                         CornerRadius="5"
@@ -125,26 +137,29 @@
                         </TextBlock>
                     </StackPanel>
                 </Border>
+
+                <vistas:FranjaSolar DataContext="{Binding Solar}" Margin="0,5,0,0" />
+                </StackPanel>
             </Grid>
         </Border>
 
         <!-- ══ Las seis pestañas ══ -->
         <TabControl Grid.Row="1" SelectedIndex="{Binding IndiceDeLaPestana}" Margin="0,0,0,8">
-            <TabItem Header="Operar">
+            <TabItem Header="Operar (Ctrl 1)">
                 <vistas:PanelOperar x:Name="Operar" />
             </TabItem>
 
-            <TabItem Header="Digital">
+            <TabItem Header="Digital (Ctrl 2)">
                 <vistas:PestanaDigital />
             </TabItem>
 
-            <TabItem Header="Cuaderno">
+            <TabItem Header="Cuaderno (Ctrl 3)">
                 <Border Style="{StaticResource Tarjeta}" Margin="0">
                     <vistas:PanelDelCuaderno x:Name="Cuaderno" Fallo="AlFallarElCuaderno" />
                 </Border>
             </TabItem>
 
-            <TabItem Header="Mapa">
+            <TabItem Header="Mapa (Ctrl 4)">
                 <Border Style="{StaticResource Tarjeta}" Margin="0">
                     <vistas:PanelDeMapa DataContext="{Binding Mapa}" />
                 </Border>
@@ -191,11 +206,12 @@
 
         <!-- ══ Barra de estado ══ -->
         <Border Grid.Row="2"
-                Background="{DynamicResource FondoCabecera}"
-                BorderBrush="{DynamicResource Borde}"
+                Background="{DynamicResource FondoCromo}"
+                BorderBrush="{DynamicResource BordeCromo}"
                 BorderThickness="0,1,0,0"
-                Padding="12,7"
-                Margin="-12,0,-12,0">
+                Padding="12,5"
+                Margin="-12,0,-12,0"
+                TextElement.Foreground="{DynamicResource TextoCromo}">
             <DockPanel>
 
                 <!--
@@ -261,7 +277,10 @@
                 </StackPanel>
 
                 <WrapPanel>
-                <TextBlock Margin="0,0,20,0">
+                <!-- Los testigos de los servicios, lo primero de la barra. -->
+                <vistas:PastillasDeServicio Margin="0,0,16,0" />
+
+                <TextBlock Margin="0,0,20,0" VerticalAlignment="Center">
                     <Run Text="Estación:" Foreground="{DynamicResource TextoTenue}" />
                     <Run Text="{Binding PerfilActivo, Mode=OneWay}" FontWeight="Bold" />
                 </TextBlock>

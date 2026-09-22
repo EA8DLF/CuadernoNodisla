@@ -56,6 +56,8 @@
                 <TextBox x:Name="CampoIndicativo"
                          Style="{StaticResource CampoDeIndicativo}"
                          Text="{Binding Entrada.Indicativo, UpdateSourceTrigger=PropertyChanged}"
+                         AutomationProperties.Name="Indicativo del corresponsal"
+                         AutomationProperties.HelpText="F4 trae el foco aquí. Al escribirlo se rellena el retrato: si aporta país, banda o modo nuevos."
                          ToolTip="Indicativo del corresponsal. F4 trae el foco aquí." />
             </StackPanel>
 

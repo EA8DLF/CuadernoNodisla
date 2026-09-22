@@ -1,0 +1,281 @@
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
+using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Dominio.Valores;
+using Serilog;
+
+namespace Nodisla.Cuaderno.Ui.VistaModelos;
+
+/// <summary>Una casilla de la rejilla de novedad, ya escrita para la pantalla.</summary>
+/// <param name="Eje">Fila de la rejilla.</param>
+/// <param name="Medio">Columna.</param>
+/// <param name="Trabajado">Ya esta en el cuaderno.</param>
+/// <param name="Confirmado">Ademas esta confirmado por esa via.</param>
+public sealed record CasillaVista(EjeDeNovedad Eje, MedioDeConfirmacion Medio, bool Trabajado, bool Confirmado)
+{
+    /// <summary>Lo que dice la casilla: nueva, pendiente o confirmada.</summary>
+    public string Texto => (Trabajado, Confirmado) switch
+    {
+        (false, _) => "NUEVO",
+        (true, false) => "sin QSL",
+        _ => "OK",
+    };
+
+    /// <summary>Nombre para el lector de pantalla, que no ve los colores.</summary>
+    public string NombreAccesible => $"{NombreDelEje} por {NombreDelMedio}: {Texto}";
+
+    /// <summary>Nombre del eje en espanol.</summary>
+    public string NombreDelEje => Eje switch
+    {
+        EjeDeNovedad.Pais => "País",
+        EjeDeNovedad.Banda => "Banda",
+        _ => "Modo",
+    };
+
+    /// <summary>Nombre de la via en espanol.</summary>
+    public string NombreDelMedio => Medio switch
+    {
+        MedioDeConfirmacion.Papel => "Papel",
+        MedioDeConfirmacion.Eqsl => "eQSL",
+        MedioDeConfirmacion.Lotw => "LoTW",
+        MedioDeConfirmacion.QrzCom => "QRZ",
+        _ => Medio.ToString(),
+    };
+}
+
+/// <summary>Una casilla de la rejilla de banda por modo, ya escrita para la pantalla.</summary>
+/// <param name="Banda">Banda de la columna.</param>
+/// <param name="Familia">Fila.</param>
+/// <param name="Contactos">Contactos en esa casilla.</param>
+/// <param name="Confirmados">De ellos, confirmados.</param>
+public sealed record CasillaDeRejilla(string Banda, FamiliaDeModo Familia, int Contactos, int Confirmados)
+{
+    /// <summary>Hay algun contacto en esa casilla.</summary>
+    public bool Trabajado => Contactos > 0;
+
+    /// <summary>Hay alguno confirmado.</summary>
+    public bool Confirmado => Confirmados > 0;
+
+    /// <summary>Lo que se escribe dentro: el numero, o nada.</summary>
+    public string Texto => Contactos switch
+    {
+        0 => string.Empty,
+        < 10 => Contactos.ToString(System.Globalization.CultureInfo.CurrentCulture),
+        _ => "9+",
+    };
+
+    /// <summary>Lo que se dice al pasar el raton y al lector de pantalla.</summary>
+    public string Detalle => Contactos == 0
+        ? $"{Banda} en {NombreDeLaFamilia}: sin contactos"
+        : $"{Banda} en {NombreDeLaFamilia}: {Contactos} contacto(s), {Confirmados} confirmado(s)";
+
+    /// <summary>Nombre de la familia de modo en espanol.</summary>
+    public string NombreDeLaFamilia => Familia switch
+    {
+        FamiliaDeModo.Fonia => "fonía",
+        FamiliaDeModo.Telegrafia => "telegrafía",
+        _ => "digitales",
+    };
+}
+
+/// <summary>
+/// El retrato del indicativo que se esta tecleando: si es nuevo y por donde lo tienes.
+/// </summary>
+/// <remarks>
+/// <para>
+/// Responde de un vistazo a «¿le llamo o no?». Arriba, la rejilla de novedad: tres filas —pais,
+/// banda, modo— por cuatro vias de confirmacion. Debajo, la rejilla de bandas por familia de
+/// modo con ese indicativo, que es el «trabajado antes» sin leer una frase.
+/// </para>
+/// <para>
+/// Se recalcula con retardo. Teclear un indicativo son seis o siete pulsaciones en dos
+/// segundos, y lanzar doce recuentos por pulsacion seria castigar la base sin necesidad: se
+/// espera a que la mano pare.
+/// </para>
+/// </remarks>
+public sealed partial class VistaModeloRetrato : ObservableObject, IDisposable
+{
+    /// <summary>Lo que se espera desde la ultima tecla antes de preguntar al cuaderno.</summary>
+    private static readonly TimeSpan Retardo = TimeSpan.FromMilliseconds(350);
+
+    /// <summary>Bandas que salen en la rejilla, en el orden de siempre.</summary>
+    public static readonly IReadOnlyList<string> BandasDeLaRejilla =
+        ["160m", "80m", "60m", "40m", "30m", "20m", "17m", "15m", "12m", "10m", "6m", "4m", "2m", "70cm"];
+
+    private readonly RetratoDelIndicativo _retrato;
+    private readonly Dominio.Dxcc.IResolutorDxcc _dxcc;
+    private readonly System.Windows.Threading.DispatcherTimer _espera;
+
+    private string _pendiente = string.Empty;
+    private Banda _banda = Banda.Vacia;
+    private Modo _modo = Modo.Vacio;
+    private CancellationTokenSource? _enCurso;
+    private bool _liberado;
+
+    /// <summary>Monta el retrato.</summary>
+    /// <param name="retrato">Caso de uso que arma las dos rejillas.</param>
+    /// <param name="dxcc">Resolutor de entidades, para saber de que pais es el indicativo.</param>
+    public VistaModeloRetrato(RetratoDelIndicativo retrato, Dominio.Dxcc.IResolutorDxcc dxcc)
+    {
+        _retrato = retrato ?? throw new ArgumentNullException(nameof(retrato));
+        _dxcc = dxcc ?? throw new ArgumentNullException(nameof(dxcc));
+
+        _espera = new System.Windows.Threading.DispatcherTimer { Interval = Retardo };
+        _espera.Tick += async (_, _) =>
+        {
+            _espera.Stop();
+            await ArmarAsync().ConfigureAwait(true);
+        };
+    }
+
+    /// <summary>Perfil de estacion activo, para no mezclar cuadernos.</summary>
+    public long? EstacionId { get; set; }
+
+    /// <summary>Las doce casillas de la rejilla de novedad.</summary>
+    public ObservableCollection<CasillaVista> Novedad { get; } = [];
+
+    /// <summary>Las casillas de la rejilla de banda por familia de modo.</summary>
+    public ObservableCollection<CasillaDeRejilla> Rejilla { get; } = [];
+
+    /// <summary>Indicativo al que corresponde lo que se ensena.</summary>
+    [ObservableProperty]
+    private string _indicativo = string.Empty;
+
+    /// <summary>Entidad DXCC del indicativo, escrita.</summary>
+    [ObservableProperty]
+    private string _pais = string.Empty;
+
+    /// <summary>Resumen del trabajado antes: cuantas veces y si hay algo nuevo.</summary>
+    [ObservableProperty]
+    private string _resumen = "Escriba un indicativo.";
+
+    /// <summary>Hay algo que el contacto aportaria: entidad, banda o modo nuevos.</summary>
+    [ObservableProperty]
+    private bool _aportaAlgo;
+
+    /// <summary>Hay datos que ensenar.</summary>
+    [ObservableProperty]
+    private bool _hayDatos;
+
+    /// <summary>
+    /// Dice que indicativo, banda y modo se estan tecleando.
+    /// </summary>
+    /// <param name="indicativo">Indicativo, tal y como va escrito.</param>
+    /// <param name="banda">Banda elegida.</param>
+    /// <param name="modo">Modo elegido.</param>
+    public void Mirar(string? indicativo, Banda banda, Modo modo)
+    {
+        var limpio = (indicativo ?? string.Empty).Trim().ToUpperInvariant();
+
+        _pendiente = limpio;
+        _banda = banda;
+        _modo = modo;
+
+        // Con menos de tres letras no hay indicativo que valga: el prefijo mas corto del mundo
+        // tiene dos y siempre lleva numero y sufijo detras.
+        if (limpio.Length < 3)
+        {
+            Vaciar();
+            return;
+        }
+
+        _espera.Stop();
+        _espera.Start();
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        if (_liberado) return;
+        _liberado = true;
+
+        _espera.Stop();
+        _enCurso?.Cancel();
+        _enCurso?.Dispose();
+    }
+
+    private void Vaciar()
+    {
+        Novedad.Clear();
+        Rejilla.Clear();
+        HayDatos = false;
+        AportaAlgo = false;
+        Indicativo = string.Empty;
+        Pais = string.Empty;
+        Resumen = "Escriba un indicativo.";
+    }
+
+    private async Task ArmarAsync()
+    {
+        if (_liberado) return;
+
+        var indicativo = _pendiente;
+        if (indicativo.Length < 3) return;
+
+        _enCurso?.Cancel();
+        _enCurso?.Dispose();
+        _enCurso = new CancellationTokenSource();
+        var ct = _enCurso.Token;
+
+        try
+        {
+            var valor = Dominio.Valores.Indicativo.Parse(indicativo);
+            var entidad = _dxcc.Resolver(valor, DateOnly.FromDateTime(DateTime.UtcNow)).Entidad;
+
+            var retrato = await _retrato.ArmarAsync(
+                valor,
+                entidad?.Numero ?? 0,
+                _banda,
+                _modo,
+                EstacionId,
+                ct).ConfigureAwait(true);
+
+            if (ct.IsCancellationRequested || _liberado) return;
+
+            Indicativo = valor.Valor;
+            Pais = entidad?.NombreParaMostrar ?? "entidad sin resolver";
+            Poner(retrato);
+        }
+        catch (OperationCanceledException)
+        {
+            // Otra tecla llego antes: lo que valia es la consulta nueva.
+        }
+        catch (Exception ex)
+        {
+            Log.Debug(ex, "No se ha podido armar el retrato de {Indicativo}.", indicativo);
+            Vaciar();
+        }
+    }
+
+    private void Poner(Retrato retrato)
+    {
+        Novedad.Clear();
+        foreach (var casilla in retrato.Novedad)
+        {
+            Novedad.Add(new CasillaVista(casilla.Eje, casilla.Medio, casilla.Trabajado, casilla.Confirmado));
+        }
+
+        var porClave = retrato.BandaYModo.ToDictionary(c => (c.Banda, c.Familia));
+
+        Rejilla.Clear();
+        foreach (var familia in (FamiliaDeModo[])[FamiliaDeModo.Fonia, FamiliaDeModo.Telegrafia, FamiliaDeModo.Digital])
+        {
+            foreach (var banda in BandasDeLaRejilla)
+            {
+                var casilla = porClave.TryGetValue((banda, familia), out var hay)
+                    ? new CasillaDeRejilla(banda, familia, hay.Contactos, hay.Confirmados)
+                    : new CasillaDeRejilla(banda, familia, 0, 0);
+
+                Rejilla.Add(casilla);
+            }
+        }
+
+        HayDatos = true;
+        AportaAlgo = retrato.Novedad.Any(c => !c.Trabajado);
+
+        Resumen = retrato.ContactosConElIndicativo == 0
+            ? "Nunca trabajado."
+            : $"Trabajado {retrato.ContactosConElIndicativo} vez/veces.";
+    }
+}

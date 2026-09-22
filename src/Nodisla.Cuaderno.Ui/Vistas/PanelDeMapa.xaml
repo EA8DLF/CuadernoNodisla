@@ -53,6 +53,7 @@
                                 MostrarPasoGris="{Binding MostrarPasoGris}"
                                 InstanteDelPasoGris="{Binding InstanteDelPasoGris}"
                                 MostrarFondo="{Binding MostrarFondo}"
+                                TemaOscuro="{Binding DataContext.TemaOscuro, RelativeSource={RelativeSource AncestorType=Window}}"
                                 MarcaElegida="AlElegirUnaMarca" />
         </Border>
 

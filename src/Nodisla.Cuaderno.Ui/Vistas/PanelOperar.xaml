@@ -86,14 +86,35 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Style="{StaticResource Tarjeta}" Margin="0,0,5,0" Padding="8,6">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
                     <!--
                         Pegado arriba: si se deja estirar, el formulario reparte su alto entre
                         las filas y deja un claro en blanco enorme debajo del comentario que no
                         sirve para nada.
                     -->
-                    <vistas:PanelDeEntrada x:Name="Entrada" VerticalAlignment="Top" />
-                </ScrollViewer>
+                    <ScrollViewer Grid.Row="0"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <vistas:PanelDeEntrada x:Name="Entrada" VerticalAlignment="Top" />
+                    </ScrollViewer>
+
+                    <!--
+                        El retrato del indicativo va ANCLADO ABAJO, fuera del desplazamiento:
+                        mientras se teclea tiene que estar a la vista, porque es lo que dice si
+                        merece la pena llamar. Si se desplazara con el formulario, el dato
+                        llegaria tarde. Son numeros que el cuaderno ya tenia y que no se
+                        ensenaban en ninguna parte.
+                    -->
+                    <StackPanel Grid.Row="1">
+                        <Separator Margin="0,5" Background="{DynamicResource BordeSuave}" />
+                        <vistas:PanelDeRetrato DataContext="{Binding Retrato}" />
+                    </StackPanel>
+                </Grid>
             </Border>
 
             <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6">

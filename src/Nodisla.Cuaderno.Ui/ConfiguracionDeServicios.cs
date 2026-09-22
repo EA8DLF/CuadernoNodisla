@@ -1,4 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Dxcc;
@@ -66,6 +66,14 @@ public static class ConfiguracionDeServicios
         servicios.AddSingleton<IRepositorioEstacion>(
             _ => new RepositorioEstacionEnMemoria(conPerfilesDeEjemplo: !SinPerfilesDeEjemplo));
         servicios.AddSingleton<IConsultaIndicativo, ConsultaIndicativoNoDisponible>();
+
+        // El modulo de propagacion SI es el de verdad: trae los indices del servicio
+        // meteorologico espacial y guarda copia en disco. Sin red, arranca con la copia y lo
+        // dice; la franja solar ensena ese aviso tal cual.
+        servicios.AddHttpClient();
+        servicios.AddSingleton<IPropagacion>(
+            proveedor => new Propagacion.ServicioDePropagacion(
+                proveedor.GetRequiredService<System.Net.Http.IHttpClientFactory>()));
         servicios.AddSingleton<ILectorAdif, LectorAdifNoDisponible>();
         servicios.AddSingleton<IEscritorAdif, EscritorAdifNoDisponible>();
 
@@ -100,12 +108,15 @@ public static class ConfiguracionDeServicios
         servicios.AddSingleton<CrearPerfilDeEstacion>();
         servicios.AddSingleton<PuntosDelCuaderno>();
         servicios.AddSingleton<SeguirElCluster>();
+        servicios.AddSingleton<RetratoDelIndicativo>();
     }
 
     private static void AnadirInterfaz(IServiceCollection servicios)
     {
         servicios.AddSingleton(_ => EstadoDeLosPaneles.Leer(App.CarpetaDeDatos));
 
+        servicios.AddSingleton<VistaModeloSolar>();
+        servicios.AddSingleton<VistaModeloRetrato>();
         servicios.AddSingleton<VistaModeloEntradaQso>();
         servicios.AddSingleton<VistaModeloCuaderno>();
         servicios.AddSingleton<VistaModeloEquipo>();

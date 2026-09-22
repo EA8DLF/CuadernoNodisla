@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Serilog;
@@ -57,10 +57,17 @@ public sealed class EstadoDeLosPaneles
     /// El programa estaba en tema oscuro.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// Quien opera de noche pone el tema oscuro y no quiere volver a ponerlo cada vez que
     /// abre el cuaderno. Lo mismo vale para la escala de letra.
+    /// </para>
+    /// <para>
+    /// <b>Viene puesto de fabrica.</b> Una cabina de radio se mira a oscuras y durante horas,
+    /// y el tema claro obliga a bajar el brillo de la pantalla para poder seguir mirando el
+    /// dial. El claro sigue estando, para quien opere de dia o prefiera imprimir.
+    /// </para>
     /// </remarks>
-    public bool TemaOscuro { get; set; }
+    public bool TemaOscuro { get; set; } = true;
 
     /// <summary>Escala de letra que tenia puesta, en tanto por ciento.</summary>
     public int EscalaDeLetra { get; set; } = 100;

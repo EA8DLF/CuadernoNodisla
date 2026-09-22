@@ -40,6 +40,8 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         VistaModeloCluster cluster,
         VistaModeloDigital digital,
         VistaModeloMapa mapa,
+        VistaModeloSolar solar,
+        VistaModeloRetrato retrato,
         IRepositorioEstacion estaciones,
         BuscarEnCuaderno buscar,
         IControlEquipo control,
@@ -54,6 +56,8 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         ArgumentNullException.ThrowIfNull(cluster);
         ArgumentNullException.ThrowIfNull(digital);
         ArgumentNullException.ThrowIfNull(mapa);
+        ArgumentNullException.ThrowIfNull(solar);
+        ArgumentNullException.ThrowIfNull(retrato);
         ArgumentNullException.ThrowIfNull(estadoDeLosPaneles);
 
         Entrada = entrada;
@@ -62,12 +66,26 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         Cluster = cluster;
         Digital = digital;
         Mapa = mapa;
+        Solar = solar;
+        Retrato = retrato;
         _estaciones = estaciones;
         _buscar = buscar;
         _control = control;
         _estadoDeLosPaneles = estadoDeLosPaneles;
 
         Entrada.CuadernoCambiado += async (_, _) => await RefrescarTodoAsync().ConfigureAwait(true);
+
+        // El retrato sigue al formulario: lo que se teclea en el indicativo, la banda o el
+        // modo cambia la respuesta a «le llamo o no».
+        Entrada.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is nameof(VistaModeloEntradaQso.Indicativo)
+                or nameof(VistaModeloEntradaQso.Banda)
+                or nameof(VistaModeloEntradaQso.Modo))
+            {
+                MirarElRetrato();
+            }
+        };
         Cuaderno.SolicitaEditar += (_, qso) => Entrada.CargarParaEditar(qso);
 
         // El dial manda sobre el formulario mientras el equipo este conectado.
@@ -79,6 +97,14 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
                 Entrada.SiguiendoAlEquipo = Equipo.Conectado;
             }
         };
+
+        // Arranque con un indicativo ya escrito, para poder capturar la ventana con el retrato
+        // lleno sin tener que teclear. Es el mismo recurso que CUADERNO_SIN_PERFILES: una
+        // variable de entorno que en uso normal no esta puesta y no hace nada.
+        if (Environment.GetEnvironmentVariable("CUADERNO_INDICATIVO") is { Length: > 0 } inicial)
+        {
+            Entrada.Indicativo = inicial;
+        }
 
         Cluster.SpotElegido += async (_, fila) => await IrAlSpotAsync(fila).ConfigureAwait(true);
         Cluster.SpotsCambiaron += (_, _) =>
@@ -120,6 +146,24 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// <summary>Panel del mapa.</summary>
     public VistaModeloMapa Mapa { get; }
 
+    /// <summary>
+    /// La franja solar: indices del Sol y horas de orto y ocaso.
+    /// </summary>
+    /// <remarks>
+    /// El programa ya calculaba todo esto y no se ensenaba en ninguna parte. Va arriba del
+    /// todo porque es de lo primero que se mira antes de decidir en que banda llamar.
+    /// </remarks>
+    public VistaModeloSolar Solar { get; }
+
+    /// <summary>
+    /// El retrato del indicativo que se esta tecleando: si es nuevo y por donde lo tienes.
+    /// </summary>
+    /// <remarks>
+    /// Responde a «le llamo o no» sin leer una frase. Sale del mismo cuaderno de siempre; lo
+    /// que faltaba era ensenarlo.
+    /// </remarks>
+    public VistaModeloRetrato Retrato { get; }
+
     /// <summary>Pestanas de la ventana, en el orden en que salen.</summary>
     public IReadOnlyList<string> Pestanas { get; } = ["Operar", "Digital", "Cuaderno", "Mapa", "Diplomas", "Ajustes"];
 
@@ -157,7 +201,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     private int _totalDeQsos;
 
     [ObservableProperty]
-    private bool _temaOscuro;
+    private bool _temaOscuro = true;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PanelDeOperacionVisible))]
@@ -541,9 +585,38 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     {
         Entrada.EstacionId = value?.Id;
         Digital.EstacionId = value?.Id;
+        Retrato.EstacionId = value?.Id;
         OnPropertyChanged(nameof(PerfilActivo));
 
-        if (value is not null) Mapa.FijarEstacion(value.MyGridsquare, value.StationCallsign.Valor);
+        if (value is null) return;
+
+        Mapa.FijarEstacion(value.MyGridsquare, value.StationCallsign.Valor);
+
+        // El orto y el ocaso son los del sitio desde donde se opera, no los de un sitio
+        // cualquiera: salen del localizador del perfil activo.
+        Solar.FijarEstacion(
+            value.MyGridsquare.EsVacio
+                ? null
+                : new Dominio.Valores.Coordenada(
+                    value.MyGridsquare.ACoordenadas().Latitud,
+                    value.MyGridsquare.ACoordenadas().Longitud));
+    }
+
+    /// <summary>
+    /// Le dice al retrato que mire el indicativo que se esta tecleando.
+    /// </summary>
+    /// <remarks>
+    /// La banda y el modo llegan al retrato como valores del dominio, no como texto: de un
+    /// «20m» escrito a mano no se puede contar nada en el cuaderno. Si lo que hay escrito no
+    /// es una banda valida —pasa de verdad, el dial de Jose estaba en 27.555 MHz— se pasa la
+    /// banda vacia y el retrato responde con lo que puede.
+    /// </remarks>
+    private void MirarElRetrato()
+    {
+        var banda = Dominio.Valores.Banda.TryParse(Entrada.Banda, out var b) ? b : Dominio.Valores.Banda.Vacia;
+        var modo = Dominio.Valores.Modo.TryParse(Entrada.Modo, null, out var m) ? m : Dominio.Valores.Modo.Vacio;
+
+        Retrato.Mirar(Entrada.Indicativo, banda, modo);
     }
 
     partial void OnEscalaDeLetraChanged(int value)

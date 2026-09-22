@@ -1,0 +1,152 @@
+﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PastillasDeServicio"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        LOS TESTIGOS DE LA BARRA DE ESTADO.
+
+        Una pastilla por servicio, verde cuando está conectado y apagada cuando no. Antes esto
+        era texto suelto en una línea, y para saber si el cluster seguía conectado había que
+        ir a buscarlo. Aquí se ve de un golpe qué está en pie y qué se ha caído.
+
+        EL COLOR NO VA SOLO: cada pastilla lleva el nombre del servicio escrito y un punto que
+        cambia de forma de relleno, y la ayuda emergente dice el estado con palabras. Un
+        testigo que solo es color deja fuera a quien no distingue el verde del gris.
+    -->
+
+    <UserControl.Resources>
+        <Style x:Key="Pastilla" TargetType="Border">
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="7,1" />
+            <Setter Property="Margin" Value="0,0,5,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Background" Value="{DynamicResource FondoPanel}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel Orientation="Horizontal" TextElement.FontSize="11">
+
+        <!-- Equipo por CAT -->
+        <Border AutomationProperties.Name="Estado de la conexión con el equipo">
+            <Border.ToolTip>
+                <TextBlock Text="{Binding Equipo.EstadoTexto}" />
+            </Border.ToolTip>
+            <Border.Style>
+                <Style TargetType="Border" BasedOn="{StaticResource Pastilla}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Equipo.Conectado}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Equipo.Transmitiendo}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource ErrorFondo}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorde}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <StackPanel Orientation="Horizontal">
+                <Ellipse Width="7" Height="7" Margin="0,0,5,0" VerticalAlignment="Center">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="{DynamicResource TextoTenue}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Equipo.Conectado}" Value="True">
+                                    <Setter Property="Fill" Value="{DynamicResource CorrectoTexto}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+                <TextBlock Text="Equipo" FontSize="11" TextTrimming="None" VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
+        <!-- Cluster de DX -->
+        <Border AutomationProperties.Name="Estado de la conexión con el cluster de DX">
+            <Border.ToolTip>
+                <TextBlock Text="{Binding Cluster.EstadoTexto}" />
+            </Border.ToolTip>
+            <Border.Style>
+                <Style TargetType="Border" BasedOn="{StaticResource Pastilla}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Cluster.EstadoTexto}" Value="Conectado">
+                            <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Cluster.EstadoTexto}" Value="Reintentando…">
+                            <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <StackPanel Orientation="Horizontal">
+                <Ellipse Width="7" Height="7" Margin="0,0,5,0" VerticalAlignment="Center">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="{DynamicResource TextoTenue}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Cluster.EstadoTexto}" Value="Conectado">
+                                    <Setter Property="Fill" Value="{DynamicResource CorrectoTexto}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+                <TextBlock Text="Cluster" FontSize="11" TextTrimming="None" VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
+        <!-- Modos digitales -->
+        <Border AutomationProperties.Name="Estado del puente de modos digitales">
+            <Border.ToolTip>
+                <TextBlock Text="{Binding Digital.EstadoTexto}" />
+            </Border.ToolTip>
+            <Border.Style>
+                <Style TargetType="Border" BasedOn="{StaticResource Pastilla}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Digital.Escuchando}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <StackPanel Orientation="Horizontal">
+                <Ellipse Width="7" Height="7" Margin="0,0,5,0" VerticalAlignment="Center">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="{DynamicResource TextoTenue}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Digital.Escuchando}" Value="True">
+                                    <Setter Property="Fill" Value="{DynamicResource CorrectoTexto}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+                <TextBlock Text="Digital" FontSize="11" TextTrimming="None" VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
+
+        <!--
+            LoTW todavía no tiene puerto conectado en la interfaz: la pastilla se dibuja
+            apagada y lo dice. Enseñarla apagada es información —se sabe que existe y que no
+            está— mientras que no enseñarla haría creer que el cuaderno no sube a ninguna
+            parte.
+        -->
+        <Border Style="{StaticResource Pastilla}"
+                Opacity="0.55"
+                ToolTip="La subida a LoTW llega en la Fase 3. Todavía no hay conexión que vigilar."
+                AutomationProperties.Name="LoTW: sin conexión, llega en la Fase 3">
+            <StackPanel Orientation="Horizontal">
+                <Ellipse Width="7" Height="7" Margin="0,0,5,0" VerticalAlignment="Center"
+                         Fill="{DynamicResource TextoTenue}" />
+                <TextBlock Text="LoTW" FontSize="11" TextTrimming="None" VerticalAlignment="Center" />
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>
