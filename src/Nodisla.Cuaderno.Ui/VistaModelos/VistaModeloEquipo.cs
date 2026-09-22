@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Data;
@@ -214,6 +214,49 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(IrALaMemoriaCommand))]
     private MemoriaDeEquipo? _memoriaElegida;
 
+    /// <summary>Atenuador de entrada, para el indicador naranja del visor.</summary>
+    [ObservableProperty]
+    private string _atenuador = "—";
+
+    /// <summary>Preamplificador de entrada, para el indicador naranja del visor.</summary>
+    [ObservableProperty]
+    private string _preamplificador = "—";
+
+    /// <summary>Filtro de muesca automatico, para el indicador naranja del visor.</summary>
+    [ObservableProperty]
+    private string _muescaAutomatica = "—";
+
+    /// <summary>Constante del control automatico de ganancia, para el visor.</summary>
+    [ObservableProperty]
+    private string _agc = "—";
+
+    /// <summary>Cuantos spots se estan viendo, para la franja inferior del visor.</summary>
+    [ObservableProperty]
+    private string _resumenDeSpots = "—";
+
+    /// <summary>Cuantos anuncios de la banda caben en la pantalla del equipo.</summary>
+    private const int EnLaBandaComoMucho = 9;
+
+    /// <summary>Quien esta anunciado ahora mismo en la banda del VFO que recibe.</summary>
+    public ObservableCollection<FilaDeSpot> EnLaBanda { get; } = [];
+
+    /// <summary>Titulo de la lista de la banda, para la pantalla del equipo.</summary>
+    [ObservableProperty]
+    private string _tituloDeLaBanda = "EN LA BANDA";
+
+    /// <summary>No hay nadie anunciado en la banda del VFO que recibe.</summary>
+    [ObservableProperty]
+    private bool _bandaVacia = true;
+
+    /// <summary>
+    /// Lo que el equipo pondria en la esquina del analizador de espectro.
+    /// </summary>
+    /// <remarks>
+    /// De momento dice la via de control y el modo, que es lo que el operador necesita saber
+    /// mientras el analizador sea nuestro y no del equipo.
+    /// </remarks>
+    public string EstadoDelEspectro => Conectado ? $"{ViaTexto}  ·  {Modo}" : "SIN CONEXIÓN";
+
     [ObservableProperty]
     private string _ordenEnCrudo = string.Empty;
 
@@ -425,6 +468,31 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     /// ejemplo— deja el VFO B en blanco en vez de inventarse un valor. Eso tambien es
     /// informacion: dice que ese equipo no lo cuenta.
     /// </remarks>
+    /// <summary>
+    /// Pasa al visor los cuatro indicadores de recepcion que el equipo ensena en naranja.
+    /// </summary>
+    /// <remarks>
+    /// Se leen de los mandos que ya estan construidos, no del equipo otra vez: es el mismo
+    /// objeto que acciona el frontal y la lista, asi que se mantienen solos al dia.
+    /// </remarks>
+    private void RecogerLosIndicadores()
+    {
+        Atenuador = TextoDelIndicador(MandoDeEquipo.Atenuador);
+        Preamplificador = TextoDelIndicador(MandoDeEquipo.Preamplificador);
+        MuescaAutomatica = TextoDelIndicador(MandoDeEquipo.MuescaAutomatica);
+        Agc = TextoDelIndicador(MandoDeEquipo.Agc);
+    }
+
+    /// <summary>Como se escribe un indicador del visor, o un guion si el equipo no lo tiene.</summary>
+    private string TextoDelIndicador(MandoDeEquipo mando)
+    {
+        if (MandoDe(mando) is not { Disponible: true } vista) return "—";
+
+        return vista.EsInterruptor
+            ? (vista.Encendido ? "ON" : "OFF")
+            : vista.ValorTexto;
+    }
+
     private void RecogerLosVfos()
     {
         if (_equipo is not IEquipoConDosVfos conDos) return;
@@ -449,6 +517,50 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         var lista = spots as IReadOnlyList<FilaDeSpot> ?? [.. spots];
         A.PonerAnuncios(lista);
         B.PonerAnuncios(lista);
+
+        ResumenDeSpots = lista.Count.ToString("N0", CultureInfo.CurrentCulture);
+        RecogerLaBanda(lista);
+    }
+
+    /// <summary>
+    /// Deja en <see cref="EnLaBanda"/> quien esta anunciado en la banda del VFO que recibe.
+    /// </summary>
+    /// <remarks>
+    /// Es lo que va donde el equipo pone el analizador de espectro. Un hueco negro no dice
+    /// nada; una lista corta de quien esta ahora mismo en la banda, ordenada por frecuencia,
+    /// es justo lo que se mira de un vistazo antes de girar el dial. En la fase cuatro ese
+    /// sitio lo ocupara la cascada de verdad.
+    /// </remarks>
+    /// <param name="lista">Spots que pasan el filtro del panel de cluster.</param>
+    private void RecogerLaBanda(IReadOnlyList<FilaDeSpot> lista)
+    {
+        var banda = A.Banda;
+
+        var enLaBanda = lista
+            .Where(f => string.Equals(f.Banda, banda, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(f => f.Spot.Frecuencia)
+            .Take(EnLaBandaComoMucho)
+            .ToList();
+
+        // Si en la banda del dial no hay nadie, la pantalla no se queda en negro: ensena lo
+        // ultimo que ha entrado por el cluster, de la banda que sea. Saber que en 6 m acaba de
+        // salir una entidad nueva es justo el motivo por el que uno cambia de banda.
+        var enSuBanda = enLaBanda.Count > 0;
+        if (!enSuBanda)
+        {
+            enLaBanda = [.. lista.Take(EnLaBandaComoMucho)];
+        }
+
+        EnLaBanda.Clear();
+        foreach (var fila in enLaBanda) EnLaBanda.Add(fila);
+
+        TituloDeLaBanda = enSuBanda
+            ? $"EN {banda}"
+            : banda.Length == 0 || banda == "—"
+                ? "EN EL AIRE"
+                : $"EN EL AIRE · NADIE EN {banda}";
+
+        BandaVacia = EnLaBanda.Count == 0;
     }
 
     /// <summary>Intercambia el contenido de los dos VFO.</summary>
@@ -799,6 +911,8 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         UltimaLectura = estado.LeidoUtc.UtcDateTime.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
 
         RecogerLosVfos();
+        RecogerLosIndicadores();
+        OnPropertyChanged(nameof(EstadoDelEspectro));
 
         if (!string.Equals(Frecuencia, frecuenciaAnterior, StringComparison.Ordinal)
             || !string.Equals(Modo, modoAnterior, StringComparison.Ordinal))

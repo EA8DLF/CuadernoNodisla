@@ -48,7 +48,28 @@ public sealed partial class VistaModeloVfo : ObservableObject
     public string Etiqueta { get; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(FrecuenciaDelVisor))]
     private string _frecuencia = "—";
+
+    /// <summary>
+    /// La frecuencia como la escribe el visor del equipo: en hercios y con puntos de millar.
+    /// </summary>
+    /// <remarks>
+    /// El equipo ensena <c>14.195.000</c>, no <c>14.195</c>. No choca con la regla del punto
+    /// decimal de ADIF porque aqui no hay decimales: son hercios enteros, y los puntos separan
+    /// millares. La frecuencia en megahercios sigue escribiendose con punto decimal en el
+    /// formulario y en el cuaderno, que es donde manda ADIF.
+    /// </remarks>
+    public string FrecuenciaDelVisor
+    {
+        get
+        {
+            var frecuencia = TextoDeFrecuencia.Leer(Frecuencia);
+            return frecuencia.EsCero
+                ? "—"
+                : frecuencia.Hercios.ToString("#,##0", CultureInfo.CurrentCulture);
+        }
+    }
 
     [ObservableProperty]
     private string _modo = "—";

@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -167,29 +167,29 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     private double _anchoDelPanelEnLetras = 34;
 
     /// <summary>
-    /// El frontal dibujado no cabe con el ancho que hay ahora.
-    /// </summary>
-    /// <remarks>
-    /// Lo decide la cabina midiendose: un dibujo vectorial no se repliega, o entra entero o
-    /// hay que cambiarlo por la lista de mandos.
-    /// </remarks>
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(FrontalDibujadoVisible))]
-    [NotifyPropertyChangedFor(nameof(FrontalEnListaVisible))]
-    [NotifyPropertyChangedFor(nameof(ColumnasDeLaCabina))]
-    [NotifyPropertyChangedFor(nameof(CabinaCompleta))]
-    [NotifyPropertyChangedFor(nameof(HayBloquesPlegados))]
-    private bool _frontalDibujadoSinSitio;
-
-    /// <summary>
     /// El equipo esta desplegado en la cabina.
     /// </summary>
     /// <remarks>
     /// El frontal ocupa una franja ancha, y hay ratos —un concurso en FT8, por ejemplo— en
-    /// que lo que interesa es el cluster y los decodificados. Se pliega entero y se recuerda.
+    /// que lo que interesa es el cluster y los decodificados. Se pliega <b>a mano</b> y se
+    /// recuerda; nunca se pliega solo. Plegarlo solo fue el error que dejo a Jose sin ver
+    /// nunca la radio.
     /// </remarks>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TextoDelPliegueDelFrontal))]
     private bool _frontalDesplegado = true;
+
+    /// <summary>
+    /// La lista completa de mandos esta a la vista.
+    /// </summary>
+    /// <remarks>
+    /// Es una vista <b>complementaria</b> del frontal, no un sustituto: se abre cuando se
+    /// quiere y ensena todos los mandos que declara el equipo, incluidos los que el dibujo
+    /// no tiene sitio para ensenar con su valor.
+    /// </remarks>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TextoDeLaListaDeMandos))]
+    private bool _listaDeMandosVisible;
 
     [ObservableProperty]
     private int _escalaDeLetra = 100;
@@ -271,45 +271,21 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         PanelDeOperacionVisible ? "Ocultar operación (F10)" : "Mostrar operación (F10)";
 
     /// <summary>
-    /// Escala de letra a partir de la cual el frontal dibujado deja paso a la lista.
+    /// Se ensena el frontal del equipo dibujado.
     /// </summary>
     /// <remarks>
-    /// El criterio de los 200 % sigue en pie: a esa escala un frontal a tamano fijo es
-    /// inservible. Desde el 175 % ya se nota, asi que el relevo se hace ahi.
+    /// <b>Siempre</b>, mientras el equipo declare sus mandos y el operador no lo haya plegado
+    /// a mano. El dibujo es vectorial y vive dentro de un <c>Viewbox</c>: con la ventana
+    /// estrecha o la letra al 200 % se <b>encoge</b>, no se recorta ni desaparece. Un frontal
+    /// pequeno sigue siendo un frontal; ninguno no lo es.
     /// </remarks>
-    public const int EscalaQueRelevaAlFrontal = 175;
+    public bool FrontalDibujadoVisible => Equipo.EsAvanzado && FrontalDesplegado;
 
-    /// <summary>Se ensena el frontal del equipo dibujado.</summary>
-    public bool FrontalDibujadoVisible =>
-        Equipo.EsAvanzado && !FrontalDibujadoSinSitio && EscalaDeLetra < EscalaQueRelevaAlFrontal;
+    /// <summary>Texto del boton que pliega y despliega el frontal del equipo.</summary>
+    public string TextoDelPliegueDelFrontal => FrontalDesplegado ? "Ocultar equipo" : "Mostrar equipo";
 
-    /// <summary>Se ensena la lista de mandos en lugar del frontal dibujado.</summary>
-    public bool FrontalEnListaVisible => !FrontalDibujadoVisible;
-
-    /// <summary>
-    /// En cuantas columnas se reparten el equipo, la entrada y el cluster.
-    /// </summary>
-    /// <remarks>
-    /// Tres cuando hay ancho de sobra. Cuando no —letra grande o ventana estrecha—, una sola:
-    /// se apilan y la cabina se desplaza. Tres columnas con la letra al 200 % dejan cada una
-    /// tan angosta que los titulos se parten letra a letra, que es peor que tener que
-    /// desplazarse.
-    /// </remarks>
-    public int ColumnasDeLaCabina => FrontalDibujadoVisible ? 2 : 1;
-
-    /// <summary>
-    /// La cabina cabe entera: equipo, entrada, cluster y decodificados.
-    /// </summary>
-    /// <remarks>
-    /// Cuando no cabe —letra grande o ventana estrecha— se pliegan <b>bloques enteros</b> por
-    /// orden de menos util a mas util, nunca se recorta uno por la mitad: primero los
-    /// decodificados y el cluster, que tienen su propia pestana y su propio sitio, y se dejan
-    /// el equipo y la entrada de contacto, que es lo imprescindible para registrar un contacto.
-    /// </remarks>
-    public bool CabinaCompleta => FrontalDibujadoVisible;
-
-    /// <summary>Se avisa de que hay bloques plegados por falta de sitio.</summary>
-    public bool HayBloquesPlegados => !CabinaCompleta;
+    /// <summary>Texto del boton que abre y cierra la lista completa de mandos.</summary>
+    public string TextoDeLaListaDeMandos => ListaDeMandosVisible ? "Ocultar todos los mandos" : "Todos los mandos";
 
     /// <summary>Ancho de la columna de operacion en puntos, medido en letras.</summary>
     /// <remarks>
@@ -561,11 +537,6 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     {
         OnPropertyChanged(nameof(TamanoDeLetra));
         OnPropertyChanged(nameof(AnchoDelPanel));
-        OnPropertyChanged(nameof(FrontalDibujadoVisible));
-        OnPropertyChanged(nameof(FrontalEnListaVisible));
-        OnPropertyChanged(nameof(ColumnasDeLaCabina));
-        OnPropertyChanged(nameof(CabinaCompleta));
-        OnPropertyChanged(nameof(HayBloquesPlegados));
     }
 
     partial void OnAnchoDelPanelEnLetrasChanged(double value) => OnPropertyChanged(nameof(AnchoDelPanel));

@@ -51,7 +51,7 @@
         <!-- Fila imprescindible: con esto solo ya se puede registrar un contacto. -->
         <WrapPanel Grid.Row="1">
             <StackPanel Style="{StaticResource BloqueDeCampo}"
-                        Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=12}">
+                        Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=10}">
                 <TextBlock Text="Indicativo" Style="{StaticResource EtiquetaDeCampo}" />
                 <TextBox x:Name="CampoIndicativo"
                          Style="{StaticResource CampoDeIndicativo}"
@@ -60,36 +60,45 @@
             </StackPanel>
 
             <StackPanel Style="{StaticResource BloqueDeCampo}"
-                        Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=8}">
+                        Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=6}">
                 <TextBlock Text="Banda" Style="{StaticResource EtiquetaDeCampo}" />
                 <ComboBox ItemsSource="{Binding Entrada.Bandas}" SelectedItem="{Binding Entrada.Banda}" />
             </StackPanel>
 
             <StackPanel Style="{StaticResource BloqueDeCampo}"
-                        Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=10}">
+                        Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=7}">
                 <TextBlock Text="Modo" Style="{StaticResource EtiquetaDeCampo}" />
                 <ComboBox ItemsSource="{Binding Entrada.Modos}" SelectedItem="{Binding Entrada.Modo}" />
             </StackPanel>
 
             <StackPanel Style="{StaticResource BloqueDeCampo}"
-                        Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=10}">
+                        Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=9}">
                 <TextBlock Text="Frecuencia (MHz)" Style="{StaticResource EtiquetaDeCampo}" />
                 <TextBox Text="{Binding Entrada.Frecuencia, UpdateSourceTrigger=PropertyChanged}"
                          ToolTip="Siempre con punto decimal, como en el dial. La coma también vale." />
             </StackPanel>
 
-            <StackPanel Style="{StaticResource BloqueDeCampo}"
-                        Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=7}">
-                <TextBlock Text="Informe env." Style="{StaticResource EtiquetaDeCampo}" />
-                <TextBox Text="{Binding Entrada.InformeEnviado, UpdateSourceTrigger=PropertyChanged}"
-                         ToolTip="Informe enviado al corresponsal" />
-            </StackPanel>
-
-            <StackPanel Style="{StaticResource BloqueDeCampo}"
-                        Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=7}">
-                <TextBlock Text="Informe rec." Style="{StaticResource EtiquetaDeCampo}" />
-                <TextBox Text="{Binding Entrada.InformeRecibido, UpdateSourceTrigger=PropertyChanged}"
-                         ToolTip="Informe recibido del corresponsal" />
+            <!--
+                Un informe son tres caracteres —«59», «599», «-07»—, no media pantalla. Los dos
+                van juntos en un bloque con un titulo comun y flechas entre ellos: enviado a la
+                izquierda, recibido a la derecha, como se dicen en antena.
+            -->
+            <StackPanel Style="{StaticResource BloqueDeCampo}">
+                <TextBlock Text="Informe env. / rec." Style="{StaticResource EtiquetaDeCampo}" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Text="{Binding Entrada.InformeEnviado, UpdateSourceTrigger=PropertyChanged}"
+                             Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=4}"
+                             TextAlignment="Center"
+                             AutomationProperties.Name="Informe enviado"
+                             ToolTip="Informe enviado al corresponsal" />
+                    <TextBlock Text="▸" Margin="4,0" VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextoTenue}" />
+                    <TextBox Text="{Binding Entrada.InformeRecibido, UpdateSourceTrigger=PropertyChanged}"
+                             Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=4}"
+                             TextAlignment="Center"
+                             AutomationProperties.Name="Informe recibido"
+                             ToolTip="Informe recibido del corresponsal" />
+                </StackPanel>
             </StackPanel>
 
             <StackPanel Style="{StaticResource BloqueDeCampo}" Orientation="Horizontal" VerticalAlignment="Bottom">

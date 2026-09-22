@@ -139,6 +139,29 @@ public sealed class AltoDeFila : IValueConverter
         throw new NotSupportedException();
 }
 
+/// <summary>
+/// Convierte una fraccion de cero a uno en el angulo de la aguja de un medidor de arco.
+/// </summary>
+/// <remarks>
+/// La aguja de un medidor analogico barre un arco corto, no media vuelta: el del equipo va de
+/// unos cuarenta y cinco grados a la izquierda a otros tantos a la derecha. El parametro dice
+/// cuantos grados mide medio arco.
+/// </remarks>
+public sealed class AnguloDeAguja : IValueConverter
+{
+    /// <inheritdoc />
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var fraccion = value is double d && !double.IsNaN(d) ? Math.Clamp(d, 0, 1) : 0;
+        var medioArco = AnchoEnLetras.LeerFactor(parameter);
+        return Math.Round((fraccion * 2 * medioArco) - medioArco, 2);
+    }
+
+    /// <inheritdoc />
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Invierte un booleano, para las visibilidades que van al reves.</summary>
 public sealed class Negacion : IValueConverter
 {
