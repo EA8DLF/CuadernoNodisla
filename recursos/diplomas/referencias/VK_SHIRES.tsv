@@ -1,0 +1,571 @@
+# Referencias del diploma VK_SHIRES. Generado; no se edita a mano.
+R	VK_SHIRES	AC2		1900-01-01	2100-12-31	Albury City Council	VK2			0	0	1		0
+R	VK_SHIRES	AC5		1900-01-01	2100-12-31	Port Augusta City Council	VK5			0	0	1		0
+R	VK_SHIRES	AD2		1900-01-01	2100-12-31	Armidale Dumaresq Council	VK2			0	0	1		0
+R	VK_SHIRES	AD5		1900-01-01	2100-12-31	Adelaide City Council	VK5			0	0	1		0
+R	VK_SHIRES	AE5		1900-01-01	2100-12-31	Port Adelaide Enfield City Council	VK5			0	0	1		0
+R	VK_SHIRES	AH5		1900-01-01	2100-12-31	Adelaide Hills Council	VK5			0	0	1		0
+R	VK_SHIRES	AK6		1900-01-01	2100-12-31	Armadale City	VK6			0	0	1		0
+R	VK_SHIRES	AL6		1900-01-01	2100-12-31	Albany City	VK6			0	0	1		0
+R	VK_SHIRES	AM6		1900-01-01	2100-12-31	Augusta-Margaret River Shire	VK6			0	0	1		0
+R	VK_SHIRES	AP5		1900-01-01	2100-12-31	Anangu Pitjantjatjara Yankunytjatjara	VK5			0	0	1		0
+R	VK_SHIRES	AR3		1900-01-01	2100-12-31	Ararat Rural City Council	VK3			0	0	1		0
+R	VK_SHIRES	AS2		1900-01-01	2100-12-31	The Council of the Municipality of Ashfield	VK2			0	0	1		0
+R	VK_SHIRES	AS3		1900-01-01	2100-12-31	Alpine Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	AS6		1900-01-01	2100-12-31	Ashburton Shire	VK6			0	0	1		0
+R	VK_SHIRES	AS8		1900-01-01	2100-12-31	Alice Springs Town Council	VK8			0	0	1		0
+R	VK_SHIRES	AU2		1900-01-01	2100-12-31	Auburn Council	VK2			0	0	1		0
+R	VK_SHIRES	AU4		1900-01-01	2100-12-31	Aurukun Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	AX5		1900-01-01	2100-12-31	Alexandrina Council	VK5			0	0	1		0
+R	VK_SHIRES	BA2		1900-01-01	2100-12-31	Balranald Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	BA4		1900-01-01	2100-12-31	Banana Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	BA5		1900-01-01	2100-12-31	Barossa Council	VK5			0	0	1		0
+R	VK_SHIRES	BA6		1900-01-01	2100-12-31	Bassendean Shire	VK6			0	0	1		0
+R	VK_SHIRES	BB2		1900-01-01	2100-12-31	The Council of the City of Botany Bay	VK2			0	0	1		0
+R	VK_SHIRES	BB3		1900-01-01	2100-12-31	Baw Baw Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	BB6		1900-01-01	2100-12-31	Boyup Brook Shire	VK6			0	0	1		0
+R	VK_SHIRES	BC2		1900-01-01	2100-12-31	Bankstown City Council	VK2			0	0	1		0
+R	VK_SHIRES	BC3		1900-01-01	2100-12-31	Banyule City Council	VK3			0	0	1		0
+R	VK_SHIRES	BC4		1900-01-01	2100-12-31	Barcaldine Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	BC7		1900-01-01	2100-12-31	Brighton Council	VK7			0	0	1		0
+R	VK_SHIRES	BD2		1900-01-01	2100-12-31	Bland Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	BE2		1900-01-01	2100-12-31	Bellingen Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	BE5		1900-01-01	2100-12-31	Berri Barmera Council	VK5			0	0	1		0
+R	VK_SHIRES	BE6		1900-01-01	2100-12-31	Broome Shire	VK6			0	0	1		0
+R	VK_SHIRES	BE8		1900-01-01	2100-12-31	Belyuen Community Council	VK8			0	0	1		0
+R	VK_SHIRES	BG6		1900-01-01	2100-12-31	Bridgetown-Greenbushes Shire	VK6			0	0	1		0
+R	VK_SHIRES	BH2		1900-01-01	2100-12-31	Broken Hill City Council	VK2			0	0	1		0
+R	VK_SHIRES	BK2		1900-01-01	2100-12-31	Bourke Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	BK3		1900-01-01	2100-12-31	Brimbank City Council	VK3			0	0	1		0
+R	VK_SHIRES	BK4		1900-01-01	2100-12-31	Burdekin Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	BK6		1900-01-01	2100-12-31	Brookton Shire	VK6			0	0	1		0
+R	VK_SHIRES	BL2		1900-01-01	2100-12-31	Blacktown City Council	VK2			0	0	1		0
+R	VK_SHIRES	BL4		1900-01-01	2100-12-31	Balonne Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	BL6		1900-01-01	2100-12-31	Belmont City	VK6			0	0	1		0
+R	VK_SHIRES	BM2		1900-01-01	2100-12-31	Blue Mountains City Council	VK2			0	0	1		0
+R	VK_SHIRES	BN2		1900-01-01	2100-12-31	Berrigan Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	BN4		1900-01-01	2100-12-31	Brisbane City Council	VK4			0	0	1		0
+R	VK_SHIRES	BN6		1900-01-01	2100-12-31	Busselton Shire	VK6			0	0	1		0
+R	VK_SHIRES	BO2		1900-01-01	2100-12-31	Bogan Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	BO3		1900-01-01	2100-12-31	Boroondara City Council	VK3			0	0	1		0
+R	VK_SHIRES	BO4		1900-01-01	2100-12-31	Barcoo Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	BO6		1900-01-01	2100-12-31	Boddington Shire	VK6			0	0	1		0
+R	VK_SHIRES	BO7		1900-01-01	2100-12-31	Break O'Day Council	VK7			0	0	1		0
+R	VK_SHIRES	BQ2		1900-01-01	2100-12-31	Byron Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	BR2		1900-01-01	2100-12-31	Bathurst Regional Council	VK2			0	0	1		0
+R	VK_SHIRES	BR3		1900-01-01	2100-12-31	Benalla Rural City Council	VK3			0	0	1		0
+R	VK_SHIRES	BR4		1900-01-01	2100-12-31	Burke Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	BR6		1900-01-01	2100-12-31	Bruce Rock Shire	VK6			0	0	1		0
+R	VK_SHIRES	BS2		1900-01-01	2100-12-31	Ballina Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	BS3		1900-01-01	2100-12-31	Bass Coast Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	BS4		1900-01-01	2100-12-31	Bulloo Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	BS8		1900-01-01	2100-12-31	Barkley Shire	VK8			0	0	1		0
+R	VK_SHIRES	BT3		1900-01-01	2100-12-31	Ballarat City Council	VK3			0	0	1		0
+R	VK_SHIRES	BT4		1900-01-01	2100-12-31	Blackall-Tambo Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	BU2		1900-01-01	2100-12-31	Burwood Council	VK2			0	0	1		0
+R	VK_SHIRES	BU3		1900-01-01	2100-12-31	Buloke Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	BU4		1900-01-01	2100-12-31	Bundaberg Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	BU5		1900-01-01	2100-12-31	Burnside City Council	VK5			0	0	1		0
+R	VK_SHIRES	BU7		1900-01-01	2100-12-31	Burnie City Council	VK7			0	0	1		0
+R	VK_SHIRES	BV2		1900-01-01	2100-12-31	Bega Valley Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	BV6		1900-01-01	2100-12-31	Beverley Shire	VK6			0	0	1		0
+R	VK_SHIRES	BW2		1900-01-01	2100-12-31	Brewarrina Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	BW5		1900-01-01	2100-12-31	District Council of Barunga West	VK5			0	0	1		0
+R	VK_SHIRES	BW6		1900-01-01	2100-12-31	Bayswater City	VK6			0	0	1		0
+R	VK_SHIRES	BX2		1900-01-01	2100-12-31	Bombala Council	VK2			0	0	1		0
+R	VK_SHIRES	BY2		1900-01-01	2100-12-31	Blayney Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	BY3		1900-01-01	2100-12-31	Bayside City Council	VK3			0	0	1		0
+R	VK_SHIRES	BY6		1900-01-01	2100-12-31	Bunbury City	VK6			0	0	1		0
+R	VK_SHIRES	BZ2		1900-01-01	2100-12-31	Boorowa Council	VK2			0	0	1		0
+R	VK_SHIRES	BZ4		1900-01-01	2100-12-31	Boulia Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	CA2		1900-01-01	2100-12-31	Cootamundra Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	CA3		1900-01-01	2100-12-31	Campaspe Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	CA5		1900-01-01	2100-12-31	Campbelltown City Council	VK5			0	0	1		0
+R	VK_SHIRES	CA6		1900-01-01	2100-12-31	Canning City	VK6			0	0	1		0
+R	VK_SHIRES	CB2		1900-01-01	2100-12-31	City of Canada Bay Council	VK2			0	0	1		0
+R	VK_SHIRES	CB6		1900-01-01	2100-12-31	Cambridge Shire	VK6			0	0	1		0
+R	VK_SHIRES	CC2		1900-01-01	2100-12-31	Camden Council	VK2			0	0	1		0
+R	VK_SHIRES	CC3		1900-01-01	2100-12-31	Casey City Council	VK3			0	0	1		0
+R	VK_SHIRES	CC4		1900-01-01	2100-12-31	Cassowary Coast Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	CC5		1900-01-01	2100-12-31	Copper Coast District Council	VK5			0	0	1		0
+R	VK_SHIRES	CC7		1900-01-01	2100-12-31	Central Coast Council	VK7			0	0	1		0
+R	VK_SHIRES	CC8		1900-01-01	2100-12-31	Coomalie Community Government Council	VK8			0	0	1		0
+R	VK_SHIRES	CD2		1900-01-01	2100-12-31	Central Darling Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	CD6		1900-01-01	2100-12-31	Cunderdin Shire	VK6			0	0	1		0
+R	VK_SHIRES	CD8		1900-01-01	2100-12-31	Central Desert Shire	VK8			0	0	1		0
+R	VK_SHIRES	CE2		1900-01-01	2100-12-31	Coonamble Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	CE3		1900-01-01	2100-12-31	Corangamite Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	CE5		1900-01-01	2100-12-31	Ceduna District Council	VK5			0	0	1		0
+R	VK_SHIRES	CF2		1900-01-01	2100-12-31	Central Coast Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	CG2		1900-01-01	2100-12-31	Conargo Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	CG3		1900-01-01	2100-12-31	Central Goldfields Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	CG4		1900-01-01	2100-12-31	Cherbourg Aboriginal Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	CG5		1900-01-01	2100-12-31	Clare and Gilbert Valleys Council	VK5			0	0	1		0
+R	VK_SHIRES	CG6		1900-01-01	2100-12-31	Coolgardie Shire	VK6			0	0	1		0
+R	VK_SHIRES	CH2		1900-01-01	2100-12-31	Coffs Harbour City Council	VK2			0	0	1		0
+R	VK_SHIRES	CH4		1900-01-01	2100-12-31	Central Highlands Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	CH6		1900-01-01	2100-12-31	Carnamah Shire	VK6			0	0	1		0
+R	VK_SHIRES	CH7		1900-01-01	2100-12-31	Central Highlands Council	VK7			0	0	1		0
+R	VK_SHIRES	CI6		1900-01-01	2100-12-31	Chittering Shire	VK6			0	0	1		0
+R	VK_SHIRES	CI7		1900-01-01	2100-12-31	Circular Head Council	VK7			0	0	1		0
+R	VK_SHIRES	CK2		1900-01-01	2100-12-31	Cessnock City Council	VK2			0	0	1		0
+R	VK_SHIRES	CK4		1900-01-01	2100-12-31	Cook Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	CK6		1900-01-01	2100-12-31	Cranbrook Shire	VK6			0	0	1		0
+R	VK_SHIRES	CL2		1900-01-01	2100-12-31	Carrathool Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	CL5		1900-01-01	2100-12-31	Cleve District Council	VK5			0	0	1		0
+R	VK_SHIRES	CL6		1900-01-01	2100-12-31	Cottesloe Shire	VK6			0	0	1		0
+R	VK_SHIRES	CL7		1900-01-01	2100-12-31	Clarence City Council	VK7			0	0	1		0
+R	VK_SHIRES	CM2		1900-01-01	2100-12-31	Cooma-Monaro Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	CN2		1900-01-01	2100-12-31	Campbelltown City Council	VK2			0	0	1		0
+R	VK_SHIRES	CN6		1900-01-01	2100-12-31	Carnarvon Shire	VK6			0	0	1		0
+R	VK_SHIRES	CO2		1900-01-01	2100-12-31	Coolamon Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	CO3		1900-01-01	2100-12-31	Colac-Otway Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	CO5		1900-01-01	2100-12-31	Coorong District Council	VK5			0	0	1		0
+R	VK_SHIRES	CO6		1900-01-01	2100-12-31	Collie Shire	VK6			0	0	1		0
+R	VK_SHIRES	CP4		1900-01-01	2100-12-31	Carpentaria Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	CP5		1900-01-01	2100-12-31	Coober Pedy District Council	VK5			0	0	1		0
+R	VK_SHIRES	CP6		1900-01-01	2100-12-31	Capel Shire	VK6			0	0	1		0
+R	VK_SHIRES	CQ6		1900-01-01	2100-12-31	Cuballing Shire	VK6			0	0	1		0
+R	VK_SHIRES	CR2		1900-01-01	2100-12-31	Cobar Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	CR4		1900-01-01	2100-12-31	Cairns Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	CR6		1900-01-01	2100-12-31	Cockburn City	VK6			0	0	1		0
+R	VK_SHIRES	CS2		1900-01-01	2100-12-31	Cabonne Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	CS3		1900-01-01	2100-12-31	Cardinia Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	CS4		1900-01-01	2100-12-31	Croydon Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	CS5		1900-01-01	2100-12-31	Charles Sturt City Council	VK5			0	0	1		0
+R	VK_SHIRES	CS6		1900-01-01	2100-12-31	Corrigin Shire	VK6			0	0	1		0
+R	VK_SHIRES	CT1		1900-01-01	2100-12-31	ACT	VK1			0	0	1		0
+R	VK_SHIRES	CT4		1900-01-01	2100-12-31	Charters Towers Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	CT6		1900-01-01	2100-12-31	Claremont Shire	VK6			0	0	1		0
+R	VK_SHIRES	CU6		1900-01-01	2100-12-31	Cue Shire	VK6			0	0	1		0
+R	VK_SHIRES	CV2		1900-01-01	2100-12-31	Clarence Valley Council	VK2			0	0	1		0
+R	VK_SHIRES	CV6		1900-01-01	2100-12-31	Chapman Valley Shire	VK6			0	0	1		0
+R	VK_SHIRES	CW2		1900-01-01	2100-12-31	Cowra Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	CW6		1900-01-01	2100-12-31	Coorow Shire	VK6			0	0	1		0
+R	VK_SHIRES	CX6		1900-01-01	2100-12-31	Christmas Island Shire	VK6			0	0	1		0
+R	VK_SHIRES	CY2		1900-01-01	2100-12-31	Canterbury City Council	VK2			0	0	1		0
+R	VK_SHIRES	CY4		1900-01-01	2100-12-31	Cloncurry Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	CZ2		1900-01-01	2100-12-31	Corowa Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	CZ6		1900-01-01	2100-12-31	Cocos Keeling Shire	VK6			0	0	1		0
+R	VK_SHIRES	DB6		1900-01-01	2100-12-31	Donnybrook-Balingup Shire	VK6			0	0	1		0
+R	VK_SHIRES	DC2		1900-01-01	2100-12-31	Deniliquin Council	VK2			0	0	1		0
+R	VK_SHIRES	DC3		1900-01-01	2100-12-31	Darebin City Council	VK3			0	0	1		0
+R	VK_SHIRES	DC7		1900-01-01	2100-12-31	Devonport City Council	VK7			0	0	1		0
+R	VK_SHIRES	DC8		1900-01-01	2100-12-31	Darwin City Council	VK8			0	0	1		0
+R	VK_SHIRES	DG2		1900-01-01	2100-12-31	Dungog Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	DG4		1900-01-01	2100-12-31	Douglas Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	DG6		1900-01-01	2100-12-31	Dumbleyung Shire	VK6			0	0	1		0
+R	VK_SHIRES	DI4		1900-01-01	2100-12-31	Diamantina Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	DK6		1900-01-01	2100-12-31	Denmark Shire	VK6			0	0	1		0
+R	VK_SHIRES	DN6		1900-01-01	2100-12-31	Dandaragan Shire	VK6			0	0	1		0
+R	VK_SHIRES	DO4		1900-01-01	2100-12-31	Doomadgee Aboriginal Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	DO7		1900-01-01	2100-12-31	Dorset Council	VK7			0	0	1		0
+R	VK_SHIRES	DP6		1900-01-01	2100-12-31	Dardanup Shire	VK6			0	0	1		0
+R	VK_SHIRES	DR6		1900-01-01	2100-12-31	Dowerin Shire	VK6			0	0	1		0
+R	VK_SHIRES	DS6		1900-01-01	2100-12-31	Dundas Shire	VK6			0	0	1		0
+R	VK_SHIRES	DU2		1900-01-01	2100-12-31	Dubbo City Council	VK2			0	0	1		0
+R	VK_SHIRES	DU6		1900-01-01	2100-12-31	Dalwallinu Shire	VK6			0	0	1		0
+R	VK_SHIRES	DV7		1900-01-01	2100-12-31	Derwent Valley Council	VK7			0	0	1		0
+R	VK_SHIRES	DW6		1900-01-01	2100-12-31	Derby-West Kimberley Shire	VK6			0	0	1		0
+R	VK_SHIRES	EA8		1900-01-01	2100-12-31	East Arnhem Shire	VK8			0	0	1		0
+R	VK_SHIRES	EF6		1900-01-01	2100-12-31	East Freemantle Shire	VK6			0	0	1		0
+R	VK_SHIRES	EG3		1900-01-01	2100-12-31	East Gippsland Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	EH6		1900-01-01	2100-12-31	Exmouth Shire	VK6			0	0	1		0
+R	VK_SHIRES	EL5		1900-01-01	2100-12-31	District Council of Elliston	VK5			0	0	1		0
+R	VK_SHIRES	EP6		1900-01-01	2100-12-31	East Pilbara Shire	VK6			0	0	1		0
+R	VK_SHIRES	ES2		1900-01-01	2100-12-31	Eurobodalla Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	ES6		1900-01-01	2100-12-31	Esperance Shire	VK6			0	0	1		0
+R	VK_SHIRES	ET4		1900-01-01	2100-12-31	Etheridge Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	FC2		1900-01-01	2100-12-31	Fairfield City Council	VK2			0	0	1		0
+R	VK_SHIRES	FC3		1900-01-01	2100-12-31	Frankston City Council	VK3			0	0	1		0
+R	VK_SHIRES	FC4		1900-01-01	2100-12-31	Fraser Coast Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	FC7		1900-01-01	2100-12-31	Flinders Council	VK7			0	0	1		0
+R	VK_SHIRES	FH5		1900-01-01	2100-12-31	Franklin Harbour District Council	VK5			0	0	1		0
+R	VK_SHIRES	FL4		1900-01-01	2100-12-31	Flinders Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	FM6		1900-01-01	2100-12-31	Fremantle City	VK6			0	0	1		0
+R	VK_SHIRES	FR5		1900-01-01	2100-12-31	Flinders Ranges Council	VK5			0	0	1		0
+R	VK_SHIRES	FS2		1900-01-01	2100-12-31	Forbes Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	GA3		1900-01-01	2100-12-31	Gannawarra Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	GA5		1900-01-01	2100-12-31	Town of Gawler	VK5			0	0	1		0
+R	VK_SHIRES	GB3		1900-01-01	2100-12-31	Greater Bendigo City Council	VK3			0	0	1		0
+R	VK_SHIRES	GC4		1900-01-01	2100-12-31	Gold Coast City Council	VK4			0	0	1		0
+R	VK_SHIRES	GC5		1900-01-01	2100-12-31	Gerard Council	VK5			0	0	1		0
+R	VK_SHIRES	GC7		1900-01-01	2100-12-31	Glenorchy City Council	VK7			0	0	1		0
+R	VK_SHIRES	GD2		1900-01-01	2100-12-31	Gundagai Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	GD3		1900-01-01	2100-12-31	Greater Dandenong City Council	VK3			0	0	1		0
+R	VK_SHIRES	GD5		1900-01-01	2100-12-31	Grant District Council	VK5			0	0	1		0
+R	VK_SHIRES	GE3		1900-01-01	2100-12-31	Glen Eira City Council	VK3			0	0	1		0
+R	VK_SHIRES	GF2		1900-01-01	2100-12-31	Griffith City Council	VK2			0	0	1		0
+R	VK_SHIRES	GG3		1900-01-01	2100-12-31	Greater Geelong City Council	VK3			0	0	1		0
+R	VK_SHIRES	GG6		1900-01-01	2100-12-31	Gingin Shire	VK6			0	0	1		0
+R	VK_SHIRES	GH2		1900-01-01	2100-12-31	Greater Hume Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	GI2		1900-01-01	2100-12-31	Glen Innes Severn Council	VK2			0	0	1		0
+R	VK_SHIRES	GI4		1900-01-01	2100-12-31	Goondiwindi Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	GK2		1900-01-01	2100-12-31	Great Lakes Council	VK2			0	0	1		0
+R	VK_SHIRES	GL2		1900-01-01	2100-12-31	Gloucester Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	GL3		1900-01-01	2100-12-31	Glenelg Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	GM2		1900-01-01	2100-12-31	Goulburn Mulwaree Council	VK2			0	0	1		0
+R	VK_SHIRES	GM6		1900-01-01	2100-12-31	Goomalling Shire	VK6			0	0	1		0
+R	VK_SHIRES	GN6		1900-01-01	2100-12-31	Geraldton-Greenough City	VK6			0	0	1		0
+R	VK_SHIRES	GP3		1900-01-01	2100-12-31	Golden Plains Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	GP6		1900-01-01	2100-12-31	Gnowangerup Shire	VK6			0	0	1		0
+R	VK_SHIRES	GR4		1900-01-01	2100-12-31	Gladstone Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	GR5		1900-01-01	2100-12-31	Goyder Regional Council	VK5			0	0	1		0
+R	VK_SHIRES	GS2		1900-01-01	2100-12-31	Gilgandra Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	GS3		1900-01-01	2100-12-31	Greater Shepparton City Council	VK3			0	0	1		0
+R	VK_SHIRES	GS6		1900-01-01	2100-12-31	Gosnells City	VK6			0	0	1		0
+R	VK_SHIRES	GS7		1900-01-01	2100-12-31	Glamorgan Spring Bay Council	VK7			0	0	1		0
+R	VK_SHIRES	GT2		1900-01-01	2100-12-31	Greater Taree City Council	VK2			0	0	1		0
+R	VK_SHIRES	GT7		1900-01-01	2100-12-31	George Town Council	VK7			0	0	1		0
+R	VK_SHIRES	GU2		1900-01-01	2100-12-31	Gunnedah Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	GW2		1900-01-01	2100-12-31	Gwydir Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	GY2		1900-01-01	2100-12-31	Guyra Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	GY4		1900-01-01	2100-12-31	Gympie Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	HB2		1900-01-01	2100-12-31	The Council of the Shire of Hornsby	VK2			0	0	1		0
+R	VK_SHIRES	HB3		1900-01-01	2100-12-31	Hobsons Bay City Council	VK3			0	0	1		0
+R	VK_SHIRES	HB4		1900-01-01	2100-12-31	Hinchinbrook Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	HB5		1900-01-01	2100-12-31	City of Holdfast Bay	VK5			0	0	1		0
+R	VK_SHIRES	HC2		1900-01-01	2100-12-31	Hawkesbury City Council	VK2			0	0	1		0
+R	VK_SHIRES	HC3		1900-01-01	2100-12-31	Hume City Council	VK3			0	0	1		0
+R	VK_SHIRES	HC6		1900-01-01	2100-12-31	Halls Creek Shire	VK6			0	0	1		0
+R	VK_SHIRES	HC7		1900-01-01	2100-12-31	Hobart City Council	VK7			0	0	1		0
+R	VK_SHIRES	HD2		1900-01-01	2100-12-31	Holroyd City Council	VK2			0	0	1		0
+R	VK_SHIRES	HH2		1900-01-01	2100-12-31	The Council of the Municipality of Hunters Hill	VK2			0	0	1		0
+R	VK_SHIRES	HI3		1900-01-01	2100-12-31	Hindmarsh Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	HN2		1900-01-01	2100-12-31	Harden Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	HR3		1900-01-01	2100-12-31	Horsham Rural City Council	VK3			0	0	1		0
+R	VK_SHIRES	HS2		1900-01-01	2100-12-31	The Hills Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	HS3		1900-01-01	2100-12-31	Hepburn Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	HV2		1900-01-01	2100-12-31	Hurstville City Council	VK2			0	0	1		0
+R	VK_SHIRES	HV4		1900-01-01	2100-12-31	Hope Vale Aboriginal Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	HV7		1900-01-01	2100-12-31	Huon Valley Council	VK7			0	0	1		0
+R	VK_SHIRES	HY2		1900-01-01	2100-12-31	Hay Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	HY6		1900-01-01	2100-12-31	Harvey Shire	VK6			0	0	1		0
+R	VK_SHIRES	IN6		1900-01-01	2100-12-31	Irwin Shire	VK6			0	0	1		0
+R	VK_SHIRES	IP4		1900-01-01	2100-12-31	Ipswich City Council	VK4			0	0	1		0
+R	VK_SHIRES	IR4		1900-01-01	2100-12-31	Isaac Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	IS2		1900-01-01	2100-12-31	Inverell Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	IS3		1900-01-01	2100-12-31	Indigo Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	JO6		1900-01-01	2100-12-31	Joondalup City	VK6			0	0	1		0
+R	VK_SHIRES	JP6		1900-01-01	2100-12-31	Jerramungup Shire	VK6			0	0	1		0
+R	VK_SHIRES	JS2		1900-01-01	2100-12-31	Jerilderie Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	JU2		1900-01-01	2100-12-31	Junee Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	KA2		1900-01-01	2100-12-31	The Council of the Municipality of Kiama	VK2			0	0	1		0
+R	VK_SHIRES	KA6		1900-01-01	2100-12-31	Kalamunda Shire	VK6			0	0	1		0
+R	VK_SHIRES	KB5		1900-01-01	2100-12-31	Kimba District Council	VK5			0	0	1		0
+R	VK_SHIRES	KC3		1900-01-01	2100-12-31	Kingston City Council	VK3			0	0	1		0
+R	VK_SHIRES	KC7		1900-01-01	2100-12-31	Kentish Council	VK7			0	0	1		0
+R	VK_SHIRES	KC8		1900-01-01	2100-12-31	Katherine Town Council	VK8			0	0	1		0
+R	VK_SHIRES	KD6		1900-01-01	2100-12-31	Kondinin Shire	VK6			0	0	1		0
+R	VK_SHIRES	KG6		1900-01-01	2100-12-31	Katanning Shire	VK6			0	0	1		0
+R	VK_SHIRES	KH7		1900-01-01	2100-12-31	Kingborough Council	VK7			0	0	1		0
+R	VK_SHIRES	KI5		1900-01-01	2100-12-31	Kangaroo Island Council	VK5			0	0	1		0
+R	VK_SHIRES	KI7		1900-01-01	2100-12-31	King Island Council	VK7			0	0	1		0
+R	VK_SHIRES	KL6		1900-01-01	2100-12-31	Kalgoorlie-Boulder City	VK6			0	0	1		0
+R	VK_SHIRES	KM2		1900-01-01	2100-12-31	Kogarah Municipal Council	VK2			0	0	1		0
+R	VK_SHIRES	KM5		1900-01-01	2100-12-31	Karoonda East Murray District Council	VK5			0	0	1		0
+R	VK_SHIRES	KN6		1900-01-01	2100-12-31	Kellerberrin Shire	VK6			0	0	1		0
+R	VK_SHIRES	KO6		1900-01-01	2100-12-31	Koorda Shire	VK6			0	0	1		0
+R	VK_SHIRES	KP6		1900-01-01	2100-12-31	Kojonup Shire	VK6			0	0	1		0
+R	VK_SHIRES	KR5		1900-01-01	2100-12-31	Kingston Regional Council	VK5			0	0	1		0
+R	VK_SHIRES	KS2		1900-01-01	2100-12-31	Kempsey Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	KT6		1900-01-01	2100-12-31	Kent Shire	VK6			0	0	1		0
+R	VK_SHIRES	KU2		1900-01-01	2100-12-31	Ku-ring-gai Council	VK2			0	0	1		0
+R	VK_SHIRES	KU6		1900-01-01	2100-12-31	Kulin Shire	VK6			0	0	1		0
+R	VK_SHIRES	KW6		1900-01-01	2100-12-31	Kwinana Shire	VK6			0	0	1		0
+R	VK_SHIRES	KX3		1900-01-01	2100-12-31	Knox City Council	VK3			0	0	1		0
+R	VK_SHIRES	KY2		1900-01-01	2100-12-31	Kyogle Council	VK2			0	0	1		0
+R	VK_SHIRES	KY4		1900-01-01	2100-12-31	Kowanyama Aboriginal Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	LA6		1900-01-01	2100-12-31	Leonora Shire	VK6			0	0	1		0
+R	VK_SHIRES	LA7		1900-01-01	2100-12-31	Launceston City Council	VK7			0	0	1		0
+R	VK_SHIRES	LC2		1900-01-01	2100-12-31	Lane Cove Municipal Council	VK2			0	0	1		0
+R	VK_SHIRES	LC3		1900-01-01	2100-12-31	Latrobe City Council	VK3			0	0	1		0
+R	VK_SHIRES	LC4		1900-01-01	2100-12-31	Logan City Council	VK4			0	0	1		0
+R	VK_SHIRES	LC7		1900-01-01	2100-12-31	Latrobe Council	VK7			0	0	1		0
+R	VK_SHIRES	LE2		1900-01-01	2100-12-31	Leeton Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	LE5		1900-01-01	2100-12-31	District Council of Lower Eyre Peninsula	VK5			0	0	1		0
+R	VK_SHIRES	LG6		1900-01-01	2100-12-31	Lake Grace Shire	VK6			0	0	1		0
+R	VK_SHIRES	LH4		1900-01-01	2100-12-31	Lockhart River Aboriginal Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	LH5		1900-01-01	2100-12-31	Le Hunte District Council	VK5			0	0	1		0
+R	VK_SHIRES	LI8		1900-01-01	2100-12-31	Litchfield Shire	VK8			0	0	1		0
+R	VK_SHIRES	LK2		1900-01-01	2100-12-31	Lockhart Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	LM2		1900-01-01	2100-12-31	Lake Macquarie City Council	VK2			0	0	1		0
+R	VK_SHIRES	LO4		1900-01-01	2100-12-31	Longreach Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	LP2		1900-01-01	2100-12-31	Liverpool Plains Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	LR2		1900-01-01	2100-12-31	Lismore City Council	VK2			0	0	1		0
+R	VK_SHIRES	LR5		1900-01-01	2100-12-31	Light Regional Council	VK5			0	0	1		0
+R	VK_SHIRES	LS2		1900-01-01	2100-12-31	Lachlan Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	LS3		1900-01-01	2100-12-31	Loddon Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	LS4		1900-01-01	2100-12-31	Livingstone Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	LT2		1900-01-01	2100-12-31	Leichhardt Municipal Council	VK2			0	0	1		0
+R	VK_SHIRES	LV2		1900-01-01	2100-12-31	Liverpool City Council	VK2			0	0	1		0
+R	VK_SHIRES	LV4		1900-01-01	2100-12-31	Lockyer Valley Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	LV6		1900-01-01	2100-12-31	Laverton Shire	VK6			0	0	1		0
+R	VK_SHIRES	LW2		1900-01-01	2100-12-31	City of Lithgow Council	VK2			0	0	1		0
+R	VK_SHIRES	LW5		1900-01-01	2100-12-31	Loxton Waikerie District Council	VK5			0	0	1		0
+R	VK_SHIRES	MA3		1900-01-01	2100-12-31	Mount Alexander Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	MA5		1900-01-01	2100-12-31	Marion City Council	VK5			0	0	1		0
+R	VK_SHIRES	MB4		1900-01-01	2100-12-31	Moreton Bay Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	MB5		1900-01-01	2100-12-31	Mt Barker District Council	VK5			0	0	1		0
+R	VK_SHIRES	MC2		1900-01-01	2100-12-31	Maitland City Council	VK2			0	0	1		0
+R	VK_SHIRES	MC3		1900-01-01	2100-12-31	Melbourne City Council	VK3			0	0	1		0
+R	VK_SHIRES	MC4		1900-01-01	2100-12-31	Maranoa Region Council	VK4			0	0	1		0
+R	VK_SHIRES	MC5		1900-01-01	2100-12-31	Mitcham City Council	VK5			0	0	1		0
+R	VK_SHIRES	MC8		1900-01-01	2100-12-31	Macdonell Shire	VK8			0	0	1		0
+R	VK_SHIRES	MD3		1900-01-01	2100-12-31	Maroondah City Council	VK3			0	0	1		0
+R	VK_SHIRES	MD5		1900-01-01	2100-12-31	Mallala District Council	VK5			0	0	1		0
+R	VK_SHIRES	MD6		1900-01-01	2100-12-31	Merredin Shire	VK6			0	0	1		0
+R	VK_SHIRES	ME2		1900-01-01	2100-12-31	Marrickville Council	VK2			0	0	1		0
+R	VK_SHIRES	ME6		1900-01-01	2100-12-31	Mullewa Shire	VK6			0	0	1		0
+R	VK_SHIRES	MG3		1900-01-01	2100-12-31	Maribyrnong City Council	VK3			0	0	1		0
+R	VK_SHIRES	MG4		1900-01-01	2100-12-31	Mornington Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	MG5		1900-01-01	2100-12-31	Mount Gambier City Council	VK5			0	0	1		0
+R	VK_SHIRES	MG6		1900-01-01	2100-12-31	Mundaring Shire	VK6			0	0	1		0
+R	VK_SHIRES	MH3		1900-01-01	2100-12-31	Monash City Council	VK3			0	0	1		0
+R	VK_SHIRES	MH4		1900-01-01	2100-12-31	Murweh Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	MH6		1900-01-01	2100-12-31	Mandurah City	VK6			0	0	1		0
+R	VK_SHIRES	MI3		1900-01-01	2100-12-31	Mildura Rural City Council	VK3			0	0	1		0
+R	VK_SHIRES	MI4		1900-01-01	2100-12-31	Mount Isa City Council	VK4			0	0	1		0
+R	VK_SHIRES	MK2		1900-01-01	2100-12-31	Muswellbrook Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	MK4		1900-01-01	2100-12-31	McKinlay Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	MK6		1900-01-01	2100-12-31	Meekatharra Shire	VK6			0	0	1		0
+R	VK_SHIRES	ML3		1900-01-01	2100-12-31	Mitchell Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	ML6		1900-01-01	2100-12-31	Mount Marshall Shire	VK6			0	0	1		0
+R	VK_SHIRES	MM2		1900-01-01	2100-12-31	Mosman Municipal Council	VK2			0	0	1		0
+R	VK_SHIRES	MM3		1900-01-01	2100-12-31	Manningham City Council	VK3			0	0	1		0
+R	VK_SHIRES	MM5		1900-01-01	2100-12-31	Mid Murray Council	VK5			0	0	1		0
+R	VK_SHIRES	MM6		1900-01-01	2100-12-31	Mount Magnet Shire	VK6			0	0	1		0
+R	VK_SHIRES	MN3		1900-01-01	2100-12-31	Melton Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	MN6		1900-01-01	2100-12-31	Murchison Shire	VK6			0	0	1		0
+R	VK_SHIRES	MO3		1900-01-01	2100-12-31	Moira Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	MO6		1900-01-01	2100-12-31	Moora Shire	VK6			0	0	1		0
+R	VK_SHIRES	MP2		1900-01-01	2100-12-31	Moree Plains Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	MP3		1900-01-01	2100-12-31	Mornington Peninsula Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	MP4		1900-01-01	2100-12-31	Mapoon Aboriginal Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	MP6		1900-01-01	2100-12-31	Manjimup Shire	VK6			0	0	1		0
+R	VK_SHIRES	MR3		1900-01-01	2100-12-31	Macedon Ranges Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	MR4		1900-01-01	2100-12-31	Mackay Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	MR5		1900-01-01	2100-12-31	Mount Remarkable District Council	VK5			0	0	1		0
+R	VK_SHIRES	MR6		1900-01-01	2100-12-31	Morawa Shire	VK6			0	0	1		0
+R	VK_SHIRES	MS2		1900-01-01	2100-12-31	Murray Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	MS3		1900-01-01	2100-12-31	Mansfield Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	MS4		1900-01-01	2100-12-31	Mareeba Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	MS6		1900-01-01	2100-12-31	Mossman Park Shire	VK6			0	0	1		0
+R	VK_SHIRES	MT5		1900-01-01	2100-12-31	Maralinga Tjarutja	VK5			0	0	1		0
+R	VK_SHIRES	MU2		1900-01-01	2100-12-31	Murrumbidgee Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	MU3		1900-01-01	2100-12-31	Murrindindi Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	MU5		1900-01-01	2100-12-31	Murray Bridge Council	VK5			0	0	1		0
+R	VK_SHIRES	MU6		1900-01-01	2100-12-31	Mukinbudin Shire	VK6			0	0	1		0
+R	VK_SHIRES	MV3		1900-01-01	2100-12-31	Moonee Valley City Council	VK3			0	0	1		0
+R	VK_SHIRES	MV6		1900-01-01	2100-12-31	Melville City	VK6			0	0	1		0
+R	VK_SHIRES	MV7		1900-01-01	2100-12-31	Meander Valley Council	VK7			0	0	1		0
+R	VK_SHIRES	MW2		1900-01-01	2100-12-31	Mid-Western Regional Council	VK2			0	0	1		0
+R	VK_SHIRES	MW6		1900-01-01	2100-12-31	Mingenew Shire	VK6			0	0	1		0
+R	VK_SHIRES	MX3		1900-01-01	2100-12-31	Moreland City Council	VK3			0	0	1		0
+R	VK_SHIRES	MY2		1900-01-01	2100-12-31	Manly Council	VK2			0	0	1		0
+R	VK_SHIRES	MY3		1900-01-01	2100-12-31	Moyne Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	MY6		1900-01-01	2100-12-31	Murray Shire	VK6			0	0	1		0
+R	VK_SHIRES	MZ3		1900-01-01	2100-12-31	Moorabool Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	MZ6		1900-01-01	2100-12-31	Menzies Shire	VK6			0	0	1		0
+R	VK_SHIRES	NA2		1900-01-01	2100-12-31	Nambucca Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	NA4		1900-01-01	2100-12-31	Napranum Aboriginal Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	NA5		1900-01-01	2100-12-31	Northern Areas Council	VK5			0	0	1		0
+R	VK_SHIRES	NB4		1900-01-01	2100-12-31	North Burnett Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	NC2		1900-01-01	2100-12-31	Newcastle City Council	VK2			0	0	1		0
+R	VK_SHIRES	NC5		1900-01-01	2100-12-31	Nepabunna Community Incorporated	VK5			0	0	1		0
+R	VK_SHIRES	NG3		1900-01-01	2100-12-31	Northern Grampians Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	NG6		1900-01-01	2100-12-31	Narrogin Shire	VK6			0	0	1		0
+R	VK_SHIRES	NH6		1900-01-01	2100-12-31	Northampton Shire	VK6			0	0	1		0
+R	VK_SHIRES	NI2		1900-01-01	2100-12-31	Narrabri Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	NL5		1900-01-01	2100-12-31	Naracoorte Lucindale Council	VK5			0	0	1		0
+R	VK_SHIRES	NL6		1900-01-01	2100-12-31	Nedlands City	VK6			0	0	1		0
+R	VK_SHIRES	NM2		1900-01-01	2100-12-31	Narromine Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	NM6		1900-01-01	2100-12-31	Northam Shire	VK6			0	0	1		0
+R	VK_SHIRES	NM7		1900-01-01	2100-12-31	Northern Midlands Council	VK7			0	0	1		0
+R	VK_SHIRES	NN6		1900-01-01	2100-12-31	Narembeen Shire	VK6			0	0	1		0
+R	VK_SHIRES	NO6		1900-01-01	2100-12-31	Northam City	VK6			0	0	1		0
+R	VK_SHIRES	NP4		1900-01-01	2100-12-31	Northern Peninsula Area Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	NP5		1900-01-01	2100-12-31	The City Of Norwood Payneham & St Peters	VK5			0	0	1		0
+R	VK_SHIRES	NP6		1900-01-01	2100-12-31	Nannup Shire	VK6			0	0	1		0
+R	VK_SHIRES	NR6		1900-01-01	2100-12-31	Nungarin Shire	VK6			0	0	1		0
+R	VK_SHIRES	NS2		1900-01-01	2100-12-31	Narrandera Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	NS3		1900-01-01	2100-12-31	Nillumbik Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	NS4		1900-01-01	2100-12-31	Noosa Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	NT6		1900-01-01	2100-12-31	Narrogin City	VK6			0	0	1		0
+R	VK_SHIRES	NU6		1900-01-01	2100-12-31	Ngaanyatjarraku Shire	VK6			0	0	1		0
+R	VK_SHIRES	NY2		1900-01-01	2100-12-31	North Sydney Council	VK2			0	0	1		0
+R	VK_SHIRES	OA5		1900-01-01	2100-12-31	Outback Areas Community Development Trust	VK5			0	0	1		0
+R	VK_SHIRES	OC2		1900-01-01	2100-12-31	Oberon Council	VK2			0	0	1		0
+R	VK_SHIRES	OC5		1900-01-01	2100-12-31	Onkaparinga City Council	VK5			0	0	1		0
+R	VK_SHIRES	OR2		1900-01-01	2100-12-31	Orange City Council	VK2			0	0	1		0
+R	VK_SHIRES	OR5		1900-01-01	2100-12-31	District Council of Orroroo Carrieton	VK5			0	0	1		0
+R	VK_SHIRES	PC2		1900-01-01	2100-12-31	Parramatta City Council	VK2			0	0	1		0
+R	VK_SHIRES	PC5		1900-01-01	2100-12-31	Playford City Council	VK5			0	0	1		0
+R	VK_SHIRES	PC8		1900-01-01	2100-12-31	Palmerston City Council	VK8			0	0	1		0
+R	VK_SHIRES	PE6		1900-01-01	2100-12-31	Perth City	VK6			0	0	1		0
+R	VK_SHIRES	PG2		1900-01-01	2100-12-31	Palerang Council	VK2			0	0	1		0
+R	VK_SHIRES	PG6		1900-01-01	2100-12-31	Peppermint Grove Shire	VK6			0	0	1		0
+R	VK_SHIRES	PH2		1900-01-01	2100-12-31	Penrith City Council	VK2			0	0	1		0
+R	VK_SHIRES	PH5		1900-01-01	2100-12-31	District Council of Peterborough	VK5			0	0	1		0
+R	VK_SHIRES	PH6		1900-01-01	2100-12-31	Port Headland Shire	VK6			0	0	1		0
+R	VK_SHIRES	PI2		1900-01-01	2100-12-31	Pittwater Council	VK2			0	0	1		0
+R	VK_SHIRES	PI4		1900-01-01	2100-12-31	Palm Island Aboriginal Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	PJ6		1900-01-01	2100-12-31	Perenjori Shire	VK6			0	0	1		0
+R	VK_SHIRES	PK2		1900-01-01	2100-12-31	Parkes Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	PL5		1900-01-01	2100-12-31	City of Pt Lincoln	VK5			0	0	1		0
+R	VK_SHIRES	PM2		1900-01-01	2100-12-31	Port Macquarie-Hastings Council	VK2			0	0	1		0
+R	VK_SHIRES	PP3		1900-01-01	2100-12-31	Port Phillip City Council	VK3			0	0	1		0
+R	VK_SHIRES	PP4		1900-01-01	2100-12-31	Pormpuraaw Aboriginal Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	PP5		1900-01-01	2100-12-31	Port Pirie Regional Council	VK5			0	0	1		0
+R	VK_SHIRES	PR5		1900-01-01	2100-12-31	Prospect City Council	VK5			0	0	1		0
+R	VK_SHIRES	PS2		1900-01-01	2100-12-31	Port Stephens Council	VK2			0	0	1		0
+R	VK_SHIRES	PS3		1900-01-01	2100-12-31	Pyrenees Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	PS4		1900-01-01	2100-12-31	Paroo Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	PT6		1900-01-01	2100-12-31	Plantagenet Shire	VK6			0	0	1		0
+R	VK_SHIRES	PY6		1900-01-01	2100-12-31	Pingelly Shire	VK6			0	0	1		0
+R	VK_SHIRES	QB3		1900-01-01	2100-12-31	Queenscliffe Borough of	VK3			0	0	1		0
+R	VK_SHIRES	QC2		1900-01-01	2100-12-31	Queanbeyan City Council	VK2			0	0	1		0
+R	VK_SHIRES	QG6		1900-01-01	2100-12-31	Quairading Shire	VK6			0	0	1		0
+R	VK_SHIRES	QS4		1900-01-01	2100-12-31	Quilpie Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	RB6		1900-01-01	2100-12-31	Roebourne Shire	VK6			0	0	1		0
+R	VK_SHIRES	RC2		1900-01-01	2100-12-31	Rockdale City Council	VK2			0	0	1		0
+R	VK_SHIRES	RD5		1900-01-01	2100-12-31	Robe District Council	VK5			0	0	1		0
+R	VK_SHIRES	RE2		1900-01-01	2100-12-31	Ryde City Council	VK2			0	0	1		0
+R	VK_SHIRES	RG8		1900-01-01	2100-12-31	Roper Gulf Shire	VK8			0	0	1		0
+R	VK_SHIRES	RI4		1900-01-01	2100-12-31	Richmond Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	RK2		1900-01-01	2100-12-31	Randwick City Council	VK2			0	0	1		0
+R	VK_SHIRES	RM6		1900-01-01	2100-12-31	Rockingham City	VK6			0	0	1		0
+R	VK_SHIRES	RP5		1900-01-01	2100-12-31	Renmark Paringa District Council	VK5			0	0	1		0
+R	VK_SHIRES	RR4		1900-01-01	2100-12-31	Rockhampton Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	RS4		1900-01-01	2100-12-31	Redland City Council	VK4			0	0	1		0
+R	VK_SHIRES	RT6		1900-01-01	2100-12-31	Ravensthorpe Shire	VK6			0	0	1		0
+R	VK_SHIRES	RV2		1900-01-01	2100-12-31	Richmond Valley Council	VK2			0	0	1		0
+R	VK_SHIRES	RX5		1900-01-01	2100-12-31	Municipal Council of Roxby Downs	VK5			0	0	1		0
+R	VK_SHIRES	SB4		1900-01-01	2100-12-31	South Burnett Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	SB5		1900-01-01	2100-12-31	District Council of Streaky Bay	VK5			0	0	1		0
+R	VK_SHIRES	SB6		1900-01-01	2100-12-31	Shark Bay Shire	VK6			0	0	1		0
+R	VK_SHIRES	SC2		1900-01-01	2100-12-31	Shellharbour City Council	VK2			0	0	1		0
+R	VK_SHIRES	SC3		1900-01-01	2100-12-31	Stonnington City Council	VK3			0	0	1		0
+R	VK_SHIRES	SC4		1900-01-01	2100-12-31	Sunshine Coast Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	SC5		1900-01-01	2100-12-31	Salisbury City Council	VK5			0	0	1		0
+R	VK_SHIRES	SC7		1900-01-01	2100-12-31	Sorell Council	VK7			0	0	1		0
+R	VK_SHIRES	SD4		1900-01-01	2100-12-31	Southern Downs Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	SG3		1900-01-01	2100-12-31	South Gippsland Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	SH2		1900-01-01	2100-12-31	Shoalhaven City Council	VK2			0	0	1		0
+R	VK_SHIRES	SH3		1900-01-01	2100-12-31	Swan Hill Rural City Council	VK3			0	0	1		0
+R	VK_SHIRES	SJ6		1900-01-01	2100-12-31	Serpentine-Jarrahdale Shire	VK6			0	0	1		0
+R	VK_SHIRES	SM2		1900-01-01	2100-12-31	Strathfield Municipal Council	VK2			0	0	1		0
+R	VK_SHIRES	SM4		1900-01-01	2100-12-31	Somerset Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	SM5		1900-01-01	2100-12-31	Southern Mallee District Council and Community	VK5			0	0	1		0
+R	VK_SHIRES	SM7		1900-01-01	2100-12-31	Southern Midlands Council	VK7			0	0	1		0
+R	VK_SHIRES	SP6		1900-01-01	2100-12-31	South Perth City	VK6			0	0	1		0
+R	VK_SHIRES	SR2		1900-01-01	2100-12-31	Snowy River Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	SR4		1900-01-01	2100-12-31	Scenic Rim Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	SS2		1900-01-01	2100-12-31	Singleton Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	SS3		1900-01-01	2100-12-31	Southern Grampians Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	SS6		1900-01-01	2100-12-31	Sandstone Shire	VK6			0	0	1		0
+R	VK_SHIRES	ST3		1900-01-01	2100-12-31	Strathbogie Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	ST6		1900-01-01	2100-12-31	Stirling City	VK6			0	0	1		0
+R	VK_SHIRES	SU2		1900-01-01	2100-12-31	Sutherland Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	SU3		1900-01-01	2100-12-31	Surf Coast Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	SU6		1900-01-01	2100-12-31	Subiaco City	VK6			0	0	1		0
+R	VK_SHIRES	SW6		1900-01-01	2100-12-31	Swan City	VK6			0	0	1		0
+R	VK_SHIRES	SY2		1900-01-01	2100-12-31	Council of the City of Sydney	VK2			0	0	1		0
+R	VK_SHIRES	TB5		1900-01-01	2100-12-31	Tumby Bay District Council	VK5			0	0	1		0
+R	VK_SHIRES	TC7		1900-01-01	2100-12-31	Tasman Council	VK7			0	0	1		0
+R	VK_SHIRES	TD2		1900-01-01	2100-12-31	Tenterfield Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	TD5		1900-01-01	2100-12-31	Tatiara District Council	VK5			0	0	1		0
+R	VK_SHIRES	TE2		1900-01-01	2100-12-31	Temora Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	TG6		1900-01-01	2100-12-31	Trayning Shire	VK6			0	0	1		0
+R	VK_SHIRES	TI4		1900-01-01	2100-12-31	Torres Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	TI8		1900-01-01	2100-12-31	Tiwi Islands Local Government	VK8			0	0	1		0
+R	VK_SHIRES	TM6		1900-01-01	2100-12-31	Tammin Shire	VK6			0	0	1		0
+R	VK_SHIRES	TP6		1900-01-01	2100-12-31	Tambellup/Broomehill Shire	VK6			0	0	1		0
+R	VK_SHIRES	TR2		1900-01-01	2100-12-31	Tamworth Regional Council	VK2			0	0	1		0
+R	VK_SHIRES	TR4		1900-01-01	2100-12-31	Tablelands Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	TS3		1900-01-01	2100-12-31	Towong Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	TS4		1900-01-01	2100-12-31	Torres Strait Island Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	TS6		1900-01-01	2100-12-31	Three Springs Shire	VK6			0	0	1		0
+R	VK_SHIRES	TT2		1900-01-01	2100-12-31	Tumut Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	TT5		1900-01-01	2100-12-31	Tea Tree Gully City Council	VK5			0	0	1		0
+R	VK_SHIRES	TU2		1900-01-01	2100-12-31	Tumbarumba Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	TV4		1900-01-01	2100-12-31	Townsville City Council	VK4			0	0	1		0
+R	VK_SHIRES	TW2		1900-01-01	2100-12-31	Tweed Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	TW4		1900-01-01	2100-12-31	Toowoomba Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	TY6		1900-01-01	2100-12-31	Toodyay Shire	VK6			0	0	1		0
+R	VK_SHIRES	UC5		1900-01-01	2100-12-31	Unley City Council	VK5			0	0	1		0
+R	VK_SHIRES	UG6		1900-01-01	2100-12-31	Upper Gascoyne Shire	VK6			0	0	1		0
+R	VK_SHIRES	UH2		1900-01-01	2100-12-31	Upper Hunter Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	UL2		1900-01-01	2100-12-31	Upper Lachlan Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	UR2		1900-01-01	2100-12-31	Urana Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	US2		1900-01-01	2100-12-31	Uralla Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	VD8		1900-01-01	2100-12-31	Victoria Daly Shire	VK8			0	0	1		0
+R	VK_SHIRES	VH5		1900-01-01	2100-12-31	City of Victor Harbor	VK5			0	0	1		0
+R	VK_SHIRES	VP6		1900-01-01	2100-12-31	Victoria Park Shire	VK6			0	0	1		0
+R	VK_SHIRES	VS6		1900-01-01	2100-12-31	Victoria Plains Shire	VK6			0	0	1		0
+R	VK_SHIRES	VT6		1900-01-01	2100-12-31	Vincent Shire	VK6			0	0	1		0
+R	VK_SHIRES	WA2		1900-01-01	2100-12-31	Walcha Council	VK2			0	0	1		0
+R	VK_SHIRES	WA3		1900-01-01	2100-12-31	Whittlesea City Council	VK3			0	0	1		0
+R	VK_SHIRES	WA6		1900-01-01	2100-12-31	West Arthur Shire	VK6			0	0	1		0
+R	VK_SHIRES	WA8		1900-01-01	2100-12-31	West Arnhem Shire	VK8			0	0	1		0
+R	VK_SHIRES	WB2		1900-01-01	2100-12-31	Wingecarribee Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	WB4		1900-01-01	2100-12-31	Woorabinda Aboriginal Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	WB6		1900-01-01	2100-12-31	Wongan-Ballidu Shire	VK6			0	0	1		0
+R	VK_SHIRES	WC2		1900-01-01	2100-12-31	Warringah Council	VK2			0	0	1		0
+R	VK_SHIRES	WC7		1900-01-01	2100-12-31	West Coast Council	VK7			0	0	1		0
+R	VK_SHIRES	WD2		1900-01-01	2100-12-31	Weddin Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	WD4		1900-01-01	2100-12-31	Western Downs Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	WD5		1900-01-01	2100-12-31	Wakefield Regional Council	VK5			0	0	1		0
+R	VK_SHIRES	WD6		1900-01-01	2100-12-31	Wandering Shire	VK6			0	0	1		0
+R	VK_SHIRES	WE2		1900-01-01	2100-12-31	Warrumbungle Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	WE6		1900-01-01	2100-12-31	Wyndham-East Kimberley Shire	VK6			0	0	1		0
+R	VK_SHIRES	WG2		1900-01-01	2100-12-31	Wollongong City Council	VK2			0	0	1		0
+R	VK_SHIRES	WG6		1900-01-01	2100-12-31	Woodanilling Shire	VK6			0	0	1		0
+R	VK_SHIRES	WH2		1900-01-01	2100-12-31	Wentworth Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	WH3		1900-01-01	2100-12-31	Whitehorse City Council	VK3			0	0	1		0
+R	VK_SHIRES	WH5		1900-01-01	2100-12-31	Whyalla City Council	VK5			0	0	1		0
+R	VK_SHIRES	WI4		1900-01-01	2100-12-31	Winton Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	WI6		1900-01-01	2100-12-31	Wickepin Shire	VK6			0	0	1		0
+R	VK_SHIRES	WK2		1900-01-01	2100-12-31	The Council of the Shire of Wakool	VK2			0	0	1		0
+R	VK_SHIRES	WK5		1900-01-01	2100-12-31	Walkerville Town Council	VK5			0	0	1		0
+R	VK_SHIRES	WL2		1900-01-01	2100-12-31	Wellington Council	VK2			0	0	1		0
+R	VK_SHIRES	WL3		1900-01-01	2100-12-31	Warrnambool City Council	VK3			0	0	1		0
+R	VK_SHIRES	WL6		1900-01-01	2100-12-31	Williams Shire	VK6			0	0	1		0
+R	VK_SHIRES	WN6		1900-01-01	2100-12-31	Wagin Shire	VK6			0	0	1		0
+R	VK_SHIRES	WO2		1900-01-01	2100-12-31	Wollondilly Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	WO3		1900-01-01	2100-12-31	Wodonga City Council	VK3			0	0	1		0
+R	VK_SHIRES	WO6		1900-01-01	2100-12-31	Wanneroo City	VK6			0	0	1		0
+R	VK_SHIRES	WR2		1900-01-01	2100-12-31	Woollahra Municipal Council	VK2			0	0	1		0
+R	VK_SHIRES	WR3		1900-01-01	2100-12-31	Wangaratta Rural City Council	VK3			0	0	1		0
+R	VK_SHIRES	WR4		1900-01-01	2100-12-31	Whitsunday Regional Council	VK4			0	0	1		0
+R	VK_SHIRES	WR5		1900-01-01	2100-12-31	Wattle Range Council	VK5			0	0	1		0
+R	VK_SHIRES	WR6		1900-01-01	2100-12-31	Waroona Shire	VK6			0	0	1		0
+R	VK_SHIRES	WS2		1900-01-01	2100-12-31	Warren Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	WS3		1900-01-01	2100-12-31	Wellington Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	WS6		1900-01-01	2100-12-31	Westonia Shire	VK6			0	0	1		0
+R	VK_SHIRES	WS8		1900-01-01	2100-12-31	Wagait Shire	VK8			0	0	1		0
+R	VK_SHIRES	WT2		1900-01-01	2100-12-31	Walgett Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	WT5		1900-01-01	2100-12-31	West Torrens City Council	VK5			0	0	1		0
+R	VK_SHIRES	WT7		1900-01-01	2100-12-31	West Tamar Council	VK7			0	0	1		0
+R	VK_SHIRES	WU5		1900-01-01	2100-12-31	Wudinna District Council	VK5			0	0	1		0
+R	VK_SHIRES	WU6		1900-01-01	2100-12-31	Wiluna Shire	VK6			0	0	1		0
+R	VK_SHIRES	WV2		1900-01-01	2100-12-31	Waverley Council	VK2			0	0	1		0
+R	VK_SHIRES	WW2		1900-01-01	2100-12-31	Wagga Wagga City Council	VK2			0	0	1		0
+R	VK_SHIRES	WW3		1900-01-01	2100-12-31	West Wimmera Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	WW4		1900-01-01	2100-12-31	Wujal Wujal Aboriginal Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	WW7		1900-01-01	2100-12-31	Waratah-Wynyard Council	VK7			0	0	1		0
+R	VK_SHIRES	WY2		1900-01-01	2100-12-31	Willoughby City Council	VK2			0	0	1		0
+R	VK_SHIRES	WY3		1900-01-01	2100-12-31	Wyndham City Council	VK3			0	0	1		0
+R	VK_SHIRES	WY6		1900-01-01	2100-12-31	Wyalkatchem Shire	VK6			0	0	1		0
+R	VK_SHIRES	YA4		1900-01-01	2100-12-31	Yarrabah Aboriginal Shire Council	VK4			0	0	1		0
+R	VK_SHIRES	YA5		1900-01-01	2100-12-31	Yalata	VK5			0	0	1		0
+R	VK_SHIRES	YC3		1900-01-01	2100-12-31	Yarra City Council	VK3			0	0	1		0
+R	VK_SHIRES	YD5		1900-01-01	2100-12-31	Yankalilla District Council	VK5			0	0	1		0
+R	VK_SHIRES	YK6		1900-01-01	2100-12-31	York Shire	VK6			0	0	1		0
+R	VK_SHIRES	YN6		1900-01-01	2100-12-31	Yilgarn Shire	VK6			0	0	1		0
+R	VK_SHIRES	YO6		1900-01-01	2100-12-31	Yalgoo Shire	VK6			0	0	1		0
+R	VK_SHIRES	YP5		1900-01-01	2100-12-31	Yorke Peninsula District Council	VK5			0	0	1		0
+R	VK_SHIRES	YR3		1900-01-01	2100-12-31	Yarra Ranges Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	YS2		1900-01-01	2100-12-31	Young Shire Council	VK2			0	0	1		0
+R	VK_SHIRES	YS3		1900-01-01	2100-12-31	Yarriambiack Shire Council	VK3			0	0	1		0
+R	VK_SHIRES	YV2		1900-01-01	2100-12-31	Yass Valley Council	VK2			0	0	1		0

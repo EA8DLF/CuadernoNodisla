@@ -1,0 +1,937 @@
+# Referencias del diploma DTC. Generado; no se edita a mano.
+R	DTC	AB001		2020-01-01		Torre del Moro	CH	Ortona	JN72FH	0	0	1		248
+R	DTC	AB002		2020-01-01		Torre Mucchia	CH	Ortona (Colle San Marco)	JN72FH	0	0	1		248
+R	DTC	AB003		2020-01-01		Torre di Punta Penna	CH	Vasto	JN72IE	0	0	1		248
+R	DTC	AB004		2020-01-01		Torre di Carlo V	TE	Martinsicuro	JN62WV	0	0	1		248
+R	DTC	AB005		2020-01-01		Torre della Vibrata	TE	Alba Adriatica	JN62XU	0	0	1		248
+R	DTC	AB006		2020-01-01		Torre del Salinello	TE	Giulianova	JN62XS	0	0	1		248
+R	DTC	AB007		2020-01-01		Torre di Cerrano	TE	Pineto	JN72BO	0	0	1		248
+R	DTC	AB501		2020-01-01		Porto di Giulianova	TE	Giulianova		0	0	1		248
+R	DTC	AB502		2020-01-01		Porto di Ortona	CH	Ortona		0	0	1		248
+R	DTC	AB503		2020-01-01		Porto di Pescara	PE	Pescara		0	0	1		248
+R	DTC	AB504		2020-01-01		Porto di Francavilla	CH	Francavilla a Mara		0	0	1		248
+R	DTC	AB505		2020-01-01		Porto di Fossacesia	CH	Fossacesia		0	0	1		248
+R	DTC	BA001		2020-01-01		Torre Caina	PZ	Maratea	JM79UX	0	0	1		248
+R	DTC	BA002		2020-01-01		Torre Bollita	MT	Marina di Nova Siri	JN80GD	0	0	1		248
+R	DTC	BA003		2020-01-01		Torre di Filocaio	PZ	Fiumicello Maratea	JM79UX	0	0	1		248
+R	DTC	BA004		2020-01-01		Torre Santavenere	PZ	Cersuta  Maratea	JN70UA	0	0	1		248
+R	DTC	BA005		2020-01-01		Torre di Acquafredda	PZ	Acquafredda Maratea	JN70UA	0	0	1		248
+R	DTC	BA006		2020-01-01		Torre dei Crivi	PZ	Acquafredda Maratea	JN70UA	0	0	1		248
+R	DTC	BA007		2020-01-01		Torre della Scanzana	MT	Scanzano Jonico	JN80IF	0	0	1		248
+R	DTC	BA501		2020-01-01		Porto Turistico Marina di Policoro	MT	Policoro	JN80IE	0	0	1		248
+R	DTC	BA502		2020-01-01		Porto Degli Argonauti	MT	Pisticci	JN80JI	0	0	1		248
+R	DTC	BA503		2020-01-01		Maratea-Marina di Maratea (Porto)	PZ	Maratea Marina	JM79UX	0	0	1		248
+R	DTC	CA001		2020-01-01		Torre Mezzanotte	SA	SAPRI	JN70TB	0	0	1		248
+R	DTC	CA002		2020-01-01		Torre di Capobianco	SA	Sapri	JN70TB	0	0	1		248
+R	DTC	CA003		2020-01-01		Torre Petrosa	SA	Villammare	JN70TB	0	0	1		248
+R	DTC	CA004		2020-01-01		Torre Cala Bianca	SA	Marina di Camerota	JM79QX	0	0	1		248
+R	DTC	CA005		2020-01-01		Torre Zancale	SA	Camerota	JM79QX	0	0	1		248
+R	DTC	CA006		2020-01-01		Torre Caprioli	SA	Palinuro	JN70PB	0	0	1		248
+R	DTC	CA007		2020-01-01		Torre del Telegrafo	SA	Ascea	JN70OC	0	0	1		248
+R	DTC	CA008		2020-01-01		Torre di Velia	SA	Velia	JN70ND	0	0	1		248
+R	DTC	CA009		2020-01-01		Torre la Punta	SA	Pollica	JN70ME	0	0	1		248
+R	DTC	CA010		2020-01-01		Torre di Minerva	NA	Massa Lubrense	JN70DN	0	0	1		248
+R	DTC	CA011		2020-01-01		Torre di Capo Corbo	NA	Massa Lubrense	JN70DO	0	0	1		248
+R	DTC	CA012		2020-01-01		Torre di Montalto	NA	Massa Lubrense	JN70EN	0	0	1		248
+R	DTC	CA013		2020-01-01		Torre Trasita Positano	SA	Positano	JN70FP	0	0	1		248
+R	DTC	CA014		2020-01-01		Torre del Saracino	NA	Vico Equense	JN70FP	0	0	1		248
+R	DTC	CA015		2020-01-01		Torre Turbolo	NA	Massa Lubrense	JN70EO	0	0	1		248
+R	DTC	CA016		2020-01-01		Torre Saracena - Praiano	SA	Praiano	JN70GO	0	0	1		248
+R	DTC	CA017		2020-01-01		Torre Bassano	NA	Torre del Greco	JN70ES	0	0	1		248
+R	DTC	CA018		2020-01-01		Torre Saracena	NA	Torre del Greco	JN70ES	0	0	1		248
+R	DTC	CA019		2020-01-01		Torre Mediterraneo a Posillipo	NA	Posilipo	JN70CT	0	0	1		248
+R	DTC	CA020		2020-01-01		Torre Ranieri	NA	Napoli	JN70CT	0	0	1		248
+R	DTC	CA021		2020-01-01		Torre Patria	CE	Castel Volturno	JN70AW	0	0	1		248
+R	DTC	CA022		2020-01-01		Torre di Materita	NA	Capri	JN70CN	0	0	1		248
+R	DTC	CA023		2020-01-01		Torre Guevara detta di Michelangelo	NA	Ischia	JN60XR	0	0	1		248
+R	DTC	CA024		2020-01-01		La Torre Costantina	NA	Forio	JN60WR	0	0	1		248
+R	DTC	CA025		2020-01-01		Torre del molino	NA	Ischia	JN60XR	0	0	1		248
+R	DTC	CA026		2020-01-01		Torre dell Aquila	NA	Forio d Ischia	JN60WS	0	0	1		248
+R	DTC	CA027		2020-01-01		Torre di Sant Angelo	NA	Sant Angelo	JN60WQ	0	0	1		248
+R	DTC	CA028		2020-01-01		Torre dello Ziro	SA	Pontone	JN70HP	0	0	1		248
+R	DTC	CA029		2020-01-01		Torre Normanna	SA	Maiori	JN70HP	0	0	1		248
+R	DTC	CA030		2020-01-01		Torre La Cerniola	SA	Erchie	JN70IP	0	0	1		248
+R	DTC	CA031		2020-01-01		Torre di Cetara	SA	Cetara	JN70IP	0	0	1		248
+R	DTC	CA032		2020-01-01		Torre Lama di Cane	SA	Maiori	JN70IP	0	0	1		248
+R	DTC	CA033		2020-01-01		Torre d Albori	SA	Vetri sul Mare	JN70IP	0	0	1		248
+R	DTC	CA034		2020-01-01		Torre Crestarella	SA	Vetri sul Mare	JN70IQ	0	0	1		248
+R	DTC	CA035		2020-01-01		Torre Angellara	SA	Salerno	JN70JP	0	0	1		248
+R	DTC	CA036		2020-01-01		Torre di Vicentino	SA	Torre Piacentina	JN70KP	0	0	1		248
+R	DTC	CA037		2020-01-01		La Torre di Agropoli	SA	Agropoli	JN70LI	0	0	1		248
+R	DTC	CA038		2020-01-01		Torre Normanna	SA	Acciaroli	JN70ME	0	0	1		248
+R	DTC	CA039		2020-01-01		Torre Perrotti	SA	Santa Maria di Castellabate	JN70LG	0	0	1		248
+R	DTC	CA501		2020-01-01		Porto di Acciaroli	SA	Acciaroli	JN70ME	0	0	1		248
+R	DTC	CA502		2020-01-01		Porto di Agnone	SA	Agnone	JN70LF	0	0	1		248
+R	DTC	CA503		2020-01-01		Porto di Agropoli	SA	Agropoli	JN70LI	0	0	1		248
+R	DTC	CA504		2020-01-01		Porto di Amalfi	SA	Amalfi	JN70HP	0	0	1		248
+R	DTC	CA505		2020-01-01		Porto di Marina di Casal Velino	SA	Marina di Casal Velino	JN70NE	0	0	1		248
+R	DTC	CA506		2020-01-01		Porto di Cetara	SA	Cetara	JN70IP	0	0	1		248
+R	DTC	CA507		2020-01-01		Porto di Maiori	SA	Maiori	JN70HP	0	0	1		248
+R	DTC	CA508		2020-01-01		Arechi (Porto)	SA	Arechi	JN70JP	0	0	1		248
+R	DTC	CA509		2020-01-01		Porto di Camerota	SA	Marina di Camerota	JN70QA	0	0	1		248
+R	DTC	CA510		2020-01-01		Marina di Pisciotta (Porto)	SA	Pisciotta	JN70OC	0	0	1		248
+R	DTC	CA511		2020-01-01		Palinuro Porto	SA	Centola	JN70PA	0	0	1		248
+R	DTC	CA512		2020-01-01		Porto di Policastro Bussentino	SA	Policastro Bussentino	JN70SB	0	0	1		248
+R	DTC	CA513		2020-01-01		Porto di Scario	SA	Scario		0	0	1		248
+R	DTC	CA514		2020-01-01		Porto di San Marco di Castellabate	SA	San Marco	JN70LG	0	0	1		248
+R	DTC	CA515		2020-01-01		Porto di Sapri	SA	Sapri	JN70TB	0	0	1		248
+R	DTC	CA516		2020-01-01		Porto di Casamicciola	NA	Casamicciola Terme	JN60WR	0	0	1		248
+R	DTC	CA517		2020-01-01		Porto di Forio d Ischia	NA	Forio	JN60WR	0	0	1		248
+R	DTC	CA518		2020-01-01		Porto d Ischia	NA	Ischia	JN60XR	0	0	1		248
+R	DTC	CA519		2020-01-01		Porto turistico Marina di Lacco Ameno	NA	Lacco Ameno	JN60WS	0	0	1		248
+R	DTC	CA520		2020-01-01		Sant Angelo (Porto)	NA	Sant Angelo	JN60WQ	0	0	1		248
+R	DTC	CA521		2020-01-01		Porto di Baia Bacoli	NA	Bacoli	JN70AT	0	0	1		248
+R	DTC	CA522		2020-01-01		Porto di Marina Grande	NA	Marina Grande	JN70CN	0	0	1		248
+R	DTC	CA523		2020-01-01		Porto di Castellammare di Stabia	NA	Castellammare di Stabia	JN70FQ	0	0	1		248
+R	DTC	CA524		2020-01-01		Porto Marina di Procida	NA	Procida	JN70AS	0	0	1		248
+R	DTC	CA525		2020-01-01		Porto di Pozzuoli	NA	Pozzuoli	JN70BT	0	0	1		248
+R	DTC	CA526		2020-01-01		Porto di Sorrento Marina Piccola	NA	Sorrento	JN70EP	0	0	1		248
+R	DTC	CA527		2020-01-01		Porto Marina Grande	NA	Sorrento	JN70EP	0	0	1		248
+R	DTC	CA528		2020-01-01		Porto Turistico di Torre Annunziata	NA	Torre Annunziata	JN70FS	0	0	1		248
+R	DTC	CA529		2020-01-01		Porto del Granatello	NA	Portici	JN70ET	0	0	1		248
+R	DTC	CA530		2020-01-01		Porto di Napoli	NA	Napoli		0	0	1		248
+R	DTC	CL001		2020-01-01		Torre di Pietrenere	RC	Palmi	JM78WJ	0	0	1		248
+R	DTC	CL002		2020-01-01		Torre Camillaro	RC	Caulonia Marina	JM88FI	0	0	1		248
+R	DTC	CL003		2020-01-01		Torre Cavallaro	RC	Marina di Gioiosa Ionica	JM88DH	0	0	1		248
+R	DTC	CL004		2020-01-01		Torre Vecchia	KR	Mascino  Cutro	JM89LA	0	0	1		248
+R	DTC	CL005		2020-01-01		Torre Cavallo	RC	Scilla	JM78UG	0	0	1		248
+R	DTC	CL006		2020-01-01		Torre di Acquicella	CS	Belmonte Calabro	JM89BD	0	0	1		248
+R	DTC	CL007		2020-01-01		Torre San Giorgio	CS	Fuscaldo Marina	JM89AJ	0	0	1		248
+R	DTC	CL008		2020-01-01		Torre Melissa	KR	Torre Melissa	JM89NH	0	0	1		248
+R	DTC	CL009		2020-01-01		Torre della Principessa	CS	Amantea	JM89AD	0	0	1		248
+R	DTC	CL010		2020-01-01		Torre Ritani	KR	Isola Capo Rizzuto	JM88NW	0	0	1		248
+R	DTC	CL011		2020-01-01		Torre Rocchetta	VV	Briatico	JM88AR	0	0	1		248
+R	DTC	CL012		2020-01-01		Bastione di Malta	CZ	Gizzeria	JM88CX	0	0	1		248
+R	DTC	CL013		2020-01-01		Torre Carlo V	CZ	Soverato	JM88GQ	0	0	1		248
+R	DTC	CL014		2020-01-01		Torre Nuova	KR	Isola Capo Rizzuto	JM88NW	0	0	1		248
+R	DTC	CL015		2020-01-01		Torre di Scifo	KR	Papanice  Crotone	JM89MB	0	0	1		248
+R	DTC	CL016		2020-01-01		Torre Talao	CS	Scalea	JM79VT	0	0	1		248
+R	DTC	CL017		2020-01-01		Torre Ruffa	VV	Ricadi	JM78WP	0	0	1		248
+R	DTC	CL018		2020-01-01		Torre Lupo	CZ	Nocera Torinese	JM89BA	0	0	1		248
+R	DTC	CL019		2020-01-01		Torre del Cavallaro	RC	Bova Marina	JM77XW	0	0	1		248
+R	DTC	CL020		2020-01-01		Torre San Giovanni	CS	Amantea	JM89AD	0	0	1		248
+R	DTC	CL021		2020-01-01		Torre di Coreca	CS	Amantea	JM89AD	0	0	1		248
+R	DTC	CL022		2020-01-01		Torre Moschetta	RC	Locri	JM88CF	0	0	1		248
+R	DTC	CL023		2020-01-01		Torre Galea	RC	Marina di Gioiosa Ionica	JM88DH	0	0	1		248
+R	DTC	CL024		2020-01-01		Torre di Capo Suvero	CZ	Falerna	JM89CA	0	0	1		248
+R	DTC	CL025		2020-01-01		Torre Marino	VV	Ricadi	JM78WP	0	0	1		248
+R	DTC	CL026		2020-01-01		Torre di Rienzo	CS	Cetraro	JM79XM	0	0	1		248
+R	DTC	CL027		2020-01-01		Torre di Amantea	CS	Amantea	JM89AD	0	0	1		248
+R	DTC	CL028		2020-01-01		Torre vecchia	KR	Ciro' Marina	JM89NI	0	0	1		248
+R	DTC	CL029		2020-01-01		Torre San Antonio	CZ	Santa Caterina dello Ionio	JM88GM	0	0	1		248
+R	DTC	CL030		2020-01-01		Torre di Paola	CS	Paola	JM89AI	0	0	1		248
+R	DTC	CL031		2020-01-01		Torre di Santa Caterina	CZ	Gizzeria	JM88CX	0	0	1		248
+R	DTC	CL032		2020-01-01		Torre di Nao	KR	Capo Colonna  Crotone	JM89OA	0	0	1		248
+R	DTC	CL033		2020-01-01		Torre San Fili	RC	Stignano	JM88GJ	0	0	1		248
+R	DTC	CL034		2020-01-01		Torre Marrana	VV	Ricadi	JM78WP	0	0	1		248
+R	DTC	CL035		2020-01-01		Torre di Mezza praia	CZ	Curinga	JM88DU	0	0	1		248
+R	DTC	CL036		2020-01-01		Torre Casamona	RC	Riace	JM88GJ	0	0	1		248
+R	DTC	CL037		2020-01-01		Torre Parnaso	VV	Nicotera	JM78WN	0	0	1		248
+R	DTC	CL038		2020-01-01		Torre Roccella Jonica (Pizzofalcone)	RC	Roccella Jonica	JM88EH	0	0	1		248
+R	DTC	CL039		2020-01-01		Torre Ruggiero	RC	Bagnara Calabra	JM78VH	0	0	1		248
+R	DTC	CL040		2020-01-01		Torre Elisabetta	RC	Gioiosa Ionica	JM88DH	0	0	1		248
+R	DTC	CL041		2020-01-01		Torre Cavallara	CZ	Catanzaro	JM88HU	0	0	1		248
+R	DTC	CL042		2020-01-01		Torre del Crocchio	CZ	Cropani	JM88JV	0	0	1		248
+R	DTC	CL043		2020-01-01		Torre Brasolo	KR	Isola di Capo Rizzuto	JM88MV	0	0	1		248
+R	DTC	CL044		2020-01-01		Torre Aragonese	KR	Torre Melissa	JM89NH	0	0	1		248
+R	DTC	CL045		2020-01-01		Torre Vecchia	KR	CirÃ² Marina	JM89NJ	0	0	1		248
+R	DTC	CL046		2020-01-01		Torre degli Spinelli	KR	Cariati	JM89LL	0	0	1		248
+R	DTC	CL047		2020-01-01		Torre del Pile	KR	Cariati	JM89LL	0	0	1		248
+R	DTC	CL048		2020-01-01		Torre vicereale del Cupo	CS	Schiavonea	JM89GP	0	0	1		248
+R	DTC	CL049		2020-01-01		Torre del Ferro	CS	Corigliano Calabro	JM89FQ	0	0	1		248
+R	DTC	CL050		2020-01-01		Torre di Guardia	CS	Rocca Imperiale Marina	JN80HC	0	0	1		248
+R	DTC	CL051		2020-01-01		Torre Vicereale del Capo Saraceno	CS	Villapiana	JM89GU	0	0	1		248
+R	DTC	CL052		2020-01-01		Torre Spaccata Amendolara	CS	Amendolara	JM89HW	0	0	1		248
+R	DTC	CL501		2020-01-01		Porto di Gioia Tauro	RC	Gioia Tauro	JM78	0	0	1		248
+R	DTC	CL502		2020-01-01		Porto di Gallipari	CZ	Badolato	JM88GO	0	0	1		248
+R	DTC	CL503		2020-01-01		Porto di Catanzaro	CZ	Catanzaro	JM88HT	0	0	1		248
+R	DTC	CL504		2020-01-01		Porto Turistico di Amantea	CS	Campora San Giovanni	JM89BB	0	0	1		248
+R	DTC	CL505		2020-01-01		Porto di Belvedere Marittimo	CS	Belvedere Marittimo	JM79WO	0	0	1		248
+R	DTC	CL506		2020-01-01		Porto di Cetraro	CS	Cetraro Marina	JM79XM	0	0	1		248
+R	DTC	CL507		2020-01-01		Porto di Marina di Sibari	CS	Sibari	JM89GR	0	0	1		248
+R	DTC	CL508		2020-01-01		Porto di Crotone	KR	Crotone	JM89NC	0	0	1		248
+R	DTC	CL509		2020-01-01		Porto di CirÃ² Marina	KR	CirÃ² Marina	JM89NI	0	0	1		248
+R	DTC	CL510		2020-01-01		Porto Le Castella	KR	Le Castella	JM88MV	0	0	1		248
+R	DTC	CL511		2020-01-01		Porto di Bollaro Marina	RC	Reggio Calabria	JM78TB	0	0	1		248
+R	DTC	CL513		2020-01-01		Porto di Roccella Ionica	RC	Roccella Ionica	JM88FH	0	0	1		248
+R	DTC	CL514		2020-01-01		Porto di Scilla	RC	Scilla	JM78UG	0	0	1		248
+R	DTC	CL515		2020-01-01		Porto di Tropea	RC	Tropea	JM78WQ	0	0	1		248
+R	DTC	CL516		2020-01-01		Porto di Vibo Valentia Marina	VV	Vibo Marina	JM88BR	0	0	1		248
+R	DTC	CL517		2020-01-01		Porto di Bagnara	RC	Bagnara calabra	JM78VH	0	0	1		248
+R	DTC	CL518		2020-01-01		Porto di Diamante	CS	Diamante	JM79VQ	0	0	1		248
+R	DTC	CL519		2020-01-01		Porto di San Lucido	CS	San Lucido	JM89AH	0	0	1		248
+R	DTC	CL520		2020-01-01		Maida Marina (Porto)	CZ	Maida Marina	JM88CU	0	0	1		248
+R	DTC	CL521		2020-01-01		Porto di Pizzo Calabro	VV	Pizzo Calabro	JM88BR	0	0	1		248
+R	DTC	CL522		2020-01-01		Briatico (Porto)	VV	Briatico	JM88AR	0	0	1		248
+R	DTC	CL523		2020-01-01		Porto Turistico di Palmi	RC	Palmi	JM78WJ	0	0	1		248
+R	DTC	CL524		2020-01-01		Porto Villa San Giovanni	RC	Villa San Giovanni	JM78TF	0	0	1		248
+R	DTC	CL525		2020-01-01		Porticciolo di Isola di Capo Rizzuto	KR	Isola di Capo Rizzuto	JM88NV	0	0	1		248
+R	DTC	CL526		2020-01-01		Porto di Corigliano Calabro	CS	Corigliano Calabro	JM89GP	0	0	1		248
+R	DTC	CL527		2020-01-01		Porto di Cariati	CS	Cariati	JM89LM	0	0	1		248
+R	DTC	CO001		2020-01-01		Torre Baradello	CO	Como		0	0	1		248
+R	DTC	ER001		2020-01-01		Torre di San Michele	RA	Cervia	JN64EG	0	0	1		248
+R	DTC	ER002		2020-01-01		Torre di Bellaria	RN	Bellaria Igea Marina	JN64FD	0	0	1		248
+R	DTC	ER003		2020-01-01		Torre Palu	FE	Goro	JN64DU	0	0	1		248
+R	DTC	ER004		2020-01-01		Torre Abate	FE	Mesola	JN64DV	0	0	1		248
+R	DTC	ER005		2020-01-01		Torre della Finanza	FE	Volano	JN64DT	0	0	1		248
+R	DTC	ER501		2020-01-01		Porto Turistico Cesenatico	FC	Cesenatico	JN64EE	0	0	1		248
+R	DTC	ER502		2020-01-01		Porto di Marina degli Estensi	FE	Lido degli Estensi	JN64CQ	0	0	1		248
+R	DTC	ER503		2020-01-01		Cervia (Porto)	RA	Cervia	JN64EG	0	0	1		248
+R	DTC	ER504		2020-01-01		Porto Turistico Marinara	RA	Marina di Ravenna	JN64DL	0	0	1		248
+R	DTC	ER505		2020-01-01		Porto di Marina di Ravenna	RA	Marina di Ravenna	JN64DL	0	0	1		248
+R	DTC	ER506		2020-01-01		Porto Canale Bellaria	RA	Bellaria	JN64FD	0	0	1		248
+R	DTC	ER507		2020-01-01		Porto Marina di Cattolica	RA	Cattolica	JN63IX	0	0	1		248
+R	DTC	ER508		2020-01-01		Portoverde	RA	Misano Adriatico	JN63IX	0	0	1		248
+R	DTC	ER509		2020-01-01		Porto Di Riccione	RA	Riccione	JN64HA	0	0	1		248
+R	DTC	ER510		2020-01-01		Porto di Marina di Rimini	RA	Rimini	JN64GB	0	0	1		248
+R	DTC	FV001		2020-01-01		Torre Millenaria	UD	Marano	JN65NS	0	0	1		248
+R	DTC	FV002		2020-01-01		Torre del Lloyd	TS	Trieste	JN65VP	0	0	1		248
+R	DTC	FV501		2020-01-01		Porto di Grado	GO	Grado	JN65QQ	0	0	1		248
+R	DTC	FV502		2020-01-01		Porto San Vito	GO	San Vito	JN65QQ	0	0	1		248
+R	DTC	FV503		2020-01-01		Porto di Marina di Monfalcone	GO	Marina di Monfalcone	JN65SS	0	0	1		248
+R	DTC	FV504		2020-01-01		Porto di Marina di San Giusto	TS	San Giusto	JN65VP	0	0	1		248
+R	DTC	FV505		2020-01-01		Bacino Sacchetta	TS	Trieste	JN65VP	0	0	1		248
+R	DTC	FV506		2020-01-01		Porto di Aprilia Marittima	UD	Aprilia Marittima	JN65MQ	0	0	1		248
+R	DTC	FV507		2020-01-01		Porto di Lignano Sabbiadoro	UD	Lignano Sabbiadoro	JN65NQ	0	0	1		248
+R	DTC	FV508		2020-01-01		Porto di Marina di San Andrea	UD	Marina di San Andrea	JN65OR	0	0	1		248
+R	DTC	FV509		2020-01-01		Porto di Marina di Capo Nord	UD	Marina di Capo Nord	JN65MQ	0	0	1		248
+R	DTC	FV510		2020-01-01		Porto di Marano Lagunare	UD	Marano Lagunare	JN65OS	0	0	1		248
+R	DTC	FV511		2020-01-01		Porto di Marina di Aquileia	UD	Marina di Aquileia	JN65QS	0	0	1		248
+R	DTC	LA001		2020-01-01		Torre Fico	LT	San Felice Circeo	JN61MF	0	0	1		248
+R	DTC	LA002		2020-01-01		Torre di Palidoro	RM	Fiumicino	JN61CS	0	0	1		248
+R	DTC	LA003		2020-01-01		Torre dei Templari	LT	San Felice Circeo	JN61MF	0	0	1		248
+R	DTC	LA004		2020-01-01		Tor Boacciana	RM	Fiumicino	JN61CS	0	0	1		248
+R	DTC	LA005		2020-01-01		Tor di Caldano	RM	Anzio	JN61HL	0	0	1		248
+R	DTC	LA006		2020-01-01		Torre San Lorenzo	RM	Marina di Ardea	JN61GN	0	0	1		248
+R	DTC	LA007		2020-01-01		Torre Nicolina	RM	Fiumicino	JN61CS	0	0	1		248
+R	DTC	LA008		2020-01-01		Torre del Maccarese	RM	Fregene	JN61CU	0	0	1		248
+R	DTC	LA009		2020-01-01		Torre di Mola	LT	Formia	JN61TG	0	0	1		248
+R	DTC	LA010		2020-01-01		Torre Viola	LT	Gaeta	JN61SF	0	0	1		248
+R	DTC	LA011		2020-01-01		Torre Astura	LT	Astura	JN61JK	0	0	1		248
+R	DTC	LA012		2020-01-01		Tor San Michele	RM	OSTIA	JN61DR	0	0	1		248
+R	DTC	LA013		2020-01-01		Torre Paola	LT	San Felice Circeo	JN61MF	0	0	1		248
+R	DTC	LA014		2020-01-01		Torre Cervia	LT	San Felice Circeo	JN61MF	0	0	1		248
+R	DTC	LA015		2020-01-01		Torre Olevola	LT	San Felice Circeo	JN61NG	0	0	1		248
+R	DTC	LA016		2020-01-01		Torre Vittoria	LT	San Felice Circeo	JN61NF	0	0	1		248
+R	DTC	LA017		2020-01-01		Torre Truglia	LT	Sperlonga	JN61RG	0	0	1		248
+R	DTC	LA018		2020-01-01		Torre Flavia	RM	Ladispoli	JN61AX	0	0	1		248
+R	DTC	LA019		2020-01-01		Toore Santa Severa	RM	Santa Severa	JN52XA	0	0	1		248
+R	DTC	LA020		2020-01-01		Antica Torre	RM	Civitavecchia	JN52VC	0	0	1		248
+R	DTC	LA021		2020-01-01		Torre Medievale	RM	Civitavecchia	JN52VC	0	0	1		248
+R	DTC	LA022		2020-01-01		Torre di Maremma	VT	Montalto di Castro	JN52SH	0	0	1		248
+R	DTC	LA501		2020-01-01		Porto di Ponza	LT	Ponza	JN60LV	0	0	1		248
+R	DTC	LA502		2020-01-01		Porto Caposele	LT	Formia	JN61TG	0	0	1		248
+R	DTC	LA503		2020-01-01		Porto di Formia	LT	Formia	JN61TG	0	0	1		248
+R	DTC	LA504		2020-01-01		Porto di Gaeta S.ta Maria	LT	Gaeta	JN61TF	0	0	1		248
+R	DTC	LA505		2020-01-01		Porto di Sperlonga	LT	Sperlonga	JN61RG	0	0	1		248
+R	DTC	LA506		2020-01-01		Porto di San Felice Circeo	LT	San Felice Circeo	JN61NF	0	0	1		248
+R	DTC	LA507		2020-01-01		Porto di Sabaudia	LT	Sabaudia	JN61MH	0	0	1		248
+R	DTC	LA508		2020-01-01		Porto di Terracina	LT	Terracina	JN61PG	0	0	1		248
+R	DTC	LA509		2020-01-01		Anzio (Porto)	RM	Anzio	JN61HK	0	0	1		248
+R	DTC	LA510		2020-01-01		Porto di Civitavecchia Porto Lega Navale	RM	Civitavecchia	JN52VC	0	0	1		248
+R	DTC	LA511		2020-01-01		Porto Fiumicino	RM	Fiumicino	JN61CS	0	0	1		248
+R	DTC	LA512		2020-01-01		Porto di Ostia	RM	Roma	JN61DR	0	0	1		248
+R	DTC	LA513		2020-01-01		Porto di Santa Marinella	RM	Santa Marinella	JN52WA	0	0	1		248
+R	DTC	LA514		2020-01-01		Porto di Foce del Floria	VT	Montalto di Castro	JN52SH	0	0	1		248
+R	DTC	LA515		2020-01-01		Foce del Marta	VT	Tarquinia	JN52UF	0	0	1		248
+R	DTC	LI001		2020-01-01		Torre dell Arma	IM	Busanna	JN33WT	0	0	1		248
+R	DTC	LI002		2020-01-01		Torre Pagana	GE	Rapallo	JN44OI	0	0	1		248
+R	DTC	LI003		2020-01-01		Torre Leon Pancaldo	SV	Savona	JN44FH	0	0	1		248
+R	DTC	LI004		2020-01-01		Torre Scola	SP	Terrizzo	JN44WB	0	0	1		248
+R	DTC	LI005		2020-01-01		Torre della Ciapela	IM	Sanremo	JN33VT	0	0	1		248
+R	DTC	LI006		2020-01-01		Torre Gallinaro	IM	Cipressa	JN33XU	0	0	1		248
+R	DTC	LI007		2020-01-01		Torre Prarola	IM	Imperia	JN33XU	0	0	1		248
+R	DTC	LI008		2020-01-01		Torre Saracena Finale Ligure	SV	Finale Ligure	JN44EE	0	0	1		248
+R	DTC	LI009		2020-01-01		Torre Pertusio	SV	Savona	JN44FH	0	0	1		248
+R	DTC	LI010		2020-01-01		Torre degli Embriaci	GE	Genova	JN44LJ	0	0	1		248
+R	DTC	LI011		2020-01-01		Torre Maruffo	GE	Genova	JN44LJ	0	0	1		248
+R	DTC	LI012		2020-01-01		Torre Saracena	IM	Grimaldi	JN33SS	0	0	1		248
+R	DTC	LI013		2020-01-01		Torre di Porta Canarda	IM	Ventimiglia	JN33TT	0	0	1		248
+R	DTC	LI014		2020-01-01		Torre Barbaresca	IM	Riva Ligure	JN33WU	0	0	1		248
+R	DTC	LI015		2020-01-01		Torre saracena	IM	Imperia	JN43AV	0	0	1		248
+R	DTC	LI016		2020-01-01		Torre dell Alpicella	IM	Diano Marina	JN43AV	0	0	1		248
+R	DTC	LI017		2020-01-01		Torre Saracena	SV	Andora	JN43BX	0	0	1		248
+R	DTC	LI018		2020-01-01		Torre Saracena	SV	Alassio	JN44CA	0	0	1		248
+R	DTC	LI019		2020-01-01		Torre di Vegliasco	SV	Vegliasco	JN44BA	0	0	1		248
+R	DTC	LI020		2020-01-01		Torre Civica	SV	Albenga	JN44CB	0	0	1		248
+R	DTC	LI021		2020-01-01		Torre Pernice	SV	Albenga	JN44CB	0	0	1		248
+R	DTC	LI022		2020-01-01		Torre Antica di Borgio	SV	Borgio	JN44DE	0	0	1		248
+R	DTC	LI023		2020-01-01		Torre del Papone	SV	Noli	JN44EE	0	0	1		248
+R	DTC	LI024		2020-01-01		Torre D Ere	SV	Bergeggi	JN44FF	0	0	1		248
+R	DTC	LI025		2020-01-01		Torre dei Favari	SV	Varazze	JN44GI	0	0	1		248
+R	DTC	LI026		2020-01-01		Torre dei Saraceni	GE	Arenzano	JN44IJ	0	0	1		248
+R	DTC	LI027		2020-01-01		Torre Saracena	GE	Sori	JN44NI	0	0	1		248
+R	DTC	LI028		2020-01-01		Torre Gropallo	GE	Genova	JN44MJ	0	0	1		248
+R	DTC	LI029		2020-01-01		Torre Doria	GE	San Fruttuoso	JN44OH	0	0	1		248
+R	DTC	LI030		2020-01-01		Torre Saracena Zoagli	GE	Zoagli	JN44PI	0	0	1		248
+R	DTC	LI031		2020-01-01		Torre del borgo a Lavagna Genova	GE	Lavagna	JN44QH	0	0	1		248
+R	DTC	LI032		2020-01-01		Torre Marconi	GE	Sestri Levante	JN44QG	0	0	1		248
+R	DTC	LI033		2020-01-01		Torre di Punta Baffe	GE	Trigoso	JN44RF	0	0	1		248
+R	DTC	LI034		2020-01-01		Torre Carolingia	SP	Framura	JN44SF	0	0	1		248
+R	DTC	LI035		2020-01-01		Torre dell Orologio	SP	Levanto	JN44TE	0	0	1		248
+R	DTC	LI036		2020-01-01		Torre Porto Venere	SP	Portovenere	JN44WB	0	0	1		248
+R	DTC	LI037		2020-01-01		Torre Corazzata Umberto IÃ‚Â°	SP	Terrizzo	JN44WB	0	0	1		248
+R	DTC	LI501		2020-01-01		Porto di Arenzano	GE	Arenzano	JN44IJ	0	0	1		248
+R	DTC	LI502		2020-01-01		Porticciolo di Camogli	GE	Camogli	JN44NI	0	0	1		248
+R	DTC	LI503		2020-01-01		Porto Turistico Marina Chiavari	GE	Chiavari	JN44PH	0	0	1		248
+R	DTC	LI504		2020-01-01		Marina Porto Antico Genova	GE	Genova	JN44LJ	0	0	1		248
+R	DTC	LI505		2020-01-01		Porto Antico	GE	Genova	JN44LJ	0	0	1		248
+R	DTC	LI506		2020-01-01		Porto di Sestri Ponente	GE	Genova	JN44KJ	0	0	1		248
+R	DTC	LI507		2020-01-01		Porto di Lavagna	GE	Lavagna	JN44QH	0	0	1		248
+R	DTC	LI508		2020-01-01		Portofino	GE	Portofino	JN44OH	0	0	1		248
+R	DTC	LI509		2020-01-01		Rapallo Porto	GE	Rapallo	JN44OI	0	0	1		248
+R	DTC	LI510		2020-01-01		Porto di Sestri Levante	GE	Sestri Levante	JN44QG	0	0	1		248
+R	DTC	LI511		2020-01-01		Porto di Santa Margherita	GE	Santa Margherita Ligure	JN44OH	0	0	1		248
+R	DTC	LI512		2020-01-01		Porticciolo Arma di Taggia	IM	Taggia	JN33WT	0	0	1		248
+R	DTC	LI513		2020-01-01		Porto di Bordighera	IM	Bordighera	JN33US	0	0	1		248
+R	DTC	LI514		2020-01-01		Porto turistico di Diano Marina	IM	Diano Marina	JN43BV	0	0	1		248
+R	DTC	LI515		2020-01-01		Porto di Imperia	IM	Imperia	JN43AV	0	0	1		248
+R	DTC	LI516		2020-01-01		Porto di Oneglia	IM	Imperia	JN43AV	0	0	1		248
+R	DTC	LI517		2020-01-01		Porto Marina Di San Lorenzo	IM	San Lorenzo al Mare	JN33XU	0	0	1		248
+R	DTC	LI518		2020-01-01		Porto Marina degli Aregai	IM	Santo Stefano al Mare	JN33WU	0	0	1		248
+R	DTC	LI519		2020-01-01		Porto di Sanremo Portosole	IM	Sanremo	JN33VT	0	0	1		248
+R	DTC	LI520		2020-01-01		Porto Mirabello	IM	La Spezia	JN44VC	0	0	1		248
+R	DTC	LI521		2020-01-01		Porto Mirabello	SP	La Spezia	JN44VC	0	0	1		248
+R	DTC	LI522		2020-01-01		Porto di La Spezia	SP	La Spezia	JN44VC	0	0	1		248
+R	DTC	LI523		2020-01-01		Porto Lotti	IM	La Spezia	JN44WC	0	0	1		248
+R	DTC	LI524		2020-01-01		Porticciolo di Lerici	SP	Lerici	JN44WB	0	0	1		248
+R	DTC	LI525		2020-01-01		Porto di Monterosso Ponente	SP	Monterosso al Mare	JN44TD	0	0	1		248
+R	DTC	LI526		2020-01-01		Portovenere	SP	Portovenere	JN44WB	0	0	1		248
+R	DTC	LI527		2020-01-01		Porto di Alassio	SV	Alassio	JN44CA	0	0	1		248
+R	DTC	LI528		2020-01-01		Porto di Celle Ligure	SV	celle Ligure	JN44GI	0	0	1		248
+R	DTC	LI529		2020-01-01		Porto di Finale Ligure	SV	Finale Ligure	JN44EE	0	0	1		248
+R	DTC	LI530		2020-01-01		Porto di Loano Marina	SV	Loano	JN44DD	0	0	1		248
+R	DTC	LI531		2020-01-01		Porto di Savona	SV	Savona	JN44FH	0	0	1		248
+R	DTC	LI532		2020-01-01		Marina di Varazze	SV	Varazze	JN44GI	0	0	1		248
+R	DTC	LO501		2020-01-01		Lenno Porto	CO	Lenno	JN45OX	0	0	1		248
+R	DTC	LO502		2020-01-01		Porto di Domaso	CO	Domaso	JN46PD	0	0	1		248
+R	DTC	LO503		2020-01-01		Porto Canottieri Garda SalÃ²	BS	SalÃ²	JN55GO	0	0	1		248
+R	DTC	LO504		2020-01-01		Porto di Sirmione 2	BS	Sirmione	JN55HL	0	0	1		248
+R	DTC	LO505		2020-01-01		Lepanto Marine Desenzano	BS	Desenzano del Garda	JN55GL	0	0	1		248
+R	DTC	LO506		2020-01-01		Marina Di Limone Sul Garda	BS	Limone Sul Garda	JN55JT	0	0	1		248
+R	DTC	LO507		2020-01-01		Marina Lisanza	BS	Lisanza	JN45HR	0	0	1		248
+R	DTC	LO508		2020-01-01		Cannero Riviera	BS	Cannero Riviera	JN46IA	0	0	1		248
+R	DTC	MA001		2020-01-01		Torre Albani di Montignano	AN	Senigallia	JN63PQ	0	0	1		248
+R	DTC	MA002		2020-01-01		Torre di Portonovo	AN	Ancona	JN63TN	0	0	1		248
+R	DTC	MA003		2020-01-01		Torre Guelfa	AP	San Benedetto del Tronto	JN62WV	0	0	1		248
+R	DTC	MA004		2020-01-01		Torre del Castello di Grottammare	AP	Grottammare	JN62VX	0	0	1		248
+R	DTC	MA005		2020-01-01		Torre dei Gualtieri	AP	San Benedetto del Tronto	JN62WW	0	0	1		248
+R	DTC	MA006		2020-01-01		Torre di San Andrea	AP	Cupra Marittima	JN63WA	0	0	1		248
+R	DTC	MA007		2020-01-01		Torre sul Porto	AP	San Benedetto del Tronto	JN62WV	0	0	1		248
+R	DTC	MA008		2020-01-01		Torre Eptagonale di Moresco	FM	Moresco	JN63UC	0	0	1		248
+R	DTC	MA009		2020-01-01		Torre di Semprinia	MC	Potenza Picena	JN63TJ	0	0	1		248
+R	DTC	MA010		2020-01-01		Torre delle mura urbiche	FM	Torre di Palme	JN63VD	0	0	1		248
+R	DTC	MA011		2020-01-01		La Torre Pelagallo	FM	Porto San Giorgio	JN63VE	0	0	1		248
+R	DTC	MA012		2020-01-01		Torre Merlata	FM	Porto San Giorgio	JN63VE	0	0	1		248
+R	DTC	MA013		2020-01-01		Torre dell orologio	FM	Porto Sant Elpidio	JM89LL	0	0	1		248
+R	DTC	MA014		2020-01-01		Torre Civica	AN	Ancona	JN63SO	0	0	1		248
+R	DTC	MA015		2020-01-01		Torre di Numana	AN	Numana	JN63TM	0	0	1		248
+R	DTC	MA501		2020-01-01		Porto di Ancona	AN	Ancona	JN63SO	0	0	1		248
+R	DTC	MA502		2020-01-01		La Marina Dorica	AN	Ancona	JN63RO	0	0	1		248
+R	DTC	MA503		2020-01-01		Porto Marina dei Cesari	PU	Fano	JN63MU	0	0	1		248
+R	DTC	MA504		2020-01-01		Porto Turistico di Senigallia	AN	Senigallia	JN63OR	0	0	1		248
+R	DTC	MA505		2020-01-01		Porto san Giorgio	FM	Porto San Giorgio	JN63VD	0	0	1		248
+R	DTC	MA506		2020-01-01		San Benedetto del Tronto (Porto)	AP	San Benedetto del Tronto	JN62WW	0	0	1		248
+R	DTC	MA507		2020-01-01		Porto di Civitanova Marche	MC	Civitanova Marche	JN63UH	0	0	1		248
+R	DTC	MA508		2020-01-01		Porto Le Cinque Vele	MC	Porto Potenza Picena	JN63UJ	0	0	1		248
+R	DTC	MA509		2020-01-01		Porto Di Fano	PU	Fano	JN63MU	0	0	1		248
+R	DTC	MA510		2020-01-01		Porto di Vallugola	PU	Gabicce Mare	JN63JX	0	0	1		248
+R	DTC	MA511		2020-01-01		Porto Di Pesaro	PU	Pesaro	JN63KW	0	0	1		248
+R	DTC	MA512		2020-01-01		Porto di Numana	AN	Numana	JN63TM	0	0	1		248
+R	DTC	MO001		2020-01-01		Torre di Petacciato	CB	Petacciato	JN72KA	0	0	1		248
+R	DTC	MO002		2020-01-01		Torre del Sinarca	CB	Colle della Torre  Termoli	JN72LA	0	0	1		248
+R	DTC	MO003		2020-01-01		Torre del Meridiano	CB	Termoli	JN72LA	0	0	1		248
+R	DTC	MO501		2020-01-01		Porto di Termoli	CB	Termoli		0	0	1		248
+R	DTC	MO502		2020-01-01		Porto di Montenero	CB	Montenero di Bisaccia		0	0	1		248
+R	DTC	MO503		2020-01-01		Porto di Campomarino	CB	Campomarino		0	0	1		248
+R	DTC	PM001		2020-01-01		TEST	TO	TEST		0	0	1		248
+R	DTC	PM501		2020-01-01		Porticciolo di Pallanza	VB	Verbania	JN45GW	0	0	1		248
+R	DTC	PM502		2020-01-01		Porto Di Verbania Suna	VB	Verbania	JN45GW	0	0	1		248
+R	DTC	PM503		2020-01-01		Porticciolo di Feriolo	VB	Feriolo	JN45FW	0	0	1		248
+R	DTC	PM504		2020-01-01		Approdo Turistico Del Lungolago Di Arona	NO	Arona	JN45GR	0	0	1		248
+R	DTC	PM505		2020-01-01		Porto Turistico Comunale Di Belgirate	VB	Belgirate	JN45GU	0	0	1		248
+R	DTC	PM506		2020-01-01		Porticiolo di Viverone	BI	Viverone	JN45AK	0	0	1		248
+R	DTC	PM507		2020-01-01		Porticciolo di Candia	TO	Candia Canavese	JN35WH	0	0	1		248
+R	DTC	PU001		2020-01-01		Torre Specchia la Guardia	LE	Santa Cesarea Terme	JN90FA	0	0	1		248
+R	DTC	PU002		2020-01-01		Torre Capo Lupo	LE	Marittima   Diso	JM99EX	0	0	1		248
+R	DTC	PU003		2020-01-01		Torre Guaceto	BR	Carovigno	JN80VR	0	0	1		248
+R	DTC	PU004		2020-01-01		Torre Suda	LE	Torre Suda   Racale	JM99AW	0	0	1		248
+R	DTC	PU005		2020-01-01		Torre Vado gia'Torre Mefanto	LE	marina di Torre Vado   Morciano di Leuca	JM99DT	0	0	1		248
+R	DTC	PU006		2020-01-01		Torre Squillace/T. Scianuri	LE	Nardo'	JN90AE	0	0	1		248
+R	DTC	PU007		2020-01-01		Torre Minervino/T. Porto Russo	LE	Santa Cesarea Terme	JN90FA	0	0	1		248
+R	DTC	PU008		2020-01-01		Torre Santa Sabina	BR	Carovigno	JN80TQ	0	0	1		248
+R	DTC	PU009		2020-01-01		Torre Veneri o Venneri	LE	Lecce	JN90CI	0	0	1		248
+R	DTC	PU010		2020-01-01		Torre Palane	LE	Marina Serra   Tricase	JM99EW	0	0	1		248
+R	DTC	PU011		2020-01-01		Torre di San Vito	BA	Cala San Vito   Polignano a Mare	JM68OQ	0	0	1		248
+R	DTC	PU012		2020-01-01		Torre San Felice	FG	Cala san Felice   Vieste	JN81CV	0	0	1		248
+R	DTC	PU013		2020-01-01		Torre Pelosa	BA	Torre a Mare   Bari	JN81MC	0	0	1		248
+R	DTC	PU014		2020-01-01		Torre Calderina	BA	Molfetta	JN81GF	0	0	1		248
+R	DTC	PU015		2020-01-01		Torre Sant'Emiliano	LE	Otranto	JN90FD	0	0	1		248
+R	DTC	PU016		2020-01-01		Torre di Sfinale	FG	Punta di Sfinale  Peschici	JN81AW	0	0	1		248
+R	DTC	PU017		2020-01-01		Torre Fiumicelli	LE	Otranto	JN90FD	0	0	1		248
+R	DTC	PU018		2020-01-01		Torre Miggiano	LE	Santa Cesarea Terme	JN90FA	0	0	1		248
+R	DTC	PU019		2020-01-01		Torre Santa Cesarea	LE	Santa Cesarea Terme	JN90FA	0	0	1		248
+R	DTC	PU020		2020-01-01		Torre del Sasso	LE	Tricase	JM99EW	0	0	1		248
+R	DTC	PU021		2020-01-01		Torre dell Orso	LE	Meledugno	JN90FG	0	0	1		248
+R	DTC	PU022		2020-01-01		Torre Specchiolla	LE	Casalabate   Squinzano e Trepuzzi	JN90AJ	0	0	1		248
+R	DTC	PU023		2020-01-01		Torre Andrano o Porto di Ripa	LE	Andrano	JM99EX	0	0	1		248
+R	DTC	PU024		2020-01-01		Torre Pozzelle	BR	Pozzelle   Ostuni	JN80TS	0	0	1		248
+R	DTC	PU025		2020-01-01		Torre di Porto Miggiano	LE	Santa Cesarea Terme	JN90FA	0	0	1		248
+R	DTC	PU026		2020-01-01		Torre Capanne	LE	Castro	JN90FA	0	0	1		248
+R	DTC	PU027		2020-01-01		Torre Rinalda	LE	Lecce	JN90CI	0	0	1		248
+R	DTC	PU028		2020-01-01		Torre Chianca	LE	Lecce	JN90CI	0	0	1		248
+R	DTC	PU029		2020-01-01		Torre del Fiume Lato	TA	Castellaneta	JN80LL	0	0	1		248
+R	DTC	PU030		2020-01-01		Torre Specchia Ruggeri	LE	Vernole	JN90DG	0	0	1		248
+R	DTC	PU031		2020-01-01		Torre San Foca	LE	San Foca   Melendugno	JN90EG	0	0	1		248
+R	DTC	PU032		2020-01-01		Torre Roca Vecchia/T. di Maradico	LE	Roca   Melendugno	JN90EG	0	0	1		248
+R	DTC	PU033		2020-01-01		Torre Cintola	BA	Capitolo	JN80QV	0	0	1		248
+R	DTC	PU034		2020-01-01		Torre Sant'Andrea	LE	Torre Sant'Andrea   Melendugno	JN90FG	0	0	1		248
+R	DTC	PU035		2020-01-01		Torre Fortore	FG	Lesina	JN71PV	0	0	1		248
+R	DTC	PU036		2020-01-01		Torre S. Stefano/T. Chianca	LE	Otranto	JN90FD	0	0	1		248
+R	DTC	PU037		2020-01-01		Torre del Serpe	LE	Otranto	JN90FD	0	0	1		248
+R	DTC	PU038		2020-01-01		Torre dell'Orto	LE	Otranto	JN90FD	0	0	1		248
+R	DTC	PU039		2020-01-01		Torre Alfonsina	LE	Otranto	JN90FD	0	0	1		248
+R	DTC	PU040		2020-01-01		Torre di Sinfono o Zunfano	LE	Alliste	JM99AW	0	0	1		248
+R	DTC	PU041		2020-01-01		Torre Scampamorte	FG	Foce sant'Andrea   Lesina	JN71RV	0	0	1		248
+R	DTC	PU042		2020-01-01		Torre del Pizzo	LE	Gallipoli	JN80XB	0	0	1		248
+R	DTC	PU043		2020-01-01		Torre san Giovanni la Pedata	LE	Gallipoli	JN80XB	0	0	1		248
+R	DTC	PU044		2020-01-01		Torre Sabea	LE	Gallipoli	JN90AB	0	0	1		248
+R	DTC	PU045		2020-01-01		torre dell'Alto Lido	LE	Sannicola	JN90AC	0	0	1		248
+R	DTC	PU046		2020-01-01		Torre del Fiume di Galatena	LE	Santa Maria al Bagno   Nardo'	JN90AE	0	0	1		248
+R	DTC	PU047		2020-01-01		Torre Santa Caterina	LE	Santa Caterina   Nardo'	JN90AE	0	0	1		248
+R	DTC	PU048		2020-01-01		Torre Santa Maria dell'Alto	LE	Nardo'	JN90AE	0	0	1		248
+R	DTC	PU049		2020-01-01		Torre Inserraglio/T.Crito'	LE	Torre Inserraglio   Nardo'	JN90AE	0	0	1		248
+R	DTC	PU050		2020-01-01		Torre Sant'Isidoro	LE	Sant'Isidoro   Nardo'	JN90AE	0	0	1		248
+R	DTC	PU051		2020-01-01		Torre Mileto	FG	San Nicandro Garganico	JN71SW	0	0	1		248
+R	DTC	PU052		2020-01-01		Torre Nasparo/T. Lissano	LE	Tiggiano	JM99EV	0	0	1		248
+R	DTC	PU053		2020-01-01		Torre Chianca o  Santo Stefano	LE	Porto Cesareo	JN80WG	0	0	1		248
+R	DTC	PU054		2020-01-01		Torre Lapillo o Santo Tommaso	LE	Torre Lapillo Porto Cesare	JN80WG	0	0	1		248
+R	DTC	PU055		2020-01-01		Torre Calarossa	FG	San Nicandro Garganico	JN71TW	0	0	1		248
+R	DTC	PU056		2020-01-01		Torre Varano piccola	FG	Ischitella	JN71VW	0	0	1		248
+R	DTC	PU057		2020-01-01		Torre Varano grande	FG	Ischitella	JN71VV	0	0	1		248
+R	DTC	PU058		2020-01-01		Torre dei Preposti/S. Menaio	FG	San Menaio   Vico del Gargano	JN71XW	0	0	1		248
+R	DTC	PU059		2020-01-01		Torre Monte Pucci	FG	Peschici	JN71XW	0	0	1		248
+R	DTC	PU060		2020-01-01		Torre Calalunga	FG	Peschici	JN81AW	0	0	1		248
+R	DTC	PU061		2020-01-01		Torre Gusmay	FG	Punta di cala Bescile   Peschici	JN81AW	0	0	1		248
+R	DTC	PU062		2020-01-01		Torre Marchiello	LE	Castrignano del Capo	JM99ET	0	0	1		248
+R	DTC	PU063		2020-01-01		Torre San Gregorio	LE	Marina S. Gregorio   Patu'	JM99DT	0	0	1		248
+R	DTC	PU064		2020-01-01		Torre del Ricco o del Rio	LE	Corsano	JM99EV	0	0	1		248
+R	DTC	PU065		2020-01-01		Torre Gattarella	FG	Lama le Canne   Vieste	JN81CU	0	0	1		248
+R	DTC	PU066		2020-01-01		Torre Cesarea/T. Porto Cesareo	LE	Porto Cesareo	JN80WG	0	0	1		248
+R	DTC	PU067		2020-01-01		Torre dell'Omomorto	LE	Castrignano del Capo	JM99ET	0	0	1		248
+R	DTC	PU068		2020-01-01		Torre Specchia Grande	LE	Corsano	JM99EV	0	0	1		248
+R	DTC	PU069		2020-01-01		Torre di San Felice	FG	Testa del Gargano	JN81CT	0	0	1		248
+R	DTC	PU070		2020-01-01		Torre di Portogreco	FG	Cala di Porto Greco   Vieste	JN81CT	0	0	1		248
+R	DTC	PU071		2020-01-01		Torre di Pugnochiuso	FG	Pugnochiuso   Vieste	JN81CS	0	0	1		248
+R	DTC	PU072		2020-01-01		Torre di Mattinata	FG	Mattinata	JN81AQ	0	0	1		248
+R	DTC	PU073		2020-01-01		Torre di Rivoli	FG	Piano di Rivoli   Zapponeta	JN71XL	0	0	1		248
+R	DTC	PU074		2020-01-01		Torre di Porticello	FG	Santa Lucia   Vieste	JN81BV	0	0	1		248
+R	DTC	PU075		2020-01-01		Torre Penna	BR	Punta Penna   Brindisi	JN80XQ	0	0	1		248
+R	DTC	PU076		2020-01-01		Torre San Leonardo	BR	Pilone   Ostuni	JN80ST	0	0	1		248
+R	DTC	PU077		2020-01-01		Torre Testa	BR	Giancola   Brindisi	JN80WQ	0	0	1		248
+R	DTC	PU078		2020-01-01		Torre d'Incina	BA	Cala Incina   Polignano a Mare	JN80OX	0	0	1		248
+R	DTC	PU079		2020-01-01		Torre Colimena	TA	Torre Colimena   Manduria	JN80TI	0	0	1		248
+R	DTC	PU080		2020-01-01		Torre San Pietro di Bevagna	TA	S. Pietro in Bevagna   Manduria	JN80TI	0	0	1		248
+R	DTC	PU081		2020-01-01		Torre Villanova	BR	Villanova   Ostuni	JN80TS	0	0	1		248
+R	DTC	PU082		2020-01-01		Torre Borraco	TA	S. Pietro in Bevagna   Manduria	JN80TI	0	0	1		248
+R	DTC	PU083		2020-01-01		Torre Lama Paterno	BT	La Matinella   Trani	JN81EG	0	0	1		248
+R	DTC	PU084		2020-01-01		Torre dell'Ofanto	BT	Barletta	JN81CI	0	0	1		248
+R	DTC	PU085		2020-01-01		Torre Moline	TA	Campomarino di Maruggio	JN80SH	0	0	1		248
+R	DTC	PU086		2020-01-01		Torre Pietra	BT	San Michele   Margherita di Savoia	JN81AK	0	0	1		248
+R	DTC	PU087		2020-01-01		Torre Mattoni	TA	Ginosa	JN80JN	0	0	1		248
+R	DTC	PU088		2020-01-01		Torre dell'Ovo	TA	Torre Ovo   Maruggio	JN80SH	0	0	1		248
+R	DTC	PU089		2020-01-01		Torre Sgarrata	TA	Tra Pulsano e Lizzano	JN80RJ	0	0	1		248
+R	DTC	PU090		2020-01-01		Torre Rondinella	TA	Punta Rondinella   Taranto	JN80OL	0	0	1		248
+R	DTC	PU091		2020-01-01		Torre Castelluccia	TA	Pulsano	JN80QJ	0	0	1		248
+R	DTC	PU092		2020-01-01		Torre Saturo	TA	Capo Saturo   Leporano	JN80PJ	0	0	1		248
+R	DTC	PU501		2020-01-01		Porto di Bari Porto Nuovo	BA	Bari	JN81KD	0	0	1		248
+R	DTC	PU502		2020-01-01		Porto di Bari Porto Vecchio	BA	Bari	JN81KD	0	0	1		248
+R	DTC	PU503		2020-01-01		Porto di Barletta	BA	Barletta	JN81DH	0	0	1		248
+R	DTC	PU504		2020-01-01		Porto di Bisceglie	BA	Bisceglie	JN81GF	0	0	1		248
+R	DTC	PU505		2020-01-01		Porto di Giovinazzo	BA	Giovinazzo	JN81IE	0	0	1		248
+R	DTC	PU506		2020-01-01		Porto di Monopoli	BA	Monopoli	JN80PW	0	0	1		248
+R	DTC	PU507		2020-01-01		Porto Mola di Bari	BA	Mola di Bari	JN81NB	0	0	1		248
+R	DTC	PU508		2020-01-01		Porto di Molfetta	BA	Molfetta	JN81HE	0	0	1		248
+R	DTC	PU509		2020-01-01		Porto di Santo Spirito	BA	Santo Spirito	JN81JD	0	0	1		248
+R	DTC	PU510		2020-01-01		Porto Torre a Mare	BA	Bari	JN81LC	0	0	1		248
+R	DTC	PU511		2020-01-01		Porto di Trani	BA	Trani	JN81FG	0	0	1		248
+R	DTC	PU512		2020-01-01		Porto di Brindisi Marina	BR	Brindisi	JN80XP	0	0	1		248
+R	DTC	PU513		2020-01-01		Porto di Brindisi Porto Interno	BR	Brindisi	JN80XP	0	0	1		248
+R	DTC	PU514		2020-01-01		Porto Brindisi Lega Navale	BR	Brindisi	JN80XP	0	0	1		248
+R	DTC	PU515		2020-01-01		Porto di Villanova di Ostuni	BR	Ostuni	JN80TS	0	0	1		248
+R	DTC	PU516		2020-01-01		Porto di Torre Canne	BR	Fasano	JN80RU	0	0	1		248
+R	DTC	PU517		2020-01-01		Porto di Savelletri	BR	Fasano	JN80QU	0	0	1		248
+R	DTC	PU518		2020-01-01		Porto di Foce di Varano Porto Canale	FG	Cagnano Varano	JN71VW	0	0	1		248
+R	DTC	PU519		2020-01-01		Porto Margherita di Savoia	FG	Margherita di Savoia	JN81BJ	0	0	1		248
+R	DTC	PU520		2020-01-01		Porto Marina del Gargano	FG	Manfredonia	JN71WO	0	0	1		248
+R	DTC	PU521		2020-01-01		Porto di Manfredonia Marina Cala delle Sirene	FG	Manfredonia	JN71XP	0	0	1		248
+R	DTC	PU522		2020-01-01		Porto di Manfredonia	FG	Manfredonia	JN71XP	0	0	1		248
+R	DTC	PU523		2020-01-01		Porto di Mattinata	FG	Mattinata	JN81AR	0	0	1		248
+R	DTC	PU524		2020-01-01		Porto di Peschici	FG	Peschici	JN81AW	0	0	1		248
+R	DTC	PU525		2020-01-01		Porto di Rodi Garganico	FG	Rodi Garganico	JN71WW	0	0	1		248
+R	DTC	PU526		2020-01-01		Porto di Vieste	FG	Vieste	JN81CV	0	0	1		248
+R	DTC	PU527		2020-01-01		Porto di Castro Marina	LE	Castro	JN90FA	0	0	1		248
+R	DTC	PU528		2020-01-01		Porto di Frigole Lega Navale	LE	Lecce	JN90DK	0	0	1		248
+R	DTC	PU529		2020-01-01		Porto di Gallipoli - Cala Fontanelle	LE	Gallipoli	JN80XB	0	0	1		248
+R	DTC	PU530		2020-01-01		Porto di Gallipoli - Porto Gaio	LE	Gallipoli	JN90AB	0	0	1		248
+R	DTC	PU531		2020-01-01		Porto di Gallipoli - Darsena Pontanelle	LE	Gallipoli	JN80XB	0	0	1		248
+R	DTC	PU532		2020-01-01		Porto Gallipoli - Mercantile	LE	Gallipoli	JN80XB	0	0	1		248
+R	DTC	PU533		2020-01-01		Porto Gallipoli - San Giorgio	LE	Gallipoli	JN80XB	0	0	1		248
+R	DTC	PU534		2020-01-01		Porto Gallipoli - Seno del Canneto	LE	Gallipoli	JN80XB	0	0	1		248
+R	DTC	PU535		2020-01-01		Porto di Otranto	LE	Otranto	JN90FD	0	0	1		248
+R	DTC	PU536		2020-01-01		Porto Cesareo	LE	Porto Cesareo	JN80WG	0	0	1		248
+R	DTC	PU537		2020-01-01		Porto Miggiano	LE	Miggiano	JN90FA	0	0	1		248
+R	DTC	PU538		2020-01-01		Porto di S. Foca di Melendugno	LE	Melendugno	JN90EH	0	0	1		248
+R	DTC	PU539		2020-01-01		Porto di Santa Caterina di Nardo	LE	Nardo	JN80XD	0	0	1		248
+R	DTC	PU540		2020-01-01		Porto di Santa Maria di Leuca	LE	Castrignano del Capo	JM99ET	0	0	1		248
+R	DTC	PU541		2020-01-01		Porto di San Cataldo	LE	Lecce	JN90DJ	0	0	1		248
+R	DTC	PU542		2020-01-01		Porto Tricase Marina	LE	Tricase	JM99EW	0	0	1		248
+R	DTC	PU544		2020-01-01		Porto di Maruggio Campomarino	TA	Maruggio	JN80SH	0	0	1		248
+R	DTC	PU545		2020-01-01		Porto di Taranto Yacht	TA	Taranto	JN80OL	0	0	1		248
+R	DTC	PU546		2020-01-01		Porto di Taranto - Industriale Esterno	TA	Taranto	JN80NM	0	0	1		248
+R	DTC	PU547		2020-01-01		Porto di Taranto - Industriale Interno	TA	Taranto	JN80OL	0	0	1		248
+R	DTC	PU548		2020-01-01		Porto di Taranto - Porto Mercantile	TA	Taranto	JN80OL	0	0	1		248
+R	DTC	PU549		2020-01-01		Porto di Taranto - Lega Navale	TA	Taranto	JN80OL	0	0	1		248
+R	DTC	PU550		2020-01-01		Porticciolo San Vito	BA	Polignano a Mare	JN81OA	0	0	1		248
+R	DTC	SA001		2020-01-01		Torre Elefante	CA	Cagliari	JM49NF	0	0	1		248
+R	DTC	SA002		2020-01-01		Torre di Su Loi o degli Ulivi	CA	Capoterra	JM49LE	0	0	1		248
+R	DTC	SA003		2020-01-01		Torre di Antigori	CA	Sarroch	JM49MB	0	0	1		248
+R	DTC	SA004		2020-01-01		Torre Zavorra	CA	Sarroch	JM49MB	0	0	1		248
+R	DTC	SA005		2020-01-01		Torre del Lazzaretto	SS	Sassari	JN40CN	0	0	1		248
+R	DTC	SA006		2020-01-01		Torre di San Macario	CA	Pula	JM49MA	0	0	1		248
+R	DTC	SA007		2020-01-01		Torre del Coltellazzo o di Sant'Efisio	CA	Pula	JM49MA	0	0	1		248
+R	DTC	SA008		2020-01-01		Torre di Cala d Ostia	CA	Pula	JM49MA	0	0	1		248
+R	DTC	SA009		2020-01-01		Torre di Chia	CA	Domus de Maria	JM48KX	0	0	1		248
+R	DTC	SA010		2020-01-01		Torre di Longonsardo	SS	Santa Teresa Gallura	JN41OF	0	0	1		248
+R	DTC	SA011		2020-01-01		Torre di Capo Malfatano	CA	Teulada	JM48IX	0	0	1		248
+R	DTC	SA012		2020-01-01		Torre di Pixinni	CA	Teulada	JM48IX	0	0	1		248
+R	DTC	SA013		2020-01-01		Torre del Budello	CA	Teulada	JM48IX	0	0	1		248
+R	DTC	SA014		2020-01-01		Torre di Porto Scuro  (o Porto Scudo)	CA	Teulada	JM48IX	0	0	1		248
+R	DTC	SA015		2020-01-01		Torre di Cala Piombo	CA	Teulada	JM48IX	0	0	1		248
+R	DTC	SA016		2020-01-01		Torre di Murtas	CA	Villaputzu	JM49TN	0	0	1		248
+R	DTC	SA017		2020-01-01		Torre di San Lorenzo	CA	Villaputzu	JM49TL	0	0	1		248
+R	DTC	SA018		2020-01-01		Torre di Vignola	SS	Aglientu	JN41MC	0	0	1		248
+R	DTC	SA019		2020-01-01		Torre di Porto Corallo	CA	Villaputzu	JM49TK	0	0	1		248
+R	DTC	SA020		2020-01-01		Torre della Porta o dei Dieci Cavalli	CA	Muravera	JM49TJ	0	0	1		248
+R	DTC	SA021		2020-01-01		Torre Salinas	CA	Muravera	JM49TI	0	0	1		248
+R	DTC	SA022		2020-01-01		Torre di Cala Pira	CA	Castiadas	JM49SE	0	0	1		248
+R	DTC	SA023		2020-01-01		Torre di San Luigi	CA	Villasimius	JM49SD	0	0	1		248
+R	DTC	SA024		2020-01-01		Torre di Porto Giunco	CA	Villasimius	JM49SD	0	0	1		248
+R	DTC	SA025		2020-01-01		Torre dell'Isola dei Cavoli	CA	Villasimius	JM49SD	0	0	1		248
+R	DTC	SA026		2020-01-01		Torre di Frigiano	SS	Castelsardo	JN40IV	0	0	1		248
+R	DTC	SA027		2020-01-01		Torre della Scafa	CA	Cagliari	JM49NF	0	0	1		248
+R	DTC	SA028		2020-01-01		Torre di Capo Boi	CA	Villasimius	JM49SD	0	0	1		248
+R	DTC	SA029		2020-01-01		Torre di Su Fenugu	CA	Maracalagonis	JM49QD	0	0	1		248
+R	DTC	SA030		2020-01-01		Torre di Cala Regina	CA	Quartu Sant Elena	JM49QE	0	0	1		248
+R	DTC	SA031		2020-01-01		Torre di Mortorio	CA	Quartu Sant Elena	JM49OF	0	0	1		248
+R	DTC	SA032		2020-01-01		Torre di Santa Lucia	NU	Siniscola	JN40UM	0	0	1		248
+R	DTC	SA033		2020-01-01		Torre di Foxi	CA	Quartu Sant Elena	JM49OF	0	0	1		248
+R	DTC	SA034		2020-01-01		Torre di Carcangiolas	CA	Quartu Sant Elena	JM49OF	0	0	1		248
+R	DTC	SA035		2020-01-01		Torre di Mezza Spiaggia	CA	Cagliari	JM49NF	0	0	1		248
+R	DTC	SA036		2020-01-01		Torre del Poetto	CA	Cagliari	JM49NF	0	0	1		248
+R	DTC	SA037		2020-01-01		Torre di Sant'Elia	CA	Cagliari	JM49NF	0	0	1		248
+R	DTC	SA038		2020-01-01		Torre del Seu	OR	Cabras	JM49GW	0	0	1		248
+R	DTC	SA039		2020-01-01		Torre di Calamosca o dei Segnali	CA	Cagliari	JM49NF	0	0	1		248
+R	DTC	SA040		2020-01-01		Torre del Prezzemolo	CA	Cagliari	JM49NF	0	0	1		248
+R	DTC	SA041		2020-01-01		Torre di Porto Pino	SU	Sant'Anna Arresi	JM49GB	0	0	1		248
+R	DTC	SA042		2020-01-01		Torre di Santa Reparata	SS	Santa Teresa di Gallura	JN41QE	0	0	1		248
+R	DTC	SA043		2020-01-01		Torre di Canai	SU	Sant'Antioco	JM48FX	0	0	1		248
+R	DTC	SA044		2020-01-01		Torre di Calasetta	SU	Calasetta	JM49EC	0	0	1		248
+R	DTC	SA045		2020-01-01		Torre San Vittorio	SU	Carloforte	JM49DD	0	0	1		248
+R	DTC	SA046		2020-01-01		Torre di Portoscuso	SU	Portoscuso	JM49EE	0	0	1		248
+R	DTC	SA047		2020-01-01		Torre di Porto Paglia	SU	Gonnesa	JM49FG	0	0	1		248
+R	DTC	SA048		2020-01-01		Torre Napoleonica	SS	La Maddalena	JN41QE	0	0	1		248
+R	DTC	SA049		2020-01-01		Torre di Cala Domestica	SU	Iglesias	JM49EI	0	0	1		248
+R	DTC	SA050		2020-01-01		Torre di Flumentorgiu (o Torre dei Corsari)	SU	Arbus	JM49HM	0	0	1		248
+R	DTC	SA051		2020-01-01		Torre di Capo Frasca (oTorre Nuova)	SU	Arbus	JM49HM	0	0	1		248
+R	DTC	SA052		2020-01-01		Torre di San Giovanni di La Caletta	NU	Posada	JN40VO	0	0	1		248
+R	DTC	SA053		2020-01-01		Torre costiera	SS	Porto Rotondo	JN41SA	0	0	1		248
+R	DTC	SA054		2020-01-01		Torre di Santa Maria Navarrese	NU	Baunei	JN40TA	0	0	1		248
+R	DTC	SA055		2020-01-01		Torre di Arbatax	NU	Tortoli'	JM49UW	0	0	1		248
+R	DTC	SA056		2020-01-01		Torre Di Sant Antonio Abate	NU	Orosei	JN40UJ	0	0	1		248
+R	DTC	SA057		2020-01-01		Torre di San Gemiliano	NU	Tortoli'	JM49UW	0	0	1		248
+R	DTC	SA058		2020-01-01		Torre di Bari'	NU	Bari Sardo	JM49UT	0	0	1		248
+R	DTC	SA059		2020-01-01		Torre di San Giovanni di Sarrala	NU	Tertenia	JM49TQ	0	0	1		248
+R	DTC	SA060		2020-01-01		Torre Vecchia di Marceddi'	OR	Terralba	JM49GR	0	0	1		248
+R	DTC	SA061		2020-01-01		Torre Grande	OR	Oristano	JM49GV	0	0	1		248
+R	DTC	SA062		2020-01-01		Torre di Su Pottu o di Cabras	OR	Cabras	JM49GW	0	0	1		248
+R	DTC	SA063		2020-01-01		Torre di Pischeredda	OR	Nurachi	JM49GX	0	0	1		248
+R	DTC	SA064		2020-01-01		Torre di Capo San Marco	OR	Cabras	JM49GW	0	0	1		248
+R	DTC	SA065		2020-01-01		Torre di San Giovanni	OR	Cabras	JM49GW	0	0	1		248
+R	DTC	SA066		2020-01-01		Torre di Monte Ferru  Capo Ferrato	CA	Muravera	JM49SH	0	0	1		248
+R	DTC	SA067		2020-01-01		Torre di Sa Mora	OR	San Vero Milis	JN40HA	0	0	1		248
+R	DTC	SA068		2020-01-01		Torre di Capo Mannu o Sa Mesa Longa	OR	San Vero Milis	JN40HA	0	0	1		248
+R	DTC	SA069		2020-01-01		Torre delle Saline	OR	San Vero Milis	JN40HA	0	0	1		248
+R	DTC	SA070		2020-01-01		Torre di Scab'e Sai	OR	San Vero Milis	JN40HA	0	0	1		248
+R	DTC	SA071		2020-01-01		Torre di Su Puttu	OR	Cuglieri	JN40GE	0	0	1		248
+R	DTC	SA072		2020-01-01		Torre di Santa Caterina di Pittinuri	OR	Cuglieri	JN40GE	0	0	1		248
+R	DTC	SA073		2020-01-01		Torre di Capo Nieddu	OR	Cuglieri	JN40GE	0	0	1		248
+R	DTC	SA074		2020-01-01		Torre di Foghe	OR	Tresnuraghes	JN40GF	0	0	1		248
+R	DTC	SA075		2020-01-01		Torre di Ischia Ruja	OR	Tresnuraghes	JN40GF	0	0	1		248
+R	DTC	SA076		2020-01-01		Torre di Colombargia	OR	Tresnuraghes	JN40GF	0	0	1		248
+R	DTC	SA077		2020-01-01		Torre di Bosa	OR	Bosa	JN40GH	0	0	1		248
+R	DTC	SA078		2020-01-01		Torre Argentina	OR	Bosa	JN40GH	0	0	1		248
+R	DTC	SA079		2020-01-01		Torre di Badde Jana	SS	Alghero	JN40DN	0	0	1		248
+R	DTC	SA080		2020-01-01		Torre di Poglina o della Speranza	SS	Alghero	JN40DN	0	0	1		248
+R	DTC	SA081		2020-01-01		Torre di Capo Galera	SS	Alghero	JN40DN	0	0	1		248
+R	DTC	SA082		2020-01-01		Torre dell'Isola Rossa	SS	Trinita' d'A. e Vignola	JN41KA	0	0	1		248
+R	DTC	SA083		2020-01-01		Torre di Porto Conte	SS	Alghero	JN40DN	0	0	1		248
+R	DTC	SA084		2020-01-01		Torre di Tramariglio	SS	Alghero	JN40DN	0	0	1		248
+R	DTC	SA085		2020-01-01		Torre del Buru	SS	Alghero	JN40DN	0	0	1		248
+R	DTC	SA086		2020-01-01		Torre della Pegna	SS	Alghero	JN40DN	0	0	1		248
+R	DTC	SA087		2020-01-01		Torre del Porticciolo	SS	Alghero	JN40DN	0	0	1		248
+R	DTC	SA088		2020-01-01		Torre di Bantine Sale	SS	Sassari	JN40GR	0	0	1		248
+R	DTC	SA089		2020-01-01		Torre Bianca o di Airadu	SS	Sassari	JN40GR	0	0	1		248
+R	DTC	SA090		2020-01-01		Torre Negra	SS	Sassari	JN40GR	0	0	1		248
+R	DTC	SA091		2020-01-01		Torre del Falcone	SS	Stintino	JN40CU	0	0	1		248
+R	DTC	SA092		2020-01-01		Torre della Pelosa	SS	Stintino	JN40CU	0	0	1		248
+R	DTC	SA093		2020-01-01		Torre dell'Isola Piana	SS	Porto Torres	JN40ET	0	0	1		248
+R	DTC	SA094		2020-01-01		Torre di Trabuccato (Asinara)	SS	Porto Torres	JN41DB	0	0	1		248
+R	DTC	SA095		2020-01-01		Torre di Cala d'Oliva (Asinara)	SS	Porto Torres	JN41EB	0	0	1		248
+R	DTC	SA096		2020-01-01		Torre di Cala d'Arena (Asinara)	SS	Porto Torres	JN41DC	0	0	1		248
+R	DTC	SA097		2020-01-01		Torre delle Saline	SS	Stintino	JN40CU	0	0	1		248
+R	DTC	SA098		2020-01-01		Torre del Porto	SS	Porto Torres	JN40EU	0	0	1		248
+R	DTC	SA099		2020-01-01		Torre di Abbacurrente	SS	Porto Torres	JN40FT	0	0	1		248
+R	DTC	SA501		2020-01-01		Porto turistico di Buggerru	SU	Buggerru	JM49EJ	0	0	1		248
+R	DTC	SA502		2020-01-01		Portoscuso	SU	Portoscuso	JM49EE	0	0	1		248
+R	DTC	SA503		2020-01-01		Piana Porto	SU	Villamarina	JM49DE	0	0	1		248
+R	DTC	SA504		2020-01-01		Isola di San Pietro Porto	SU	Carloforte	JM49DD	0	0	1		248
+R	DTC	SA505		2020-01-01		I. S. Antioco/Calasetta Porto	SU	Calasetta	JM49EC	0	0	1		248
+R	DTC	SA506		2020-01-01		I. S. Antioco Porto	SU	Calasetta	JM49EC	0	0	1		248
+R	DTC	SA507		2020-01-01		Porto Teulada	CA	Teulada	JM48IW	0	0	1		248
+R	DTC	SA508		2020-01-01		Porto di Santa Margherita di Pula	CA	Santa Margherita di Pula	JM48LW	0	0	1		248
+R	DTC	SA509		2020-01-01		Porto di Perd e Sali	CA	Perde Sali	JM49MA	0	0	1		248
+R	DTC	SA510		2020-01-01		Porto di Cagliari	CA	Cagliari	JM49NE	0	0	1		248
+R	DTC	SA511		2020-01-01		Porto di Cagliari Marina del Sole	CA	Cagliari	JM49NE	0	0	1		248
+R	DTC	SA512		2020-01-01		Porto di Cagliari Marina di Sant elmo	CA	Cagliari	JM49NE	0	0	1		248
+R	DTC	SA513		2020-01-01		Poetto Marina Piccola	CA	Cagliari	JM49NE	0	0	1		248
+R	DTC	SA514		2020-01-01		Porto di Marina di Capitana	CA	Quartu Sant Elena	JM49PE	0	0	1		248
+R	DTC	SA515		2020-01-01		Porto Turistico Marina di Olbia	SS	Olbia	JN40SV	0	0	1		248
+R	DTC	SA516		2020-01-01		Porto di Olbia Porto Interno	SS	Olbia	JN40SW	0	0	1		248
+R	DTC	SA517		2020-01-01		Porto di Olbia Boat Service	SS	Olbia	JN40SW	0	0	1		248
+R	DTC	SA518		2020-01-01		Porto di Olbia Nausika	SS	Olbia	JN40SW	0	0	1		248
+R	DTC	SA519		2020-01-01		Porto di Olbia Sarda Nautica	SS	Olbia	JN40SV	0	0	1		248
+R	DTC	SA520		2020-01-01		Porto di Baia Caddinas Porto	SS	Golfo Aranci	JN40TX	0	0	1		248
+R	DTC	SA521		2020-01-01		Porto di Yachting Club Vela Blu	SS	Golfo Aranci	JN41SA	0	0	1		248
+R	DTC	SA522		2020-01-01		orto di Circolo Nautico I.S di Marinella	SS	Marinella	JN41SA	0	0	1		248
+R	DTC	SA523		2020-01-01		Porto di Punta Marana	SS	Marinella	JN41SA	0	0	1		248
+R	DTC	SA524		2020-01-01		Porticciolo di Palumbalza	SS	Marinella	JN41SA	0	0	1		248
+R	DTC	SA525		2020-01-01		Porto Rotondo	SS	Olbia	JN41SA	0	0	1		248
+R	DTC	SA526		2020-01-01		Porto Asfodeli	SS	Porto Rotondo	JN41SA	0	0	1		248
+R	DTC	SA527		2020-01-01		Porto di Molo Moro	SS	Olbia	JN41SA	0	0	1		248
+R	DTC	SA528		2020-01-01		Porto di Marina di Portisco	SS	Portisco	JN41SA	0	0	1		248
+R	DTC	SA529		2020-01-01		Porto Cervo (Porto)	SS	Porto Cervo	JN41SD	0	0	1		248
+R	DTC	SA530		2020-01-01		Porto di Cannigione	SS	Cannigione	JN41RC	0	0	1		248
+R	DTC	SA531		2020-01-01		Poltu Quatu Marina Dell Orso	SS	Arzachena	JN41RD	0	0	1		248
+R	DTC	SA532		2020-01-01		Porto di Cala Bitta	SS	Cala Bitta	JN41RD	0	0	1		248
+R	DTC	SA533		2020-01-01		Porto di Cala Capra	SS	LocalitÃ  Cala Capra	JN41RE	0	0	1		248
+R	DTC	SA534		2020-01-01		Porto di Palau	SS	Palau	JN41QE	0	0	1		248
+R	DTC	SA535		2020-01-01		Porto Rafael	SS	LocalitÃ  Punta Sardegna	JN41QE	0	0	1		248
+R	DTC	SA536		2020-01-01		Porto Palma	SS	La Maddalena	JN41RE	0	0	1		248
+R	DTC	SA537		2020-01-01		Maddalena Porto Mercantile	SS	La Maddalena	JN41QF	0	0	1		248
+R	DTC	SA538		2020-01-01		Porto Maddalena Cala Mangiavolpe	SS	La Maddalena	JN41QF	0	0	1		248
+R	DTC	SA539		2020-01-01		Porto Maddalena Cala Camiciotto	SS	La Maddalena	JN41RF	0	0	1		248
+R	DTC	SA540		2020-01-01		Porto Arsenale	SS	La Maddalena	JN41RF	0	0	1		248
+R	DTC	SA541		2020-01-01		Porto di Moneta	SS	La Maddalena	JN41RF	0	0	1		248
+R	DTC	SA542		2020-01-01		Porto Maddalena Cala Spalmatore	SS	La Maddalena	JN41RF	0	0	1		248
+R	DTC	SA543		2020-01-01		Porto di Porto Massimo	SS	Porto Massimo	JN41RG	0	0	1		248
+R	DTC	SA544		2020-01-01		Porto di Cala Capo Ferrari	SS	La Maddalena	JN41QF	0	0	1		248
+R	DTC	SA545		2020-01-01		Porto Maddalena Nido D aquila	SS	Nido d aquila	JN41QF	0	0	1		248
+R	DTC	SA546		2020-01-01		Porto Pozzo	SS	Porto Pozzo	JN41PE	0	0	1		248
+R	DTC	SA547		2020-01-01		Porto di Santa Teresa Gallura	SS	Santa Teresa Gallura	JN41OF	0	0	1		248
+R	DTC	SA548		2020-01-01		Isola Rossa Porto	SS	Isola Rossa	JN41KA	0	0	1		248
+R	DTC	SA549		2020-01-01		Porto di santa giusta	OR	Santa giusta	JM49GU	0	0	1		248
+R	DTC	SA550		2020-01-01		Porticciolo di Marina di Torregrande	OR	Oristano	JM49FV	0	0	1		248
+R	DTC	SA551		2020-01-01		Porto Di Bosa	OR	Bosa	JN40FH	0	0	1		248
+R	DTC	SA552		2020-01-01		Porto di Bosa Marina Porto Commerciale	OR	Bosa	JN40FG	0	0	1		248
+R	DTC	SA553		2020-01-01		Porto di Alghero	SS	Alghero	JN40DN	0	0	1		248
+R	DTC	SA554		2020-01-01		Porto di Castelsardo	SS	Castelsardo	JN40IV	0	0	1		248
+R	DTC	SA555		2020-01-01		Porto di Porto Torres	SS	Porto Torres	JN40EU	0	0	1		248
+R	DTC	SA556		2020-01-01		Porto di Stintino	SS	Stintino	JN40CW	0	0	1		248
+R	DTC	SA557		2020-01-01		Porto Mannu	SS	Stintino	JN40CW	0	0	1		248
+R	DTC	SA558		2020-01-01		Porto di Stintino Marina	SS	Stintino	JN40CW	0	0	1		248
+R	DTC	SA559		2020-01-01		Porto dell Ancora	SS	Stintino	JN40CW	0	0	1		248
+R	DTC	SA560		2020-01-01		Porticciolo di Cala Reale	SS	La Reale	JN41DB	0	0	1		248
+R	DTC	SA561		2020-01-01		Porticciolo turistico di Cala Tramariglio	SS	Alghero	JN40CO	0	0	1		248
+R	DTC	SA562		2020-01-01		Porto Conte Base Nautica	SS	Maristella	JN40CO	0	0	1		248
+R	DTC	SA563		2020-01-01		Porto di Fertilia	SS	Alghero		0	0	1		248
+R	DTC	SA564		2020-01-01		Porto di Villasimius	CA	Villasimius	JM49SC	0	0	1		248
+R	DTC	SA565		2020-01-01		Antico porticciolo dell isola dei Granchi	SU	Villasimius	JM49SC	0	0	1		248
+R	DTC	SA566		2020-01-01		Porto di Porto Corallo	SU	Villaputzu	JM49TK	0	0	1		248
+R	DTC	SA567		2020-01-01		Vecchio Porto Santoru	NU	Lanusei	JM49TO	0	0	1		248
+R	DTC	SA568		2020-01-01		Porto di Marina di Arbatax	NU	TortolÃ¬	JM49UW	0	0	1		248
+R	DTC	SA569		2020-01-01		Porto turistico di Santa Maria Navarrese	NU	Santa Maria Navarrese	JM49UX	0	0	1		248
+R	DTC	SA570		2020-01-01		Porto di Cala Gonone	NU	Cala Gonone	JN40TG	0	0	1		248
+R	DTC	SA571		2020-01-01		Porto di Osalla	NU	Orosei	JN40UH	0	0	1		248
+R	DTC	SA572		2020-01-01		Molo di Marina Orosei	NU	Orosei	JN40UI	0	0	1		248
+R	DTC	SA573		2020-01-01		Porto di La Caletta	NU	La Caletta	JN40VO	0	0	1		248
+R	DTC	SA574		2020-01-01		Porto Ottiolu	SS	Budoni	JN40UR	0	0	1		248
+R	DTC	SA575		2020-01-01		Porto Marina di Puntaldia	SS	Puntaldia	JN40UT	0	0	1		248
+R	DTC	SA576		2020-01-01		Porto Cala Finanza	SS	Loiri Porto San Paolo	JN40TV	0	0	1		248
+R	DTC	SA577		2020-01-01		Porto San Paolo	SS	Loiri Porto San Paolo	JN40TV	0	0	1		248
+R	DTC	SA578		2020-01-01		Porticciolo Punta delle Saline	SS	Olbia	JN41SA	0	0	1		248
+R	DTC	SC501		2020-01-01		Porto Empedocle	AG	Agrigento	JM67SG	0	0	1		248
+R	DTC	SC502		2020-01-01		Porto di Porto Palo	AG	Agrigento	JM67KN	0	0	1		248
+R	DTC	SC503		2020-01-01		Porto di Sciacca	AG	Sciacca	JM67MM	0	0	1		248
+R	DTC	SC504		2020-01-01		Porto di San Leone	AG	San Leone	JM67SG	0	0	1		248
+R	DTC	SC505		2020-01-01		Porto turistico di Licata	AG	Licata	JM67XC	0	0	1		248
+R	DTC	SC506		2020-01-01		Porto di Gela	CL	Gela	JM77CB	0	0	1		248
+R	DTC	SC507		2020-01-01		Porto di Catania	CT	Catania	JM77NM	0	0	1		248
+R	DTC	SC508		2020-01-01		Porto di Milazzo	ME	Milazzo	JM78OF	0	0	1		248
+R	DTC	SC509		2020-01-01		Porto Santa Maria Maggiore	ME	Milazzo	JM78OF	0	0	1		248
+R	DTC	SC510		2020-01-01		Porto di Marina Poseidon Milazzo	ME	Milazzo	JM78OF	0	0	1		248
+R	DTC	SC511		2020-01-01		Porto di Marina di Portorosa	ME	Furnari	JM78NC	0	0	1		248
+R	DTC	SC512		2020-01-01		Vulcano Porto di Levante	ME	Vulcano Porto	JM78LJ	0	0	1		248
+R	DTC	SC513		2020-01-01		Vulcano Marina di Vulcanello	ME	Mollica-acqua Calda-pozzo Perla	JM78LK	0	0	1		248
+R	DTC	SC514		2020-01-01		Lipari Porto	ME	Lipari	JM78LL	0	0	1		248
+R	DTC	SC515		2020-01-01		Porto Lipari Marina Lunga	ME	Lipari	JM78LL	0	0	1		248
+R	DTC	SC516		2020-01-01		Porto Pignataro	ME	Lipari	JM78LL	0	0	1		248
+R	DTC	SC517		2020-01-01		Porto turistico Santa Marina Salina	ME	Santa Marina Salina	JM78KN	0	0	1		248
+R	DTC	SC518		2020-01-01		Porto Scalo Galera	ME	Scalo Galera	JM78KN	0	0	1		248
+R	DTC	SC519		2020-01-01		Alicudi Porto	ME	Alicudi Porto	JM78EM	0	0	1		248
+R	DTC	SC520		2020-01-01		Filicudi Porto	ME	Lipari	JM78GN	0	0	1		248
+R	DTC	SC521		2020-01-01		Panarea Scalo Ditella Porto	ME	Panarea	JM78MP	0	0	1		248
+R	DTC	SC522		2020-01-01		Porto Stromboli Ficogrande	ME	Stromboli	JM78OT	0	0	1		248
+R	DTC	SC523		2020-01-01		Porto Stromboli Scari	ME	Stromboli	JM78OT	0	0	1		248
+R	DTC	SC524		2020-01-01		Porto di Marina di Patti	ME	Patti	JM78LD	0	0	1		248
+R	DTC	SC525		2020-01-01		Capo Dorlando Porto	ME	Capo d Orlando	JM78JD	0	0	1		248
+R	DTC	SC526		2020-01-01		Sant Agata di Militello Porto	ME	Sant Agata di Militello	JM78HB	0	0	1		248
+R	DTC	SC527		2020-01-01		CefalÃ¹ Levante Porto Nuovo	PA	CefalÃ¹	JM78AA	0	0	1		248
+R	DTC	SC528		2020-01-01		Porto di Termini Imerese	PA	Termini Imerese	JM67UX	0	0	1		248
+R	DTC	SC529		2020-01-01		Porto di San Nicola Arena	PA	Trabia	JM68TA	0	0	1		248
+R	DTC	SC530		2020-01-01		Porto di Ponticello Santa Flavia	PA	Santa Flavia	JM68SC	0	0	1		248
+R	DTC	SC531		2020-01-01		Porto di Palermo	PA	Palermo	JM68QD	0	0	1		248
+R	DTC	SC532		2020-01-01		Porto di Acquasanta Palermo	PA	Palermo	JM68QD	0	0	1		248
+R	DTC	SC533		2020-01-01		Porto Arenella	PA	Palermo	JM68QD	0	0	1		248
+R	DTC	SC534		2020-01-01		Porto di Fossa del Gallo	PA	Palermo	JM68PF	0	0	1		248
+R	DTC	SC535		2020-01-01		Porto di Sferracavallo	PA	Palermo	JM68PE	0	0	1		248
+R	DTC	SC536		2020-01-01		Isola delle Femmine	PA	Isola delle Femmine	JM68OE	0	0	1		248
+R	DTC	SC537		2020-01-01		Porto Marina di Cinisi	PA	Terrasini	JM68MD	0	0	1		248
+R	DTC	SC538		2020-01-01		Porto Isola di Ustica Cala S. Maria	PA	Ustica	JM68OQ	0	0	1		248
+R	DTC	SC539		2020-01-01		Porto di Terrasini	PA	Terrasini	JM68MD	0	0	1		248
+R	DTC	SC540		2020-01-01		Porto di Balestrate	PA	Balestrate	JM68MB	0	0	1		248
+R	DTC	SC541		2020-01-01		Porto di Scoglitti	RG	Scoglitti	JM76FV	0	0	1		248
+R	DTC	SC542		2020-01-01		Porto di Marina di Ragusa	RG	Ragusa	JM76GS	0	0	1		248
+R	DTC	SC543		2020-01-01		Porto di Donnalucata	RG	Donnalucata	JM76HS	0	0	1		248
+R	DTC	SC544		2020-01-01		Porto di Pozzallo	RG	Pozzallo	JM76JR	0	0	1		248
+R	DTC	SC545		2020-01-01		Porto Palo	SR	Portopalo di Capo Passero	JM76NQ	0	0	1		248
+R	DTC	SC546		2020-01-01		Porto di Marzamemi Marina	SR	Marzamemi	JM76NR	0	0	1		248
+R	DTC	SC547		2020-01-01		Porto di Marzamemi el Cachalote	SR	Marzamemi	JM76NR	0	0	1		248
+R	DTC	SC548		2020-01-01		Porto Marina di Castellammare del Golfo	TP	astellammare del Golfo	JM68KA	0	0	1		248
+R	DTC	SC549		2020-01-01		Porto di San Vito	TP	San Vito Lo Capo	JM68IE	0	0	1		248
+R	DTC	SC550		2020-01-01		Porto di Trapani	TP	Trapani	JM68GA	0	0	1		248
+R	DTC	SC551		2020-01-01		Porto di Levanto Cala Dogana	TP	Levanzo	JM67EX	0	0	1		248
+R	DTC	SC552		2020-01-01		Porto di Marettimo Scalo Nuovo	TP	Marettimo	JM67AX	0	0	1		248
+R	DTC	SC553		2020-01-01		Porto Marettimo Scalo Vecchio	TP	Marettimo	JM67AX	0	0	1		248
+R	DTC	SC554		2020-01-01		Porto Di Favignana	TP	Favignana	JM67DW	0	0	1		248
+R	DTC	SC555		2020-01-01		Porto Di Favignana Punta Longa	TP	Favignana	JM67DW	0	0	1		248
+R	DTC	SC556		2020-01-01		Porto di Marsala e molo Colombo	TP	Marsala	JM67FS	0	0	1		248
+R	DTC	SC557		2020-01-01		Porto di Mazzara del Vallo	TP	Mazara del Vallo	JM67HP	0	0	1		248
+R	DTC	SC558		2020-01-01		Porto di San Vito	TP	San Vito Lo Capo	JM68IE	0	0	1		248
+R	DTC	SC559		2020-01-01		Porto Mazzara del Vallo A.D.NA	TP	Mazara del Vallo	JM67GP	0	0	1		248
+R	DTC	SC560		2020-01-01		Porto di Pantelleria Porto Nuovo	TP	Pantelleria	JM56XU	0	0	1		248
+R	DTC	SC561		2020-01-01		Pantelleria Porto Vecchio	TP	Pantelleria	JM56XT	0	0	1		248
+R	DTC	SC562		2020-01-01		Pantelleria Scauri Porto	TP	Scauri	JM56XS	0	0	1		248
+R	DTC	SC563		2020-01-01		Porto di Marinella di Selinunte	TP	Marinella	JM67KN	0	0	1		248
+R	DTC	SC564		2020-01-01		Porto di Messina	ME	Messina	JM78SE	0	0	1		248
+R	DTC	SC565		2020-01-01		Porto Tremestieri	ME	Messina	JM78SD	0	0	1		248
+R	DTC	SI001		2020-01-01		Torrione del Forte degli Inglesi	ME	Messina	JM78SE	0	0	1		248
+R	DTC	SI002		2020-01-01		Torre Battilamano	PA	Termini Imerese	JM67UX	0	0	1		248
+R	DTC	SI003		2020-01-01		Torre Archirafi	CT	Riposto	JM77OR	0	0	1		248
+R	DTC	SI004		2020-01-01		Torre di San Nicola l'Arena	PA	Trabia	JM68TA	0	0	1		248
+R	DTC	SI005		2020-01-01		Torre Sibiliana	TP	Petrosino	JM67FR	0	0	1		248
+R	DTC	SI006		2020-01-01		Torre Colonna	PA	Altavilla Milicia	JM68OQ	0	0	1		248
+R	DTC	SI007		2020-01-01		Torre Milicia	PA	Altavilla Milicia	JM68TA	0	0	1		248
+R	DTC	SI008		2020-01-01		Torre Schiso'	ME	Giardini Naxos	JM77PT	0	0	1		248
+R	DTC	SI009		2020-01-01		Torre Saracena	ME	Roccalumera	JM77QX	0	0	1		248
+R	DTC	SI010		2020-01-01		Torre Marmora	ME	Messina	JM78SE	0	0	1		248
+R	DTC	SI011		2020-01-01		Torre di Capo Zafferano	PA	Santa Flavia	JM68SB	0	0	1		248
+R	DTC	SI012		2020-01-01		Torre Galvaga	TP	Petrosino	JM67GQ	0	0	1		248
+R	DTC	SI013		2020-01-01		Torre delle Ciavole	ME	Piraino	JM78KE	0	0	1		248
+R	DTC	SI014		2020-01-01		Torre Cordova	PA	Ficarazzi	JM68RC	0	0	1		248
+R	DTC	SI015		2020-01-01		Torre Caldura	PA	Cefalu'	JM78AA	0	0	1		248
+R	DTC	SI016		2020-01-01		Torre Sveva	SR	Noto	JM76MT	0	0	1		248
+R	DTC	SI017		2020-01-01		Torre della tonnara di Vergine Maria	PA	Palermo	JM68QC	0	0	1		248
+R	DTC	SI018		2020-01-01		Torre di Monte Pellegrino	PA	Palermo	JM68QC	0	0	1		248
+R	DTC	SI019		2020-01-01		Torre del Rotolo	PA	Palermo	JM68QC	0	0	1		248
+R	DTC	SI020		2020-01-01		Torre di Monterosso	AG	Realmonte	JM67RH	0	0	1		248
+R	DTC	SI021		2020-01-01		Torre della tonnara di Mondello	PA	Palermo	JM68QC	0	0	1		248
+R	DTC	SI022		2020-01-01		Torretta di Mazzara	TP	Mazzara del Vallo	JM67HN	0	0	1		248
+R	DTC	SI023		2020-01-01		Torre Fano	SR	Portopalo di Capo Passero	JM76NQ	0	0	1		248
+R	DTC	SI024		2020-01-01		Torre Amari o dammuso di Gallo	PA	Palermo	JM68QC	0	0	1		248
+R	DTC	SI025		2020-01-01		Torre Scibini	SR	Pachino	JM76NQ	0	0	1		248
+R	DTC	SI026		2020-01-01		Torre del Fico	SR	Priolo Gargallo	JM77OD	0	0	1		248
+R	DTC	SI027		2020-01-01		Torre sulla penisola Magnisi	SR	Priolo Gargallo	JM77OD	0	0	1		248
+R	DTC	SI028		2020-01-01		Torre Targetta	SR	Siracusa	JM77PB	0	0	1		248
+R	DTC	SI029		2020-01-01		Torre Ognina	SR	Siracusa	JM77PB	0	0	1		248
+R	DTC	SI030		2020-01-01		Torre dello Spalmatore	PA	Ustica	JM68OQ	0	0	1		248
+R	DTC	SI031		2020-01-01		Torre in terra di Isola delle Femmine	PA	Isola delle Femmine	JM68OE	0	0	1		248
+R	DTC	SI032		2020-01-01		Torre di fuori di Isola delle Femmine	PA	Isola delle Femmine	JM68PE	0	0	1		248
+R	DTC	SI033		2020-01-01		Torre Ciachea	PA	Carini	JM68OD	0	0	1		248
+R	DTC	SI034		2020-01-01		Torre Milioti	PA	Carini	JM68OD	0	0	1		248
+R	DTC	SI035		2020-01-01		Torre Raisigerbi	PA	Pollina	JM77BX	0	0	1		248
+R	DTC	SI036		2020-01-01		Torre Muzza	PA	Carini	JM68OD	0	0	1		248
+R	DTC	SI037		2020-01-01		Torre Pozzillo	PA	Cinisi	JM68ND	0	0	1		248
+R	DTC	SI038		2020-01-01		Torre della Tonnara dell'Ursa	PA	Cinisi	JM68ND	0	0	1		248
+R	DTC	SI039		2020-01-01		Torre Mulinazzo	PA	Cinisi	JM68ND	0	0	1		248
+R	DTC	SI040		2020-01-01		Torre Alba	PA	Terrasini	JM68MD	0	0	1		248
+R	DTC	SI041		2020-01-01		Torre di Capo Rama	PA	Terrasini	JM68MD	0	0	1		248
+R	DTC	SI042		2020-01-01		Torre Toleda o Paternella	PA	Terrasini	JM68MD	0	0	1		248
+R	DTC	SI043		2020-01-01		Torre di San Cataldo	PA	Terrasini	JM68MD	0	0	1		248
+R	DTC	SI044		2020-01-01		Torre Ammazzagatto	PA	Pollina	JM77BX	0	0	1		248
+R	DTC	SI045		2020-01-01		Torre Finale	PA	Pollina	JM77BX	0	0	1		248
+R	DTC	SI046		2020-01-01		Torre Muzza	ME	Motta d'Affermo	JM78DA	0	0	1		248
+R	DTC	SI047		2020-01-01		Torre di Acquedolci	ME	Acquedolci	JM78GB	0	0	1		248
+R	DTC	SI048		2020-01-01		Torre Gatto	ME	Torrenova	JM78IC	0	0	1		248
+R	DTC	SI049		2020-01-01		Torre di Guidaloca	TP	Castellammare del Golfo	JM68KA	0	0	1		248
+R	DTC	SI050		2020-01-01		Torre Bennistra	TP	Castellammare del Golfo	JM68KA	0	0	1		248
+R	DTC	SI051		2020-01-01		Torre del Cantone	ME	Barcellona Pozzo di Gotto	JM78OD	0	0	1		248
+R	DTC	SI052		2020-01-01		Torre di Scopello	TP	Castellammare del Golfo	JM68KA	0	0	1		248
+R	DTC	SI053		2020-01-01		Torre della lanterna di Milazzo	ME	Milazzo	JM78OF	0	0	1		248
+R	DTC	SI054		2020-01-01		Torre Rasocolmo	ME	Messina	JM78SE	0	0	1		248
+R	DTC	SI055		2020-01-01		Torre della tonnara del Secco	TP	San Vito Lo Capo	JM68IE	0	0	1		248
+R	DTC	SI056		2020-01-01		Torre Scieri	TP	San Vito Lo Capo	JM68IE	0	0	1		248
+R	DTC	SI057		2020-01-01		Torre del santuario di San Vito	TP	San Vito Lo Capo	JM68IE	0	0	1		248
+R	DTC	SI058		2020-01-01		Torrazzo di San Vito	TP	San Vito Lo Capo	JM68IE	0	0	1		248
+R	DTC	SI059		2020-01-01		Torre del Roccazzo	TP	San Vito Lo Capo	JM68IE	0	0	1		248
+R	DTC	SI060		2020-01-01		Torre dell'Isolidda	TP	San Vito Lo Capo	JM68IE	0	0	1		248
+R	DTC	SI061		2020-01-01		Torre Bianca	ME	Messina	JM78SE	0	0	1		248
+R	DTC	SI062		2020-01-01		Torre Cariddi	ME	Messina	JM78SE	0	0	1		248
+R	DTC	SI063		2020-01-01		Torre della Lanterna o torre di San Ranieri	ME	Messina	JM78SE	0	0	1		248
+R	DTC	SI064		2020-01-01		Torre di Cofano	TP	Custonaci	JM68IB	0	0	1		248
+R	DTC	SI065		2020-01-01		Torre Nova	ME	Scaletta Zanclea	JM78RB	0	0	1		248
+R	DTC	SI066		2020-01-01		Torre della tonnara di Bonagia	TP	Valderice	JM68HA	0	0	1		248
+R	DTC	SI067		2020-01-01		Torre della tonnara vecchia di Bonagia	TP	Erice	JM68HA	0	0	1		248
+R	DTC	SI068		2020-01-01		Torre di Pizzolungo	TP	Erice	JM68HA	0	0	1		248
+R	DTC	SI069		2020-01-01		Torre di Martognella	TP	Erice	JM68HA	0	0	1		248
+R	DTC	SI070		2020-01-01		Torre della tonnara di San Giuliano	TP	Trapani	JM68GA	0	0	1		248
+R	DTC	SI071		2020-01-01		Torre di Ligny	TP	Trapani	JM68GA	0	0	1		248
+R	DTC	SI072		2020-01-01		Torre della Colombara	TP	Trapani	JM68GA	0	0	1		248
+R	DTC	SI073		2020-01-01		Torre Nubia	TP	Paceco	JM67GX	0	0	1		248
+R	DTC	SI074		2020-01-01		Torre di Marausa	TP	Trapani	JM68GA	0	0	1		248
+R	DTC	SI075		2020-01-01		Torretta	TP	Favignana	JM67DW	0	0	1		248
+R	DTC	SI076		2020-01-01		Torre di Capo Grosso	ME	Ali' Terme	JM68OQ	0	0	1		248
+R	DTC	SI077		2020-01-01		Torre di San Teodoro A	TP	Marsala	JM67FT	0	0	1		248
+R	DTC	SI078		2020-01-01		Torre di San Teodoro B	TP	Marsala	JM67FT	0	0	1		248
+R	DTC	SI079		2020-01-01		Torre della Lumera	ME	Roccalumera	JM77QX	0	0	1		248
+R	DTC	SI080		2020-01-01		Torre dei Saraceni	ME	Santa Teresa di Riva	JM77QW	0	0	1		248
+R	DTC	SI081		2020-01-01		Torre del Baglio	ME	Santa Teresa di Riva	JM77QW	0	0	1		248
+R	DTC	SI082		2020-01-01		Torre di Catalmo	ME	Santa Teresa di Riva	JM77QW	0	0	1		248
+R	DTC	SI083		2020-01-01		Torre San Nicola	ME	Taormina	JM77PU	0	0	1		248
+R	DTC	SI084		2020-01-01		Torre Sances	TP	Marsala	JM67FT	0	0	1		248
+R	DTC	SI085		2020-01-01		Torretta di Santa Tecla	CT	Acireale	JM77OO	0	0	1		248
+R	DTC	SI086		2020-01-01		Torre di Sant'Anna o di Capo Mulini	CT	Acireale	JM77OO	0	0	1		248
+R	DTC	SI087		2020-01-01		Torre Faraglione	CT	Aci Castello	JM77NN	0	0	1		248
+R	DTC	SI088		2020-01-01		Torre di Ognina (di Catania)	CT	Catania	JM77MM	0	0	1		248
+R	DTC	SI089		2020-01-01		Torre di Capo Santa Croce	SR	Augusta	JM77OG	0	0	1		248
+R	DTC	SI090		2020-01-01		Torre Conche	PA	Pollina	JM77BX	0	0	1		248
+R	DTC	SI091		2020-01-01		Torre Stampace	SR	Noto	JM76MV	0	0	1		248
+R	DTC	SI092		2020-01-01		Torre di Vendicari	SR	Noto	JM76MV	0	0	1		248
+R	DTC	SI093		2020-01-01		Torre del Giardino	TP	Petrosino	JM67FR	0	0	1		248
+R	DTC	SI094		2020-01-01		Torre di Portopalo	SR	Portopalo di Capo Passero	JM67KN	0	0	1		248
+R	DTC	SI095		2020-01-01		Torre di Pozzallo o Cabrera	RG	Pozzallo	JM76KR	0	0	1		248
+R	DTC	SI096		2020-01-01		Torre Scalambri	RG	Santa Croce Camerina	JM76FS	0	0	1		248
+R	DTC	SI097		2020-01-01		Torretta Granitola	TP	Mazara del Vallo	JM67HP	0	0	1		248
+R	DTC	SI098		2020-01-01		Torre Tre Fontane	TP	Campobello di Mazara	JM67IN	0	0	1		248
+R	DTC	SI099		2020-01-01		Torre Polluce	TP	Castelvetrano	JM67JQ	0	0	1		248
+R	DTC	SI100		2020-01-01		Torre di Porto Palo	AG	Menfi	JM67LO	0	0	1		248
+R	DTC	SI101		2020-01-01		Torre di Mezzo	RG	Santa Croce Camerina	JM76FT	0	0	1		248
+R	DTC	SI102		2020-01-01		Torre Vignagrande	AG	Sciacca	JM67MM	0	0	1		248
+R	DTC	SI103		2020-01-01		Torre del tradimento	AG	Sciacca	JM67MM	0	0	1		248
+R	DTC	SI104		2020-01-01		Torre Vigliena o Braccetto	RG	Ragusa	JM76IW	0	0	1		248
+R	DTC	SI105		2020-01-01		Torre Insegna	CL	Gela	JM77CB	0	0	1		248
+R	DTC	SI106		2020-01-01		Torre di Manfria	CL	Gela	JM77CB	0	0	1		248
+R	DTC	SI107		2020-01-01		Torre Verdura	AG	Sciacca	JM67MM	0	0	1		248
+R	DTC	SI108		2020-01-01		Torre di Falconara	CL	Butera	JM77CE	0	0	1		248
+R	DTC	SI109		2020-01-01		Torre Salsa o Marinata	AG	Siculiana	JM67RI	0	0	1		248
+R	DTC	SI110		2020-01-01		Torre ottagonale di San Nicola	AG	Licata	JM67XC	0	0	1		248
+R	DTC	SI111		2020-01-01		Torre di Gaffe	AG	Licata	JM67XC	0	0	1		248
+R	DTC	SI112		2020-01-01		Torre del Castellazzo	AG	Palma di Montechiaro	JM67UE	0	0	1		248
+R	DTC	SI113		2020-01-01		Torre San Carlo	AG	Palma di Montechiaro	JM67UE	0	0	1		248
+R	DTC	SI114		2020-01-01		Torre del caricatore di Girgenti	AG	Porto Empedocle	JM67SG	0	0	1		248
+R	DTC	SI115		2020-01-01		Torre San Giuseppe	AG	Agrigento	JM67TH	0	0	1		248
+R	DTC	SI566		2020-01-01		Porto di Siracusa	SR	Siracusa	JM77PB	0	0	1		248
+R	DTC	TO001		2020-01-01		Torre del Marzocco	LI	Livorno	JN53DO	0	0	1		248
+R	DTC	TO002		2020-01-01		Torre Matilde	LU	Lucca	JN53DU	0	0	1		248
+R	DTC	TO004		2020-01-01		Torre del lago Puccini	LU	Lucca	JN53DT	0	0	1		248
+R	DTC	TO005		2020-01-01		Torre Maltarchiata	LI	livorno	JN53DN	0	0	1		248
+R	DTC	TO006		2020-01-01		Torre di Calafuria	LI	Livorno	JN53DL	0	0	1		248
+R	DTC	TO007		2020-01-01		Torre della Meloria	LI	Livorno	JN53CN	0	0	1		248
+R	DTC	TO008		2020-01-01		Torre Vecchia (Gorgona)	LI	Gorgona Scalo	JN43WK	0	0	1		248
+R	DTC	TO009		2020-01-01		Torre Nuova (Gorgona)	LI	Isola di Gorgona	JN43WK	0	0	1		248
+R	DTC	TO010		2020-01-01		Torre Medicea	LI	Castiglioncello	JN53EJ	0	0	1		248
+R	DTC	TO011		2020-01-01		Torre di Vada	LI	Vada	JN53FI	0	0	1		248
+R	DTC	TO012		2020-01-01		Torre di San Vincenzo	LI	San Vincenzo	JN53GC	0	0	1		248
+R	DTC	TO013		2020-01-01		La Torraccia	LI	San Vincenzo	JN53GA	0	0	1		248
+R	DTC	TO014		2020-01-01		Torre Nuova (Piombino)	LI	Piombino	JN53GA	0	0	1		248
+R	DTC	TO015		2020-01-01		Torre della Linguella	LI	Portoferraio	JN52DT	0	0	1		248
+R	DTC	TO016		2020-01-01		Torre del Gallo	LI	Portoferraio	JN53PS	0	0	1		248
+R	DTC	TO017		2020-01-01		Torre di Castel Marino	GR	Grosseto	JN52NQ	0	0	1		248
+R	DTC	TO018		2020-01-01		Torre di Collelungo	GR	Grosseto	JN52MP	0	0	1		248
+R	DTC	TO019		2020-01-01		Torre dell Uccellina	GR	Grosseto	JN52NP	0	0	1		248
+R	DTC	TO020		2020-01-01		Torre di Cala di Forno	GR	Grosseto	JN52NO	0	0	1		248
+R	DTC	TO021		2020-01-01		Torre del Campese	GR	Giglio Campese	JN52KI	0	0	1		248
+R	DTC	TO022		2020-01-01		Torre del Lazzaretto	GR	Isola del Giglio	JN52LI	0	0	1		248
+R	DTC	TO023		2020-01-01		Torre del Saraceno	GR	Giglio Porto	JN52LI	0	0	1		248
+R	DTC	TO024		2020-01-01		Torre di Poggio Raso	GR	Orbetello	JN52NO	0	0	1		248
+R	DTC	TO025		2020-01-01		Torre delle Cannelle	GR	Orbetello	JN52NO	0	0	1		248
+R	DTC	TO026		2020-01-01		Torre di Cala Galera	GR	Castiglione della Pescaia	JN52JS	0	0	1		248
+R	DTC	TO027		2020-01-01		Torre di Selva Nera	GR	Chiarone Scalo	JN52QJ	0	0	1		248
+R	DTC	TO028		2020-01-01		Torre di Buranaccio	GR	Capalbio	JN52QJ	0	0	1		248
+R	DTC	TO029		2020-01-01		Torre Hidalgo	GR	Punta Ala	JN52IT	0	0	1		248
+R	DTC	TO030		2020-01-01		Torre degli Appiani	LI	Punta Ala	JN52CT	0	0	1		248
+R	DTC	TO031		2020-01-01		Torre della Trappola	GR	Principina a Mare	JN52LQ	0	0	1		248
+R	DTC	TO032		2020-01-01		Torre della Peschiera di Nassa	GR	Monte Argentario	JN52NK	0	0	1		248
+R	DTC	TO033		2020-01-01		Torre di Santa Liberata	GR	Porto Santo Stefano	JN52NK	0	0	1		248
+R	DTC	TO034		2020-01-01		Torre Dell Argentiera	GR	Porto Santo Stefano	JN52NK	0	0	1		248
+R	DTC	TO035		2020-01-01		Torre della Cacciarella	GR	Monte Argentario	JN52NK	0	0	1		248
+R	DTC	TO036		2020-01-01		Torre di Cala Grande	GR	Monte Argentario	JN52NK	0	0	1		248
+R	DTC	TO037		2020-01-01		Torre di Cala Moresca	GR	Monte Argentario	JN52NK	0	0	1		248
+R	DTC	TO038		2020-01-01		Torre di Cala Piccola	GR	Monte Argentario	JN52NJ	0	0	1		248
+R	DTC	TO039		2020-01-01		Torre di Capo d Uomo	GR	Monte Argentario	JN52NJ	0	0	1		248
+R	DTC	TO040		2020-01-01		Torre della Maddalena	GR	Monte Argentario	JN52NJ	0	0	1		248
+R	DTC	TO041		2020-01-01		Torre delle Cannelle	GR	Monte Argentario	JN52NJ	0	0	1		248
+R	DTC	TO042		2020-01-01		Torre Ciana	GR	Monte Argentario	JN52NI	0	0	1		248
+R	DTC	TO043		2020-01-01		Torre dell Avvoltore	GR	Monte Argentario	JN52OI	0	0	1		248
+R	DTC	TO044		2020-01-01		Monte Argentario	GR	Monte Argentario	JN52OJ	0	0	1		248
+R	DTC	TO045		2020-01-01		Torre di Talamonaccio	GR	Orbetello	JN52NN	0	0	1		248
+R	DTC	TO046		2020-01-01		Torre di San Pancrazio	GR	Ansedonia	JN52PJ	0	0	1		248
+R	DTC	TO047		2020-01-01		Torre di San Biagio	GR	Ansedonia	JN52PJ	0	0	1		248
+R	DTC	TO048		2020-01-01		Torre della Tagliata	SI	Orbetello	JN52OK	0	0	1		248
+R	DTC	TO049		2020-01-01		Torre Civette	GR	Scarlino	JN52JU	0	0	1		248
+R	DTC	TO050		2020-01-01		Torre del Sale	LI	Piombino	JN52HW	0	0	1		248
+R	DTC	TO051		2020-01-01		Torre di San Giovanni	LI	Campo nell Elba	JN52CS	0	0	1		248
+R	DTC	TO052		2020-01-01		Torre di Marina di Campo	LI	Marina di Campo	JN52CR	0	0	1		248
+R	DTC	TO053		2020-01-01		Torre del Mulinaccio	GR	Monte Argentario	JN52OJ	0	0	1		248
+R	DTC	TO501		2020-01-01		Porto del Puntone	GR	Scarlino	JN52JV	0	0	1		248
+R	DTC	TO502		2020-01-01		Porto di Carbonifera	LI	Piombino	JN52IW	0	0	1		248
+R	DTC	TO503		2020-01-01		Porto di Castiglione della Pescaia	GR	Castiglione della Pescaia	JN52KS	0	0	1		248
+R	DTC	TO504		2020-01-01		Porto Cala Galera	GR	Porto Ercole	JN52OJ	0	0	1		248
+R	DTC	TO505		2020-01-01		Porto Ercole	GR	Porto Ercole	JN52OJ	0	0	1		248
+R	DTC	TO506		2020-01-01		Porto di Punta Ala	GR	Punta Ala	JN52IT	0	0	1		248
+R	DTC	TO507		2020-01-01		Talamone Porto	GR	Talamone	JN52NN	0	0	1		248
+R	DTC	TO508		2020-01-01		Porto Santa Liberata	GR	Santa Liberata	JN52NK	0	0	1		248
+R	DTC	TO509		2020-01-01		Porto di Livorno	LI	Livorno	JN53DN	0	0	1		248
+R	DTC	TO510		2020-01-01		Porto Santo Stefano	GR	Porto Santo Stefano	JN52NK	0	0	1		248
+R	DTC	TO511		2020-01-01		Porto di Marina di Cecina	LI	Cecina	JN53FH	0	0	1		248
+R	DTC	TO512		2020-01-01		Porto di Piombino	LI	Piombino	JN52GW	0	0	1		248
+R	DTC	TO513		2020-01-01		Porto Marina di San Vincenzo	LI	San Vincenzo	JN53GC	0	0	1		248
+R	DTC	TO514		2020-01-01		Portoferraio	LI	Portoferraio	JN52DT	0	0	1		248
+R	DTC	UM001		2020-01-01		TEST	PG	TEST		0	0	1		248
+R	DTC	UM501		2020-01-01		Porto Del Sole	PG	Tuoro sul Trasimeno	JN63AE	0	0	1		248
+R	DTC	UM502		2020-01-01		Porto di Monte del Lago	PG	Magione	JN63BD	0	0	1		248
+R	DTC	UM503		2020-01-01		Porto di San Feliciano	PG	San Feliciano	JN63CC	0	0	1		248
+R	DTC	UM504		2020-01-01		Porto Di Sant Arcangelo	PG	Magione	JN63BB	0	0	1		248
+R	DTC	UM505		2020-01-01		Porto Imbarcadero lago Trasimeo	PG	Castiglione del Lago	JN63AC	0	0	1		248
+R	DTC	UM506		2020-01-01		Porticciolo Isola Maggiore	PG	Isola Maggiore	JN63BE	0	0	1		248
+R	DTC	UM507		2020-01-01		Porticciolo del Lago di Piedilugo	TR	Piediluco	JN62JM	0	0	1		248
+R	DTC	VE001		2020-01-01		Torre delle Bebbe	VE	Chioggia	JN65CE	0	0	1		248
+R	DTC	VE002		2020-01-01		Torre Massimiliana	VE	Venezia	JN65EK	0	0	1		248
+R	DTC	VE003		2020-01-01		Torre telemetrica Crepaldo	VE	Cavallino-Treporti	JN65FL	0	0	1		248
+R	DTC	VE004		2020-01-01		Torre del Caligo	VE	Jesolo	JN65HN	0	0	1		248
+R	DTC	VE501		2020-01-01		Porto di Chioggia	VE	Chioggia		0	0	1		248
+R	DTC	VE502		2020-01-01		Porto di Malamocco	VE	Venezia		0	0	1		248
+R	DTC	VE503		2020-01-01		Bacino Stazione Marittima	VE	Venezia		0	0	1		248
+R	DTC	VE504		2020-01-01		Darsena ACTV	VE	Venezia		0	0	1		248
+R	DTC	VE505		2020-01-01		Darsena Grande	VE	Venezia		0	0	1		248
+R	DTC	VE506		2020-01-01		Porto San Nicolo	VE	Venezia	jn65ek	0	0	1		248

@@ -1,0 +1,623 @@
+# Referencias del diploma DIFO. Generado; no se edita a mano.
+R	DIFO	FG001		1900-01-01		Guadeloupe (Grande-Terre)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG002		1900-01-01		Cabrit (ilet) Saintes archipelago	Guadeloupe Islands	NA-114		0	0	1		79
+R	DIFO	FG003		1900-01-01		Kahouanne (ilet)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG004		1900-01-01		Desirade(la)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG005		1900-01-01		Fajout (ilet)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG006		1900-01-01		Goyaves (ilet)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG007		1900-01-01		Grand Ilet (Saintes archipelago)	Guadeloupe Islands	NA-114		0	0	1		79
+R	DIFO	FG008		1900-01-01		Marie galante	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG009		1900-01-01		Iles de la Petite Terre(Terre de Bas)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG010		1900-01-01		Terre de Bas (Saintes archipelago)	Guadeloupe Islands	NA-114		0	0	1		79
+R	DIFO	FG011		1900-01-01		Terre de Haut (Saintes acrchipelago)	Guadeloupe Islands	NA-114		0	0	1		79
+R	DIFO	FG012		1900-01-01		Le Pate (Terre de Bas)	Guadeloupe Islands	NA-114		0	0	1		79
+R	DIFO	FG013		1900-01-01		La Coche (Les Saintes)	Guadeloupe Islands	NA-114		0	0	1		79
+R	DIFO	FG014		1900-01-01		La Redonde (Terre de Haut)	Guadeloupe Islands	NA-114		0	0	1		79
+R	DIFO	FG015		1900-01-01		Les Augustins (Les Saintes)	Guadeloupe Islands	NA-114		0	0	1		79
+R	DIFO	FG016		1900-01-01		Gosier (ilet du)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG017		1900-01-01		Grand Ilet (Pigeon natural reserve)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG018		1900-01-01		De Carenage	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG019		1900-01-01		Guadeloupe (Basse-Terre)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG020		1900-01-01		Iles de la Petite Terre (Terre de Haut)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG021		1900-01-01		Grand ilet	Guadeloupe Islands	NA-114		0	0	1		79
+R	DIFO	FG022		1900-01-01		La baleine	Guadeloupe Islands	NA-114		0	0	1		79
+R	DIFO	FG023		1900-01-01		Roches perc�es (Terre de haut)	Guadeloupe Islands	NA-114		0	0	1		79
+R	DIFO	FG024		1900-01-01		Vieux Fort	Guadeloupe Islands	NA-114		0	0	1		79
+R	DIFO	FG025		1900-01-01		Baleine de l�ouest (ile de la petite terre)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG026		1900-01-01		Baleine du Sud (Ile de la Petite Terre)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG027		1900-01-01		Vieux Fort (Marie Galante)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG028		1900-01-01		Ile Ptrezulli (sud de pointe � pitre)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG029		1900-01-01		Ilet Cabrit (large de Petit Bourg)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG030		1900-01-01		Fr�gate de haut (large de petit bourg)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG031		1900-01-01		Petit let (Pigeon natural reserve)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG032		1900-01-01		Ilet Fortune (nord de Goyave)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG033		1900-01-01		Ilet crabri�re (nord de sainte rose)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG034		1900-01-01		Mangle � lorette (nord de sainte rose)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG035		1900-01-01		La Biche (R�serve Naturelle de Car�nage)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG036		1900-01-01		Ilet Caret (R�serve Naturelle de Car�nage)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG037		1900-01-01		Ilet Christophe (nord de Baie Mahault)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG038		1900-01-01		Ilets grand blanc (d�sirade)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG039		1900-01-01		Ilet � N�gre	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG040		1900-01-01		Ilot de l�hermitage	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG041		1900-01-01		Rocher Jeantoutou	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG042		1900-01-01		Rocher tete � l�anglais	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG043		1900-01-01		Ilet Blanc (R�serve Naturelle de Car�nage)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG044		1900-01-01		Petit ilet (R�serve Naturelle de Car�nage)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG045		1900-01-01		Grand ilet (R�serve Naturelle de Car�nage)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG046		1900-01-01		La petite Biche (R�serve Naturelle de Car�nage)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG047		1900-01-01		Ilet des petits pompoms (Ste Rose)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG048		1900-01-01		Ilet Boyer (Ste Rose)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG049		1900-01-01		Ilet Macou (nord de Vieux Bourg)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG050		1900-01-01		Ilet Rat (nord de Vieux Bourg)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG051		1900-01-01		Ilet Duberran (nord de Vieux Bourg)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG052		1900-01-01		Ilet Voute (nord de Vieux Bourg)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG053		1900-01-01		Ilet Maurice (nord du Moule)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG054		1900-01-01		La Roche (pointe des chateaux)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG055		1900-01-01		Ile � cochons (Pointe � Pitre)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG056		1900-01-01		Ilet Boissard (Pointe � Pitre)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG057		1900-01-01		Ilet Chasse (Pointe � Pitre)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FG058		1900-01-01		Ilet Feuille (Pointe � Pitre)	Guadeloupe Islands	NA-102		0	0	1		79
+R	DIFO	FH001		1900-01-01		Grande Terre	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH002		1900-01-01		Petite Terre	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH003		1900-01-01		Zamboro	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH004		1900-01-01		Malandza	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH005		1900-01-01		Handrema	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH006		1900-01-01		Verte	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH007		1900-01-01		Des 4 Freres	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH008		1900-01-01		Tsanga	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH009		1900-01-01		Bouzi	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH010		1900-01-01		Boue	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH011		1900-01-01		Pingoi	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH012		1900-01-01		Pouhou	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH013		1900-01-01		Bandrele	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH014		1900-01-01		Bambo ilot	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH015		1900-01-01		De sable ilot	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH016		1900-01-01		Bouini ilot	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH017		1900-01-01		Caroni	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH018		1900-01-01		Sada	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FH019		1900-01-01		Songoma	Mayotte Islands	AF-027		0	0	1		169
+R	DIFO	FJ001		1900-01-01		St Barthelemy (main island)	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ002		1900-01-01		Coco	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ003		1900-01-01		Fourchue	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ004		1900-01-01		Rocher du boeuf	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ005		1900-01-01		Pain de sucre	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ006		1900-01-01		Les baleines	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ007		1900-01-01		Pointe	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ008		1900-01-01		A vent	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ009		1900-01-01		Boulanger	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ010		1900-01-01		Chevreau	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ011		1900-01-01		Fregate	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ012		1900-01-01		Tocverts	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ013		1900-01-01		Grenadies	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ014		1900-01-01		Tortue	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ015		1900-01-01		Gros ilet	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ016		1900-01-01		Petits saints	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ017		1900-01-01		Roche plate ou Table � diable	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ018		1900-01-01		Groupiers	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ019		1900-01-01		Pel�e	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ020		1900-01-01		Fourmis	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ021		1900-01-01		Roches roubes	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ022		1900-01-01		Petite islette	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ023		1900-01-01		Mancel ou la poule et les poussins	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FJ024		1900-01-01		L��ne rouge	St Barthelemy Islands	NA-146		0	0	1		516
+R	DIFO	FK001		1900-01-01		Main island (Grande terre)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK002		1900-01-01		Amedee ilot	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK003		1900-01-01		Art (Belep islands)	New Caledonia Islands	OC-079		0	0	1		162
+R	DIFO	FK004		1900-01-01		Baaba	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK005		1900-01-01		Balabio	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK006		1900-01-01		FK/C Chesterfield (Loop isl.)	New Caledonia Islands	OC-176		0	0	1		512
+R	DIFO	FK007		1900-01-01		Dudune (Mare)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK008		1900-01-01		Hunter	New Caledonia Islands	OC-218		0	0	1		162
+R	DIFO	FK009		1900-01-01		Huon (Entrecasteaux reef)	New Caledonia Islands	OC-058		0	0	1		162
+R	DIFO	FK010		1900-01-01		Koutoumou	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK011		1900-01-01		Lelioga	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK012		1900-01-01		Lifou	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK013		1900-01-01		Mare	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK014		1900-01-01		Matthew	New Caledonia Islands	OC-218		0	0	1		162
+R	DIFO	FK015		1900-01-01		Neba	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK016		1900-01-01		Oua (Lifou)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK017		1900-01-01		Ouen	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK018		1900-01-01		Ouvea	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK019		1900-01-01		Pam	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK020		1900-01-01		Pins (Main island)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK021		1900-01-01		Pott (Belep islands)	New Caledonia Islands	OC-079		0	0	1		162
+R	DIFO	FK022		1900-01-01		Sable	New Caledonia Islands	OC-176		0	0	1		162
+R	DIFO	FK023		1900-01-01		Surprise (Entrecasteaux reef)	New Caledonia Islands	OC-058		0	0	1		162
+R	DIFO	FK024		1900-01-01		Tiga (Lifou)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK025		1900-01-01		Walpole	New Caledonia Islands	OC-218		0	0	1		162
+R	DIFO	FK026		1900-01-01		Yande	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK027		1900-01-01		Koutomo (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK028		1900-01-01		Brosse (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK029		1900-01-01		Aventure (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK030		1900-01-01		Bayonnaise (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK031		1900-01-01		Moro (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK032		1900-01-01		Nubwe (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK033		1900-01-01		Koe (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK034		1900-01-01		Koumo (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK035		1900-01-01		Mouere ilot (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK036		1900-01-01		Gie (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK037		1900-01-01		Canawa (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK038		1900-01-01		Nuupowa (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK039		1900-01-01		Eyuepe (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK040		1900-01-01		Moneoro (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK041		1900-01-01		Wiere (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK042		1900-01-01		Lorette (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK043		1900-01-01		Nana (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK044		1900-01-01		Konubutre (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK045		1900-01-01		Wete (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK046		1900-01-01		Tanu (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK047		1900-01-01		Atere ilot (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK048		1900-01-01		Tare (pins)	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK049		1900-01-01		Celiogat (Lifou	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK050		1900-01-01		Vauvilliers (Lifou)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK051		1900-01-01		Ounes (Ouvea)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK052		1900-01-01		Baleine (Ouvea)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK053		1900-01-01		Tortue (Ouvea)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK054		1900-01-01		Wegnec (Ouvea)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK055		1900-01-01		Table (Ouvea)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK056		1900-01-01		Djekoutene (Ouvea)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK057		1900-01-01		Haute (Ouvea)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK058		1900-01-01		Styx (Ouvea)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK059		1900-01-01		Bagao (Ouvea)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK060		1900-01-01		Gue (Ouvea)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK061		1900-01-01		Guetche (Ouvea)	New Caledonia Islands	OC-033		0	0	1		162
+R	DIFO	FK062		1900-01-01		Nemou	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK063		1900-01-01		Toupeti	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK064		1900-01-01		Hugon	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK065		1900-01-01		Ducos	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK066		1900-01-01		Lepredour	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK067		1900-01-01		Puen	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK068		1900-01-01		Grimault	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK069		1900-01-01		Poule pondeuse	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK070		1900-01-01		Baaba	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK071		1900-01-01		Pia	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK072		1900-01-01		Taanlo	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK073		1900-01-01		Yangebarre	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK074		1900-01-01		Maitre isl	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK075		1900-01-01		Lango isl	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK076		1900-01-01		Loop isl	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK077		1900-01-01		Ile Verte	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK078		1900-01-01		Ile Freycinet	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK079		1900-01-01		Ile N'Die	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK080		1900-01-01		FK/C 3 ilots du mouillage	New Caledonia Islands	OC-176		0	0	1		162
+R	DIFO	FK081		1900-01-01		FK/C ilot du passage	New Caledonia Islands	OC-176		0	0	1		162
+R	DIFO	FK082		1900-01-01		FK/C ile longue	New Caledonia Islands	OC-176		0	0	1		162
+R	DIFO	FK083		1900-01-01		Charon Isl	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK084		1900-01-01		Bailly isl	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK085		1900-01-01		Petit Charron	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK086		1900-01-01		Tindu ilot	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK087		1900-01-01		Kamere	New Caledonia Islands	OC-032		0	0	1		162
+R	DIFO	FK088		1900-01-01		Ile Ange	Environs de Noum�a			0	0	1		162
+R	DIFO	FK089		1900-01-01		Ile T'Ndu	Environs de Noum�a			0	0	1		162
+R	DIFO	FK090		1900-01-01		Ile Pandanus	Environs de Noum�a			0	0	1		162
+R	DIFO	FK091		1900-01-01		Ilot Signal	Environs de Noum�a			0	0	1		162
+R	DIFO	FK092		1900-01-01		Ilot Lar�gn�re	Environs de Noum�a			0	0	1		162
+R	DIFO	FK093		1900-01-01		Ilot Hareng Saur	Environs de Noum�a			0	0	1		162
+R	DIFO	FK094		1900-01-01		Ile aux Canards	Environs de Noum�a			0	0	1		162
+R	DIFO	FK095		1900-01-01		Ilot Brun	Environs de Noum�a			0	0	1		162
+R	DIFO	FK096		1900-01-01		Ile Numbo	Environs de Noum�a			0	0	1		162
+R	DIFO	FK097		1900-01-01		Ilot Nour�	Environs de Noum�a			0	0	1		162
+R	DIFO	FK098		1900-01-01		Ile La Toto	Environs de Noum�a			0	0	1		162
+R	DIFO	FK099		1900-01-01		Ile Ste-Marie ( N'g�a)	Environs de Noum�a			0	0	1		162
+R	DIFO	FK100		1900-01-01		Ile U�r�	Environs de Noum�a			0	0	1		162
+R	DIFO	FK101		1900-01-01		Ilot Ndo	Environs de Noum�a			0	0	1		162
+R	DIFO	FK102		1900-01-01		Ilot Song	Environs de Noum�a			0	0	1		162
+R	DIFO	FK103		1900-01-01		Ile Petit Fourmi	Environs de Noum�a			0	0	1		162
+R	DIFO	FK104		1900-01-01		Ile Grand Fourmi	Environs de Noum�a			0	0	1		162
+R	DIFO	FK105		1900-01-01		Ile Porc-Epic	Environs de Noum�a			0	0	1		162
+R	DIFO	FK106		1900-01-01		Ile Charbon (N'd�)	Environs de Noum�a			0	0	1		162
+R	DIFO	FK107		1900-01-01		Ilot Carcasse	Environs de Noum�a			0	0	1		162
+R	DIFO	FK108		1900-01-01		Ilot Tioar�	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK109		1900-01-01		Ile Ugo (ile aux requins)	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK110		1900-01-01		Ilot Gabriel	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK111		1900-01-01		Ile Nuu Nyam�	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK112		1900-01-01		Ile W�n�r�	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK113		1900-01-01		Ile Nwa Remwa	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK114		1900-01-01		Ile Nuu N���	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK115		1900-01-01		Ile Nuu M�r�	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK116		1900-01-01		Ile Nuu N�mbo	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK117		1900-01-01		Ile Nuu Pav�	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK118		1900-01-01		Ile Nuu Ni�	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK119		1900-01-01		Ile Nuu Whawm�ak	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK120		1900-01-01		Ile Nuu	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK121		1900-01-01		Ilot Imo	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK122		1900-01-01		Ilot Yaxiri	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK123		1900-01-01		Ilot Nu Ti�	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK124		1900-01-01		Ilot Dunu	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK125		1900-01-01		Ilot Patino	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK126		1900-01-01		Ilot Kwa Du Nu	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK127		1900-01-01		Ilot Xiare	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK128		1900-01-01		Ilot Jiduw�	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK129		1900-01-01		Ilot Kwa Du	Environs de Noum�a Yat�			0	0	1		162
+R	DIFO	FK130		1900-01-01		Ile aux Cochons (Pwinyara)	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK131		1900-01-01		Ile Layrle ( Hu)	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK132		1900-01-01		Ile Canon	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK133		1900-01-01		Ile Patrice	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK134		1900-01-01		Ilot Avit	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK135		1900-01-01		Ilots Dominos (Nerepaiyemwa)	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK136		1900-01-01		Ile Geoffroy	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK137		1900-01-01		Ile Perseval (Wewi)	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK138		1900-01-01		Ile Devarenne (Nenaw�)	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK139		1900-01-01		Ile des Morts (Dubwa)	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK140		1900-01-01		Ilot Bois� (Ub�nya)	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK141		1900-01-01		Ile Marceau (Ubeakure)	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK142		1900-01-01		Ile aux Cocos (N�d�)	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK143		1900-01-01		Ile de la Pointe (Navaji�)	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK144		1900-01-01		Ile Daussy (P��)	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK145		1900-01-01		Ile M�hw�	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK146		1900-01-01		Ile Ronde (Grand Pandanus)	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK147		1900-01-01		Ilot M�Ba (Grande Ile)	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK148		1900-01-01		Ilot M�Bo	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK149		1900-01-01		Ile Moro	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK150		1900-01-01		Ile Abu	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK151		1900-01-01		Ile M�B�	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK152		1900-01-01		Ile Goldfield	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK153		1900-01-01		Ile Nduku�	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK154		1900-01-01		Ile Mathieu	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK155		1900-01-01		Ile Longue	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK156		1900-01-01		Ilot Tapou�	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK157		1900-01-01		Ilot Julien	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK158		1900-01-01		Ilot Rousseau	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK159		1900-01-01		Ilot Goui	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK160		1900-01-01		Ilot Cocotier	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK161		1900-01-01		Ile Konga	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK162		1900-01-01		Ile Dingo	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK163		1900-01-01		Ile Jacqueline	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK164		1900-01-01		Ile Page	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK165		1900-01-01		Ile Trelon	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK166		1900-01-01		Ilot Turpin	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK167		1900-01-01		Ilots Trio	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK168		1900-01-01		Ilot Tyr	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK169		1900-01-01		Ilot Champignon	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK170		1900-01-01		Ile Petit Tenia	Environs de la Tontouta - Bouloupari			0	0	1		162
+R	DIFO	FK171		1900-01-01		Ile Tenia	Environs de Bouloupari - La Foa			0	0	1		162
+R	DIFO	FK172		1900-01-01		Ilot Chengiro	Environs de Bouloupari - La Foa			0	0	1		162
+R	DIFO	FK173		1900-01-01		Ile Quernel	Environs de Bouloupari - La Foa			0	0	1		162
+R	DIFO	FK174		1900-01-01		Ile Omafa	Environs de Bouloupari - La Foa			0	0	1		162
+R	DIFO	FK175		1900-01-01		Ile Wao Ama Cououi	Environs de Bouloupari - La Foa			0	0	1		162
+R	DIFO	FK176		1900-01-01		Ilot Ras	Environs de Bouloupari - La Foa			0	0	1		162
+R	DIFO	FK177		1900-01-01		Ile Pah�d�	Environs de Bouloupari - La Foa			0	0	1		162
+R	DIFO	FK178		1900-01-01		Ile Lebris	Environs de Bouloupari - La Foa			0	0	1		162
+R	DIFO	FK179		1900-01-01		Ilot Cafard	Environs de Bouloupari - La Foa			0	0	1		162
+R	DIFO	FK180		1900-01-01		Ile Isie (Nei Il�)	Environs de Bouloupari - La Foa			0	0	1		162
+R	DIFO	FK181		1900-01-01		Ilot K�d�o	Environs de Bouloupari - La Foa			0	0	1		162
+R	DIFO	FK182		1900-01-01		Ilot Bigarri	Environs de Bouloupari - La Foa			0	0	1		162
+R	DIFO	FK183		1900-01-01		Ilot Cinq Bras (Nei Cha Kwa)	Environs de Bouloupari - La Foa			0	0	1		162
+R	DIFO	FK184		1900-01-01		Ilot Teremba	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK185		1900-01-01		Ilot Bois de Fer	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK186		1900-01-01		Ilot Chat (Ramo)	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK187		1900-01-01		Ile Sany��	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK188		1900-01-01		Ile Mara	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK189		1900-01-01		Ilot Cotogi	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK190		1900-01-01		Ilot Monot	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK191		1900-01-01		Ilot Patate	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK192		1900-01-01		Ilot Caillou	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK193		1900-01-01		Ile N� K�r�	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK194		1900-01-01		Ile N� Pom�	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK195		1900-01-01		Les 2 fr�res (N� N� Ori)	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK196		1900-01-01		Ile N� Pwerigo	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK197		1900-01-01		Ile Verte (M�reureu)	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK198		1900-01-01		Ilot Shark	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK199		1900-01-01		Ilot Kia	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK200		1900-01-01		Ilot Korragan	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK201		1900-01-01		Ilot M�j�no	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK202		1900-01-01		Ilot Meeue	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK203		1900-01-01		Ilot Kouenra	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK204		1900-01-01		Ilot Nessara	Environs de la Foa - Bourail			0	0	1		162
+R	DIFO	FK205		1900-01-01		Ilot Contrari�t�	Environs de Bourail - Pouembout			0	0	1		162
+R	DIFO	FK206		1900-01-01		Ile Nekaiaou	Environs de Bourail - Pouembout			0	0	1		162
+R	DIFO	FK207		1900-01-01		Ile Dji� (Longue)	Environs de Bourail - Pouembout			0	0	1		162
+R	DIFO	FK208		1900-01-01		Ilot Didot (Ile Ronde)	Environs de Bourail - Pouembout			0	0	1		162
+R	DIFO	FK209		1900-01-01		Ilot Pinda�	Environs de Bourail - Pouembout			0	0	1		162
+R	DIFO	FK210		1900-01-01		Ile Koni�ne	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK211		1900-01-01		Ile Pingiane	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK212		1900-01-01		Ile de Gatope	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK213		1900-01-01		Ile Grand Ronfleur (Xoaboak)	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK214		1900-01-01		Ile Deverd	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK215		1900-01-01		Ile Kendec	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK216		1900-01-01		Ile de la Table (Ile Rat)	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK217		1900-01-01		Ile Magone	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK218		1900-01-01		Ile Tangadiou	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK219		1900-01-01		Ile Double	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK220		1900-01-01		Ile Yan�Dagouet	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK221		1900-01-01		Ile Tiam�Bou�ne	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK222		1900-01-01		Ile Nana	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK223		1900-01-01		Ilot Crabe (Goenghu)	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK224		1900-01-01		Ile Tic-Ac	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK225		1900-01-01		Ile Tienghi�ne	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK226		1900-01-01		Ilot Les 3 fr�res	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK227		1900-01-01		Ile Ouanne	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK228		1900-01-01		Ile Neangambo (Yangobo)	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK229		1900-01-01		Ile Boh	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK230		1900-01-01		Ile Tanl�	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK231		1900-01-01		Ile Maabounghi (Petit Tanl�)	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK232		1900-01-01		Ile Miouanda	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK233		1900-01-01		Ile Bou�rate	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK234		1900-01-01		Ile Naane	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK235		1900-01-01		Ile Mouac (Mwak)	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK236		1900-01-01		Ile Yoyo�	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK237		1900-01-01		Ile Tuany	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK238		1900-01-01		Ile Pionne ( Piyon)	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK239		1900-01-01		Ile Nendial� (Naajal�)	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK240		1900-01-01		Ile Paa�o (Phaayo)	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK241		1900-01-01		Ile Yava	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK242		1900-01-01		Ile Ti� (C�)	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK243		1900-01-01		Ile Nadalap	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK244		1900-01-01		Ile Tiya	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK245		1900-01-01		Ile Temay�	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK246		1900-01-01		Ile Dau Wa�	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK247		1900-01-01		Ile Moop	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK248		1900-01-01		Ile Houpe	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK249		1900-01-01		Ile Nadaad�	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK250		1900-01-01		Ile Cocotier	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK251		1900-01-01		Ilots St-Phalle (Rhabwa M�li)	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK252		1900-01-01		Ilot Bayu	Environs de Pouembout - Poum			0	0	1		162
+R	DIFO	FK253		1900-01-01		Iles Sentinelles	Iles de la cote est			0	0	1		162
+R	DIFO	FK254		1900-01-01		Ilot Mwa	Iles de la cote est			0	0	1		162
+R	DIFO	FK255		1900-01-01		Ilot Poudiou�	Iles de la cote est			0	0	1		162
+R	DIFO	FK256		1900-01-01		Ilot Thigit	Iles de la cote est			0	0	1		162
+R	DIFO	FK257		1900-01-01		Ilot Hiengh�ne ( Yeragen)	Iles de la cote est			0	0	1		162
+R	DIFO	FK258		1900-01-01		Ilot Jio ( Sphinx)	Iles de la cote est			0	0	1		162
+R	DIFO	FK259		1900-01-01		Ile Hiengabat ( Y�ravac)	Iles de la cote est			0	0	1		162
+R	DIFO	FK260		1900-01-01		Ilot Hienga	Iles de la cote est			0	0	1		162
+R	DIFO	FK261		1900-01-01		Ilot Hiengu	Iles de la cote est			0	0	1		162
+R	DIFO	FK262		1900-01-01		Ilot Ouao (Kohut)	Iles de la cote est			0	0	1		162
+R	DIFO	FK263		1900-01-01		Ilot Atit ( Pwahila)	Iles de la cote est			0	0	1		162
+R	DIFO	FK264		1900-01-01		Ilot Hway� Bwadoa	Iles de la cote est			0	0	1		162
+R	DIFO	FK265		1900-01-01		Ile P�t�m�n	Iles de la cote est			0	0	1		162
+R	DIFO	FK266		1900-01-01		Ile Tibarama	Iles de la cote est			0	0	1		162
+R	DIFO	FK267		1900-01-01		Iles Bayes	Iles de la cote est			0	0	1		162
+R	DIFO	FK268		1900-01-01		Ilot St-Ignace	Iles de la cote est			0	0	1		162
+R	DIFO	FK269		1900-01-01		Ilot Tou�rou	Iles de la cote est			0	0	1		162
+R	DIFO	FK270		1900-01-01		Ilot N�ai	Iles de la cote est			0	0	1		162
+R	DIFO	FK271		1900-01-01		Ilot Tun�	Iles de la cote est			0	0	1		162
+R	DIFO	FK272		1900-01-01		Ile Les 3 Fr�res (Ochobwara)	Iles de la cote est			0	0	1		162
+R	DIFO	FK273		1900-01-01		Ile Nani	Iles de la cote est			0	0	1		162
+R	DIFO	FK274		1900-01-01		Ilot Gu	Iles de la cote est			0	0	1		162
+R	DIFO	FK275		1900-01-01		Ilot Nu Boa	Iles de la cote est			0	0	1		162
+R	DIFO	FK276		1900-01-01		Ile N�mu ( St-Thomas)	Iles de la cote est			0	0	1		162
+R	DIFO	FK277		1900-01-01		Ile N�kwakw�	Iles de la cote est			0	0	1		162
+R	DIFO	FM001		1900-01-01		Martinique Main island	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM002		1900-01-01		Ilet Cabrits	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM003		1900-01-01		Rocher de la Caravelle	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM004		1900-01-01		Rocher du Diamant	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM005		1900-01-01		Ilet Chancel ou ilet Ramville (Le Robert)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM006		1900-01-01		Petit Ilet   ( Baie G�nipa )	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM007		1900-01-01		Gros Ilet ou ilet Mandoline ( Baie G�nipa )	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM008		1900-01-01		Les 3 iles (3 ilets)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM009		1900-01-01		Ilet � Ramiers ( Pointe Blanche)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM010		1900-01-01		Ilet du C�ron (Diamant)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM011		1900-01-01		Ilet Duquesnoy ( Pointe Marin )	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM012		1900-01-01		Ilet Baude ( Pointe Marin )	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM013		1900-01-01		Petit ilet Dupr� (Marin)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM014		1900-01-01		Ilet � Toiroux ou ilet Poirier ( R�serve des ilets de Saint Anne)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM015		1900-01-01		Ilet Hardy  ( R�serve des ilets de Saint Anne)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM016		1900-01-01		Ile Aigrette (ilets de St Anne)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM017		1900-01-01		Ilet Perc�e	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM018		1900-01-01		Ilet Burgaux	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM019		1900-01-01		Ilet de la grotte ou ilet ragot (Le Robert)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM020		1900-01-01		Ilet Chevalier ou ilet L�zards ( R�serve des ilets de Saint Anne)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM021		1900-01-01		Ilet aux Chiens  ( R�serve des ilets de Saint Anne)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM022		1900-01-01		Ile Petite Grenade (Vauclin )	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM023		1900-01-01		Table du diable (pointe des Salines)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM024		1900-01-01		Ilet Fr�gate  ( Le Fran�ois )	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM025		1900-01-01		Ilet Long    ( Le Fran�ois )	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM026		1900-01-01		Ilet Pel�    ( Le Fran�ois )	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM027		1900-01-01		Ilet Thierry    ( Le Fran�ois )	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM028		1900-01-01		Ilet M�trente    ( Le Fran�ois )	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM029		1900-01-01		Ilet Lavigne ou Gros Ilet    ( Le Fran�ois )	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM030		1900-01-01		Ilet Oscar    ( Le Fran�ois )	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM031		1900-01-01		Ile Loup Garou (Le Robert)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM032		1900-01-01		Ilet Madame (Le Robert)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM033		1900-01-01		Ilet Boisseau ou ilet des Chardons (Le Robert)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM034		1900-01-01		Ilet Petit Piton ou Rocher de la Grotte (Le Robert)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM035		1900-01-01		Ilet aux Rats (Le Robert)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM036		1900-01-01		Ilet � Eaux ( Le Robert )	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM037		1900-01-01		Ilet Petit Martinique (Le Robert)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM038		1900-01-01		Ilet Petit Vincent (Le Robert)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM039		1900-01-01		Ilet du Galion (Baie du Galion)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM040		1900-01-01		Ilet Tr�sor ( Presqu'ile  de la Caravelle)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM041		1900-01-01		Ile du lapin (Prequ'ile de la Caravelle)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM042		1900-01-01		Ilet Lapin (Le Francois)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM043		1900-01-01		Ilet Tartane (Presqu'ile de la Caravelle)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM044		1900-01-01		Ilet St Aubin (Sainte Marie)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM045		1900-01-01		Ilet Ste Marie (Sainte Marie)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FM046		1900-01-01		Ilet La Perle (Anse Couleuvre)	Martinique Islands	NA-107		0	0	1		84
+R	DIFO	FO001		1900-01-01		Clipperton	French Polynesia Islands	NA-011		0	0	1		36
+R	DIFO	FO002		1900-01-01		Tahiti	French Polynesia Islands	OC-046		0	0	1		175
+R	DIFO	FO003		1900-01-01		Bora-Bora	French Polynesia Islands	OC-067		0	0	1		175
+R	DIFO	FO004		1900-01-01		Huahine Nui	French Polynesia Islands	OC-067		0	0	1		175
+R	DIFO	FO005		1900-01-01		Maiao	French Polynesia Islands	OC-046		0	0	1		175
+R	DIFO	FO006		1900-01-01		Manuae Atoll	French Polynesia Islands	OC-057		0	0	1		175
+R	DIFO	FO007		1900-01-01		Maupihaa Atoll	French Polynesia Islands	OC-057		0	0	1		175
+R	DIFO	FO008		1900-01-01		Maupiti	French Polynesia Islands	OC-067		0	0	1		175
+R	DIFO	FO009		1900-01-01		Mehetia	French Polynesia Islands	OC-046		0	0	1		175
+R	DIFO	FO010		1900-01-01		Moorea	French Polynesia Islands	OC-046		0	0	1		175
+R	DIFO	FO011		1900-01-01		Motu-One Atoll (Bellinghausen)	French Polynesia Islands	OC-057		0	0	1		175
+R	DIFO	FO012		1900-01-01		Raiatea	French Polynesia Islands	OC-067		0	0	1		175
+R	DIFO	FO013		1900-01-01		Tahaa	French Polynesia Islands	OC-067		0	0	1		175
+R	DIFO	FO014		1900-01-01		Tetiaroa Atoll	French Polynesia Islands	OC-046		0	0	1		175
+R	DIFO	FO015		1900-01-01		Tupai Atoll	French Polynesia Islands	OC-067		0	0	1		175
+R	DIFO	FO016		1900-01-01		Eiao	French Polynesia Islands	OC-027		0	0	1		509
+R	DIFO	FO017		1900-01-01		Fatu-Iva	French Polynesia Islands	OC-027		0	0	1		509
+R	DIFO	FO018		1900-01-01		Fatu-Utu	French Polynesia Islands	OC-027		0	0	1		509
+R	DIFO	FO019		1900-01-01		Hatu-Iti	French Polynesia Islands	OC-027		0	0	1		509
+R	DIFO	FO020		1900-01-01		Hatutuaa	French Polynesia Islands	OC-027		0	0	1		509
+R	DIFO	FO021		1900-01-01		Hiva-Oa	French Polynesia Islands	OC-027		0	0	1		509
+R	DIFO	FO022		1900-01-01		Mohotani	French Polynesia Islands	OC-027		0	0	1		509
+R	DIFO	FO023		1900-01-01		Nuku-Hiva	French Polynesia Islands	OC-027		0	0	1		509
+R	DIFO	FO024		1900-01-01		Tahuata	French Polynesia Islands	OC-027		0	0	1		509
+R	DIFO	FO025		1900-01-01		Tomasset (Rocher)	French Polynesia Islands	OC-027		0	0	1		509
+R	DIFO	FO026		1900-01-01		Ua-Huka	French Polynesia Islands	OC-027		0	0	1		509
+R	DIFO	FO027		1900-01-01		Ua-POoua	French Polynesia Islands	OC-027		0	0	1		509
+R	DIFO	FO028		1900-01-01		Ahe Atoll	French Polynesia Islands	OC-0131		0	0	1		175
+R	DIFO	FO029		1900-01-01		Ahunui Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO030		1900-01-01		Akiaki Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO031		1900-01-01		Amanu Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO032		1900-01-01		Anaa Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO033		1900-01-01		Anuanuraro Atoll	French Polynesia Islands	OC-052		0	0	1		175
+R	DIFO	FO034		1900-01-01		Anunurunga Atoll	French Polynesia Islands	OC-052		0	0	1		175
+R	DIFO	FO035		1900-01-01		Apataki Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO036		1900-01-01		Aratika Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO037		1900-01-01		Arutua Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO038		1900-01-01		Faaite Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO039		1900-01-01		Fakahina Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO040		1900-01-01		Fakarava Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO041		1900-01-01		Fangatau Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO042		1900-01-01		Fangataifa Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO043		1900-01-01		Hao Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO044		1900-01-01		Haraiki Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO045		1900-01-01		Hereheretue Atoll	French Polynesia Islands	OC-052		0	0	1		175
+R	DIFO	FO046		1900-01-01		Hikueru Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO047		1900-01-01		Hiti Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO048		1900-01-01		Katiu Atoll (Katia)	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO049		1900-01-01		Kauehi Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO050		1900-01-01		Kaukuroa Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO051		1900-01-01		Makatea	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO052		1900-01-01		Makemo Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO053		1900-01-01		Maria Atoll	French Polynesia Islands	OC-113		0	0	1		175
+R	DIFO	FO054		1900-01-01		Marutea Atoll (North)	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO055		1900-01-01		Marutea Atoll (South)	French Polynesia Islands	OC-113		0	0	1		175
+R	DIFO	FO056		1900-01-01		Manihi Atoll	French Polynesia Islands	OC-131		0	0	1		175
+R	DIFO	FO057		1900-01-01		Manuangi Ato	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO058		1900-01-01		Mataiva Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO059		1900-01-01		Marokau Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO060		1900-01-01		Morane Atoll	French Polynesia Islands	OC-113		0	0	1		175
+R	DIFO	FO061		1900-01-01		Motutunga Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO062		1900-01-01		Mururoa Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO063		1900-01-01		Napuka	French Polynesia Islands	OC-094		0	0	1		175
+R	DIFO	FO064		1900-01-01		Nengo-Nengo Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO065		1900-01-01		Niau	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO066		1900-01-01		Nihiru Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO067		1900-01-01		Nukutipipi Atoll	French Polynesia Islands	OC-052		0	0	1		175
+R	DIFO	FO068		1900-01-01		Nukutavake Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO069		1900-01-01		Paraoa Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO070		1900-01-01		Pinaki Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO071		1900-01-01		Puka-Puka Atoll	French Polynesia Islands	OC-062		0	0	1		175
+R	DIFO	FO072		1900-01-01		Pukarua Atoll	French Polynesia Islands	OC-238		0	0	1		175
+R	DIFO	FO073		1900-01-01		Rangiroa Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO074		1900-01-01		Raraka Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO075		1900-01-01		Raroia Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO076		1900-01-01		Ravahere Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO077		1900-01-01		Reao Atoll	French Polynesia Islands	OC-238		0	0	1		175
+R	DIFO	FO078		1900-01-01		Reitoru Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO079		1900-01-01		Reka-Reka Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO080		1900-01-01		Taenga Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO081		1900-01-01		Tahanea Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO082		1900-01-01		Taiaro Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO083		1900-01-01		Takapoto Atoll	French Polynesia Islands	OC-131		0	0	1		175
+R	DIFO	FO084		1900-01-01		Takaroa Atoll	French Polynesia Islands	OC-131		0	0	1		175
+R	DIFO	FO085		1900-01-01		Takuame Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO086		1900-01-01		Tatakotu Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO087		1900-01-01		Tauere Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO088		1900-01-01		Tehuata Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO089		1900-01-01		Tekokota Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO090		1900-01-01		Tematangi Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO091		1900-01-01		Tepoto Atoll (North)	French Polynesia Islands	OC-094		0	0	1		175
+R	DIFO	FO092		1900-01-01		Tepoto Atoll (South)	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO093		1900-01-01		Tikehau Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO094		1900-01-01		Tikei	French Polynesia Islands	OC-131		0	0	1		175
+R	DIFO	FO095		1900-01-01		Toau Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO096		1900-01-01		Tuanake Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO097		1900-01-01		Tureia Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO098		1900-01-01		Vahitahi Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO099		1900-01-01		Vairaatea Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO100		1900-01-01		Vana-Vana Atoll	French Polynesia Islands	OC-066		0	0	1		175
+R	DIFO	FO101		1900-01-01		Agakauitaki	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO102		1900-01-01		Akamaru	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO103		1900-01-01		Aukena	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO104		1900-01-01		Gaioio	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO105		1900-01-01		Kamaka	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO106		1900-01-01		Kouaku	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO107		1900-01-01		Makaroa	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO108		1900-01-01		Mangareva	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO111		1900-01-01		Tarauru-Roa	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO112		1900-01-01		Taravai	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO113		1900-01-01		Teauanone	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO114		1900-01-01		Tekava	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO115		1900-01-01		Temoe	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO116		1900-01-01		Tenoko	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO117		1900-01-01		Tepapuri	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO118		1900-01-01		Tokoroa	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO119		1900-01-01		Totegegie	French Polynesia Islands	OC-063		0	0	1		175
+R	DIFO	FO120		1900-01-01		Bass Ilots (Marotiri)	French Polynesia Islands	OC-051		0	0	1		508
+R	DIFO	FO121		1900-01-01		Maria Atoll	French Polynesia Islands	OC-264		0	0	1		508
+R	DIFO	FO122		1900-01-01		Raevavae	French Polynesia Islands	OC-114		0	0	1		508
+R	DIFO	FO123		1900-01-01		Rapa	French Polynesia Islands	OC-051		0	0	1		508
+R	DIFO	FO124		1900-01-01		Rimatara	French Polynesia Islands	OC-050		0	0	1		508
+R	DIFO	FO125		1900-01-01		Rurutu	French Polynesia Islands	OC-050		0	0	1		508
+R	DIFO	FO126		1900-01-01		Tubuai	French Polynesia Islands	OC-152		0	0	1		508
+R	DIFO	FO127		1900-01-01		Mai Moana	French Polynesia Islands	OC-067		0	0	1		175
+R	DIFO	FO128		1900-01-01		Motu Tane	French Polynesia Islands	OC-067		0	0	1		175
+R	DIFO	FO129		1900-01-01		Huahine Iti	French Polynesia Islands	OC-067		0	0	1		175
+R	DIFO	FP001		1900-01-01		St Pierre	St Pierre & Miquelon Islands	NA-032		0	0	1		277
+R	DIFO	FP002		1900-01-01		Miquelon	St Pierre & Miquelon Islands	NA-032		0	0	1		277
+R	DIFO	FP003		1900-01-01		Rocher d'Est	St Pierre & Miquelon Islands	NA-032		0	0	1		277
+R	DIFO	FP004		1900-01-01		Grand Colombier	St Pierre & Miquelon Islands	NA-032		0	0	1		277
+R	DIFO	FP005		1900-01-01		Vainqueurs Ilot	St Pierre & Miquelon Islands	NA-032		0	0	1		277
+R	DIFO	FP006		1900-01-01		Ile aux Marins	St Pierre & Miquelon Islands	NA-032		0	0	1		277
+R	DIFO	FP007		1900-01-01		Ile Verte	St Pierre & Miquelon Islands	NA-032		0	0	1		277
+R	DIFO	FP008		1900-01-01		Veaux Marins	St Pierre & Miquelon Islands	NA-032		0	0	1		277
+R	DIFO	FP009		1900-01-01		Ile aux Chevaux	St Pierre & Miquelon Islands	NA-032		0	0	1		277
+R	DIFO	FR001		1900-01-01		Reunion	Reunion Islands	AF-016		0	0	1		453
+R	DIFO	FR002		1900-01-01		Bassas da India (before 04/06/94)	Reunion Islands	AF-034		0	0	1		453
+R	DIFO	FR003		1900-01-01		Europa	Reunion Islands	AF-009		0	0	1		124
+R	DIFO	FR004		1900-01-01		Glorieuse	Reunion Islands	AF-011		0	0	1		99
+R	DIFO	FR005		1900-01-01		Juan de Nova	Reunion Islands	AF-012		0	0	1		124
+R	DIFO	FR006		1900-01-01		Tromelin	Reunion Islands	AF-031		0	0	1		276
+R	DIFO	FR007		1900-01-01		Du lys	Reunion Islands	AF-011		0	0	1		99
+R	DIFO	FR008		1900-01-01		Roches Vertes	Reunion Islands	AF-011		0	0	1		99
+R	DIFO	FS001		1900-01-01		St Martin (main island)	St Martin Islands	NA-105		0	0	1		213
+R	DIFO	FS002		1900-01-01		Tintamarre	St Martin Islands	NA-199		0	0	1		213
+R	DIFO	FS003		1900-01-01		Sable	St Martin Islands	NA-199		0	0	1		213
+R	DIFO	FS004		1900-01-01		Rocher Creole	St Martin Islands	NA-105		0	0	1		213
+R	DIFO	FS005		1900-01-01		Pinel Ilet	St Martin Islands	NA-105		0	0	1		213
+R	DIFO	FS006		1900-01-01		Caye Verte	St Martin Islands	NA-105		0	0	1		213
+R	DIFO	FS007		1900-01-01		Embouchure	St Martin Islands	NA-105		0	0	1		213
+R	DIFO	FS008		1900-01-01		Rocher de l’Anse Marcel	St Martin Islands	NA-105		0	0	1		213
+R	DIFO	FS009		1900-01-01		Petite Clef	St Martin Islands	NA-105		0	0	1		213
+R	DIFO	FT001		1900-01-01		Amsterdam	TAAF Islands	AF-002		0	0	1		10
+R	DIFO	FT002		1900-01-01		Aride (Crozet)	TAAF Islands	AF-008		0	0	1		41
+R	DIFO	FT003		1900-01-01		Est (Crozet)	TAAF Islands	AF-008		0	0	1		41
+R	DIFO	FT004		1900-01-01		Foch (Kerguelen)	TAAF Islands	AF-048		0	0	1		131
+R	DIFO	FT005		1900-01-01		Howe (Kerguelen)	TAAF Islands	AF-048		0	0	1		131
+R	DIFO	FT006		1900-01-01		Petrels (Dumont d'Urville Base)	TAAF Islands	AN-017		0	0	1		13
+R	DIFO	FT007		1900-01-01		Pingouins (Crozet)	TAAF Islands	AF-008		0	0	1		41
+R	DIFO	FT008		1900-01-01		Cochons (Crozet)	TAAF Islands	AF-008		0	0	1		41
+R	DIFO	FT009		1900-01-01		Possession (Crozet)	TAAF Islands	AF-008		0	0	1		41
+R	DIFO	FT010		1900-01-01		St Paul	TAAF Islands	AF-002		0	0	1		10
+R	DIFO	FT011		1900-01-01		Kerguelen (main island)	TAAF Islands	AF-048		0	0	1		131
+R	DIFO	FT012		1900-01-01		Du milieu (ilet) St Paul	TAAF Islands	AF-002		0	0	1		10
+R	DIFO	FT013		1900-01-01		Du nord (ilet) St Paul	TAAF Islands	AF-002		0	0	1		10
+R	DIFO	FT014		1900-01-01		La quille St Paul	TAAF Islands	AF-002		0	0	1		10
+R	DIFO	FT015		1900-01-01		Chausse des phoques (2 islands)	TAAF Islands	AF-002		0	0	1		10
+R	DIFO	FT016		1900-01-01		Rocher ouest	TAAF Islands	AF-002		0	0	1		10
+R	DIFO	FT017		1900-01-01		Les 2 Freres	TAAF Islands	AF-002		0	0	1		10
+R	DIFO	FW001		1900-01-01		Uvea (main island)	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW002		1900-01-01		Faioa	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW003		1900-01-01		Fennua-fu	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW004		1900-01-01		Fungalei	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW005		1900-01-01		Luaniva	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW006		1900-01-01		Nukuaeta	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW007		1900-01-01		Nukufotu	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW008		1900-01-01		Nukuhifala	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW009		1900-01-01		Nukuhione	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW010		1900-01-01		Nukuloa	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW011		1900-01-01		Nukutapu	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW012		1900-01-01		Nukuteatea	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW013		1900-01-01		Tegaviki	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW014		1900-01-01		Fugalei	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW015		1900-01-01		Nukuafo	Wallis & Futuna Islands	OC-054		0	0	1		298
+R	DIFO	FW016		1900-01-01		Alofi	Wallis & Futuna Islands	OC-118		0	0	1		298
+R	DIFO	FW017		1900-01-01		Futuna (Main island)	Wallis & Futuna Islands	OC-118		0	0	1		298
+R	DIFO	FW018		1900-01-01		Rochers de Fatua	Wallis & Futuna Islands	OC-118		0	0	1		298
+R	DIFO	FY001		1900-01-01		Diable (Salut archipelago)	Guyane Islands	SA-020		0	0	1		63
+R	DIFO	FY002		1900-01-01		L'enfant Perdu (lighthouse)	Guyane Islands			0	0	1		63
+R	DIFO	FY003		1900-01-01		Le Malingre	Guyane Islands			0	0	1		63
+R	DIFO	FY004		1900-01-01		Les Mamelles (1)	Guyane Islands			0	0	1		63
+R	DIFO	FY005		1900-01-01		Les Mamelles (2)	Guyane Islands			0	0	1		63
+R	DIFO	FY006		1900-01-01		La Mere	Guyane Islands			0	0	1		63
+R	DIFO	FY007		1900-01-01		Le Connetable	Guyane Islands			0	0	1		63
+R	DIFO	FY008		1900-01-01		Royale (Salut)	Guyane Islands	SA-020		0	0	1		63
+R	DIFO	FY009		1900-01-01		St Joseph (Salut)	Guyane Islands	SA-020		0	0	1		63
+R	DIFO	FY010		1900-01-01		Le Pere	Guyane Islands			0	0	1		63

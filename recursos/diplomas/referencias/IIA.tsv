@@ -1,0 +1,761 @@
+# Referencias del diploma IIA. Generado; no se edita a mano.
+R	IIA	A001		2013-01-01		Scoglio Vela	Adriatico			0	0	1		225,248
+R	IIA	A002		2013-01-01		Scoglio Le due Sorelle	Adriatico			0	0	1		225,248
+R	IIA	A003		2013-01-01		Scoglio del Trave (Scogliera I Travi)	Adriatico			0	0	1		225,248
+R	IIA	A004		2013-01-01		Il Biancone Nord	Adriatico			0	0	1		225,248
+R	IIA	A005		2013-01-01		Il Biancone Sud	Adriatico			0	0	1		225,248
+R	IIA	A007		2013-01-01		Scannone di Goro	Adriatico			0	0	1		225,248
+R	IIA	A008		2013-01-01		Isola Albarella	Adriatico			0	0	1		225,248
+R	IIA	A009		2013-01-01		Isola Bacucco [Isola dei Gabbiani]	Adriatico			0	0	1		225,248
+R	IIA	A010		2013-01-01		Isola della Barricata (Ex Casone San Guglielmo)	Adriatico			0	0	1		225,248
+R	IIA	A011		2013-01-01		Bonello Scirocco	Adriatico			0	0	1		225,248
+R	IIA	A012		2013-01-01		Isola Batteria	Adriatico			0	0	1		225,248
+R	IIA	A013		2013-01-01		Scanno del Palo (di Po di Tolle)	Adriatico			0	0	1		225,248
+R	IIA	A014		2013-01-01		Scanno di Boa	Adriatico			0	0	1		225,248
+R	IIA	A015		2013-01-01		Isola Bastimento	Adriatico			0	0	1		225,248
+R	IIA	A016		2013-01-01		Scanno del Gallo	Adriatico			0	0	1		225,248
+R	IIA	A017		2013-01-01		Scanno delle Ceppe o Cannone	Adriatico			0	0	1		225,248
+R	IIA	A018		2013-01-01		Isola di Boccasette (Scanno del Palo).	Adriatico			0	0	1		225,248
+R	IIA	A019		2013-01-01		Scanno Cavallari	Adriatico			0	0	1		225,248
+R	IIA	A020		2013-01-01		Isola Girotto (Bonellino)	Adriatico			0	0	1		225,248
+R	IIA	A021		2013-01-01		Isola Canarin	Adriatico			0	0	1		225,248
+R	IIA	A022		2013-01-01		Isola del Basson	Adriatico			0	0	1		225,248
+R	IIA	A023		2013-01-01		Isola degli Scanelli	Adriatico			0	0	1		225,248
+R	IIA	A024		2013-01-01		Scogli della Bagnante	Adriatico			0	0	1		225,248
+R	IIA	B001		2013-01-01		Santo Ianni	Basilicata			0	0	1		225,248
+R	IIA	C001		2013-01-01		Isola d'Ischia	Campania			0	0	1		225,248
+R	IIA	C002		2013-01-01		Isola di Procida	Campania			0	0	1		225,248
+R	IIA	C003		2013-01-01		Il Gallo Lungo	Campania			0	0	1		225,248
+R	IIA	C004		2013-01-01		Nisida	Campania			0	0	1		225,248
+R	IIA	C005		2013-01-01		Isola Vivara	Campania			0	0	1		225,248
+R	IIA	C006		2013-01-01		Isola di Capri	Campania			0	0	1		225,248
+R	IIA	C007		2013-01-01		Scogli Gaiola	Campania			0	0	1		225,248
+R	IIA	C008		2013-01-01		Scoglio Isca	Campania			0	0	1		225,248
+R	IIA	C009		2013-01-01		Scoglio Rovigliano	Campania			0	0	1		225,248
+R	IIA	C010		2013-01-01		Scoglio Vervece	Campania			0	0	1		225,248
+R	IIA	C011		2013-01-01		I Faraglioni di Capri	Campania			0	0	1		225,248
+R	IIA	C012		2013-01-01		Scoglio Monacone	Campania			0	0	1		225,248
+R	IIA	C013		2013-01-01		Scoglio Scruopolo	Campania			0	0	1		225,248
+R	IIA	C014		2013-01-01		Scoglio San Martino	Campania			0	0	1		225,248
+R	IIA	C015		2013-01-01		Scoglio A Penna	Campania			0	0	1		225,248
+R	IIA	C016		2013-01-01		La Rotonda	Campania			0	0	1		225,248
+R	IIA	C017		2013-01-01		Scoglio Vetara o Vivaro	Campania			0	0	1		225,248
+R	IIA	C018		2013-01-01		La Castelluccia	Campania			0	0	1		225,248
+R	IIA	C019		2013-01-01		Scoglio della Margherita	Campania			0	0	1		225,248
+R	IIA	C020		2013-01-01		Scoglio dei Francesi	Campania			0	0	1		225,248
+R	IIA	C021		2013-01-01		Scoglio Lungo	Campania			0	0	1		225,248
+R	IIA	C022		2013-01-01		Isola Megaride	Campania			0	0	1		225,248
+R	IIA	C023		2013-01-01		Scoglio Cannone	Campania			0	0	1		225,248
+R	IIA	C024		2013-01-01		Ischia Minore	Campania			0	0	1		225,248
+R	IIA	C025		2013-01-01		Scoglio della Tartaruga	Campania			0	0	1		225,248
+R	IIA	C026		2013-01-01		Scoglio del Vichingo	Campania			0	0	1		225,248
+R	IIA	C027		2013-01-01		Lo Schiavone (Procida) o Scoglio dello Schiavo	Campania			0	0	1		225,248
+R	IIA	C028		2013-01-01		Scoglio di Villa Vazia	Campania			0	0	1		225,248
+R	IIA	C029		2013-01-01		Lo Schiavone di Miliscola	Campania			0	0	1		225,248
+R	IIA	C030		2013-01-01		Il Fungo o Pietra del Lacco (Ischia)	Campania			0	0	1		225,248
+R	IIA	C031		2013-01-01		La Nave (Ischia)	Campania			0	0	1		225,248
+R	IIA	C032		2013-01-01		Scogli Camerata (Ischia)	Campania			0	0	1		225,248
+R	IIA	C033		2013-01-01		Scoglio Lorio (Ischia)	Campania			0	0	1		225,248
+R	IIA	C034		2013-01-01		Scogli Sant'Anna (Ischia)	Campania			0	0	1		225,248
+R	IIA	C035		2013-01-01		Spinesante	Campania			0	0	1		225,248
+R	IIA	C036		2013-01-01		Pietra Impisa	Campania			0	0	1		225,248
+R	IIA	C037		2013-01-01		Pietre Rosse	Campania			0	0	1		225,248
+R	IIA	C038		2013-01-01		Pietra Bianca	Campania			0	0	1		225,248
+R	IIA	C039		2013-01-01		Pietra Nera	Campania			0	0	1		225,248
+R	IIA	C040		2013-01-01		Chianare di Spadera	Campania			0	0	1		225,248
+R	IIA	C041		2013-01-01		Pietre del Cavallone	Campania			0	0	1		225,248
+R	IIA	C042		2013-01-01		Scoglio Unghia Marina	Campania			0	0	1		225,248
+R	IIA	C043		2013-01-01		Isola Licosa	Campania			0	0	1		225,248
+R	IIA	C044		2013-01-01		Torre delle Viole	Campania			0	0	1		225,248
+R	IIA	C045		2013-01-01		Scoglio Scialandro	Campania			0	0	1		225,248
+R	IIA	C046		2013-01-01		Il Coniglio o Scoglio della Marina	Campania			0	0	1		225,248
+R	IIA	C047		2013-01-01		Scoglio Mingardo	Campania			0	0	1		225,248
+R	IIA	C048		2013-01-01		Scogli I Due Fratelli	Campania			0	0	1		225,248
+R	IIA	D001		2013-01-01		Sardegna	Sardegna			0	0	1		225,248
+R	IIA	E001		2013-01-01		Isola Lipari	Eolie			0	0	1		225,248
+R	IIA	E002		2013-01-01		Isola Alicudi	Eolie			0	0	1		225,248
+R	IIA	E003		2013-01-01		Isola Filicudi	Eolie			0	0	1		225,248
+R	IIA	E004		2013-01-01		La Canna	Eolie			0	0	1		225,248
+R	IIA	E005		2013-01-01		Scoglio di Montenassari	Eolie			0	0	1		225,248
+R	IIA	E006		2013-01-01		Isola Panarea	Eolie			0	0	1		225,248
+R	IIA	E007		2013-01-01		Isola Basiluzzo	Eolie			0	0	1		225,248
+R	IIA	E008		2013-01-01		Bottaro	Eolie			0	0	1		225,248
+R	IIA	E009		2013-01-01		Dattilo	Eolie			0	0	1		225,248
+R	IIA	E010		2013-01-01		Le Formiche di Lipari	Eolie			0	0	1		225,248
+R	IIA	E011		2013-01-01		Lisca Bianca	Eolie			0	0	1		225,248
+R	IIA	E012		2013-01-01		Lisca Nera	Eolie			0	0	1		225,248
+R	IIA	E013		2013-01-01		I Panarelli	Eolie			0	0	1		225,248
+R	IIA	E014		2013-01-01		Scoglio Spinazzola	Eolie			0	0	1		225,248
+R	IIA	E015		2013-01-01		Isola Salina	Eolie			0	0	1		225,248
+R	IIA	E016		2013-01-01		Isola Stromboli	Eolie			0	0	1		225,248
+R	IIA	E017		2013-01-01		Strombolicchio	Eolie			0	0	1		225,248
+R	IIA	E018		2013-01-01		Isola Vulcano	Eolie			0	0	1		225,248
+R	IIA	E019		2013-01-01		Scoglio Faraglione o Pollara	Eolie			0	0	1		225,248
+R	IIA	E020		2013-01-01		Scoglio Galera	Eolie			0	0	1		225,248
+R	IIA	E021		2013-01-01		Scoglio Imerata o del Carabiniere	Eolie			0	0	1		225,248
+R	IIA	E022		2013-01-01		La Nave di Panarea	Eolie			0	0	1		225,248
+R	IIA	E023		2013-01-01		Pietra del Bagno	Eolie			0	0	1		225,248
+R	IIA	E024		2013-01-01		Pietra Lunga	Eolie			0	0	1		225,248
+R	IIA	E025		2013-01-01		Pietra Menalda	Eolie			0	0	1		225,248
+R	IIA	E026		2013-01-01		Scoglio Quaedri o Pietra Quaglietto	Eolie			0	0	1		225,248
+R	IIA	E027		2013-01-01		Scoglio Palomba	Eolie			0	0	1		225,248
+R	IIA	E028		2013-01-01		Scoglio Jalera	Eolie			0	0	1		225,248
+R	IIA	E029		2013-01-01		Scoglio Bastimento	Eolie			0	0	1		225,248
+R	IIA	E030		2013-01-01		Scoglio delle Sirene	Eolie			0	0	1		225,248
+R	IIA	E031		2013-01-01		Le Formiche di Panarea	Eolie			0	0	1		225,248
+R	IIA	E032		2013-01-01		Scoglio Giafante	Eolie			0	0	1		225,248
+R	IIA	F001		2013-01-01		Grado (incluse La Schiusa e Le Cove)	Friuli			0	0	1		225,248
+R	IIA	F002		2013-01-01		Isola dei Belli	Friuli			0	0	1		225,248
+R	IIA	F003		2013-01-01		Isole della Grande Chiusa	Friuli			0	0	1		225,248
+R	IIA	F004		2013-01-01		San Giuliano	Friuli			0	0	1		225,248
+R	IIA	F005		2013-01-01		Isola Marina dei Manzi	Friuli			0	0	1		225,248
+R	IIA	F006		2013-01-01		Isola Orbi	Friuli			0	0	1		225,248
+R	IIA	F007		2013-01-01		Isola Montaron	Friuli			0	0	1		225,248
+R	IIA	F008		2013-01-01		San Pietro d'Orio	Friuli			0	0	1		225,248
+R	IIA	F009		2013-01-01		Isola Ravaiarina	Friuli			0	0	1		225,248
+R	IIA	F010		2013-01-01		Isola Morgo	Friuli			0	0	1		225,248
+R	IIA	F011		2013-01-01		Isola Gorgo	Friuli			0	0	1		225,248
+R	IIA	F012		2013-01-01		Santa Maria di Barbana	Friuli			0	0	1		225,248
+R	IIA	F013		2013-01-01		Volpera	Friuli			0	0	1		225,248
+R	IIA	F014		2013-01-01		Isola dei Busiari	Friuli			0	0	1		225,248
+R	IIA	F015		2013-01-01		Pampaiola o Pampagnola	Friuli			0	0	1		225,248
+R	IIA	F016		2013-01-01		Panera e La Scuela	Friuli			0	0	1		225,248
+R	IIA	F017		2013-01-01		Sian	Friuli			0	0	1		225,248
+R	IIA	F018		2013-01-01		Isole del Taglio Nuovo	Friuli			0	0	1		225,248
+R	IIA	F019		2013-01-01		Villa Nova	Friuli			0	0	1		225,248
+R	IIA	F020		2013-01-01		Volperassa (Volperossa)	Friuli			0	0	1		225,248
+R	IIA	F021		2013-01-01		Isola del Lovo	Friuli			0	0	1		225,248
+R	IIA	F022		2013-01-01		Mezzano	Friuli			0	0	1		225,248
+R	IIA	F023		2013-01-01		Valerian	Friuli			0	0	1		225,248
+R	IIA	F024		2013-01-01		Sentinella	Friuli			0	0	1		225,248
+R	IIA	F025		2013-01-01		Anfora	Friuli			0	0	1		225,248
+R	IIA	F026		2013-01-01		Ara Storta	Friuli			0	0	1		225,248
+R	IIA	F027		2013-01-01		Marina di Macia	Friuli			0	0	1		225,248
+R	IIA	F028		2013-01-01		Isola Campo	Friuli			0	0	1		225,248
+R	IIA	F029		2013-01-01		Banco d'Orio	Friuli			0	0	1		225,248
+R	IIA	F030		2013-01-01		Tanori	Friuli			0	0	1		225,248
+R	IIA	F031		2013-01-01		Verzelai	Friuli			0	0	1		225,248
+R	IIA	F032		2013-01-01		Isola Cona	Friuli			0	0	1		225,248
+R	IIA	F033		2013-01-01		Golame de Fora	Friuli			0	0	1		225,248
+R	IIA	F034		2013-01-01		Mota dei Biviacqua	Friuli			0	0	1		225,248
+R	IIA	F035		2013-01-01		Tapo dell'Uomo Morto	Friuli			0	0	1		225,248
+R	IIA	F036		2013-01-01		Ara de Piera	Friuli			0	0	1		225,248
+R	IIA	F037		2013-01-01		Isola dei Bioni	Friuli			0	0	1		225,248
+R	IIA	F038		2013-01-01		Isola di San Pietro	Friuli			0	0	1		225,248
+R	IIA	F039		2013-01-01		Isola Sant'Andrea	Friuli			0	0	1		225,248
+R	IIA	F040		2013-01-01		Isola Marinetta	Friuli			0	0	1		225,248
+R	IIA	F041		2013-01-01		Isola Martignano	Friuli			0	0	1		225,248
+R	IIA	F042		2013-01-01		Mandragole	Friuli			0	0	1		225,248
+R	IIA	F043		2013-01-01		Isola delle Conchiglie	Friuli			0	0	1		225,248
+R	IIA	F044		2013-01-01		Isola dei Gorghi	Friuli			0	0	1		225,248
+R	IIA	F045		2013-01-01		Isola Palma	Friuli			0	0	1		225,248
+R	IIA	G001		2013-01-01		Isola di Lampedusa	Pelagie			0	0	1		225,248
+R	IIA	G002		2013-01-01		Isola di Lampione	Pelagie			0	0	1		225,248
+R	IIA	G003		2013-01-01		Isola di Linosa	Pelagie			0	0	1		225,248
+R	IIA	G004		2013-01-01		Isola dei Conigli	Pelagie			0	0	1		225,248
+R	IIA	H001		2013-01-01		Isola Pantelleria	Pantelleria			0	0	1		225,248
+R	IIA	H002		2013-01-01		Faraglione Dietro l'Isola	Pantelleria			0	0	1		225,248
+R	IIA	H003		2013-01-01		Faraglione Tracino	Pantelleria			0	0	1		225,248
+R	IIA	H004		2013-01-01		Scogli del Formaggio	Pantelleria			0	0	1		225,248
+R	IIA	H005		2013-01-01		Galera della Salina	Pantelleria			0	0	1		225,248
+R	IIA	H006		2013-01-01		Scoglio di Punta del Duce	Pantelleria			0	0	1		225,248
+R	IIA	H007		2013-01-01		Gli Scoglietti	Pantelleria			0	0	1		225,248
+R	IIA	I001		2013-01-01		Isola Formica	Egadi			0	0	1		225,248
+R	IIA	I002		2013-01-01		Isola Galeotta	Egadi			0	0	1		225,248
+R	IIA	I003		2013-01-01		Isola Maraone	Egadi			0	0	1		225,248
+R	IIA	I004		2013-01-01		Isolotto Preveto	Egadi			0	0	1		225,248
+R	IIA	I005		2013-01-01		Scogli Porcelli	Egadi			0	0	1		225,248
+R	IIA	I006		2013-01-01		Isola di Levanzo	Egadi			0	0	1		225,248
+R	IIA	I007		2013-01-01		Isola Marettimo	Egadi			0	0	1		225,248
+R	IIA	I008		2013-01-01		Isola Favignana	Egadi			0	0	1		225,248
+R	IIA	I009		2013-01-01		Scoglio Cammello	Egadi			0	0	1		225,248
+R	IIA	I010		2013-01-01		Il Faraglione	Egadi			0	0	1		225,248
+R	IIA	I011		2013-01-01		Isola Galera	Egadi			0	0	1		225,248
+R	IIA	I012		2013-01-01		Scoglio Correnti	Egadi			0	0	1		225,248
+R	IIA	I013		2013-01-01		Scoglio Palumbo (Favignana)	Egadi			0	0	1		225,248
+R	IIA	J001		2013-01-01		Isola San Paolo	Cheradi			0	0	1		225,248
+R	IIA	J002		2013-01-01		Isola San Pietro	Cheradi			0	0	1		225,248
+R	IIA	K001		2013-01-01		Isola Cirella	Calabria			0	0	1		225,248
+R	IIA	K002		2013-01-01		Isola Dino	Calabria			0	0	1		225,248
+R	IIA	K003		2013-01-01		Scoglio Formicola	Calabria			0	0	1		225,248
+R	IIA	K004		2013-01-01		Scogli Coreca	Calabria			0	0	1		225,248
+R	IIA	K005		2013-01-01		Scoglio Cervaro	Calabria			0	0	1		225,248
+R	IIA	K006		2013-01-01		Scoglio Isca Maggiore	Calabria			0	0	1		225,248
+R	IIA	K007		2013-01-01		Isola dei Serpenti	Calabria			0	0	1		225,248
+R	IIA	K008		2013-01-01		Scoglio Regina	Calabria			0	0	1		225,248
+R	IIA	K009		2013-01-01		Scoglio Tre Fratelli	Calabria			0	0	1		225,248
+R	IIA	K010		2013-01-01		Scoglio di Guardia Piemontese	Calabria			0	0	1		225,248
+R	IIA	K011		2013-01-01		Scoglio Isca Minore	Calabria			0	0	1		225,248
+R	IIA	K012		2013-01-01		Scoglio Pietra Grande	Calabria			0	0	1		225,248
+R	IIA	K013		2013-01-01		Le Castella	Calabria			0	0	1		225,248
+R	IIA	K014		2013-01-01		Scoglio del Gabbiano	Calabria			0	0	1		225,248
+R	IIA	K015		2013-01-01		Scoglio Galera	Calabria			0	0	1		225,248
+R	IIA	K016		2013-01-01		Scoglio dell'Ulivo	Calabria			0	0	1		225,248
+R	IIA	K017		2013-01-01		Scoglio della Galea	Calabria			0	0	1		225,248
+R	IIA	K018		2013-01-01		Scoglio del Godano o Vadaro o Vadera	Calabria			0	0	1		225,248
+R	IIA	K019		2013-01-01		Scoglio Mantineo	Calabria			0	0	1		225,248
+R	IIA	K020		2013-01-01		Scoglio Arena o Praca o Galera	Calabria			0	0	1		225,248
+R	IIA	K021		2013-01-01		Scoglio Utonu	Calabria			0	0	1		225,248
+R	IIA	K022		2013-01-01		Scogli delle Formiche (I Furmiculi)	Calabria			0	0	1		225,248
+R	IIA	K023		2013-01-01		Scoglio Cala Lancuia	Calabria			0	0	1		225,248
+R	IIA	L001		2013-01-01		Isola del Tino	Liguria			0	0	1		225,248
+R	IIA	L002		2013-01-01		Isola del Tinetto	Liguria			0	0	1		225,248
+R	IIA	L003		2013-01-01		Torre Scuola	Liguria			0	0	1		225,248
+R	IIA	L004		2013-01-01		Scoglio Ferale	Liguria			0	0	1		225,248
+R	IIA	L005		2013-01-01		Scoglio di Cala Fornace	Liguria			0	0	1		225,248
+R	IIA	L006		2013-01-01		Scoglio Corvaccino	Liguria			0	0	1		225,248
+R	IIA	L007		2013-01-01		Scoglio Viciatiello	Liguria			0	0	1		225,248
+R	IIA	L008		2013-01-01		Scogli Punta delle Stelle	Liguria			0	0	1		225,248
+R	IIA	L009		2013-01-01		Scoglio Galera	Liguria			0	0	1		225,248
+R	IIA	L010		2013-01-01		Scoglio Grimaldo	Liguria			0	0	1		225,248
+R	IIA	L011		2013-01-01		Scoglio Rognosa	Liguria			0	0	1		225,248
+R	IIA	L012		2013-01-01		Scoglio del Frate	Liguria			0	0	1		225,248
+R	IIA	L013		2013-01-01		Scoglio Gagiato	Liguria			0	0	1		225,248
+R	IIA	L014		2013-01-01		Scoglio Nero o Padre Vecchio	Liguria			0	0	1		225,248
+R	IIA	L015		2013-01-01		Scoglio Giamio	Liguria			0	0	1		225,248
+R	IIA	L016		2013-01-01		Scoglio Stella	Liguria			0	0	1		225,248
+R	IIA	L017		2013-01-01		La Guardiola	Liguria			0	0	1		225,248
+R	IIA	L018		2013-01-01		Isola Gallinara	Liguria			0	0	1		225,248
+R	IIA	L019		2013-01-01		Isola di Bergeggi	Liguria			0	0	1		225,248
+R	IIA	L020		2013-01-01		Scogli I Pagliai	Liguria			0	0	1		225,248
+R	IIA	L021		2013-01-01		Scoglio delle Donne	Liguria			0	0	1		225,248
+R	IIA	L022		2013-01-01		Scoglio Margonara	Liguria			0	0	1		225,248
+R	IIA	L024		2013-01-01		Pria Pula	Liguria			0	0	1		225,248
+R	IIA	L025		2013-01-01		Scoglio Pietra Stella (Pria Stella)	Liguria			0	0	1		225,248
+R	IIA	L026		2013-01-01		Scoglio della Galeazza	Liguria			0	0	1		225,248
+R	IIA	L027		2013-01-01		Isola Palmaria	Liguria			0	0	1		225,248
+R	IIA	M001		2013-01-01		Isola Maddalena	Maddalena			0	0	1		225,248
+R	IIA	M002		2013-01-01		Isola Barrettini	Maddalena			0	0	1		225,248
+R	IIA	M003		2013-01-01		Isola delle Bisce	Maddalena			0	0	1		225,248
+R	IIA	M004		2013-01-01		Isola Budelli	Maddalena			0	0	1		225,248
+R	IIA	M005		2013-01-01		Isola Caprera	Maddalena			0	0	1		225,248
+R	IIA	M006		2013-01-01		Isola Corcelli	Maddalena			0	0	1		225,248
+R	IIA	M007		2013-01-01		La Presa	Maddalena			0	0	1		225,248
+R	IIA	M008		2013-01-01		Scogli I Monaci	Maddalena			0	0	1		225,248
+R	IIA	M009		2013-01-01		Isola Piana di Corcelli	Maddalena			0	0	1		225,248
+R	IIA	M010		2013-01-01		Isolotto Porco	Maddalena			0	0	1		225,248
+R	IIA	M011		2013-01-01		Isola Razzoli	Maddalena			0	0	1		225,248
+R	IIA	M012		2013-01-01		Isola Santa Maria	Maddalena			0	0	1		225,248
+R	IIA	M013		2013-01-01		Isola Santo Stefano	Maddalena			0	0	1		225,248
+R	IIA	M014		2013-01-01		Isola Spargi	Maddalena			0	0	1		225,248
+R	IIA	M015		2013-01-01		Scogli di Spargiotto	Maddalena			0	0	1		225,248
+R	IIA	M016		2013-01-01		Isola Chiesa	Maddalena			0	0	1		225,248
+R	IIA	M017		2013-01-01		Isolotto Roma	Maddalena			0	0	1		225,248
+R	IIA	M018		2013-01-01		Isolotti Paduleddi	Maddalena			0	0	1		225,248
+R	IIA	M019		2013-01-01		Isolotti Stramanari	Maddalena			0	0	1		225,248
+R	IIA	M020		2013-01-01		Scogli Spargiortelli	Maddalena			0	0	1		225,248
+R	IIA	M021		2013-01-01		Isolotti Barrettinelli	Maddalena			0	0	1		225,248
+R	IIA	M022		2013-01-01		Barrettinelli di Fuori	Maddalena			0	0	1		225,248
+R	IIA	M023		2013-01-01		Isola Capicciolu di Santa Maria	Maddalena			0	0	1		225,248
+R	IIA	M024		2013-01-01		Isola Cappuccini	Maddalena			0	0	1		225,248
+R	IIA	M025		2013-01-01		Isola Carpa	Maddalena			0	0	1		225,248
+R	IIA	M026		2013-01-01		Isola degl'Italiani	Maddalena			0	0	1		225,248
+R	IIA	M027		2013-01-01		Isola Giardinelli	Maddalena			0	0	1		225,248
+R	IIA	M028		2013-01-01		Isolotto Pecora	Maddalena			0	0	1		225,248
+R	IIA	M029		2013-01-01		Isola Abbatoggia	Maddalena			0	0	1		225,248
+R	IIA	M030		2013-01-01		Isole di Li Nibani	Maddalena			0	0	1		225,248
+R	IIA	M031		2013-01-01		Scogli di Cala Granara	Maddalena			0	0	1		225,248
+R	IIA	M032		2013-01-01		Scogli di Pietragliaccio	Maddalena			0	0	1		225,248
+R	IIA	M033		2013-01-01		Spargiotto	Maddalena			0	0	1		225,248
+R	IIA	M034		2013-01-01		Isolotto dei Fichi d'India	Maddalena			0	0	1		225,248
+R	IIA	M035		2013-01-01		Isolotti di Cala Lunga	Maddalena			0	0	1		225,248
+R	IIA	M036		2013-01-01		Isolotto Capicciolu di Razzoli	Maddalena			0	0	1		225,248
+R	IIA	M037		2013-01-01		Scogli delle Catene	Maddalena			0	0	1		225,248
+R	IIA	M038		2013-01-01		Scogli di (Punta) Marginetto	Maddalena			0	0	1		225,248
+R	IIA	M039		2013-01-01		Scogli di Punta Galera	Maddalena			0	0	1		225,248
+R	IIA	M040		2013-01-01		Scogli della Moneta	Maddalena			0	0	1		225,248
+R	IIA	M041		2013-01-01		Scogli di (Punta) Abbatoggia	Maddalena			0	0	1		225,248
+R	IIA	M042		2013-01-01		Scogli di Cala d'Inferno	Maddalena			0	0	1		225,248
+R	IIA	M043		2013-01-01		Scogli di Cala Maiore	Maddalena			0	0	1		225,248
+R	IIA	M044		2013-01-01		Scogli di (Punta) di Nido d'Aquila	Maddalena			0	0	1		225,248
+R	IIA	M045		2013-01-01		Scoglio Bianco	Maddalena			0	0	1		225,248
+R	IIA	M046		2013-01-01		Scoglio Nassu	Maddalena			0	0	1		225,248
+R	IIA	M047		2013-01-01		Isolotto dell'Aglio	Maddalena			0	0	1		225,248
+R	IIA	M048		2013-01-01		Scogli di Punta San Giorgio	Maddalena			0	0	1		225,248
+R	IIA	M049		2013-01-01		Isolotto di Punta Stagnali	Maddalena			0	0	1		225,248
+R	IIA	M050		2013-01-01		Isolotto Fico	Maddalena			0	0	1		225,248
+R	IIA	M051		2013-01-01		Isolotto Monaci	Maddalena			0	0	1		225,248
+R	IIA	M052		2013-01-01		Isolotto Lo Strangolato	Maddalena			0	0	1		225,248
+R	IIA	M053		2013-01-01		Scoglio Cannone	Maddalena			0	0	1		225,248
+R	IIA	M054		2013-01-01		Isola Mortorio	Maddalena			0	0	1		225,248
+R	IIA	M055		2013-01-01		Scogli Mortoriotto	Maddalena			0	0	1		225,248
+R	IIA	M056		2013-01-01		Le Camere	Maddalena			0	0	1		225,248
+R	IIA	M057		2013-01-01		Isola Soffi	Maddalena			0	0	1		225,248
+R	IIA	M058		2013-01-01		Isole dei Poveri	Maddalena			0	0	1		225,248
+R	IIA	M059		2013-01-01		Isola delle Rocche	Maddalena			0	0	1		225,248
+R	IIA	M060		2013-01-01		Isola Camize	Maddalena			0	0	1		225,248
+R	IIA	M061		2013-01-01		Isolotto di Cala Francese	Maddalena			0	0	1		225,248
+R	IIA	M062		2013-01-01		Isola delle Spugne	Maddalena			0	0	1		225,248
+R	IIA	M063		2013-01-01		Isolotto Scaviccio o Scabeccio	Maddalena			0	0	1		225,248
+R	IIA	M064		2013-01-01		Scogli di Missoggiu	Maddalena			0	0	1		225,248
+R	IIA	M065		2013-01-01		Isolotto di Punta Corsara	Maddalena			0	0	1		225,248
+R	IIA	N001		2013-01-01		Isola dell'Ogliastra	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	N002		2013-01-01		Scoglio Brecconi	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	N003		2013-01-01		Isolotto d'Ottiolo	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	N004		2013-01-01		Isolotti dei Pedrami	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	N005		2013-01-01		Isola Ruia di Porto Brandinchi	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	N006		2013-01-01		Isola Ruia di Capo Comino	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	N007		2013-01-01		Scoglio dei Cormorani	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	N008		2013-01-01		Scoglio Marchesa	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	N009		2013-01-01		Is Scoglius Arrubius	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	N010		2013-01-01		Scoglio Testa di Moro	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	N011		2013-01-01		Isola Proratora	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	N012		2013-01-01		Isola Cana	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	N013		2013-01-01		L'Isoledda	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	N014		2013-01-01		Scogli Cannazellu o Cannuzzellu	Nuorese-Ogliastra			0	0	1		225,248
+R	IIA	O001		2013-01-01		Isola Mal di Ventre	Planargia- Campidano			0	0	1		225,248
+R	IIA	O002		2013-01-01		Il Catalano	Planargia-Campidano			0	0	1		225,248
+R	IIA	O003		2013-01-01		Scogli di Corona Niedda	Planargia-Campidano			0	0	1		225,248
+R	IIA	O004		2013-01-01		Isolotto Peloso o de Sa Tonnara	Planargia- Campidano			0	0	1		225,248
+R	IIA	O005		2013-01-01		Sa Mesalonga	Planargia- Campidano			0	0	1		225,248
+R	IIA	O006		2013-01-01		Scogli di S'Archittu	Planargia-Campidano			0	0	1		225,248
+R	IIA	O007		2013-01-01		Scoglio del Faro Vecchio	Planargia- Campidano			0	0	1		225,248
+R	IIA	O008		2013-01-01		Isolotto Caogheddas	Planargia- Campidano			0	0	1		225,248
+R	IIA	O009		2013-01-01		Il Catalanetto	Planargia- Campidano			0	0	1		225,248
+R	IIA	O010		2013-01-01		Isola Rossa di Bosa	Planargia- Campidano			0	0	1		225,248
+R	IIA	O011		2013-01-01		Isolotto Pagliosa	Planargia- Campidano			0	0	1		225,248
+R	IIA	O012		2013-01-01		Isolotto Managu	Planargia- Campidano			0	0	1		225,248
+R	IIA	P001		2013-01-01		Isolotto dell'Eremita o San Paolo	Puglia			0	0	1		225,248
+R	IIA	P002		2013-01-01		La Cassa	Puglia			0	0	1		225,248
+R	IIA	P003		2013-01-01		Pedagna Grande	Puglia			0	0	1		225,248
+R	IIA	P004		2013-01-01		Scogli Apani o dei Lapani	Puglia			0	0	1		225,248
+R	IIA	P005		2013-01-01		Scoglio Guaceto Maggiore	Puglia			0	0	1		225,248
+R	IIA	P007		2013-01-01		Isola Sant'Andrea	Puglia			0	0	1		225,248
+R	IIA	P008		2013-01-01		Isolotto Giorgio Treviso	Puglia			0	0	1		225,248
+R	IIA	P009		2013-01-01		Isolotto Monacello	Puglia			0	0	1		225,248
+R	IIA	P010		2013-01-01		Isolotto La Chiesa	Puglia			0	0	1		225,248
+R	IIA	P011		2013-01-01		Isolotto Traversa	Puglia			0	0	1		225,248
+R	IIA	P012		2013-01-01		Scoglio Cavallo	Puglia			0	0	1		225,248
+R	IIA	P013		2013-01-01		Scoglio Guaceto Minore	Puglia			0	0	1		225,248
+R	IIA	P014		2013-01-01		Scoglio Guaceto di Fuori	Puglia			0	0	1		225,248
+R	IIA	P015		2013-01-01		Scoglio Pantanagianni	Puglia			0	0	1		225,248
+R	IIA	P016		2013-01-01		Scoglio di Portonuovo	Puglia			0	0	1		225,248
+R	IIA	P017		2013-01-01		Isola di Campi	Puglia			0	0	1		225,248
+R	IIA	P018		2013-01-01		Isola La Chianca	Puglia			0	0	1		225,248
+R	IIA	P019		2013-01-01		Scoglio Sant'Eufemia	Puglia			0	0	1		225,248
+R	IIA	P020		2013-01-01		Scoglio Paradiso	Puglia			0	0	1		225,248
+R	IIA	P021		2013-01-01		La Gattarella	Puglia			0	0	1		225,248
+R	IIA	P022		2013-01-01		Scoglio di Portonuovo di Fuori	Puglia			0	0	1		225,248
+R	IIA	P023		2013-01-01		Scoglio di Campi	Puglia			0	0	1		225,248
+R	IIA	P024		2013-01-01		Isola Sant'Andrea	Puglia			0	0	1		225,248
+R	IIA	P025		2013-01-01		Isola Grande di Porto Cesareo o dei Conigli	Puglia			0	0	1		225,248
+R	IIA	P026		2013-01-01		Isola della Malva o della Chianca	Puglia			0	0	1		225,248
+R	IIA	P027		2013-01-01		Isola del Capezzone	Puglia			0	0	1		225,248
+R	IIA	P028		2013-01-01		Scoglio del Campo (Gallipoli)	Puglia			0	0	1		225,248
+R	IIA	P029		2013-01-01		Scoglio Pazzi	Puglia			0	0	1		225,248
+R	IIA	P030		2013-01-01		Scoglio Santo Emiliano	Puglia			0	0	1		225,248
+R	IIA	P031		2013-01-01		Scogli Due Sorelle	Puglia			0	0	1		225,248
+R	IIA	P032		2013-01-01		Scoglio Fanciulla	Puglia			0	0	1		225,248
+R	IIA	P033		2013-01-01		Gallipoli	Puglia			0	0	1		225,248
+R	IIA	P034		2013-01-01		Scoglio Giurlita	Puglia			0	0	1		225,248
+R	IIA	P035		2013-01-01		Scoglio Tondo	Puglia			0	0	1		225,248
+R	IIA	P036		2013-01-01		Isola dei Gabbiani	Puglia			0	0	1		225,248
+R	IIA	P037		2013-01-01		Isola Mogghia o Moiusa	Puglia			0	0	1		225,248
+R	IIA	P038		2013-01-01		Isola degli Scheletri	Puglia			0	0	1		225,248
+R	IIA	P039		2013-01-01		Isolotto Chianca d'Abramo	Puglia			0	0	1		225,248
+R	IIA	P040		2013-01-01		Isolotto Cuccio	Puglia			0	0	1		225,248
+R	IIA	P041		2013-01-01		Isola della Scogliera o Piccola (inclusa Isola di Mezzo)	Puglia			0	0	1		225,248
+R	IIA	P042		2013-01-01		Scoglio Occhio I	Puglia			0	0	1		225,248
+R	IIA	P043		2013-01-01		Scoglio Occhio II	Puglia			0	0	1		225,248
+R	IIA	P044		2013-01-01		Scoglio Penna	Puglia			0	0	1		225,248
+R	IIA	P045		2013-01-01		Le Formiche (San Foca)	Puglia			0	0	1		225,248
+R	IIA	P046		2013-01-01		Isolotto di Torre Sant'Isidoro	Puglia			0	0	1		225,248
+R	IIA	P047		2013-01-01		Scoglio della Discesa	Puglia			0	0	1		225,248
+R	IIA	P048		2013-01-01		Scoglio dei Capperi	Puglia			0	0	1		225,248
+R	IIA	P049		2013-01-01		Scoglio dei Piccioni	Puglia			0	0	1		225,248
+R	IIA	P050		2013-01-01		Scoglio La Terra	Puglia			0	0	1		225,248
+R	IIA	P051		2013-01-01		Scoglio Qunta	Puglia			0	0	1		225,248
+R	IIA	P052		2013-01-01		Scoglio Scattapignata	Puglia			0	0	1		225,248
+R	IIA	P053		2013-01-01		Scoglio della Specchia	Puglia			0	0	1		225,248
+R	IIA	P054		2013-01-01		Scoglio Pinuso	Puglia			0	0	1		225,248
+R	IIA	P055		2013-01-01		Scoglio Fincari	Puglia			0	0	1		225,248
+R	IIA	P056		2013-01-01		Scoglio Iannaredda	Puglia			0	0	1		225,248
+R	IIA	P057		2013-01-01		Scoglio Pizzicazzi	Puglia			0	0	1		225,248
+R	IIA	P058		2013-01-01		Scoglio Papuscia	Puglia			0	0	1		225,248
+R	IIA	P059		2013-01-01		Scoglio Sulasce	Puglia			0	0	1		225,248
+R	IIA	P060		2013-01-01		Scoglio Prusieddi	Puglia			0	0	1		225,248
+R	IIA	P061		2013-01-01		Scoglio Grosso	Puglia			0	0	1		225,248
+R	IIA	P062		2013-01-01		Scoglio della Gaggiana	Puglia			0	0	1		225,248
+R	IIA	P063		2013-01-01		Scoglio di Santa Caterina	Puglia			0	0	1		225,248
+R	IIA	P064		2013-01-01		Scoglio Fontanelle	Puglia			0	0	1		225,248
+R	IIA	P065		2013-01-01		Scoglio Macolone	Puglia			0	0	1		225,248
+R	IIA	P066		2013-01-01		Scoglio Piccolo	Puglia			0	0	1		225,248
+R	IIA	P067		2013-01-01		Isola Bassa	Puglia			0	0	1		225,248
+R	IIA	P068		2013-01-01		Scoglio San Nicola (Otranto)	Puglia			0	0	1		225,248
+R	IIA	P069		2013-01-01		Scoglio I Paduli (Ugento)	Puglia			0	0	1		225,248
+R	IIA	P070		2013-01-01		Scoglio di Torre dell'Ovo	Puglia			0	0	1		225,248
+R	IIA	P071		2013-01-01		Taranto Vecchia	Puglia			0	0	1		225,248
+R	IIA	P072		2013-01-01		Scoglio di Manaccora	Puglia			0	0	1		225,248
+R	IIA	P073		2013-01-01		Scoglio della Testa del Gargano	Puglia			0	0	1		225,248
+R	IIA	P074		2013-01-01		Scoglio Le Forbici o Faraglione della Baia dei Mergoli	Puglia			0	0	1		225,248
+R	IIA	Q001		2013-01-01		Isola San Domino	Tremiti			0	0	1		225,248
+R	IIA	Q002		2013-01-01		Isola San Nicola	Tremiti			0	0	1		225,248
+R	IIA	Q003		2013-01-01		Isola Caprara o Capraia	Tremiti			0	0	1		225,248
+R	IIA	Q004		2013-01-01		Isola Pianosa	Tremiti			0	0	1		225,248
+R	IIA	Q005		2013-01-01		Cacio Cavallo	Tremiti			0	0	1		225,248
+R	IIA	Q006		2013-01-01		Il Cretaccio o Cretazzo	Tremiti			0	0	1		225,248
+R	IIA	Q007		2013-01-01		I Pagliai	Tremiti			0	0	1		225,248
+R	IIA	Q008		2013-01-01		Scoglio La Vecchia	Tremiti			0	0	1		225,248
+R	IIA	R001		2013-01-01		Isola di Ponza	Lazio			0	0	1		225,248
+R	IIA	R002		2013-01-01		Isola di Gavi	Lazio			0	0	1		225,248
+R	IIA	R003		2013-01-01		Scoglio La Botte	Lazio			0	0	1		225,248
+R	IIA	R004		2013-01-01		Scoglio Cappello	Lazio			0	0	1		225,248
+R	IIA	R005		2013-01-01		Le Formiche	Lazio			0	0	1		225,248
+R	IIA	R006		2013-01-01		Le Galere	Lazio			0	0	1		225,248
+R	IIA	R007		2013-01-01		Faraglione di Mezzogiorno	Lazio			0	0	1		225,248
+R	IIA	R008		2013-01-01		Isola di Palmarola	Lazio			0	0	1		225,248
+R	IIA	R009		2013-01-01		I Piatti	Lazio			0	0	1		225,248
+R	IIA	R010		2013-01-01		Isola di Santo Stefano	Lazio			0	0	1		225,248
+R	IIA	R011		2013-01-01		Isola di Ventotene	Lazio			0	0	1		225,248
+R	IIA	R012		2013-01-01		Isola di Zannone	Lazio			0	0	1		225,248
+R	IIA	R013		2013-01-01		La Nave di Fuori (Ventotene)	Lazio			0	0	1		225,248
+R	IIA	R014		2013-01-01		Scoglio Ravia	Lazio			0	0	1		225,248
+R	IIA	R015		2013-01-01		Scoglio Rosso (Punta Madonna)	Lazio			0	0	1		225,248
+R	IIA	R016		2013-01-01		Scoglio Suvace	Lazio			0	0	1		225,248
+R	IIA	R017		2013-01-01		Scogli di Calzone Muto	Lazio			0	0	1		225,248
+R	IIA	R018		2013-01-01		Scoglio del Parroco	Lazio			0	0	1		225,248
+R	IIA	R019		2013-01-01		Scoglio Evangelista	Lazio			0	0	1		225,248
+R	IIA	R020		2013-01-01		I Faraglioni di Maria Rosa (Ponza)	Lazio			0	0	1		225,248
+R	IIA	R021		2013-01-01		Faraglioni della Madonna	Lazio			0	0	1		225,248
+R	IIA	R022		2013-01-01		Scoglio Forcina	Lazio			0	0	1		225,248
+R	IIA	R023		2013-01-01		Scoglio Fucile	Lazio			0	0	1		225,248
+R	IIA	R024		2013-01-01		Scoglio Monaco	Lazio			0	0	1		225,248
+R	IIA	R025		2013-01-01		Scoglio Pallante	Lazio			0	0	1		225,248
+R	IIA	R026		2013-01-01		Scoglio San Silverio	Lazio			0	0	1		225,248
+R	IIA	R027		2013-01-01		Le Scoglietelle	Lazio			0	0	1		225,248
+R	IIA	R028		2013-01-01		Sconciglio Grande (Ventotene)	Lazio			0	0	1		225,248
+R	IIA	R029		2013-01-01		Scoglio Scuncillo	Lazio			0	0	1		225,248
+R	IIA	R030		2013-01-01		Scoglio Spaccapolpi o Calzone del Parroco o Arco Naturale	Lazio			0	0	1		225,248
+R	IIA	R031		2013-01-01		La Nave di Serapo	Lazio			0	0	1		225,248
+R	IIA	R032		2013-01-01		Isola Piana di Mezzo	Lazio			0	0	1		225,248
+R	IIA	R033		2013-01-01		Scoglio Rosso (Piana di Mezzo) o Grosso	Lazio			0	0	1		225,248
+R	IIA	R034		2013-01-01		Scoglio Romanello di Battaglia	Lazio			0	0	1		225,248
+R	IIA	R035		2013-01-01		Sconciglio Piccolo (Ventotene)	Lazio			0	0	1		225,248
+R	IIA	R036		2013-01-01		Isola Piana di Mezzogiorno (Palmarola)	Lazio			0	0	1		225,248
+R	IIA	R037		2013-01-01		Faraglione Aniello Antonio	Lazio			0	0	1		225,248
+R	IIA	R038		2013-01-01		Scoglio Fungo	Lazio			0	0	1		225,248
+R	IIA	R039		2013-01-01		Lo Scoglietello di Ventotene	Lazio			0	0	1		225,248
+R	IIA	R040		2013-01-01		Il Pirgo	Lazio			0	0	1		225,248
+R	IIA	R041		2013-01-01		Scoglio dei Saraceni	Lazio			0	0	1		225,248
+R	IIA	R042		2013-01-01		Torre Astura	Lazio			0	0	1		225,248
+R	IIA	R043		2013-01-01		Piatto di Fuori	Ponziane Islands			0	0	1		225,248
+R	IIA	S001		2013-01-01		Pietra Patella	Sicilia			0	0	1		225,248
+R	IIA	S002		2013-01-01		Scogli Guicciarda	Sicilia			0	0	1		225,248
+R	IIA	S003		2013-01-01		Isola dei Ciclopi o Il Faraglione Grande	Sicilia			0	0	1		225,248
+R	IIA	S004		2013-01-01		Lachea o Isola di Aci	Sicilia			0	0	1		225,248
+R	IIA	S005		2013-01-01		I Faraglioni dei Ciclopi	Sicilia			0	0	1		225,248
+R	IIA	S006		2013-01-01		Isola Bella	Sicilia			0	0	1		225,248
+R	IIA	S007		2013-01-01		Pietra (o Scoglio) di Patti	Sicilia			0	0	1		225,248
+R	IIA	S008		2013-01-01		Le Pietre Nere	Sicilia			0	0	1		225,248
+R	IIA	S009		2013-01-01		Scoglio San Biagio	Sicilia			0	0	1		225,248
+R	IIA	S010		2013-01-01		Scoglio di Brolo	Sicilia			0	0	1		225,248
+R	IIA	S011		2013-01-01		Scoglio di Patti	Sicilia			0	0	1		225,248
+R	IIA	S012		2013-01-01		Scoglio dello Zio Gennaro (U'Zu'Jannaru)	Sicilia			0	0	1		225,248
+R	IIA	S013		2013-01-01		Scoglio delle Sirene (Scogghiu a longa)	Sicilia			0	0	1		225,248
+R	IIA	S014		2013-01-01		Scoglio delle Formica (Capo d'Orlando)	Sicilia			0	0	1		225,248
+R	IIA	S015		2013-01-01		Isola delle Femmine	Sicilia			0	0	1		225,248
+R	IIA	S016		2013-01-01		Scoglio Formica	Sicilia			0	0	1		225,248
+R	IIA	S017		2013-01-01		Isola dei Porri	Sicilia			0	0	1		225,248
+R	IIA	S018		2013-01-01		Scoglio Iannuzzo	Sicilia			0	0	1		225,248
+R	IIA	S019		2013-01-01		Sicilia	Sicilia			0	0	1		225,248
+R	IIA	S020		2013-01-01		Isola delle Correnti	Sicilia			0	0	1		225,248
+R	IIA	S021		2013-01-01		Isola di Capo Passero	Sicilia			0	0	1		225,248
+R	IIA	S022		2013-01-01		Isola Vendicari	Sicilia			0	0	1		225,248
+R	IIA	S023		2013-01-01		I Due Fratelli	Sicilia			0	0	1		225,248
+R	IIA	S024		2013-01-01		Isola Grande di Marzamemi	Sicilia			0	0	1		225,248
+R	IIA	S025		2013-01-01		Ortigia	Sicilia			0	0	1		225,248
+R	IIA	S026		2013-01-01		Isola Piccola di Marzamemi	Sicilia			0	0	1		225,248
+R	IIA	S027		2013-01-01		Ognina	Sicilia			0	0	1		225,248
+R	IIA	S028		2013-01-01		Scoglio a Pizzo	Sicilia			0	0	1		225,248
+R	IIA	S029		2013-01-01		Isola delle Palme	Sicilia			0	0	1		225,248
+R	IIA	S030		2013-01-01		Scoglio dei Maltesi	Sicilia			0	0	1		225,248
+R	IIA	S031		2013-01-01		Scoglio di Milocca	Sicilia			0	0	1		225,248
+R	IIA	S032		2013-01-01		Scoglio Galera	Sicilia			0	0	1		225,248
+R	IIA	S033		2013-01-01		Isola dei Cani	Sicilia			0	0	1		225,248
+R	IIA	S034		2013-01-01		Scoglio dei Cappuccini	Sicilia			0	0	1		225,248
+R	IIA	S035		2013-01-01		Scogli Castelluccio	Sicilia			0	0	1		225,248
+R	IIA	S036		2013-01-01		Forte Vittoria e Forte Garzia	Sicilia			0	0	1		225,248
+R	IIA	S037		2013-01-01		Torre Avalos	Sicilia			0	0	1		225,248
+R	IIA	S038		2013-01-01		Isola Asinelli	Sicilia			0	0	1		225,248
+R	IIA	S039		2013-01-01		Isolotto Colombaia	Sicilia			0	0	1		225,248
+R	IIA	S040		2013-01-01		Scoglio Scialandro	Sicilia			0	0	1		225,248
+R	IIA	S041		2013-01-01		Scoglio Mal Consiglio	Sicilia			0	0	1		225,248
+R	IIA	S042		2013-01-01		Santa Maria	Sicilia			0	0	1		225,248
+R	IIA	S043		2013-01-01		Isola Lunga o Grande	Sicilia			0	0	1		225,248
+R	IIA	S044		2013-01-01		La Scuola	Sicilia			0	0	1		225,248
+R	IIA	S045		2013-01-01		San Pantaleo o Mozia	Sicilia			0	0	1		225,248
+R	IIA	S046		2013-01-01		Scoglio Scibiliana	Sicilia			0	0	1		225,248
+R	IIA	S047		2013-01-01		Isolotto Cala Rossa	Sicilia			0	0	1		225,248
+R	IIA	S048		2013-01-01		Scoglio San Nicola o Rocca San Nicola	Sicilia			0	0	1		225,248
+R	IIA	T001		2013-01-01		Isola di Giannutri	Toscana			0	0	1		225,248
+R	IIA	T002		2013-01-01		Isola del Giglio	Toscana			0	0	1		225,248
+R	IIA	T003		2013-01-01		Isola Argentarola	Toscana			0	0	1		225,248
+R	IIA	T004		2013-01-01		Formiche di Burano	Toscana			0	0	1		225,248
+R	IIA	T005		2013-01-01		Formica Grande di Grosseto	Toscana			0	0	1		225,248
+R	IIA	T006		2013-01-01		L'Isolotto	Toscana			0	0	1		225,248
+R	IIA	T007		2013-01-01		Scoglio dello Sparviero	Toscana			0	0	1		225,248
+R	IIA	T008		2013-01-01		Scoglio Corallo (Secca di Cala Piccola)	Toscana			0	0	1		225,248
+R	IIA	T009		2013-01-01		Scogli Porchetti o Porcarelli	Toscana			0	0	1		225,248
+R	IIA	T010		2013-01-01		Le Scole	Toscana			0	0	1		225,248
+R	IIA	T011		2013-01-01		Scoglio del Corvo	Toscana			0	0	1		225,248
+R	IIA	T012		2013-01-01		Pietralta (Scoglio di Mezzofranco)	Toscana			0	0	1		225,248
+R	IIA	T013		2013-01-01		Isola della Cappa	Toscana			0	0	1		225,248
+R	IIA	T014		2013-01-01		Formica Piccola di Grosseto	Toscana			0	0	1		225,248
+R	IIA	T015		2013-01-01		Isola Rossa	Toscana			0	0	1		225,248
+R	IIA	T016		2013-01-01		Isola d'Elba	Toscana			0	0	1		225,248
+R	IIA	T017		2013-01-01		Isola Corbella	Toscana			0	0	1		225,248
+R	IIA	T018		2013-01-01		I Gemini	Toscana			0	0	1		225,248
+R	IIA	T019		2013-01-01		Scoglio della Meloria (Fanale Sud)	Toscana			0	0	1		225,248
+R	IIA	T020		2013-01-01		Scoglio Ogliera	Toscana			0	0	1		225,248
+R	IIA	T021		2013-01-01		Isolotto d'Ortano	Toscana			0	0	1		225,248
+R	IIA	T022		2013-01-01		Isola Palmaiola	Toscana			0	0	1		225,248
+R	IIA	T023		2013-01-01		Scoglio di Remaiolo	Toscana			0	0	1		225,248
+R	IIA	T024		2013-01-01		Scoglietto	Toscana			0	0	1		225,248
+R	IIA	T025		2013-01-01		Isola Paolina o La Sedia di Paolina	Toscana			0	0	1		225,248
+R	IIA	T026		2013-01-01		Scoglio d'Africa o Affrico	Toscana			0	0	1		225,248
+R	IIA	T027		2013-01-01		Isola dei Topi	Toscana			0	0	1		225,248
+R	IIA	T028		2013-01-01		Scoglio della Triglia	Toscana			0	0	1		225,248
+R	IIA	T029		2013-01-01		Isola Gorgona	Toscana			0	0	1		225,248
+R	IIA	T030		2013-01-01		Isola di Montecristo	Toscana			0	0	1		225,248
+R	IIA	T031		2013-01-01		Isola Pianosa	Toscana			0	0	1		225,248
+R	IIA	T032		2013-01-01		Isola Cerboli	Toscana			0	0	1		225,248
+R	IIA	T033		2013-01-01		Falconcino	Toscana			0	0	1		225,248
+R	IIA	T034		2013-01-01		Scoglio Santa Lucia	Toscana			0	0	1		225,248
+R	IIA	T035		2013-01-01		Isola Capraia	Toscana			0	0	1		225,248
+R	IIA	T036		2013-01-01		Gli Scoglietti (Capraia)	Toscana			0	0	1		225,248
+R	IIA	T037		2013-01-01		Formiche della Zanca	Toscana			0	0	1		225,248
+R	IIA	T038		2013-01-01		La Scarpa	Toscana			0	0	1		225,248
+R	IIA	T039		2013-01-01		La Scola	Toscana			0	0	1		225,248
+R	IIA	T040		2013-01-01		I Corbelli	Toscana			0	0	1		225,248
+R	IIA	T041		2013-01-01		Isolotto dei Liscoli	Toscana			0	0	1		225,248
+R	IIA	T042		2013-01-01		Scogli di Vada	Toscana			0	0	1		225,248
+R	IIA	T043		2013-01-01		La Nave dell'Elba	Toscana			0	0	1		225,248
+R	IIA	T044		2013-01-01		Scoglio del Falcone	Toscana			0	0	1		225,248
+R	IIA	T045		2013-01-01		Torre della Meloria	Toscana			0	0	1		225,248
+R	IIA	T046		2013-01-01		Formiche di Montecristo	Toscana			0	0	1		225,248
+R	IIA	T047		2013-01-01		Isola dei Gabbiani o La Peraiola	Toscana			0	0	1		225,248
+R	IIA	T048		2013-01-01		Le Formiche di Capraia	Toscana			0	0	1		225,248
+R	IIA	T049		2013-01-01		I Bricchetti	Toscana			0	0	1		225,248
+R	IIA	T050		2013-01-01		Lo Scoglione	Toscana			0	0	1		225,248
+R	IIA	T051		2013-01-01		Scoglio del Gatto	Toscana			0	0	1		225,248
+R	IIA	T052		2013-01-01		Scoglio Forano	Toscana			0	0	1		225,248
+R	IIA	T053		2013-01-01		Scoglio del Reciso	Toscana			0	0	1		225,248
+R	IIA	T054		2013-01-01		Gli Scoglietti (Elba)	Toscana			0	0	1		225,248
+R	IIA	T055		2013-01-01		Scoglio della Capra	Toscana			0	0	1		225,248
+R	IIA	T056		2013-01-01		Il Dattero	Toscana			0	0	1		225,248
+R	IIA	T057		2013-01-01		Scoglio La Chiana	Toscana			0	0	1		225,248
+R	IIA	T058		2013-01-01		Scoglietto (Capo d'Enfola)	Toscana			0	0	1		225,248
+R	IIA	T059		2013-01-01		Scoglio di Acquaviva	Toscana			0	0	1		225,248
+R	IIA	T060		2013-01-01		Scoglio Moro	Toscana			0	0	1		225,248
+R	IIA	T061		2013-01-01		Scoglio di Punta di Cavoli	Toscana			0	0	1		225,248
+R	IIA	T062		2013-01-01		Scoglio di Punta Le Tombe	Toscana			0	0	1		225,248
+R	IIA	T063		2013-01-01		Scoglio di Punta di Barabarca	Toscana			0	0	1		225,248
+R	IIA	T064		2013-01-01		Scoglio Stella	Toscana			0	0	1		225,248
+R	IIA	T065		2013-01-01		Scoglio dell�Accademia Navale	Toscana			0	0	1		225,248
+R	IIA	T066		2013-01-01		Scoglio della Meloria (Fanale Nord)	Toscana			0	0	1		225,248
+R	IIA	U001		2013-01-01		Isola di Ustica	Ustica			0	0	1		225,248
+R	IIA	U002		2013-01-01		Colombara	Ustica			0	0	1		225,248
+R	IIA	U003		2013-01-01		Scoglio del Medico	Ustica			0	0	1		225,248
+R	IIA	V001		2013-01-01		Cason Prime Poste	Veneto			0	0	1		225,248
+R	IIA	V002		2013-01-01		Cason Mille Campi	Veneto			0	0	1		225,248
+R	IIA	V003		2013-01-01		Cason delle Pescine o Cason Tagiae	Veneto			0	0	1		225,248
+R	IIA	V004		2013-01-01		(ex Forte) San Secondo	Veneto			0	0	1		225,248
+R	IIA	V005		2013-01-01		Campalto	Veneto			0	0	1		225,248
+R	IIA	V006		2013-01-01		(ex Batteria) Tessera	Veneto			0	0	1		225,248
+R	IIA	V007		2013-01-01		Murano	Veneto			0	0	1		225,248
+R	IIA	V008		2013-01-01		(ex Batteria) Carbonera	Veneto			0	0	1		225,248
+R	IIA	V009		2013-01-01		San Giacomo in Palude	Veneto			0	0	1		225,248
+R	IIA	V010		2013-01-01		Madonna del Monte	Veneto			0	0	1		225,248
+R	IIA	V011		2013-01-01		Buel del Lovo	Veneto			0	0	1		225,248
+R	IIA	V012		2013-01-01		Mazzorbo	Veneto			0	0	1		225,248
+R	IIA	V013		2013-01-01		Burano	Veneto			0	0	1		225,248
+R	IIA	V014		2013-01-01		Torcello	Veneto			0	0	1		225,248
+R	IIA	V015		2013-01-01		Santa Cristina	Veneto			0	0	1		225,248
+R	IIA	V016		2013-01-01		La Salina	Veneto			0	0	1		225,248
+R	IIA	V017		2013-01-01		La Cura	Veneto			0	0	1		225,248
+R	IIA	V018		2013-01-01		Sant'Erasmo	Veneto			0	0	1		225,248
+R	IIA	V019		2013-01-01		San Francesco nel Deserto	Veneto			0	0	1		225,248
+R	IIA	V020		2013-01-01		Le Vignole	Veneto			0	0	1		225,248
+R	IIA	V021		2013-01-01		La Certosa	Veneto			0	0	1		225,248
+R	IIA	V022		2013-01-01		San Servolo	Veneto			0	0	1		225,248
+R	IIA	V023		2013-01-01		San Lazzaro degli Armeni	Veneto			0	0	1		225,248
+R	IIA	V024		2013-01-01		Lazzaretto Vecchio	Veneto			0	0	1		225,248
+R	IIA	V025		2013-01-01		San Giorgio Maggiore	Veneto			0	0	1		225,248
+R	IIA	V026		2013-01-01		La Grazia	Veneto			0	0	1		225,248
+R	IIA	V027		2013-01-01		La Giudecca	Veneto			0	0	1		225,248
+R	IIA	V028		2013-01-01		San Clemente	Veneto			0	0	1		225,248
+R	IIA	V029		2013-01-01		Sacca Sessola	Veneto			0	0	1		225,248
+R	IIA	V030		2013-01-01		Santo Spirito	Veneto			0	0	1		225,248
+R	IIA	V031		2013-01-01		Poveglia	Veneto			0	0	1		225,248
+R	IIA	V032		2013-01-01		Campana (ex Batteria Podo o Forte di Sopra)	Veneto			0	0	1		225,248
+R	IIA	V033		2013-01-01		(ex Batteria) Poveglia (o Forte di Mezzo)	Veneto			0	0	1		225,248
+R	IIA	V034		2013-01-01		(ex Batteria) Fisolo (o Forte di Sotto)	Veneto			0	0	1		225,248
+R	IIA	V035		2013-01-01		Lido	Veneto			0	0	1		225,248
+R	IIA	V036		2013-01-01		Pellestrina	Veneto			0	0	1		225,248
+R	IIA	V037		2013-01-01		(ex Forte) Sant'Angelo della Polvere	Veneto			0	0	1		225,248
+R	IIA	V038		2013-01-01		San Giorgio in Alga	Veneto			0	0	1		225,248
+R	IIA	V039		2013-01-01		Isola delle Tresse (o Trezze)	Veneto			0	0	1		225,248
+R	IIA	V040		2013-01-01		(ex Ridotto di) Crevan	Veneto			0	0	1		225,248
+R	IIA	V041		2013-01-01		Lazzaretto Nuovo	Veneto			0	0	1		225,248
+R	IIA	V042		2013-01-01		San Ariano	Veneto			0	0	1		225,248
+R	IIA	V043		2013-01-01		San Michele	Veneto			0	0	1		225,248
+R	IIA	V044		2013-01-01		Ottagono degli Alberoni	Veneto			0	0	1		225,248
+R	IIA	V045		2013-01-01		Ottagono abbandonato	Veneto			0	0	1		225,248
+R	IIA	V046		2013-01-01		Ottogono di San Pietro (o Il Bastione)	Veneto			0	0	1		225,248
+R	IIA	V047		2013-01-01		Ottagono di Ca'Roman	Veneto			0	0	1		225,248
+R	IIA	V048		2013-01-01		Venezia	Veneto			0	0	1		225,248
+R	IIA	V049		2013-01-01		(ex Faro) Spignon	Veneto			0	0	1		225,248
+R	IIA	V050		2013-01-01		San Giuliano	Veneto			0	0	1		225,248
+R	IIA	V051		2013-01-01		Isola dell'Aleghero	Veneto			0	0	1		225,248
+R	IIA	V052		2013-01-01		Chioggia	Veneto			0	0	1		225,248
+R	IIA	V053		2013-01-01		Motta San Lorenzo	Veneto			0	0	1		225,248
+R	IIA	V054		2013-01-01		Motta dei Cunicci	Veneto			0	0	1		225,248
+R	IIA	V055		2013-01-01		Motta di Bombae	Veneto			0	0	1		225,248
+R	IIA	V056		2013-01-01		Motta Val in Pozzo	Veneto			0	0	1		225,248
+R	IIA	V057		2013-01-01		Motta Val Grande	Veneto			0	0	1		225,248
+R	IIA	V058		2013-01-01		Motta del Cornio Vecchio	Veneto			0	0	1		225,248
+R	IIA	V059		2013-01-01		Motta del Cornio Nuovo	Veneto			0	0	1		225,248
+R	IIA	V060		2013-01-01		Torson di Sotto	Veneto			0	0	1		225,248
+R	IIA	V061		2013-01-01		Casone Barenon	Veneto			0	0	1		225,248
+R	IIA	V062		2013-01-01		Motta dell'Aseo	Veneto			0	0	1		225,248
+R	IIA	V063		2013-01-01		Casone Lanzoni	Veneto			0	0	1		225,248
+R	IIA	V064		2013-01-01		Monte dell'Oro	Veneto			0	0	1		225,248
+R	IIA	V065		2013-01-01		Falconera (Laguna di Venezia)	Veneto			0	0	1		225,248
+R	IIA	V066		2013-01-01		Motta Peta di Bo	Veneto			0	0	1		225,248
+R	IIA	V067		2013-01-01		C� Zane	Veneto			0	0	1		225,248
+R	IIA	W001		2013-01-01		Isola della Bocca	Gallura			0	0	1		225,248
+R	IIA	W002		2013-01-01		Isola di Figarolo	Gallura			0	0	1		225,248
+R	IIA	W003		2013-01-01		Garofani	Gallura			0	0	1		225,248
+R	IIA	W004		2013-01-01		Isola Tavolara	Gallura			0	0	1		225,248
+R	IIA	W005		2013-01-01		Barca Sconcia	Gallura			0	0	1		225,248
+R	IIA	W006		2013-01-01		Isola Piana (di Tavolara)	Gallura			0	0	1		225,248
+R	IIA	W007		2013-01-01		Isolotto Rosso o Reulino	Gallura			0	0	1		225,248
+R	IIA	W008		2013-01-01		Isola dei Topi (di Tavolara) o Verde	Gallura			0	0	1		225,248
+R	IIA	W009		2013-01-01		Isola Molara	Gallura			0	0	1		225,248
+R	IIA	W010		2013-01-01		Isola Molarotto	Gallura			0	0	1		225,248
+R	IIA	W011		2013-01-01		Scogli Tre Fratelli o I Cerri	Gallura			0	0	1		225,248
+R	IIA	W012		2013-01-01		Isola Cavalli (Tavolara)	Gallura			0	0	1		225,248
+R	IIA	W013		2013-01-01		Isola Gabbia	Gallura			0	0	1		225,248
+R	IIA	W014		2013-01-01		Isola Lepre	Gallura			0	0	1		225,248
+R	IIA	W015		2013-01-01		Isola Manna	Gallura			0	0	1		225,248
+R	IIA	W016		2013-01-01		Patron Fiaso	Gallura			0	0	1		225,248
+R	IIA	W017		2013-01-01		Isolotto Porri (Olbia)	Gallura			0	0	1		225,248
+R	IIA	W018		2013-01-01		Porritula	Gallura			0	0	1		225,248
+R	IIA	W019		2013-01-01		Portisco	Gallura			0	0	1		225,248
+R	IIA	W020		2013-01-01		Isole Marmorata	Gallura			0	0	1		225,248
+R	IIA	W021		2013-01-01		Municca	Gallura			0	0	1		225,248
+R	IIA	W022		2013-01-01		Isola Rossa di Badesi (o di Castelsardo)	Gallura			0	0	1		225,248
+R	IIA	W023		2013-01-01		Scoglio Paganetto	Gallura			0	0	1		225,248
+R	IIA	W024		2013-01-01		Isolotto dei Mucchi Bianchi	Gallura			0	0	1		225,248
+R	IIA	W025		2013-01-01		Isolotto di Ziu Paulu	Gallura			0	0	1		225,248
+R	IIA	W026		2013-01-01		Isola di Mezzo	Gallura			0	0	1		225,248
+R	IIA	W027		2013-01-01		Portolucas	Gallura			0	0	1		225,248
+R	IIA	W028		2013-01-01		Isola Peddona	Gallura			0	0	1		225,248
+R	IIA	W029		2013-01-01		Isola del Cavallo (Olbia)	Gallura			0	0	1		225,248
+R	IIA	W030		2013-01-01		Scogli di Mezzocammino	Gallura			0	0	1		225,248
+R	IIA	W031		2013-01-01		Scoglio del Muzzone	Gallura			0	0	1		225,248
+R	IIA	W032		2013-01-01		Isolotto Muzzone	Gallura			0	0	1		225,248
+R	IIA	W033		2013-01-01		Isola dei Porri (Tavolara) o Spalmatore	Gallura			0	0	1		225,248
+R	IIA	W034		2013-01-01		Isola del Fico	Gallura			0	0	1		225,248
+R	IIA	W035		2013-01-01		Scoglio I Porri (Molara)	Gallura			0	0	1		225,248
+R	IIA	W036		2013-01-01		Marinella	Gallura			0	0	1		225,248
+R	IIA	W037		2013-01-01		Scogli Capaccia	Gallura			0	0	1		225,248
+R	IIA	W038		2013-01-01		Scogli di Punta Capriccioli	Gallura			0	0	1		225,248
+R	IIA	W039		2013-01-01		Scoglio di Monte Russu	Gallura			0	0	1		225,248
+R	IIA	W040		2013-01-01		Scoglio dei Magroni	Gallura			0	0	1		225,248
+R	IIA	W041		2013-01-01		Scoglio di Porto Quadro	Gallura			0	0	1		225,248
+R	IIA	W042		2013-01-01		Scogli della Marmorata	Gallura			0	0	1		225,248
+R	IIA	W043		2013-01-01		Scoglio della Colombaia	Gallura			0	0	1		225,248
+R	IIA	W044		2013-01-01		Scogli di Macchia Mala	Gallura			0	0	1		225,248
+R	IIA	W045		2013-01-01		Isola dei Cavalli (Palau)	Gallura			0	0	1		225,248
+R	IIA	W046		2013-01-01		Scoglio L'Isuledda	Gallura			0	0	1		225,248
+R	IIA	W047		2013-01-01		Isolotto di Porto Pollo	Gallura			0	0	1		225,248
+R	IIA	W048		2013-01-01		Isolotto dell'Oro	Gallura			0	0	1		225,248
+R	IIA	W049		2013-01-01		Isolotto de Lo Stentino	Gallura			0	0	1		225,248
+R	IIA	W050		2013-01-01		Scogli delle Vacche	Gallura			0	0	1		225,248
+R	IIA	W051		2013-01-01		Scoglio Municchedda	Gallura			0	0	1		225,248
+R	IIA	W052		2013-01-01		Scoglio di Levante	Gallura			0	0	1		225,248
+R	IIA	W053		2013-01-01		Scoglio dell'Isola Marinella	Gallura			0	0	1		225,248
+R	IIA	W054		2013-01-01		Scoglio dell'Isola Gabbia	Gallura			0	0	1		225,248
+R	IIA	W055		2013-01-01		Scoglio dell'Isola di Mezzo	Gallura			0	0	1		225,248
+R	IIA	W056		2013-01-01		Scoglio della Peschiera	Gallura			0	0	1		225,248
+R	IIA	W057		2013-01-01		Scoglio dell'Isola Lepre	Gallura			0	0	1		225,248
+R	IIA	W058		2013-01-01		Isolotto della Paiaia	Gallura			0	0	1		225,248
+R	IIA	W059		2013-01-01		Scoglio dell'Isola del Cavallo (Olbia)	Gallura			0	0	1		225,248
+R	IIA	W060		2013-01-01		Isolotto di Sa Marinedda	Gallura			0	0	1		225,248
+R	IIA	W061		2013-01-01		Scogli Contra dei Marinai	Gallura			0	0	1		225,248
+R	IIA	W062		2013-01-01		Isolotto di Li Cuncheddi	Gallura			0	0	1		225,248
+R	IIA	W063		2013-01-01		Scoglio dell'Isolotto di Li Cuncheddi	Gallura			0	0	1		225,248
+R	IIA	W064		2013-01-01		Scoglio di Porto Vitello	Gallura			0	0	1		225,248
+R	IIA	W065		2013-01-01		Scoglio di Poltu Casu	Gallura			0	0	1		225,248
+R	IIA	W066		2013-01-01		Scoglio di Capo Ceraso	Gallura			0	0	1		225,248
+R	IIA	W067		2013-01-01		Scoglio Mandrioli	Gallura			0	0	1		225,248
+R	IIA	W068		2013-01-01		Isolotto di Punta La Greca	Gallura			0	0	1		225,248
+R	IIA	W069		2013-01-01		Scoglio dell'Isolotto di Punta La Greca	Gallura			0	0	1		225,248
+R	IIA	W070		2013-01-01		Scogli di Punta Don Diego	Gallura			0	0	1		225,248
+R	IIA	W071		2013-01-01		Isolotto di Cala Battistone	Gallura			0	0	1		225,248
+R	IIA	W072		2013-01-01		Scoglio di Punta Spada	Gallura			0	0	1		225,248
+R	IIA	W073		2013-01-01		Scoglio Cormorano	Gallura			0	0	1		225,248
+R	IIA	W074		2013-01-01		Scoglio di Cala Rossa	Gallura			0	0	1		225,248
+R	IIA	X001		2013-01-01		Isola Asinara	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X002		2013-01-01		Scoglio Businco	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X003		2013-01-01		Isola Piana (dell'Asinara)	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X004		2013-01-01		Isolotto della Pelosa	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X005		2013-01-01		Isola Foradada	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X006		2013-01-01		Isolotto della Maddalena (di Alghero)	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X007		2013-01-01		Isola Piana di Alghero (o di Capo Caccia)	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X008		2013-01-01		Isola dei Porri (Stintino)	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X009		2013-01-01		Scogli Forani	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X010		2013-01-01		Scombro	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X011		2013-01-01		Frigianu	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X012		2013-01-01		Scogli Neri	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X013		2013-01-01		Isolotto Bocca (dell'Asinara)	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X014		2013-01-01		Isolotto Molino	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X015		2013-01-01		Stella Maris	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X016		2013-01-01		Isolotto Rospo	Nurra-Sassarese			0	0	1		225,248
+R	IIA	X017		2013-01-01		Isolotti Candelliere	Nurra-Sassarese			0	0	1		225,248
+R	IIA	Y001		2013-01-01		Isola dei Cavoli	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y002		2013-01-01		Isola del Corno o del Gallo	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y003		2013-01-01		Il Toro	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y004		2013-01-01		La Vacca	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y005		2013-01-01		La Ghinghetta	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y006		2013-01-01		Isola dei Meli o dei Porri (di Capo Alfano) o Scoglio Mannu	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y007		2013-01-01		Scoglio Mangiabarche	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y008		2013-01-01		Isola Piana di San Pietro	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y009		2013-01-01		Isola di Quirra o Murtas	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y010		2013-01-01		Isola dei Ratti o dei Topi (di San Pietro)	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y011		2013-01-01		Isola Rossa di Capo Teulada	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y012		2013-01-01		Isolotto San Macario	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y013		2013-01-01		Isola San Pietro	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y014		2013-01-01		Isola Sant'Antioco	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y015		2013-01-01		Isola Serpentara	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y016		2013-01-01		Isola Tuaredda	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y017		2013-01-01		Variglioni di Cavoli	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y018		2013-01-01		Isola di Campianna	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y019		2013-01-01		Isola di Calavinagra	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y020		2013-01-01		I Padiglioni	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y021		2013-01-01		Scoglio Pan di Zucchero o La Spendula	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y022		2013-01-01		Scogli de Piscadeddus o Pescatelli	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y023		2013-01-01		Scoglio Proci	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y024		2013-01-01		Scogli Sant'Elmo (Capo Carbonara)	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y025		2013-01-01		Su Cardolinu	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y026		2013-01-01		Su Giudeu	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y027		2013-01-01		Il Vitello	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y028		2013-01-01		Scoglio di Sant'Elmo	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y029		2013-01-01		Variglioni di Serpentara	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y030		2013-01-01		Scoglio Santo Stefano	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y031		2013-01-01		Scoglio Sant'Elia	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y032		2013-01-01		Isolotto Coltellazzo	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y033		2013-01-01		Isola Ferraglione	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y034		2013-01-01		Isolotto Francese	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y035		2013-01-01		Scoglio della Catena	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y036		2013-01-01		Isola di Stea	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y037		2013-01-01		Scogli S'Augusteri	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y038		2013-01-01		Scoglio Il Morto	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y039		2013-01-01		Isola Genia o Genio'	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y040		2013-01-01		Scogli Neri	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y041		2013-01-01		Scogli di Porto Nebida	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y042		2013-01-01		Su Scoglitteddu	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y043		2013-01-01		Scoglio Is Canneddas	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y044		2013-01-01		Scogli delle Spine	Iglesiente-Gerrei			0	0	1		225,248
+R	IIA	Y045		2013-01-01		Scoglio Peppino	Iglesiente-Gerrei			0	0	1		225,248

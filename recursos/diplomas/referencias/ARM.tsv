@@ -1,0 +1,117 @@
+# Referencias del diploma ARM. Generado; no se edita a mano.
+R	ARM	AA		2019-01-01		Torpediniera ALBATROS				0	0	1		248
+R	ARM	AB		2019-01-01		Torpediniera ABBA				0	0	1		248
+R	ARM	AC		2019-01-01		Torpediniera ALCIONE				0	0	1		248
+R	ARM	AD		2019-01-01		Torpediniera AUDACE				0	0	1		248
+R	ARM	AE		2019-01-01		Torpediniera ARIEL				0	0	1		248
+R	ARM	AF		2019-01-01		Cacciatorpediniere ALFIERI				0	0	1		248
+R	ARM	AI		2019-01-01		Cacciatorpediniere ASCARI				0	0	1		248
+R	ARM	AL		2019-01-01		Torpediniera ALDEBARAN				0	0	1		248
+R	ARM	AN		2019-01-01		Torpediniera ANTARES				0	0	1		248
+R	ARM	AP		2019-01-01		Cacciatorpediniere ALPINO				0	0	1		248
+R	ARM	AQ		2019-01-01		Cacciatorpediniere AQUILONE				0	0	1		248
+R	ARM	AR		2019-01-01		Cacciatorpediniere ARTIGLIERE				0	0	1		248
+R	ARM	AU		2019-01-01		Torpediniera ARETUSA				0	0	1		248
+R	ARM	AV		2019-01-01		Cacciatorpediniere AVIERE				0	0	1		248
+R	ARM	AZ		2019-01-01		Incrociatore DUCA DEGLI ABRUZZI				0	0	1		248
+R	ARM	BA		2019-01-01		Incrociatore ALBERICO DA BARBIANO				0	0	1		248
+R	ARM	BC		2019-01-01		Incrociatore BARTOLOMEO COLLEONI				0	0	1		248
+R	ARM	BG		2019-01-01		Cacciatorpediniere BERSAGLIERE				0	0	1		248
+R	ARM	BL		2019-01-01		Incrociatore BOLZANO				0	0	1		248
+R	ARM	BN		2019-01-01		Incrociatore GIOVANNI DALLE BANDE NERE				0	0	1		248
+R	ARM	BO		2019-01-01		Cacciatorpediniere BALENO				0	0	1		248
+R	ARM	BR		2019-01-01		Cacciatorpediniere BOREA				0	0	1		248
+R	ARM	BS		2019-01-01		Torpediniera BASSINI				0	0	1		248
+R	ARM	BT		2019-01-01		Cacciatorpediniere CESARE BATTISTI				0	0	1		248
+R	ARM	CA		2019-01-01		Torpediniera GIACINTO CARINI				0	0	1		248
+R	ARM	CB		2019-01-01		Cacciatorpediniere CARABINIERE				0	0	1		248
+R	ARM	CC		2019-01-01		Torpediniera CIRCE				0	0	1		248
+R	ARM	CD		2019-01-01		Cacciatorpediniere GIOSUE' CARDUCCI				0	0	1		248
+R	ARM	CE		2019-01-01		Torpediniera CLIMENE				0	0	1		248
+R	ARM	CF		2019-01-01		Torpediniera CONFIENZA				0	0	1		248
+R	ARM	CG		2019-01-01		Torpediniera Cigno				0	0	1		248
+R	ARM	CL		2019-01-01		Torpediniera CAIROLI				0	0	1		248
+R	ARM	CM		2019-01-01		Torpediniera CALATAFIMI				0	0	1		248
+R	ARM	CN		2019-01-01		Cacciatorpediniere CAMICIA NERA				0	0	1		248
+R	ARM	CO		2019-01-01		Torpediniera CENTAURO				0	0	1		248
+R	ARM	CP		2019-01-01		Torpediniera CALLIOPE				0	0	1		248
+R	ARM	CR		2019-01-01		Cacciatorpediniere FRANCESCO CRISPI				0	0	1		248
+R	ARM	CT		2019-01-01		Torpediniera CASTORE				0	0	1		248
+R	ARM	CV		2019-01-01		Corazzata CONTE DI CAVOUR				0	0	1		248
+R	ARM	CZ		2019-01-01		Cacciatorpediniere CORAZZIERE				0	0	1		248
+R	ARM	DA		2019-01-01		Cacciatorpediniere DARDO				0	0	1		248
+R	ARM	DD		2019-01-01		Incrociatore EMANUELE F. DUCA D'AOSTA				0	0	1		248
+R	ARM	DI		2019-01-01		Incrociatore ARMANDO DIAZ				0	0	1		248
+R	ARM	DM		2019-01-01		Cacciatorpediniere ALVISE DA MOSTO				0	0	1		248
+R	ARM	DO		2019-01-01		Corazzata DORIA				0	0	1		248
+R	ARM	DR		2019-01-01		Cacciatorpediniere NICOLOSO DA RECCO				0	0	1		248
+R	ARM	DU		2019-01-01		Corazzata DUILIO				0	0	1		248
+R	ARM	DV		2019-01-01		Cacciatorpediniere GIOVANNI DA VERRAZZANO				0	0	1		248
+R	ARM	ES		2019-01-01		Cacciatorpediniere ESPERO				0	0	1		248
+R	ARM	FB		2019-01-01		Torpediniera NICOLA FABRIZI				0	0	1		248
+R	ARM	FG		2019-01-01		Cacciatorpediniere FOLGORE				0	0	1		248
+R	ARM	FI		2019-01-01		Incrociatore FIUME				0	0	1		248
+R	ARM	FL		2019-01-01		Cacciatorpediniere FULMINE				0	0	1		248
+R	ARM	FR		2019-01-01		Cacciatorpediniere FRECCIA				0	0	1		248
+R	ARM	GB		2019-01-01		Cacciatorpediniere VINCENZO GIOBERTI				0	0	1		248
+R	ARM	GC		2019-01-01		Corazzata GIULIO CESARE				0	0	1		248
+R	ARM	GE		2019-01-01		Cacciatorpediniere GENIERE				0	0	1		248
+R	ARM	GG		2019-01-01		Incrociatore GIUSEPPE GARIBALDI				0	0	1		248
+R	ARM	GI		2019-01-01		Incrociatore ALBERTO DI GIUSSANO				0	0	1		248
+R	ARM	GN		2019-01-01		Cacciatorpediniere GRANATIERE				0	0	1		248
+R	ARM	GO		2019-01-01		Incrociatore GORIZIA				0	0	1		248
+R	ARM	GR		2019-01-01		Cacciatorpediniere GRECALE				0	0	1		248
+R	ARM	GU		2019-01-01		Corvetta GRU				0	0	1		248
+R	ARM	IB		2019-01-01		Corvetta IBIS				0	0	1		248
+R	ARM	LA		2019-01-01		Incrociatore LUIGI CADORNA				0	0	1		248
+R	ARM	LB		2019-01-01		Torpediniera LIBRA				0	0	1		248
+R	ARM	LC		2019-01-01		Torpediniera LINCE				0	0	1		248
+R	ARM	LE		2019-01-01		Cacciatorpediniere LEONE				0	0	1		248
+R	ARM	LG		2019-01-01		Cacciatorpediniere LEGIONARIO				0	0	1		248
+R	ARM	LI		2019-01-01		Cacciatorpediniere LIBECCIO				0	0	1		248
+R	ARM	LM		2019-01-01		Torpediniera GIUSEPPE LA MASA				0	0	1		248
+R	ARM	LN		2019-01-01		Cacciatorpediniere LANCIERE				0	0	1		248
+R	ARM	LP		2019-01-01		Cacciatorpediniere LAMPO				0	0	1		248
+R	ARM	LR		2019-01-01		Torpediniere LIRA				0	0	1		248
+R	ARM	LT		2019-01-01		Corazzata LITTORIO				0	0	1		248
+R	ARM	LU		2019-01-01		Torpediniera LUPO				0	0	1		248
+R	ARM	MA		2019-01-01		Cacciatorpediniere DANIELE MANIN				0	0	1		248
+R	ARM	MB		2019-01-01		Torpediniere MOZAMBANO				0	0	1		248
+R	ARM	ME		2019-01-01		Incrociatore MUZIO ATTENDOLO				0	0	1		248
+R	ARM	ML		2019-01-01		Cacciatorpediniere MAESTRALE				0	0	1		248
+R	ARM	NB		2019-01-01		Cacciatorpediniere NEMBO				0	0	1		248
+R	ARM	NL		2019-01-01		Cacciatorpediniere FRANCESCO NULLO				0	0	1		248
+R	ARM	OA		2019-01-01		Cacciatorpediniere ALFREDO ORIANI				0	0	1		248
+R	ARM	OT		2019-01-01		Cacciatorpediniere OSTRO				0	0	1		248
+R	ARM	PG		2019-01-01		Torpediniera PEGASO				0	0	1		248
+R	ARM	PN		2019-01-01		Cacciatorpediniere LEONE PANCALDO				0	0	1		248
+R	ARM	PO		2019-01-01		Incrociatore POLA				0	0	1		248
+R	ARM	PR		2019-01-01		Torpediniera Marco PRESTINARI				0	0	1		248
+R	ARM	PS		2019-01-01		Cacciatorpediniere EMANUELE PESSAGNO				0	0	1		248
+R	ARM	PT		2019-01-01		Cacciatorpediniere PANTERA				0	0	1		248
+R	ARM	RM		2019-01-01		Incrociatore RAIMONDO MONTECUCCOLI				0	0	1		248
+R	ARM	RO		2019-01-01		Corazzata ROMA				0	0	1		248
+R	ARM	SA		2019-01-01		Cacciatorpediniere SAETTA				0	0	1		248
+R	ARM	SC		2019-01-01		Cacciatorpediniere SCIROCCO				0	0	1		248
+R	ARM	SE		2019-01-01		Cacciatorpediniere QUINTINO SELLA				0	0	1		248
+R	ARM	SG		2019-01-01		Torpediniera SAGITTARIO				0	0	1		248
+R	ARM	SI		2019-01-01		Torpediniera SIRIO				0	0	1		248
+R	ARM	SM		2019-01-01		Torpediniera SAN MARTINO				0	0	1		248
+R	ARM	SN		2019-01-01		Incrociatore SCIPIONE AFRICANO				0	0	1		248
+R	ARM	SO		2019-01-01		Torpediniera STOCCO				0	0	1		248
+R	ARM	SR		2019-01-01		Torpediniera GIUSEPPPE SIRTORI				0	0	1		248
+R	ARM	ST		2019-01-01		Cacciatorpediniere STRALE				0	0	1		248
+R	ARM	SU		2019-01-01		Cacciatorpediniere NAZARIO SAURO				0	0	1		248
+R	ARM	SV		2019-01-01		Incrociatore EUGENIO DI SAVOIA				0	0	1		248
+R	ARM	TA		2019-01-01		Cacciatorpediniere LUCA TARIGO				0	0	1		248
+R	ARM	TB		2019-01-01		Cacciatorpediniere TURBINE				0	0	1		248
+R	ARM	TI		2019-01-01		Cacciatorpediniere TIGRE				0	0	1		248
+R	ARM	TR		2019-01-01		Incrociatore TRENTO				0	0	1		248
+R	ARM	TS		2019-01-01		Incrociatore TRIESTE				0	0	1		248
+R	ARM	TT		2019-01-01		Incrociatore TARANTO				0	0	1		248
+R	ARM	US		2019-01-01		Cacciatorpediniere ANTONIOTTO USODIMARE				0	0	1		248
+R	ARM	VG		2019-01-01		Torpediniera VEGA				0	0	1		248
+R	ARM	VV		2019-01-01		Corazzata VITTORIO VENETO				0	0	1		248
+R	ARM	ZA		2019-01-01		Incrociatore ZARA				0	0	1		248
+R	ARM	ZE		2019-01-01		Cacciatorpediniere NICOLO' ZENO				0	0	1		248
+R	ARM	ZF		2019-01-01		Cacciatorpediniere ZEFFIRO				0	0	1		248

@@ -1,0 +1,570 @@
+# Referencias del diploma WAP_WADA. Generado; no se edita a mano.
+R	WAP_WADA	ARG-01		1945-11-15		Teniente Benjamin Matienzo Base (Air Force)	Weddel Sea			0	0	1		13
+R	WAP_WADA	ARG-02		1945-11-15		Almirante Brown Base (Army)	San Martin Land			0	0	1		13
+R	WAP_WADA	ARG-03		1945-11-15		Alférez De Navió José Maria Sobrall Base (Army)	Edith Ronne Land			0	0	1		13
+R	WAP_WADA	ARG-04		1945-11-15		Esperanza Base (Army)	San Martin Land			0	0	1		13
+R	WAP_WADA	ARG-05		1945-11-15		General Manuel Belgrano Base (Army)	Luitpold Coast			0	0	1		13
+R	WAP_WADA	ARG-06		1945-11-15		General Manuel Belgrano II Base (Army)	North of Coast Land			0	0	1		13
+R	WAP_WADA	ARG-07		1945-11-15		General Manuel Belgrano III Base (Army)	Berkner Island			0	0	1		13
+R	WAP_WADA	ARG-08		1945-11-15		General San Martin Base (Army)	Debenham Group			0	0	1		13
+R	WAP_WADA	ARG-09		1945-11-15		Primavera Base (Army) (aka Capitan Cobett Base)	Alejandrina Island			0	0	1		13
+R	WAP_WADA	ARG-10		1945-11-15		Teniente Horacio Ballvé Basy (Navy) (aka Refugio Naval Península Ardley)	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	ARG-11		1945-11-15		Byers Camp (IAA)	Livingston Island (AN-010)			0	0	1		241
+R	WAP_WADA	ARG-12		1945-11-15		Destacamento Naval Decepción Base (Navy)	Deception Island (AN-010)			0	0	1		241
+R	WAP_WADA	ARG-13		1945-11-15		Destacamento Naval Melchior Base (Navy)	Observatorio Island, Melchior Islands (AN-012)			0	0	1		13
+R	WAP_WADA	ARG-14		1945-11-15		Ellsworth Base (IAA)	Weddell Sea			0	0	1		13
+R	WAP_WADA	ARG-15		1945-11-15		Destacamento Naval Orcadas del Sur Base (Navy)	Laurie Island			0	0	1		13
+R	WAP_WADA	ARG-16		1945-11-15		Teniente de Navió Juan Camara Base (Navy) (aka Dest. Naval Bahía Luna)	Livingstone Island (AN-010)			0	0	1		241
+R	WAP_WADA	ARG-17		1945-11-15		Destacamento Naval Petrel Base (Navy)	Dundee Island (AN-013)			0	0	1		13
+R	WAP_WADA	ARG-18		1945-11-15		Groussac Refuge (Navy) (aka Hipolito Bouchard Refuge)	Petermann Island (AN-006)			0	0	1		13
+R	WAP_WADA	ARG-19		1945-11-15		Scientific Livingston Camp (IAA)	Livingston Island (AN-010)			0	0	1		241
+R	WAP_WADA	ARG-20		1945-11-15		Alejandro Carlini Station and Jubany Meterological Center (incl. Baliza Potter LH)	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	ARG-21		1945-11-15		Vicecomodoro Gustavo Marambio Base (Air Force)	Marambio Island (Seymour Island) (AN-013)			0	0	1		13
+R	WAP_WADA	ARG-22		1945-11-15		Corbeta Uruguay Station (IAA) (expired 1982)	Thule Island (AN-009)			0	0	1		240
+R	WAP_WADA	ARG-23		1945-11-15		Tierra del Fuego Province	Tierra del Fuego (SA-008)			0	0	1		100
+R	WAP_WADA	ARG-24		1945-11-15		Bahia Dorian Refuge	Wiencke Island,Palmer Archipelago (AN012)			0	0	1		13
+R	WAP_WADA	ARG-25		1945-11-15		Argentine Glaciology Camp	Vega Island, Trinity Group (AN-013)			0	0	1		13,199
+R	WAP_WADA	ARG-26		1945-11-15		Teniente Esquivel Refuge (1955-1956)	Thule Island (AN-009)			0	0	1		240
+R	WAP_WADA	ARG-27		1945-11-15		Albatros Refuge	Isla 25 de Mayo			0	0	1		13
+R	WAP_WADA	ARG-28		1945-11-15		Francisco Gurruchaga Naval Redfuge (aka Refugio Armonía-Harmony Haven)	Nelson Island (AN-010)			0	0	1		241
+R	WAP_WADA	ARG-29		1945-11-15		Isla de los Estados (Staten Island)	Los Estados (Staten) (SA-049)			0	0	1		100
+R	WAP_WADA	ARG-30		1945-11-15		Isla Observatorio Refuge	Observatorio Island (SA-049)			0	0	1		100
+R	WAP_WADA	AUS-01		1945-11-15		Amery Station (ANARE)	Amery Ice Shelf			0	0	1		13
+R	WAP_WADA	AUS-02		1945-11-15		Richard Casey Station (ANARE)	Wilkes Land			0	0	1		13
+R	WAP_WADA	AUS-03		1945-11-15		Davis Station (ANARE)	Princess Elizabeth Land			0	0	1		13
+R	WAP_WADA	AUS-04		1945-11-15		Douglas Mawson Station (ANARE)	Mac Robertson Land			0	0	1		13
+R	WAP_WADA	AUS-05		1945-11-15		Wilkes Station (ANARE) (ex. US Knox Base)	Wilkes Land			0	0	1		13
+R	WAP_WADA	AUS-06		1945-11-15		Ionospherical Research Station (ANARE)	Donovon Islands			0	0	1		13
+R	WAP_WADA	AUS-07		1945-11-15		Heard Island Station (ANARE)	Heard Island (AN-003)			0	0	1		111
+R	WAP_WADA	AUS-08		1945-11-15		Macquarie Island Station (ANARE)	Macquarie Island (AN-005)			0	0	1		153
+R	WAP_WADA	AUS-09		1945-11-15		Hut Hill	Macquarie Island (AN-005)			0	0	1		153
+R	WAP_WADA	BEL-01		1945-11-15		Roi Baudouin Base	Queen Maud Lands			0	0	1		13
+R	WAP_WADA	BEL-02		1945-11-15		Belgian Princess Elisabeth Station	Utsteinen Site Camp			0	0	1		13
+R	WAP_WADA	BGR-01		1945-11-15		St. Kliment Ohridski Base	Livingston Island (AN-010)			0	0	1		241
+R	WAP_WADA	BRA-01		1945-11-15		Astronomo Cruis Refuge	Nelson Island AN-010)			0	0	1		241
+R	WAP_WADA	BRA-02		1945-11-15		Comandante Luiz Antonio de Carvalho Ferraz Base	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	BRA-03		1945-11-15		Hardy Point Camp	Greenwich Island (AN-010)			0	0	1		241
+R	WAP_WADA	BRA-04		1945-11-15		Padre Balduino Rambo Refuge	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	BRA-05		1945-11-15		Emilio Goeldi Refuge	Elephant Island (AN-010)			0	0	1		241
+R	WAP_WADA	CHL-01		1945-11-15		Capitan Arturo Prat Base	Greenwich Island (AN-010)			0	0	1		241
+R	WAP_WADA	CHL-02		1945-11-15		General Bernardo O'Higgins Riiquelme Base (Army)	Isabel Riquelme Island, Trinity Peninsula (AN-013)			0	0	1		13
+R	WAP_WADA	CHL-03		1945-11-15		Julio Ripamonti Base (INACH)	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	CHL-04		1945-11-15		Presidente Pedro Aguirre Cerda base (Air Force)	Decption Island (AN-010)			0	0	1		241
+R	WAP_WADA	CHL-05		1945-11-15		Presidente Eduardo Frei Montalva Base (Air Force)	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	CHL-06		1945-11-15		Presidente Gabriel Gonzáles Videla Base (Air Force)	West Graham Land			0	0	1		13
+R	WAP_WADA	CHL-07		1945-11-15		Profesor Julio Escudero Base (INACH)	King Georege Island (AN-010)			0	0	1		241
+R	WAP_WADA	CHL-08		1945-11-15		Base Dr. Guillermo Mann (formerly Cape Shirreff)	Livingston Island (AN-010)			0	0	1		241
+R	WAP_WADA	CHL-09		1945-11-15		Teniente Luis Tomás Carvajal Villarroel (Air Force)	Adelaide Island (AN-001)			0	0	1		13
+R	WAP_WADA	CHL-10		1945-11-15		Teniente Rodolfo Marsh Martin (Air Force)	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	CHL-11		1945-11-15		Yelcho Sub-Base (INACH)	Doumer Island (AN-012)			0	0	1		13
+R	WAP_WADA	CHL-12		1945-11-15		Alfred Wegener Institute Refuge (AWI Refuge)	Ardley Island			0	0	1		241
+R	WAP_WADA	CHL-13		1945-11-15		Magallanes and Antarctica Chilena Region (excluding Commune of Antarctica)	Magellanes, Ultima Esperanza			0	0	1		112
+R	WAP_WADA	CHL-14		1945-11-15		Teniente Arturo Parodi Alsiter Station (Air Force)	Patriot Hills			0	0	1		13
+R	WAP_WADA	CHL-15		1945-11-15		Antonio Huneeus Gana Base (INACH)	Patriot Hills			0	0	1		13
+R	WAP_WADA	CHL-16		1945-11-15		Collins Refuge	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	CHL-17		1945-11-15		Luis Risopatrón Base (INACH)	Robert Island (AN-010)			0	0	1		241
+R	WAP_WADA	CHL-18		1945-11-15		Puerto Williams Station	Navarino Island (SA-050)			0	0	1		112
+R	WAP_WADA	CHL-19		1945-11-15		Lennox Island Chilean Navy Outpost	West Lennox Island (SA-050)			0	0	1		112
+R	WAP_WADA	CHL-20		1945-11-15		Homos Island Meteo Station	Hom Island, Hermite Islands (SA-031)			0	0	1		112
+R	WAP_WADA	CHL-21		1945-11-15		Diego Ramirez Station	Gonzalo Island, Diego Ramirez Islands (SA-097)			0	0	1		112
+R	WAP_WADA	CHN-01		1945-11-15		Great Walll Station (Changcheng Station)	King George ISland (AN-010)			0	0	1		241
+R	WAP_WADA	CHN-02		1945-11-15		Zhong Shan Station (Sun Yat-Sen Station)	Christensen Coast			0	0	1		13
+R	WAP_WADA	CZE-01		1945-11-15		Eco Nelson Base	Nelson Island (AN-010)			0	0	1		241
+R	WAP_WADA	DDR-01		1945-11-15	1990-10-02	Georg Foster Station (before 3 October 1990	Queen Maud Land			0	0	1		13
+R	WAP_WADA	DEU-01		1945-11-15		George von Neumayer Station	Atka Bay, Princess Martha Coast			0	0	1		13
+R	WAP_WADA	DEU-02		1945-11-15		Neumayer 2 Station	Atka Bay, Princess Martha Coast			0	0	1		13
+R	WAP_WADA	DEU-03		1990-10-03		George Foster Station (from 3 October 1990)	Schrimacher Oasis, Queen Maud Land			0	0	1		13
+R	WAP_WADA	DEU-04		1945-11-15		Gondwana Station	Terra Nova Bay, Victoria Land			0	0	1		13
+R	WAP_WADA	DEU-05		1945-11-15		Ardley Station of German Refuge (before 1997)	Ardley Island			0	0	1		13
+R	WAP_WADA	DEU-06		1945-11-15		Cape Williams Camp	Cape Williams, Victoria Land			0	0	1		13
+R	WAP_WADA	DEU-07		1945-11-15	1993-12-31	Eduard Dallmann Laboratory Refuge (before 1 January 1994)	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	DEU-08		1945-11-15		Neumayer III Station	Atka Bay, Princess Martha Coast			0	0	1		13
+R	WAP_WADA	DEU-09		1945-11-15		PALAOA Observatory	Ekström Ice Shelf, Eastern Weddell Sea			0	0	1		13
+R	WAP_WADA	DEU-10		1945-11-15		Watzmann Seismological Observatory-VNA2	Ekström Ice Shelf, Halvfar Ryggen			0	0	1		13
+R	WAP_WADA	DEU-11		1945-11-15		Heinz Kohnen Station	Queen Maud Land			0	0	1		13
+R	WAP_WADA	DEU-12		1945-11-15		Olymp Seismological Observatory-VNA3 (aka Sorasen)	Ekström Ice Shelf, Sorasen Ice Risen			0	0	1		13
+R	WAP_WADA	ECU-01		1945-11-15		Pedro Vicente Maldonado Station	Greenwich Island (AN-010)			0	0	1		241
+R	WAP_WADA	ECU-02		1945-11-15		Republica del Ecuador Refuge	King George Land (AN-010)			0	0	1		241
+R	WAP_WADA	ESP-01		1945-11-15		Juan Carlos I Base (BAE)	Livingston Island (AN-010)			0	0	1		241
+R	WAP_WADA	ESP-02		1945-11-15		Base Gabrie De Castilla (aka Gabriel De Catilla Refuge)	Decption Island (AN-010)			0	0	1		241
+R	WAP_WADA	ESP-03		1945-11-15		Base Orcadas	Coronation Island (AN-008)			0	0	1		238
+R	WAP_WADA	FIN-01		1945-11-15		Aboa Station	Nunatak Basen, Queen Maud Land			0	0	1		13
+R	WAP_WADA	FRA-01		1945-11-15		Dumont D'Urville Base (TAAF)	Petrel Island, Adelie Land (AN-017)			0	0	1		13
+R	WAP_WADA	FRA-02		1945-11-15		Alfred Faure Base (TAAF)	Possession Island (AF-008)			0	0	1		41
+R	WAP_WADA	FRA-03		1945-11-15		Martin De Viviès Base (including Mataf Hut)	Amsterdam Island (AF-002)			0	0	1		10
+R	WAP_WADA	FRA-04		1945-11-15		Port Aux Francais Base (TAAF)	Kerguelen Island (AF-048)			0	0	1		131
+R	WAP_WADA	FRA-05		1945-11-15		Port Jeanne d'Arc	Kerguelen Island (AF-048)			0	0	1		131
+R	WAP_WADA	FRA-06		1945-11-15		Port Chaarcot Base (now Memorial Site)	Wandel/Booth Island (AN-006)			0	0	1		13
+R	WAP_WADA	FRA-07		1945-11-15		Port Martin Station (HSM-46)	Adelie Land, Wilkes LAnd			0	0	1		13
+R	WAP_WADA	FRA-08		1945-11-15		Port Circumcision Cairn & Charcot Plaque	Petermann Island (AN-006)			0	0	1		13
+R	WAP_WADA	FRA-09		1945-11-15		Antonelli Hut	Amsterdam Island (AF-002)			0	0	1		10
+R	WAP_WADA	FRA-10		1945-11-15		Ratmanoff Refuge & Geomagnetic STation	Kerguelen Island (AF-048)			0	0	1		131
+R	WAP_WADA	GBR-01		1945-11-15		Station "A" Port Lockroy	Goudier Island, Wiencke Island (AN-012)			0	0	1		13
+R	WAP_WADA	GBR-02		1945-11-15		Station "B" Deception Island	Deception ISland (AN-010)			0	0	1		241
+R	WAP_WADA	GBR-03		1945-11-15		Station "C" Cape Geddes (aka "C" Laurie)	Laurie Island (AN-008)			0	0	1		238
+R	WAP_WADA	GBR-04		1945-11-15		Station "D" Hope Bay	Hope Bay, Trinity Peninsula			0	0	1		13
+R	WAP_WADA	GBR-05		1945-11-15		Station "E" Stonington Island	Stonington Island (AN-001)			0	0	1		13
+R	WAP_WADA	GBR-06		1945-11-15		Station "F" Faraday	Galindez Island (AN-006)			0	0	1		13
+R	WAP_WADA	GBR-07		1945-11-15		Station "F" Faraday (James Wordie House)	Winter Island (AN-006)			0	0	1		13
+R	WAP_WADA	GBR-08		1945-11-15		Station "G" Admiralty Base	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	GBR-09		1945-11-15		Station "H" Signy Island	Signy Island (AN-008)			0	0	1		238
+R	WAP_WADA	GBR-10		1945-11-15		Station "KG" Fossil Bluff	Alexander Island, Palmer Land (AN-018)			0	0	1		13
+R	WAP_WADA	GBR-11		1945-11-15		Station "O" Danco Island (aka "O" Finger Island)	Danco Coast, West Graham Land			0	0	1		13
+R	WAP_WADA	GBR-12		1945-11-15		Station "R" Rothera	Adelaide Island (AN-001)			0	0	1		13
+R	WAP_WADA	GBR-13		1945-11-15		Station "T" Adelaide	Adelaide Island (AN-001)			0	0	1		13
+R	WAP_WADA	GBR-14		1945-11-15		Station "Y" Horseshoe Island	Horseshoe Island (AN-001)			0	0	1		13
+R	WAP_WADA	GBR-15		1945-11-15	1977-08-15	Station "Z" Edmond Halley I (aka Halley Base until 15 August 1977)	Brunt Ice Shelf, Caird Coast			0	0	1		13
+R	WAP_WADA	GBR-16		1945-11-15		Station "Z" Edmond Halley II	Brunt Ice Shelf, Caird Coast			0	0	1		13
+R	WAP_WADA	GBR-17		1945-11-15		Station "Z" Edmond Halley III	Brunt Ice Shelf, Caird Coast			0	0	1		13
+R	WAP_WADA	GBR-18		1945-11-15		Station "Z" Edmond Halley IV	Brunt Ice Shelf, Caird Coast			0	0	1		13
+R	WAP_WADA	GBR-19		1945-11-15	2012-02-08	Station "Z" Edmond Halley V (closed on 8 February 2012)	Brunt Ice Shelf, Caird Coast			0	0	1		13
+R	WAP_WADA	GBR-20		1945-11-15		Brabant Station	Brabant Island (AN-012)			0	0	1		13
+R	WAP_WADA	GBR-21		1945-11-15		Smith Station	Smith Island (AN-010)			0	0	1		241
+R	WAP_WADA	GBR-22		1945-11-15		Ferguson Bay Base Camp (will also qualify for ARG-26)	Thule Island (AN-009)			0	0	1		240
+R	WAP_WADA	GBR-23		1945-11-15		Station "BI" Bird Island Station	Bird Island (AN-007)			0	0	1		235
+R	WAP_WADA	GBR-24		1945-11-15		Station "M" King Edward Point	King Edward Point, South Georgia Islands (AN-007)			0	0	1		235
+R	WAP_WADA	GBR-25		1945-11-15		Falkland Islands	Falkland Islands (SA-002)			0	0	1		141
+R	WAP_WADA	GBR-26		1945-11-15		Station "W" Detaille Island (aka Loubet Coast Station)	Detaille Island, West Graham Land (AN-001)			0	0	1		13
+R	WAP_WADA	GBR-27		1945-11-15		Husvik Station	Husvik, South Georgia Islands (AN-007)			0	0	1		235
+R	WAP_WADA	GBR-28		1945-11-15		Spenceley Galcier Camp	South Georgia Islands (AN-007)			0	0	1		235
+R	WAP_WADA	GBR-29		1945-11-15		Grytviken Station	South Georgia Islands (AN-007)			0	0	1		235
+R	WAP_WADA	GBR-30		1945-11-15		Candlemas Island Camp	Candlemas Island (AN-009)			0	0	1		240
+R	WAP_WADA	GBR-31		1945-11-15		Station "L" Damoy Point Hut Refuge	Wiencke Island, Palmer Archipelago (AN-012)			0	0	1		13
+R	WAP_WADA	GBR-32		1945-11-15		Station "S" Shackelton Camp	Shack Coates Land			0	0	1		13
+R	WAP_WADA	GBR-33		1945-11-15		Station "J" Prospect Point (aja "J" Ferin Island)	Signy Island (AN-008)			0	0	1		238
+R	WAP_WADA	GBR-34		1945-11-15		Waterpipe Refuge	Signy Island (AN-008)			0	0	1		238
+R	WAP_WADA	GBR-35		1945-11-15		Lagoon Island Refuge	Lagoon Island			0	0	1		13
+R	WAP_WADA	GBR-36		1945-11-15		Cape Reclus Reguge (aka Reclus Hut/Portal Point Hut)	Portal Point, Danco Coast			0	0	1		13
+R	WAP_WADA	GBR-37		1945-11-15		Halley VI Station	Brunt Ice Shelf, Dronning Maud Land			0	0	1		13
+R	WAP_WADA	GBR-38		1945-11-15		Station "N" Anvers Island	Anvers Island, Palmer Archipelago (AN-012)			0	0	1		13
+R	WAP_WADA	GBR-39		1945-11-15		Husvik Bay Camp	Husvik, South Georgia Islands (AN-007)			0	0	1		235
+R	WAP_WADA	GBR-40		1945-11-15		Halley VI-a Station	Brunt Ice Shelf, Dronning Maud Land			0	0	1		13
+R	WAP_WADA	IND-01		1945-11-15		Dakshin Gangotri Station	Nivlisen, Queen Maud Land			0	0	1		13
+R	WAP_WADA	IND-02		1945-11-15		Indian Bay Camp	Nivlisen, Queen Maud Land			0	0	1		13
+R	WAP_WADA	IND-03		1945-11-15		Maitri Station	Schirmacher Oasis, Queen Maud Land			0	0	1		13
+R	WAP_WADA	IND-04		1945-11-15		Bharati Station	Larsemann Hills, Princess Elizabeth Land			0	0	1		13
+R	WAP_WADA	ITA-01		1945-11-15		Mario Zucchelli Station (aka Terra Nova Bay Station)	Terra Nova Bay, Ross Sea			0	0	1		13
+R	WAP_WADA	ITA-02		1945-11-15		Giacomo Bove Camp	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	JPN-01		1945-11-15		Asuka Station (NIPR)	Princess Ragnhild Coast, East Queen Maud Land			0	0	1		13
+R	WAP_WADA	JPN-02		1945-11-15		Mizuho Station (NIPR)	Mizuho Plateau, Prince Olav Coast			0	0	1		13
+R	WAP_WADA	JPN-03		1945-11-15		Syowa Station (NIPR)	East Ongul Island, Queen Maud Land (AN-015)			0	0	1		13
+R	WAP_WADA	JPN-04		1945-11-15		Dome Fuji Station (NIPR)	Peak of Valkyrjedomen, Prince Olav Coast			0	0	1		13
+R	WAP_WADA	KOR-01		1945-11-15		King Sejong Station	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	KOR-02		1945-11-15		Jang Bogo Station	Terra Nova Bay, Ross Dependency			0	0	1		13
+R	WAP_WADA	MNB-01		1945-11-15		Mount Vinson Station	Vinson Massif, Ellsworth Land			0	0	1		13
+R	WAP_WADA	MNB-02		1945-11-15		Patriot Hills Station	Ellsworth Land			0	0	1		13
+R	WAP_WADA	MNB-03		1945-11-15		Dome C - Concordia Station	East Atlantic Plateau, Inland from Banzare Coast			0	0	1		13
+R	WAP_WADA	MNB-04		1994-01-01		Eduard Dallmann Laboratory (after 1 January 1994)	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	MNB-05		1945-11-15		Martin Hills Fiels Camp	Ellsworth Land			0	0	1		13
+R	WAP_WADA	MNB-06		1945-11-15		Blue One Runway Camp (or Novo Runway - aka DROMLAN)	Queen Maud Land			0	0	1		13
+R	WAP_WADA	MNB-07		1945-11-15		Nordensklöld Base (FIN-01 + SWE-04 joined)	Nunatak Basen, Dronning Maud Land			0	0	1		13
+R	WAP_WADA	MNB-08		1945-11-15		Hallett Station	Cape Hallett, Victoria Land			0	0	1		13
+R	WAP_WADA	MNB-09		1945-11-15		Fuel Depot 83-South Pole Camp	Queen Maud Land			0	0	1		13
+R	WAP_WADA	MNB-10		1945-11-15		Starr Nunatak Field Camp	Harbord Glacier, Victoria Land			0	0	1		13
+R	WAP_WADA	MNB-11		1945-11-15		Whichaway Camp	Antarctic Plateau			0	0	1		13
+R	WAP_WADA	MNB-12		1945-11-15		Wolfs Fang Runway	Antarctic Plateau			0	0	1		13
+R	WAP_WADA	MNB-13		1945-11-15		Traverse Stop Point-Temporary Field Camp	Queen Maud Land			0	0	1		13
+R	WAP_WADA	NOR-01		1945-11-15		Blue Field Base Camp	Luitpold Coast, Cosats Land			0	0	1		13
+R	WAP_WADA	NOR-02		1945-11-15		Norwegian Research Station Bouvetoya	Bouvet Island (AN-002)			0	0	1		24
+R	WAP_WADA	NOR-03		1945-11-15		Ellsworth Mountains Camp	Ellsworth Land			0	0	1		13
+R	WAP_WADA	NOR-04		1945-11-15		Guillaume	Guillaume II Coast			0	0	1		13
+R	WAP_WADA	NOR-05		1945-11-15		Queen Maud Land	Princess Martha Coast, Queen Maud LAnd			0	0	1		13
+R	WAP_WADA	NOR-06		1945-11-15		Norway 5 Camp	Sverdrup Mountains, Queen Maud Land			0	0	1		13
+R	WAP_WADA	NOR-07		1945-11-15		Norway Station	Princess Martha Coast, Queen Maud Land			0	0	1		13
+R	WAP_WADA	NOR-08		1945-11-15		Peter I Oy Island	Eve Cape, Peter 1 Island (AN-004)			0	0	1		199
+R	WAP_WADA	NOR-09		1945-11-15		Terra Nova Bay Camp	Terra Nova Bay, Victoria Land			0	0	1		13
+R	WAP_WADA	NOR-10		1945-11-15		Theron Field Camp	Luitpold Coast, Coats Land			0	0	1		13
+R	WAP_WADA	NOR-11		1945-11-15		Troll Station	Jutulsessen, Queen Maud Land			0	0	1		13
+R	WAP_WADA	NOR-12		1945-11-15		Norwegian Aktieselskabet Hektor Whalers Station	Deception Island (AN-010)			0	0	1		241
+R	WAP_WADA	NOR-13		1945-11-15		Camp Norway 3	Queen Maud Land			0	0	1		13
+R	WAP_WADA	NZL-01		1945-11-15		Scott Base (NZARP)	Ross Island (AN-011)			0	0	1		13
+R	WAP_WADA	NZL-02		1945-11-15		Swan Base	Balleny Islands (AN-019)			0	0	1		13
+R	WAP_WADA	NZL-03		1945-11-15		Worldpark Base (Greenpeace Station)	Ross Island (AN-011)			0	0	1		13
+R	WAP_WADA	NZL-04		1945-11-15		Auckland Island	Auckland Island (OC-074)			0	0	1		16
+R	WAP_WADA	NZL-05		1945-11-15		Campbell Island	Campbell Island (OC-037)			0	0	1		16
+R	WAP_WADA	NZL-06		1945-11-15		Coast Guard Weather Station	Campbell Island (OC-037)			0	0	1		16
+R	WAP_WADA	NZL-07		1945-11-15		Weather Station	Campbell Island (OC-037)			0	0	1		16
+R	WAP_WADA	NZL-08		1945-11-15		Enderby Station and Stella Hut	Enderby Island (OC-074)			0	0	1		16
+R	WAP_WADA	NZL-09		1945-11-15		Ranui Coastwatcher Station	Auckland Island (OC-074)			0	0	1		16
+R	WAP_WADA	NZL-10		1945-11-15		Snares Castaway Depot & Research Hut	Snares Island			0	0	1		16
+R	WAP_WADA	NZL-11		1945-11-15		Castaway Depot and Department of Lands and Survey Hut	Antipodes Island (OC-286)			0	0	1		16
+R	WAP_WADA	PER-01		1945-11-15		Machu Picchu Station	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	POL-01		1945-11-15		Henryk Arctowski Station	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	RUS-01		1945-11-15		Bellinghausen Station	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	RUS-02		1945-11-15		Druzhnaya I Station	Filcher Ice Shelf, Princess Astrid Coast			0	0	1		13
+R	WAP_WADA	RUS-03		1945-11-15		Druzhnaya III Station	Princess Martha Coast, Queen Maud Land			0	0	1		13
+R	WAP_WADA	RUS-04		1945-11-15		Druzhnaya IV Station	Landing Bluff, Princess Elizabeth Land			0	0	1		13
+R	WAP_WADA	RUS-05		1945-11-15		Komsomolskaya Station	Wilkes Land			0	0	1		13
+R	WAP_WADA	RUS-06		1945-11-15		Leningradskaya Station	Oates Coast			0	0	1		13
+R	WAP_WADA	RUS-07		1945-11-15		Mirny Station	Davis Sea Coast, Vuillaume II Coast			0	0	1		13
+R	WAP_WADA	RUS-08		1945-11-15		Molodezhnaya Station	Alasheyev Blight, Enderby Land			0	0	1		13
+R	WAP_WADA	RUS-09		1945-11-15		Novolazarevskaya Station (née Lazarev)	Schirmacher Oasis, Queen Maud Land			0	0	1		13
+R	WAP_WADA	RUS-10		1945-11-15		Pionerskaya Station	Reine Mary Coast			0	0	1		13
+R	WAP_WADA	RUS-11		1945-11-15		Progress Station (aka Progress II from January 1989)	Prydz Bay, Princess Elizabeth Land			0	0	1		13
+R	WAP_WADA	RUS-12		1945-11-15		Russkaya Station	Cape Burks, Mary Bird Land			0	0	1		13
+R	WAP_WADA	RUS-13		1945-11-15		Vostok Station	Wilkes Land			0	0	1		13
+R	WAP_WADA	RUS-14		1945-11-15		Vostok I Station	Wilkes Land			0	0	1		13
+R	WAP_WADA	RUS-15		1945-11-15		Priroda Station	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	SWE-01		1945-11-15		Kirvanveggen Camp	Princess Martha Coast, Queen Maud Land			0	0	1		13
+R	WAP_WADA	SWE-02		1945-11-15		Svea Research Station	Helmefront Range, Queen Maud Land			0	0	1		13
+R	WAP_WADA	SWE-03		1945-11-15		Sweden Camp	Princess Astrid Coast			0	0	1		13
+R	WAP_WADA	SWE-04		1945-11-15		Wasa Research Station	Nunatakk Base, Queen Maud Land			0	0	1		13
+R	WAP_WADA	UKR-01		1945-11-15		Akademik Vernadsky Station	Galindez Island (AN-006)			0	0	1		13
+R	WAP_WADA	URY-01		1945-11-15		General José Artigas Base	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	USA-01		1945-11-15		Beardmore South Camp	Walcott Nevé, Dufek Coast			0	0	1		13
+R	WAP_WADA	USA-02		1945-11-15		Brockton II Station	Ross Ice Shelf, Shackelton Coast (AN-016)			0	0	1		13
+R	WAP_WADA	USA-03		1945-11-15		Byrd VLF Substation (aka Longwire)	Mary Bird Land			0	0	1		13
+R	WAP_WADA	USA-04		1945-11-15		Central West Camp	Mary Bird Land			0	0	1		13
+R	WAP_WADA	USA-05		1945-11-15		Dome Charlie Camp	Wilkes Land			0	0	1		13
+R	WAP_WADA	USA-06		1945-11-15		Downstream Bravo Camp	Whillans Ice Shelf, Marie Bird LAnd			0	0	1		13
+R	WAP_WADA	USA-07		1945-11-15		Eights Station (Sky High) Camp	Ellsworth Land			0	0	1		13
+R	WAP_WADA	USA-08		1945-11-15		Fuchs Sound Camp	West Graham Land			0	0	1		13
+R	WAP_WADA	USA-09		1945-11-15		Beardmore II Station	Ross Ice Shelf, Beardmore Galcier			0	0	1		13
+R	WAP_WADA	USA-10		1945-11-15		Little Rockford II Station	Shirase Coast, Marie Bird Land			0	0	1		13
+R	WAP_WADA	USA-11		1945-11-15		North Victoria Land Camp	Victoria Land			0	0	1		13
+R	WAP_WADA	USA-12		1945-11-15		Pieter J: Lenie Field Station (aka Copacabana)	King George Island (AN-010)			0	0	1		241
+R	WAP_WADA	USA-13		1945-11-15		Plateau Station	Reine Maud Land			0	0	1		13
+R	WAP_WADA	USA-14		1945-11-15		Upper West Station Camp	Marie Bird Land			0	0	1		13
+R	WAP_WADA	USA-15		1945-11-15		Terra Nova Bay Camp	Scott Coast, Victoria Land			0	0	1		13
+R	WAP_WADA	USA-16		1945-11-15		Upstream B Camp	Whillans Ice Stream, Marie Bird Land			0	0	1		13
+R	WAP_WADA	USA-17		1945-11-15		Upstream C Camp	Whillans Ice Stream, Marie Bird Land			0	0	1		13
+R	WAP_WADA	USA-18		1945-11-15		Siple Dome Camp	Marie Bird Land			0	0	1		13
+R	WAP_WADA	USA-19		1945-11-15		Byrd Station (aka Old Byrd Station)	Marie Bird Land			0	0	1		13
+R	WAP_WADA	USA-20		1945-11-15		Byrd Surface Camp	Marie Bird Land			0	0	1		13
+R	WAP_WADA	USA-21		1945-11-15	2010-10-10	Amundson Scott South Pole Station (aka NFS STation 1975)	South Pole			0	0	1		13
+R	WAP_WADA	USA-22		1945-11-15		McMurdo Station	Ross Island (AN-011)			0	0	1		13
+R	WAP_WADA	USA-23		1945-11-15		Palmer Station	Anvers Island (AN-012)			0	0	1		13
+R	WAP_WADA	USA-24		1945-11-15		Siple Station	Ellsworth Land			0	0	1		13
+R	WAP_WADA	USA-25		1945-11-15		Williams Field	Ross Ice Shelf			0	0	1		13
+R	WAP_WADA	USA-26		1945-11-15		Wilkes Station	Stonehocker Point, Wilkes Land			0	0	1		13
+R	WAP_WADA	USA-27		1945-11-15		East Camp Vostok	Lake Vostok, Knox Coast			0	0	1		13
+R	WAP_WADA	USA-28		1945-11-15		Marble Point Camp	Scott Coast, Victoria Land			0	0	1		13
+R	WAP_WADA	USA-29		1945-11-15		Little America V Station	Kainan Bay, Ross Ice Shelf, Shirase Coast			0	0	1		13
+R	WAP_WADA	USA-30		1945-11-15		Leverett Glacier Camp	Marie Bird Land			0	0	1		13
+R	WAP_WADA	USA-31		1945-11-15		Ellsworth Station	Luitpold Coast, Weddell Sea			0	0	1		13
+R	WAP_WADA	USA-32		1945-11-15		Marie Byrd Land Camp	Hobbs Coast			0	0	1		13
+R	WAP_WADA	USA-33		1945-11-15		Old Palmer Station	Anvers Island (AN-012)			0	0	1		13
+R	WAP_WADA	USA-34		1945-11-15		WAIS Devide Camp	West Antarctic Ice Sheet Devide			0	0	1		13
+R	WAP_WADA	USA-35		1945-11-15		Byrd Radio Noise Outpost (aka Conjugate Point Station)	Marie Bird Land			0	0	1		13
+R	WAP_WADA	USA-36		1945-11-15		Amundson Scott South Pole Station (aka New NSF Station)	South Pole			0	0	1		13
+R	WAP_WADA	USA-37		1945-11-15		Little America III Station	Ross Ice Shelf, Shirase Coast			0	0	1		13
+R	WAP_WADA	USA-38		1945-11-15		AGO Camp 4 (aka P4)	Antarctic Plateau			0	0	1		13
+R	WAP_WADA	USA-39		1945-11-15		US Navy South Pole Station (aka 1st South Pole Station)	South Pole			0	0	1		13
+R	WAP_WADA	USA-40		1945-11-15		East Base	Stonington Island (AN-001)			0	0	1		13
+R	WAP_WADA	USA-41		1945-11-15		Byrd Aurora Substation	Marie Bird Land			0	0	1		13
+R	WAP_WADA	USA-42		1945-11-15		Pegasus Field Runway	Ross Island (AN-011)			0	0	1		13
+R	WAP_WADA	USA-43		1945-11-15		Little America I Station	Ross Ice Shelf, Shirase Coast			0	0	1		13
+R	WAP_WADA	USA-44		1945-11-15		Yesterday Camp	Ross Ice Shelf			0	0	1		13
+R	WAP_WADA	WAB-086		1945-11-15		OE3RPB/ANT or OE3RPB/AAW-Berndorf	4th, 5th, 6th, 7th, 8th, 9th AAWs			0	0	1		206
+R	WAP_WADA	WAB-087		1945-11-15		OE3KTA/ANTor OE3KTA/AAW-Sollenau	4th, 5th AAWs			0	0	1		206
+R	WAP_WADA	WAB-088		1945-11-15		OE3KKA/ANT or OE3KKA/AAW or OE8WAP-Pottendorf	4, 5, 6, 7, 8, 9, 10, 12, 13, 14th AAWs			0	0	1		206
+R	WAP_WADA	WAP-001		2006-01-01		IN0G - Roma (RM)	National Institue of Geophysics			0	0	1		248
+R	WAP_WADA	WAP-002		1945-11-15		IR1ANT-Torino (TO) and Casalgrasso (CN)	Antarctic Adventure			0	0	1		248
+R	WAP_WADA	WAP-003		1945-11-15		IR2A-Ispra (VA)	Antarctic Commemoration			0	0	1		248
+R	WAP_WADA	WAP-004		1945-11-15		IR2ANT-Varese (VA)	Antarctic Commemoration			0	0	1		248
+R	WAP_WADA	WAP-005		1945-11-15		IR8ANT-Napoli (NA)	Antarctic Commemoration			0	0	1		248
+R	WAP_WADA	WAP-006		1945-11-15		IY0A-Roma (RM)	Offical Station to contact BTN			0	0	1		248
+R	WAP_WADA	WAP-007		1945-11-15		IY8UN-Napoli (NA)	Antarctic Commemoration			0	0	1		248
+R	WAP_WADA	WAP-008		1945-11-15		TM0ANT-Bron	1st, 2nd, 3rd, 5th AAWs			0	0	1		227
+R	WAP_WADA	WAP-009		1945-11-15		ED2BAE-Las Arenas (Vizcaya)	1st, 3rd AAWs			0	0	1		281
+R	WAP_WADA	WAP-010		1945-11-15		IR0ANT-Fornia (LT)	1st, 5th, 9th AAWs			0	0	1		248
+R	WAP_WADA	WAP-011		1945-11-15		II6ANT-Sassoferrato (AN)	1st, 11th, 12th, 13th AAWs			0	0	1		248
+R	WAP_WADA	WAP-012		1945-11-15		II7ANT-Taranto (TA)	1st, 9th AAWs			0	0	1		248
+R	WAP_WADA	WAP-013		1945-11-15		IO8ANT-Cassano Jonio (CS)	2nd, 3rd AAWs			0	0	1		248
+R	WAP_WADA	WAP-014		1945-11-15		TM8ANT-Macon	2nd, 3rd AAWs			0	0	1		227
+R	WAP_WADA	WAP-015		1945-11-15		IU7ANT-Porto Cesareo (LE)	2nd, 4th AAWs			0	0	1		248
+R	WAP_WADA	WAP-016		1945-11-15		II0ANT-Cassino & Rocca d'Arce (FR)	2nd, 3rd, 4th AAWs			0	0	1		248
+R	WAP_WADA	WAP-017		1945-11-15		II4ANT-Forli (FC)	2md, 3rd, 4th AAWs			0	0	1		248
+R	WAP_WADA	WAP-018		1945-11-15		II8ANT-Battipaglia (SA)	2nd, 3rd AAWs			0	0	1		248
+R	WAP_WADA	WAP-019		1945-11-15		IU0ANT-Grottaferrata (RM)	2nd, 3rd, 4th AAWs			0	0	1		248
+R	WAP_WADA	WAP-020		1945-11-15		II2AMI-Varese (VA)	Italian Air Force, 2nd AAW			0	0	1		248
+R	WAP_WADA	WAP-021		1945-11-15		AT3ANT-Kengeri Upanagara (Bangalore)	3rd, 5th, 10th, 11th, 13th, 14th AAWs			0	0	1		324
+R	WAP_WADA	WAP-022		1945-11-15		4O3ANT-Cajetina	3rd AAW			0	0	1		296
+R	WAP_WADA	WAP-023		1945-11-15		IO2MET-Gallarate (VA)	IAF Meteo Center Liante, 3rd AAW			0	0	1		248
+R	WAP_WADA	WAP-024		1945-11-15		UE6ANT or R6ANT-Krasnodar	3rd, 4th, 5th AAWs			0	0	1		54
+R	WAP_WADA	WAP-025		1945-11-15		II5ANT-Lucca (LU)	3rd, 6th, 7th, 8th, 9th, 10th, 11th, 12th, 13th AA			0	0	1		248
+R	WAP_WADA	WAP-026		1945-11-15		TO2ANT-Guadeloiupe Island	3rd AAW			0	0	1		79
+R	WAP_WADA	WAP-027		1945-11-15		LR5U or LR50U-General Pico, La Pampa	50th Anniv. 1st Excpedfition to Thule I.			0	0	1		100
+R	WAP_WADA	WAP-028		1945-11-15		IO6ANT-Basciano (TE)	3rd AAW			0	0	1		248
+R	WAP_WADA	WAP-029		1945-11-15		TM5ANT-Moldieu	3rd AAW			0	0	1		227
+R	WAP_WADA	WAP-030		1945-11-15		II2ANT-Induno Olona (VA)	3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16th AAWs			0	0	1		248
+R	WAP_WADA	WAP-031		1945-11-15		TM6ANT-Yves	3rd AAW			0	0	1		227
+R	WAP_WADA	WAP-032		1945-11-15		II1ANT-Genova (GE)	3rd, 5th AAWs			0	0	1		248
+R	WAP_WADA	WAP-033		1945-11-15		EM10KY-Rivne	10th Anniv. Ukrainian Arctic Station			0	0	1		288
+R	WAP_WADA	WAP-034		1945-11-15		TM7ANT-Niort	3rd AAW			0	0	1		227
+R	WAP_WADA	WAP-035		1945-11-15		IO0ANT-Cassino (FR)	3rd, 4th, 5th, 7th AAWs			0	0	1		248
+R	WAP_WADA	WAP-036		1945-11-15		LU2CN or LU6CN-Buenos Aires	Servicio Auxilar de la Armada			0	0	1		100
+R	WAP_WADA	WAP-037		1945-11-15		TM1ANT-Vaulx en Velin	3rd, 5th AAWs			0	0	1		227
+R	WAP_WADA	WAP-038		1945-11-15		TM3ANT-Heyrieux	3rd AAW			0	0	1		227
+R	WAP_WADA	WAP-040		1945-11-15		TM2ANT-Savas Mepin	3rd AAW			0	0	1		227
+R	WAP_WADA	WAP-041		1945-11-15		TM4ANT-Bihorel	3rd, 4th AAWs			0	0	1		227
+R	WAP_WADA	WAP-042		1945-11-15		TM8TAF-Bordeaux	3rd AAW			0	0	1		227
+R	WAP_WADA	WAP-043		1945-11-15		TM0TAF-Provins	3rd, 4th AAWs			0	0	1		227
+R	WAP_WADA	WAP-044		1945-11-15		IU8ANT-Casalnuovo (NA)	3rd, 4th, 5th, 6th, 7th AAWs			0	0	1		248
+R	WAP_WADA	WAP-045		1945-11-15		EM10UA-Kyiv	10th Anniv. of Venadsky Antarctic Base			0	0	1		288
+R	WAP_WADA	WAP-046		1945-11-15		EM10LV-Kharkov	10th Anniv. of Venadsky Antarctic Base			0	0	1		288
+R	WAP_WADA	WAP-047		1945-11-15		EM10HO-Poltava	10th Anniv. of Venadsky Antarctic Base			0	0	1		288
+R	WAP_WADA	WAP-048		1945-11-15		EM10KGG-Rovno	10th Anniv. of Venadsky Antarctic Base			0	0	1		288
+R	WAP_WADA	WAP-049		1945-11-15		EM10KCC-Rovno	10th Anniv. of Venadsky Antarctic Base			0	0	1		288
+R	WAP_WADA	WAP-050		1945-11-15		UA3AV/UA1KAE	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-051		1945-11-15		UA3YH/ANT	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-052		1945-11-15		IU2ANT-Mantova (MN)	4th, 6th, 7th AAWs			0	0	1		248
+R	WAP_WADA	WAP-053		1945-11-15		UA1JJ/ANT-St. Petersburg	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-054		1945-11-15		RA3YV/ANT-Bryansk	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-055		1945-11-15		YL2AG/ANT-Riga	50th Anniv. of UA1KAE Mirny Station			0	0	1		145
+R	WAP_WADA	WAP-056		1945-11-15		RA3ZZ/ANT-Shebekino	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-057		1945-11-15		UA3GM/ANT-Vidnoe	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-058		1945-11-15		UA1BJ/ANT-St. Petersburg	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-059		1945-11-15		UA1ADQ/ANT-St. Petersburg	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-060		1945-11-15		II1MNA-Genova (GE)	Museo Nazionale deöö_Antardide Genova			0	0	1		248
+R	WAP_WADA	WAP-061		1945-11-15		UA6LV/ANT-Taganrog	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-062		1945-11-15		RW1AI/ANT-St. Petersburg	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-063		1945-11-15		UA1PAC/ANT-Arkhangelsk	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-064		1945-11-15		RN1NA/ANT-Sortavala	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-065		1945-11-15		RK3DSW/ANT	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-066		1945-11-15		UA1QV/ANT-Vologda	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-067		1945-11-15		IR4ICE-Bagnocavallo (RA)	4th AAW			0	0	1		248
+R	WAP_WADA	WAP-068		1945-11-15		RX6AA/ANT-Krasnodar	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-069		1945-11-15		RX6AAP/ANT-Krasnodar	50th Anniv. of UA1KAE Mirny Station			0	0	1		54
+R	WAP_WADA	WAP-070		1945-11-15		VA7ANT or VA7AAW or VG7AAW-Williams Lake	4, 5, 6, 7, 8, 9, 10, 12th AAWs			0	0	1		1,54
+R	WAP_WADA	WAP-071		1945-11-15		VA3ANTA-Listowel	4th AAW			0	0	1		1
+R	WAP_WADA	WAP-072		1945-11-15		GB0ANT-Barnsley, Soith Yorkshire	4, 5, 6, 7, 8, 9, 10, 14th AAWs			0	0	1		223
+R	WAP_WADA	WAP-073		1945-11-15		K4A-Marietta (GA)	4, 5, 6, 7, 8, 9, 10, 13, 14, 216th AAWs			0	0	1		291
+R	WAP_WADA	WAP-074		1945-11-15		IR7ANT-Taranto (TA)	4th, 9th AAWs			0	0	1		248
+R	WAP_WADA	WAP-075		1945-11-15		YQ2ANT-Timisoara	4th, 5th, 7th, 8th AAWs			0	0	1		275
+R	WAP_WADA	WAP-076		1945-11-15		8J1ANT or 8J1ANT/2-Tokyo	50th Anniv. of JARE			0	0	1		339
+R	WAP_WADA	WAP-077		1945-11-15		IO2ANT-Milano (MI)	4th, 5th, 8th AAWs			0	0	1		248
+R	WAP_WADA	WAP-078		1945-11-15		K4Z/ANT-Centreville (VA)	4th AAW			0	0	1		291
+R	WAP_WADA	WAP-079		1945-11-15		TM5TAF-La Seyne sur Mer	4th AAW			0	0	1		227
+R	WAP_WADA	WAP-080		1945-11-15		TM8WAP-Salernes	4th AAW			0	0	1		227
+R	WAP_WADA	WAP-081		1945-11-15		HB9ICE or HE8ICE-Zürich	Swissair Radio Club			0	0	1		287
+R	WAP_WADA	WAP-082		1945-11-15		IO8IAA-Cassano Jonio (CS)	4th AAW			0	0	1		248
+R	WAP_WADA	WAP-083		1945-11-15		DR2007ANT-Bellenberg	4th AAW			0	0	1		230
+R	WAP_WADA	WAP-084		1945-11-15		TM4IPY-Macon	2007 Internartional Polar Year			0	0	1		227
+R	WAP_WADA	WAP-085		1945-11-15		OE3WWB/ANT or OE3WBB/AAW-Soillenau	4th, 5th, 6th, 7th, 8th, 9th AAWs			0	0	1		206
+R	WAP_WADA	WAP-089		1945-11-15		OE3AIS/ANT or OE3AIS/AAW or OE89ANT-Pottendorf	4, 5, 6, 7, 8, 9, 10, 12, 13, 14th AAWs			0	0	1		206
+R	WAP_WADA	WAP-090		1945-11-15		OE3SGA/ANT or OE3SGA/AAW or OE90AAW-Pottendforf	4, 5, 6, 7, 8, 9, 10, 12, 13, 14th AAWs			0	0	1		206
+R	WAP_WADA	WAP-091		1945-11-15		N5T/ANT - Quinian (TX)	4th, 5th, 6th, 7th, 8th, 9th AAWs			0	0	1		291
+R	WAP_WADA	WAP-092		1945-11-15		K9A-Itasca (IL)	4th AAW			0	0	1		291
+R	WAP_WADA	WAP-093		1945-11-15		OE4VIE/ANT-St. Michael	4th AAW			0	0	1		206
+R	WAP_WADA	WAP-094		1945-11-15		IA0IPY-Rocca d'Arce (FR)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-095		1945-11-15		IA8IPA-Cassano Ionio (CS)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-096		1945-11-15		IO4ANT-Cervia (RA)	4th AAW			0	0	1		248
+R	WAP_WADA	WAP-097		1945-11-15		IP7IPY-Taranto (TA)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-098		1945-11-15		GB4IPY-Barnsley, South Yorkshire	2007 International Polar Year			0	0	1		223
+R	WAP_WADA	WAP-099		1945-11-15		IA7IPY-Taranto (TA)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-100		1945-11-15		IR1IPY-Genova (GE)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-101		1945-11-15		IA2IPY-Rodano (MI)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-102		1945-11-15		IA3IPY-Marghera (VE)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-103		1945-11-15		IA4IPY or IR4IPY-Forli (CS)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-104		1945-11-15		IA9IPY-Avola (SR)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-105		1945-11-15		IA6IPY-Francavilla Mare (CH)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-106		1945-11-15		LZ04ANT-Dupnica	4th AAW			0	0	1		212
+R	WAP_WADA	WAP-107		1945-11-15		VE2/VY0ICE-Baie de Schawinigan	4th AAW			0	0	1		1
+R	WAP_WADA	WAP-108		1945-11-15		LZ07IPY-Dupnica	2007 International Polar Year			0	0	1		212
+R	WAP_WADA	WAP-109		1945-11-15		VA2WAP-St. Nicolas (QC)	5th, 6th AAWs			0	0	1		1
+R	WAP_WADA	WAP-110		1945-11-15		IP2IPY-Milano (MI)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-111		1945-11-15		VA3WAP or VG3WAP-Consecon	5, 6, 7, 8, 9, 10, 12, 13th AAWs			0	0	1		1
+R	WAP_WADA	WAP-112		1945-11-15		EV5IPY-Grodno	2007 International Polar Year			0	0	1		27
+R	WAP_WADA	WAP-113		1945-11-15		IP8IPY-Casalnuovo (NA)	2007 International Polar Year			0	0	1		27,248
+R	WAP_WADA	WAP-114		1945-11-15		IR2IPY-Limbiate (MI)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-115		1945-11-15		IU0IPY-Rocca d'Arce (FR)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-116		1945-11-15		II8IPY-Torre del Greco (NA)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-117		1945-11-15		IR8IPY-Cassano Ionio (CS)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-118		1945-11-15		CQ4IPY-Oeiras	2007 International Polar Year			0	0	1		272
+R	WAP_WADA	WAP-119		1945-11-15		IU2IPY-Mantova (MN)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-120		1945-11-15		IR0IPY-Isola dei Liri (FR)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-121		1945-11-15		II0IPY-Cassino (FR)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-122		1945-11-15		SN0IPY	2007 International Polar Year			0	0	1		269
+R	WAP_WADA	WAP-123		1945-11-15		IP0IPY-Sora (FR)	2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-124		1945-11-15		IO4WAP-Forli (FC)	5th AAW			0	0	1		248
+R	WAP_WADA	WAP-125		1945-11-15		OE3HM/AAW	5th, 6th, 7th AAWs			0	0	1		206
+R	WAP_WADA	WAP-126		1945-11-15		OE3AGA/AAW	5th, 6th, 7rth AAWs			0	0	1		206
+R	WAP_WADA	WAP-127		1945-11-15		TM5ICE	5th AAW			0	0	1		227
+R	WAP_WADA	WAP-128		1945-11-15		DA0ANT-Bellenberg	5th, 6th, 7th, 8th AAWs			0	0	1		230
+R	WAP_WADA	WAP-129		1945-11-15		IP0WAP-Frosinone (FR)	Polar Bear's Friend			0	0	1		248
+R	WAP_WADA	WAP-130		1945-11-15		IR2WAP-Varese (VA)	5th, 6th, 7th AAWs			0	0	1		248
+R	WAP_WADA	WAP-131		1945-11-15		II3ANT-Sona (VR)	5th, 6th, 7th, 8th, 9th AAWs			0	0	1		248
+R	WAP_WADA	WAP-132		1945-11-15		II2EFA-Gallarate (VA)	Italian Air Force Gallerate			0	0	1		248
+R	WAP_WADA	WAP-133		1945-11-15		YE2IPY	2007/2008 International Polar Year			0	0	1		327
+R	WAP_WADA	WAP-134		1945-11-15		YB4IPY	2007/2008 International Polar Year			0	0	1		327
+R	WAP_WADA	WAP-135		1945-11-15		IQ0IPY-Castelliri (FR)	2007/2008 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-136		1945-11-15		IP0ANT-Castelliri (FR)	5th AAW			0	0	1		248
+R	WAP_WADA	WAP-137		1945-11-15		AO1WAP-Aviles	5th, 14th AAWs			0	0	1		281
+R	WAP_WADA	WAP-138		1945-11-15		IS0IPY-Cagliari (CA)	2007/2008 International Polar Year			0	0	1		225
+R	WAP_WADA	WAP-139		1945-11-15		IA0ANT-Castelliri (FR)	5th AAW			0	0	1		248
+R	WAP_WADA	WAP-140		1945-11-15		IR6&ANT-Francavilla Mare (CH)	5th AAW			0	0	1		248
+R	WAP_WADA	WAP-141		1945-11-15		IP6IPY-Francavilla Mare (CH)	2006/2007 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-142		1945-11-15		IQ8IPY-Cassano Ionio (CS)	2008 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-143		1945-11-15		IR8WAP-Cassano Ionio (CS)	5th AAW			0	0	1		248
+R	WAP_WADA	WAP-144		1945-11-15		IR8PS-Torre del Greco (NA)	5th AAW			0	0	1		248
+R	WAP_WADA	WAP-145		1945-11-15		LZ05ANT-Dupnica	5th AAW			0	0	1		212
+R	WAP_WADA	WAP-146		1945-11-15		4Z4DX/ANT-Ramat Hasharon	5th AAW			0	0	1		336
+R	WAP_WADA	WAP-147		1945-11-15		LZ08IPY-Dupnica	2008 International Polar Year			0	0	1		212
+R	WAP_WADA	WAP-148		1945-11-15		VA3AAO or VG3AAO-Listowel	5th, 6th, 7th AAWs			0	0	1		1
+R	WAP_WADA	WAP-149		1945-11-15		R3AANT	5th AAW			0	0	1		54
+R	WAP_WADA	WAP-150		1945-11-15		RU3HD/ANT-Pos. Zavety Il'Icha	5th AAW			0	0	1		54
+R	WAP_WADA	WAP-151		1945-11-15		S50IPY-Bistrica	2008 International Polar Year			0	0	1		499
+R	WAP_WADA	WAP-152		1945-11-15		IR3IPY-Sona (VR)	2008 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-153		1945-11-15		5D0IPY-Settat	2008 International Polar Year			0	0	1		446
+R	WAP_WADA	WAP-154		1945-11-15		TM8ICE-Macon	6th AAW			0	0	1		227
+R	WAP_WADA	WAP-155		1945-11-15		IN3IPY-Merano (BZ)	2008 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-156		1945-11-15		DR09ANT-München	6th AAW			0	0	1		230
+R	WAP_WADA	WAP-157		1945-11-15		IP9IPY-Palermo (PA)	2008/2009 International Polar Year			0	0	1		248
+R	WAP_WADA	WAP-158		1945-11-15		UE6IPY-Stavropol	2008 International Polar Year			0	0	1		54
+R	WAP_WADA	WAP-159		1945-11-15		IR1WAP-Genova (GE)	6th AAW			0	0	1		248
+R	WAP_WADA	WAP-160		1945-11-15		II5AM-Pisa (PI)	6th AAW			0	0	1		248
+R	WAP_WADA	WAP-161		1945-11-15		IY8WAP-Cassano Ionio CS)	6th AAW			0	0	1		248
+R	WAP_WADA	WAP-162		1945-11-15		UT1KY/WAP-Rivne	6, 7, 8, 9, 10, 11, 12, 13, 14th AAWs			0	0	1		288
+R	WAP_WADA	WAP-163		1945-11-15		UT7UA/WAP-Kyiv	6th, 10th, 14th AAWs			0	0	1		288
+R	WAP_WADA	WAP-164		1945-11-15		UR5KGG/WAP-Rovno	6th, 14th AAWs			0	0	1		288
+R	WAP_WADA	WAP-165		1945-11-15		UR8LV/WAP-Kharkiv	6th AAW			0	0	1		288
+R	WAP_WADA	WAP-166		1945-11-15		UR5KCC/WAP-Rivne	6th AAW			0	0	1		288
+R	WAP_WADA	WAP-167		1945-11-15		UX2HO/WAP-Poltava	6th AAW			0	0	1		288
+R	WAP_WADA	WAP-168		1945-11-15		LZ06ANT-Dupnica	6th AAW			0	0	1		212
+R	WAP_WADA	WAP-169		1945-11-15		LZ09IPY-Dupnica	2009 International Polar Year			0	0	1		212
+R	WAP_WADA	WAP-170		1945-11-15		UE6ICE-Stavropol	6th AAW			0	0	1		54
+R	WAP_WADA	WAP-171		1945-11-15		EG2ANT-Las Arenas	6th, 7th AAWs			0	0	1		281
+R	WAP_WADA	WAP-172		1945-11-15		W6A-Fresno (CA)	6th, 7th AAWs			0	0	1		291
+R	WAP_WADA	WAP-173		1945-11-15		IR1SMG-Genova (GE)	7th AAW			0	0	1		248
+R	WAP_WADA	WAP-174		1945-11-15		EG2IPY-Las Arenas	2009 International Polar Year			0	0	1		281
+R	WAP_WADA	WAP-175		1945-11-15		ON100PES-St. Truiden	100th Anniv. of Belgium Pole Expeditions			0	0	1		209
+R	WAP_WADA	WAP-176		1945-11-15		K4K-Mc Donough (GA)	7,8,9,10,11,12,13th AAWs			0	0	1		291
+R	WAP_WADA	WAP-177		1945-11-15		II1CAM-Cameri (NO)	Special Event with IAF Cameri Base			0	0	1		248
+R	WAP_WADA	WAP-178		1945-11-15		II0WAP-Monte San Giovanni Campano (FR)	7th, 9th AAWs			0	0	1		248
+R	WAP_WADA	WAP-179		1945-11-15		II0AAW-Piedimonte San Germano (FR)	7th, 8th AAWs			0	0	1		248
+R	WAP_WADA	WAP-180		1945-11-15		AO1ANT-Aviles	7th AAW			0	0	1		281
+R	WAP_WADA	WAP-181		1945-11-15		TM7AAW-Macon	7th AAW			0	0	1		227
+R	WAP_WADA	WAP-182		1945-11-15		S50ANT-Bistrica	7th, 8th AAWs			0	0	1		499
+R	WAP_WADA	WAP-183		1945-11-15		IA0AAW-Cassino (FR)	7th AAW			0	0	1		248
+R	WAP_WADA	WAP-184		1945-11-15		N1A-Chatham (MI)	7th AAW			0	0	1		291
+R	WAP_WADA	WAP-185		1945-11-15		TM7WAP-Noirétable	7th AAW			0	0	1		227
+R	WAP_WADA	WAP-186		1945-11-15		LZ07ANT-Dupnica	7th AAW			0	0	1		212
+R	WAP_WADA	WAP-187		1945-11-15		IP3ANT-Mezzocorona /TN)	7th, 8th AAWs			0	0	1		248
+R	WAP_WADA	WAP-188		1945-11-15		VB3ANT or VB3A-Caledon	7th, 8th, 9th AAWs			0	0	1		1
+R	WAP_WADA	WAP-189		1945-11-15		AO6ANT-Mallorca	7th AAW			0	0	1		21
+R	WAP_WADA	WAP-190		1945-11-15		II0METEO-Pratica die Mare (LT)	77rth AAW			0	0	1		248
+R	WAP_WADA	WAP-191		1945-11-15		LY10ANT-Siauliai	7th, 9th AAWs			0	0	1		146
+R	WAP_WADA	WAP-192		1945-11-15		WK3N/AAW-Hartstown (PA)				0	0	1		291
+R	WAP_WADA	WAP-193		1945-11-15		EG1AAW-Vilagarcia de Arousa-Po	7th AAW			0	0	1		281
+R	WAP_WADA	WAP-194		1945-11-15		IU1ANT-Bussoleno (TO)	8th AAW			0	0	1		248
+R	WAP_WADA	WAP-195		1945-11-15		IR2IR-Buguggiate (VA)	8th, 9th AAWs			0	0	1		248
+R	WAP_WADA	WAP-196		1945-11-15		IP8AAW-Borgo Rurale Appio Grazzanise (CE)	8th, 9th, 10th, 11th AAWs			0	0	1		248
+R	WAP_WADA	WAP-197		1945-11-15		TM0WAP-Noirétable	8th AAW			0	0	1		227
+R	WAP_WADA	WAP-198		1945-11-15		K0ANT-Overland Park (KS)	8, 9, 10, 11, 12, 13, 14th AAWs			0	0	1		291
+R	WAP_WADA	WAP-199		1945-11-15		TM8AAW-Macon	8th AAW			0	0	1		227
+R	WAP_WADA	WAP-200		1945-11-15		IP1METEO-Mondovi (CN)	8th AAW			0	0	1		248
+R	WAP_WADA	WAP-201		1945-11-15		IP1NAVY-Genova (GE)	8th AAW			0	0	1		248
+R	WAP_WADA	WAP-202		1945-11-15		IR0AW-Monta San Giovanni Campano (FR)	8th AAW			0	0	1		248
+R	WAP_WADA	WAP-203		1945-11-15		AO1AAW-Aviles	8th AAW			0	0	1		281
+R	WAP_WADA	WAP-204		1945-11-15		YQ8ANT-Suceava	8th,9th,11th,12th AAWs			0	0	1		275
+R	WAP_WADA	WAP-205		1945-11-15		II3MNA-Trieste (TS)	8th, 12th, 14th AAWs			0	0	1		248
+R	WAP_WADA	WAP-206		1945-11-15		LY100SP-Siauliai	8th AAW			0	0	1		146
+R	WAP_WADA	WAP-207		1945-11-15		EG1WAP-Vilagarcia De Arousa-Po	8th, 14th AAWs			0	0	1		281
+R	WAP_WADA	WAP-208		1945-11-15		LZ08ANT-Dupnica	8th AAW			0	0	1		212
+R	WAP_WADA	WAP-209		1945-11-15		II8AAW-Casalnuovo	8th AAW			0	0	1		248
+R	WAP_WADA	WAP-210		1945-11-15		IO5ANT-Siena (SI)	8th, 10th AAWs			0	0	1		248
+R	WAP_WADA	WAP-211		1945-11-15		EM15U-Kyiv	15th Anniv of Vernadsky Base			0	0	1		288
+R	WAP_WADA	WAP-212		1945-11-15		IP2ANT-Mantova (MN)	8, 9, 10, 11, 13th AAWs			0	0	1		248
+R	WAP_WADA	WAP-213		1945-11-15		AU8ANT-Bangalore	8th AAW			0	0	1		324
+R	WAP_WADA	WAP-214		1945-11-15		II2MAL-Malpensa (MI)	1st Centenary of Malpensa Airport			0	0	1		248
+R	WAP_WADA	WAP-215		1945-11-15		HF36POL-Mierzecice	36. Polish Antarctic Expedition			0	0	1		269
+R	WAP_WADA	WAP-216		1945-11-15		HF35APAS or HF35APAS/mm - Mierzecice	26. Polish Antarctic Expedition			0	0	1		269
+R	WAP_WADA	WAP-217		1945-11-15		TM9WAP-Noirétable	9th AAW			0	0	1		227
+R	WAP_WADA	WAP-218		1945-11-15		PA100SP-Sliedrecht	100th Anniv. of the South Pole Conquest			0	0	1		263
+R	WAP_WADA	WAP-219		1945-11-15		IR1SP-Imperia (IM)	9, 10, 11, 13th AAWs			0	0	1		248
+R	WAP_WADA	WAP-220		1945-11-15		TM9AAW-Macon	9th AAW			0	0	1		227
+R	WAP_WADA	WAP-221		1945-11-15		PA6ANT-Sliedrecht	9, 10, 11, 12, 13, 14th AAWs			0	0	1		263
+R	WAP_WADA	WAP-222		1945-11-15		AO1POL-Aviles	9th AAW			0	0	1		281
+R	WAP_WADA	WAP-223		1945-11-15		YQ0ANT-Timisoara	9th, 10th AAWs			0	0	1		275
+R	WAP_WADA	WAP-224		1945-11-15		AO5ANT-Denia	9th, 10th, 14th AAWs			0	0	1		275,281
+R	WAP_WADA	WAP-225		1945-11-15		TM100SP-Macon	100th Anniv. of the South Pole Conquest			0	0	1		227
+R	WAP_WADA	WAP-226		1945-11-15		EG1SPA-Vilagarcia	9th AAW			0	0	1		281
+R	WAP_WADA	WAP-227		1945-11-15		PC12ANT-Amsterdam	9th AAW			0	0	1		263
+R	WAP_WADA	WAP-228		1945-11-15		EG1WAA-Villagarcia de Arousa-Po	10th AAW			0	0	1		281
+R	WAP_WADA	WAP-229		1945-11-15		IR0WAP-Pigllio (FR)	10th AAW			0	0	1		248
+R	WAP_WADA	WAP-231		1945-11-15		IR0AAW-Frosinone (FR)	10th AAW			0	0	1		248
+R	WAP_WADA	WAP-232		1945-11-15		VK2ANT-Bowraville	10, 11, 12, 13, 14th AAWs			0	0	1		150
+R	WAP_WADA	WAP-233		1945-11-15		AO1ICE-Aviles	10th AAW			0	0	1		281
+R	WAP_WADA	WAP-234		1945-11-15		IO5SP-Siena (SI)	10th AAW			0	0	1		248
+R	WAP_WADA	WAP-235		1945-11-15		TM10AAW-Macon	10th AAW			0	0	1		227
+R	WAP_WADA	WAP-236		1945-11-15		IR7WAP-Bari (BA)	10th AAW			0	0	1		248
+R	WAP_WADA	WAP-237		1945-11-15		HF0A-Mierzecice	10, 11, 12, 14th AAWs			0	0	1		269
+R	WAP_WADA	WAP-238		1945-11-15		TM10WAP-Noirétable	10th AAW			0	0	1		227
+R	WAP_WADA	WAP-239		1945-11-15		PF13ANT-Amsterdam	10th AAW			0	0	1		263
+R	WAP_WADA	WAP-240		1945-11-15		LZ10ANT-Dupnica	10th AAW			0	0	1		212
+R	WAP_WADA	WAP-241		1945-11-15		N6A-Petaluma	10th AAW			0	0	1		291
+R	WAP_WADA	WAP-242		1945-11-15		AO4HAG-Torrelodones	10, 11, 12, 13, 14th AAWs			0	0	1		281
+R	WAP_WADA	WAP-243		1945-11-15		3ZL301GVX-Slubice	10th AAW			0	0	1		269
+R	WAP_WADA	WAP-244		1945-11-15		EM150KV or EM150KV/A-Rivne	150th Anniv. of Voldmyr Ivanovich Verdnadsky			0	0	1		288
+R	WAP_WADA	WAP-245		1945-11-15		TM11AAW-Macxron	11th AAW			0	0	1		227
+R	WAP_WADA	WAP-246		1945-11-15		II0AW-Rome (RM)	11th AAW			0	0	1		248
+R	WAP_WADA	WAP-247		1945-11-15		TM11WAP-Noirétable	11th AAW			0	0	1		227,248
+R	WAP_WADA	WAP-248		1945-11-15		EM11KY-Rivne	11th AAW			0	0	1		288
+R	WAP_WADA	WAP-249		1945-11-15		PF14ANT-Amsterdam	11th AAW			0	0	1		263
+R	WAP_WADA	WAP-250		1945-11-15		EG1WAS-Aviles	11th AAW			0	0	1		281
+R	WAP_WADA	WAP-251		1945-11-15		EG3ANT-Santa Coloma de Gramanet	11th AAW			0	0	1		281
+R	WAP_WADA	WAP-252		1945-11-15		EH5ANT-Denia	10, 11, 12, 13, 14th AAW			0	0	1		281
+R	WAP_WADA	WAP-253		1945-11-15		K4C-Mc Donough (GA)	12th AAW			0	0	1		291
+R	WAP_WADA	WAP-254		1945-11-15		EG1LSP-Vilagarcia	12th AAW			0	0	1		281
+R	WAP_WADA	WAP-255		1945-11-15		TM60TAAF-Macon	60th Anniv. of FSAT/TAAF Founding			0	0	1		227
+R	WAP_WADA	WAP-256		1945-11-15		EG5ANT-Boadilla del Monte	12th, 14th AAWs			0	0	1		281
+R	WAP_WADA	WAP-257		1945-11-15		PF15ANT-Amsterdam	12th AAW			0	0	1		263
+R	WAP_WADA	WAP-258		1945-11-15		TM12WAP-Noirétable	12th AAW			0	0	1		227
+R	WAP_WADA	WAP-259		1945-11-15		II8POLE-Burgo Rurale Appio Grazzanise (CE)	12, 13, 14th AAWs			0	0	1		227,248
+R	WAP_WADA	WAP-260		1945-11-15		TO1TAAF-Reunion	13th AAW			0	0	1		453
+R	WAP_WADA	WAP-261		1945-11-15		IR5ANT-Montecatini Terme (PT)	13th AAW			0	0	1		248
+R	WAP_WADA	WAP-262		1945-11-15		II1YBJ-Mondovi (CN)	13th AAW			0	0	1		248
+R	WAP_WADA	WAP-263		1945-11-15		IR7IPY-Bari (BA)	13th AAW			0	0	1		248
+R	WAP_WADA	WAP-264		1945-11-15		PG16ANT-Amsterdam	13th AAW			0	0	1		263
+R	WAP_WADA	WAP-265		1945-11-15		TM13AAW-Macon	13th AAW			0	0	1		227
+R	WAP_WADA	WAP-266		1945-11-15		AO3ANT-Girona	13th, 14th AAWs			0	0	1		281
+R	WAP_WADA	WAP-267		1945-11-15		EH5WAP-Denia	13th, 14th AAWs			0	0	1		281
+R	WAP_WADA	WAP-268		1945-11-15		EG5WAP-Boadilla del Monte	13th, 14th AAWs			0	0	1		281
+R	WAP_WADA	WAP-269		1945-11-15		EM20UASAV-Kyiv	13th AAW			0	0	1		288
+R	WAP_WADA	WAP-270		1945-11-15		TM13WAP-Noirétable	13th AAW			0	0	1		227
+R	WAP_WADA	WAP-271		1945-11-15		II3BOVE-Trieste (TS)	13th AAV			0	0	1		248
+R	WAP_WADA	WAP-272		1945-11-15		AO5WAP-Altea	13th, 14th AAWs			0	0	1		281
+R	WAP_WADA	WAP-273		1945-11-15		EG1PAA-Vilagarcia	13th AAW			0	0	1		281
+R	WAP_WADA	WAP-274		1945-11-15		IR4ANT-Terenzo (PR)	13th, 14th AAWs			0	0	1		248
+R	WAP_WADA	WAP-275		1945-11-15		TM14AAW-Macon	13th, 14th AAWs			0	0	1		227
+R	WAP_WADA	WAP-276		1945-11-15		IR2XIR-Buguggiate (VA)	13th, 14th AAWs			0	0	1		248
+R	WAP_WADA	WAP-277		1945-11-15		PH17ANT-Amsterdam	14th AAW			0	0	1		263
+R	WAP_WADA	WAP-278		1945-11-15		CF7AAW/1-Williams Lake	14th AAW			0	0	1		1
+R	WAP_WADA	WAP-279		1945-11-15		IR8AAW-Casalnuovo (NA)	14th AAW			0	0	1		248
+R	WAP_WADA	WAP-280		1945-11-15		TM14WAP-Noirétable	14th AAW			0	0	1		227
+R	WAP_WADA	WAP-281		1945-11-15		R14ANT-Stavropol	14th AAW			0	0	1		54
+R	WAP_WADA	WAP-282		1945-11-15		TM18ATS-Nozay	15th AAWW			0	0	1		227
+R	WAP_WADA	WAP-283		1945-11-15		KA4RXP/mm-M/V Spirit of Enderby	15th AAW			0	0	1		227,291
+R	WAP_WADA	WAP-284		1945-11-15		OE15AAW-Altenburg	15th AAW			0	0	1		206
+R	WAP_WADA	WAP-285		1945-11-15		TM15AAW-Macon	15th AAW			0	0	1		227
+R	WAP_WADA	WAP-286		1945-11-15		LU4AAO/D-Vila Adelina	15th AAW			0	0	1		100
+R	WAP_WADA	WAP-287		1945-11-15		OR15ANT-Goesnes	15th AAW			0	0	1		209
+R	WAP_WADA	WAP-288		1945-11-15		VI70HI-Narre Warren South	Frist ANARE Exp. to Heard I. in Dec. 1947			0	0	1		150
+R	WAP_WADA	WAP-289		1945-11-15		PB18ANT-Amsterdam	15th AAW			0	0	1		263
+R	WAP_WADA	WAP-290		1945-11-15		IR18AAW-Burgo Ruale Appio Grazzanise (CE)	15th AAW			0	0	1		248
+R	WAP_WADA	WAP-291		1945-11-15		AM5WAP-Valencia	15th AAW			0	0	1		281
+R	WAP_WADA	WAP-292		1945-11-15		EH3ANT-Barcelona	15th AAW			0	0	1		281
+R	WAP_WADA	WAP-293		1945-11-15		VI70MI-Australia	70 Years of ANARE for Macquarie Island			0	0	1		150
+R	WAP_WADA	WAP-294		1945-11-15		OT6A/p-Goesnes	16th AAW			0	0	1		209
+R	WAP_WADA	WAP-295		1945-11-15		EM1UAP-Rivne	16th AAW			0	0	1		288
+R	WAP_WADA	WAP-296		1945-11-15		PF19ANT-Amsterdam	16th AAW			0	0	1		263
+R	WAP_WADA	WAP-298		1945-11-15		SP0ANT-Bieskiekierz	16th AAW			0	0	1		269
+R	WAP_WADA	WAP-299		1945-11-15		TM16WAP-Noirétable	16th AAW			0	0	1		227
+R	WAP_WADA	WAP-300		1945-11-15		TM16AAW-Macon	16th AAW			0	0	1		227
+R	WAP_WADA	WAP-301		1945-11-15		TM70TAAF-Macon	17th AAW			0	0	1		227
+R	WAP_WADA	WAP-302		1945-11-15		TM17AAW-Macon	17th AAW			0	0	1		227
+R	WAP_WADA	WAP-303		1945-11-15		OE17AAW-Altenburg	17th AAW			0	0	1		206
+R	WAP_WADA	WAP-304		1945-11-15		R200ANT-Orel	17th AAW			0	0	1		54
+R	WAP_WADA	WAP-305		1945-11-15		EM200ANT-Rivne	200 Years of Antarctic Exploration			0	0	1		288
+R	WAP_WADA	ZAF-01		1945-11-15		Sanae Echo Base (Emergency Base)	Fimbul Ice Shelf			0	0	1		13
+R	WAP_WADA	ZAF-02		1945-11-15		Sanae III Base	Princess Martha Coast, Queen Maud Land			0	0	1		13
+R	WAP_WADA	ZAF-03		1945-11-15		Sanae IV Base	Vesleskarvet, Queen Maud Land			0	0	1		13
+R	WAP_WADA	ZAF-04		1945-11-15		Sarie Marais Field Base	Ahlmann Ridge, Queen Maud Land			0	0	1		13
+R	WAP_WADA	ZAF-05		1945-11-15		SANAP Weather Station	Gough Island (AF-030)			0	0	1		274
+R	WAP_WADA	ZAF-06		1945-11-15	2010-11-30	Marion Station Weather Station (expired November 2010)	Marion Island (AF-021)			0	0	1		201
+R	WAP_WADA	ZAF-07		1945-11-15		Penguin Bay Camp	Queen Maud Land			0	0	1		13
+R	WAP_WADA	ZAF-08		1945-11-15		Borga Field Base	Borg Massif, Queen Maud Land			0	0	1		13
+R	WAP_WADA	ZAF-09		1945-11-15		The Glen Station (aka Expedition Hut)	Gough Island (AF-030)			0	0	1		274
+R	WAP_WADA	ZAF-10		2010-12-01		Marion Station Weather Stations (rebuilt, from Decemebr 2010)	Marion Island (AF-021)			0	0	1		201
+R	WAP_WADA	ZAF-11		1945-11-15		Summer Support Base (aka Neumayer Emergency Base)	Ekström Shelf Ice, Akta Bay, Princess Martha Coast			0	0	1		13

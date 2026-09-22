@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nodisla.Cuaderno.Aplicacion\Nodisla.Cuaderno.Aplicacion.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Solo la abstraccion de registro: los servicios no se atan a Serilog. -->
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <!-- IHttpClientFactory: un cliente por servicio, reutilizado. Nunca un HttpClient por llamada. -->
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <!-- DPAPI de usuario para las credenciales. -->
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
