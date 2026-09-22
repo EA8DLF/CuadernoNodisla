@@ -67,6 +67,21 @@ public static class ConfiguracionDeServicios
             _ => new RepositorioEstacionEnMemoria(conPerfilesDeEjemplo: !SinPerfilesDeEjemplo));
         servicios.AddSingleton<IConsultaIndicativo, ConsultaIndicativoNoDisponible>();
 
+        // Los secretos van cifrados con la proteccion de datos de la cuenta de Windows. Esta
+        // implementacion SI es la de verdad: no hay version de mentira de guardar una
+        // contrasena.
+        servicios.AddSingleton<IAlmacenDeCredenciales>(
+            _ => new Servicios.Credenciales.AlmacenDeCredencialesDpapi());
+
+        // El motor de diplomas de verdad necesita una conexion a la base del cuaderno, y la
+        // interfaz todavia trabaja contra el repositorio en memoria. Mientras tanto, este
+        // cuenta lo que SI se puede contar de los contactos que hay —entidades, continentes,
+        // zonas y prefijos— y dice por que lo demas no sale.
+        servicios.AddSingleton<IDiplomas>(
+            proveedor => new DiplomasDeDesarrollo(
+                Demostracion.Value,
+                proveedor.GetRequiredService<IResolutorDxcc>()));
+
         // El modulo de propagacion SI es el de verdad: trae los indices del servicio
         // meteorologico espacial y guarda copia en disco. Sin red, arranca con la copia y lo
         // dice; la franja solar ensena ese aviso tal cual.
@@ -109,11 +124,48 @@ public static class ConfiguracionDeServicios
         servicios.AddSingleton<PuntosDelCuaderno>();
         servicios.AddSingleton<SeguirElCluster>();
         servicios.AddSingleton<RetratoDelIndicativo>();
+        servicios.AddSingleton<ImportarAdif>();
     }
+
+    /// <summary>
+    /// Devuelve, cada vez que se le pregunta, por que no se puede subir a LoTW.
+    /// </summary>
+    /// <remarks>
+    /// Se pregunta cada vez y no una sola: el operador puede instalar TQSL con la aplicacion
+    /// abierta, y entonces la respuesta cambia sin reiniciar nada.
+    /// </remarks>
+    private static Func<string?> MotivoDeNoPoderSubirALotw(IServiceProvider proveedor) => () =>
+    {
+        try
+        {
+            var lotw = new Servicios.Lotw.ServicioLotw(
+                proveedor.GetRequiredService<System.Net.Http.IHttpClientFactory>(),
+                proveedor.GetRequiredService<IAlmacenDeCredenciales>(),
+                new Servicios.Lotw.OpcionesLotw());
+
+            return lotw.MotivoDeNoPoderSubir;
+        }
+        catch (Exception ex)
+        {
+            return $"No se ha podido comprobar el estado de LoTW: {ex.Message}";
+        }
+    };
 
     private static void AnadirInterfaz(IServiceCollection servicios)
     {
         servicios.AddSingleton(_ => EstadoDeLosPaneles.Leer(App.CarpetaDeDatos));
+        servicios.AddSingleton(_ => DiplomasElegidos.Leer(App.CarpetaDeDatos));
+
+        servicios.AddSingleton<VistaModeloDiplomas>();
+
+        // LoTW se monta aqui solo para poder DECIR por que no se puede subir: si falta TQSL o
+        // falta la ubicacion de estacion, la pantalla lo explica en vez de dejar un boton gris.
+        servicios.AddSingleton(proveedor => new VistaModeloAjustes(
+            proveedor.GetRequiredService<IAlmacenDeCredenciales>(),
+            proveedor.GetRequiredService<ImportarAdif>(),
+            proveedor.GetRequiredService<IRepositorioQso>(),
+            Servicios.Lotw.ServicioLotw.AvisoDeLaFraseDePaso,
+            MotivoDeNoPoderSubirALotw(proveedor)));
 
         servicios.AddSingleton<VistaModeloSolar>();
         servicios.AddSingleton<VistaModeloRetrato>();

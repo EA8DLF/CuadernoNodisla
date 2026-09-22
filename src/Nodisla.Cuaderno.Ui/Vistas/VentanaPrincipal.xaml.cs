@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -71,6 +71,15 @@ public partial class VentanaPrincipal : Window
             Cuaderno.MarcarOrdenEnLasCabeceras();
             PonerLaEstacionEnElMapa();
             Operar.EnfocarIndicativo();
+
+            // El catalogo de diplomas y las cifras de ajustes se traen al abrir, no al entrar
+            // en la pestana: asi la primera visita no se queda mirando un hueco vacio.
+            await _vistaModelo.Diplomas.CargarAsync().ConfigureAwait(true);
+            await _vistaModelo.Configuracion.RefrescarAsync().ConfigureAwait(true);
+
+            // Verificacion sin molestar: si se ha pedido una captura, la ventana se retrata
+            // sola y se cierra. No hay que traerla al frente ni darle un solo clic.
+            Desarrollo.RetratoDeLaVentana.ProgramarSiSePide(this);
         }
         catch (Exception ex)
         {

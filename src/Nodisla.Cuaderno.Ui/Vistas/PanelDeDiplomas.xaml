@@ -1,0 +1,291 @@
+﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PanelDeDiplomas"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        LA PANTALLA DE DIPLOMAS.
+
+        Tres bloques: a la izquierda el catálogo para elegir los propios, en el centro cómo van
+        los elegidos, y a la derecha el detalle de uno: qué referencias tiene, cuáles
+        confirmadas y cuáles faltan.
+
+        SIN ELECCIÓN NO HAY CIFRAS, Y SE DICE. El motor devuelve lista vacía a propósito cuando
+        no hay diplomas marcados: recalcular los ochenta y siete «por si acaso» sería trabajo
+        tirado sobre medio millón de referencias. Por eso la pantalla empieza invitando a elegir
+        en vez de fingir que está calculando.
+
+        EL AVISO DE «NO ES FIRME» VA JUNTO A LA CIFRA, no escondido en una ayuda emergente. Hay
+        diplomas que valida su gestor contra su propia base, y otros que cuentan por campos que
+        el cuaderno no guarda: en esos casos el número es una COTA INFERIOR. Enseñarlo sin
+        decirlo llevaría a pedir un diploma que no se tiene, o a no pedir el que sí.
+
+        El detalle va paginado porque hay diplomas enormes: SOTA pasa de 182.000 referencias.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+        <conversores:NoEsVacio x:Key="NoEsVacio" />
+        <conversores:EsVacio x:Key="EsVacio" />
+        <conversores:VisibleSiEsFalso x:Key="VisibleSiEsFalso" />
+        <conversores:FraccionDeAncho x:Key="FraccionDeAncho" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" MinWidth="200" />
+            <ColumnDefinition Width="2*" MinWidth="260" />
+            <ColumnDefinition Width="2*" MinWidth="240" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ══ Elegir los propios ══ -->
+        <Border Grid.Column="0" Style="{StaticResource Tarjeta}" Margin="0,0,5,0" Padding="8,6">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="Mis diplomas" Style="{StaticResource TituloDeSeccion}" />
+                <TextBlock DockPanel.Dock="Top"
+                           Text="Marque los que sigue. Solo se calculan estos: son 87 diplomas y medio millón de referencias, y calcularlos todos por si acaso sería trabajo tirado."
+                           Style="{StaticResource TextoTenueEstilo}"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,6" />
+
+                <ListBox ItemsSource="{Binding Catalogo}"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Padding" Value="2,1" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Elegido}"
+                                      ToolTip="{Binding NombreLargo}"
+                                      AutomationProperties.Name="{Binding NombreLargo}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Nombre}" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding Gestor}"
+                                               Style="{StaticResource TextoTenueEstilo}"
+                                               TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                            </CheckBox>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <!-- ══ Cómo van ══ -->
+        <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0,0,5,0" Padding="8,6">
+            <DockPanel>
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                    <Button DockPanel.Dock="Right"
+                            Content="Recontar"
+                            Command="{Binding RefrescarCommand}"
+                            ToolTip="Vuelve a calcular el progreso de los diplomas elegidos"
+                            AutomationProperties.Name="Volver a calcular el progreso" />
+                    <TextBlock Text="Progreso" Style="{StaticResource TituloDeSeccion}" Margin="0" />
+                </DockPanel>
+
+                <TextBlock DockPanel.Dock="Top"
+                           Text="{Binding Aviso}"
+                           Style="{StaticResource TextoTenueEstilo}"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,4"
+                           Visibility="{Binding Aviso, Converter={StaticResource NoEsVacio}}" />
+
+                <!-- Sin nada elegido: se invita, no se finge. -->
+                <Border DockPanel.Dock="Top"
+                        Padding="10,8"
+                        CornerRadius="4"
+                        Background="{DynamicResource FondoResalte}"
+                        BorderBrush="{DynamicResource Borde}"
+                        BorderThickness="1"
+                        Visibility="{Binding SinEleccion, Converter={StaticResource BooleanoAVisible}}">
+                    <StackPanel>
+                        <TextBlock Text="Todavía no sigue ningún diploma" FontWeight="Bold" TextWrapping="Wrap" />
+                        <TextBlock Text="Marque a la izquierda los que le interesen y aquí aparecerá cómo va cada uno, con lo que le falta."
+                                   Style="{StaticResource TextoTenueEstilo}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,3,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding Mios}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,6"
+                                        Padding="8,6"
+                                        CornerRadius="4"
+                                        Background="{DynamicResource FondoAlterno}"
+                                        BorderBrush="{DynamicResource BordeSuave}"
+                                        BorderThickness="1">
+                                    <StackPanel>
+                                        <DockPanel>
+                                            <TextBlock DockPanel.Dock="Right"
+                                                       Text="{Binding Cifra}"
+                                                       FontWeight="Bold"
+                                                       Margin="8,0,0,0"
+                                                       TextTrimming="None" />
+                                            <TextBlock Text="{Binding NombreLargo}"
+                                                       FontWeight="Bold"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       ToolTip="{Binding Detalle}" />
+                                        </DockPanel>
+
+                                        <!-- La barra: el canal mide 200 puntos y lo lleno sale de la fracción. -->
+                                        <Grid Height="7" Margin="0,4,0,3" HorizontalAlignment="Left" Width="200">
+                                            <Border Background="{DynamicResource FondoCampo}" CornerRadius="3.5" />
+                                            <Border Background="{DynamicResource Acento}"
+                                                    CornerRadius="3.5"
+                                                    HorizontalAlignment="Left"
+                                                    Width="{Binding Fraccion, Converter={StaticResource FraccionDeAncho}, ConverterParameter=200}" />
+                                        </Grid>
+
+                                        <DockPanel>
+                                            <Button DockPanel.Dock="Right"
+                                                    Content="Ver detalle"
+                                                    Command="{Binding DataContext.VerElDetalleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Padding="8,2"
+                                                    Margin="8,0,0,0" />
+                                            <TextBlock Text="{Binding Faltan}" Style="{StaticResource TextoTenueEstilo}" />
+                                        </DockPanel>
+
+                                        <!--
+                                            El aviso de cota inferior, JUNTO A LA CIFRA y en ámbar.
+                                            Un diploma mal entendido lleva a pedir uno que no se tiene.
+                                        -->
+                                        <Border Margin="0,5,0,0"
+                                                Padding="7,4"
+                                                CornerRadius="3"
+                                                Background="{DynamicResource AvisoFondo}"
+                                                BorderBrush="{DynamicResource AvisoBorde}"
+                                                BorderThickness="1"
+                                                Visibility="{Binding EsFirme, Converter={StaticResource VisibleSiEsFalso}}">
+                                            <StackPanel>
+                                                <TextBlock Text="La cifra es un mínimo, no la definitiva"
+                                                           FontWeight="Bold"
+                                                           FontSize="11"
+                                                           Foreground="{DynamicResource AvisoTexto}"
+                                                           TextWrapping="Wrap" />
+                                                <TextBlock Text="{Binding PorQueNoEsFirme}"
+                                                           FontSize="11"
+                                                           Foreground="{DynamicResource AvisoTexto}"
+                                                           TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+
+        <!-- ══ Detalle de una variante ══ -->
+        <Border Grid.Column="2" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top"
+                           Text="{Binding TituloDelDetalle}"
+                           Style="{StaticResource TituloDeSeccion}"
+                           TextTrimming="CharacterEllipsis" />
+
+                <!-- La invitación desaparece en cuanto hay un detalle que mirar. -->
+                <TextBlock DockPanel.Dock="Top"
+                           Text="Elija «Ver detalle» en un diploma para ver sus referencias: cuáles tiene, cuáles confirmadas y cuáles le faltan."
+                           Style="{StaticResource TextoTenueEstilo}"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,6"
+                           Visibility="{Binding TextoDeLaPagina, Converter={StaticResource EsVacio}}" />
+
+                <!-- La paginación: hay diplomas de cientos de miles de referencias. -->
+                <DockPanel DockPanel.Dock="Bottom" Margin="0,6,0,0"
+                           Visibility="{Binding TextoDeLaPagina, Converter={StaticResource NoEsVacio}}">
+                    <Button DockPanel.Dock="Left"
+                            Content="◀"
+                            Command="{Binding PaginaAnteriorCommand}"
+                            Padding="10,2"
+                            AutomationProperties.Name="Página anterior de referencias" />
+                    <Button DockPanel.Dock="Right"
+                            Content="▶"
+                            Command="{Binding PaginaSiguienteCommand}"
+                            Padding="10,2"
+                            AutomationProperties.Name="Página siguiente de referencias" />
+                    <TextBlock Text="{Binding TextoDeLaPagina}"
+                               Style="{StaticResource TextoTenueEstilo}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </DockPanel>
+
+                <ListBox ItemsSource="{Binding Referencias}"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Padding" Value="2,1" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <!--
+                                    El estado va escrito, no solo en color: quien no distingue el
+                                    verde del ámbar tiene que poder leerlo igual.
+                                -->
+                                <Border DockPanel.Dock="Right"
+                                        CornerRadius="2"
+                                        Padding="5,0"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource BordeSuave}" />
+                                            <Setter Property="BorderThickness" Value="1" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Trabajada}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Confirmada}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock FontSize="10" TextTrimming="None">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="falta" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Trabajada}" Value="True">
+                                                        <Setter Property="Text" Value="sin QSL" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Confirmada}" Value="True">
+                                                        <Setter Property="Text" Value="confirmada" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
+
+                                <TextBlock Text="{Binding Nombre}"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding Referencia}" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -94,6 +94,26 @@ public sealed class NoEsVacio : IValueConverter
 }
 
 /// <summary>
+/// Lo contrario de <see cref="NoEsVacio"/>: ensena el elemento solo mientras NO hay dato.
+/// </summary>
+/// <remarks>
+/// Es lo que hace falta para las invitaciones —«elija un diploma para ver su detalle»—, que
+/// tienen que desaparecer en cuanto hay algo de verdad que ensenar en su sitio.
+/// </remarks>
+public sealed class EsVacio : IValueConverter
+{
+    /// <inheritdoc />
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is string texto && texto.Length > 0
+            ? System.Windows.Visibility.Collapsed
+            : System.Windows.Visibility.Visible;
+
+    /// <inheritdoc />
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>
 /// Convierte una fraccion de cero a uno en un ancho, para pintar barras de medidor.
 /// </summary>
 /// <remarks>
@@ -156,6 +176,28 @@ public sealed class AnguloDeAguja : IValueConverter
         var medioArco = AnchoEnLetras.LeerFactor(parameter);
         return Math.Round((fraccion * 2 * medioArco) - medioArco, 2);
     }
+
+    /// <inheritdoc />
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
+/// <summary>
+/// Ensena un elemento cuando la condicion es FALSA.
+/// </summary>
+/// <remarks>
+/// Hace falta uno propio: <see cref="Negacion"/> devuelve un booleano, y enlazar un booleano
+/// a <c>Visibility</c> no convierte nada —WPF se queda con el valor de partida y el bloque
+/// sale SIEMPRE visible—. Es un fallo silencioso y feo: el aviso de «esta cifra no es firme»
+/// aparecia tambien sobre las cifras que si lo eran.
+/// </remarks>
+public sealed class VisibleSiEsFalso : IValueConverter
+{
+    /// <inheritdoc />
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is bool cierto && cierto
+            ? System.Windows.Visibility.Collapsed
+            : System.Windows.Visibility.Visible;
 
     /// <inheritdoc />
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>

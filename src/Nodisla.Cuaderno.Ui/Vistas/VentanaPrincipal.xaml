@@ -39,6 +39,8 @@
         <KeyBinding Key="D2" Modifiers="Control" Command="{Binding VerLoDigitalCommand}" />
         <KeyBinding Key="D3" Modifiers="Control" Command="{Binding VerElCuadernoCommand}" />
         <KeyBinding Key="D4" Modifiers="Control" Command="{Binding VerElMapaCommand}" />
+        <KeyBinding Key="D5" Modifiers="Control" Command="{Binding VerLosDiplomasCommand}" />
+        <KeyBinding Key="D6" Modifiers="Control" Command="{Binding VerLosAjustesCommand}" />
     </Window.InputBindings>
 
     <!--
@@ -165,43 +167,14 @@
                 </Border>
             </TabItem>
 
-            <TabItem Header="Diplomas">
-                <Border Style="{StaticResource Tarjeta}" Margin="0">
-                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="520">
-                        <TextBlock Text="Diplomas" Style="{StaticResource TituloDeSeccion}" HorizontalAlignment="Center" />
-                        <TextBlock Style="{StaticResource TextoTenueEstilo}"
-                                   TextAlignment="Center"
-                                   Text="El seguimiento de diplomas llega en la Fase 3. Aquí irán las matrices de entidades por banda y modo, y lo que falta para cerrar cada diploma." />
-                    </StackPanel>
-                </Border>
+            <TabItem Header="Diplomas (Ctrl 5)">
+                <vistas:PanelDeDiplomas DataContext="{Binding Diplomas}" />
             </TabItem>
 
-            <TabItem Header="Ajustes">
-                <Grid Margin="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" MinWidth="260" />
-                        <ColumnDefinition Width="*" MinWidth="300" />
-                    </Grid.ColumnDefinitions>
-
-                    <Border Grid.Column="0" Style="{StaticResource Tarjeta}" Margin="0,0,5,0">
-                        <StackPanel>
-                            <TextBlock Text="Ajustes" Style="{StaticResource TituloDeSeccion}" />
-                            <TextBlock Style="{StaticResource TextoTenueEstilo}"
-                                       TextWrapping="Wrap"
-                                       Text="El perfil de estación, la escala de letra y el tema están en la cabecera y en la barra de estado, y se recuerdan de una sesión a la siguiente. Lo demás llega en la Fase 3." />
-                        </StackPanel>
-                    </Border>
-
-                    <!--
-                        La configuración del cluster vive aquí, no en la pantalla de operar:
-                        el guion de arranque, las órdenes al nodo y el tráfico crudo se tocan
-                        una vez y se diagnostican cuando algo falla, no mientras se opera.
-                    -->
-                    <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0">
-                        <vistas:AjustesDelCluster DataContext="{Binding Cluster}" />
-                    </Border>
-                </Grid>
+            <TabItem Header="Ajustes (Ctrl 6)">
+                <vistas:PanelDeAjustes DataContext="{Binding Configuracion}" />
             </TabItem>
+
         </TabControl>
 
         <!-- ══ Barra de estado ══ -->

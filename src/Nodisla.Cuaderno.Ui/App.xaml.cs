@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Markup;
@@ -64,6 +64,25 @@ public partial class App : Application
 
         var ventana = _anfitrion.Services.GetRequiredService<VentanaPrincipal>();
         MainWindow = ventana;
+
+        // MODO DE VERIFICACION SIN MOLESTAR.
+        //
+        // Con CUADERNO_APARTADA puesta, la ventana se abre FUERA DE LA PANTALLA y sin
+        // activarse: no aparece delante de nadie, no le quita el teclado a quien este
+        // trabajando y no sale en la barra de tareas. Aun asi se dibuja de verdad, asi que
+        // PrintWindow saca una captura buena de lo que se veria.
+        //
+        // Existe porque verificar no puede costarle al operador que le roben el ordenador:
+        // llevabamos semanas abriendole la ventana encima de lo que estuviera haciendo.
+        if (Environment.GetEnvironmentVariable("CUADERNO_APARTADA") is { Length: > 0 })
+        {
+            ventana.WindowStartupLocation = WindowStartupLocation.Manual;
+            ventana.ShowActivated = false;
+            ventana.ShowInTaskbar = false;
+            ventana.Left = -6000;
+            ventana.Top = 0;
+        }
+
         ventana.Show();
         Log.Information(
             "Ventana principal mostrada. Contenido {Contenido}, tamano {Ancho}x{Alto}, recursos {Recursos}, fondo {Fondo}.",

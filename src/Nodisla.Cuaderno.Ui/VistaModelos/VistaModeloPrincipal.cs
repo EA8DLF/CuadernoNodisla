@@ -42,6 +42,8 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         VistaModeloMapa mapa,
         VistaModeloSolar solar,
         VistaModeloRetrato retrato,
+        VistaModeloDiplomas diplomas,
+        VistaModeloAjustes configuracion,
         IRepositorioEstacion estaciones,
         BuscarEnCuaderno buscar,
         IControlEquipo control,
@@ -58,6 +60,8 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         ArgumentNullException.ThrowIfNull(mapa);
         ArgumentNullException.ThrowIfNull(solar);
         ArgumentNullException.ThrowIfNull(retrato);
+        ArgumentNullException.ThrowIfNull(diplomas);
+        ArgumentNullException.ThrowIfNull(configuracion);
         ArgumentNullException.ThrowIfNull(estadoDeLosPaneles);
 
         Entrada = entrada;
@@ -68,6 +72,8 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         Mapa = mapa;
         Solar = solar;
         Retrato = retrato;
+        Diplomas = diplomas;
+        Configuracion = configuracion;
         _estaciones = estaciones;
         _buscar = buscar;
         _control = control;
@@ -163,6 +169,19 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// que faltaba era ensenarlo.
     /// </remarks>
     public VistaModeloRetrato Retrato { get; }
+
+    /// <summary>La pantalla de diplomas.</summary>
+    public VistaModeloDiplomas Diplomas { get; }
+
+    /// <summary>
+    /// La pantalla de ajustes.
+    /// </summary>
+    /// <remarks>
+    /// Se llama <c>Configuracion</c> y no <c>Ajustes</c> porque <c>Ajustes</c> es ya el
+    /// espacio de nombres donde viven el estado de los paneles y la seleccion de diplomas, y
+    /// una propiedad con ese nombre lo taparia dentro de esta clase.
+    /// </remarks>
+    public VistaModeloAjustes Configuracion { get; }
 
     /// <summary>Pestanas de la ventana, en el orden en que salen.</summary>
     public IReadOnlyList<string> Pestanas { get; } = ["Operar", "Digital", "Cuaderno", "Mapa", "Diplomas", "Ajustes"];
@@ -439,10 +458,19 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     [RelayCommand]
     public void VerElMapa() => IndiceDeLaPestana = 3;
 
+    /// <summary>Pone a la vista los diplomas.</summary>
+    [RelayCommand]
+    public void VerLosDiplomas() => IndiceDeLaPestana = 4;
+
+    /// <summary>Pone a la vista los ajustes.</summary>
+    [RelayCommand]
+    public void VerLosAjustes() => IndiceDeLaPestana = 5;
+
     /// <summary>Guarda como han quedado los paneles. Lo llama la ventana al cerrarse.</summary>
     /// <param name="carpeta">Carpeta de datos del programa.</param>
     public void GuardarEstadoDeLosPaneles(string carpeta)
     {
+        Diplomas.GuardarLaEleccion(carpeta);
         _estadoDeLosPaneles.TemaOscuro = TemaOscuro;
         _estadoDeLosPaneles.EscalaDeLetra = EscalaDeLetra;
         _estadoDeLosPaneles.Pestana = IndiceDeLaPestana;
@@ -498,6 +526,16 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
             ? _estadoDeLosPaneles.EscalaDeLetra
             : 100;
         IndiceDeLaPestana = Math.Clamp(_estadoDeLosPaneles.Pestana, 0, Pestanas.Count - 1);
+
+        // Con que pestana abre, si se ha pedido. Va DESPUES de recuperar lo guardado, porque
+        // si no lo guardado lo pisa. Sirve para capturar cada pantalla sin tener que darle
+        // clics a la ventana del operador, que es lo que no se puede hacer.
+        if (Environment.GetEnvironmentVariable("CUADERNO_PESTANA") is { Length: > 0 } pestana
+            && int.TryParse(pestana, System.Globalization.NumberStyles.Integer,
+                CultureInfo.InvariantCulture, out var indice))
+        {
+            IndiceDeLaPestana = Math.Clamp(indice, 0, Pestanas.Count - 1);
+        }
         FrontalDesplegado = _estadoDeLosPaneles.EquipoDesplegado;
         PanelDeOperacionPedido = _estadoDeLosPaneles.PanelVisible;
         PanelElegido = _estadoDeLosPaneles.PanelElegido;
