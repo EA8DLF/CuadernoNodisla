@@ -150,9 +150,19 @@ public sealed class ServicioDePropagacion : IPropagacion
     }
 
     /// <inheritdoc/>
+    /// <remarks>
+    /// Esto dice que motor esta configurado. Lo que vale para un resultado concreto es el
+    /// <see cref="PrediccionDeBanda.Motor"/> de esa prediccion, que puede ser otro si el motor
+    /// tuvo que estimar.
+    /// </remarks>
     public string MotorDePrediccion => motor.Nombre;
 
     /// <inheritdoc/>
+    /// <remarks>
+    /// Igual que <see cref="MotorDePrediccion"/>: habla del motor configurado. Para saber si
+    /// <b>una</b> prediccion es estimada hay que mirar su
+    /// <see cref="PrediccionDeBanda.EsAproximacion"/>.
+    /// </remarks>
     public bool EsAproximacion => motor.EsAproximacion;
 
     /// <summary>

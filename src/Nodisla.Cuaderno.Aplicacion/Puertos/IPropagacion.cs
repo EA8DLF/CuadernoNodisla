@@ -62,9 +62,26 @@ public sealed record PrediccionDeBanda(
     /// </summary>
     /// <remarks>
     /// Una prediccion hecha a ciegas y una hecha con el Sol de hoy no valen lo mismo, y el
-    /// operador tiene derecho a distinguirlas antes de elegir banda.
+    /// operador tiene derecho a distinguirlas antes de elegir banda. Ojo: con indices de la
+    /// copia guardada esto es <b>falso</b>, porque si hubo datos solares aunque fueran de ayer;
+    /// lo viejos que sean lo cuenta <see cref="IndicesSolares.Descripcion"/>.
     /// </remarks>
     public bool SinDatosSolares { get; init; }
+
+    /// <summary>Motor que produjo <b>esta</b> prediccion.</summary>
+    public string Motor { get; init; } = string.Empty;
+
+    /// <summary>
+    /// <b>Esta</b> prediccion es una aproximacion, no la salida de un motor reconocido.
+    /// </summary>
+    /// <remarks>
+    /// Va en cada prediccion y no solo en el servicio a proposito: el dia que haya un motor
+    /// externo de verdad, seguira cayendo en la aproximacion cuando el proceso falle o cuando
+    /// el trayecto se salga de su rango. Si la bandera viviera solo en el servicio, esas
+    /// predicciones se ensenarian como calculadas sin serlo, que es el enganno que este
+    /// modulo tiene prohibido.
+    /// </remarks>
+    public bool EsAproximacion { get; init; } = true;
 }
 
 /// <summary>Datos de un trayecto entre dos puntos.</summary>
@@ -161,6 +178,13 @@ public interface IPropagacion
     /// </remarks>
     string MotorDePrediccion { get; }
 
-    /// <summary>La prediccion es una aproximacion propia, no un motor reconocido.</summary>
+    /// <summary>
+    /// El motor configurado es una aproximacion propia y no uno reconocido.
+    /// </summary>
+    /// <remarks>
+    /// Esto habla del servicio; lo que vale para cada resultado concreto es
+    /// <see cref="PrediccionDeBanda.EsAproximacion"/>, porque un servicio con motor real
+    /// tambien cae en la aproximacion cuando el proceso falla o el trayecto se sale de rango.
+    /// </remarks>
     bool EsAproximacion { get; }
 }

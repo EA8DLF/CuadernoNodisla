@@ -35,6 +35,13 @@ public interface IMotorDePrediccion
     /// <summary>Predice el circuito banda por banda.</summary>
     /// <param name="solicitud">Datos del trayecto y del momento.</param>
     /// <param name="ct">Testigo de cancelacion.</param>
+    /// <remarks>
+    /// Quien implemente esto tiene que firmar <b>cada</b> <see cref="PrediccionDeBanda"/> con su
+    /// <see cref="PrediccionDeBanda.Motor"/> y su <see cref="PrediccionDeBanda.EsAproximacion"/>,
+    /// no fiarse de lo que diga el motor en conjunto. Un motor externo que se cae a mitad y
+    /// termina el trabajo con una estimacion tiene que devolver esas bandas marcadas como
+    /// estimacion, aunque el motor se llame VOACAP.
+    /// </remarks>
     Task<IReadOnlyList<PrediccionDeBanda>> PredecirAsync(
         SolicitudDePrediccion solicitud,
         CancellationToken ct = default);

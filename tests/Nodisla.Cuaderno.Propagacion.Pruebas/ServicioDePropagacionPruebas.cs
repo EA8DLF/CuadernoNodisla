@@ -123,6 +123,27 @@ public class ServicioDePropagacionPruebas : IDisposable
     }
 
     [Fact]
+    public async Task Un_motor_que_cae_de_vuelta_marca_esas_bandas_como_estimadas()
+    {
+        // Este es el caso por el que la bandera vive en cada prediccion: el motor dice que no es
+        // aproximacion, pero tuvo que estimar tres bandas y lo confiesa banda a banda.
+        using var fabrica = FabricaFalsa.Caida();
+        var servicio = new ServicioDePropagacion(fabrica, Opciones(), new MotorDeMentira());
+
+        var prediccion = await servicio.PredecirAsync(
+            Tenerife,
+            Madrid,
+            100,
+            Momento("2026-09-22T13:00:00Z"),
+            CancellationToken.None);
+
+        servicio.EsAproximacion.Should().BeFalse();
+        prediccion.Where(p => p.EsAproximacion).Should().HaveCount(1);
+        prediccion.Single(p => p.EsAproximacion).Motor.Should().Contain("no es VOACAP");
+        prediccion.Single(p => !p.EsAproximacion).Motor.Should().Be("VOACAP 14.2 (proceso externo)");
+    }
+
+    [Fact]
     public async Task Se_predice_aunque_no_haya_habido_manera_de_traer_los_indices()
     {
         using var fabrica = FabricaFalsa.Caida();
@@ -208,7 +229,10 @@ public class ServicioDePropagacionPruebas : IDisposable
         public override DateTimeOffset GetUtcNow() => momento;
     }
 
-    /// <summary>Un motor cualquiera que no es el nuestro, para ver que el servicio lo respeta.</summary>
+    /// <summary>
+    /// Un motor externo de mentira que resuelve una banda con su calculo y otra tiene que
+    /// estimarla, como haria uno de verdad al salirse de su rango.
+    /// </summary>
     private sealed class MotorDeMentira : IMotorDePrediccion
     {
         public string Nombre => "VOACAP 14.2 (proceso externo)";
@@ -218,7 +242,19 @@ public class ServicioDePropagacionPruebas : IDisposable
         public Task<IReadOnlyList<PrediccionDeBanda>> PredecirAsync(
             SolicitudDePrediccion solicitud,
             CancellationToken ct = default) =>
-            Task.FromResult<IReadOnlyList<PrediccionDeBanda>>([]);
+            Task.FromResult<IReadOnlyList<PrediccionDeBanda>>(
+            [
+                new PrediccionDeBanda(Banda.Parse("20m"), solicitud.MomentoUtc, 0.9, -120, 10, 1)
+                {
+                    Motor = Nombre,
+                    EsAproximacion = false,
+                },
+                new PrediccionDeBanda(Banda.Parse("6m"), solicitud.MomentoUtc, 0.1, null, null, 1)
+                {
+                    Motor = MotorAproximacionNodisla.NombreDelMotor,
+                    EsAproximacion = true,
+                },
+            ]);
     }
 
     /// <summary>Fabrica de clientes HTTP que sirve boletines de mentira o se cae siempre.</summary>

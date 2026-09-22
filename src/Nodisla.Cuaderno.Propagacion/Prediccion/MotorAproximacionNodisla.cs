@@ -92,6 +92,11 @@ public sealed class MotorAproximacionNodisla(OpcionesPropagacion? opciones = nul
             {
                 // Sin indices se ha calculado con un Sol supuesto: no vale lo mismo y se dice.
                 SinDatosSolares = aCiegas,
+
+                // Cada prediccion lleva su firma. Aqui salen todas del mismo sitio, pero el dia
+                // que haya un motor externo estas seran las que hayan caido de vuelta.
+                Motor = NombreDelMotor,
+                EsAproximacion = true,
             });
         }
 

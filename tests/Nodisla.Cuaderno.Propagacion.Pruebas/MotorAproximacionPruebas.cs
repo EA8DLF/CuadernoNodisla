@@ -30,6 +30,27 @@ public class MotorAproximacionPruebas
     }
 
     [Fact]
+    public void Cada_prediccion_va_firmada_por_su_motor()
+    {
+        // La firma va en cada banda, no solo en el motor: el dia que haya un motor externo,
+        // las bandas que caigan de vuelta a la estimacion tienen que poder distinguirse.
+        var prediccion = Predecir(Tenerife, Madrid, Mediodia);
+
+        prediccion.Should().OnlyContain(p => p.EsAproximacion);
+        prediccion.Should().OnlyContain(p => p.Motor == MotorAproximacionNodisla.NombreDelMotor);
+    }
+
+    [Fact]
+    public void Una_prediccion_recien_hecha_nunca_se_da_por_calculada_por_descuido()
+    {
+        // El contrato deja EsAproximacion en cierto por omision: si alguien escribe un motor y
+        // se olvida de firmar, lo peor que pasa es que se enseñe como estimacion algo que no lo
+        // era, y no al reves.
+        new PrediccionDeBanda(Banda.Parse("20m"), Mediodia, 0.5, null, null, 1)
+            .EsAproximacion.Should().BeTrue();
+    }
+
+    [Fact]
     public void Se_predicen_todas_las_bandas_de_hf_y_las_probabilidades_son_probabilidades()
     {
         var prediccion = Predecir(Tenerife, Madrid, Mediodia);
