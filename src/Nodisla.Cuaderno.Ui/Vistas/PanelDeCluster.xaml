@@ -197,43 +197,11 @@
                            VerticalAlignment="Center" />
             </WrapPanel>
 
-            <!-- ══ Consola cruda ══ -->
-            <Expander Header="Consola del cluster" IsExpanded="True" Margin="0,6,0,0">
-                <Grid Margin="0,8,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <Border Grid.Row="0"
-                            Background="{DynamicResource FondoCampo}"
-                            BorderBrush="{DynamicResource Borde}"
-                            BorderThickness="1"
-                            CornerRadius="3"
-                            MaxHeight="150">
-                        <ScrollViewer x:Name="DesplazamientoDeLaConsola" VerticalScrollBarVisibility="Auto" Padding="8,6">
-                            <ItemsControl ItemsSource="{Binding Consola}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding}" Style="{StaticResource TextoDeConsola}" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-                    </Border>
-
-                    <DockPanel Grid.Row="1" Margin="0,6,0,0">
-                        <Button DockPanel.Dock="Right"
-                                Content="Enviar"
-                                Command="{Binding EnviarOrdenCommand}"
-                                Margin="8,0,0,0" />
-                        <TextBox Text="{Binding Orden, UpdateSourceTrigger=PropertyChanged}"
-                                 FontFamily="Consolas, Cascadia Mono, Courier New"
-                                 ToolTip="Orden para el nodo, por ejemplo sh/dx"
-                                 KeyDown="AlTeclearLaOrden" />
-                    </DockPanel>
-                </Grid>
-            </Expander>
+            <!--
+                La consola cruda del nodo se fue a Ajustes. Mientras se opera no se leen los
+                «set/» del nodo, se leen los anuncios; lo que sí se mira operando es el estado de
+                la conexión, y ese sigue arriba, en la cabecera de este panel.
+            -->
         </StackPanel>
     </Grid>
 </UserControl>

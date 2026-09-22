@@ -2,38 +2,31 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
-             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
              Foreground="{DynamicResource Texto}">
 
     <!--
         LA CABINA DE OPERACIÓN.
 
-        Disposición confirmada por el propietario:
-
             ┌──────────────────────────────────────────────┐
             │  FRONTAL DEL FT-710  (todo el ancho)         │
-            ├───────────────────┬──────────────────────────┤
-            │  Contacto nuevo   │  Cluster de DX / Digital │
-            └───────────────────┴──────────────────────────┘
+            ├──────────────┬───────────────────────────────┤
+            │ Contacto     │  Cluster de DX                │
+            │ nuevo (1/3)  │  (2/3)                        │
+            └──────────────┴───────────────────────────────┘
 
         EL FRONTAL SE DIBUJA SIEMPRE. Es vectorial y vive dentro de un «Viewbox»: cuando la
-        ventana se estrecha o la letra crece, se ENCOGE; no se recorta y no desaparece. Un
-        frontal pequeño sigue sirviendo; ninguno, no. Solo se va si el operador lo pliega él
-        mismo con el botón de la barra, y ese pliegue se recuerda.
+        ventana se estrecha o la letra crece, se ENCOGE; no se recorta y no desaparece. Solo se
+        va si el operador lo pliega él mismo, y ese pliegue se recuerda.
 
-        La lista completa de mandos ya no es un sustituto del dibujo: es una vista
-        COMPLEMENTARIA que se abre cuando se quiere, con el botón «Todos los mandos», y que
-        enseña el valor de todos los mandos que declara el equipo.
+        El contacto nuevo se lleva un tercio y el cluster dos: en el formulario se escribe un
+        indicativo y poco más, mientras que en el cluster hay información que LEER —indicativo,
+        frecuencia, banda, modo, país, referencias— y cuanto más ancho, menos líneas partidas.
 
-        Los decodificados de los modos digitales ya no se llevan una franja entera: comparten
-        el bloque de la derecha con el cluster, en una pestaña.
-
-        El botón de pánico —soltar el PTT— va arriba del todo y siempre visible.
+        Los modos digitales tienen pestaña propia de primer nivel, con el mismo frontal arriba.
     -->
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
-        <conversores:NoEsVacio x:Key="NoEsVacio" />
     </UserControl.Resources>
 
     <Grid>
@@ -44,85 +37,12 @@
             <RowDefinition Height="*" MinHeight="150" />
         </Grid.RowDefinitions>
 
-        <!-- ══ Barra del equipo: estado, conexión, mandos y botón de pánico ══ -->
+        <!-- ══ Barra del equipo: la misma que en Digital ══ -->
         <Border Grid.Row="0"
                 Style="{StaticResource Tarjeta}"
                 Margin="0,0,0,5"
                 Padding="8,4">
-            <DockPanel>
-                <Button DockPanel.Dock="Right"
-                        Content="SOLTAR PTT"
-                        Command="{Binding Equipo.SoltarPttCommand}"
-                        Style="{StaticResource BotonDePanico}"
-                        Margin="6,0,0,0"
-                        ToolTip="Suelta el PTT ahora mismo, pase lo que pase. No pide confirmación."
-                        AutomationProperties.Name="Soltar el PTT ahora mismo" />
-
-                <Button DockPanel.Dock="Right"
-                        Content="{Binding Equipo.TextoDelBotonDeConexion}"
-                        Margin="6,0,0,0"
-                        ToolTip="Abre o cierra la comunicación con el equipo">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-                            <Setter Property="Command" Value="{Binding Equipo.ConectarCommand}" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Equipo.Conectado}" Value="True">
-                                    <Setter Property="Command" Value="{Binding Equipo.DesconectarCommand}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
-
-                <!-- La vista complementaria: se abre cuando se quiere, no sustituye al dibujo. -->
-                <ToggleButton DockPanel.Dock="Right"
-                              Content="{Binding TextoDeLaListaDeMandos}"
-                              IsChecked="{Binding ListaDeMandosVisible}"
-                              Margin="6,0,0,0"
-                              ToolTip="Enseña todos los mandos que declara el equipo, con su valor y su recorrido"
-                              AutomationProperties.Name="Ver todos los mandos del equipo" />
-
-                <ToggleButton DockPanel.Dock="Right"
-                              Content="{Binding TextoDelPliegueDelFrontal}"
-                              IsChecked="{Binding FrontalDesplegado}"
-                              Margin="6,0,0,0"
-                              ToolTip="Pliega el frontal del equipo para dejar sitio al cluster"
-                              AutomationProperties.Name="Plegar o desplegar el frontal del equipo" />
-
-                <Border DockPanel.Dock="Right"
-                        CornerRadius="3"
-                        Padding="8,2"
-                        VerticalAlignment="Center"
-                        Margin="6,0,0,0">
-                    <Border.Style>
-                        <Style TargetType="Border">
-                            <Setter Property="Background" Value="{DynamicResource FondoResalte}" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
-                            <Setter Property="BorderThickness" Value="1" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Equipo.Conectado}" Value="True">
-                                    <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Equipo.Transmitiendo}" Value="True">
-                                    <Setter Property="Background" Value="{DynamicResource ErrorFondo}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorde}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
-                    <TextBlock Text="{Binding Equipo.EstadoTexto}" FontWeight="Bold" TextTrimming="None" />
-                </Border>
-
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding Equipo.NombreDelEquipo}" FontWeight="Bold" />
-                    <TextBlock Text="{Binding Equipo.Aviso}"
-                               Style="{StaticResource TextoTenueEstilo}"
-                               Foreground="{DynamicResource AvisoTexto}"
-                               Margin="10,0,0,0"
-                               Visibility="{Binding Equipo.Aviso, Converter={StaticResource NoEsVacio}}" />
-                </StackPanel>
-            </DockPanel>
+            <vistas:BarraDelEquipo />
         </Border>
 
         <!-- ══ El frontal del equipo, a todo el ancho ══ -->
@@ -136,8 +56,7 @@
             <!--
                 El tope de alto es lo único que limita al dibujo: sin él, a mil quinientos
                 puntos de ancho el frontal se llevaría media pantalla. Con él crece hasta ese
-                alto y luego se queda quieto y centrado, como una radio de verdad encima de la
-                mesa.
+                alto y luego se queda quieto y centrado, como una radio encima de la mesa.
             -->
             <vistas:FrontalFt710 x:Name="Frontal" MaxHeight="370" />
         </Border>
@@ -159,24 +78,24 @@
             </StackPanel>
         </Border>
 
-        <!-- ══ Contacto nuevo a la izquierda; cluster y digital a la derecha ══ -->
+        <!-- ══ Contacto nuevo a la izquierda; cluster a la derecha ══ -->
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="5*" MinWidth="260" />
-                <ColumnDefinition Width="4*" MinWidth="220" />
+                <ColumnDefinition Width="1*" MinWidth="230" />
+                <ColumnDefinition Width="2*" MinWidth="260" />
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Style="{StaticResource Tarjeta}" Margin="0,0,5,0" Padding="8,6">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <vistas:PanelDeEntrada x:Name="Entrada" />
+                    <!--
+                        Pegado arriba: si se deja estirar, el formulario reparte su alto entre
+                        las filas y deja un claro en blanco enorme debajo del comentario que no
+                        sirve para nada.
+                    -->
+                    <vistas:PanelDeEntrada x:Name="Entrada" VerticalAlignment="Top" />
                 </ScrollViewer>
             </Border>
 
-            <!--
-                El cluster, solo. Los modos digitales tienen pestaña propia de primer nivel:
-                con el módem nuestro delante necesitan la ventana entera —cascada, decodificados
-                y control de la transmisión—, y aquí no cabrían sin estorbar al cluster.
-            -->
             <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6">
                 <vistas:PanelDeCluster DataContext="{Binding Cluster}" />
             </Border>

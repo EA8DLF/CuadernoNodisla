@@ -283,19 +283,42 @@
 
     <!-- ── Barras de desplazamiento ──────────────────────────────────────── -->
 
+    <!--
+        Una barra de desplazamiento tiene que PARECER una barra de desplazamiento.
+
+        Antes el pulgar era un rectangulo gris macizo sobre un canal invisible, y lo que se
+        veia era una mancha gris vertical flotando encima del contenido, sin que se entendiera
+        si era un asa de division, una raya o un fallo de pintado. Ahora el canal se ve —tenue,
+        pero se ve—, el pulgar es mas estrecho y se aclara al pasar el raton por encima: se lee
+        como lo que es de un vistazo.
+    -->
     <Style x:Key="PulgarDeBarra" TargetType="Thumb">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Border Background="{DynamicResource Borde}" CornerRadius="4" Margin="2" />
+                    <Border x:Name="pulgar"
+                            Background="{DynamicResource Borde}"
+                            CornerRadius="3"
+                            Margin="4,2"
+                            Opacity="0.75" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="pulgar" Property="Opacity" Value="1" />
+                            <Setter TargetName="pulgar" Property="Margin" Value="3,2" />
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="pulgar" Property="Background" Value="{DynamicResource Acento}" />
+                            <Setter TargetName="pulgar" Property="Opacity" Value="1" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style TargetType="ScrollBar">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Width" Value="14" />
+        <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
+        <Setter Property="Width" Value="13" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollBar">
@@ -314,7 +337,7 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="Orientation" Value="Horizontal">
-                            <Setter Property="Height" Value="14" />
+                            <Setter Property="Height" Value="13" />
                             <Setter Property="Width" Value="Auto" />
                             <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="False" />
                         </Trigger>

@@ -28,14 +28,39 @@
         sitio está guardado.
     -->
 
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" MinHeight="150" />
         </Grid.RowDefinitions>
 
+        <!--
+            EL FRONTAL TAMBIEN AQUI. Operando en FT8 hace falta ver y tocar la radio igual que
+            operando en fonia: la frecuencia, el modo, el filtro y el boton de soltar el PTT.
+            Es el MISMO control sobre el MISMO modelo de vista que en Operar, asi que no hay
+            dos estados: lo que se toca aqui se ve alla, y el pliegue es el mismo interruptor.
+        -->
+        <Border Grid.Row="0" Style="{StaticResource Tarjeta}" Margin="0,0,0,5" Padding="8,4">
+            <vistas:BarraDelEquipo />
+        </Border>
+
+        <Border Grid.Row="1"
+                Style="{StaticResource Tarjeta}"
+                Margin="0,0,0,5"
+                Padding="5"
+                DataContext="{Binding Equipo}"
+                Visibility="{Binding DataContext.FrontalDibujadoVisible, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanoAVisible}}">
+            <vistas:FrontalFt710 MaxHeight="300" />
+        </Border>
+
         <!-- ══ De dónde sale el audio y el espectro ══ -->
-        <Border Grid.Row="0" Style="{StaticResource Tarjeta}" Margin="0,0,0,5" Padding="8,6">
+        <Border Grid.Row="2" Style="{StaticResource Tarjeta}" Margin="0,0,0,5" Padding="8,6">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="Fuente"
@@ -62,7 +87,7 @@
             </DockPanel>
         </Border>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*" MinWidth="260" />
                 <ColumnDefinition Width="4*" MinWidth="300" />
@@ -121,7 +146,7 @@
             <!-- ══ El puente externo, como una fuente más ══ -->
             <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <vistas:PanelDigital />
+                    <vistas:PanelDigital DataContext="{Binding Digital}" />
                 </ScrollViewer>
             </Border>
         </Grid>

@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Mapsui;
@@ -100,15 +100,34 @@ public class ControlDeMapa : UserControl, IDisposable
     private readonly TextBlock _atribucion = new();
     private readonly TextBlock _aviso = new();
 
+    /// <summary>
+    /// La sombra de la noche, atenuada como capa.
+    /// </summary>
+    /// <remarks>
+    /// La transparencia se pone AQUI, en la capa, y no en el color del relleno. Con el color
+    /// translucido el motor de mapas componia la mancha de manera que el mapa de debajo
+    /// desaparecia: quedaban dos bandas macizas que tapaban continentes, mosaicos y contactos,
+    /// y el mapa solo asomaba por la franja de dia. Atenuando la capa entera, el velo deja ver
+    /// lo que hay debajo, que es lo que tiene que hacer una linea gris.
+    /// </remarks>
+    private readonly MemoryLayer _capaDeLaNoche = new("Noche") { Opacity = 0.3 };
+
     private readonly MemoryLayer _capaDelPasoGris = new("Paso gris");
     private readonly MemoryLayer _capaDeTrayectos = new("Trayectos");
     private readonly MemoryLayer _capaDeMarcas = new("Contactos y spots");
     private readonly MemoryLayer _capaDeLaEstacion = new("Estación propia");
 
     private ILayer? _capaDeMosaicos;
-    private CancellationTokenSource? _dibujoEnCurso;
+    /// <summary>Calculo en curso de cada capa, para poder cancelar solo el suyo.</summary>
+    private readonly Dictionary<MemoryLayer, CancellationTokenSource> _dibujosEnCurso = [];
     private bool _liberado;
     private bool _encuadrado;
+
+    /// <summary>Escalon de zoom con el que se agruparon las marcas por ultima vez.</summary>
+    private int _escalonDeZoom = int.MinValue;
+
+    /// <summary>Ultima marca sobre la que estuvo el raton, para no rehacer la ayuda a cada pixel.</summary>
+    private MarcaDelMapa? _marcaSenalada;
 
     /// <summary>Monta el mapa con sus capas y lo deja mirando al mundo entero.</summary>
     public ControlDeMapa()
@@ -134,11 +153,14 @@ public class ControlDeMapa : UserControl, IDisposable
         lienzo.Children.Add(_aviso);
         Content = lienzo;
 
+        _mapa.Map.Layers.Add(_capaDeLaNoche);
         _mapa.Map.Layers.Add(_capaDelPasoGris);
         _mapa.Map.Layers.Add(_capaDeTrayectos);
         _mapa.Map.Layers.Add(_capaDeMarcas);
         _mapa.Map.Layers.Add(_capaDeLaEstacion);
         _mapa.MapTapped += AlTocarElMapa;
+        _mapa.MapPointerMoved += AlPasarElRaton;
+        _mapa.Map.Navigator.ViewportChanged += AlCambiarElEncuadre;
 
         AplicarTema();
         RehacerElFondo();
@@ -275,8 +297,13 @@ public class ControlDeMapa : UserControl, IDisposable
 
         _mapa.MapTapped -= AlTocarElMapa;
         SizeChanged -= AlCambiarDeTamano;
-        _dibujoEnCurso?.Cancel();
-        _dibujoEnCurso?.Dispose();
+        foreach (var testigo in _dibujosEnCurso.Values)
+        {
+            testigo.Cancel();
+            testigo.Dispose();
+        }
+
+        _dibujosEnCurso.Clear();
         _mapa.Dispose();
     }
 
@@ -389,6 +416,7 @@ public class ControlDeMapa : UserControl, IDisposable
 
         if (!MostrarPasoGris)
         {
+            Colgar(_capaDeLaNoche, []);
             Colgar(_capaDelPasoGris, []);
             return;
         }
@@ -397,9 +425,8 @@ public class ControlDeMapa : UserControl, IDisposable
         var paleta = Paleta;
         var detalle = Detalle;
 
-        EnSegundoPlano(
-            () => CapasDelMapa.PasoGrisDelMapa(instante, paleta, detalle),
-            figuras => Colgar(_capaDelPasoGris, figuras));
+        EnSegundoPlano(_capaDeLaNoche, () => CapasDelMapa.SombraDeLaNoche(instante, paleta, detalle));
+        EnSegundoPlano(_capaDelPasoGris, () => CapasDelMapa.LineasDelPasoGris(instante, paleta, detalle));
     }
 
     private void RehacerLosTrayectos()
@@ -410,9 +437,34 @@ public class ControlDeMapa : UserControl, IDisposable
         var paleta = Paleta;
         var detalle = Detalle;
 
-        EnSegundoPlano(
-            () => CapasDelMapa.Trayectos(trayectos, paleta, detalle),
-            figuras => Colgar(_capaDeTrayectos, figuras));
+        EnSegundoPlano(_capaDeTrayectos, () => CapasDelMapa.Trayectos(trayectos, paleta, detalle));
+    }
+
+    /// <summary>Puntos de pantalla que se dejan entre una burbuja y la siguiente.</summary>
+    /// <remarks>
+    /// Una burbuja con su numero dentro mide unos treinta puntos. Agrupando con casillas de
+    /// cuarenta y cuatro, dos burbujas vecinas no se tocan ni a vista de mundo, que era el
+    /// problema: veinte encima unas de otras sobre Europa.
+    /// </remarks>
+    private const double PuntosEntreBurbujas = 44.0;
+
+    /// <summary>Vuelta al mundo por el ecuador, en metros de Mercator.</summary>
+    private const double VueltaAlMundoEnMetros = 40075016.686;
+
+    /// <summary>
+    /// Lado de la casilla de agrupacion, en grados, para el zoom que hay ahora.
+    /// </summary>
+    /// <remarks>
+    /// La resolucion del motor de mapas son metros de Mercator por punto de pantalla. Pasar de
+    /// ahi a grados de longitud es una regla de tres con la vuelta al mundo. Devuelve cero si
+    /// todavia no hay encuadre, y entonces se agrupa como antes, por el tope de marcas.
+    /// </remarks>
+    private double LadoDeCasillaEnGrados()
+    {
+        var resolucion = _mapa.Map.Navigator.Viewport.Resolution;
+        if (double.IsNaN(resolucion) || resolucion <= 0) return 0;
+
+        return Math.Clamp(PuntosEntreBurbujas * resolucion * 360.0 / VueltaAlMundoEnMetros, 0.05, 90.0);
     }
 
     private void RehacerLasMarcas()
@@ -423,10 +475,39 @@ public class ControlDeMapa : UserControl, IDisposable
         var paleta = Paleta;
         var maximo = MaximoDeMarcas;
         var letra = LetraDeLaVentana;
+        var lado = LadoDeCasillaEnGrados();
 
-        EnSegundoPlano(
-            () => CapasDelMapa.Marcas(marcas, paleta, maximo, letra),
-            figuras => Colgar(_capaDeMarcas, figuras));
+        _escalonDeZoom = EscalonDeZoom();
+
+        EnSegundoPlano(_capaDeMarcas, () => CapasDelMapa.Marcas(marcas, paleta, maximo, letra, lado));
+    }
+
+    /// <summary>
+    /// Escalon de zoom, para no rehacer las marcas con cada rueda del raton.
+    /// </summary>
+    /// <remarks>
+    /// Se agrupa de nuevo cuando el zoom cambia al doble o a la mitad, no antes: rehacer
+    /// veinte mil contactos en cada paso intermedio dejaria el mapa a tirones sin que el
+    /// reparto de burbujas cambiara nada que se note.
+    /// </remarks>
+    private int EscalonDeZoom()
+    {
+        var resolucion = _mapa.Map.Navigator.Viewport.Resolution;
+        return double.IsNaN(resolucion) || resolucion <= 0
+            ? int.MinValue
+            : (int)Math.Round(Math.Log2(resolucion));
+    }
+
+    private void AlCambiarElEncuadre(object? origen, EventArgs args)
+    {
+        if (_liberado) return;
+
+        var escalon = EscalonDeZoom();
+        if (escalon == int.MinValue || escalon == _escalonDeZoom) return;
+
+        _ = Dispatcher.BeginInvoke(
+            System.Windows.Threading.DispatcherPriority.Background,
+            new Action(RehacerLasMarcas));
     }
 
     private void RehacerLaEstacion()
@@ -453,15 +534,28 @@ public class ControlDeMapa : UserControl, IDisposable
     /// el mapa o pasa un minuto del reloj, asi que se hace aparte. Cada peticion nueva cancela
     /// la anterior: lo que importa es lo ultimo que pidio el operador, no lo que pidio antes.
     /// </remarks>
-    private void EnSegundoPlano(
-        Func<IReadOnlyList<IFeature>> calcular,
-        Action<IReadOnlyList<IFeature>> colgar)
+    /// <summary>
+    /// Calcula unas figuras fuera del hilo de la ventana y las cuelga de su capa.
+    /// </summary>
+    /// <param name="capa">Capa que recibe el resultado.</param>
+    /// <param name="calcular">Lo que hay que calcular, que puede tardar decimas de segundo.</param>
+    /// <remarks>
+    /// <b>Cada capa lleva su propio testigo de cancelacion.</b> Antes habia uno solo para todo
+    /// el control, asi que rehacer una capa cancelaba el calculo de la anterior: pedir a la vez
+    /// la noche y las lineas del paso gris —o las marcas y los trayectos— dejaba fuera a la
+    /// primera, y la capa se quedaba vacia sin que nadie se enterara. Lo que si tiene que
+    /// cancelarse es el calculo VIEJO DE LA MISMA CAPA, que ya no sirve para nada.
+    /// </remarks>
+    private void EnSegundoPlano(MemoryLayer capa, Func<IReadOnlyList<IFeature>> calcular)
     {
-        var anterior = _dibujoEnCurso;
+        if (_dibujosEnCurso.TryGetValue(capa, out var anterior))
+        {
+            anterior.Cancel();
+            anterior.Dispose();
+        }
+
         var testigo = new CancellationTokenSource();
-        _dibujoEnCurso = testigo;
-        anterior?.Cancel();
-        anterior?.Dispose();
+        _dibujosEnCurso[capa] = testigo;
 
         var ct = testigo.Token;
         _ = Task.Run(
@@ -483,7 +577,7 @@ public class ControlDeMapa : UserControl, IDisposable
                 _ = Dispatcher.InvokeAsync(() =>
                 {
                     if (ct.IsCancellationRequested || _liberado) return;
-                    colgar(figuras);
+                    Colgar(capa, figuras);
                 });
             },
             ct);
@@ -511,6 +605,37 @@ public class ControlDeMapa : UserControl, IDisposable
         _ = Dispatcher.BeginInvoke(
             System.Windows.Threading.DispatcherPriority.Loaded,
             new Action(VerElMundo));
+    }
+
+    /// <summary>
+    /// Ensena de quien es la marca que hay bajo el raton.
+    /// </summary>
+    /// <remarks>
+    /// Con el cuaderno entero encima no caben los indicativos escritos —se pisarian unos a
+    /// otros hasta tapar el mapa—, asi que el rotulo se guarda para cuando hay sitio y el
+    /// resto del tiempo se dice aqui, que no ocupa nada hasta que hace falta.
+    /// </remarks>
+    private void AlPasarElRaton(object? origen, MapEventArgs args)
+    {
+        if (_liberado) return;
+
+        var info = args.GetMapInfo([_capaDeLaEstacion, _capaDeMarcas]);
+        var marca = info.Feature?[CapasDelMapa.ClaveDeLaMarca] as MarcaDelMapa;
+
+        if (ReferenceEquals(marca, _marcaSenalada)) return;
+        _marcaSenalada = marca;
+
+        if (marca is null)
+        {
+            _mapa.ToolTip = null;
+            return;
+        }
+
+        var cuantos = info.Feature?[CapasDelMapa.ClaveDeCuantos] as int? ?? 1;
+
+        _mapa.ToolTip = cuantos > 1
+            ? $"{marca.Etiqueta} y {cuantos - 1} más en esta zona"
+            : marca.Etiqueta;
     }
 
     private void AlTocarElMapa(object? origen, MapEventArgs args)

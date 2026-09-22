@@ -1,4 +1,4 @@
-using Mapsui.Styles;
+﻿using Mapsui.Styles;
 
 namespace Nodisla.Cuaderno.Ui.Mapa;
 
@@ -35,8 +35,8 @@ internal sealed record PaletaDelMapa(
         EstacionPropia: Color.FromArgb(255, 20, 86, 42),
         CaminoCorto: Color.FromArgb(220, 190, 28, 40),
         CaminoLargo: Color.FromArgb(150, 120, 60, 160),
-        Noche: Color.FromArgb(60, 10, 22, 45),
-        LineaDelPasoGris: Color.FromArgb(190, 40, 60, 100),
+        Noche: Color.FromArgb(255, 34, 50, 78),
+        LineaDelPasoGris: Color.FromArgb(130, 40, 60, 100),
         Texto: Color.FromArgb(255, 22, 32, 46),
         Halo: Color.FromArgb(210, 255, 255, 255),
         BordeDeMarca: Color.FromArgb(220, 255, 255, 255));
@@ -51,8 +51,8 @@ internal sealed record PaletaDelMapa(
         EstacionPropia: Color.FromArgb(255, 110, 210, 140),
         CaminoCorto: Color.FromArgb(225, 245, 95, 105),
         CaminoLargo: Color.FromArgb(160, 180, 140, 230),
-        Noche: Color.FromArgb(90, 0, 0, 0),
-        LineaDelPasoGris: Color.FromArgb(200, 170, 195, 235),
+        Noche: Color.FromArgb(255, 0, 0, 0),
+        LineaDelPasoGris: Color.FromArgb(140, 170, 195, 235),
         Texto: Color.FromArgb(255, 232, 238, 246),
         Halo: Color.FromArgb(215, 12, 16, 24),
         BordeDeMarca: Color.FromArgb(200, 20, 26, 36));

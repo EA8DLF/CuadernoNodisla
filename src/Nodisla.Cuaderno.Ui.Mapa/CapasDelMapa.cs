@@ -1,4 +1,4 @@
-using Mapsui;
+﻿using Mapsui;
 using Mapsui.Layers;
 using Mapsui.Nts;
 using Mapsui.Styles;
@@ -24,8 +24,26 @@ internal static class CapasDelMapa
     /// <summary>Clave con la que cada figura guarda cuantas marcas ha juntado.</summary>
     public const string ClaveDeCuantos = "cuantos";
 
+    /// <summary>
+    /// Lo que se atenua el velo de la noche.
+    /// </summary>
+    /// <remarks>
+    /// Va en el ESTILO y con el color macizo, no en el canal alfa del color. Con el color
+    /// translucido el motor de mapas componia la mancha de otra manera y el mapa de debajo
+    /// desaparecia: quedaban dos bandas macizas que tapaban continentes, mosaicos y contactos.
+    /// Este numero esta ajustado mirando la captura: con el se sigue viendo la costa, el mar y
+    /// las marcas dentro de la noche, y a la vez se distingue de un vistazo donde es de dia.
+    /// </remarks>
+    private const float OpacidadDeLaNoche = 0.55f;
+
     /// <summary>A partir de estas marcas ya no se escriben los indicativos: no cabrian.</summary>
-    private const int MarcasConEtiqueta = 120;
+    /// <remarks>
+    /// Un indicativo ocupa seis o siete letras al lado de su punto. Con mas de estas marcas a
+    /// la vez, los rotulos se pisan unos a otros y el mapa se vuelve una mancha. Por debajo de
+    /// este numero caben; por encima, el indicativo se ve al pasar el raton por encima, que
+    /// para eso esta la ayuda emergente.
+    /// </remarks>
+    private const int MarcasConEtiqueta = 40;
 
     /// <summary>
     /// A partir de estos grupos, solo se escribe el numero de los mas poblados.
@@ -35,10 +53,10 @@ internal static class CapasDelMapa
     /// cientos de numeros y no se ve ni la costa. Con muchos grupos solo se rotulan los que
     /// de verdad dicen algo, que son los que juntan muchos contactos.
     /// </remarks>
-    private const int GruposConCuenta = 60;
+    private const int GruposConCuenta = 16;
 
     /// <summary>Cuando hay muchos grupos, solo se rotulan los mas poblados.</summary>
-    private const int GruposRotulados = 12;
+    private const int GruposRotulados = 6;
 
     /// <summary>
     /// Convierte las marcas en figuras, agrupando las que caen encima unas de otras.
@@ -47,16 +65,29 @@ internal static class CapasDelMapa
     /// <param name="paleta">Colores del tema en uso.</param>
     /// <param name="maximo">Cuantas figuras se permiten como mucho.</param>
     /// <param name="tamanoDeLetra">Tamano de letra de la ventana, para que las etiquetas crezcan con ella.</param>
+    /// <param name="ladoEnGrados">
+    /// Lado de la casilla de agrupacion, en grados, calculado por la vista a partir del zoom.
+    /// Cero o menos deja que se ajuste solo al tope de marcas.
+    /// </param>
     /// <returns>Las figuras listas para colgar de una capa.</returns>
+    /// <remarks>
+    /// El lado lo pone la vista y no esta clase porque solo la vista sabe cuantos metros mide
+    /// un punto de pantalla en este momento. Agrupar por distancia en el mundo y no por
+    /// distancia en la pantalla es justo lo que hacia que a vista de mundo salieran veinte
+    /// burbujas amontonadas sobre Europa: en el mundo estaban separadas, en la pantalla no.
+    /// </remarks>
     public static IReadOnlyList<IFeature> Marcas(
         IReadOnlyList<MarcaDelMapa> marcas,
         PaletaDelMapa paleta,
         int maximo,
-        double tamanoDeLetra)
+        double tamanoDeLetra,
+        double ladoEnGrados = 0)
     {
         if (marcas.Count == 0) return [];
 
-        var grupos = AgrupacionDePuntos.AgruparHasta(marcas, m => m.Donde, maximo);
+        var grupos = ladoEnGrados > 0
+            ? ConTopeDeMarcas(AgrupacionDePuntos.Agrupar(marcas, m => m.Donde, ladoEnGrados), marcas, maximo)
+            : AgrupacionDePuntos.AgruparHasta(marcas, m => m.Donde, maximo);
         var conEtiqueta = grupos.Count <= MarcasConEtiqueta;
 
         // Los grupos vienen del mas poblado al menos poblado, asi que cuando hay muchos basta
@@ -131,47 +162,77 @@ internal static class CapasDelMapa
     }
 
     /// <summary>
-    /// La sombra de la noche y la linea del paso gris para un instante dado.
+    /// La sombra de la noche para un instante dado.
     /// </summary>
     /// <param name="instante">Momento que se representa.</param>
     /// <param name="paleta">Colores del tema en uso.</param>
-    /// <param name="detalle">Como de fina sale la linea.</param>
-    /// <returns>El poligono de la noche y las lineas de crepusculo.</returns>
-    public static IReadOnlyList<IFeature> PasoGrisDelMapa(
+    /// <param name="detalle">Como de fino sale el contorno.</param>
+    /// <returns>El poligono de la noche, o nada si no lo hay.</returns>
+    /// <remarks>
+    /// El color viene macizo a proposito: <b>la transparencia la pone la capa</b>, no el color.
+    /// Con el color translucido el motor de mapas componia el relleno de manera que el mapa de
+    /// debajo desaparecia —quedaban dos bandas macizas que tapaban continentes y contactos—.
+    /// Atenuando la capa entera, el velo se comporta como lo que es: una sombra por encima del
+    /// mapa que deja ver lo que hay debajo.
+    /// </remarks>
+    public static IReadOnlyList<IFeature> SombraDeLaNoche(
         DateTimeOffset instante,
         PaletaDelMapa paleta,
         DetalleDelMapa detalle)
     {
-        var puntos = detalle switch
+        if (Proyeccion.APoligono(PasoGris.ZonaNocturna(instante, PuntosDelTerminador(detalle))) is not { } noche)
         {
-            DetalleDelMapa.Ligero => 61,
-            DetalleDelMapa.Fino => 361,
-            _ => 181,
-        };
+            return [];
+        }
 
-        var figuras = new List<IFeature>(3);
-
-        if (Proyeccion.APoligono(PasoGris.ZonaNocturna(instante, puntos)) is { } noche)
-        {
-            figuras.Add(new GeometryFeature(noche)
+        return
+        [
+            new GeometryFeature(noche)
             {
                 Styles =
                 {
-                    new VectorStyle { Fill = new Brush(paleta.Noche), Outline = null, Line = null },
+                    new VectorStyle { Opacity = OpacidadDeLaNoche, Fill = new Brush(paleta.Noche), Outline = null, Line = null },
                 },
-            });
-        }
+            },
+        ];
+    }
 
-        // La linea de dia y noche va maciza; el borde del crepusculo, a trazos. Entre las dos
-        // queda la franja donde de verdad abre la propagacion.
-        AnadirLinea(figuras, PasoGris.Linea(instante, puntos), new Pen(paleta.LineaDelPasoGris, 1.8));
+    /// <summary>
+    /// Las dos lineas del paso gris: la de dia y noche, y la del crepusculo.
+    /// </summary>
+    /// <param name="instante">Momento que se representa.</param>
+    /// <param name="paleta">Colores del tema en uso.</param>
+    /// <param name="detalle">Como de fina sale la linea.</param>
+    /// <returns>Las lineas listas para colgar de una capa.</returns>
+    /// <remarks>
+    /// Van en capa aparte de la sombra porque la sombra se atenua entera —es un velo— y las
+    /// lineas no: atenuadas al treinta por ciento no se verian, y son justamente lo que hay
+    /// que mirar, porque entre las dos queda la franja donde abre la propagacion.
+    /// </remarks>
+    public static IReadOnlyList<IFeature> LineasDelPasoGris(
+        DateTimeOffset instante,
+        PaletaDelMapa paleta,
+        DetalleDelMapa detalle)
+    {
+        var puntos = PuntosDelTerminador(detalle);
+        var figuras = new List<IFeature>(2);
+
+        // La linea de dia y noche va maciza; el borde del crepusculo, a trazos.
+        AnadirLinea(figuras, PasoGris.Linea(instante, puntos), new Pen(paleta.LineaDelPasoGris, 1.1));
         AnadirLinea(
             figuras,
             PasoGris.Linea(instante, puntos, PasoGris.GradosDeCrepusculo),
-            new Pen(paleta.LineaDelPasoGris, 1.0) { PenStyle = PenStyle.Dot });
+            new Pen(paleta.LineaDelPasoGris, 0.8) { PenStyle = PenStyle.Dot });
 
         return figuras;
     }
+
+    private static int PuntosDelTerminador(DetalleDelMapa detalle) => detalle switch
+    {
+        DetalleDelMapa.Ligero => 61,
+        DetalleDelMapa.Fino => 361,
+        _ => 181,
+    };
 
     /// <summary>La marca de la estacion propia, que siempre va sola y encima de todo.</summary>
     /// <param name="donde">Donde esta la estacion.</param>
@@ -229,6 +290,20 @@ internal static class CapasDelMapa
         _ => 1,
     };
 
+    /// <summary>
+    /// Deja los grupos por debajo del tope de marcas sin perder ninguna.
+    /// </summary>
+    /// <remarks>
+    /// Si la casilla del zoom deja mas burbujas de las que la vista admite, se vuelve al
+    /// reparto que se ajusta solo. Nunca se recortan grupos por la cola: un contacto que
+    /// desaparece del mapa sin avisar es peor que una burbuja de mas.
+    /// </remarks>
+    private static IReadOnlyList<Grupo<MarcaDelMapa>> ConTopeDeMarcas(
+        IReadOnlyList<Grupo<MarcaDelMapa>> grupos,
+        IReadOnlyList<MarcaDelMapa> marcas,
+        int maximo) =>
+        grupos.Count <= maximo ? grupos : AgrupacionDePuntos.AgruparHasta(marcas, m => m.Donde, maximo);
+
     private static SymbolStyle SimboloDe(MarcaDelMapa marca, int cuantos, PaletaDelMapa paleta)
     {
         var color = marca switch
@@ -242,14 +317,14 @@ internal static class CapasDelMapa
 
         // El grupo crece con el numero de contactos, pero muy poco a poco: con logaritmo, mil
         // contactos son el doble de grande que uno, no mil veces.
-        var escala = 0.26 + (Math.Log10(Math.Max(1, cuantos)) * 0.11);
+        var escala = 0.17 + (Math.Log10(Math.Max(1, cuantos)) * 0.085);
 
         return new SymbolStyle
         {
             SymbolType = SymbolType.Ellipse,
-            SymbolScale = Math.Min(0.75, escala),
+            SymbolScale = Math.Min(0.5, escala),
             Fill = new Brush(color),
-            Outline = new Pen(paleta.BordeDeMarca, cuantos > 1 ? 1.6 : 1.0),
+            Outline = new Pen(paleta.BordeDeMarca, cuantos > 1 ? 1.2 : 0.8),
         };
     }
 

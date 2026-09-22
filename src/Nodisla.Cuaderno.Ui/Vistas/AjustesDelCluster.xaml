@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.AjustesDelCluster"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        LA CONFIGURACIÓN DEL CLUSTER, CON SU CONSOLA.
+
+        La consola cruda estaba en la pantalla de operar y de ahí se ha quitado: mientras se
+        opera no se leen los «set/» del nodo, se leen los anuncios. Lo que sí se mira operando
+        es el ESTADO de la conexión —conectado, reintentando, rechazado—, y eso se queda en la
+        pestaña Operar, en la cabecera del cluster.
+
+        Aquí queda lo otro: el guion de arranque, las órdenes al nodo y el tráfico crudo, que
+        es lo que hace falta para configurar y para diagnosticar cuando algo no va.
+    -->
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" MinHeight="120" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Cluster de DX" Style="{StaticResource TituloDeSeccion}" />
+
+        <DockPanel Grid.Row="1" Margin="0,0,0,6">
+            <Button DockPanel.Dock="Right"
+                    Content="{Binding TextoDelBotonDeConexion}"
+                    Margin="8,0,0,0"
+                    ToolTip="Abre o cierra la conexión con el nodo">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                        <Setter Property="Command" Value="{Binding ConectarCommand}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding EstadoTexto}" Value="Conectado">
+                                <Setter Property="Command" Value="{Binding DesconectarCommand}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding EstadoTexto}" Value="Conectando…">
+                                <Setter Property="Command" Value="{Binding DesconectarCommand}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding EstadoTexto}" Value="Reintentando…">
+                                <Setter Property="Command" Value="{Binding DesconectarCommand}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="{Binding Nombre}" FontWeight="Bold" />
+                <TextBlock Text="{Binding EstadoTexto}" Style="{StaticResource TextoTenueEstilo}" />
+            </StackPanel>
+        </DockPanel>
+
+        <!-- ══ El tráfico crudo del nodo ══ -->
+        <Border Grid.Row="2"
+                Background="{DynamicResource FondoCampo}"
+                BorderBrush="{DynamicResource Borde}"
+                BorderThickness="1"
+                CornerRadius="3">
+            <ScrollViewer x:Name="DesplazamientoDeLaConsola" VerticalScrollBarVisibility="Auto" Padding="8,6">
+                <ItemsControl ItemsSource="{Binding Consola}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" Style="{StaticResource TextoDeConsola}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+
+        <DockPanel Grid.Row="3" Margin="0,6,0,0">
+            <Button DockPanel.Dock="Right"
+                    Content="Enviar"
+                    Command="{Binding EnviarOrdenCommand}"
+                    Margin="8,0,0,0" />
+            <TextBox Text="{Binding Orden, UpdateSourceTrigger=PropertyChanged}"
+                     FontFamily="Consolas, Cascadia Mono, Courier New"
+                     ToolTip="Orden para el nodo, por ejemplo sh/dx"
+                     KeyDown="AlTeclearLaOrden" />
+        </DockPanel>
+    </Grid>
+</UserControl>
