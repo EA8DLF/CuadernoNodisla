@@ -206,6 +206,18 @@
         <Setter Property="FontWeight" Value="Bold" />
     </Style>
 
+    <!--
+        Botón que pone el equipo EN ANTENA. Va en ámbar y lo dice en su rótulo: no puede
+        quedarse entre los botones inocuos, porque al pulsarlo se sale al aire.
+    -->
+    <Style x:Key="BotonQueTransmite" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+        <Setter Property="Foreground" Value="{DynamicResource AvisoTexto}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
     <!-- Marca de «esto sería nuevo en el cuaderno». -->
     <Style x:Key="MarcaDeNovedad" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />

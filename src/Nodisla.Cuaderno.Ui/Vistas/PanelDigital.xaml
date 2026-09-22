@@ -7,12 +7,22 @@
     <!--
         Panel de modos digitales.
 
-        La regla de este panel es una sola: un botón que el programa del otro lado no admite
-        sale DESACTIVADO, nunca falla al pulsarlo. WSJT-X admite que le digamos a quién llamar
-        y que resalte indicativos; JTDX no tiene el mensaje de resaltado. Se pregunta al puente
-        antes de ofrecer el botón, y debajo se explica en una línea qué no admite la instancia
-        que esté elegida, para que el operador no se quede mirando un botón gris sin saber por
-        qué lo está.
+        Ningún botón de aquí falla al pulsarlo: antes se le pregunta al puente qué admite el
+        programa que hay al otro lado. Y se distingue entre dos cosas que no son iguales:
+
+          · Lo que esa instancia NO PODRÁ HACER NUNCA —JTDX no tiene el mensaje de resaltado;
+            WSJT-X no deja mover el tono de transmisión desde fuera, porque su mensaje de
+            configuración fija el de recepción— se ESCONDE. Un botón gris que no va a
+            encenderse jamás es ruido permanente.
+          · Lo que está gris porque falta hacer algo —elegir una decodificación— se queda a la
+            vista, en gris, porque se enciende solo con dar ese paso.
+
+        Para que esconder no sea ocultar, la línea de capacidades de arriba dice siempre qué
+        admite y qué no la instancia elegida: así se entiende por qué en una sale un botón y en
+        otra no.
+
+        Y lo que sale al aire lo dice: «Llamar CQ — TRANSMITE» va en ámbar y aparte de los
+        botones inocuos.
     -->
 
     <UserControl.Resources>
@@ -22,6 +32,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -84,46 +95,36 @@
                    FontStyle="Italic"
                    Margin="0,0,0,6" />
 
-        <!-- ══ Botonera y filtro ══ -->
+        <!--
+            ══ Botonera y filtro ══
+
+            Un botón que la instancia elegida NO admite no se enseña gris: se esconde. El gris se
+            reserva para lo que puede encenderse solo con hacer algo —elegir una decodificación,
+            por ejemplo—; un gris que no va a cambiar nunca es ruido permanente. Qué admite y
+            qué no queda dicho arriba, en la línea de capacidades, para que se entienda por qué
+            en una instancia sale un botón y en otra no.
+        -->
         <WrapPanel Grid.Row="2" Margin="0,0,0,6">
             <Button Content="Responder a esta llamada"
                     Command="{Binding ResponderCommand}"
                     Margin="0,0,8,6"
+                    Visibility="{Binding AdmiteResponder, Converter={StaticResource BooleanoAVisible}}"
                     ToolTip="Le pide al programa que llame a la estación decodificada" />
+
             <Button Content="Resaltar indicativo"
                     Command="{Binding ResaltarCommand}"
                     Margin="0,0,8,6"
+                    Visibility="{Binding AdmiteResaltar, Converter={StaticResource BooleanoAVisible}}"
                     ToolTip="Resalta el indicativo en la ventana del programa" />
-            <Button Content="Llamar CQ"
+
+            <!-- Esto sale al aire: va en ámbar y lo dice el rótulo. -->
+            <Button Content="Llamar CQ — TRANSMITE"
                     Command="{Binding LlamarCqCommand}"
+                    Style="{StaticResource BotonQueTransmite}"
                     Margin="0,0,8,6"
-                    ToolTip="Le pide al programa que lance una llamada general" />
-
-            <!--
-                El tono de transmisión: el sitio del ancho de banda de audio por el que se
-                sale. Se cambia para no pisar a quien ya está ahí.
-            -->
-            <TextBox Text="{Binding TonoDeTransmision, UpdateSourceTrigger=PropertyChanged}"
-                     Width="60"
-                     VerticalAlignment="Center"
-                     Margin="0,0,4,6"
-                     AutomationProperties.Name="Tono de transmisión en hercios"
-                     ToolTip="Tono de transmisión, en hercios" />
-            <Button Content="Poner tono"
-                    Command="{Binding PonerTonoTxCommand}"
-                    Margin="0,0,8,6"
-                    ToolTip="Pone ese tono de transmisión en el programa" />
-
-            <TextBox Text="{Binding Configuracion, UpdateSourceTrigger=PropertyChanged}"
-                     Width="110"
-                     VerticalAlignment="Center"
-                     Margin="0,0,4,6"
-                     AutomationProperties.Name="Nombre de la configuración del programa"
-                     ToolTip="Nombre de la configuración del programa" />
-            <Button Content="Cambiar configuración"
-                    Command="{Binding CambiarConfiguracionCommand}"
-                    Margin="0,0,8,6"
-                    ToolTip="Hace que el programa pase a esa configuración" />
+                    Visibility="{Binding AdmiteLlamarCq, Converter={StaticResource BooleanoAVisible}}"
+                    AutomationProperties.Name="Lanzar una llamada general. Pone el equipo en antena."
+                    ToolTip="Lanza una llamada general: el equipo SALE AL AIRE. Llama sin dirigir y respeta el periodo que el programa tiene puesto. El botón «SOLTAR PTT» la corta." />
 
             <CheckBox Content="Solo indicativos nuevos"
                       IsChecked="{Binding SoloNuevos}"
@@ -132,8 +133,57 @@
             <Button Content="Vaciar" Command="{Binding LimpiarDecodificacionesCommand}" Margin="0,0,0,6" />
         </WrapPanel>
 
+        <!--
+            Los ajustes del programa van plegados: cambiar el tono de transmisión en mitad de un
+            periodo SE OYE EN EL AIRE y la estación de enfrente puede perder lo que queda de él.
+            No pide confirmación, pero no es un control que deba rozarse sin querer.
+        -->
+        <Expander Grid.Row="3"
+                  Header="Ajustes del programa"
+                  IsExpanded="False"
+                  Margin="0,0,0,6"
+                  Visibility="{Binding HayAjustesDelPrograma, Converter={StaticResource BooleanoAVisible}}">
+            <WrapPanel Margin="0,6,0,0">
+                <StackPanel Orientation="Horizontal"
+                            Margin="0,0,16,6"
+                            Visibility="{Binding AdmiteCambiarTono, Converter={StaticResource BooleanoAVisible}}">
+                    <TextBlock Text="Tono de TX"
+                               Style="{StaticResource EtiquetaDeCampo}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,6,0" />
+                    <TextBox Text="{Binding TonoDeTransmision, UpdateSourceTrigger=PropertyChanged}"
+                             Width="66"
+                             VerticalAlignment="Center"
+                             Margin="0,0,6,0"
+                             AutomationProperties.Name="Tono de transmisión, en hercios"
+                             ToolTip="Tono de transmisión, en hercios" />
+                    <Button Content="Poner tono"
+                            Command="{Binding PonerTonoTxCommand}"
+                            ToolTip="Cambiarlo en mitad de una transmisión se oye en el aire: la estación de enfrente puede perder el resto del periodo." />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"
+                            Margin="0,0,0,6"
+                            Visibility="{Binding AdmiteCambiarConfiguracion, Converter={StaticResource BooleanoAVisible}}">
+                    <TextBlock Text="Configuración"
+                               Style="{StaticResource EtiquetaDeCampo}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,6,0" />
+                    <TextBox Text="{Binding Configuracion, UpdateSourceTrigger=PropertyChanged}"
+                             Width="120"
+                             VerticalAlignment="Center"
+                             Margin="0,0,6,0"
+                             AutomationProperties.Name="Nombre de la configuración del programa"
+                             ToolTip="Nombre de la configuración del programa" />
+                    <Button Content="Cambiar"
+                            Command="{Binding CambiarConfiguracionCommand}"
+                            ToolTip="Hace que el programa pase a esa configuración" />
+                </StackPanel>
+            </WrapPanel>
+        </Expander>
+
         <!-- ══ Decodificaciones en vivo ══ -->
-        <ListBox Grid.Row="3"
+        <ListBox Grid.Row="4"
                  ItemsSource="{Binding Decodificaciones}"
                  SelectedItem="{Binding DecodificacionElegida}">
             <ListBox.ItemTemplate>
@@ -194,7 +244,7 @@
         </ListBox>
 
         <!-- ══ Contactos ya cerrados y ADIF ══ -->
-        <StackPanel Grid.Row="4" Margin="0,8,0,0">
+        <StackPanel Grid.Row="5" Margin="0,8,0,0">
             <Border Margin="0,0,0,8"
                     Padding="10,7"
                     CornerRadius="4"

@@ -93,17 +93,23 @@ public sealed class PuenteDigitalSimulado : IPuenteDigital, IAsyncDisposable
             if (!_instancias.ContainsKey(identificador)) return CapacidadesDigitales.Desconocidas;
         }
 
+        // Las capacidades son las de verdad de cada dialecto, no unas inventadas: si el
+        // simulado mintiera, la pantalla se disenaria contra un protocolo que no existe.
+        //
+        //   · JTDX no tiene el mensaje de resaltado ni el de configuracion.
+        //   · WSJT-X no deja mover el tono de TRANSMISION desde fuera: su mensaje de
+        //     configuracion fija el de RECEPCION. Eso solo lo permite JTDX.
         return string.Equals(identificador, InstanciaLimitada, StringComparison.Ordinal)
             ? new CapacidadesDigitales(
                 PuedeResponder: true,
                 PuedeResaltar: false,
                 PuedeCambiarTonoTx: true,
-                PuedeLlamarCq: false,
+                PuedeLlamarCq: true,
                 PuedeCambiarConfiguracion: false)
             : new CapacidadesDigitales(
                 PuedeResponder: true,
                 PuedeResaltar: true,
-                PuedeCambiarTonoTx: true,
+                PuedeCambiarTonoTx: false,
                 PuedeLlamarCq: true,
                 PuedeCambiarConfiguracion: true);
     }

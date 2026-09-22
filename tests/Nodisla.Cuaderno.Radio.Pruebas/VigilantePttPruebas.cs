@@ -28,6 +28,20 @@ public class VigilantePttPruebas
             EngancharseAlCierreDelProceso = false,
         };
 
+    /// <summary>
+    /// Lo que se le da al vigilante para que suelte: lo que el mismo declara que tarda —el
+    /// tiempo que vigila mas su plazo de suelta— y un respiro para el planificador. Nada de
+    /// plazos a ojo: si esto se queda corto, es que el vigilante llega tarde de verdad.
+    /// </summary>
+    private static TimeSpan PlazoRazonable(VigilantePtt vigilante, OpcionesDelVigilante opciones)
+    {
+        var loQueVigila = opciones.TiempoMaximo < opciones.TiempoSinLatido
+            ? opciones.TiempoMaximo
+            : opciones.TiempoSinLatido;
+
+        return loQueVigila + opciones.PasoDeVigilancia + vigilante.PlazoDeSuelta + TimeSpan.FromSeconds(5);
+    }
+
     private static async Task EsperarAQue(Func<bool> condicion, int milisegundos = 3000)
     {
         var reloj = Stopwatch.StartNew();
@@ -49,8 +63,7 @@ public class VigilantePttPruebas
     {
         var equipo = new ControlDeMentira();
         await using var vigilante = new VigilantePtt(equipo, OpcionesRapidas());
-        var motivos = new List<MotivoDeSuelta>();
-        vigilante.PttSoltado += (_, motivo) => motivos.Add(motivo);
+        var sueltas = new EsperaDeSueltas(vigilante);
 
         await using (await vigilante.PedirAntenaAsync("prueba"))
         {
@@ -62,7 +75,8 @@ public class VigilantePttPruebas
         equipo.Subidas.Should().Be(1);
         equipo.Bajadas.Should().Be(1);
         vigilante.EnAntena.Should().BeFalse();
-        motivos.Should().ContainSingle().Which.Should().Be(MotivoDeSuelta.Normal);
+        (await sueltas.PrimeraAsync(TimeSpan.FromSeconds(10))).Should().Be(MotivoDeSuelta.Normal);
+        sueltas.Motivos.Should().ContainSingle();
     }
 
     [Fact]
@@ -89,8 +103,7 @@ public class VigilantePttPruebas
     {
         var equipo = new ControlDeMentira();
         await using var vigilante = new VigilantePtt(equipo, OpcionesRapidas());
-        var motivos = new List<MotivoDeSuelta>();
-        vigilante.PttSoltado += (_, motivo) => motivos.Add(motivo);
+        var sueltas = new EsperaDeSueltas(vigilante);
 
         var accion = () => vigilante.TransmitirAsync(
             "prueba",
@@ -98,7 +111,7 @@ public class VigilantePttPruebas
 
         await accion.Should().ThrowAsync<InvalidOperationException>();
         equipo.PttArriba.Should().BeFalse();
-        motivos.Should().ContainSingle().Which.Should().Be(MotivoDeSuelta.Excepcion);
+        (await sueltas.PrimeraAsync(TimeSpan.FromSeconds(10))).Should().Be(MotivoDeSuelta.Excepcion);
     }
 
     [Fact]
@@ -111,14 +124,13 @@ public class VigilantePttPruebas
         var transmision = await vigilante.PedirAntenaAsync("prueba", cts.Token);
         equipo.PttArriba.Should().BeTrue();
 
-        var motivos = new List<MotivoDeSuelta>();
-        vigilante.PttSoltado += (_, motivo) => motivos.Add(motivo);
+        var sueltas = new EsperaDeSueltas(vigilante);
 
         await cts.CancelAsync();
 
-        await EsperarAQue(() => !equipo.PttArriba);
+        var motivo = await sueltas.PrimeraAsync(PlazoRazonable(vigilante, OpcionesRapidas()));
+        motivo.Should().Be(MotivoDeSuelta.Cancelado);
         equipo.PttArriba.Should().BeFalse();
-        motivos.Should().Contain(MotivoDeSuelta.Cancelado);
         vigilante.EnAntena.Should().BeFalse();
         transmision.EnAntena.Should().BeFalse();
 
@@ -130,15 +142,16 @@ public class VigilantePttPruebas
     [Fact]
     public async Task Al_agotarse_el_tiempo_maximo_se_baja_el_ptt()
     {
+        var opciones = OpcionesRapidas(tiempoMaximoMs: 120);
         var equipo = new ControlDeMentira();
-        await using var vigilante = new VigilantePtt(equipo, OpcionesRapidas(tiempoMaximoMs: 120));
-        var motivos = new List<MotivoDeSuelta>();
-        vigilante.PttSoltado += (_, motivo) => motivos.Add(motivo);
+        await using var vigilante = new VigilantePtt(equipo, opciones);
+        var sueltas = new EsperaDeSueltas(vigilante);
 
         var transmision = await vigilante.PedirAntenaAsync("una transmisión que se eterniza");
 
-        await EsperarAQue(() => !equipo.PttArriba);
-        motivos.Should().ContainSingle().Which.Should().Be(MotivoDeSuelta.TiempoAgotado);
+        var motivo = await sueltas.PrimeraAsync(PlazoRazonable(vigilante, opciones));
+        motivo.Should().Be(MotivoDeSuelta.TiempoAgotado);
+        equipo.PttArriba.Should().BeFalse();
         transmision.EnAntena.Should().BeFalse();
         await transmision.DisposeAsync();
     }
@@ -146,18 +159,74 @@ public class VigilantePttPruebas
     [Fact]
     public async Task Si_deja_de_latir_se_baja_el_ptt()
     {
+        var opciones = OpcionesRapidas(tiempoMaximoMs: 5000, tiempoSinLatidoMs: 100);
         var equipo = new ControlDeMentira();
-        await using var vigilante = new VigilantePtt(
-            equipo,
-            OpcionesRapidas(tiempoMaximoMs: 5000, tiempoSinLatidoMs: 100));
-        var motivos = new List<MotivoDeSuelta>();
-        vigilante.PttSoltado += (_, motivo) => motivos.Add(motivo);
+        await using var vigilante = new VigilantePtt(equipo, opciones);
+        var sueltas = new EsperaDeSueltas(vigilante);
 
         var transmision = await vigilante.PedirAntenaAsync("un módem que se cuelga");
 
-        await EsperarAQue(() => !equipo.PttArriba);
-        motivos.Should().ContainSingle().Which.Should().Be(MotivoDeSuelta.SinLatido);
+        var motivo = await sueltas.PrimeraAsync(PlazoRazonable(vigilante, opciones));
+        motivo.Should().Be(MotivoDeSuelta.SinLatido);
+        equipo.PttArriba.Should().BeFalse();
         await transmision.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task El_tope_de_tiempo_suelta_aunque_el_repartidor_de_tareas_este_ahogado()
+    {
+        // La red de seguridad final es el tiempo máximo de transmisión. Tiene que cumplirse
+        // aunque la aplicación haya dejado el repartidor de tareas sin un hilo libre: por eso
+        // el vigilante tiene hilo propio y no espera a nadie.
+        //
+        // El repartidor se ocupa con tareas dormidas, no quemando procesador: lo que se prueba
+        // es que la suelta no depende de que haya un hilo libre en el pool, no que aguante una
+        // máquina sin procesador —eso no lo puede prometer nadie— y así esta prueba tampoco
+        // estorba a las demás.
+        var opciones = OpcionesRapidas(tiempoMaximoMs: 200);
+        var equipo = new ControlDeMentira();
+        await using var vigilante = new VigilantePtt(equipo, opciones);
+        var sueltas = new EsperaDeSueltas(vigilante);
+
+        using var ahogo = new CancellationTokenSource();
+        var quemadores = new List<Task>();
+        for (var i = 0; i < Environment.ProcessorCount * 4; i++)
+        {
+            quemadores.Add(Task.Run(
+                () => ahogo.Token.WaitHandle.WaitOne(TimeSpan.FromSeconds(30)),
+                CancellationToken.None));
+        }
+
+        try
+        {
+            var transmision = await vigilante.PedirAntenaAsync("una transmisión con la máquina ahogada");
+            var reloj = Stopwatch.StartNew();
+
+            // Se espera bloqueando: con el repartidor de tareas lleno, un «await» no despertaría
+            // aunque el vigilante hubiera soltado, y estaríamos midiendo el pool, no el PTT.
+            var motivo = sueltas.EsperarBloqueando(PlazoRazonable(vigilante, opciones));
+            reloj.Stop();
+
+            motivo.Should().Be(MotivoDeSuelta.TiempoAgotado);
+            equipo.PttArriba.Should().BeFalse();
+            reloj.Elapsed.Should().BeLessThan(
+                opciones.TiempoMaximo + vigilante.PlazoDeSuelta + TimeSpan.FromSeconds(2),
+                "el tope de transmisión no puede quedarse esperando a que haya un hilo libre");
+
+            await transmision.DisposeAsync();
+        }
+        finally
+        {
+            await ahogo.CancelAsync();
+            try
+            {
+                await Task.WhenAll(quemadores).WaitAsync(TimeSpan.FromSeconds(10));
+            }
+            catch (Exception)
+            {
+                // La carga es de mentira: da igual cómo termine.
+            }
+        }
     }
 
     [Fact]
@@ -235,15 +304,14 @@ public class VigilantePttPruebas
     {
         var equipo = new ControlDeMentira();
         await using var vigilante = new VigilantePtt(equipo, OpcionesRapidas());
-        var motivos = new List<MotivoDeSuelta>();
-        vigilante.PttSoltado += (_, motivo) => motivos.Add(motivo);
+        var sueltas = new EsperaDeSueltas(vigilante);
 
         var transmision = await vigilante.PedirAntenaAsync("prueba");
         await vigilante.SoltarYaAsync();
 
         equipo.PttArriba.Should().BeFalse();
         transmision.EnAntena.Should().BeFalse();
-        motivos.Should().Contain(MotivoDeSuelta.Panico);
+        (await sueltas.PrimeraAsync(TimeSpan.FromSeconds(10))).Should().Be(MotivoDeSuelta.Panico);
         await transmision.DisposeAsync();
     }
 
@@ -283,8 +351,7 @@ public class VigilantePttPruebas
         var equipo = new ControlDeMentira();
         var registro = new RegistroDeMentira();
         await using var vigilante = new VigilantePtt(equipo, OpcionesRapidas(), registro);
-        PttPegadoException? avisado = null;
-        vigilante.PttPegado += (_, ex) => avisado = ex;
+        var sueltas = new EsperaDeSueltas(vigilante);
 
         var transmision = await vigilante.PedirAntenaAsync("prueba");
         equipo.FallaLaViaNormal = true;
@@ -293,8 +360,8 @@ public class VigilantePttPruebas
         var accion = async () => await transmision.DisposeAsync();
 
         await accion.Should().ThrowAsync<PttPegadoException>();
-        avisado.Should().NotBeNull();
-        avisado!.Fallos.Should().HaveCountGreaterThan(1, "hay que dejar constancia de cada vía probada");
+        var avisado = await sueltas.PegadoAsync(TimeSpan.FromSeconds(10));
+        avisado.Fallos.Should().HaveCountGreaterThan(1, "hay que dejar constancia de cada vía probada");
         registro.De(LogLevel.Error).Should().NotBeEmpty();
 
         // Aunque haya fallado, el vigilante queda libre para que el operador pueda reintentar.

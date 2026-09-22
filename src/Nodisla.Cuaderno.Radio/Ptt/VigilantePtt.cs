@@ -25,12 +25,40 @@ namespace Nodisla.Cuaderno.Radio.Ptt;
 /// Si la via normal falla, se prueban todas las vias de emergencia que ofrezca el control
 /// (<see cref="ISueltaDeEmergenciaPtt"/>) y, si tampoco funciona ninguna, se lanza
 /// <see cref="PttPegadoException"/>: el fallo nunca se traga en silencio.
+///
+/// <para><b>Cuanto se tarda en bajar el PTT, como mucho.</b> Esta cifra es la que separa un
+/// susto de una etapa final quemada, asi que conviene tenerla escrita:</para>
+/// <list type="bullet">
+/// <item>
+/// Por tiempo agotado, por falta de latido o por cancelacion: el plazo que toque
+/// —<see cref="TiempoMaximo"/> o <see cref="TiempoSinLatido"/>— mas
+/// <see cref="OpcionesDelVigilante.PasoDeVigilancia"/> mas <see cref="PlazoDeSuelta"/>. El
+/// vigilante corre en <b>hilo propio</b>, no en el repartidor de tareas, precisamente para que
+/// este plazo se cumpla aunque la aplicacion deje el pool sin un hilo libre.
+/// </item>
+/// <item>
+/// Porque el equipo desaparezca: lo que tarde el control en darse cuenta —en el FT-710,
+/// <c>ControlFt710.TiempoMaximoDeDeteccion</c>, que con los valores de partida son 5,1 s— mas
+/// <see cref="PlazoDeSuelta"/>. Esa deteccion si depende del sondeo, y por eso detras esta
+/// siempre la red de <see cref="TiempoMaximo"/>, que no depende de nada.
+/// </item>
+/// <item>
+/// Pasado <see cref="PlazoDeSuelta"/> sin confirmacion, se dejan de esperar tareas y se tira de
+/// las vias sincronas desde el propio hilo de la suelta.
+/// </item>
+/// </list>
 /// </remarks>
 public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
 {
     private const int Libre = 0;
     private const int EnAntenaEstado = 1;
     private const int Soltando = 2;
+
+    /// <summary>Lo que duerme el hilo vigilante cuando no hay nada en antena.</summary>
+    private static readonly TimeSpan SiestaSinTransmision = TimeSpan.FromMilliseconds(250);
+
+    /// <summary>Lo que espera el hilo vigilante si algo le revienta, para no hacer un bucle loco.</summary>
+    private static readonly TimeSpan SiestaTrasFallo = TimeSpan.FromMilliseconds(50);
 
     private readonly IControlEquipo _control;
     private readonly OpcionesDelVigilante _opciones;
@@ -40,12 +68,16 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
     private readonly UnhandledExceptionEventHandler _alFallarSinAtender;
     private readonly EventHandler<string> _alPerderseElEquipo;
 
+    private readonly ManualResetEventSlim _hayQueMirar = new(false);
+    private readonly Thread _hiloDeVigilancia;
+
     private int _estado = Libre;
     private Transmision? _transmision;
     private CancellationTokenSource? _ctsTransmision;
     private Task _sueltaEnCurso = Task.CompletedTask;
     private long _marcaDeInicio;
     private long _marcaDeLatido;
+    private volatile bool _cerrando;
     private bool _desechado;
 
     /// <summary>Crea el vigilante sobre un control de equipo.</summary>
@@ -77,6 +109,18 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
             AppDomain.CurrentDomain.ProcessExit += _alCerrarseElProceso;
             AppDomain.CurrentDomain.UnhandledException += _alFallarSinAtender;
         }
+
+        // El vigilante tiene hilo propio, y no es un capricho: el camino que baja el PTT no
+        // puede depender de que el repartidor de tareas tenga un hilo libre. Si la aplicacion
+        // lo ahoga —un modem digital moliendo, por ejemplo—, una vigilancia montada sobre
+        // tareas se retrasa segundos, y son segundos con el equipo en antena.
+        _hiloDeVigilancia = new Thread(VigilarSiempre)
+        {
+            IsBackground = true,
+            Name = "Vigilante de PTT",
+            Priority = ThreadPriority.AboveNormal,
+        };
+        _hiloDeVigilancia.Start();
     }
 
     /// <summary>
@@ -147,14 +191,18 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
         Volatile.Write(ref _marcaDeInicio, ahora);
         Volatile.Write(ref _marcaDeLatido, ahora);
 
-        var transmision = new Transmision(this, razon);
         CancellationTokenSource cts;
+        Transmision transmision;
         lock (_candado)
         {
             cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            transmision = new Transmision(this, razon, cts.Token);
             _ctsTransmision = cts;
             _transmision = transmision;
         }
+
+        // Se despierta al hilo vigilante: a partir de aqui hay algo que vigilar.
+        _hayQueMirar.Set();
 
         try
         {
@@ -183,8 +231,6 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
             _opciones.TiempoMaximo,
             _opciones.TiempoSinLatido);
 
-        // El bucle de vigilancia es una tarea, nunca un async void.
-        transmision.Vigilancia = Task.Run(() => VigilarAsync(transmision, cts.Token), CancellationToken.None);
         return transmision;
     }
 
@@ -250,6 +296,10 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
         {
             _registro.LogError(ex, "PTT pegado al cerrar el vigilante.");
         }
+        finally
+        {
+            PararLaVigilancia();
+        }
     }
 
     /// <summary>Version bloqueante de la liberacion, para quien no pueda esperar una tarea.</summary>
@@ -263,6 +313,27 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
         _desechado = true;
         Desenganchar();
         SoltarEnElCierre(MotivoDeSuelta.Cierre, "liberación del vigilante");
+        PararLaVigilancia();
+    }
+
+    /// <summary>Para el hilo vigilante. Solo se llama al liberar el vigilante.</summary>
+    private void PararLaVigilancia()
+    {
+        _cerrando = true;
+        _hayQueMirar.Set();
+        try
+        {
+            if (!_hiloDeVigilancia.Join(TimeSpan.FromSeconds(2)))
+            {
+                _registro.LogWarning("El hilo del vigilante no ha terminado a tiempo.");
+            }
+        }
+        catch (Exception ex)
+        {
+            _registro.LogDebug(ex, "Fallo al esperar al hilo del vigilante.");
+        }
+
+        _hayQueMirar.Dispose();
     }
 
     /// <summary>Anota un latido de quien transmite.</summary>
@@ -319,15 +390,163 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
             _transmision = null;
             Volatile.Write(ref _estado, Soltando);
 
-            // Fuera del hilo del llamante y fuera del candado: la suelta no debe depender de quien la pide.
-            tarea = Task.Run(() => EjecutarSueltaAsync(motivo, cts), CancellationToken.None);
+            // En hilo propio, fuera del candado y fuera del repartidor de tareas: la suelta no
+            // puede depender ni de quien la pide ni de que haya un hilo libre en el pool.
+            tarea = EnHiloPropio("Suelta de PTT", () => SoltarConPlazo(motivo, cts));
             _sueltaEnCurso = tarea;
         }
 
         return tarea;
     }
 
-    private async Task EjecutarSueltaAsync(MotivoDeSuelta motivo, CancellationTokenSource? cts)
+    /// <summary>
+    /// Plazo duro de una suelta: lo que se le da a la via normal y a cada via de emergencia,
+    /// mas una espera de gracia.
+    /// </summary>
+    /// <remarks>
+    /// Pasado este plazo se dejan de esperar tareas y se tira de las vias sincronas. Es la
+    /// cota que convierte «deberia soltar» en «suelta en menos de tanto».
+    /// </remarks>
+    public TimeSpan PlazoDeSuelta
+    {
+        get
+        {
+            var vias = _control is ISueltaDeEmergenciaPtt emergencia ? emergencia.ViasDeSuelta.Count : 0;
+            return _opciones.EsperaDeSuelta * (vias + 2);
+        }
+    }
+
+    /// <summary>
+    /// Ejecuta la suelta y, si la parte asincrona no confirma dentro del plazo, tira de las
+    /// vias sincronas desde este mismo hilo.
+    /// </summary>
+    private void SoltarConPlazo(MotivoDeSuelta motivo, CancellationTokenSource? cts)
+    {
+        var aviso = new AvisoDeSuelta();
+        Exception? fallo = null;
+        var plazo = PlazoDeSuelta;
+
+        try
+        {
+            var tarea = EjecutarSueltaAsync(motivo, cts, aviso);
+            if (tarea.Wait(plazo))
+            {
+                if (!tarea.IsFaulted)
+                {
+                    return;
+                }
+
+                fallo = tarea.Exception?.GetBaseException();
+            }
+            else
+            {
+                _registro.LogError(
+                    "La suelta del PTT no se confirmó en {Plazo}; se prueban las vías síncronas.",
+                    plazo);
+            }
+        }
+        catch (Exception ex)
+        {
+            fallo = ex;
+        }
+
+        // Aqui se llega con el PTT posiblemente arriba: o fallaron todas las vias, o ninguna
+        // contesto a tiempo. Queda el ultimo recurso, que no espera a nadie.
+        Volatile.Write(ref _estado, Libre);
+        if (SoltarPorViasSincronas("suelta con plazo agotado"))
+        {
+            aviso.AvisarUnaVez(this, motivo);
+            return;
+        }
+
+        if (fallo is PttPegadoException pegado)
+        {
+            throw pegado;
+        }
+
+        var seQuedoPuesto = new PttPegadoException(
+            "¡PTT PEGADO! Ni las vías normales ni las síncronas han podido bajar el PTT. Apague "
+            + "el equipo o el amplificador a mano ahora mismo.",
+            fallo is null ? [] : [fallo]);
+        _registro.LogError(seQuedoPuesto, seQuedoPuesto.Message);
+        Avisar(PttPegado, seQuedoPuesto);
+        throw seQuedoPuesto;
+    }
+
+    /// <summary>Arranca algo en un hilo propio y devuelve la tarea que termina con el.</summary>
+    private static Task EnHiloPropio(string nombre, Action trabajo)
+    {
+        var terminado = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var hilo = new Thread(() =>
+        {
+            try
+            {
+                trabajo();
+                terminado.TrySetResult();
+            }
+            catch (Exception ex)
+            {
+                terminado.TrySetException(ex);
+            }
+        })
+        {
+            IsBackground = true,
+            Name = nombre,
+            Priority = ThreadPriority.AboveNormal,
+        };
+
+        hilo.Start();
+        return terminado.Task;
+    }
+
+    /// <summary>Recorre las vias sincronas de suelta. Devuelve si alguna funciono.</summary>
+    private bool SoltarPorViasSincronas(string cuando)
+    {
+        if (_control is not ISueltaDeEmergenciaPtt emergencia)
+        {
+            return false;
+        }
+
+        foreach (var via in emergencia.ViasDeSuelta)
+        {
+            if (via.SoltarSincrono is null)
+            {
+                continue;
+            }
+
+            try
+            {
+                via.SoltarSincrono();
+                _registro.LogInformation("PTT abajo en la {Cuando} por «{Via}».", cuando, via.Nombre);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _registro.LogError(ex, "Falló la vía síncrona «{Via}».", via.Nombre);
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>Lleva la cuenta de si ya se ha avisado de una suelta, para no avisar dos veces.</summary>
+    private sealed class AvisoDeSuelta
+    {
+        private int _avisado;
+
+        internal void AvisarUnaVez(VigilantePtt vigilante, MotivoDeSuelta motivo)
+        {
+            if (Interlocked.Exchange(ref _avisado, 1) != 0)
+            {
+                return;
+            }
+
+            vigilante._registro.LogInformation("PTT abajo por «{Motivo}».", motivo);
+            vigilante.Avisar(vigilante.PttSoltado, motivo);
+        }
+    }
+
+    private async Task EjecutarSueltaAsync(MotivoDeSuelta motivo, CancellationTokenSource? cts, AvisoDeSuelta aviso)
     {
         var fallos = new List<Exception>();
         var soltado = false;
@@ -397,82 +616,110 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
             throw pegado;
         }
 
-        _registro.LogInformation("PTT abajo por «{Motivo}» ({Via}).", motivo, viaBuena);
-        Avisar(PttSoltado, motivo);
+        _registro.LogDebug("PTT abajo por la {Via}.", viaBuena);
+        aviso.AvisarUnaVez(this, motivo);
     }
 
-    private async Task VigilarAsync(Transmision transmision, CancellationToken ct)
+    /// <summary>
+    /// El bucle del hilo vigilante. Mira el reloj, no espera a nadie.
+    /// </summary>
+    /// <remarks>
+    /// Va en un hilo propio y usa <see cref="Thread.Sleep(TimeSpan)"/> en vez de esperas
+    /// asincronas a proposito: asi el tope de tiempo de transmision y el latido se cumplen
+    /// aunque el repartidor de tareas este ahogado, que es justo cuando mas falta hace.
+    /// </remarks>
+    private void VigilarSiempre()
     {
-        try
+        while (!_cerrando)
         {
-            while (SigueEnAntena(transmision))
+            try
             {
-                if (ct.IsCancellationRequested)
+                var transmision = Volatile.Read(ref _transmision);
+                if (transmision is null || Volatile.Read(ref _estado) != EnAntenaEstado)
                 {
-                    await SoltarYRegistrarAsync(transmision, MotivoDeSuelta.Cancelado).ConfigureAwait(false);
-                    return;
+                    // Nada en antena: a dormir hasta que alguien pida la antena.
+                    _hayQueMirar.Wait(SiestaSinTransmision);
+                    _hayQueMirar.Reset();
+                    continue;
                 }
 
-                var enAntena = Stopwatch.GetElapsedTime(Volatile.Read(ref _marcaDeInicio));
-                if (enAntena >= _opciones.TiempoMaximo)
+                var motivo = QueTocaHacer(transmision, out var siguienteMirada);
+                if (motivo is not null)
                 {
-                    await SoltarYRegistrarAsync(transmision, MotivoDeSuelta.TiempoAgotado).ConfigureAwait(false);
-                    return;
+                    SoltarDesdeLaVigilancia(transmision, motivo.Value);
+                    continue;
                 }
 
-                var sinLatir = Stopwatch.GetElapsedTime(Volatile.Read(ref _marcaDeLatido));
-                if (sinLatir >= _opciones.TiempoSinLatido)
+                if (siguienteMirada > TimeSpan.Zero)
                 {
-                    await SoltarYRegistrarAsync(transmision, MotivoDeSuelta.SinLatido).ConfigureAwait(false);
-                    return;
-                }
-
-                var loQueFaltaParaElTope = _opciones.TiempoMaximo - enAntena;
-                var loQueFaltaSinLatir = _opciones.TiempoSinLatido - sinLatir;
-                var siguiente = _opciones.PasoDeVigilancia;
-                if (loQueFaltaParaElTope < siguiente)
-                {
-                    siguiente = loQueFaltaParaElTope;
-                }
-
-                if (loQueFaltaSinLatir < siguiente)
-                {
-                    siguiente = loQueFaltaSinLatir;
-                }
-
-                if (siguiente < TimeSpan.Zero)
-                {
-                    siguiente = TimeSpan.Zero;
-                }
-
-                try
-                {
-                    await Task.Delay(siguiente, ct).ConfigureAwait(false);
-                }
-                catch (OperationCanceledException)
-                {
-                    // La siguiente vuelta decide: o ya esta soltado, o hay que soltar por cancelacion.
+                    Thread.Sleep(siguienteMirada);
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            _registro.LogError(ex, "El vigilante del PTT falló; se suelta por si acaso.");
-            await SoltarYRegistrarAsync(transmision, MotivoDeSuelta.Excepcion).ConfigureAwait(false);
+            catch (Exception ex)
+            {
+                // Aqui no se sale del bucle por nada del mundo: si el vigilante muere, no hay
+                // quien baje el PTT.
+                _registro.LogError(ex, "El hilo del vigilante falló; sigue vigilando.");
+                Thread.Sleep(SiestaTrasFallo);
+            }
         }
     }
 
-    private async Task SoltarYRegistrarAsync(Transmision transmision, MotivoDeSuelta motivo)
+    /// <summary>Decide si hay que soltar y, si no, cuanto se puede dormir.</summary>
+    private MotivoDeSuelta? QueTocaHacer(Transmision transmision, out TimeSpan siguienteMirada)
+    {
+        siguienteMirada = TimeSpan.Zero;
+
+        if (transmision.Testigo.IsCancellationRequested)
+        {
+            return MotivoDeSuelta.Cancelado;
+        }
+
+        var enAntena = Stopwatch.GetElapsedTime(Volatile.Read(ref _marcaDeInicio));
+        if (enAntena >= _opciones.TiempoMaximo)
+        {
+            return MotivoDeSuelta.TiempoAgotado;
+        }
+
+        var sinLatir = Stopwatch.GetElapsedTime(Volatile.Read(ref _marcaDeLatido));
+        if (sinLatir >= _opciones.TiempoSinLatido)
+        {
+            return MotivoDeSuelta.SinLatido;
+        }
+
+        var siguiente = _opciones.PasoDeVigilancia;
+        var loQueFaltaParaElTope = _opciones.TiempoMaximo - enAntena;
+        var loQueFaltaSinLatir = _opciones.TiempoSinLatido - sinLatir;
+        if (loQueFaltaParaElTope < siguiente)
+        {
+            siguiente = loQueFaltaParaElTope;
+        }
+
+        if (loQueFaltaSinLatir < siguiente)
+        {
+            siguiente = loQueFaltaSinLatir;
+        }
+
+        siguienteMirada = siguiente > TimeSpan.Zero ? siguiente : TimeSpan.Zero;
+        return null;
+    }
+
+    private void SoltarDesdeLaVigilancia(Transmision transmision, MotivoDeSuelta motivo)
     {
         try
         {
-            await SoltarNucleoAsync(transmision, motivo).ConfigureAwait(false);
+            var tarea = SoltarNucleoAsync(transmision, motivo);
+
+            // El hilo vigilante espera a su propia suelta: no tiene nada mejor que hacer y asi
+            // no se solapan dos sueltas seguidas.
+            if (!tarea.Wait(PlazoDeSuelta + PlazoDeSuelta))
+            {
+                _registro.LogError("La suelta por «{Motivo}» no ha terminado a tiempo.", motivo);
+            }
         }
-        catch (PttPegadoException ex)
+        catch (AggregateException ex) when (ex.GetBaseException() is PttPegadoException pegado)
         {
-            // Ya esta anotado como grave y avisado por evento; aqui solo se evita que la
-            // excepcion se pierda sin que nadie la mire.
-            _registro.LogError(ex, "PTT pegado al soltar por «{Motivo}».", motivo);
+            _registro.LogError(pegado, "PTT pegado al soltar por «{Motivo}».", motivo);
         }
         catch (Exception ex)
         {
@@ -534,30 +781,7 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
         }
 
         _registro.LogError("La suelta del PTT en el {Quien} no se confirmó; se prueban las vías síncronas.", quien);
-
-        if (_control is not ISueltaDeEmergenciaPtt emergencia)
-        {
-            return;
-        }
-
-        foreach (var via in emergencia.ViasDeSuelta)
-        {
-            if (via.SoltarSincrono is null)
-            {
-                continue;
-            }
-
-            try
-            {
-                via.SoltarSincrono();
-                _registro.LogInformation("PTT abajo en el {Quien} por «{Via}».", quien, via.Nombre);
-                return;
-            }
-            catch (Exception ex)
-            {
-                _registro.LogError(ex, "Falló la vía síncrona «{Via}».", via.Nombre);
-            }
-        }
+        SoltarPorViasSincronas(quien);
     }
 
     private void Desenganchar()
@@ -602,17 +826,18 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
         private readonly VigilantePtt _vigilante;
         private int _liberada;
 
-        internal Transmision(VigilantePtt vigilante, string motivo)
+        internal Transmision(VigilantePtt vigilante, string motivo, CancellationToken testigo)
         {
             _vigilante = vigilante;
             Motivo = motivo;
+            Testigo = testigo;
         }
 
         /// <summary>Para que se pidio la antena.</summary>
         public string Motivo { get; }
 
-        /// <summary>Bucle de vigilancia de esta transmision.</summary>
-        internal Task? Vigilancia { get; set; }
+        /// <summary>Testigo de cancelacion de esta transmision.</summary>
+        internal CancellationToken Testigo { get; }
 
         /// <inheritdoc />
         public bool EnAntena => _vigilante.SigueEnAntena(this);

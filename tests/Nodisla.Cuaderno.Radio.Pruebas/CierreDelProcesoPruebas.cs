@@ -96,8 +96,7 @@ public class CierreDelProcesoPruebas
     {
         var equipo = new ControlDeMentira();
         var vigilante = new VigilantePtt(equipo, OpcionesConCierre());
-        var motivos = new List<MotivoDeSuelta>();
-        vigilante.PttSoltado += (_, motivo) => motivos.Add(motivo);
+        var sueltas = new EsperaDeSueltas(vigilante);
 
         try
         {
@@ -111,7 +110,7 @@ public class CierreDelProcesoPruebas
             manejador.DynamicInvoke(null, EventArgs.Empty);
 
             equipo.PttArriba.Should().BeFalse("el proceso no se puede ir con el equipo en antena");
-            motivos.Should().Contain(MotivoDeSuelta.Cierre);
+            (await sueltas.PrimeraAsync(TimeSpan.FromSeconds(10))).Should().Be(MotivoDeSuelta.Cierre);
             vigilante.EnAntena.Should().BeFalse();
             await transmision.DisposeAsync();
         }

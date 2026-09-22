@@ -20,7 +20,7 @@ internal sealed class Ft710DeMentira : IAsyncDisposable
     private readonly CancellationTokenSource _cts = new();
     private readonly ConcurrentQueue<string> _recibidas = new();
     private readonly ConcurrentDictionary<string, string> _valores = new(StringComparer.Ordinal);
-    private readonly Task _bucle;
+    private readonly Thread _bucle;
 
     private int _enAntena;
     private int _mudo;
@@ -34,7 +34,11 @@ internal sealed class Ft710DeMentira : IAsyncDisposable
         _escucha = new TcpListener(IPAddress.Loopback, 0);
         _escucha.Start();
         Puerto = ((IPEndPoint)_escucha.LocalEndpoint).Port;
-        _bucle = Task.Run(() => AtenderSiempreAsync(_cts.Token));
+
+        // Hilos propios, no tareas: si el equipo de mentira compitiera por el repartidor de
+        // tareas, al medir con la máquina ahogada estaríamos midiendo el doble y no el módulo.
+        _bucle = new Thread(AtenderSiempre) { IsBackground = true, Name = "FT-710 de mentira" };
+        _bucle.Start();
     }
 
     /// <summary>Puerto TCP donde escucha.</summary>
@@ -65,20 +69,13 @@ internal sealed class Ft710DeMentira : IAsyncDisposable
     internal void Responder(string consulta, string respuesta) => _valores[consulta] = respuesta;
 
     /// <inheritdoc />
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
-        await _cts.CancelAsync();
+        _cts.Cancel();
         _escucha.Stop();
-        try
-        {
-            await _bucle.WaitAsync(TimeSpan.FromSeconds(2));
-        }
-        catch (Exception)
-        {
-            // Da igual como termine el bucle: esto es un doble de pruebas.
-        }
-
+        _bucle.Join(TimeSpan.FromSeconds(2));
         _cts.Dispose();
+        return ValueTask.CompletedTask;
     }
 
     private void PrepararRespuestas()
@@ -150,25 +147,26 @@ internal sealed class Ft710DeMentira : IAsyncDisposable
         }
     }
 
-    private async Task AtenderSiempreAsync(CancellationToken ct)
+    private void AtenderSiempre()
     {
-        while (!ct.IsCancellationRequested)
+        while (!_cts.IsCancellationRequested)
         {
             TcpClient cliente;
             try
             {
-                cliente = await _escucha.AcceptTcpClientAsync(ct);
+                cliente = _escucha.AcceptTcpClient();
             }
             catch (Exception)
             {
                 return;
             }
 
-            _ = Task.Run(() => AtenderAsync(cliente, ct), CancellationToken.None);
+            var atencion = new Thread(() => Atender(cliente)) { IsBackground = true, Name = "FT-710 de mentira (sesión)" };
+            atencion.Start();
         }
     }
 
-    private async Task AtenderAsync(TcpClient cliente, CancellationToken ct)
+    private void Atender(TcpClient cliente)
     {
         using (cliente)
         {
@@ -176,24 +174,19 @@ internal sealed class Ft710DeMentira : IAsyncDisposable
             var buzon = new byte[256];
             var pendiente = new StringBuilder();
 
-            while (!ct.IsCancellationRequested)
+            while (!_cts.IsCancellationRequested)
             {
                 int leidos;
                 try
                 {
-                    leidos = await flujo.ReadAsync(buzon.AsMemory(), ct);
+                    leidos = flujo.Read(buzon, 0, buzon.Length);
                 }
                 catch (Exception)
                 {
                     return;
                 }
 
-                if (leidos <= 0)
-                {
-                    return;
-                }
-
-                if (Volatile.Read(ref _apagado) != 0)
+                if (leidos <= 0 || Volatile.Read(ref _apagado) != 0)
                 {
                     return;
                 }
@@ -206,10 +199,20 @@ internal sealed class Ft710DeMentira : IAsyncDisposable
                     var orden = texto[..(fin + 1)];
                     texto = texto[(fin + 1)..];
                     var respuesta = Responder(orden);
-                    if (respuesta is not null)
+                    if (respuesta is null)
                     {
-                        await flujo.WriteAsync(Encoding.ASCII.GetBytes(respuesta).AsMemory(), ct);
-                        await flujo.FlushAsync(ct);
+                        continue;
+                    }
+
+                    try
+                    {
+                        var bytes = Encoding.ASCII.GetBytes(respuesta);
+                        flujo.Write(bytes, 0, bytes.Length);
+                        flujo.Flush();
+                    }
+                    catch (Exception)
+                    {
+                        return;
                     }
                 }
 

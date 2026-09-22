@@ -745,7 +745,47 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     /// Cuantas pasadas seguidas sin respuesta hacen falta para dar el equipo por perdido.
     /// </summary>
     /// <remarks>Una sola pasada fallida puede ser un byte perdido; tres seguidas, no.</remarks>
-    private const int FallosParaDarloPorPerdido = 3;
+    public const int FallosParaDarloPorPerdido = 3;
+
+    /// <summary>
+    /// Lo que puede tardar, como mucho, en darse cuenta de que el equipo ha desaparecido.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Esta cifra importa: es la ventana en la que el programa todavia se cree en antena
+    /// despues de que el equipo se apague o se desenchufe. Sale de que cada pasada de sondeo
+    /// gasta, en el peor caso, el intervalo mas la espera completa de una orden que no va a
+    /// contestar nadie, y de que hacen falta <see cref="FallosParaDarloPorPerdido"/> pasadas
+    /// seguidas asi; se suma una pasada mas porque el equipo puede desaparecer justo despues
+    /// de empezar una.
+    /// </para>
+    /// <para>
+    /// Con los valores de partida (sondeo cada 500 ms, espera de orden 350 ms) son <b>3,4
+    /// segundos</b>. Detras de esta cota estan las otras dos redes: el tiempo maximo de
+    /// transmision del vigilante, que suelta pase lo que pase con la deteccion, y el cierre
+    /// del proceso.
+    /// </para>
+    /// </remarks>
+    /// <param name="opciones">Ajustes con los que corre el control.</param>
+    /// <returns>La cota de tiempo hasta que se avisa de que el equipo no esta.</returns>
+    public static TimeSpan TiempoMaximoDeDeteccion(OpcionesFt710 opciones)
+    {
+        ArgumentNullException.ThrowIfNull(opciones);
+
+        var teorica = (FallosParaDarloPorPerdido + 1) * (opciones.IntervaloDeSondeo + opciones.EsperaDeOrden);
+        return teorica * MargenDelPlanificador;
+    }
+
+    /// <summary>
+    /// Holgura sobre el tiempo teorico, porque el sondeo espera con el repartidor de tareas y
+    /// con la maquina cargada las esperas se pasan de largo.
+    /// </summary>
+    /// <remarks>
+    /// Medido en esta maquina con sondeo de 50 ms y espera de orden de 500 ms —teoricas 2,2 s—:
+    /// entre 1,55 s y 1,72 s con la maquina descansada, y entre 1,97 s y 2,19 s con el doble de
+    /// hilos que nucleos moliendo. La mitad de holgura cubre eso con sitio de sobra.
+    /// </remarks>
+    private const double MargenDelPlanificador = 1.5;
 
     private void DarPorPerdido(Exception causa)
     {
@@ -770,7 +810,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     /// </remarks>
     private async Task ComprobarQueSigueAhiAsync(CancellationToken ct)
     {
-        var identificador = await _canal.PreguntarAsync("ID;", ct).ConfigureAwait(false);
+        var identificador = await PreguntarAsync("ID;", ct).ConfigureAwait(false);
         if (identificador is null || !identificador.StartsWith("ID", StringComparison.OrdinalIgnoreCase))
         {
             throw new EquipoNoContestaException(_canal.Descripcion);
@@ -791,6 +831,16 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
 
     private async Task<string?> PreguntarAsync(string orden, CancellationToken ct)
     {
+        // Una espera agotada deja el canal inservible: cancelar una lectura aborta el socket, y
+        // en el puerto serie pasa otro tanto. Si no se vuelve a abrir, las preguntas siguientes
+        // fallan solas sin llegar al equipo, y entonces el contador de fallos no cuenta intentos
+        // de verdad: cuenta el mismo canal roto tres veces.
+        if (!_canal.Abierto)
+        {
+            await _canal.AbrirAsync(ct).ConfigureAwait(false);
+            _registro.LogDebug("Se ha vuelto a abrir {Canal} antes de preguntar.", _canal.Descripcion);
+        }
+
         var respuesta = await _canal.PreguntarAsync(orden, ct).ConfigureAwait(false);
         _registro.LogDebug("CAT {Orden} -> {Respuesta}", orden, respuesta ?? "(sin respuesta)");
         return respuesta;

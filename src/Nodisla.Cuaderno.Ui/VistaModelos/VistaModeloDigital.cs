@@ -223,6 +223,7 @@ public sealed partial class VistaModeloDigital : ObservableObject
     [NotifyPropertyChangedFor(nameof(AdmiteLlamarCq))]
     [NotifyPropertyChangedFor(nameof(AdmiteCambiarTono))]
     [NotifyPropertyChangedFor(nameof(AdmiteCambiarConfiguracion))]
+    [NotifyPropertyChangedFor(nameof(HayAjustesDelPrograma))]
     [NotifyCanExecuteChangedFor(nameof(ResponderCommand))]
     [NotifyCanExecuteChangedFor(nameof(ResaltarCommand))]
     [NotifyCanExecuteChangedFor(nameof(LlamarCqCommand))]
@@ -276,6 +277,9 @@ public sealed partial class VistaModeloDigital : ObservableObject
 
     /// <summary>La instancia elegida admite cambiar de configuracion.</summary>
     public bool AdmiteCambiarConfiguracion => Capacidades.PuedeCambiarConfiguracion;
+
+    /// <summary>Hay algun ajuste del programa que esta instancia admita tocar.</summary>
+    public bool HayAjustesDelPrograma => AdmiteCambiarTono || AdmiteCambiarConfiguracion;
 
     /// <summary>Lo que sabe hacer la instancia elegida, tal y como lo declara el puente.</summary>
     public CapacidadesDigitales Capacidades => InstanciaElegida is { } fila
@@ -527,7 +531,15 @@ public sealed partial class VistaModeloDigital : ObservableObject
 
     private bool SePuedeResaltar() => AdmiteResaltar && DecodificacionElegida is not null;
 
-    private bool SePuedeLlamarCq() => AdmiteLlamarCq;
+    /// <summary>
+    /// Se puede llamar cuando la instancia lo admite y ya ha informado de su estado.
+    /// </summary>
+    /// <remarks>
+    /// Sin estado, el puente no sabe en que periodo transmite esa instancia y devuelve falso.
+    /// Aqui la lista solo tiene instancias de las que ya ha llegado estado, asi que basta con
+    /// que haya una elegida; se deja escrito para que siga siendo cierto si eso cambia.
+    /// </remarks>
+    private bool SePuedeLlamarCq() => AdmiteLlamarCq && InstanciaElegida is not null;
 
     private bool SePuedeCambiarElTono() => AdmiteCambiarTono;
 
@@ -560,6 +572,7 @@ public sealed partial class VistaModeloDigital : ObservableObject
         OnPropertyChanged(nameof(AdmiteLlamarCq));
         OnPropertyChanged(nameof(AdmiteCambiarTono));
         OnPropertyChanged(nameof(AdmiteCambiarConfiguracion));
+        OnPropertyChanged(nameof(HayAjustesDelPrograma));
     });
 
     private void AlLlegarAdif(object? origen, string adif) => Hilo.EnLaVentana(() =>

@@ -332,7 +332,14 @@ public class ControlFt710Pruebas
     [Fact]
     public async Task Si_el_equipo_se_apaga_a_mitad_se_suelta_el_ptt()
     {
-        var (equipo, control) = await MontarAsync();
+        var ajustes = new OpcionesFt710
+        {
+            IntervaloDeSondeo = TimeSpan.FromMilliseconds(50),
+            EsperaDeOrden = TimeSpan.FromMilliseconds(500),
+            EsperaDeReconexion = TimeSpan.FromMilliseconds(50),
+        };
+
+        var (equipo, control) = await MontarAsync(opciones: ajustes);
         await using var _ = equipo;
         await using var __ = control;
         await using var vigilante = new VigilantePtt(control, new OpcionesDelVigilante
@@ -343,19 +350,20 @@ public class ControlFt710Pruebas
             EngancharseAlCierreDelProceso = false,
         });
 
-        var motivos = new List<MotivoDeSuelta>();
-        vigilante.PttSoltado += (_, motivo) => motivos.Add(motivo);
-
+        var sueltas = new EsperaDeSueltas(vigilante);
         var transmision = await vigilante.PedirAntenaAsync("una transmisión que se queda sin equipo");
         await EsperarAQue(() => equipo.EnAntena);
 
         // Jose apaga la radio en mitad de la transmisión.
         equipo.Enmudecer();
 
-        await EsperarAQue(() => !vigilante.EnAntena);
+        // Se espera a la señal del vigilante, no a un plazo a ojo, y el plazo que se le da es
+        // el que el propio código declara que tarda: la cota de detección más la de suelta.
+        var plazo = ControlFt710.TiempoMaximoDeDeteccion(ajustes) + vigilante.PlazoDeSuelta;
+        var motivo = await sueltas.PrimeraAsync(plazo);
 
+        motivo.Should().Be(MotivoDeSuelta.EquipoPerdido);
         vigilante.EnAntena.Should().BeFalse("el vigilante no puede quedarse creyendo que sigue en antena");
-        motivos.Should().Contain(MotivoDeSuelta.EquipoPerdido);
         control.Estado.Conectado.Should().BeFalse();
         control.Estado.Transmitiendo.Should().BeFalse();
         transmision.EnAntena.Should().BeFalse();
