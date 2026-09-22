@@ -136,11 +136,24 @@ catálogo, **sustituye la ventana de las 402 referencias del DXCC por la del res
 entidades del dominio**, que es quien sabe cuándo nació y cuándo se borró cada una. Así no
 hay dos lugares del programa que puedan discrepar sobre lo mismo.
 
+### Los tipos de emisión son familias, no modos sueltos
+
+El original guarda `CW`, `PHONE` o `DIGITAL`; el recurso los conserva tal cual y el lector los
+traduce a `ClaseDeModo` del contrato. Importa porque los reglamentos hablan de familias: una
+variante de fonía tiene que aceptar **SSB, AM y FM**, y exigir un modo ADIF concreto dejaría
+fuera contactos que cuentan.
+
 ### Un diploma que no se sabe calcular se marca, no se calcula mal
 
-`SIOTA` cuenta por el campo `SIG_INFO`, que el modelo del cuaderno no guarda en columna. En
-vez de sacar un número cualquiera, el guion lo marca `calculable = 0` con el motivo, el
-motor devuelve cero y explica por qué. Un diploma mal calculado es peor que no calcularlo.
+Si el original trae un diploma que cuenta por un campo del contacto que el motor no sabe
+leer, el guion lo marca `calculable = 0` con el motivo; el motor devuelve cero y lo explica en
+`ProgresoDeDiploma.PorQueNoEsFirme`. Un diploma mal calculado es peor que no calcularlo.
+
+Hay un segundo filtro que el recurso no puede ver: **que la columna exista de verdad en el
+cuaderno del operador**. El catálogo se actualiza por su cuenta y la base puede ser más vieja,
+así que el motor lee `pragma_table_info('qso')` al conectar y, si falta la columna que el
+diploma necesita, no lanza la consulta y dice cuál falta. Le pasa a `SIOTA`, que cuenta por
+`SIG_INFO`, mientras esa columna no llegue al esquema.
 
 ## Cifras de la última generación
 

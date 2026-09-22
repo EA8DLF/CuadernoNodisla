@@ -24,14 +24,14 @@ public sealed class ImportarAdifPruebas
     {
         var caso = Caso(SinLaQsl, ConLaQsl);
 
-        var resultado = await caso.DesdeAsync(Stream.Null);
+        var resultado = await caso.EjecutarAsync(Stream.Null);
 
         _cuaderno.Contenido.Should().ContainSingle();
         resultado.RegistrosLeidos.Should().Be(2);
         resultado.FundidosEnElFichero.Should().Be(1);
-        resultado.ContactosDistintos.Should().Be(1);
+        (resultado.RegistrosLeidos - resultado.FundidosEnElFichero).Should().Be(1);
         resultado.Anadidos.Should().Be(1);
-        resultado.SinPerdidas.Should().BeTrue();
+        resultado.NoSePierdeNada.Should().BeTrue();
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public sealed class ImportarAdifPruebas
     {
         var caso = Caso(SinLaQsl, ConLaQsl);
 
-        var resultado = await caso.DesdeAsync(Stream.Null);
+        var resultado = await caso.EjecutarAsync(Stream.Null);
 
         resultado.ConfirmacionesRecuperadas.Should().Be(1);
         var papel = _cuaderno.Contenido[0].Confirmaciones.Should().ContainSingle().Subject;
@@ -65,7 +65,7 @@ public sealed class ImportarAdifPruebas
                 return q;
             });
 
-        var resultado = await caso.DesdeAsync(Stream.Null);
+        var resultado = await caso.EjecutarAsync(Stream.Null);
 
         resultado.FundidosEnElFichero.Should().Be(2);
         resultado.Choques.Should().ContainSingle().Which.Campo.Should().Be("NAME");
@@ -80,13 +80,13 @@ public sealed class ImportarAdifPruebas
             () => Ayuda.Qso(call: "EA2DEF", inicioUtc: Instante),
             () => Ayuda.Qso(call: "EA1ABC", inicioUtc: Instante.AddMinutes(1)));
 
-        var resultado = await caso.DesdeAsync(Stream.Null);
+        var resultado = await caso.EjecutarAsync(Stream.Null);
 
         _cuaderno.Contenido.Should().HaveCount(3);
         resultado.FundidosEnElFichero.Should().Be(0);
         resultado.Anadidos.Should().Be(3);
-        resultado.ContactosDistintos.Should().Be(3);
-        resultado.SinPerdidas.Should().BeTrue();
+        (resultado.RegistrosLeidos - resultado.FundidosEnElFichero).Should().Be(3);
+        resultado.NoSePierdeNada.Should().BeTrue();
     }
 
     // ── Reimportar el mismo fichero ──────────────────────────────────────────
@@ -96,14 +96,14 @@ public sealed class ImportarAdifPruebas
     {
         var caso = Caso(ConLaQsl);
 
-        var primera = await caso.DesdeAsync(Stream.Null);
-        var segunda = await caso.DesdeAsync(Stream.Null);
+        var primera = await caso.EjecutarAsync(Stream.Null);
+        var segunda = await caso.EjecutarAsync(Stream.Null);
 
         primera.Anadidos.Should().Be(1);
         segunda.Anadidos.Should().Be(0);
         segunda.YaEstaban.Should().Be(1);
         segunda.FundidosConElCuaderno.Should().Be(0);
-        segunda.SinPerdidas.Should().BeTrue();
+        segunda.NoSePierdeNada.Should().BeTrue();
         _cuaderno.Contenido.Should().ContainSingle();
     }
 
@@ -113,12 +113,12 @@ public sealed class ImportarAdifPruebas
         _cuaderno.Sembrar(ConLaQsl());
         var caso = Caso(ConLaQsl);
 
-        var resultado = await caso.DesdeAsync(Stream.Null);
+        var resultado = await caso.EjecutarAsync(Stream.Null);
 
         resultado.YaEstaban.Should().Be(1);
         resultado.FundidosConElCuaderno.Should().Be(0);
         resultado.Anadidos.Should().Be(0);
-        resultado.SinPerdidas.Should().BeTrue();
+        resultado.NoSePierdeNada.Should().BeTrue();
         _cuaderno.Actualizaciones.Should().Be(0);
     }
 
@@ -130,13 +130,13 @@ public sealed class ImportarAdifPruebas
         _cuaderno.Sembrar(SinLaQsl());
         var caso = Caso(ConLaQsl);
 
-        var resultado = await caso.DesdeAsync(Stream.Null);
+        var resultado = await caso.EjecutarAsync(Stream.Null);
 
         resultado.FundidosConElCuaderno.Should().Be(1);
         resultado.Anadidos.Should().Be(0);
         resultado.YaEstaban.Should().Be(0);
         resultado.ConfirmacionesRecuperadas.Should().Be(1);
-        resultado.SinPerdidas.Should().BeTrue();
+        resultado.NoSePierdeNada.Should().BeTrue();
         _cuaderno.Actualizaciones.Should().Be(1);
 
         var guardado = _cuaderno.Contenido.Should().ContainSingle().Subject;
@@ -154,7 +154,7 @@ public sealed class ImportarAdifPruebas
         var id = yaEstaba.Id;
         var caso = Caso(ConLaQsl);
 
-        await caso.DesdeAsync(Stream.Null);
+        await caso.EjecutarAsync(Stream.Null);
 
         var guardado = _cuaderno.Contenido.Should().ContainSingle().Subject;
         guardado.Uuid.Should().Be(uuid);
@@ -173,14 +173,14 @@ public sealed class ImportarAdifPruebas
             () => Ayuda.Qso(call: "EA2DEF", inicioUtc: Instante),
             () => Ayuda.Qso(call: "EA3GHI", inicioUtc: Instante));
 
-        var resultado = await caso.DesdeAsync(Stream.Null);
+        var resultado = await caso.EjecutarAsync(Stream.Null);
 
         resultado.RegistrosLeidos.Should().Be(3);
-        resultado.ContactosDistintos.Should().Be(3);
+        (resultado.RegistrosLeidos - resultado.FundidosEnElFichero).Should().Be(3);
         resultado.FundidosConElCuaderno.Should().Be(1);
         resultado.YaEstaban.Should().Be(1);
         resultado.Anadidos.Should().Be(1);
-        resultado.SinPerdidas.Should().BeTrue();
+        resultado.NoSePierdeNada.Should().BeTrue();
         _cuaderno.Contenido.Should().HaveCount(3);
     }
 
@@ -194,7 +194,7 @@ public sealed class ImportarAdifPruebas
             () => Ayuda.Qso(call: "EA2DEF", inicioUtc: Instante),
             () => Ayuda.Qso(call: "EA3GHI", inicioUtc: Instante));
 
-        var resultado = await caso.DesdeAsync(Stream.Null);
+        var resultado = await caso.EjecutarAsync(Stream.Null);
 
         _cuaderno.ConsultasDeDuplicado.Should().Be(0);
         _cuaderno.Conteos.Should().Be(1);
@@ -210,7 +210,7 @@ public sealed class ImportarAdifPruebas
             () => Ayuda.Qso(call: "EA1ABC", inicioUtc: Instante),
             () => Ayuda.Qso(call: "EA2DEF", inicioUtc: Instante));
 
-        await caso.DesdeAsync(Stream.Null);
+        await caso.EjecutarAsync(Stream.Null);
 
         _cuaderno.ConsultasDeDuplicado.Should().Be(2);
     }
@@ -226,7 +226,7 @@ public sealed class ImportarAdifPruebas
         };
         var caso = new ImportarAdif(lector, _cuaderno);
 
-        var resultado = await caso.DesdeAsync(Stream.Null);
+        var resultado = await caso.EjecutarAsync(Stream.Null);
 
         resultado.Avisos.Should().ContainSingle().Which.Campo.Should().Be("CNTY");
         resultado.Duracion.Should().BeGreaterThanOrEqualTo(TimeSpan.Zero);
@@ -237,12 +237,12 @@ public sealed class ImportarAdifPruebas
     {
         var caso = Caso();
 
-        var resultado = await caso.DesdeAsync(Stream.Null);
+        var resultado = await caso.EjecutarAsync(Stream.Null);
 
         resultado.RegistrosLeidos.Should().Be(0);
-        resultado.ContactosDistintos.Should().Be(0);
+        (resultado.RegistrosLeidos - resultado.FundidosEnElFichero).Should().Be(0);
         resultado.Anadidos.Should().Be(0);
-        resultado.SinPerdidas.Should().BeTrue();
+        resultado.NoSePierdeNada.Should().BeTrue();
         _cuaderno.Contenido.Should().BeEmpty();
     }
 
@@ -251,9 +251,10 @@ public sealed class ImportarAdifPruebas
     {
         var caso = Caso(SinLaQsl, ConLaQsl);
 
-        var resultado = await caso.DesdeAsync(Stream.Null);
+        var resultado = await caso.EjecutarAsync(Stream.Null);
 
-        resultado.Resumen.Should().Contain("2").And.Contain("registros leidos");
+        resultado.RegistrosLeidos.Should().Be(2);
+        resultado.Fundidos.Should().Be(1);
     }
 
     [Fact]
@@ -261,7 +262,7 @@ public sealed class ImportarAdifPruebas
     {
         var caso = Caso(ConLaQsl);
 
-        var sinFlujo = async () => await caso.DesdeAsync(null!);
+        var sinFlujo = async () => await caso.EjecutarAsync(null!);
 
         await sinFlujo.Should().ThrowAsync<ArgumentNullException>();
     }
@@ -285,7 +286,7 @@ public sealed class ImportarAdifPruebas
         using var fuente = new CancellationTokenSource();
         await fuente.CancelAsync();
 
-        var importar = async () => await caso.DesdeAsync(Stream.Null, fuente.Token);
+        var importar = async () => await caso.EjecutarAsync(Stream.Null, fuente.Token);
 
         await importar.Should().ThrowAsync<OperationCanceledException>();
         _cuaderno.Contenido.Should().BeEmpty();

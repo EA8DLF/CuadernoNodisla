@@ -64,6 +64,13 @@ public sealed record ResultadoDeImportacion
 /// </remarks>
 public sealed class ImportarAdif(ILectorAdif lector, IRepositorioQso repositorio)
 {
+    // Se comprueban aqui y no al usarlos: un nulo que salta en la primera importacion, con el
+    // fichero de Jose delante, es mucho peor que uno que salta al montar la aplicacion.
+    private readonly ILectorAdif _lector = lector ?? throw new ArgumentNullException(nameof(lector));
+
+    private readonly IRepositorioQso _repositorio =
+        repositorio ?? throw new ArgumentNullException(nameof(repositorio));
+
     /// <summary>Lee el fichero, funde los duplicados y guarda lo que corresponda.</summary>
     /// <param name="origen">Flujo del fichero ADI o ADX.</param>
     /// <param name="ct">Testigo de cancelacion.</param>
@@ -72,7 +79,7 @@ public sealed class ImportarAdif(ILectorAdif lector, IRepositorioQso repositorio
         ArgumentNullException.ThrowIfNull(origen);
 
         var reloj = Stopwatch.StartNew();
-        var lectura = await lector.LeerAsync(origen, ct).ConfigureAwait(false);
+        var lectura = await _lector.LeerAsync(origen, ct).ConfigureAwait(false);
 
         var choques = new List<ChoqueDeFusion>();
         var recuperadas = 0;
@@ -80,7 +87,7 @@ public sealed class ImportarAdif(ILectorAdif lector, IRepositorioQso repositorio
         var unicos = FundirDuplicadosDelFichero(lectura.Qsos, choques, ref recuperadas, out var fundidosEnFichero);
 
         // Con el cuaderno vacio no hay con que chocar, y son tantas consultas como contactos.
-        var cuadernoVacio = await repositorio.ContarAsync(ct).ConfigureAwait(false) == 0;
+        var cuadernoVacio = await _repositorio.ContarAsync(ct).ConfigureAwait(false) == 0;
 
         var aAnadir = new List<Qso>(unicos.Count);
         var fundidosConCuaderno = 0;
@@ -92,7 +99,7 @@ public sealed class ImportarAdif(ILectorAdif lector, IRepositorioQso repositorio
 
             var existente = cuadernoVacio
                 ? null
-                : await repositorio.BuscarDuplicadoAsync(qso, ct).ConfigureAwait(false);
+                : await _repositorio.BuscarDuplicadoAsync(qso, ct).ConfigureAwait(false);
 
             if (existente is null)
             {
@@ -107,7 +114,7 @@ public sealed class ImportarAdif(ILectorAdif lector, IRepositorioQso repositorio
             if (fusion.HuboCambios)
             {
                 existente.ModificadoUtc = DateTimeOffset.UtcNow;
-                await repositorio.ActualizarAsync(existente, ct).ConfigureAwait(false);
+                await _repositorio.ActualizarAsync(existente, ct).ConfigureAwait(false);
                 fundidosConCuaderno++;
             }
             else
@@ -118,7 +125,7 @@ public sealed class ImportarAdif(ILectorAdif lector, IRepositorioQso repositorio
 
         var lote = aAnadir.Count == 0
             ? new ResultadoDeLote(0, 0, TimeSpan.Zero)
-            : await repositorio.AnadirLoteAsync(aAnadir, omitirDuplicados: true, ct).ConfigureAwait(false);
+            : await _repositorio.AnadirLoteAsync(aAnadir, omitirDuplicados: true, ct).ConfigureAwait(false);
 
         return new ResultadoDeImportacion
         {

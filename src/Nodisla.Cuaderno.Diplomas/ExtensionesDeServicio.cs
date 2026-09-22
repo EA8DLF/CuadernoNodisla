@@ -14,6 +14,12 @@ public static class ExtensionesDeServicio
     /// Se registra como <b>unico</b> a proposito: el motor mantiene abierta la conexion con el
     /// cuaderno, el catalogo compilado y la cache de progreso, y tenerlos por peticion echaria a
     /// perder justo lo que hace inmediato el aviso al teclear.
+    /// <para>
+    /// Hace falta que este registrado <see cref="IFabricaDeConexion"/>, que lo pone la capa de
+    /// datos, y <see cref="Dominio.Dxcc.IResolutorDxcc"/>. El motor se registra ademas como
+    /// <see cref="INotificadorDeDiplomas"/>: quien anada contactos o baje confirmaciones tiene
+    /// que avisar por ahi.
+    /// </para>
     /// </remarks>
     /// <param name="servicios">Coleccion de servicios.</param>
     /// <param name="configurar">Ajustes del motor.</param>

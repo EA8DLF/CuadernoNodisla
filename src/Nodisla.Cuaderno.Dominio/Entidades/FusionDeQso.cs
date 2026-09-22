@@ -196,8 +196,7 @@ public static class FusionDeQso
         Valor(c, "MY_DXCC", d, o, q => q.MyDxcc, (q, v) => q.MyDxcc = v, v => v is null);
         Valor(c, "MY_CQ_ZONE", d, o, q => q.MyCqZone, (q, v) => q.MyCqZone = v, v => v is null);
         Valor(c, "MY_ITU_ZONE", d, o, q => q.MyItuZone, (q, v) => q.MyItuZone = v, v => v is null);
-        Valor(c, "MY_LAT", d, o, q => q.MyLat, (q, v) => q.MyLat = v, v => v is null);
-        Valor(c, "MY_LON", d, o, q => q.MyLon, (q, v) => q.MyLon = v, v => v is null);
+        FundirMiPosicion(c, d, o);
         Valor(c, "MY_ALTITUDE", d, o, q => q.MyAltitude, (q, v) => q.MyAltitude = v, v => v is null);
         Texto(c, "MY_RIG", d, o, q => q.MyRig, (q, v) => q.MyRig = v);
         Texto(c, "MY_ANTENNA", d, o, q => q.MyAntenna, (q, v) => q.MyAntenna = v);
@@ -206,16 +205,72 @@ public static class FusionDeQso
 
     private static void FundirCondiciones(Contexto c, Qso d, Qso o)
     {
+        // Cero grados es el NORTE: un rumbo de antena perfectamente real, y probablemente el
+        // mas comun en una antena fija. Aqui el cero es un dato, no un hueco.
         Valor(c, "ANT_AZ", d, o, q => q.AntAz, (q, v) => q.AntAz = v, v => v is null);
         Valor(c, "ANT_EL", d, o, q => q.AntEl, (q, v) => q.AntEl = v, v => v is null);
+
+        // Una distancia de cero es rara pero puede haberla puesto alguien a proposito; perder
+        // un dato deliberado es peor que conservar un cero raro.
         Valor(c, "DISTANCE", d, o, q => q.Distance, (q, v) => q.Distance = v, v => v is null);
+
+        // Indices geomagneticos: cero es legitimo y ademas el mejor valor posible —campo en
+        // calma, que es cuando mejor se propaga—, asi que tampoco es un hueco.
         Valor(c, "A_INDEX", d, o, q => q.AIndex, (q, v) => q.AIndex = v, v => v is null);
         Valor(c, "K_INDEX", d, o, q => q.KIndex, (q, v) => q.KIndex = v, v => v is null);
-        Valor(c, "SFI", d, o, q => q.Sfi, (q, v) => q.Sfi = v, v => v is null);
+
+        // Flujo solar: el minimo historico ronda los 64 y un cero es FISICAMENTE IMPOSIBLE,
+        // asi que solo puede significar «sin rellenar». Es una de las dos unicas excepciones
+        // en las que el cero cuenta como hueco; no se extiende a ningun otro campo.
+        Valor(c, "SFI", d, o, q => q.Sfi, (q, v) => q.Sfi = v, EsFlujoSolarSinRellenar);
         Valor(c, "SWL", d, o, q => q.Swl, (q, v) => q.Swl = v, v => !v);
         Texto(c, "QSO_COMPLETE", d, o, q => q.QsoComplete, (q, v) => q.QsoComplete = v);
         Valor(c, "QSO_RANDOM", d, o, q => q.QsoRandom, (q, v) => q.QsoRandom = v, v => v is null);
     }
+
+    /// <summary>
+    /// Un flujo solar de cero es «sin rellenar» y no un dato.
+    /// </summary>
+    /// <remarks>
+    /// El flujo a 10,7 cm no baja de unos 64 ni en el fondo del minimo solar: el Sol siempre
+    /// radia. Un cero es un hueco que dejo el programa que escribio el fichero, nunca una
+    /// medida. Es una excepcion argumentada para este campo y no una regla general: en
+    /// <c>ANT_AZ</c>, <c>A_INDEX</c>, <c>K_INDEX</c>, <c>TX_PWR</c> o <c>DISTANCE</c> el cero
+    /// si es un valor y convertirlo en hueco destruiria informacion.
+    /// </remarks>
+    private static bool EsFlujoSolarSinRellenar(double? valor) => valor is null or 0;
+
+    /// <summary>
+    /// Funde mi latitud y mi longitud como una sola cosa, porque solo juntas se sabe si hay
+    /// posicion o no.
+    /// </summary>
+    /// <remarks>
+    /// El punto (0, 0) cae en el golfo de Guinea, en mitad del oceano: nadie opera desde ahi,
+    /// asi que un par de ceros es un hueco. Pero la condicion tiene que ser <b>conjunta</b>:
+    /// una longitud de exactamente cero a solas es el meridiano de Greenwich, y ahi si hay
+    /// estaciones. Por eso esto no se puede resolver campo a campo.
+    /// </remarks>
+    private static void FundirMiPosicion(Contexto c, Qso d, Qso o)
+    {
+        if (EsElGolfoDeGuinea(o.MyLat, o.MyLon)) return;
+
+        if (EsElGolfoDeGuinea(d.MyLat, d.MyLon))
+        {
+            d.MyLat = o.MyLat;
+            d.MyLon = o.MyLon;
+            c.MarcarCambio();
+            return;
+        }
+
+        // Las dos copias declaran una posicion de verdad: se comparan campo a campo y un cero
+        // cuenta como valor, que es lo que corresponde a un meridiano o a un paralelo reales.
+        Valor(c, "MY_LAT", d, o, q => q.MyLat, (q, v) => q.MyLat = v, v => v is null);
+        Valor(c, "MY_LON", d, o, q => q.MyLon, (q, v) => q.MyLon = v, v => v is null);
+    }
+
+    /// <summary>Indica si el par de coordenadas es el punto nulo y no una posicion.</summary>
+    private static bool EsElGolfoDeGuinea(double? latitud, double? longitud) =>
+        latitud is null or 0 && longitud is null or 0;
 
     private static void FundirConcursoYNotas(Contexto c, Qso d, Qso o)
     {
