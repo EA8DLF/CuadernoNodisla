@@ -16,22 +16,13 @@ namespace Nodisla.Cuaderno.Datos.Interceptores;
 /// </remarks>
 public sealed class InterceptorDePragmas : DbConnectionInterceptor
 {
-    private const string Ajustes =
-        "PRAGMA journal_mode=WAL;" +
-        "PRAGMA foreign_keys=ON;" +
-        "PRAGMA busy_timeout=5000;" +
-        "PRAGMA synchronous=NORMAL;";
-
     /// <summary>Instancia compartida; el interceptor no guarda estado.</summary>
     public static InterceptorDePragmas Instancia { get; } = new();
 
     /// <inheritdoc/>
     public override void ConnectionOpened(DbConnection connection, ConnectionEndEventData eventData)
     {
-        ArgumentNullException.ThrowIfNull(connection);
-        using var orden = connection.CreateCommand();
-        orden.CommandText = Ajustes;
-        orden.ExecuteNonQuery();
+        AjustesDeSqlite.Aplicar(connection);
         base.ConnectionOpened(connection, eventData);
     }
 
@@ -41,13 +32,7 @@ public sealed class InterceptorDePragmas : DbConnectionInterceptor
         ConnectionEndEventData eventData,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(connection);
-        await using (var orden = connection.CreateCommand())
-        {
-            orden.CommandText = Ajustes;
-            await orden.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        }
-
+        await AjustesDeSqlite.AplicarAsync(connection, cancellationToken).ConfigureAwait(false);
         await base.ConnectionOpenedAsync(connection, eventData, cancellationToken).ConfigureAwait(false);
     }
 }

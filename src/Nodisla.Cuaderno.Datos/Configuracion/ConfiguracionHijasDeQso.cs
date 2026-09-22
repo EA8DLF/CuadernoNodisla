@@ -57,6 +57,13 @@ public sealed class ConfiguracionQsoReferencia : IEntityTypeConfiguration<QsoRef
 
         constructor.HasIndex(r => new { r.Lado, r.Tipo, r.Codigo })
             .HasDatabaseName("ix_ref_propia");
+
+        // Los programas que ADIF no modela se guardan como award_code OTRA con el nombre en
+        // «programa»: sin este indice, cada consulta de un diploma de esos tiene que recorrer
+        // todas las referencias OTRA del cuaderno.
+        constructor.HasIndex(r => new { r.NombrePrograma, r.Codigo })
+            .HasDatabaseName("ix_ref_programa")
+            .HasFilter("programa IS NOT NULL");
     }
 }
 

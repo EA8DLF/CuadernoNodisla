@@ -50,6 +50,7 @@ public sealed class EsquemaPruebas : IAsyncLifetime
             "ix_ref_award_ref",
             "ix_ref_qso",
             "ix_ref_propia",
+            "ix_ref_programa",
             "ux_campo_extra",
             "ux_estacion_nombre",
         ]);

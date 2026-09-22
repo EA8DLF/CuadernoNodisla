@@ -50,7 +50,7 @@ public static class NombresDeColumna
         "contacted_op", "qsl_via", "station_callsign", "operator", "owner_callsign",
         "my_gridsquare", "my_state", "my_cnty", "my_country", "my_iota", "contest_id",
         "sat_name", "sat_mode", "prop_mode", "origen", "qso_complete", "nombre_perfil", "servicio",
-        "award_code", "referencia", "programa", "campo",
+        "award_code", "referencia", "programa", "campo", "sig", "sig_info",
     };
 
     /// <summary>Renombra tablas y columnas de todo el modelo.</summary>

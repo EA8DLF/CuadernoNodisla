@@ -31,7 +31,12 @@ public static class ExtensionesDeServicio
                 opciones.CadenaDeConexion,
                 sqlite => sqlite.MigrationsAssembly(typeof(ContextoCuaderno).Assembly.FullName)));
 
-        servicios.AddScoped<IRepositorioQso, RepositorioQso>();
+        servicios.AddSingleton<IFabricaDeConexion, FabricaDeConexion>();
+
+        // El notificador de diplomas es opcional: se pide por si alguien lo ha registrado.
+        servicios.AddScoped<IRepositorioQso>(sp => new RepositorioQso(
+            sp.GetRequiredService<ContextoCuaderno>(),
+            sp.GetService<INotificadorDeDiplomas>()));
         servicios.AddScoped<IRepositorioEstacion, RepositorioEstacion>();
         servicios.AddScoped<IConsultasDeInforme, ConsultasDeInforme>();
         servicios.AddScoped<MigradorDeCuaderno>();

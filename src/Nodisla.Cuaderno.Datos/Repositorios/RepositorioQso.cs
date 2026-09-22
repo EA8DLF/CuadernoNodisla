@@ -9,7 +9,14 @@ namespace Nodisla.Cuaderno.Datos.Repositorios;
 
 /// <summary>El cuaderno sobre EF Core y SQLite.</summary>
 /// <param name="contexto">Contexto del cuaderno.</param>
-public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
+/// <param name="diplomas">
+/// A quien avisar de que el cuaderno ha cambiado. Es opcional: si nadie lo registra, no se
+/// avisa a nadie y el motor de diplomas se entera igual por su marca de agua, solo que mas
+/// caro. Se avisa despues de confirmar la transaccion y solo si se escribio algo de verdad.
+/// </param>
+public sealed class RepositorioQso(
+    ContextoCuaderno contexto,
+    INotificadorDeDiplomas? diplomas = null) : IRepositorioQso
 {
     /// <summary>Cuantos contactos se escriben por tanda en el alta en lote.</summary>
     private const int TamanoDeTanda = 2000;
@@ -55,6 +62,7 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
         Sellar(qso, esAlta: true);
         contexto.Qsos.Add(qso);
         await contexto.SaveChangesAsync(ct).ConfigureAwait(false);
+        diplomas?.CuadernoCambiado();
         return qso.Id;
     }
 
@@ -98,6 +106,11 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
 
             await transaccion.CommitAsync(ct).ConfigureAwait(false);
             reloj.Stop();
+            if (anadidos > 0)
+            {
+                diplomas?.CuadernoCambiado();
+            }
+
             return new ResultadoDeLote(anadidos, omitidos, reloj.Elapsed);
         }
         finally
@@ -130,13 +143,23 @@ public sealed class RepositorioQso(ContextoCuaderno contexto) : IRepositorioQso
         }
 
         Sellar(existente, esAlta: false);
-        await contexto.SaveChangesAsync(ct).ConfigureAwait(false);
+        var escritas = await contexto.SaveChangesAsync(ct).ConfigureAwait(false);
+        if (escritas > 0)
+        {
+            diplomas?.CuadernoCambiado();
+        }
     }
 
     /// <inheritdoc/>
     public async Task EliminarAsync(long id, CancellationToken ct = default)
     {
-        await contexto.Qsos.Where(q => q.Id == id).ExecuteDeleteAsync(ct).ConfigureAwait(false);
+        var borrados = await contexto.Qsos.Where(q => q.Id == id)
+            .ExecuteDeleteAsync(ct)
+            .ConfigureAwait(false);
+        if (borrados > 0)
+        {
+            diplomas?.CuadernoCambiado();
+        }
 
         // El borrado directo no pasa por el rastreador: si el contacto estaba cargado, se suelta.
         var rastreado = contexto.ChangeTracker.Entries<Qso>().FirstOrDefault(e => e.Entity.Id == id);

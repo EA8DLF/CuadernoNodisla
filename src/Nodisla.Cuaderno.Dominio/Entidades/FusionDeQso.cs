@@ -178,6 +178,8 @@ public static class FusionDeQso
         Texto(c, "CONTACTED_OP", d, o, q => q.ContactedOp, (q, v) => q.ContactedOp = v);
         Texto(c, "QSL_VIA", d, o, q => q.QslVia, (q, v) => q.QslVia = v);
         Texto(c, "IOTA_ISLAND_ID", d, o, q => q.IotaIslandId, (q, v) => q.IotaIslandId = v);
+        Texto(c, "SIG", d, o, q => q.Sig, (q, v) => q.Sig = v);
+        Texto(c, "SIG_INFO", d, o, q => q.SigInfo, (q, v) => q.SigInfo = v);
     }
 
     private static void FundirMiEstacion(Contexto c, Qso d, Qso o)

@@ -226,6 +226,19 @@ public sealed class Qso
     /// <summary>Identificador numerico de la isla IOTA (<c>IOTA_ISLAND_ID</c>).</summary>
     public string? IotaIslandId { get; set; }
 
+    /// <summary>
+    /// Programa de actividad del corresponsal (<c>SIG</c>), por ejemplo <c>POTA</c> o <c>SIOTA</c>.
+    /// </summary>
+    /// <remarks>
+    /// Es el cajon del estandar para los programas que no tienen campo propio. Sin el hay
+    /// diplomas que no se pueden calcular: los que cuentan por <c>SIG_INFO</c> quedan a cero
+    /// aunque los contactos esten en el cuaderno.
+    /// </remarks>
+    public string? Sig { get; set; }
+
+    /// <summary>Referencia dentro de ese programa (<c>SIG_INFO</c>).</summary>
+    public string? SigInfo { get; set; }
+
     // ── Concurso ─────────────────────────────────────────────────────────────
 
     /// <summary>Identificador del concurso (<c>CONTEST_ID</c>).</summary>

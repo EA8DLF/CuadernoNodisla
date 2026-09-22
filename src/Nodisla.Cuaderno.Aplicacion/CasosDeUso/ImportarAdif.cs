@@ -4,120 +4,99 @@ using Nodisla.Cuaderno.Dominio.Entidades;
 
 namespace Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 
-/// <summary>Parte de lo ocurrido al importar un fichero ADIF.</summary>
-/// <param name="RegistrosLeidos">Registros que traia el fichero.</param>
-/// <param name="Anadidos">Contactos nuevos que han entrado en el cuaderno.</param>
-/// <param name="FundidosEnElFichero">
-/// Registros del propio fichero que resultaron ser el mismo contacto y se fundieron entre si.
-/// </param>
-/// <param name="FundidosConElCuaderno">
-/// Contactos que ya estaban en el cuaderno y han recibido datos del fichero.
-/// </param>
-/// <param name="YaEstaban">Contactos que ya estaban y a los que el fichero no aportaba nada.</param>
-/// <param name="ConfirmacionesRecuperadas">
-/// Fusiones que han rescatado informacion de confirmacion. Es la cifra que justifica fundir
-/// en vez de descartar: cada una es un dato que cuenta para los diplomas y que se habria perdido.
-/// </param>
-/// <param name="Choques">Datos que venian distintos en dos copias del mismo contacto.</param>
-/// <param name="Avisos">Avisos del analizador de ADIF.</param>
-/// <param name="Duracion">Lo que ha tardado la importacion entera.</param>
-public sealed record ResultadoDeImportacion(
-    int RegistrosLeidos,
-    int Anadidos,
-    int FundidosEnElFichero,
-    int FundidosConElCuaderno,
-    int YaEstaban,
-    int ConfirmacionesRecuperadas,
-    IReadOnlyList<ChoqueDeFusion> Choques,
-    IReadOnlyList<AvisoAdif> Avisos,
-    TimeSpan Duracion)
+/// <summary>Parte de una importacion de ADIF, pensado para ensenarselo al operador.</summary>
+public sealed record ResultadoDeImportacion
 {
-    /// <summary>Contactos distintos que traia el fichero, ya descontadas las copias repetidas.</summary>
-    public int ContactosDistintos => RegistrosLeidos - FundidosEnElFichero;
+    /// <summary>Registros que traia el fichero, antes de fundir nada.</summary>
+    public required int RegistrosLeidos { get; init; }
 
-    /// <summary>No se ha descartado ningun registro del fichero.</summary>
-    public bool SinPerdidas => Anadidos + FundidosConElCuaderno + YaEstaban == ContactosDistintos;
+    /// <summary>Contactos nuevos que han entrado en el cuaderno.</summary>
+    public required int Anadidos { get; init; }
 
-    /// <summary>Resumen de una linea para la barra de estado.</summary>
-    public string Resumen =>
-        $"{RegistrosLeidos:N0} registros leidos: {Anadidos:N0} nuevos, " +
-        $"{FundidosEnElFichero + FundidosConElCuaderno:N0} fundidos, {YaEstaban:N0} ya estaban.";
+    /// <summary>Registros del fichero que eran otra copia de un contacto del mismo fichero.</summary>
+    public required int FundidosEnElFichero { get; init; }
+
+    /// <summary>Registros que han aportado algo a un contacto que ya estaba en el cuaderno.</summary>
+    public required int FundidosConElCuaderno { get; init; }
+
+    /// <summary>Registros que ya estaban en el cuaderno y no aportaban nada nuevo.</summary>
+    public required int YaEstaban { get; init; }
+
+    /// <summary>
+    /// Contactos en los que la fusion ha rescatado una confirmacion que se habria perdido
+    /// descartando la copia. Es la cifra que justifica fundir en lugar de saltar.
+    /// </summary>
+    public required int ConfirmacionesRecuperadas { get; init; }
+
+    /// <summary>Datos que venian distintos en dos copias, para que el operador los revise.</summary>
+    public IReadOnlyList<ChoqueDeFusion> Choques { get; init; } = [];
+
+    /// <summary>Problemas de lectura del fichero.</summary>
+    public IReadOnlyList<AvisoAdif> Avisos { get; init; } = [];
+
+    /// <summary>Programa que genero el fichero, del campo <c>PROGRAMID</c>.</summary>
+    public string? ProgramaOrigen { get; init; }
+
+    /// <summary>Lo que ha tardado la importacion entera.</summary>
+    public TimeSpan Duracion { get; init; }
+
+    /// <summary>Registros del fichero que se han fundido con otro contacto.</summary>
+    public int Fundidos => FundidosEnElFichero + FundidosConElCuaderno;
+
+    /// <summary>
+    /// Ningun registro del fichero se ha quedado por el camino: o entro, o se fundio con otro,
+    /// o ya estaba. Si esto es falso, hay un contacto perdido y eso no puede pasar.
+    /// </summary>
+    public bool NoSePierdeNada =>
+        RegistrosLeidos == Anadidos + FundidosEnElFichero + FundidosConElCuaderno + YaEstaban;
 }
 
 /// <summary>
-/// Importa un fichero ADIF en el cuaderno fundiendo los contactos repetidos.
+/// Mete un fichero ADIF en el cuaderno.
 /// </summary>
 /// <remarks>
-/// La politica es <b>fundir, no descartar</b>, y no es una preferencia estetica. Un respaldo
-/// real de Log4OM del cuaderno de EA8DLF trae 43 pares de registros con la misma clave natural
-/// que no son copias literales: difieren en informes, submodo, indices de propagacion y —lo
-/// que importa— en las confirmaciones, de modo que una copia da una QSL por recibida y la otra
-/// no. Quedarse con una sola copia perderia confirmaciones, y las confirmaciones son diplomas.
-/// Log4OM no exporta ningun identificador propio de contacto, asi que las copias solo se
-/// distinguen por su contenido y la unica salida que no pierde nada es fundirlas.
+/// La parte delicada no es leer el fichero sino que hacer con los registros que comparten
+/// clave natural. Un respaldo real de Log4OM trae pares con el mismo indicativo, banda, modo y
+/// segundo exacto que no son copias literales: una trae la QSL sin recibir y la otra recibida
+/// con su fecha. Saltarse la segunda copia —que es lo que hace un alta en lote a secas—
+/// perderia confirmaciones, y las confirmaciones son diplomas. Por eso aqui se funden, primero
+/// entre si dentro del fichero y despues contra lo que ya hay en el cuaderno.
 /// </remarks>
-/// <param name="lector">Analizador de ADIF.</param>
-/// <param name="repositorio">Cuaderno donde se guarda.</param>
 public sealed class ImportarAdif(ILectorAdif lector, IRepositorioQso repositorio)
 {
-    private readonly ILectorAdif _lector = lector ?? throw new ArgumentNullException(nameof(lector));
-    private readonly IRepositorioQso _repositorio =
-        repositorio ?? throw new ArgumentNullException(nameof(repositorio));
-
-    /// <summary>Lee el fichero y lo vuelca en el cuaderno.</summary>
-    /// <param name="origen">Flujo con el contenido del fichero ADIF.</param>
+    /// <summary>Lee el fichero, funde los duplicados y guarda lo que corresponda.</summary>
+    /// <param name="origen">Flujo del fichero ADI o ADX.</param>
     /// <param name="ct">Testigo de cancelacion.</param>
-    public async Task<ResultadoDeImportacion> DesdeAsync(Stream origen, CancellationToken ct = default)
+    public async Task<ResultadoDeImportacion> EjecutarAsync(Stream origen, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(origen);
 
         var reloj = Stopwatch.StartNew();
-        var lectura = await _lector.LeerAsync(origen, ct).ConfigureAwait(false);
+        var lectura = await lector.LeerAsync(origen, ct).ConfigureAwait(false);
 
         var choques = new List<ChoqueDeFusion>();
         var recuperadas = 0;
 
-        // ── 1. Fundir las copias que vienen repetidas dentro del propio fichero ──
-        var porClave = new Dictionary<string, Qso>(StringComparer.OrdinalIgnoreCase);
-        var fundidosEnElFichero = 0;
+        var unicos = FundirDuplicadosDelFichero(lectura.Qsos, choques, ref recuperadas, out var fundidosEnFichero);
 
-        foreach (var qso in lectura.Qsos)
-        {
-            ct.ThrowIfCancellationRequested();
+        // Con el cuaderno vacio no hay con que chocar, y son tantas consultas como contactos.
+        var cuadernoVacio = await repositorio.ContarAsync(ct).ConfigureAwait(false) == 0;
 
-            if (porClave.TryGetValue(qso.ClaveNatural, out var yaVisto))
-            {
-                var fusion = FusionDeQso.Fundir(yaVisto, qso);
-                choques.AddRange(fusion.Choques);
-                if (fusion.RecuperoConfirmacion) recuperadas++;
-                fundidosEnElFichero++;
-            }
-            else
-            {
-                porClave.Add(qso.ClaveNatural, qso);
-            }
-        }
-
-        // ── 2. Contrastar con lo que ya hay en el cuaderno ───────────────────
-        // Si el cuaderno esta vacio no hace falta preguntar por cada contacto, que son
-        // tantas consultas como registros traiga el fichero.
-        var cuadernoVacio = await _repositorio.ContarAsync(ct).ConfigureAwait(false) == 0;
-
-        var nuevos = new List<Qso>(porClave.Count);
-        var fundidosConElCuaderno = 0;
+        var aAnadir = new List<Qso>(unicos.Count);
+        var fundidosConCuaderno = 0;
         var yaEstaban = 0;
 
-        foreach (var qso in porClave.Values)
+        foreach (var qso in unicos)
         {
             ct.ThrowIfCancellationRequested();
 
             var existente = cuadernoVacio
                 ? null
-                : await _repositorio.BuscarDuplicadoAsync(qso, ct).ConfigureAwait(false);
+                : await repositorio.BuscarDuplicadoAsync(qso, ct).ConfigureAwait(false);
 
             if (existente is null)
             {
-                nuevos.Add(qso);
+                aAnadir.Add(qso);
                 continue;
             }
 
@@ -128,8 +107,8 @@ public sealed class ImportarAdif(ILectorAdif lector, IRepositorioQso repositorio
             if (fusion.HuboCambios)
             {
                 existente.ModificadoUtc = DateTimeOffset.UtcNow;
-                await _repositorio.ActualizarAsync(existente, ct).ConfigureAwait(false);
-                fundidosConElCuaderno++;
+                await repositorio.ActualizarAsync(existente, ct).ConfigureAwait(false);
+                fundidosConCuaderno++;
             }
             else
             {
@@ -137,27 +116,65 @@ public sealed class ImportarAdif(ILectorAdif lector, IRepositorioQso repositorio
             }
         }
 
-        // ── 3. Guardar los nuevos ────────────────────────────────────────────
-        // Ya estan deduplicados, asi que un duplicado aqui seria un fallo nuestro y debe
-        // hacerse notar en vez de pasar desapercibido.
-        var anadidos = 0;
-        if (nuevos.Count > 0)
+        var lote = aAnadir.Count == 0
+            ? new ResultadoDeLote(0, 0, TimeSpan.Zero)
+            : await repositorio.AnadirLoteAsync(aAnadir, omitirDuplicados: true, ct).ConfigureAwait(false);
+
+        return new ResultadoDeImportacion
         {
-            var lote = await _repositorio
-                .AnadirLoteAsync(nuevos, omitirDuplicados: false, ct)
-                .ConfigureAwait(false);
-            anadidos = lote.Anadidos;
+            RegistrosLeidos = lectura.Qsos.Count,
+            Anadidos = lote.Anadidos,
+            FundidosEnElFichero = fundidosEnFichero,
+            FundidosConElCuaderno = fundidosConCuaderno,
+
+            // Los omitidos por el lote solo aparecen si alguien escribio en el cuaderno a la
+            // vez que nosotros; se cuentan como «ya estaban» para que las cifras cuadren.
+            YaEstaban = yaEstaban + lote.OmitidosPorDuplicado,
+            ConfirmacionesRecuperadas = recuperadas,
+            Choques = choques,
+            Avisos = lectura.Avisos,
+            ProgramaOrigen = lectura.ProgramaOrigen,
+            Duracion = reloj.Elapsed,
+        };
+    }
+
+    /// <summary>
+    /// Funde entre si los registros del fichero que comparten clave natural y devuelve la
+    /// lista de contactos distintos, en el orden en que aparecian.
+    /// </summary>
+    /// <remarks>
+    /// Gana el primero que aparece, que es el que se queda en el cuaderno; los demas le vuelcan
+    /// lo que sepan de mas. El orden importa poco porque la parte que de verdad decide
+    /// —las confirmaciones— se funde de forma conmutativa.
+    /// </remarks>
+    public static List<Qso> FundirDuplicadosDelFichero(
+        IReadOnlyList<Qso> leidos,
+        List<ChoqueDeFusion> choques,
+        ref int confirmacionesRecuperadas,
+        out int fundidos)
+    {
+        ArgumentNullException.ThrowIfNull(leidos);
+        ArgumentNullException.ThrowIfNull(choques);
+
+        var porClave = new Dictionary<string, Qso>(leidos.Count, StringComparer.Ordinal);
+        var unicos = new List<Qso>(leidos.Count);
+        fundidos = 0;
+
+        foreach (var qso in leidos)
+        {
+            if (porClave.TryGetValue(qso.ClaveNatural, out var primero))
+            {
+                var fusion = FusionDeQso.Fundir(primero, qso);
+                choques.AddRange(fusion.Choques);
+                if (fusion.RecuperoConfirmacion) confirmacionesRecuperadas++;
+                fundidos++;
+                continue;
+            }
+
+            porClave[qso.ClaveNatural] = qso;
+            unicos.Add(qso);
         }
 
-        return new ResultadoDeImportacion(
-            RegistrosLeidos: lectura.Qsos.Count,
-            Anadidos: anadidos,
-            FundidosEnElFichero: fundidosEnElFichero,
-            FundidosConElCuaderno: fundidosConElCuaderno,
-            YaEstaban: yaEstaban,
-            ConfirmacionesRecuperadas: recuperadas,
-            Choques: choques,
-            Avisos: lectura.Avisos,
-            Duracion: reloj.Elapsed);
+        return unicos;
     }
 }

@@ -27,6 +27,26 @@ public sealed record Diploma(
     string? Gestor,
     Uri? Web);
 
+/// <summary>
+/// Familia de modos que exige una variante de diploma.
+/// </summary>
+/// <remarks>
+/// Hace falta porque los reglamentos hablan de <b>fonia</b>, <b>telegrafia</b> y <b>digitales</b>,
+/// no de modos ADIF sueltos. Una variante de fonia acepta SSB, AM y FM; exigir un modo concreto
+/// dejaria fuera contactos que cuentan.
+/// </remarks>
+public enum ClaseDeModo
+{
+    /// <summary>Cualquier modo.</summary>
+    Cualquiera,
+    /// <summary>Telegrafia.</summary>
+    Telegrafia,
+    /// <summary>Fonia: SSB, AM, FM y voz digital cuando el diploma la admita.</summary>
+    Fonia,
+    /// <summary>Modos digitales.</summary>
+    Digital,
+}
+
 /// <summary>Como hay que confirmar un contacto para que cuente.</summary>
 public enum ExigenciaDeConfirmacion
 {
@@ -42,7 +62,10 @@ public enum ExigenciaDeConfirmacion
 /// <param name="Codigo">Clave del diploma al que pertenece.</param>
 /// <param name="Variante">Nombre de la variante, por ejemplo <c>20m</c> o <c>CW</c>.</param>
 /// <param name="Banda">Banda exigida, o vacia si vale cualquiera.</param>
-/// <param name="Modo">Modo exigido, o vacio si vale cualquiera.</param>
+/// <param name="Modo">
+/// Modo ADIF exigido, o vacio si la variante no baja a ese detalle. Para las variantes que
+/// hablan de familias —fonia, telegrafia, digitales— manda <see cref="Clase"/>.
+/// </param>
 /// <param name="Exigencia">Que confirmacion hace falta.</param>
 /// <param name="MediosValidos">
 /// Vias de confirmacion que acepta. Vacio significa que vale cualquiera. Importa: hay diplomas
@@ -56,7 +79,11 @@ public sealed record VarianteDeDiploma(
     Modo Modo,
     ExigenciaDeConfirmacion Exigencia,
     IReadOnlyList<MedioDeConfirmacion> MediosValidos,
-    int? Objetivo);
+    int? Objetivo)
+{
+    /// <summary>Familia de modos que exige la variante.</summary>
+    public ClaseDeModo Clase { get; init; } = ClaseDeModo.Cualquiera;
+}
 
 /// <summary>Como va un diploma.</summary>
 /// <param name="Codigo">Diploma.</param>
@@ -73,6 +100,21 @@ public sealed record ProgresoDeDiploma(
     int? Objetivo,
     DateTimeOffset CalculadoUtc)
 {
+    /// <summary>
+    /// El progreso es una <b>cota inferior</b> o no se puede calcular, y esta es la razon.
+    /// Nulo cuando la cifra es firme.
+    /// </summary>
+    /// <remarks>
+    /// Es la traduccion al contrato de la regla del modulo: ante la duda se cuenta de menos y
+    /// <b>se dice por que</b>. Hay diplomas que valida su gestor contra su propia base y otros
+    /// que cuentan por campos que el cuaderno no guarda. Ensenar un numero sin ese aviso
+    /// llevaria al operador a pedir un diploma que no tiene, o a no pedir el que si.
+    /// </remarks>
+    public string? PorQueNoEsFirme { get; init; }
+
+    /// <summary>La cifra es firme y se puede usar para pedir el diploma.</summary>
+    public bool EsFirme => PorQueNoEsFirme is null;
+
     /// <summary>Parte del objetivo cubierta, de 0 a 1. Nulo si el diploma no fija objetivo.</summary>
     public double? Fraccion => Objetivo is > 0 ? Math.Min(1.0, (double)Confirmadas / Objetivo.Value) : null;
 
@@ -123,10 +165,23 @@ public interface IDiplomas
     /// <summary>Progreso de todos los diplomas que el operador tenga marcados como propios.</summary>
     Task<IReadOnlyList<ProgresoDeDiploma>> ProgresoDeMisDiplomasAsync(CancellationToken ct = default);
 
-    /// <summary>Estado de cada referencia de una variante: lo trabajado, lo confirmado y lo que falta.</summary>
-    Task<IReadOnlyList<EstadoDeReferencia>> DetalleAsync(
+    /// <summary>
+    /// Estado de cada referencia de una variante: lo trabajado, lo confirmado y lo que falta.
+    /// </summary>
+    /// <param name="codigo">Diploma.</param>
+    /// <param name="variante">Variante.</param>
+    /// <param name="desplazamiento">Cuantas referencias saltar.</param>
+    /// <param name="limite">Cuantas devolver.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <remarks>
+    /// Va paginado porque hay diplomas enormes: SOTA tiene mas de 182.000 referencias. Un tope
+    /// escondido en la implementacion dejaria al operador creyendo que ha visto la lista entera.
+    /// </remarks>
+    Task<Pagina<EstadoDeReferencia>> DetalleAsync(
         string codigo,
         string variante,
+        int desplazamiento,
+        int limite,
         CancellationToken ct = default);
 
     /// <summary>
