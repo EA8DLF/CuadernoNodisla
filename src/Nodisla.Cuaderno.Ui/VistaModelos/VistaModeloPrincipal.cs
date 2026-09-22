@@ -121,13 +121,22 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     public VistaModeloMapa Mapa { get; }
 
     /// <summary>Pestanas de la ventana, en el orden en que salen.</summary>
-    public IReadOnlyList<string> Pestanas { get; } = ["Operar", "Cuaderno", "Mapa", "Diplomas", "Ajustes"];
+    public IReadOnlyList<string> Pestanas { get; } = ["Operar", "Digital", "Cuaderno", "Mapa", "Diplomas", "Ajustes"];
 
     /// <summary>Perfiles de estacion disponibles.</summary>
     public ObservableCollection<Estacion> Estaciones { get; } = [];
 
     /// <summary>Escalas de letra que se ofrecen, en tanto por ciento.</summary>
     public IReadOnlyList<int> EscalasDeLetra { get; } = [100, 125, 150, 175, 200];
+
+    /// <summary>
+    /// La escala de letra escrita, para el mando fijo de la barra de estado.
+    /// </summary>
+    /// <remarks>
+    /// Ese mando no puede seguir a la escala —si creciera con ella, al 200 % se saldria de la
+    /// ventana igual que la cabecera— asi que ensena el numero el mismo.
+    /// </remarks>
+    public string EscalaDeLetraTexto => $"{EscalaDeLetra} %";
 
     /// <summary>Escalas ya como lista, para poder buscar la posicion de la actual.</summary>
     private List<int> Escalas => _escalas ??= [.. EscalasDeLetra];
@@ -374,13 +383,17 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     [RelayCommand]
     public void VerOperar() => IndiceDeLaPestana = 0;
 
+    /// <summary>Pone a la vista los modos digitales.</summary>
+    [RelayCommand]
+    public void VerLoDigital() => IndiceDeLaPestana = 1;
+
     /// <summary>Pone a la vista el cuaderno.</summary>
     [RelayCommand]
-    public void VerElCuaderno() => IndiceDeLaPestana = 1;
+    public void VerElCuaderno() => IndiceDeLaPestana = 2;
 
     /// <summary>Pone a la vista el mapa.</summary>
     [RelayCommand]
-    public void VerElMapa() => IndiceDeLaPestana = 2;
+    public void VerElMapa() => IndiceDeLaPestana = 3;
 
     /// <summary>Guarda como han quedado los paneles. Lo llama la ventana al cerrarse.</summary>
     /// <param name="carpeta">Carpeta de datos del programa.</param>
@@ -537,6 +550,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     {
         OnPropertyChanged(nameof(TamanoDeLetra));
         OnPropertyChanged(nameof(AnchoDelPanel));
+        OnPropertyChanged(nameof(EscalaDeLetraTexto));
     }
 
     partial void OnAnchoDelPanelEnLetrasChanged(double value) => OnPropertyChanged(nameof(AnchoDelPanel));

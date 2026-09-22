@@ -110,6 +110,142 @@ public class ControlFt710Pruebas
     }
 
     [Fact]
+    public async Task Hay_mandos_que_solo_existen_en_el_vfo_principal()
+    {
+        var (equipo, control) = await MontarAsync();
+        await using var _ = equipo;
+        await using var __ = control;
+
+        var principal = control.MandosDe(VfoDelEquipo.Principal);
+        var segundo = control.MandosDe(VfoDelEquipo.Secundario);
+
+        // Estos sí están en los dos: el equipo contesta AG1, SQ1, NB1 y PA1.
+        segundo.Should().Contain(MandoDeEquipo.Volumen);
+        segundo.Should().Contain(MandoDeEquipo.Silenciador);
+        segundo.Should().Contain(MandoDeEquipo.SupresorDeRuido);
+        segundo.Should().Contain(MandoDeEquipo.Preamplificador);
+
+        // Y estos solo en el principal: SH1, RG1, GT1 y RA1 contestan «?;».
+        principal.Should().Contain(MandoDeEquipo.AnchoDeFiltro);
+        segundo.Should().NotContain(MandoDeEquipo.AnchoDeFiltro);
+        segundo.Should().NotContain(MandoDeEquipo.GananciaRf);
+        segundo.Should().NotContain(MandoDeEquipo.Agc);
+        segundo.Should().NotContain(MandoDeEquipo.Atenuador);
+
+        control.Rango(MandoDeEquipo.AnchoDeFiltro, VfoDelEquipo.Secundario).Should().BeNull();
+        var escribir = () => control.EscribirMandoAsync(MandoDeEquipo.AnchoDeFiltro, 5, VfoDelEquipo.Secundario);
+        await escribir.Should().ThrowAsync<NotSupportedException>();
+    }
+
+    [Fact]
+    public async Task Se_acciona_el_segundo_vfo_con_su_propia_orden()
+    {
+        var (equipo, control) = await MontarAsync();
+        await using var _ = equipo;
+        await using var __ = control;
+
+        await control.EscribirMandoAsync(MandoDeEquipo.Volumen, 120, VfoDelEquipo.Secundario);
+
+        await EsperarAQue(() => equipo.Recibidas.Contains("AG1120;"));
+        equipo.Recibidas.Should().Contain("AG1120;").And.NotContain("AG0120;");
+    }
+
+    [Fact]
+    public async Task Se_entiende_al_equipo_aunque_conteste_con_otro_indice()
+    {
+        var (equipo, control) = await MontarAsync();
+        await using var _ = equipo;
+        await using var __ = control;
+
+        // Rareza capturada del firmware: a «SQ1;» contesta «SQ0000;», con el índice del primero.
+        var silenciador = await control.LeerMandoAsync(MandoDeEquipo.Silenciador, VfoDelEquipo.Secundario);
+
+        silenciador.Should().Be(0d);
+    }
+
+    [Fact]
+    public async Task El_desplazamiento_de_fi_se_lee_con_signo_y_no_se_acciona()
+    {
+        var (equipo, control) = await MontarAsync();
+        await using var _ = equipo;
+        await using var __ = control;
+
+        // IS00+0000: el valor viene con signo delante.
+        (await control.LeerMandoAsync(MandoDeEquipo.DesplazamientoFi)).Should().Be(0d);
+
+        // Y no se acciona: el recorrido no consta en ninguna captura, así que va de solo lectura.
+        control.Rango(MandoDeEquipo.DesplazamientoFi)!.SoloLectura.Should().BeTrue();
+        var escribir = () => control.EscribirMandoAsync(MandoDeEquipo.DesplazamientoFi, 100);
+        await escribir.Should().ThrowAsync<NotSupportedException>();
+    }
+
+    [Fact]
+    public async Task Se_lee_el_reloj_del_equipo()
+    {
+        var (equipo, control) = await MontarAsync();
+        await using var _ = equipo;
+        await using var __ = control;
+
+        var reloj = await control.LeerRelojDelEquipoAsync();
+
+        // DT020260921 + DT1071700 = 21-09-2026, 07:17:00.
+        reloj.Should().NotBeNull();
+        reloj!.Value.Year.Should().Be(2026);
+        reloj.Value.Month.Should().Be(9);
+        reloj.Value.Day.Should().Be(21);
+        reloj.Value.Hour.Should().Be(7);
+        reloj.Value.Minute.Should().Be(17);
+    }
+
+    [Fact]
+    public async Task Se_leen_el_tono_el_repetidor_y_los_indicadores()
+    {
+        var (equipo, control) = await MontarAsync();
+        await using var _ = equipo;
+        await using var __ = control;
+
+        (await control.LeerIndiceDeTonoAsync()).Should().Be(12);
+        (await control.LeerDesplazamientoDeRepetidorAsync()).Should().Be(0);
+        (await control.LeerIndicadoresAsync()).Should().Be("0000000");
+    }
+
+    [Fact]
+    public async Task Del_banco_de_memorias_solo_se_saca_el_canal_actual()
+    {
+        var (equipo, control) = await MontarAsync();
+        await using var _ = equipo;
+        await using var __ = control;
+
+        var memorias = await control.LeerMemoriasAsync();
+
+        // Limitación conocida: MT00; contesta «?;» y MC; solo da el canal en el que está.
+        memorias.Should().ContainSingle();
+        memorias[0].Numero.Should().Be(1);
+        OrdenesFt710.Sondeo.Should().NotContain(orden => orden.StartsWith("MT", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void El_audio_del_equipo_se_puede_preguntar_este_o_no_encendido()
+    {
+        // Hoy el equipo está apagado, así que lo normal es que no haya códec. Lo que se
+        // comprueba es que preguntarlo no revienta y que las dos respuestas concuerdan.
+        var encendido = AudioDelFt710.EquipoEncendido();
+        var audio = AudioDelFt710.Buscar();
+
+        encendido.Should().Be(audio is not null);
+        AudioDelFt710.Describir(audio).Should().NotBeNullOrWhiteSpace();
+
+        if (audio is not null)
+        {
+            audio.ContenedorUsb.Should().NotBe(Guid.Empty);
+            foreach (var extremo in audio.Entradas.Concat(audio.Salidas))
+            {
+                extremo.Identificador.Should().StartWith("{0.0.");
+            }
+        }
+    }
+
+    [Fact]
     public void El_mapa_del_menu_dice_de_donde_sale()
     {
         var procedencia = MenuFt710.Procedencia;
@@ -120,7 +256,8 @@ public class ControlFt710Pruebas
         procedencia.FechaDeLectura.Should().Be("2026-09-21");
         procedencia.Identificador.Should().Be(ControlFt710.IdentificadorFt710);
         procedencia.Metodo.Should().Contain("SOLO LECTURA");
-        procedencia.Cobertura.Should().NotBeNullOrWhiteSpace("hay que decir hasta dónde llegó el barrido");
+        procedencia.Cobertura.Should().Contain("completo", "el barrido completo del 22-09-2026 confirmó las mismas 296");
+        procedencia.Entradas.Should().HaveCount(296);
     }
 
     [Fact]
@@ -163,9 +300,14 @@ public class ControlFt710Pruebas
         (await control.LeerMandoAsync(MandoDeEquipo.Potencia)).Should().Be(100d);
         (await control.LeerMandoAsync(MandoDeEquipo.VelocidadKeyer)).Should().Be(20d);
 
-        // CO011500 son hercios directos; BP01150 son décimas: 1500 Hz.
+        // CO011500 son hercios directos, eso sí está capturado.
         (await control.LeerMandoAsync(MandoDeEquipo.FrecuenciaDeContorno)).Should().Be(1500d);
-        (await control.LeerMandoAsync(MandoDeEquipo.FrecuenciaDeMuesca)).Should().Be(1500d);
+        control.Rango(MandoDeEquipo.FrecuenciaDeContorno)!.Unidad.Should().Be("Hz");
+
+        // BP01150 es lo que Yaesu llama «nivel» de la muesca. Que cada paso sean diez hercios
+        // no se ha podido comprobar sin escribir en el equipo, así que se enseña el índice.
+        (await control.LeerMandoAsync(MandoDeEquipo.FrecuenciaDeMuesca)).Should().Be(150d);
+        control.Rango(MandoDeEquipo.FrecuenciaDeMuesca)!.Unidad.Should().Be("índice");
 
         // AG0089 va de 0 a 255 tal cual.
         (await control.LeerMandoAsync(MandoDeEquipo.Volumen)).Should().Be(89d);

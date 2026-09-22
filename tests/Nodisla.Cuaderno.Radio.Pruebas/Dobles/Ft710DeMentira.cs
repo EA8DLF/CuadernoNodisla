@@ -90,7 +90,22 @@ internal sealed class Ft710DeMentira : IAsyncDisposable
             ["VS;"] = "VS0;",
             ["IF;"] = "IF000027555000+000000200000;",
             ["MD0;"] = "MD02;",
-            ["MD1;"] = "MD12;",
+
+            // Segunda captura, 22-09-2026: el VFO B estaba en LSB.
+            ["MD1;"] = "MD11;",
+            ["NB1;"] = "NB10;",
+            ["AG1;"] = "AG1000;",
+            ["PA1;"] = "PA00;",
+            ["CN00;"] = "CN00012;",
+            ["IS0;"] = "IS00+0000;",
+            ["IS1;"] = "IS00+0000;",
+            ["OS0;"] = "OS00;",
+            ["OS1;"] = "OS10;",
+            ["RI0;"] = "RI00000000;",
+            ["DT1;"] = "DT1071700;",
+
+            // El equipo contesta al silenciador del segundo VFO con el índice del primero.
+            ["SQ1;"] = "SQ0000;",
             ["SH0;"] = "SH0020;",
             ["NA0;"] = "NA00;",
             ["NB0;"] = "NB00;",

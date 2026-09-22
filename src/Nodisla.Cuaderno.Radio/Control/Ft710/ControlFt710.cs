@@ -36,6 +36,12 @@ public sealed class OpcionesFt710
     public TraductorDeModos Traductor { get; set; } = TraductorDeModos.PorOmision;
 
     /// <summary>
+    /// Usar el codec de audio USB del equipo para saber si esta encendido antes de reintentar
+    /// la conexion. Solo se aplica cuando se habla por su puerto serie.
+    /// </summary>
+    public bool ComprobarElCodecDeAudio { get; set; } = true;
+
+    /// <summary>
     /// Lectura del medidor S a la que se considera que hay S9. Segun la captura el medidor va
     /// de 0 a 255; el reparto de esa escala en unidades S es aproximado y por eso se deja aqui.
     /// </summary>
@@ -72,6 +78,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     private readonly ILogger _registro;
     private readonly object _candado = new();
     private readonly HashSet<MandoDeEquipo> _mandos = [];
+    private readonly HashSet<MandoDeEquipo> _mandosDelSegundoVfo = [];
 
     private CancellationTokenSource? _ctsSondeo;
     private Task? _sondeo;
@@ -299,12 +306,36 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
         Actualizar(estado => estado with { Transmitiendo = transmitir });
     }
 
-    /// <inheritdoc />
-    public RangoDeMando? Rango(MandoDeEquipo mando)
+    /// <summary>
+    /// Mandos que admite un VFO concreto.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="Mandos"/> son los del VFO principal, que es lo que la interfaz ensena por
+    /// omision. El segundo receptor tiene menos, y esta es la forma de saber cuales.
+    /// </remarks>
+    /// <param name="vfo">VFO por el que se pregunta.</param>
+    /// <returns>Los mandos de ese VFO.</returns>
+    public IReadOnlySet<MandoDeEquipo> MandosDe(VfoDelEquipo vfo)
     {
         lock (_candado)
         {
-            if (!_mandos.Contains(mando))
+            return new HashSet<MandoDeEquipo>(vfo == VfoDelEquipo.Principal ? _mandos : _mandosDelSegundoVfo);
+        }
+    }
+
+    /// <inheritdoc />
+    public RangoDeMando? Rango(MandoDeEquipo mando) => Rango(mando, VfoDelEquipo.Principal);
+
+    /// <summary>Describe el rango de un mando en un VFO. Nulo si ese VFO no lo tiene.</summary>
+    /// <param name="mando">Mando buscado.</param>
+    /// <param name="vfo">VFO por el que se pregunta.</param>
+    /// <returns>El rango, o nulo.</returns>
+    public RangoDeMando? Rango(MandoDeEquipo mando, VfoDelEquipo vfo)
+    {
+        lock (_candado)
+        {
+            var admitidos = vfo == VfoDelEquipo.Principal ? _mandos : _mandosDelSegundoVfo;
+            if (!admitidos.Contains(mando))
             {
                 return null;
             }
@@ -314,16 +345,27 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     }
 
     /// <inheritdoc />
-    public async Task<double?> LeerMandoAsync(MandoDeEquipo mando, CancellationToken ct = default)
+    public Task<double?> LeerMandoAsync(MandoDeEquipo mando, CancellationToken ct = default) =>
+        LeerMandoAsync(mando, VfoDelEquipo.Principal, ct);
+
+    /// <summary>Lee el valor de un mando en el VFO indicado.</summary>
+    /// <param name="mando">Mando a leer.</param>
+    /// <param name="vfo">VFO del que se lee.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>El valor, o nulo si ese VFO no tiene el mando.</returns>
+    public async Task<double?> LeerMandoAsync(
+        MandoDeEquipo mando,
+        VfoDelEquipo vfo,
+        CancellationToken ct = default)
     {
         var descripcion = MandosFt710.Buscar(mando);
-        if (descripcion is null || Rango(mando) is null)
+        if (descripcion is null || Rango(mando, vfo) is null || descripcion.ConsultaDe(vfo) is not { } consulta)
         {
             return null;
         }
 
-        var respuesta = await PreguntarAsync(descripcion.OrdenDeLectura, ct).ConfigureAwait(false);
-        return descripcion.Interpretar(respuesta);
+        var respuesta = await PreguntarAsync(consulta + Cat.Fin, ct).ConfigureAwait(false);
+        return descripcion.Interpretar(respuesta, vfo);
     }
 
     /// <inheritdoc />
@@ -334,13 +376,33 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     /// Si el mando pone el equipo en antena y no hay una transmision en curso pedida al
     /// vigilante del PTT.
     /// </exception>
-    public async Task EscribirMandoAsync(MandoDeEquipo mando, double valor, CancellationToken ct = default)
+    public Task EscribirMandoAsync(MandoDeEquipo mando, double valor, CancellationToken ct = default) =>
+        EscribirMandoAsync(mando, valor, VfoDelEquipo.Principal, ct);
+
+    /// <summary>Acciona un mando en el VFO indicado.</summary>
+    /// <param name="mando">Mando a accionar.</param>
+    /// <param name="valor">Valor en unidades del operador.</param>
+    /// <param name="vfo">VFO al que se le manda.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>La tarea de la orden.</returns>
+    /// <exception cref="NotSupportedException">
+    /// Si ese VFO no admite el mando o si el mando es de solo lectura.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Si el mando pone el equipo en antena y no hay una transmision en curso pedida al
+    /// vigilante del PTT.
+    /// </exception>
+    public async Task EscribirMandoAsync(
+        MandoDeEquipo mando,
+        double valor,
+        VfoDelEquipo vfo,
+        CancellationToken ct = default)
     {
         var descripcion = MandosFt710.Buscar(mando);
-        var rango = Rango(mando);
+        var rango = Rango(mando, vfo);
         if (descripcion is null || rango is null)
         {
-            throw new NotSupportedException($"Este equipo no admite el mando {mando}.");
+            throw new NotSupportedException($"Este equipo no admite el mando {mando} en el VFO {vfo}.");
         }
 
         if (rango.SoloLectura)
@@ -357,7 +419,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
                 + "IVigilantePtt y accionarlo dentro de ella.");
         }
 
-        await MandarAsync(descripcion.OrdenDeEscritura(valor), ct).ConfigureAwait(false);
+        await MandarAsync(descripcion.OrdenDeEscritura(valor, vfo), ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -417,9 +479,18 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
 
     /// <inheritdoc />
     /// <remarks>
-    /// De la captura del equipo solo sale <c>MC;</c>, que dice en que memoria esta, no como leer
-    /// el banco entero. Hasta tener la orden de lectura de memorias confirmada, esto devuelve la
-    /// memoria en la que esta el equipo y nada mas: inventarse el formato del banco seria peor.
+    /// <para>
+    /// <b>Limitacion conocida.</b> Este equipo no deja leer el banco de memorias entero con
+    /// ninguna orden de las que se han podido comprobar: <c>MT00;</c> contesta <c>?;</c> y
+    /// <c>MC;</c> solo dice en que canal esta. Asi que esto devuelve la memoria actual y nada
+    /// mas.
+    /// </para>
+    /// <para>
+    /// Esta escrito aqui para que nadie vuelva a intentarlo a base de sondear ordenes
+    /// desconocidas: en Yaesu hay ordenes que parecen consultas y son acciones —<c>SV;</c>
+    /// intercambia los VFO— y otras que escriben memorias. Si algun dia aparece la orden en la
+    /// documentacion del fabricante, se anade aqui.
+    /// </para>
     /// </remarks>
     public async Task<IReadOnlyList<MemoriaDeEquipo>> LeerMemoriasAsync(CancellationToken ct = default)
     {
@@ -467,6 +538,99 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
 
         OrdenesFt710.ComprobarQueValeEnCrudo(limpia);
         return await _canal.PreguntarAsync(limpia, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// El audio que trae el equipo por USB, si esta encendido.
+    /// </summary>
+    /// <remarks>
+    /// Se mira cada vez, no se recuerda: el operador puede apagar la radio en cualquier momento.
+    /// Sirve para dos cosas: saber si la radio esta viva sin abrir el puerto serie, y decirle al
+    /// modem de la Fase 4 cual de todos los dispositivos de audio del ordenador es la radio.
+    /// </remarks>
+    /// <returns>El audio del equipo, o nulo si no esta.</returns>
+    public static AudioDelEquipo? BuscarElAudioDelEquipo() => AudioDelFt710.Buscar();
+
+    /// <summary>
+    /// Lee la fecha y la hora que tiene puestas el equipo.
+    /// </summary>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>La fecha y hora del equipo, o nulo si no las da.</returns>
+    public async Task<DateTimeOffset?> LeerRelojDelEquipoAsync(CancellationToken ct = default)
+    {
+        // DT0 da la fecha (DT020260921 = 2026-09-21) y DT1 la hora (DT1071700 = 07:17:00).
+        var fecha = await PreguntarAsync("DT0;", ct).ConfigureAwait(false);
+        var hora = await PreguntarAsync("DT1;", ct).ConfigureAwait(false);
+        if (OrdenesFt710.DiceQueNoLoAdmite(fecha) || OrdenesFt710.DiceQueNoLoAdmite(hora))
+        {
+            return null;
+        }
+
+        var cifrasDeFecha = fecha!.Length >= 11 ? fecha[3..11] : null;
+        var cifrasDeHora = hora!.Length >= 9 ? hora[3..9] : null;
+        if (cifrasDeFecha is null || cifrasDeHora is null)
+        {
+            return null;
+        }
+
+        return DateTimeOffset.TryParseExact(
+            cifrasDeFecha + cifrasDeHora,
+            "yyyyMMddHHmmss",
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.AssumeLocal,
+            out var momento)
+            ? momento
+            : null;
+    }
+
+    /// <summary>Lee el tono CTCSS que tiene puesto el equipo, como indice de su tabla.</summary>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>El indice del tono, o nulo si el equipo no lo da.</returns>
+    /// <remarks>
+    /// Se da el indice y no los hercios: la tabla de tonos de Yaesu no esta confirmada contra
+    /// este equipo, y un tono equivocado es un repetidor que no abre.
+    /// </remarks>
+    public async Task<int?> LeerIndiceDeTonoAsync(CancellationToken ct = default) =>
+        await LeerCifrasAsync("CN00;", "CN00", ct).ConfigureAwait(false);
+
+    /// <summary>Lee el desplazamiento de repetidor que tiene puesto el equipo.</summary>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>El valor del equipo, o nulo si no lo da.</returns>
+    public async Task<int?> LeerDesplazamientoDeRepetidorAsync(CancellationToken ct = default) =>
+        await LeerCifrasAsync("OS0;", "OS0", ct).ConfigureAwait(false);
+
+    /// <summary>Lee los indicadores de estado del equipo, tal cual los da.</summary>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>La cadena de indicadores, o nulo.</returns>
+    /// <remarks>
+    /// El equipo contesta ocho cifras (<c>RI00000000</c>) y no consta que significa cada una,
+    /// asi que se devuelven sin interpretar.
+    /// </remarks>
+    public async Task<string?> LeerIndicadoresAsync(CancellationToken ct = default)
+    {
+        var respuesta = await PreguntarAsync("RI0;", ct).ConfigureAwait(false);
+        return OrdenesFt710.DiceQueNoLoAdmite(respuesta) || respuesta!.Length <= 3
+            ? null
+            : respuesta[3..];
+    }
+
+    private async Task<int?> LeerCifrasAsync(string orden, string prefijo, CancellationToken ct)
+    {
+        var respuesta = await PreguntarAsync(orden, ct).ConfigureAwait(false);
+        if (OrdenesFt710.DiceQueNoLoAdmite(respuesta)
+            || !respuesta!.StartsWith(prefijo, StringComparison.OrdinalIgnoreCase)
+            || respuesta.Length <= prefijo.Length)
+        {
+            return null;
+        }
+
+        return int.TryParse(
+            respuesta[prefijo.Length..],
+            NumberStyles.Integer,
+            CultureInfo.InvariantCulture,
+            out var valor)
+            ? valor
+            : null;
     }
 
     /// <summary>Lee un ajuste del menu interno.</summary>
@@ -583,10 +747,21 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
         ("RM7", "corriente"),
     ];
 
+    /// <summary>
+    /// Pregunta al equipo, mando a mando y VFO a VFO, que sabe hacer.
+    /// </summary>
+    /// <remarks>
+    /// Se pregunta por los dos VFO porque <b>varios mandos existen solo para el principal</b>:
+    /// el ancho de filtro, el filtro estrecho, la ganancia de radiofrecuencia, el control
+    /// automatico de ganancia y el atenuador contestan <c>?;</c> cuando se les pregunta por el
+    /// segundo. Una interfaz que ofreciera esos mandos para el segundo VFO estaria ofreciendo
+    /// algo que no existe.
+    /// </remarks>
     private async Task AveriguarCapacidadesAsync(CancellationToken ct)
     {
         var admitidos = new List<MandoDeEquipo>();
         var rechazados = new List<MandoDeEquipo>();
+        var admitidosEnElSegundo = new List<MandoDeEquipo>();
 
         foreach (var descripcion in MandosFt710.Todos)
         {
@@ -599,20 +774,39 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
             }
 
             admitidos.Add(descripcion.Mando);
+
+            if (descripcion.OrdenDeLecturaDelSegundoVfo is not { } ordenDelSegundo)
+            {
+                continue;
+            }
+
+            var respuestaDelSegundo = await PreguntarAsync(ordenDelSegundo, ct).ConfigureAwait(false);
+            if (!OrdenesFt710.DiceQueNoLoAdmite(respuestaDelSegundo))
+            {
+                admitidosEnElSegundo.Add(descripcion.Mando);
+            }
         }
 
         lock (_candado)
         {
             _mandos.Clear();
+            _mandosDelSegundoVfo.Clear();
             foreach (var mando in admitidos)
             {
                 _mandos.Add(mando);
             }
+
+            foreach (var mando in admitidosEnElSegundo)
+            {
+                _mandosDelSegundoVfo.Add(mando);
+            }
         }
 
         _registro.LogInformation(
-            "El equipo admite {Admitidos} mandos y rechaza {Rechazados}: {Lista}.",
+            "El equipo admite {Admitidos} mandos ({DelSegundo} también en el segundo VFO) y rechaza "
+            + "{Rechazados}: {Lista}.",
             admitidos.Count,
+            admitidosEnElSegundo.Count,
             rechazados.Count,
             rechazados.Count > 0 ? string.Join(", ", rechazados) : "ninguno");
     }
@@ -686,6 +880,15 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
                 if (perdido)
                 {
                     await Task.Delay(espera, ct).ConfigureAwait(false);
+
+                    if (!MereceLaPenaReintentar())
+                    {
+                        // El códec de audio del equipo no está: la radio sigue apagada. No se
+                        // abre el puerto para nada; se espera a que vuelva.
+                        espera = Espaciar(espera);
+                        continue;
+                    }
+
                     await ReconectarAsync(ct).ConfigureAwait(false);
                     perdido = false;
                     fallosSeguidos = 0;
@@ -717,9 +920,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
                 if (perdido)
                 {
                     // Sigue sin estar; se espacia el reintento para no machacar el puerto.
-                    espera = espera + espera > _opciones.EsperaMaximaDeReconexion
-                        ? _opciones.EsperaMaximaDeReconexion
-                        : espera + espera;
+                    espera = Espaciar(espera);
                     continue;
                 }
 
@@ -786,6 +987,35 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     /// hilos que nucleos moliendo. La mitad de holgura cubre eso con sitio de sobra.
     /// </remarks>
     private const double MargenDelPlanificador = 1.5;
+
+    private TimeSpan Espaciar(TimeSpan espera) =>
+        espera + espera > _opciones.EsperaMaximaDeReconexion
+            ? _opciones.EsperaMaximaDeReconexion
+            : espera + espera;
+
+    /// <summary>
+    /// Dice si tiene sentido volver a intentar hablar con el equipo.
+    /// </summary>
+    /// <remarks>
+    /// Si el equipo va por su cable USB y su codec de audio no aparece, la radio esta apagada:
+    /// abrir el puerto una y otra vez no la va a encender. Solo se mira cuando el canal es el
+    /// puerto serie del propio equipo; con un puente por red esto no dice nada.
+    /// </remarks>
+    private bool MereceLaPenaReintentar()
+    {
+        if (!_opciones.ComprobarElCodecDeAudio || _canal is not CanalSerieCat)
+        {
+            return true;
+        }
+
+        if (AudioDelFt710.EquipoEncendido())
+        {
+            return true;
+        }
+
+        _registro.LogDebug("El códec de audio del equipo no está: la radio sigue apagada.");
+        return false;
+    }
 
     private void DarPorPerdido(Exception causa)
     {

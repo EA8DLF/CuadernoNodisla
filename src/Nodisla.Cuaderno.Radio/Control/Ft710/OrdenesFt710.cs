@@ -46,12 +46,17 @@ public static class OrdenesFt710
     /// </remarks>
     public static IReadOnlyList<string> Sondeo { get; } =
     [
+        // Confirmadas en la captura del 21-09-2026.
         "ID;", "PS;", "FA;", "FB;", "VS;", "IF;", "MD0;", "SH0;", "NA0;",
         "NB0;", "NL0;", "NR0;", "RL0;", "BP00;", "BP01;", "CO00;", "CO01;",
         "AG0;", "RG0;", "SQ0;", "MG;", "PC;", "AC;", "VX;", "VG;", "VD;",
         "GT0;", "PA0;", "RA0;", "KS;", "KP;", "BI;", "BC0;", "SM0;",
         "RM1;", "RM3;", "RM4;", "RM5;", "RM6;", "RM7;",
-        "FT;", "ST;", "MC;", "LK;",
+        "FT;", "ST;", "MC;", "LK;", "DT0;",
+
+        // Añadidas con el barrido completo del 22-09-2026.
+        "MD1;", "NB1;", "AG1;", "SQ1;", "PA1;", "CN00;",
+        "IS0;", "IS1;", "OS0;", "OS1;", "RI0;", "DT1;",
     ];
 
     /// <summary>

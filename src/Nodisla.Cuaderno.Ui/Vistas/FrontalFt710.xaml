@@ -7,46 +7,98 @@
     <!--
         EL FRONTAL DEL EQUIPO, DIBUJADO DE CERO EN VECTOR.
 
-        Fuentes, las dos verificadas:
+        Fuentes, todas verificadas:
           · «Front Panel Controls & Switches» del manual oficial (páginas impresas 30 a 39): la
             lista numerada de los 25 mandos y las láminas con sus llamadas. De ahí sale DÓNDE
             va cada cosa.
           · «Specifications», página 106: 239 × 80 × 247 mm. El frente es de casi 3:1, y por eso
             este dibujo mide 1000 × 335.
+          · La ficha del fabricante: pantalla táctil TFT en color de 4,3 pulgadas —10,9 cm sobre
+            23,9 de ancho de equipo, o sea casi la mitad del frontal— y el dial MAIN grande,
+            con los indicadores de VFO a un lado y otro. Por eso aquí la pantalla y el dial
+            mandan, y los botones son pequeños: es lo que hace que se reconozca.
           · `docs\05-frontal-ft710-referencia.md`, que describe la fotografía que envió Jose. De
-            ahí salen los COLORES y el aspecto: cuerpo negro mate, botones gris muy oscuro con
-            rótulo blanco, mandos negros estriados y el anillo azul del dial.
+            ahí salen los colores y los materiales: cuerpo negro mate, botones gris muy oscuro
+            con rótulo blanco, mandos negros estriados con reflejo metálico y el anillo azul
+            iluminado del dial.
+
+        EL RELIEVE NO ES ADORNO. Un mando de verdad es un cilindro: tiene una cara iluminada
+        arriba a la izquierda y una sombra abajo a la derecha, y un canto estriado que brilla.
+        Un círculo plano con una rayita no se parece a nada. Lo mismo con las teclas: bisel
+        claro arriba, sombra abajo, y un poco de sombra proyectada sobre el cuerpo.
 
         NO se reproduce el logotipo ni la marca. Es una herramienta propia para uso particular,
-        no una imitación del producto: el parecido sale de la disposición, las proporciones y
-        los colores.
+        no una imitación del producto.
 
         EL BLOQUE DE REJILLA DE LA FOTO NO SE DIBUJA. Es el altavoz externo SP-40, un accesorio:
         el manual lo enseña atornillándose al costado del equipo («The SP-40 can be mounted on
-        either the left or right side of the transceiver», página impresa 13). El cuerpo de la
-        radio es lo que hay aquí.
+        either the left or right side of the transceiver», página impresa 13).
 
-        Es vectorial y va dentro de un Viewbox: se ENCOGE con la ventana, nunca desaparece. Si
-        la letra es muy grande y queda pequeño, queda pequeño; más vale un frontal pequeño que
-        ningún frontal.
+        Es vectorial y va dentro de un Viewbox: se ENCOGE con la ventana, nunca desaparece.
     -->
 
     <UserControl.Resources>
         <!-- ── Colores del equipo, fijos: la radio es negra con cualquier tema ── -->
-        <SolidColorBrush x:Key="Cuerpo" Color="#FF1A1C1F" />
-        <SolidColorBrush x:Key="CuerpoBorde" Color="#FF35393E" />
-        <SolidColorBrush x:Key="Tecla" Color="#FF2A2D32" />
-        <SolidColorBrush x:Key="TeclaBorde" Color="#FF43484F" />
-        <SolidColorBrush x:Key="TeclaTexto" Color="#FFE8ECF0" />
-        <SolidColorBrush x:Key="TeclaApagada" Color="#FF6A717A" />
-        <SolidColorBrush x:Key="Mando" Color="#FF232629" />
-        <SolidColorBrush x:Key="MandoCanto" Color="#FF4E555D" />
-        <SolidColorBrush x:Key="AnilloAzul" Color="#FF1F7FE8" />
         <SolidColorBrush x:Key="Serigrafia" Color="#FFAAB3BD" />
-        <SolidColorBrush x:Key="PilotoApagado" Color="#FF2F3439" />
+        <SolidColorBrush x:Key="TeclaTexto" Color="#FFE8ECF0" />
+        <SolidColorBrush x:Key="TeclaApagada" Color="#FF676E77" />
+        <SolidColorBrush x:Key="AnilloAzul" Color="#FF1F7FE8" />
+        <SolidColorBrush x:Key="PilotoApagado" Color="#FF25292E" />
         <SolidColorBrush x:Key="RojoTx" Color="#FFE2352B" />
 
-        <!-- Un botón del frontal: rectangular, gris muy oscuro, rótulo blanco pequeño. -->
+        <!-- El cuerpo: chapa negra mate con la luz cayendo desde arriba. -->
+        <LinearGradientBrush x:Key="Cuerpo" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0" Color="#FF2B2E32" />
+            <GradientStop Offset="0.12" Color="#FF202327" />
+            <GradientStop Offset="0.85" Color="#FF16181B" />
+            <GradientStop Offset="1" Color="#FF101214" />
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="CuerpoBorde" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0" Color="#FF4E555D" />
+            <GradientStop Offset="1" Color="#FF0A0B0D" />
+        </LinearGradientBrush>
+
+        <!-- Una tecla: bisel claro arriba, sombra abajo. -->
+        <LinearGradientBrush x:Key="Tecla" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0" Color="#FF43484F" />
+            <GradientStop Offset="0.5" Color="#FF303439" />
+            <GradientStop Offset="0.52" Color="#FF272B30" />
+            <GradientStop Offset="1" Color="#FF1B1E22" />
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="TeclaPulsada" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0" Color="#FF1B1E22" />
+            <GradientStop Offset="1" Color="#FF383D43" />
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="TeclaBorde" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0" Color="#FF5B636C" />
+            <GradientStop Offset="1" Color="#FF0C0E10" />
+        </LinearGradientBrush>
+
+        <!-- El canto metálico de los mandos y del dial. -->
+        <LinearGradientBrush x:Key="CantoMetalico" StartPoint="0.15,0" EndPoint="0.85,1">
+            <GradientStop Offset="0" Color="#FF8B949E" />
+            <GradientStop Offset="0.35" Color="#FF4A515A" />
+            <GradientStop Offset="0.7" Color="#FF23272C" />
+            <GradientStop Offset="1" Color="#FF585F68" />
+        </LinearGradientBrush>
+
+        <!-- La cara del mando: cilindro negro iluminado desde arriba a la izquierda. -->
+        <RadialGradientBrush x:Key="CaraDeMando" GradientOrigin="0.34,0.26" Center="0.5,0.5"
+                             RadiusX="0.72" RadiusY="0.72">
+            <GradientStop Offset="0" Color="#FF4A5058" />
+            <GradientStop Offset="0.45" Color="#FF25292E" />
+            <GradientStop Offset="1" Color="#FF0D0F11" />
+        </RadialGradientBrush>
+
+        <!-- Conectores y ranuras: huecos, así que la luz va al revés. -->
+        <LinearGradientBrush x:Key="Hueco" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0" Color="#FF0A0B0D" />
+            <GradientStop Offset="1" Color="#FF20242A" />
+        </LinearGradientBrush>
+
         <Style x:Key="TeclaDelFrontal" TargetType="Button">
             <Setter Property="FontSize" Value="9" />
             <Setter Property="FontWeight" Value="Bold" />
@@ -56,21 +108,39 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="cuerpo"
-                                Background="{StaticResource Tecla}"
-                                BorderBrush="{StaticResource TeclaBorde}"
-                                BorderThickness="1"
-                                CornerRadius="2"
-                                Padding="2,3">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
+                        <Grid>
+                            <!-- La sombra que la tecla proyecta sobre el cuerpo. -->
+                            <Border Background="#66000000" CornerRadius="3" Margin="0.5,1.5,-0.5,-1.5" />
+
+                            <Border x:Name="cuerpo"
+                                    Background="{StaticResource Tecla}"
+                                    BorderBrush="{StaticResource TeclaBorde}"
+                                    BorderThickness="1"
+                                    CornerRadius="3"
+                                    Padding="2,3">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+
+                            <!-- El brillo del bisel superior. -->
+                            <Border x:Name="brillo"
+                                    BorderBrush="#40FFFFFF"
+                                    BorderThickness="0,1,0,0"
+                                    CornerRadius="3,3,0,0"
+                                    Margin="2,1,2,0"
+                                    VerticalAlignment="Top"
+                                    Height="3" />
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="cuerpo" Property="Background" Value="#FF3A3F46" />
+                                <Setter TargetName="cuerpo" Property="Background" Value="#FF454B53" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="cuerpo" Property="Background" Value="{StaticResource TeclaPulsada}" />
+                                <Setter TargetName="brillo" Property="Visibility" Value="Collapsed" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Foreground" Value="{StaticResource TeclaApagada}" />
-                                <Setter TargetName="cuerpo" Property="Background" Value="#FF212429" />
+                                <Setter TargetName="brillo" Property="Opacity" Value="0.35" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -78,10 +148,9 @@
             </Setter>
         </Style>
 
-        <!-- Conectores y ranuras: se dibujan, no se accionan. -->
         <Style x:Key="PiezaDelFrontal" TargetType="Border">
-            <Setter Property="Background" Value="#FF141619" />
-            <Setter Property="BorderBrush" Value="{StaticResource TeclaBorde}" />
+            <Setter Property="Background" Value="{StaticResource Hueco}" />
+            <Setter Property="BorderBrush" Value="#FF0A0B0D" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Margin" Value="1.5" />
         </Style>
@@ -96,21 +165,32 @@
 
         <!-- Las dos barras del indicador de VFO que flanquean el dial. -->
         <Style x:Key="BarraDeVfo" TargetType="Border">
-            <Setter Property="Width" Value="5" />
-            <Setter Property="CornerRadius" Value="2.5" />
-            <Setter Property="Margin" Value="0,14" />
+            <Setter Property="Width" Value="6" />
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="Margin" Value="0,26" />
             <Setter Property="Background" Value="{StaticResource PilotoApagado}" />
+            <Setter Property="BorderBrush" Value="#FF0A0B0D" />
+            <Setter Property="BorderThickness" Value="1" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding EsElActivo}" Value="True">
                     <Setter Property="Background" Value="{StaticResource AnilloAzul}" />
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="#FF1F7FE8" BlurRadius="9" ShadowDepth="0" Opacity="0.85" />
+                        </Setter.Value>
+                    </Setter>
                 </DataTrigger>
                 <!--
                     Naranja es «por aquí se transmite», que no es lo mismo que «se está
-                    transmitiendo». El rojo se reserva para el piloto BUSY/TX, que solo se
-                    enciende con el equipo en antena de verdad.
+                    transmitiendo». El rojo se reserva para el piloto BUSY/TX.
                 -->
                 <DataTrigger Binding="{Binding Transmite}" Value="True">
                     <Setter Property="Background" Value="#FFF29A2E" />
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="#FFF29A2E" BlurRadius="9" ShadowDepth="0" Opacity="0.85" />
+                        </Setter.Value>
+                    </Setter>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -121,28 +201,28 @@
                 Height="335"
                 Background="{StaticResource Cuerpo}"
                 BorderBrush="{StaticResource CuerpoBorde}"
-                BorderThickness="1"
-                CornerRadius="7"
-                Padding="10,8">
+                BorderThickness="1.5"
+                CornerRadius="9"
+                Padding="9,7">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="76" />
+                    <ColumnDefinition Width="62" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="330" />
+                    <ColumnDefinition Width="346" />
                 </Grid.ColumnDefinitions>
 
                 <!-- ══ ①②③④⑤⑥ Columna izquierda ══ -->
-                <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                <StackPanel Grid.Column="0" Margin="0,0,7,0">
                     <Button Style="{StaticResource TeclaDelFrontal}"
                             Content="⏻ LOCK"
                             IsEnabled="False"
                             AutomationProperties.Name="Encendido y bloqueo del dial (LOCK)"
                             ToolTip="LOCK — Encendido y bloqueo del dial. El equipo no lo ofrece por CAT." />
 
-                    <Border Style="{StaticResource PiezaDelFrontal}" Height="12" CornerRadius="1"
+                    <Border Style="{StaticResource PiezaDelFrontal}" Height="11" CornerRadius="1"
                             AutomationProperties.Name="Ranura de tarjeta SD"
                             ToolTip="Ranura de tarjeta SD">
-                        <TextBlock Text="SD" Style="{StaticResource SerigrafiaDePieza}" />
+                        <TextBlock Text="SD" Style="{StaticResource SerigrafiaDePieza}" FontSize="6" />
                     </Border>
 
                     <Button Style="{StaticResource TeclaDelFrontal}"
@@ -160,26 +240,34 @@
                             AutomationProperties.Name="Paso a transmisión por voz (VOX/MOX)"
                             ToolTip="VOX MOX — Paso a transmisión por voz" />
 
-                    <Border Style="{StaticResource PiezaDelFrontal}" Height="20" CornerRadius="10"
-                            Margin="1.5,5,1.5,1.5"
+                    <Border Style="{StaticResource PiezaDelFrontal}" Height="19" CornerRadius="10"
+                            Margin="1.5,6,1.5,1.5"
                             AutomationProperties.Name="Toma de auriculares (PHONES)"
                             ToolTip="PHONES — Toma de auriculares">
-                        <Ellipse Width="9" Height="9" Fill="#FF0B0D10"
-                                 Stroke="{StaticResource MandoCanto}" StrokeThickness="1" />
+                        <Ellipse Width="9" Height="9" Fill="#FF050607"
+                                 Stroke="#FF585F68" StrokeThickness="1" />
                     </Border>
-                    <TextBlock Text="PHONES" Style="{StaticResource SerigrafiaDePieza}" />
+                    <TextBlock Text="PHONES" Style="{StaticResource SerigrafiaDePieza}" FontSize="6" />
 
-                    <Border Style="{StaticResource PiezaDelFrontal}" Height="20" CornerRadius="2"
+                    <Border Style="{StaticResource PiezaDelFrontal}" Height="19" CornerRadius="2"
                             AutomationProperties.Name="Conector de micrófono (MIC)"
                             ToolTip="MIC — Conector de micrófono">
-                        <Rectangle Width="18" Height="9" Fill="#FF0B0D10"
-                                   Stroke="{StaticResource MandoCanto}" StrokeThickness="1" />
+                        <Rectangle Width="17" Height="9" Fill="#FF050607"
+                                   Stroke="#FF585F68" StrokeThickness="1" RadiusX="1" RadiusY="1" />
                     </Border>
-                    <TextBlock Text="MIC" Style="{StaticResource SerigrafiaDePieza}" />
+                    <TextBlock Text="MIC" Style="{StaticResource SerigrafiaDePieza}" FontSize="6" />
                 </StackPanel>
 
-                <!-- ══ La pantalla ══ -->
-                <vistas:VisorDeVfos Grid.Column="1" Margin="0,0,8,0" />
+                <!-- ══ La pantalla, hundida en el cuerpo y con marco propio ══ -->
+                <Grid Grid.Column="1" Margin="0,0,7,0">
+                    <!-- El rebaje donde va encajada. -->
+                    <Border CornerRadius="4"
+                            Background="#FF0A0B0D"
+                            BorderBrush="#FF3A3F46"
+                            BorderThickness="1"
+                            Margin="-2" />
+                    <vistas:VisorDeVfos />
+                </Grid>
 
                 <!-- ══ Bloque derecho ══ -->
                 <Grid Grid.Column="2">
@@ -242,11 +330,11 @@
                     </UniformGrid>
 
                     <!-- ⑦⑨⑪⑮⑯⑰⑲⑳ -->
-                    <Grid Grid.Row="2" Margin="0,4,0,0">
+                    <Grid Grid.Row="2" Margin="0,3,0,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="62" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="62" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -254,15 +342,15 @@
                         </Grid.RowDefinitions>
 
                         <!-- ⑪ DNR · ⑯ BUSY/TX · ⑰ NAR -->
-                        <UniformGrid Grid.Row="0" Grid.Column="1" Columns="3" Margin="2,0,2,2">
+                        <UniformGrid Grid.Row="0" Grid.Column="1" Columns="3" Margin="2,0,2,1">
                             <Button Style="{StaticResource TeclaDelFrontal}" Content="DNR"
                                     Command="{Binding AlternarMandoCommand}"
                                     CommandParameter="{x:Static puertos:MandoDeEquipo.ReductorDeRuido}"
                                     AutomationProperties.Name="Reductor de ruido digital (DNR)"
                                     ToolTip="DNR — Reductor de ruido digital" />
 
-                            <Border CornerRadius="2" Margin="3,2" BorderThickness="1"
-                                    BorderBrush="{StaticResource TeclaBorde}"
+                            <Border CornerRadius="3" Margin="3,2.5" BorderThickness="1"
+                                    BorderBrush="#FF0A0B0D"
                                     AutomationProperties.Name="Indicador de ocupado y transmisión (BUSY/TX)"
                                     ToolTip="BUSY/TX — Verde con el silenciador abierto, rojo en transmisión">
                                 <Border.Style>
@@ -271,6 +359,12 @@
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Transmitiendo}" Value="True">
                                                 <Setter Property="Background" Value="{StaticResource RojoTx}" />
+                                                <Setter Property="Effect">
+                                                    <Setter.Value>
+                                                        <DropShadowEffect Color="#FFE2352B" BlurRadius="12"
+                                                                          ShadowDepth="0" Opacity="0.9" />
+                                                    </Setter.Value>
+                                                </Setter>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -297,24 +391,50 @@
                                     AutomationProperties.Name="Indicador del VFO A"
                                     ToolTip="Indicador del VFO A" />
 
-                            <Viewbox Grid.Column="1" Stretch="Uniform" Margin="3,0">
-                                <Grid Width="128" Height="128"
+                            <!--
+                                EL DIAL MANDA. En la radio es el mando más grande con diferencia
+                                y lo primero que se ve; si aquí sale mediano, el dibujo deja de
+                                parecerse por mucho que todo lo demás esté en su sitio.
+                            -->
+                            <Viewbox Grid.Column="1" Stretch="Uniform" Margin="2,0">
+                                <Grid Width="150" Height="150"
                                       ToolTip="Dial principal. Lo gira el operador en el equipo."
                                       AutomationProperties.Name="Dial principal">
-                                    <!-- El anillo azul iluminado que rodea el dial. -->
-                                    <Ellipse Stroke="{StaticResource AnilloAzul}" StrokeThickness="4" />
-                                    <Ellipse Margin="7" Fill="{StaticResource Mando}"
-                                             Stroke="{StaticResource MandoCanto}" StrokeThickness="2" />
-                                    <!-- El canto estriado. -->
-                                    <Ellipse Margin="14" Stroke="#FF33383E" StrokeThickness="1"
-                                             StrokeDashArray="1 1.4" />
-                                    <Ellipse Margin="24" Fill="#FF1B1E22"
-                                             Stroke="{StaticResource MandoCanto}" StrokeThickness="1" />
+                                    <!-- El halo del anillo iluminado sobre el cuerpo. -->
+                                    <Ellipse Stroke="{StaticResource AnilloAzul}" StrokeThickness="5" Opacity="0.5">
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect Color="#FF1F7FE8" BlurRadius="18"
+                                                              ShadowDepth="0" Opacity="0.9" />
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                    <Ellipse Stroke="#FF3FA0FF" StrokeThickness="3.5" />
+
+                                    <!-- El aro metálico exterior. -->
+                                    <Ellipse Margin="6" Stroke="{StaticResource CantoMetalico}" StrokeThickness="4" />
+
+                                    <!-- El canto estriado del mando. -->
+                                    <Ellipse Margin="9" Fill="{StaticResource CaraDeMando}" />
+                                    <Ellipse Margin="11" Stroke="#FF6A727C" StrokeThickness="4"
+                                             StrokeDashArray="0.55 0.55" Opacity="0.55" />
+
+                                    <!-- La cara de goma, hundida respecto al canto. -->
+                                    <Ellipse Margin="24" Fill="{StaticResource CaraDeMando}"
+                                             Stroke="#FF0A0B0D" StrokeThickness="1.5" />
+                                    <Ellipse Margin="30" Stroke="#30FFFFFF" StrokeThickness="1" />
+
                                     <!-- La hendidura para el dedo. -->
-                                    <Ellipse Width="17" Height="17" Fill="#FF0D0F12"
-                                             Stroke="{StaticResource MandoCanto}" StrokeThickness="1"
+                                    <Ellipse Width="21" Height="21"
                                              HorizontalAlignment="Center" VerticalAlignment="Center"
-                                             Margin="0,0,0,54" />
+                                             Margin="0,0,0,62"
+                                             Stroke="#FF080A0C" StrokeThickness="1.5">
+                                        <Ellipse.Fill>
+                                            <RadialGradientBrush GradientOrigin="0.4,0.75" Center="0.5,0.5"
+                                                                 RadiusX="0.75" RadiusY="0.75">
+                                                <GradientStop Offset="0" Color="#FF3C424A" />
+                                                <GradientStop Offset="1" Color="#FF05060A" />
+                                            </RadialGradientBrush>
+                                        </Ellipse.Fill>
+                                    </Ellipse>
                                 </Grid>
                             </Viewbox>
 
@@ -348,9 +468,9 @@
                     <!-- ⑩ DSP RESET · ⑱ FINE/FAST -->
                     <Grid Grid.Row="3" Margin="0,2,0,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="62" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="62" />
                         </Grid.ColumnDefinitions>
 
                         <Button Grid.Column="0" Style="{StaticResource TeclaDelFrontal}" Content="DSP RESET"

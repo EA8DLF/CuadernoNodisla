@@ -36,8 +36,9 @@
         <KeyBinding Key="D0" Modifiers="Control" Command="{Binding LetraNormalCommand}" />
         <KeyBinding Key="NumPad0" Modifiers="Control" Command="{Binding LetraNormalCommand}" />
         <KeyBinding Key="D1" Modifiers="Control" Command="{Binding VerOperarCommand}" />
-        <KeyBinding Key="D2" Modifiers="Control" Command="{Binding VerElCuadernoCommand}" />
-        <KeyBinding Key="D3" Modifiers="Control" Command="{Binding VerElMapaCommand}" />
+        <KeyBinding Key="D2" Modifiers="Control" Command="{Binding VerLoDigitalCommand}" />
+        <KeyBinding Key="D3" Modifiers="Control" Command="{Binding VerElCuadernoCommand}" />
+        <KeyBinding Key="D4" Modifiers="Control" Command="{Binding VerElMapaCommand}" />
     </Window.InputBindings>
 
     <!--
@@ -133,6 +134,10 @@
                 <vistas:PanelOperar x:Name="Operar" />
             </TabItem>
 
+            <TabItem Header="Digital">
+                <vistas:PestanaDigital DataContext="{Binding Digital}" />
+            </TabItem>
+
             <TabItem Header="Cuaderno">
                 <Border Style="{StaticResource Tarjeta}" Margin="0">
                     <vistas:PanelDelCuaderno x:Name="Cuaderno" Fallo="AlFallarElCuaderno" />
@@ -175,7 +180,71 @@
                 BorderThickness="0,1,0,0"
                 Padding="12,7"
                 Margin="-12,0,-12,0">
-            <WrapPanel>
+            <DockPanel>
+
+                <!--
+                    EL MANDO DE LA ESCALA DE LETRA, SIEMPRE ALCANZABLE CON EL RATÓN.
+
+                    Esto no es un adorno: es la salida de emergencia. La escala se guarda de una
+                    sesión a la siguiente, así que si el único sitio donde se puede bajar es la
+                    cabecera y la cabecera se pliega al 200 %, la aplicación se queda atascada en
+                    grande para siempre y no hay manera de volver con el ratón. Un ajuste que se
+                    puede poner y no se puede quitar es una trampa.
+
+                    Por eso vive aquí, en la barra de estado, que no se pliega nunca; va anclado
+                    a la derecha, de modo que es lo primero que se reserva y lo último que se
+                    recorta; y lleva TAMAÑO DE LETRA FIJO, sin seguir a la escala, para que al
+                    200 % siga ocupando lo mismo que al 100 %.
+
+                    Los atajos (Ctrl+, Ctrl− y Ctrl+0) siguen estando, pero un atajo que no se
+                    ve no existe.
+                -->
+                <StackPanel DockPanel.Dock="Right"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Margin="16,0,0,0"
+                            TextElement.FontSize="12"
+                            AutomationProperties.Name="Tamaño de la letra de la ventana">
+                    <TextBlock Text="Letra"
+                               FontSize="12"
+                               VerticalAlignment="Center"
+                               Margin="0,0,6,0"
+                               Foreground="{DynamicResource TextoTenue}" />
+
+                    <Button Content="−"
+                            Command="{Binding ReducirLetraCommand}"
+                            FontSize="12"
+                            Padding="8,1"
+                            MinWidth="26"
+                            ToolTip="Letra más pequeña (Ctrl −)"
+                            AutomationProperties.Name="Reducir el tamaño de la letra" />
+
+                    <TextBlock Text="{Binding EscalaDeLetraTexto}"
+                               FontSize="12"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"
+                               TextAlignment="Center"
+                               MinWidth="44"
+                               TextTrimming="None" />
+
+                    <Button Content="+"
+                            Command="{Binding AumentarLetraCommand}"
+                            FontSize="12"
+                            Padding="8,1"
+                            MinWidth="26"
+                            ToolTip="Letra más grande (Ctrl +)"
+                            AutomationProperties.Name="Aumentar el tamaño de la letra" />
+
+                    <Button Content="100 %"
+                            Command="{Binding LetraNormalCommand}"
+                            FontSize="12"
+                            Padding="8,1"
+                            Margin="6,0,0,0"
+                            ToolTip="Vuelve al tamaño normal (Ctrl 0)"
+                            AutomationProperties.Name="Volver al tamaño de letra normal" />
+                </StackPanel>
+
+                <WrapPanel>
                 <TextBlock Margin="0,0,20,0">
                     <Run Text="Estación:" Foreground="{DynamicResource TextoTenue}" />
                     <Run Text="{Binding PerfilActivo, Mode=OneWay}" FontWeight="Bold" />
@@ -191,8 +260,9 @@
                 <TextBlock Style="{StaticResource TextoTenueEstilo}"
                            Visibility="{Binding LeyendaVisible, Converter={StaticResource BooleanoAVisible}}"
                            ToolTip="Atajos de teclado"
-                           Text="Intro registra · Esc limpia · F2 modifica · F3 buscar · F4 indicativo · F5 refresca · F7 más datos · F8 hora · F9 tema · Ctrl1 operar · Ctrl2 cuaderno · Ctrl3 mapa · Ctrl+ y Ctrl− escala" />
-            </WrapPanel>
+                           Text="Intro registra · Esc limpia · F2 modifica · F3 buscar · F4 indicativo · F5 refresca · F7 más datos · F8 hora · F9 tema · Ctrl1 operar · Ctrl2 digital · Ctrl3 cuaderno · Ctrl4 mapa · Ctrl+ y Ctrl− escala" />
+                </WrapPanel>
+            </DockPanel>
         </Border>
     </Grid>
 </Window>

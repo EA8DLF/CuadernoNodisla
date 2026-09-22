@@ -173,21 +173,12 @@
             </Border>
 
             <!--
-                El cluster y los decodificados comparten bloque. Los decodificados perdieron su
-                franja porque dejaban la cabina en tiras finas; aquí tienen el mismo sitio que
-                el cluster y se llega a ellos con una pestaña, sin quitarle nada a nadie.
+                El cluster, solo. Los modos digitales tienen pestaña propia de primer nivel:
+                con el módem nuestro delante necesitan la ventana entera —cascada, decodificados
+                y control de la transmisión—, y aquí no cabrían sin estorbar al cluster.
             -->
-            <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0" Padding="4">
-                <TabControl>
-                    <TabItem Header="Cluster de DX">
-                        <vistas:PanelDeCluster DataContext="{Binding Cluster}" />
-                    </TabItem>
-                    <TabItem Header="Modos digitales">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <vistas:PanelDigital DataContext="{Binding Digital}" />
-                        </ScrollViewer>
-                    </TabItem>
-                </TabControl>
+            <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6">
+                <vistas:PanelDeCluster DataContext="{Binding Cluster}" />
             </Border>
         </Grid>
     </Grid>

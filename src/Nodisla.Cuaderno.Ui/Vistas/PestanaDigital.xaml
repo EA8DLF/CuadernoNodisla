@@ -1,0 +1,129 @@
+﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PestanaDigital"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        LA PESTAÑA DE LOS MODOS DIGITALES.
+
+        Está pensada para NUESTRO módem, no como una ventana sobre WSJT-X. La decisión está
+        tomada: el módem de FT8 y FT4 va dentro de esta aplicación, y el puente con WSJT-X y
+        JTDX pasa a ser una fuente más, opcional, no el camino principal. Por eso la cascada
+        manda en la pantalla y el puente vive en una columna, y no al revés.
+
+        De momento el módem propio no existe —llega en la Fase 4—, así que su sitio está
+        reservado y dicho con todas las letras. Reservarlo ahora evita tener que deshacer la
+        pestaña entera cuando llegue, y evita lo contrario: montar la pestaña alrededor del
+        puente externo y descubrir después que el módem propio no cabe.
+
+        De dónde saldrá el audio y el espectro, por orden de preferencia:
+          · El PUENTE USB SPI del propio FT-710, que entrega su espectro por los controladores
+            FTDI. Si se confirma con el equipo encendido, la cascada viene de la radio y no de
+            la tarjeta de sonido, que es mucho mejor: sin dobles conversiones y sin depender
+            del nivel de entrada.
+          · El AUDIO USB del equipo, que ya trae el suyo propio.
+          · Una tarjeta de sonido cualquiera, para quien no tenga ninguna de las dos.
+        Nada de eso se puede elegir todavía; están dibujadas y apagadas para que se vea que el
+        sitio está guardado.
+    -->
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- ══ De dónde sale el audio y el espectro ══ -->
+        <Border Grid.Row="0" Style="{StaticResource Tarjeta}" Margin="0,0,0,5" Padding="8,6">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Fuente"
+                               Style="{StaticResource TextoTenueEstilo}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,6,0" />
+                    <ComboBox SelectedIndex="0"
+                              MinWidth="240"
+                              ToolTip="De dónde salen el audio y el espectro de los modos digitales"
+                              AutomationProperties.Name="Fuente del audio y del espectro">
+                        <ComboBoxItem Content="Puente externo (WSJT-X · JTDX)" />
+                        <ComboBoxItem Content="Puente USB SPI del equipo (Fase 4)" IsEnabled="False" />
+                        <ComboBoxItem Content="Audio USB del equipo (Fase 4)" IsEnabled="False" />
+                        <ComboBoxItem Content="Tarjeta de sonido (Fase 4)" IsEnabled="False" />
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Modos digitales" Style="{StaticResource TituloDeSeccion}" Margin="0" />
+                    <TextBlock Text="El módem de FT8 y FT4 será nuestro. El puente con WSJT-X y JTDX es una fuente más, no el camino principal."
+                               Style="{StaticResource TextoTenueEstilo}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" MinWidth="260" />
+                <ColumnDefinition Width="4*" MinWidth="300" />
+            </Grid.ColumnDefinitions>
+
+            <!-- ══ El sitio de la cascada, reservado ══ -->
+            <Border Grid.Column="0" Style="{StaticResource Tarjeta}" Margin="0,0,5,0" Padding="6">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" CornerRadius="3" BorderThickness="1" BorderBrush="#FF2A2F36">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Offset="0" Color="#FF0A0D12" />
+                                <GradientStop Offset="1" Color="#FF060809" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12">
+                            <TextBlock Text="CASCADA"
+                                       Foreground="#FFF29A2E"
+                                       FontWeight="Bold"
+                                       FontSize="11"
+                                       HorizontalAlignment="Center"
+                                       TextTrimming="None" />
+                            <TextBlock Text="Este hueco es de la cascada de nuestro módem, con el cursor de sintonía y el ancho del período. Llega en la Fase 4; el sitio está guardado desde ahora."
+                                       Foreground="#FF9BA6B2"
+                                       FontSize="11"
+                                       MaxWidth="320"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       Margin="0,6,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ══ El control de la transmisión y la máquina del QSO automático ══ -->
+                    <Border Grid.Row="1" Margin="0,6,0,0" Padding="8,6" CornerRadius="3"
+                            Background="{DynamicResource FondoResalte}"
+                            BorderBrush="{DynamicResource Borde}"
+                            BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="Transmisión y QSO automático"
+                                       FontWeight="Bold"
+                                       Margin="0,0,0,3" />
+                            <TextBlock Text="Cuando el módem sea nuestro, aquí van el turno de transmisión, la potencia del período, la secuencia del contacto y el freno de mano. Hoy la transmisión la lleva el programa externo, con sus reglas, en la columna de al lado."
+                                       Style="{StaticResource TextoTenueEstilo}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- ══ El puente externo, como una fuente más ══ -->
+            <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <vistas:PanelDigital />
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

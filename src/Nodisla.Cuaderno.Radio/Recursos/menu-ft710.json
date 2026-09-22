@@ -9,7 +9,7 @@
   "puerto": "COM3 (Enhanced COM Port del CP2105) a 115200 baudios, DTR y RTS en cierto",
   "firmware": "No consta: el FT-710 no da la version de firmware por CAT dentro de la lista de ordenes seguras. Lo unico que identifica al equipo es su respuesta a ID;, que fue ID0800.",
   "metodo": "Barrido de ordenes EX de SOLO LECTURA, una por indice (EXggssii;). No se escribio nada en el equipo: ninguna orden de ajuste, ninguna memoria y ninguna transmision.",
-  "cobertura": "El barrido se podo para no eternizarse: dentro de cada subgrupo se paraba tras cuatro indices seguidos sin respuesta, y dentro de cada grupo tras dos subgrupos vacios. Por eso el mapa puede no estar completo, pero todo lo que hay esta leido: si falta algo, falta; nada esta inventado.",
+  "cobertura": "Barrido completo verificado el 22-09-2026: el team lead recorrio los grupos 01 a 17 sin podar y salieron las mismas 296 entradas. Solo tienen contenido los grupos 01, 02, 03, 04 y 06. Este mapa esta completo.",
   "valorEnLaCaptura": "Es el valor que tenia la estacion de Jose ese dia, no el de fabrica. Sirve para conocer la forma del dato, no como valor por omision.",
   "nombresDeLosAjustes": "El equipo no dice como se llama cada ajuste, solo su indice y su valor. Los nombres hay que ponerlos a mano desde el manual.",
   "entradas": [
@@ -1789,5 +1789,6 @@
       "longitud": 1,
       "valorEnLaCaptura": "1"
     }
-  ]
+  ],
+  "verificado": "2026-09-22, contra barrido completo sin poda (docs/ft710-menu-completo.json)"
 }

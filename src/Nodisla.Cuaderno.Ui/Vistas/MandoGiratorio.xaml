@@ -7,7 +7,12 @@
         Un mando giratorio del frontal.
 
         Los colores son FIJOS, no del tema: el equipo es negro con el tema claro y con el
-        oscuro. Mando negro estriado con el canto metálico, como en la fotografía de Jose.
+        oscuro.
+
+        Un mando de verdad es un CILINDRO, no un círculo: tiene una cara iluminada arriba a la
+        izquierda, sombra abajo a la derecha, un canto estriado que devuelve reflejos y una
+        sombra proyectada sobre el cuerpo del equipo. Esa sensación de relieve es lo que hace
+        que se reconozca; un círculo plano con una rayita no se parece a nada.
 
         Lleva el ROTULO REAL del equipo —«RF GAIN/SQL», no «Ganancia de RF»—, que es lo que
         Jose ve serigrafiado en su radio; la explicación en español va en la ayuda emergente y
@@ -15,37 +20,59 @@
         para operar, porque el operador no sabe dónde lo ha dejado.
 
         Un mando que el equipo tiene pero no ofrece por CAT se dibuja igual, apagado y con su
-        explicación. Que esté y no se pueda tocar es información; que no esté sería un frontal
-        incompleto.
+        explicación.
 
         La marca gira en el arco útil de un potenciómetro de verdad —270 grados, de las siete a
         las cinco— en vez de dar la vuelta entera.
     -->
 
-    <StackPanel x:Name="Cuerpo">
-        <Grid Width="40" Height="40" HorizontalAlignment="Center">
-            <!-- El canto metálico del mando. -->
-            <Ellipse Stroke="#FF4E555D" StrokeThickness="2" Fill="#FF232629" />
+    <UserControl.Resources>
+        <LinearGradientBrush x:Key="CantoMetalico" StartPoint="0.15,0" EndPoint="0.85,1">
+            <GradientStop Offset="0" Color="#FF8B949E" />
+            <GradientStop Offset="0.35" Color="#FF4A515A" />
+            <GradientStop Offset="0.7" Color="#FF23272C" />
+            <GradientStop Offset="1" Color="#FF585F68" />
+        </LinearGradientBrush>
 
-            <!-- Las estrías. -->
-            <Ellipse Width="30" Height="30"
-                     Stroke="#FF33383E"
-                     StrokeThickness="1"
-                     StrokeDashArray="1 1.2"
-                     HorizontalAlignment="Center"
-                     VerticalAlignment="Center" />
+        <RadialGradientBrush x:Key="CaraDeMando" GradientOrigin="0.34,0.26" Center="0.5,0.5"
+                             RadiusX="0.72" RadiusY="0.72">
+            <GradientStop Offset="0" Color="#FF4A5058" />
+            <GradientStop Offset="0.45" Color="#FF25292E" />
+            <GradientStop Offset="1" Color="#FF0D0F11" />
+        </RadialGradientBrush>
+    </UserControl.Resources>
+
+    <StackPanel x:Name="Cuerpo">
+        <Grid Width="42" Height="42" HorizontalAlignment="Center">
+            <!-- La sombra que el mando proyecta sobre la chapa. -->
+            <Ellipse Fill="#70000000" Margin="1.5,2.5,-1.5,-2.5" />
+
+            <!-- El canto metálico. -->
+            <Ellipse Stroke="{StaticResource CantoMetalico}" StrokeThickness="3" />
+
+            <!-- La cara del cilindro. -->
+            <Ellipse Margin="3" Fill="{StaticResource CaraDeMando}" />
+
+            <!-- Las estrías del canto. -->
+            <Ellipse Margin="4" Stroke="#FF6A727C" StrokeThickness="3"
+                     StrokeDashArray="0.6 0.6" Opacity="0.5" />
+
+            <!-- La meseta central, hundida. -->
+            <Ellipse Margin="9" Fill="{StaticResource CaraDeMando}"
+                     Stroke="#FF0A0B0D" StrokeThickness="1" />
+            <Ellipse Margin="11" Stroke="#28FFFFFF" StrokeThickness="1" />
 
             <!-- La marca que dice por dónde va el mando. -->
             <Rectangle x:Name="Marca"
                        Width="2.5"
-                       Height="12"
-                       Fill="#FFE8ECF0"
+                       Height="11"
+                       Fill="#FFF2F6FA"
                        RadiusX="1.25"
                        RadiusY="1.25"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Top"
-                       Margin="0,4,0,0"
-                       RenderTransformOrigin="0.5,1.35">
+                       Margin="0,5,0,0"
+                       RenderTransformOrigin="0.5,1.4">
                 <Rectangle.RenderTransform>
                     <RotateTransform Angle="{Binding Giro, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                 </Rectangle.RenderTransform>
@@ -61,7 +88,7 @@
                    TextAlignment="Center"
                    TextWrapping="Wrap"
                    TextTrimming="None"
-                   Margin="0,2,0,0" />
+                   Margin="0,3,0,0" />
 
         <TextBlock Text="{Binding ValorTexto, RelativeSource={RelativeSource AncestorType=UserControl}}"
                    FontSize="9"
