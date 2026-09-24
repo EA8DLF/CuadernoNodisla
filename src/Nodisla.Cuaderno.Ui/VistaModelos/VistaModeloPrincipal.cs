@@ -121,6 +121,13 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         if (Environment.GetEnvironmentVariable("CUADERNO_INDICATIVO") is { Length: > 0 } inicial)
         {
             Entrada.Indicativo = inicial;
+
+            // Y con CUADERNO_REGISTRAR puesta, ademas lo registra. Sirve para comprobar que el
+            // contacto sobrevive a cerrar y abrir sin tener que teclear en la ventana de nadie.
+            if (Environment.GetEnvironmentVariable("CUADERNO_REGISTRAR") is { Length: > 0 })
+            {
+                _ = Entrada.GuardarCommand.ExecuteAsync(null);
+            }
         }
 
         Cluster.SpotElegido += async (_, fila) => await IrAlSpotAsync(fila).ConfigureAwait(true);
@@ -203,6 +210,17 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// una propiedad con ese nombre lo taparia dentro de esta clase.
     /// </remarks>
     public VistaModeloAjustes Configuracion { get; }
+
+    /// <summary>
+    /// La aplicacion esta corriendo con los puertos simulados.
+    /// </summary>
+    /// <remarks>
+    /// <b>Tiene que verse en pantalla.</b> Con los simulados detras, el cuaderno son veinte mil
+    /// contactos de relleno que se pierden al cerrar, la radio no existe y los anuncios del
+    /// cluster son inventados. Creer que se esta mirando el cuaderno de verdad seria el peor
+    /// malentendido posible.
+    /// </remarks>
+    public static bool ModoSimulado => ConfiguracionDeServicios.ConPuertosSimulados;
 
     /// <summary>Pestanas de la ventana, en el orden en que salen.</summary>
     public IReadOnlyList<string> Pestanas { get; } = ["Operar", "Digital", "Cuaderno", "Mapa", "Diplomas", "Ajustes"];
@@ -429,7 +447,16 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         Estaciones.Clear();
         foreach (var e in perfiles) Estaciones.Add(e);
 
-        EstacionActiva = await _estaciones.PredeterminadaAsync().ConfigureAwait(true) ?? Estaciones.FirstOrDefault();
+        // Se elige POR IDENTIFICADOR, no por objeto. Con el cuaderno de verdad detras, cada
+        // consulta devuelve instancias distintas —vienen de la base y no se comparten—, asi
+        // que el perfil predeterminado NO es el mismo objeto que el de la lista y la casilla
+        // se quedaba en blanco aunque el perfil estuviera cargado. Con el repositorio en
+        // memoria no pasaba, porque alli era el mismo objeto.
+        var predeterminado = await _estaciones.PredeterminadaAsync().ConfigureAwait(true);
+
+        EstacionActiva = predeterminado is null
+            ? Estaciones.FirstOrDefault()
+            : Estaciones.FirstOrDefault(e => e.Id == predeterminado.Id) ?? predeterminado;
 
         await RefrescarTodoAsync().ConfigureAwait(true);
         _reloj.Start();
@@ -580,6 +607,28 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         Mapa.MostrarFondo = _estadoDeLosPaneles.FondoDelMapa;
         Mapa.MostrarContactos = _estadoDeLosPaneles.ContactosEnElMapa;
         Mapa.MostrarSpots = _estadoDeLosPaneles.SpotsEnElMapa;
+    }
+
+    /// <summary>
+    /// Dice si el cuaderno tiene algun contacto.
+    /// </summary>
+    /// <remarks>
+    /// Lo usa la ventana para decidir si ofrece traerse un ADIF. Si la consulta falla se
+    /// responde que SI hay contactos: mejor no ofrecer nada que ofrecer importar encima de un
+    /// cuaderno que a lo mejor esta lleno.
+    /// </remarks>
+    /// <returns>Cierto si hay al menos un contacto.</returns>
+    public async Task<bool> HayContactosAsync()
+    {
+        try
+        {
+            return await _buscar.ContarTodoAsync().ConfigureAwait(true) > 0;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "No se ha podido contar el cuaderno.");
+            return true;
+        }
     }
 
     /// <summary>Cambia entre el tema claro y el oscuro.</summary>

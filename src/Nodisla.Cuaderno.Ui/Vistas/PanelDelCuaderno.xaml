@@ -16,6 +16,7 @@
     -->
 
     <UserControl.Resources>
+        <conversores:NoEsVacio x:Key="NoEsVacio" />
         <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
         <conversores:AnchoEnLetras x:Key="AnchoEnLetras" />
         <conversores:AnchoDeColumnaEnLetras x:Key="AnchoDeColumna" />
@@ -86,6 +87,21 @@
                 <CheckBox Content="IOTA" IsChecked="{Binding Cuaderno.VerIota}" Margin="0,0,18,0" />
             </WrapPanel>
         </Expander>
+
+        <!--
+            Una rejilla en blanco no distingue entre «no hay contactos» y «el filtro no deja
+            pasar ninguno», y son cosas muy distintas. Se dice cuál de las dos es.
+        -->
+        <TextBlock Grid.Row="2"
+                   Text="{Binding Cuaderno.PorQueNoHayFilas}"
+                   Style="{StaticResource TextoTenueEstilo}"
+                   TextWrapping="Wrap"
+                   TextAlignment="Center"
+                   MaxWidth="460"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Panel.ZIndex="1"
+                   Visibility="{Binding Cuaderno.PorQueNoHayFilas, Converter={StaticResource NoEsVacio}}" />
 
         <DataGrid Grid.Row="2"
                   x:Name="RejillaDelCuaderno"

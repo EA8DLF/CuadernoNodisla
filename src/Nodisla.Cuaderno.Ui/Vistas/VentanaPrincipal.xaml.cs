@@ -27,7 +27,22 @@ namespace Nodisla.Cuaderno.Ui.Vistas;
 public partial class VentanaPrincipal : Window
 {
     private readonly VistaModeloPrincipal _vistaModelo;
+    /// <summary>
+    /// La aplicacion corre con los puertos simulados, y hay que decirlo en pantalla.
+    /// </summary>
+    /// <remarks>
+    /// Va como propiedad estatica porque el aviso vive en la barra de estado, que se dibuja
+    /// antes de que haya modelo de vista al que preguntarle.
+    /// </remarks>
+    public static bool EnPruebas => ConfiguracionDeServicios.ConPuertosSimulados;
+
     private readonly CrearPerfilDeEstacion _perfiles;
+
+    /// <summary>
+    /// Como pedir la bienvenida del cuaderno vacio. Nulo con los puertos simulados, donde el
+    /// cuaderno viene lleno de contactos de relleno y no hay nada que ofrecer.
+    /// </summary>
+    private readonly Func<VentanaDeCuadernoVacio>? _cuadernoVacio;
     private readonly Func<VentanaDePrimerArranque> _ventanaDePrimerArranque;
     private bool _dibujadoComprobado;
     private bool _ajustandoComposicion;
@@ -36,12 +51,14 @@ public partial class VentanaPrincipal : Window
     public VentanaPrincipal(
         VistaModeloPrincipal vistaModelo,
         CrearPerfilDeEstacion perfiles,
-        Func<VentanaDePrimerArranque> ventanaDePrimerArranque)
+        Func<VentanaDePrimerArranque> ventanaDePrimerArranque,
+        Func<VentanaDeCuadernoVacio>? cuadernoVacio = null)
     {
         ArgumentNullException.ThrowIfNull(vistaModelo);
         _vistaModelo = vistaModelo;
         _perfiles = perfiles;
         _ventanaDePrimerArranque = ventanaDePrimerArranque;
+        _cuadernoVacio = cuadernoVacio;
 
         InitializeComponent();
         DataContext = vistaModelo;
@@ -67,6 +84,8 @@ public partial class VentanaPrincipal : Window
         {
             if (!await PedirPerfilSiHaceFaltaAsync().ConfigureAwait(true)) return;
 
+            await OfrecerTraerElCuadernoAsync().ConfigureAwait(true);
+
             await _vistaModelo.InicializarAsync().ConfigureAwait(true);
             Cuaderno.MarcarOrdenEnLasCabeceras();
             PonerLaEstacionEnElMapa();
@@ -91,6 +110,33 @@ public partial class VentanaPrincipal : Window
     /// Sin perfil de estacion no se deja operar: se pide antes de cargar nada y, si el operador
     /// no quiere crearlo, el programa se cierra. Nunca se llega a la entrada sin perfil.
     /// </summary>
+    /// <summary>
+    /// Con el cuaderno vacio, ofrece traerse un ADIF antes de ensenar una rejilla en blanco.
+    /// </summary>
+    /// <remarks>
+    /// <b>No importa nada solo.</b> Se explica que el cuaderno esta vacio, donde vive, y se
+    /// ofrece; decide el operador. Si dice que no, se sigue con el cuaderno vacio, que es una
+    /// respuesta perfectamente valida.
+    /// </remarks>
+    private async Task OfrecerTraerElCuadernoAsync()
+    {
+        if (_cuadernoVacio is null) return;
+
+        try
+        {
+            if (await _vistaModelo.HayContactosAsync().ConfigureAwait(true)) return;
+
+            var ventana = _cuadernoVacio();
+            ventana.Owner = this;
+            ventana.ShowDialog();
+        }
+        catch (Exception ex)
+        {
+            // Que falle la bienvenida no puede impedir abrir el cuaderno.
+            Serilog.Log.Error(ex, "No se ha podido ofrecer la importación inicial.");
+        }
+    }
+
     private async Task<bool> PedirPerfilSiHaceFaltaAsync()
     {
         if (await _perfiles.HayAlgunoAsync().ConfigureAwait(true)) return true;
@@ -278,6 +324,10 @@ public partial class VentanaPrincipal : Window
 
     private void MostrarFallo(Exception ex)
     {
+        // Al registro ANTES de ensenar nada: un fallo que solo aparece en un cartel se pierde
+        // en cuanto alguien le da a «Entendido», y entonces no hay manera de saber que paso.
+        Serilog.Log.Error(ex, "Fallo al arrancar la ventana principal.");
+
         var dialogo = new VentanaDeConfirmacion
         {
             Owner = this,

@@ -24,6 +24,61 @@ public partial class App : Application
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "CuadernoNodisla");
 
+    /// <summary>
+    /// Deja el cuaderno listo antes de abrir la ventana: crea la base si no esta y aplica
+    /// las migraciones pendientes, con copia de seguridad previa.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Va aqui y no en la ventana porque si el cuaderno no se puede abrir <b>no hay programa</b>:
+    /// mas vale decirlo con un cartel claro que arrancar y que fallen las pantallas una a una
+    /// sin que se entienda por que.
+    /// </para>
+    /// <para>
+    /// La copia la hace el propio migrador antes de tocar nada, y solo si hay migraciones que
+    /// aplicar sobre una base que ya existia. Un cuaderno de miles de contactos no se toca sin
+    /// dejar antes una copia con la fecha en el nombre.
+    /// </para>
+    /// </remarks>
+    private void PrepararElCuaderno()
+    {
+        if (ConfiguracionDeServicios.ConPuertosSimulados) return;
+
+        try
+        {
+            using var ambito = _anfitrion!.Services.CreateScope();
+            var migrador = ambito.ServiceProvider.GetRequiredService<Nodisla.Cuaderno.Datos.MigradorDeCuaderno>();
+
+            var copia = migrador.AplicarMigracionesAsync().GetAwaiter().GetResult();
+
+            // Ojo con lo que devuelve: es la ruta de la COPIA, y sale nula tanto cuando no
+            // habia migraciones pendientes como cuando el cuaderno se acababa de crear y no
+            // habia nada que copiar. Decir «no habia migraciones» en los dos casos era mentira
+            // la mitad de las veces, y justo en el caso mas interesante: el primer arranque.
+            Log.Information(
+                copia is null
+                    ? "Cuaderno listo en {Ruta}."
+                    : "Cuaderno migrado en {Ruta}. Copia previa en {Copia}.",
+                Path.Combine(CarpetaDeDatos, Nodisla.Cuaderno.Datos.OpcionesCuaderno.NombreDelFichero),
+                copia);
+        }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "No se ha podido preparar el cuaderno.");
+
+            MessageBox.Show(
+                "No se ha podido abrir el cuaderno.\n\n"
+                + $"{ex.Message}\n\n"
+                + $"El cuaderno vive en {CarpetaDeDatos}. Si el fichero está dañado, ahí mismo "
+                + "hay una carpeta «copias» con las copias de seguridad anteriores.",
+                "Cuaderno NODISLA",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+
+            Shutdown(1);
+        }
+    }
+
     /// <inheritdoc />
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -59,6 +114,8 @@ public partial class App : Application
             CultureInfo.CurrentCulture.Name,
             CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator,
             CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
+
+        PrepararElCuaderno();
 
         base.OnStartup(e);
 

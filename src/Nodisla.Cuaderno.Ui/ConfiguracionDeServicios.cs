@@ -1,8 +1,15 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.IO;
+using Microsoft.Extensions.DependencyInjection;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Dxcc;
+using Nodisla.Cuaderno.Datos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Audio;
+using Nodisla.Cuaderno.Radio;
+using Nodisla.Cuaderno.Servicios;
+using Nodisla.Cuaderno.Ui.Datos;
 using Nodisla.Cuaderno.Ui.Ajustes;
 using Nodisla.Cuaderno.Ui.Desarrollo;
 using Nodisla.Cuaderno.Ui.VistaModelos;
@@ -54,7 +61,18 @@ public static class ConfiguracionDeServicios
     private static bool SinPerfilesDeEjemplo =>
         !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CUADERNO_SIN_PERFILES"));
 
-    /// <summary>Puertos cubiertos con implementaciones en memoria hasta que lleguen las reales.</summary>
+    /// <summary>
+    /// Se ha pedido arrancar con los puertos simulados.
+    /// </summary>
+    /// <remarks>
+    /// Sirve para poder ver y capturar la aplicacion sin equipo, sin red y sin base de datos.
+    /// <b>Con la variable puesta, la ventana lo dice en pantalla</b>: no hay nada peor que
+    /// creer que se esta mirando el cuaderno de verdad.
+    /// </remarks>
+    public static bool ConPuertosSimulados =>
+        !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CUADERNO_SIMULADO"));
+
+    /// <summary>Registra los puertos: los de verdad, o los simulados si se han pedido.</summary>
     private static void AnadirPuertosProvisionales(IServiceCollection servicios)
     {
         servicios.AddSingleton<IResolutorDxcc>(_ => ResolutorDxcc.Predeterminado);
@@ -62,45 +80,146 @@ public static class ConfiguracionDeServicios
         // Canarias es Region 1 de la IARU: en 40 metros se acaba en 7.200 y no en 7.300.
         servicios.AddSingleton<IBandplan>(_ => Integraciones.Bandplan.BandplanNodisla.Para(RegionIaru.Region1));
 
-        servicios.AddSingleton<IRepositorioQso>(_ => new RepositorioQsoEnMemoria(Demostracion.Value));
-        servicios.AddSingleton<IRepositorioEstacion>(
-            _ => new RepositorioEstacionEnMemoria(conPerfilesDeEjemplo: !SinPerfilesDeEjemplo));
-        servicios.AddSingleton<IConsultaIndicativo, ConsultaIndicativoNoDisponible>();
+        // Los servicios de confirmacion traen su propio registro, y con el <b>el almacen de
+        // credenciales cifrado con DPAPI</b>: los secretos solo los puede descifrar la cuenta
+        // de Windows que los escribio. Registrarlos no abre ninguna conexion: los clientes
+        // HTTP se crean perezosos y no salen a la red hasta que alguien pide subir o bajar.
+        servicios.AnadirServiciosDeConfirmacion();
 
-        // Los secretos van cifrados con la proteccion de datos de la cuenta de Windows. Esta
-        // implementacion SI es la de verdad: no hay version de mentira de guardar una
-        // contrasena.
-        servicios.AddSingleton<IAlmacenDeCredenciales>(
-            _ => new Servicios.Credenciales.AlmacenDeCredencialesDpapi());
+        servicios.AnadirLotw(new Servicios.Lotw.OpcionesLotw());
+        servicios.AnadirEqsl(new Servicios.Eqsl.OpcionesEqsl());
+        servicios.AnadirClubLog(new Servicios.ClubLog.OpcionesClubLog());
+        servicios.AnadirQrz(new Servicios.Qrz.OpcionesQrz());
 
-        // El motor de diplomas de verdad necesita una conexion a la base del cuaderno, y la
-        // interfaz todavia trabaja contra el repositorio en memoria. Mientras tanto, este
-        // cuenta lo que SI se puede contar de los contactos que hay —entidades, continentes,
-        // zonas y prefijos— y dice por que lo demas no sale.
-        servicios.AddSingleton<IDiplomas>(
-            proveedor => new DiplomasDeDesarrollo(
-                Demostracion.Value,
-                proveedor.GetRequiredService<IResolutorDxcc>(),
-                App.CarpetaDeDatos));
-
-        // El modulo de propagacion SI es el de verdad: trae los indices del servicio
-        // meteorologico espacial y guarda copia en disco. Sin red, arranca con la copia y lo
-        // dice; la franja solar ensena ese aviso tal cual.
+        // La propagacion es la de verdad en los dos modos: trae los indices del servicio
+        // meteorologico espacial y guarda copia en disco.
         servicios.AddHttpClient();
         servicios.AddSingleton<IPropagacion>(
             proveedor => new Propagacion.ServicioDePropagacion(
                 proveedor.GetRequiredService<System.Net.Http.IHttpClientFactory>()));
-        servicios.AddSingleton<ILectorAdif, LectorAdifNoDisponible>();
-        servicios.AddSingleton<IEscritorAdif, EscritorAdifNoDisponible>();
+
+        servicios.AddSingleton<IConsultaIndicativo, ConsultaIndicativoNoDisponible>();
+
+        if (ConPuertosSimulados)
+        {
+            AnadirPuertosSimulados(servicios);
+            return;
+        }
+
+        AnadirPuertosReales(servicios);
+    }
+
+    /// <summary>
+    /// El cuaderno de verdad: base de datos, diplomas, radio, cluster y ADIF.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b>Nada de esto toca la radio ni la red al arrancar.</b> El equipo y el cluster se
+    /// registran, pero conectar es una accion del operador: abrir el programa no puede ponerse
+    /// a mandar ordenes CAT a una radio que puede estar haciendo otra cosa, ni a abrir una
+    /// conexion a un nodo.
+    /// </para>
+    /// <para>
+    /// La base vive en <c>%AppData%\CuadernoNodisla\cuaderno.sqlite</c> y se puede copiar
+    /// tal cual: es un solo fichero.
+    /// </para>
+    /// </remarks>
+    private static void AnadirPuertosReales(IServiceCollection servicios)
+    {
+        // ── El cuaderno ────────────────────────────────────────────────────
+        servicios.AnadirDatosDelCuaderno(opciones =>
+        {
+            opciones.Ruta = Path.Combine(App.CarpetaDeDatos, OpcionesCuaderno.NombreDelFichero);
+            opciones.CarpetaDeCopias = Path.Combine(App.CarpetaDeDatos, "copias");
+        });
+
+        // Los repositorios de la capa de datos van por ambito y los modelos de vista son
+        // unicos: este puente abre un ambito por llamada. Ver UnAmbitoPorLlamada.
+        servicios.AnadirPuentesDelCuaderno();
+
+        // ── Los diplomas, ya con el cuaderno de verdad detras ───────────────
+        servicios.AddSingleton<IDiplomas>(proveedor => new Diplomas.MotorDeDiplomas(
+            new Diplomas.OpcionesDeDiplomas
+            {
+                RutaDelCatalogo = Path.Combine(App.CarpetaDeDatos, Diplomas.OpcionesDeDiplomas.NombreDelCatalogo),
+            },
+            proveedor.GetRequiredService<IFabricaDeConexion>(),
+            proveedor.GetRequiredService<IResolutorDxcc>()));
+
+        // ── ADIF de verdad: importar el respaldo de Log4OM y exportar ───────
+        servicios.AddSingleton<ILectorAdif, Adif.LectorAdif>();
+        servicios.AddSingleton<IEscritorAdif, Adif.EscritorAdif>();
+
+        // ── La radio ───────────────────────────────────────────────────────
+        // Registrada, pero SIN abrir el puerto: la via arranca en Ninguna y la elige el
+        // operador en los ajustes. El PTT solo se sube por el vigilante.
+        servicios.AnadirRadio(opciones =>
+        {
+            opciones.Via = ViaDeControl.Ninguna;
+        });
+
+        // OJO: aqui NO se registra un IEquipoAvanzado de mentira. El modelo de vista mira si
+        // el control que hay ES avanzado (`_equipo is IEquipoAvanzado`), asi que colar un
+        // equipo simulado detras de ese puerto pintaria el frontal del FT-710 con mandos
+        // inventados encima de una radio que no esta conectada. Mientras la via de control sea
+        // Ninguna, el control es generico y la cabina lo dice.
+
+        // ── El cluster, por Telnet y sin conectar solo ──────────────────────
+        // PENDIENTE: el nodo y el indicativo con el que se entra estan fijos aqui porque
+        // todavia no hay pantalla donde elegirlos, y el registro de servicios se monta antes
+        // de que haya perfil de estacion cargado. Cuando Ajustes tenga la configuracion del
+        // cluster, esto pasa a leerse de ahi y el indicativo, del perfil activo.
+        servicios.AddSingleton<IFuenteSpots>(proveedor => new Integraciones.Cluster.ClusterTelnet(
+            new Integraciones.Cluster.OpcionesCluster
+            {
+                Nombre = "Cluster de DX",
+                Servidor = "cluster.ea4rch.es",
+                Puerto = 7300,
+                Indicativo = Indicativo.Parse("EA8DLF"),
+            },
+            proveedor.GetRequiredService<IResolutorDxcc>()));
+
+        // ── Los modos digitales, escuchando solo cuando se pida ─────────────
+        servicios.AddSingleton<IPuenteDigital>(_ => new Integraciones.Digital.PuenteDigitalUdp());
+
+        // ── El audio del modem propio ──────────────────────────────────────
+        // Registrado, pero SIN ABRIR NINGUN DISPOSITIVO: el modulo deja claro que no arranca
+        // el seguimiento del reloj ni toca la tarjeta de sonido hasta que se le pide. Abrir el
+        // microfono de alguien al arrancar un programa no se hace.
+        servicios.AnadirAudio();
+
+        // Con puertos de verdad NO se conecta nada solo.
+        servicios.AddSingleton(ArranqueDeOperacion.ConPuertosReales);
+    }
+
+    /// <summary>
+    /// Los simulados, para poder ver y probar la aplicacion sin equipo, sin red y sin base.
+    /// </summary>
+    /// <remarks>
+    /// No se borran cuando llega lo real: siguen haciendo falta para capturar pantallas, para
+    /// enseñar la aplicacion y para trabajar en la interfaz sin tener la radio delante. Lo que
+    /// si hace falta es que <b>se note</b>, y de eso se encarga el aviso de la ventana.
+    /// </remarks>
+    private static void AnadirPuertosSimulados(IServiceCollection servicios)
+    {
+        servicios.AddSingleton<IRepositorioQso>(_ => new RepositorioQsoEnMemoria(Demostracion.Value));
+        servicios.AddSingleton<IRepositorioEstacion>(
+            _ => new RepositorioEstacionEnMemoria(conPerfilesDeEjemplo: !SinPerfilesDeEjemplo));
 
         servicios.AddSingleton<IConsultasDeInforme>(
             proveedor => new ConsultasDeInformeEnMemoria(
                 Demostracion.Value,
                 proveedor.GetRequiredService<IResolutorDxcc>()));
 
-        // ── Operacion ───────────────────────────────────────────────────────
-        // Estas cuatro lineas son las que cambian el dia que lleguen el control CAT de verdad,
-        // el cluster por Telnet y el lector de UDP de WSJT-X. Nada mas.
+        servicios.AddSingleton<IDiplomas>(
+            proveedor => new DiplomasDeDesarrollo(
+                Demostracion.Value,
+                proveedor.GetRequiredService<IResolutorDxcc>(),
+                App.CarpetaDeDatos));
+
+        servicios.AddSingleton<ILectorAdif, LectorAdifNoDisponible>();
+        servicios.AddSingleton<IEscritorAdif, EscritorAdifNoDisponible>();
+
         servicios.AddSingleton<EquipoSimulado>();
         servicios.AddSingleton<IControlEquipo>(p => p.GetRequiredService<EquipoSimulado>());
         servicios.AddSingleton<IEquipoAvanzado>(p => p.GetRequiredService<EquipoSimulado>());
@@ -109,8 +228,8 @@ public static class ConfiguracionDeServicios
         servicios.AddSingleton<IFuenteSpots>(_ => new FuenteSpotsSimulada());
         servicios.AddSingleton<IPuenteDigital, PuenteDigitalSimulado>();
 
-        // Con los puertos simulados los paneles se conectan solos; con una radio de verdad
-        // detras, esta linea pasa a ArranqueDeOperacion.ConPuertosReales.
+        // Con los puertos simulados los paneles se conectan solos: asi la pantalla de
+        // operacion se ve funcionando desde el primer arranque.
         servicios.AddSingleton(ArranqueDeOperacion.ConPuertosSimulados);
     }
 
@@ -181,6 +300,15 @@ public static class ConfiguracionDeServicios
         // El primer arranque se pide una sola vez, pero se crea al vuelo para que la ventana
         // principal no dependa del contenedor mas alla de esta fabrica.
         servicios.AddTransient<VistaModeloPrimerArranque>();
+
+        // La bienvenida del cuaderno vacio: se pide una sola vez, el primer arranque con la
+        // base recien creada.
+        servicios.AddTransient(proveedor => new VistaModeloCuadernoVacio(
+            proveedor.GetRequiredService<ImportarAdif>(),
+            Path.Combine(App.CarpetaDeDatos, OpcionesCuaderno.NombreDelFichero)));
+        servicios.AddTransient<VentanaDeCuadernoVacio>();
+        servicios.AddSingleton<Func<VentanaDeCuadernoVacio>>(
+            proveedor => proveedor.GetRequiredService<VentanaDeCuadernoVacio>);
         servicios.AddTransient<VentanaDePrimerArranque>();
         servicios.AddSingleton<Func<VentanaDePrimerArranque>>(
             proveedor => proveedor.GetRequiredService<VentanaDePrimerArranque>);

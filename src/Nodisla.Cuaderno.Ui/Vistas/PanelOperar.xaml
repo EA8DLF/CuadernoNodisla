@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
+             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
              Foreground="{DynamicResource Texto}">
 
     <!--
@@ -27,6 +28,7 @@
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+        <conversores:VisibleSiEsFalso x:Key="VisibleSiEsFalso" />
     </UserControl.Resources>
 
     <Grid>
@@ -59,6 +61,27 @@
                 alto y luego se queda quieto y centrado, como una radio encima de la mesa.
             -->
             <vistas:FrontalFt710 x:Name="Frontal" MaxHeight="370" />
+        </Border>
+
+        <!--
+            Sin equipo que hable CAT no hay frontal que dibujar, y un hueco mudo parecería un
+            fallo. Se dice qué pasa y qué hacer, que es elegir la vía de control en Ajustes y
+            pulsar «Conectar». Conectar nunca lo hace el programa solo.
+        -->
+        <Border Grid.Row="1"
+                Style="{StaticResource Tarjeta}"
+                Margin="0,0,0,5"
+                Padding="14,10"
+                Visibility="{Binding FrontalDibujadoVisible, Converter={StaticResource VisibleSiEsFalso}}">
+            <StackPanel>
+                <TextBlock Text="Todavía no hay equipo conectado"
+                           FontWeight="Bold"
+                           TextWrapping="Wrap" />
+                <TextBlock Text="Cuando el equipo hable por CAT, aquí aparece su frontal dibujado con los mandos donde corresponde. Elija la vía de control en Ajustes y pulse «Conectar»: abrir el programa no toca la radio."
+                           Style="{StaticResource TextoTenueEstilo}"
+                           TextWrapping="Wrap"
+                           Margin="0,3,0,0" />
+            </StackPanel>
         </Border>
 
         <!-- ══ La vista complementaria de todos los mandos ══ -->
