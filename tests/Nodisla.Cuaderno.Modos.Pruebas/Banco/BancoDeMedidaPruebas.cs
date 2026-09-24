@@ -44,7 +44,14 @@ public class BancoDeMedidaPruebas(ITestOutputHelper salida)
 
         var informe = Componer(ft8, ft4);
         salida.WriteLine(informe);
+
+        // El informe que queda en el repositorio se escribe solo desde una compilacion de
+        // publicacion. Si no, pasar las pruebas en depuracion —que es lo normal mientras se
+        // trabaja— dejaria apuntados unos tiempos cinco veces peores que los de verdad, y la
+        // proxima persona que lo lea creeria que el modem no cabe en su ventana.
+#if !DEBUG
         Escribir(informe);
+#endif
 
         // Ninguna franja puede inventar un mensaje. Es la condicion que no se negocia.
         ft8.Sum(f => f.Falsos).Should().Be(0, "un mensaje falso mete un contacto que nunca existió");
