@@ -147,31 +147,67 @@
 
         <!-- ══ Las seis pestañas ══ -->
         <TabControl Grid.Row="1" SelectedIndex="{Binding IndiceDeLaPestana}" Margin="0,0,0,8">
-            <TabItem Header="Operar (Ctrl 1)">
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{StaticResource IconoOperar}" Width="16" Height="16" Margin="0,0,7,0" />
+                        <TextBlock Text="Operar (Ctrl 1)" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
                 <vistas:PanelOperar x:Name="Operar" />
             </TabItem>
 
-            <TabItem Header="Digital (Ctrl 2)">
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{StaticResource IconoDigital}" Width="16" Height="16" Margin="0,0,7,0" />
+                        <TextBlock Text="Digital (Ctrl 2)" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
                 <vistas:PestanaDigital />
             </TabItem>
 
-            <TabItem Header="Cuaderno (Ctrl 3)">
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{StaticResource IconoCuaderno}" Width="16" Height="16" Margin="0,0,7,0" />
+                        <TextBlock Text="Cuaderno (Ctrl 3)" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
                 <Border Style="{StaticResource Tarjeta}" Margin="0">
                     <vistas:PanelDelCuaderno x:Name="Cuaderno" Fallo="AlFallarElCuaderno" />
                 </Border>
             </TabItem>
 
-            <TabItem Header="Mapa (Ctrl 4)">
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{StaticResource IconoMapa}" Width="16" Height="16" Margin="0,0,7,0" />
+                        <TextBlock Text="Mapa (Ctrl 4)" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
                 <Border Style="{StaticResource Tarjeta}" Margin="0">
                     <vistas:PanelDeMapa DataContext="{Binding Mapa}" />
                 </Border>
             </TabItem>
 
-            <TabItem Header="Diplomas (Ctrl 5)">
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{StaticResource IconoDiplomas}" Width="16" Height="16" Margin="0,0,7,0" />
+                        <TextBlock Text="Diplomas (Ctrl 5)" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
                 <vistas:PanelDeDiplomas DataContext="{Binding Diplomas}" />
             </TabItem>
 
-            <TabItem Header="Ajustes (Ctrl 6)">
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{StaticResource IconoAjustes}" Width="16" Height="16" Margin="0,0,7,0" />
+                        <TextBlock Text="Ajustes (Ctrl 6)" VerticalAlignment="Center" />
+                    </StackPanel>
+                </TabItem.Header>
                 <vistas:PanelDeAjustes DataContext="{Binding Configuracion}" />
             </TabItem>
 

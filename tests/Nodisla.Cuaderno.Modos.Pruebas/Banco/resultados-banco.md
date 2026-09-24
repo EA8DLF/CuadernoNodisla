@@ -1,6 +1,6 @@
 # Banco de medida del módem propio
 
-Generado por `BancoDeMedidaPruebas` el 2026-09-22 (UTC). **No editar a mano.**
+Generado por `BancoDeMedidaPruebas` el 2026-09-24 (UTC). **No editar a mano.**
 
 Señal sintética con ruido blanco gaussiano, relación señal-ruido referida a 2500 Hz,
 igual que los informes de FT8. Cada ventana lleva un mensaje al azar entre ocho, en una
@@ -18,30 +18,35 @@ La columna que manda es **Falsos**: tiene que ser cero en todas las franjas. Un 
 falso mete en el cuaderno un contacto que nunca existió y contamina los diplomas para
 siempre; perder decodificaciones no deja rastro.
 
+La columna **ms/ventana** solo vale si se dice cómo se compiló, porque entre una
+compilación de depuración y una de publicación hay un factor de cinco. Estas cifras son
+de una compilación **de depuración (Debug)**. Para hacerse una idea: FT8 da 15.000 ms por ventana y
+FT4 da 7.500, así que aquí se está usando en torno al 3 % del hueco disponible.
+
 ### FT8
 
 | S/R (dB) | Ventanas | Recuperados | % | Falsos | Rechazos del CRC | Error del informe (dB) | ms/ventana |
 |---:|---:|---:|---:|---:|---:|---:|---:|
-| 0 | 12 | 12 | 100,0 | 0 | 3 | -6,8 | 2400 |
-| -3 | 12 | 12 | 100,0 | 0 | 5 | -4,1 | 2317 |
-| -6 | 12 | 12 | 100,0 | 0 | 3 | -3,0 | 2195 |
-| -9 | 12 | 12 | 100,0 | 0 | 9 | -1,7 | 2097 |
-| -12 | 12 | 12 | 100,0 | 0 | 5 | -1,6 | 2107 |
-| -15 | 12 | 12 | 100,0 | 0 | 7 | -0,6 | 2110 |
-| -18 | 12 | 12 | 100,0 | 0 | 5 | -0,8 | 2293 |
-| -21 | 12 | 0 | 0,0 | 0 | 4 | 00 | 2545 |
-| -24 | 12 | 0 | 0,0 | 0 | 2 | 00 | 2578 |
+| 0 | 12 | 12 | 100,0 | 0 | 2 | -6,8 | 2383 |
+| -3 | 12 | 12 | 100,0 | 0 | 0 | -4,1 | 2204 |
+| -6 | 12 | 12 | 100,0 | 0 | 1 | -3,0 | 2852 |
+| -9 | 12 | 12 | 100,0 | 0 | 2 | -1,7 | 2821 |
+| -12 | 12 | 12 | 100,0 | 0 | 0 | -1,6 | 3583 |
+| -15 | 12 | 12 | 100,0 | 0 | 0 | -0,5 | 3426 |
+| -18 | 12 | 11 | 91,7 | 0 | 0 | -0,7 | 3107 |
+| -21 | 12 | 1 | 8,3 | 0 | 1 | +1,0 | 2556 |
+| -24 | 12 | 0 | 0,0 | 0 | 2 | 00 | 1938 |
 
 ### FT4
 
 | S/R (dB) | Ventanas | Recuperados | % | Falsos | Rechazos del CRC | Error del informe (dB) | ms/ventana |
 |---:|---:|---:|---:|---:|---:|---:|---:|
-| 0 | 12 | 12 | 100,0 | 0 | 6 | -3,4 | 2370 |
-| -3 | 12 | 12 | 100,0 | 0 | 6 | -1,8 | 2904 |
-| -6 | 12 | 12 | 100,0 | 0 | 5 | -1,3 | 2745 |
-| -9 | 12 | 12 | 100,0 | 0 | 2 | -0,8 | 2105 |
-| -12 | 12 | 12 | 100,0 | 0 | 9 | -0,4 | 1968 |
-| -15 | 12 | 3 | 25,0 | 0 | 9 | -1,3 | 1977 |
-| -18 | 12 | 0 | 0,0 | 0 | 7 | 00 | 2048 |
-| -21 | 12 | 0 | 0,0 | 0 | 3 | 00 | 1905 |
+| 0 | 12 | 12 | 100,0 | 0 | 2 | -3,6 | 2091 |
+| -3 | 12 | 12 | 100,0 | 0 | 1 | -1,8 | 1662 |
+| -6 | 12 | 12 | 100,0 | 0 | 1 | -1,3 | 2646 |
+| -9 | 12 | 12 | 100,0 | 0 | 2 | -0,8 | 2136 |
+| -12 | 12 | 12 | 100,0 | 0 | 2 | -0,5 | 1826 |
+| -15 | 12 | 4 | 33,3 | 0 | 0 | -1,5 | 1491 |
+| -18 | 12 | 0 | 0,0 | 0 | 1 | 00 | 1504 |
+| -21 | 12 | 0 | 0,0 | 0 | 0 | 00 | 1449 |
 

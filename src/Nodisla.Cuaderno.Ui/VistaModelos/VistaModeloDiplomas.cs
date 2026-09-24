@@ -110,16 +110,17 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
     public const int ReferenciasPorPagina = 100;
 
     private readonly IDiplomas _diplomas;
-    private readonly Ajustes.DiplomasElegidos _eleccion;
 
     /// <summary>Monta la pantalla.</summary>
     /// <param name="diplomas">Motor de diplomas.</param>
-    /// <param name="eleccion">Los diplomas que el operador sigue, recordados entre sesiones.</param>
-    public VistaModeloDiplomas(IDiplomas diplomas, Ajustes.DiplomasElegidos eleccion)
-    {
+    /// <remarks>
+    /// <b>La eleccion la guarda el motor, no esta pantalla.</b> Aqui solo se marca y se
+    /// desmarca; quien recuerda que diplomas sigue el operador es el puerto, con
+    /// <c>MisDiplomasAsync</c> y <c>FijarMisDiplomasAsync</c>. Asi cualquier otra cosa que
+    /// quiera saberlo —un aviso al teclear un indicativo— pregunta al motor y no a la ventana.
+    /// </remarks>
+    public VistaModeloDiplomas(IDiplomas diplomas) =>
         _diplomas = diplomas ?? throw new ArgumentNullException(nameof(diplomas));
-        _eleccion = eleccion ?? throw new ArgumentNullException(nameof(eleccion));
-    }
 
     /// <summary>Todo el catalogo, para elegir.</summary>
     public ObservableCollection<FilaDeDiploma> Catalogo { get; } = [];
@@ -180,6 +181,9 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
         try
         {
             var diplomas = await _diplomas.CatalogoAsync().ConfigureAwait(true);
+            var mios = new HashSet<string>(
+                await _diplomas.MisDiplomasAsync().ConfigureAwait(true),
+                StringComparer.OrdinalIgnoreCase);
 
             foreach (var diploma in diplomas)
             {
@@ -188,7 +192,7 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
                 {
                     var fila = new FilaDeDiploma(diploma, variante)
                     {
-                        Elegido = _eleccion.Contiene($"{diploma.Codigo}/{variante.Variante}"),
+                        Elegido = mios.Contains($"{diploma.Codigo}/{variante.Variante}"),
                     };
 
                     fila.PropertyChanged += AlCambiarLaEleccion;
@@ -279,12 +283,23 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
         await TraerLaPaginaAsync().ConfigureAwait(true);
     }
 
-    /// <summary>Guarda la eleccion. Lo llama la ventana al cerrarse.</summary>
-    /// <param name="carpeta">Carpeta de datos del programa.</param>
-    public void GuardarLaEleccion(string carpeta)
+    /// <summary>Le dice al motor que diplomas sigue el operador.</summary>
+    /// <remarks>
+    /// Se llama en cuanto se marca o se desmarca uno, no al cerrar la ventana: si la
+    /// aplicacion se cierra de malas maneras, la eleccion no se pierde.
+    /// </remarks>
+    private async Task GuardarLaEleccionAsync()
     {
-        _eleccion.Poner(Catalogo.Where(f => f.Elegido).Select(f => f.Clave));
-        _eleccion.Escribir(carpeta);
+        try
+        {
+            await _diplomas
+                .FijarMisDiplomasAsync([.. Catalogo.Where(f => f.Elegido).Select(f => f.Clave)])
+                .ConfigureAwait(true);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "No se ha podido guardar la selección de diplomas.");
+        }
     }
 
     private async Task TraerLaPaginaAsync()
@@ -326,6 +341,7 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
 
         try
         {
+            await GuardarLaEleccionAsync().ConfigureAwait(true);
             await RefrescarAsync().ConfigureAwait(true);
         }
         catch (Exception ex)

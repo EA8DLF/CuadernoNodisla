@@ -42,6 +42,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         VistaModeloMapa mapa,
         VistaModeloSolar solar,
         VistaModeloRetrato retrato,
+        VistaModeloBandmap bandmap,
         VistaModeloDiplomas diplomas,
         VistaModeloAjustes configuracion,
         IRepositorioEstacion estaciones,
@@ -60,6 +61,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         ArgumentNullException.ThrowIfNull(mapa);
         ArgumentNullException.ThrowIfNull(solar);
         ArgumentNullException.ThrowIfNull(retrato);
+        ArgumentNullException.ThrowIfNull(bandmap);
         ArgumentNullException.ThrowIfNull(diplomas);
         ArgumentNullException.ThrowIfNull(configuracion);
         ArgumentNullException.ThrowIfNull(estadoDeLosPaneles);
@@ -72,6 +74,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         Mapa = mapa;
         Solar = solar;
         Retrato = retrato;
+        Bandmap = bandmap;
         Diplomas = diplomas;
         Configuracion = configuracion;
         _estaciones = estaciones;
@@ -95,7 +98,15 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         Cuaderno.SolicitaEditar += (_, qso) => Entrada.CargarParaEditar(qso);
 
         // El dial manda sobre el formulario mientras el equipo este conectado.
-        Equipo.DialCambiado += (_, dial) => Entrada.SeguirAlDial(dial.Frecuencia, dial.Modo);
+        Equipo.DialCambiado += (_, dial) =>
+        {
+            Entrada.SeguirAlDial(dial.Frecuencia, dial.Modo);
+            Bandmap.PonerElDial(dial.Frecuencia, dial.Modo.NombreUsual);
+        };
+
+        // Tocar un anuncio del bandmap hace lo mismo que tocarlo en la lista: llevar el equipo
+        // a esa frecuencia y poner el indicativo en el formulario.
+        Bandmap.SpotElegido += async (_, fila) => await IrAlSpotAsync(fila).ConfigureAwait(true);
         Equipo.PropertyChanged += (_, args) =>
         {
             if (args.PropertyName == nameof(VistaModeloEquipo.Conectado))
@@ -120,6 +131,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
             // Los dos VFO ensenan quien esta anunciado en su propia frecuencia: es el dato
             // que decide si merece la pena llamar.
             Equipo.PonerSpots(Cluster.Spots);
+            Bandmap.PonerSpots(Cluster.Spots);
         };
         Digital.CuadernoCambiado += async (_, _) => await RefrescarTodoAsync().ConfigureAwait(true);
         Mapa.MarcaElegida += (_, marca) => Entrada.Indicativo = marca.Etiqueta;
@@ -169,6 +181,15 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// que faltaba era ensenarlo.
     /// </remarks>
     public VistaModeloRetrato Retrato { get; }
+
+    /// <summary>
+    /// El bandmap: los mismos anuncios del cluster, pero por frecuencia.
+    /// </summary>
+    /// <remarks>
+    /// Come de la misma lista que el panel de cluster y del mismo dial que el frontal: no hay
+    /// una segunda fuente que se pueda desincronizar.
+    /// </remarks>
+    public VistaModeloBandmap Bandmap { get; }
 
     /// <summary>La pantalla de diplomas.</summary>
     public VistaModeloDiplomas Diplomas { get; }
@@ -370,6 +391,12 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     [ObservableProperty]
     private int _indiceDeLaPestana;
 
+    /// <summary>
+    /// Que se mira a la derecha del contacto nuevo: cero la lista del cluster, uno el bandmap.
+    /// </summary>
+    [ObservableProperty]
+    private int _indiceDeLaListaDeSpots;
+
     /// <summary>Texto del boton que pliega y despliega la zona de entrada.</summary>
     public string TextoDelPliegue => EntradaPlegada ? "Mostrar entrada (F6)" : "Ocultar entrada (F6)";
 
@@ -470,10 +497,10 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// <param name="carpeta">Carpeta de datos del programa.</param>
     public void GuardarEstadoDeLosPaneles(string carpeta)
     {
-        Diplomas.GuardarLaEleccion(carpeta);
         _estadoDeLosPaneles.TemaOscuro = TemaOscuro;
         _estadoDeLosPaneles.EscalaDeLetra = EscalaDeLetra;
         _estadoDeLosPaneles.Pestana = IndiceDeLaPestana;
+        _estadoDeLosPaneles.ListaDeSpots = IndiceDeLaListaDeSpots;
         _estadoDeLosPaneles.EquipoDesplegado = FrontalDesplegado;
         _estadoDeLosPaneles.PanelVisible = PanelDeOperacionPedido;
         _estadoDeLosPaneles.PanelElegido = PanelElegido;
@@ -526,6 +553,15 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
             ? _estadoDeLosPaneles.EscalaDeLetra
             : 100;
         IndiceDeLaPestana = Math.Clamp(_estadoDeLosPaneles.Pestana, 0, Pestanas.Count - 1);
+
+        IndiceDeLaListaDeSpots = Math.Clamp(_estadoDeLosPaneles.ListaDeSpots, 0, 1);
+
+        if (Environment.GetEnvironmentVariable("CUADERNO_LISTA_DE_SPOTS") is { Length: > 0 } lista
+            && int.TryParse(lista, System.Globalization.NumberStyles.Integer,
+                CultureInfo.InvariantCulture, out var cual))
+        {
+            IndiceDeLaListaDeSpots = Math.Clamp(cual, 0, 1);
+        }
 
         // Con que pestana abre, si se ha pedido. Va DESPUES de recuperar lo guardado, porque
         // si no lo guardado lo pisa. Sirve para capturar cada pantalla sin tener que darle

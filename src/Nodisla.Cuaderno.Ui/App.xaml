@@ -6,6 +6,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <!-- El primer diccionario es el tema; se sustituye entero al cambiar de tema. -->
                 <ResourceDictionary Source="Recursos/Tema.Oscuro.xaml" />
+                <ResourceDictionary Source="Recursos/Iconos.xaml" />
                 <ResourceDictionary Source="Recursos/Estilos.xaml" />
                 <ResourceDictionary Source="Recursos/Estilos.Operacion.xaml" />
             </ResourceDictionary.MergedDictionaries>

@@ -162,7 +162,11 @@ public static class MensajeDe77Bits
 
     private static string NormalizarTexto(string texto)
     {
-        var partes = texto.Trim().ToUpperInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        // Los corchetes angulares son como se ensena un indicativo que viaja resumido; al
+        // empaquetar sobran, porque lo que se manda es el resumen y no el texto.
+        var limpio = texto.Replace("<", string.Empty, StringComparison.Ordinal)
+                          .Replace(">", string.Empty, StringComparison.Ordinal);
+        var partes = limpio.Trim().ToUpperInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
         return string.Join(' ', partes);
     }
 
@@ -379,6 +383,22 @@ public static class MensajeDe77Bits
         return false;
     }
 
+    /// <summary>
+    /// Empaqueta un mensaje en el que uno de los dos indicativos no cabe en el formato corriente.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Solo uno de los dos puede ser raro: el otro tiene que ser un indicativo corriente —o una
+    /// llamada general— porque viaja resumido en doce bits y hace falta que el receptor lo pueda
+    /// resolver.
+    /// </para>
+    /// <para>
+    /// La comprobacion es deliberadamente estricta. Si no lo fuera, un texto cualquiera de dos
+    /// palabras se colaria por aqui y se emitiria como si fueran dos indicativos: el receptor
+    /// leeria «HOLA» como una estacion. Antes que eso, que caiga al texto libre, que dice lo que
+    /// dice.
+    /// </para>
+    /// </remarks>
     private static bool TryEmpaquetarNoEstandar(string texto, out byte[] bits)
     {
         bits = [];
@@ -386,27 +406,7 @@ public static class MensajeDe77Bits
         if (campos.Length is < 2 or > 3) return false;
 
         var esCq = campos[0] == "CQ";
-        var primero = campos[0];
-        var segundo = campos[1];
         var cola = campos.Length == 3 ? campos[2] : string.Empty;
-
-        // Solo uno de los dos puede ser raro: el otro viaja resumido en doce bits.
-        string? raro = null;
-        string? corriente = null;
-        var elRaroVaPrimero = false;
-
-        if (!esCq && EsIndicativoLargo(primero) && !EsIndicativoLargo(segundo))
-        {
-            raro = primero; corriente = segundo; elRaroVaPrimero = true;
-        }
-        else if (EsIndicativoLargo(segundo))
-        {
-            raro = segundo;
-            corriente = esCq ? string.Empty : primero;
-            elRaroVaPrimero = false;
-        }
-        if (raro is null || corriente is null) return false;
-
         var r2 = cola switch
         {
             "" => 0L,
@@ -416,6 +416,33 @@ public static class MensajeDe77Bits
             _ => -1L,
         };
         if (r2 < 0) return false;
+
+        string raro, corriente;
+        bool elRaroVaPrimero;
+
+        if (esCq)
+        {
+            if (!EsIndicativoNoEstandar(campos[1])) return false;
+            raro = campos[1];
+            corriente = string.Empty;
+            elRaroVaPrimero = false;
+        }
+        else if (EsIndicativoNoEstandar(campos[0]) && EsIndicativoCorriente(campos[1]))
+        {
+            raro = campos[0];
+            corriente = campos[1];
+            elRaroVaPrimero = true;
+        }
+        else if (EsIndicativoNoEstandar(campos[1]) && EsIndicativoCorriente(campos[0]))
+        {
+            raro = campos[1];
+            corriente = campos[0];
+            elRaroVaPrimero = false;
+        }
+        else
+        {
+            return false;
+        }
 
         if (!TryIndicativoLargoA58(raro, out var c58)) return false;
         var h12 = corriente.Length == 0 ? 0 : CatalogoDeIndicativos.Resumir(corriente, 12);
@@ -430,11 +457,33 @@ public static class MensajeDe77Bits
         return true;
     }
 
-    private static bool EsIndicativoLargo(string v) =>
-        v.Length is >= 3 and <= CaracteresDeIndicativoLargo
-        && v.All(c => AlfabetoDeIndicativoLargo.Contains(c, StringComparison.Ordinal))
-        && !TryPlantillaDeSeis(v, out _);
+    /// <summary>Dice si algo tiene pinta de indicativo pero no cabe en el formato corriente.</summary>
+    /// <remarks>
+    /// Se exige que lleve al menos una cifra y al menos una letra, que es lo que distingue a
+    /// <c>EA1ABC/P</c> o <c>VP2E/K1ABC</c> de una palabra suelta. Sin ese filtro, cualquier par
+    /// de palabras acabaria emitiendose como si fueran estaciones.
+    /// </remarks>
+    private static bool EsIndicativoNoEstandar(string v)
+    {
+        if (v.Length is < 3 or > CaracteresDeIndicativoLargo) return false;
+        if (!v.All(c => AlfabetoDeIndicativoLargo.Contains(c, StringComparison.Ordinal))) return false;
+        if (v[0] == '/' || v[^1] == '/') return false;
+        if (!v.Any(char.IsAsciiDigit)) return false;
+        if (!v.Any(char.IsAsciiLetter)) return false;
+        return !TryPlantillaDeSeis(v, out _);
+    }
 
+    /// <summary>Dice si algo es un indicativo del formato corriente.</summary>
+    private static bool EsIndicativoCorriente(string v) => TryIndicativoCorrienteA28(v, out _, out _);
+
+    /// <summary>
+    /// Numera un indicativo raro en base 38 para que quepa en 58 bits.
+    /// </summary>
+    /// <remarks>
+    /// Once caracteres de un alfabeto de 38 —letras, cifras, barra y hueco— dan un numero de
+    /// 57,7 bits, que cabe justo en los 58 que reserva el formato. Ese es el motivo de que un
+    /// indicativo de mas de once caracteres no se pueda emitir de ninguna manera.
+    /// </remarks>
     private static bool TryIndicativoLargoA58(string indicativo, out long c58)
     {
         c58 = 0;

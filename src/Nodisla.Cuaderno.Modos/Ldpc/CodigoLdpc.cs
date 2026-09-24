@@ -259,35 +259,95 @@ public sealed class CodigoLdpc
         var h = new bool[ecuaciones][];
         for (var e = 0; e < ecuaciones; e++) h[e] = new bool[longitud];
 
-        // Parte del mensaje: cada bit de informacion entra en tres ecuaciones distintas.
-        for (var v = 0; v < bitsDeMensaje; v++)
+        // Cuantas variables comparten ya cada pareja de ecuaciones. Mantener esto en cero o uno
+        // es lo que evita los ciclos cortos, que es de lo que depende que el codigo sea bueno.
+        var compartidas = new int[ecuaciones, ecuaciones];
+
+        bool CabeEn(List<int> grupo, int candidata)
         {
-            var puestas = 0;
-            while (puestas < 3)
-            {
-                var e = azar.Next(ecuaciones);
-                if (h[e][v]) continue;
-                h[e][v] = true;
-                puestas++;
-            }
+            foreach (var otra in grupo)
+                if (compartidas[Math.Min(otra, candidata), Math.Max(otra, candidata)] > 0) return false;
+            return true;
         }
 
-        // Parte de la paridad: diagonal mas dos unos por debajo, que la hace invertible seguro.
-        for (var e = 0; e < ecuaciones; e++)
+        void Anotar(List<int> grupo)
         {
-            h[e][bitsDeMensaje + e] = true;
-            var puestas = 0;
-            var intentos = 0;
-            while (puestas < 2 && e > 0 && intentos < 50)
+            for (var i = 0; i < grupo.Count; i++)
+                for (var j = i + 1; j < grupo.Count; j++)
+                    compartidas[Math.Min(grupo[i], grupo[j]), Math.Max(grupo[i], grupo[j])]++;
+        }
+
+        // Parte de la paridad. Se recorre por columnas y no por filas: una misma columna puede
+        // acabar en tres ecuaciones, y si se recorriera por filas se anotarian solo dos de las
+        // tres parejas que eso crea, dejando ciclos cortos sin detectar.
+        var libres = new List<int>(ecuaciones);
+        for (var j = 0; j < ecuaciones; j++)
+        {
+            // La diagonal hace la parte de paridad triangular con unos en la diagonal, y eso
+            // garantiza que el sistema siempre se puede despejar.
+            h[j][bitsDeMensaje + j] = true;
+            var grupo = new List<int> { j };
+            while (grupo.Count < 3)
             {
-                intentos++;
-                var otra = azar.Next(e);
-                if (h[e][bitsDeMensaje + otra]) continue;
-                h[e][bitsDeMensaje + otra] = true;
-                puestas++;
+                libres.Clear();
+                for (var e = j + 1; e < ecuaciones; e++)
+                    if (CabeEn(grupo, e)) libres.Add(e);
+                if (libres.Count == 0) break;
+                var elegida = libres[azar.Next(libres.Count)];
+                h[elegida][bitsDeMensaje + j] = true;
+                grupo.Add(elegida);
             }
+            Anotar(grupo);
+        }
+
+        // Parte del mensaje: cada bit de informacion entra en tres ecuaciones que no se hayan
+        // cruzado antes. En vez de probar al azar y descartar —que se atasca cuando quedan pocas
+        // combinaciones libres— se filtra primero cuales valen y se elige entre esas.
+        for (var v = 0; v < bitsDeMensaje; v++)
+        {
+            var grupo = new List<int>(3);
+            while (grupo.Count < 3)
+            {
+                libres.Clear();
+                for (var e = 0; e < ecuaciones; e++)
+                    if (!grupo.Contains(e) && CabeEn(grupo, e)) libres.Add(e);
+                if (libres.Count == 0) break;
+                grupo.Add(libres[azar.Next(libres.Count)]);
+            }
+            // Solo si de verdad no quedaba sitio se afloja la condicion: mas vale un codigo con
+            // algun ciclo corto que una construccion que no termine nunca.
+            while (grupo.Count < 3)
+            {
+                var e = azar.Next(ecuaciones);
+                if (!grupo.Contains(e)) grupo.Add(e);
+            }
+            foreach (var e in grupo) h[e][v] = true;
+            Anotar(grupo);
         }
 
         return DesdeMatrizDeParidad(h, bitsDeMensaje);
+    }
+
+    /// <summary>
+    /// Cuantas parejas de ecuaciones comparten mas de una variable.
+    /// </summary>
+    /// <remarks>
+    /// Dos ecuaciones que comparten dos variables forman un ciclo de longitud cuatro en el grafo
+    /// del codigo. La propagacion de creencias se atasca en esos ciclos: las dos ecuaciones se
+    /// repiten la una a la otra lo mismo que ya sabian y se convencen entre si de algo que no
+    /// han comprobado. Un codigo bueno no tiene ninguno; este numero permite comprobarlo.
+    /// </remarks>
+    public int ParejasDeEcuacionesQueSeSolapan()
+    {
+        var solapes = 0;
+        for (var a = 0; a < Ecuaciones; a++)
+            for (var b = a + 1; b < Ecuaciones; b++)
+            {
+                var comunes = 0;
+                foreach (var v in _variablesDeCadaEcuacion[a])
+                    if (Array.IndexOf(_variablesDeCadaEcuacion[b], v) >= 0) comunes++;
+                if (comunes > 1) solapes++;
+            }
+        return solapes;
     }
 }

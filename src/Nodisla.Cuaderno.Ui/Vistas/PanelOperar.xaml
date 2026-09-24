@@ -117,8 +117,33 @@
                 </Grid>
             </Border>
 
-            <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6">
-                <vistas:PanelDeCluster DataContext="{Binding Cluster}" />
+            <!--
+                El cluster y el bandmap: los mismos anuncios por lista y por frecuencia. La
+                lista dice quién ha salido; el bandmap dice dónde está llena la banda y dónde
+                hay hueco, que es lo que decide hacia dónde se gira el dial.
+            -->
+            <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0" Padding="4">
+                <TabControl SelectedIndex="{Binding IndiceDeLaListaDeSpots}">
+                    <TabItem>
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="{StaticResource IconoDigital}" Width="14" Height="14" Margin="0,0,6,0" />
+                                <TextBlock Text="Cluster de DX" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <vistas:PanelDeCluster DataContext="{Binding Cluster}" Margin="4" />
+                    </TabItem>
+
+                    <TabItem>
+                        <TabItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="{StaticResource IconoBandmap}" Width="14" Height="14" Margin="0,0,6,0" />
+                                <TextBlock Text="Bandmap" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </TabItem.Header>
+                        <vistas:PanelDeBandmap DataContext="{Binding Bandmap}" Margin="4" />
+                    </TabItem>
+                </TabControl>
             </Border>
         </Grid>
     </Grid>

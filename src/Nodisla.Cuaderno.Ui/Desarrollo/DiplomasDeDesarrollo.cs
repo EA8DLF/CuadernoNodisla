@@ -35,13 +35,23 @@ public sealed class DiplomasDeDesarrollo : IDiplomas
     /// </remarks>
     private readonly Dictionary<string, EntidadDxcc?> _entidades = new(StringComparer.OrdinalIgnoreCase);
 
+    /// <summary>Fichero donde se guardan los diplomas elegidos.</summary>
+    public const string FicheroDeLaEleccion = "diplomas-elegidos.json";
+
+    private readonly string _carpeta;
+    private List<string> _mios = [];
+
     /// <summary>Monta el motor de desarrollo.</summary>
     /// <param name="cuaderno">Contactos sobre los que se cuenta.</param>
     /// <param name="dxcc">Resolutor de entidades, para el universo de referencias del DXCC.</param>
-    public DiplomasDeDesarrollo(IReadOnlyList<Qso> cuaderno, IResolutorDxcc dxcc)
+    /// <param name="carpeta">Carpeta de datos donde se recuerda la eleccion.</param>
+    public DiplomasDeDesarrollo(IReadOnlyList<Qso> cuaderno, IResolutorDxcc dxcc, string carpeta)
     {
         _cuaderno = cuaderno ?? throw new ArgumentNullException(nameof(cuaderno));
         _dxcc = dxcc ?? throw new ArgumentNullException(nameof(dxcc));
+        _carpeta = carpeta ?? throw new ArgumentNullException(nameof(carpeta));
+
+        _mios = LeerLaEleccion();
     }
 
     private static readonly IReadOnlyList<Diploma> Catalogo =
@@ -129,12 +139,81 @@ public sealed class DiplomasDeDesarrollo : IDiplomas
     }
 
     /// <inheritdoc />
+    public Task<IReadOnlyList<string>> MisDiplomasAsync(CancellationToken ct = default) =>
+        Task.FromResult<IReadOnlyList<string>>([.. _mios]);
+
+    /// <inheritdoc />
     /// <remarks>
-    /// Devuelve lista vacia cuando no hay nada elegido, igual que el motor de verdad: calcular
-    /// los ochenta y siete diplomas «por si acaso» es trabajo tirado.
+    /// La eleccion la guarda el motor, no la pantalla: quien quiera saber que diplomas sigue
+    /// el operador le pregunta al puerto y no a la ventana.
     /// </remarks>
-    public Task<IReadOnlyList<ProgresoDeDiploma>> ProgresoDeMisDiplomasAsync(CancellationToken ct = default) =>
-        Task.FromResult<IReadOnlyList<ProgresoDeDiploma>>([]);
+    public Task FijarMisDiplomasAsync(IReadOnlyList<string> codigos, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(codigos);
+
+        _mios = [.. codigos];
+        EscribirLaEleccion();
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Con la eleccion vacia devuelve lista vacia, igual que el motor de verdad: calcular los
+    /// ochenta y siete diplomas «por si acaso» es trabajo tirado.
+    /// </remarks>
+    public async Task<IReadOnlyList<ProgresoDeDiploma>> ProgresoDeMisDiplomasAsync(CancellationToken ct = default)
+    {
+        var progresos = new List<ProgresoDeDiploma>(_mios.Count);
+
+        foreach (var clave in _mios)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            var trozos = clave.Split('/', 2);
+            if (trozos.Length != 2) continue;
+
+            progresos.Add(await ProgresoAsync(trozos[0], trozos[1], ct).ConfigureAwait(false));
+        }
+
+        return progresos;
+    }
+
+    private List<string> LeerLaEleccion()
+    {
+        try
+        {
+            var ruta = System.IO.Path.Combine(_carpeta, FicheroDeLaEleccion);
+            if (!System.IO.File.Exists(ruta)) return [];
+
+            return System.Text.Json.JsonSerializer.Deserialize<List<string>>(
+                System.IO.File.ReadAllText(ruta)) ?? [];
+        }
+        catch (Exception ex)
+        {
+            // Un fichero de ajustes roto no puede impedir abrir el cuaderno: se arranca sin
+            // ningun diploma elegido, que es el estado de partida.
+            Serilog.Log.Warning(ex, "No se ha podido leer la selección de diplomas.");
+            return [];
+        }
+    }
+
+    private void EscribirLaEleccion()
+    {
+        try
+        {
+            System.IO.Directory.CreateDirectory(_carpeta);
+            System.IO.File.WriteAllText(
+                System.IO.Path.Combine(_carpeta, FicheroDeLaEleccion),
+                System.Text.Json.JsonSerializer.Serialize(_mios, JsonFormato));
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Warning(ex, "No se ha podido guardar la selección de diplomas.");
+        }
+    }
+
+    private static readonly System.Text.Json.JsonSerializerOptions JsonFormato = new() { WriteIndented = true };
 
     /// <inheritdoc />
     public async Task<Pagina<EstadoDeReferencia>> DetalleAsync(

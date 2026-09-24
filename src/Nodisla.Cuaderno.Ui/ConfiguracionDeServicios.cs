@@ -80,7 +80,8 @@ public static class ConfiguracionDeServicios
         servicios.AddSingleton<IDiplomas>(
             proveedor => new DiplomasDeDesarrollo(
                 Demostracion.Value,
-                proveedor.GetRequiredService<IResolutorDxcc>()));
+                proveedor.GetRequiredService<IResolutorDxcc>(),
+                App.CarpetaDeDatos));
 
         // El modulo de propagacion SI es el de verdad: trae los indices del servicio
         // meteorologico espacial y guarda copia en disco. Sin red, arranca con la copia y lo
@@ -154,8 +155,7 @@ public static class ConfiguracionDeServicios
     private static void AnadirInterfaz(IServiceCollection servicios)
     {
         servicios.AddSingleton(_ => EstadoDeLosPaneles.Leer(App.CarpetaDeDatos));
-        servicios.AddSingleton(_ => DiplomasElegidos.Leer(App.CarpetaDeDatos));
-
+        servicios.AddSingleton<VistaModeloBandmap>();
         servicios.AddSingleton<VistaModeloDiplomas>();
 
         // LoTW se monta aqui solo para poder DECIR por que no se puede subir: si falta TQSL o

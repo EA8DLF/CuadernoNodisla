@@ -69,6 +69,15 @@ public sealed class EstadoDeLosPaneles
     /// </remarks>
     public bool TemaOscuro { get; set; } = true;
 
+    /// <summary>
+    /// Que se estaba mirando a la derecha del contacto nuevo: la lista del cluster o el bandmap.
+    /// </summary>
+    /// <remarks>
+    /// Se recuerda porque es una preferencia de manera de operar, no un detalle: quien opera
+    /// por frecuencia quiere el bandmap cada vez que abre, y quien opera por lista, la lista.
+    /// </remarks>
+    public int ListaDeSpots { get; set; }
+
     /// <summary>Escala de letra que tenia puesta, en tanto por ciento.</summary>
     public int EscalaDeLetra { get; set; } = 100;
 

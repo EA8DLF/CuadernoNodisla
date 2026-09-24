@@ -226,6 +226,122 @@ public sealed class MotorDeDiplomas(
     }
 
     /// <inheritdoc/>
+    public async Task<IReadOnlyList<string>> MisDiplomasAsync(CancellationToken ct = default)
+    {
+        await _puerta.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            return MisDiplomas();
+        }
+        finally
+        {
+            _puerta.Release();
+        }
+    }
+
+    /// <inheritdoc/>
+    /// <exception cref="ArgumentException">
+    /// Alguna de las claves no esta en el catalogo. Se comprueban todas antes de guardar nada:
+    /// una seleccion a medias dejaria al operador siguiendo un diploma que no existe y viendo
+    /// un cero que parece un dato.
+    /// </exception>
+    public async Task FijarMisDiplomasAsync(
+        IReadOnlyList<string> codigos, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(codigos);
+
+        await _puerta.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            var catalogo = await AsegurarCatalogoSinPuertaAsync(ct).ConfigureAwait(false);
+            var resueltas = new List<string>(codigos.Count);
+
+            foreach (var codigo in codigos)
+            {
+                var clave = Resolver(catalogo, codigo);
+                if (!resueltas.Contains(clave, StringComparer.OrdinalIgnoreCase)) resueltas.Add(clave);
+            }
+
+            SeleccionDeDiplomas.Escribir(
+                opciones.RutaDeMisDiplomasEfectiva(fabrica.RutaDelCuaderno), resueltas);
+
+            _misDiplomas = resueltas;
+
+            // Cambiar de diplomas cambia lo que hay que calcular y lo que dice el aviso al
+            // teclear, asi que lo cacheado ya no vale.
+            Limpiar();
+            _registro.LogInformation("El operador sigue ahora {Cuantos} diplomas.", resueltas.Count);
+        }
+        finally
+        {
+            _puerta.Release();
+        }
+    }
+
+    /// <summary>
+    /// Completa una clave del operador. Admite <c>CODIGO</c> a secas, y entonces se queda con la
+    /// variante menos restrictiva del diploma, que es la que cuenta en cualquier banda y modo.
+    /// </summary>
+    private static string Resolver(CatalogoDeDiplomas catalogo, string codigo)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(codigo);
+        var (diploma, variante) = Partir(codigo.Trim());
+
+        if (!catalogo.Diplomas.ContainsKey(diploma) ||
+            !catalogo.Variantes.TryGetValue(diploma, out var variantes))
+        {
+            throw new ArgumentException(
+                $"El diploma «{diploma}» no está en el catálogo.", nameof(codigo));
+        }
+
+        if (variante.Length == 0)
+        {
+            var elegida = variantes
+                .OrderBy(Restricciones)
+                .ThenBy(v => PrioridadDeNombre(diploma, v.Variante))
+                .ThenBy(v => v.Variante, StringComparer.OrdinalIgnoreCase)
+                .First();
+            return Clave(diploma, elegida.Variante);
+        }
+
+        var encontrada = variantes.FirstOrDefault(
+            v => v.Variante.Equals(variante, StringComparison.OrdinalIgnoreCase));
+        if (encontrada is null)
+        {
+            throw new ArgumentException(
+                $"El diploma «{diploma}» no tiene ninguna clase llamada «{variante}».", nameof(codigo));
+        }
+
+        return Clave(diploma, encontrada.Variante);
+    }
+
+    /// <summary>
+    /// Desempata entre variantes igual de abiertas.
+    /// </summary>
+    /// <remarks>
+    /// Hace falta porque el catalogo del original deja sin rellenar las bandas de varias clases
+    /// que si las tienen: <c>DXCC/5BANDS_12M</c> parece tan abierta como <c>DXCC/MIXED</c> y no
+    /// lo es. Se usa el vocabulario del propio catalogo, que llama <c>MIXED</c> a la clase sin
+    /// restriccion y da a la principal el nombre del diploma, en vez de inventar una regla.
+    /// </remarks>
+    private static int PrioridadDeNombre(string diploma, string variante)
+    {
+        if (variante.Equals(diploma, StringComparison.OrdinalIgnoreCase)) return 0;
+
+        foreach (var palabra in new[] { "MIXED", "MIXTO", "GENERAL" })
+        {
+            if (variante.Contains(palabra, StringComparison.OrdinalIgnoreCase)) return 1;
+        }
+        return 2;
+    }
+
+    /// <summary>Cuanto restringe una variante; la de menos es la mixta.</summary>
+    private static int Restricciones(VarianteDelCatalogo v) =>
+        v.Bandas.Count + v.Modos.Count + v.Continentes.Count +
+        (v.Clase == ClaseDeModo.Cualquiera ? 0 : 1) +
+        (v.Anual ? 1 : 0) + (v.ExigeSatelite ? 1 : 0) + (v.ExcluyeSatelite ? 1 : 0);
+
+    /// <inheritdoc/>
     public async Task<IReadOnlyList<ProgresoDeDiploma>> ProgresoDeMisDiplomasAsync(
         CancellationToken ct = default)
     {
@@ -408,7 +524,11 @@ public sealed class MotorDeDiplomas(
         var reglas = await BuscarReglasSinPuertaAsync(codigo, variante, ct).ConfigureAwait(false);
         if (reglas is null)
         {
-            return new ProgresoDeDiploma(codigo, variante, 0, 0, null, DateTimeOffset.UtcNow);
+            // Puede pasar si el catalogo ha encogido desde que el operador eligio.
+            return new ProgresoDeDiploma(codigo, variante, 0, 0, null, DateTimeOffset.UtcNow)
+            {
+                PorQueNoEsFirme = "El diploma o la clase ya no están en el catálogo.",
+            };
         }
 
         var conexion = await AsegurarConexionAsync(ct).ConfigureAwait(false);
@@ -553,14 +673,37 @@ public sealed class MotorDeDiplomas(
     }
 
     /// <summary>
-    /// Los diplomas que el operador ha marcado como propios.
+    /// Los diplomas que el operador sigue.
     /// </summary>
     /// <remarks>
+    /// <para>
+    /// Manda lo guardado en disco. La lista de <see cref="OpcionesDeDiplomas.MisDiplomas"/> es
+    /// solo el valor de partida de un cuaderno que todavia no tiene seleccion: en cuanto el
+    /// operador elige una vez, deja de mirarse.
+    /// </para>
+    /// <para>
     /// Si no ha marcado ninguno la respuesta es <b>ninguno</b>, no «todos por si acaso».
     /// Calcular los 87 del catalogo el primer dia es trabajo tirado y, peor, ensena cifras que
     /// el operador no ha pedido y que puede tomar por suyas. Que la interfaz le invite a elegir.
+    /// </para>
     /// </remarks>
-    private IReadOnlyList<string> MisDiplomas() => _misDiplomas ??= [.. opciones.MisDiplomas];
+    private IReadOnlyList<string> MisDiplomas()
+    {
+        if (_misDiplomas is not null) return _misDiplomas;
+
+        var ruta = opciones.RutaDeMisDiplomasEfectiva(fabrica.RutaDelCuaderno);
+        try
+        {
+            _misDiplomas = SeleccionDeDiplomas.Leer(ruta)?.ToList();
+        }
+        catch (IOException ex)
+        {
+            _registro.LogWarning(
+                ex, "No se ha podido leer la selección de diplomas de {Ruta}.", ruta);
+        }
+
+        return _misDiplomas ??= [.. opciones.MisDiplomas];
+    }
 
     private async Task<ReglasDeVariante?> BuscarReglasAsync(
         string codigo, string variante, CancellationToken ct)

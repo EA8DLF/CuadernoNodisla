@@ -86,10 +86,28 @@ public class CodigoLdpcPruebas
             if (corrector.TryDecodificar(confianzas, recuperada) && recuperada.SequenceEqual(palabra)) arreglados++;
         }
 
-        // Con hasta unos diez bits mal tiene que salir siempre; a partir de ahi empieza a costar,
-        // que es exactamente la forma de la curva de un codigo de este tamano.
-        if (errores <= 10) arreglados.Should().Be(Intentos, $"con {errores} bits mal el corrector no debería fallar");
-        else arreglados.Should().BeGreaterThan(0, "aun con muchos bits mal se recupera algo");
+        // Los topes salen de medir, no de desear. Este es el caso peor posible: los bits malos
+        // no llegan dudosos sino con toda la confianza puesta del reves, que es lo contrario de
+        // lo que hace el ruido de verdad —ahi un bit estropeado suele llegar dudoso y se arregla
+        // mucho mejor—. Un codigo de 174 bits con 91 de mensaje tiene una distancia minima de
+        // unas dos decenas de bits, asi que diez errores tan tercos ya rozan su limite teorico.
+        var minimo = errores switch
+        {
+            <= 4 => Intentos,          // hasta cuatro, siempre
+            <= 10 => Intentos * 6 / 10, // a diez, la mayoria
+            _ => 1,                     // mas alla, lo que se pueda
+        };
+        arreglados.Should().BeGreaterThanOrEqualTo(minimo,
+            $"con {errores} bits invertidos con plena confianza el corrector recupera al menos {minimo} de {Intentos}");
+    }
+
+    [Fact]
+    public void ElCodigoDePruebasNoTieneCiclosCortos()
+    {
+        // Dos ecuaciones que comparten dos variables forman un ciclo de cuatro, y la propagacion
+        // de creencias se atasca en ellos. Un codigo con muchos rendiría por debajo de lo que
+        // rendiría el de FT8, y las cifras del banco engañarían por lo bajo.
+        Codigo.ParejasDeEcuacionesQueSeSolapan().Should().Be(0);
     }
 
     [Fact]

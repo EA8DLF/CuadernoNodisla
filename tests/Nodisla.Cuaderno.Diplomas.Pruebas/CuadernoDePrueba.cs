@@ -90,6 +90,7 @@ public sealed class CuadernoDePrueba : IAsyncDisposable
 
     private readonly string _carpeta;
     private readonly SqliteConnection _escritura;
+    private readonly List<MotorDeDiplomas> _motores = [];
     private SqliteTransaction? _lote;
     private MotorDeDiplomas? _motor;
 
@@ -132,8 +133,17 @@ public sealed class CuadernoDePrueba : IAsyncDisposable
     /// <returns>El motor, ya creado.</returns>
     public MotorDeDiplomas Motor(Action<OpcionesDeDiplomas>? ajustar = null)
     {
-        if (_motor is not null) return _motor;
+        return _motor ??= NuevoMotor(ajustar);
+    }
 
+    /// <summary>
+    /// Crea un motor mas sobre el mismo cuaderno, como si se cerrara y se volviera a abrir el
+    /// programa. Sirve para comprobar que lo que se guarda en disco sobrevive.
+    /// </summary>
+    /// <param name="ajustar">Retoques de configuracion.</param>
+    /// <returns>El motor nuevo.</returns>
+    public MotorDeDiplomas NuevoMotor(Action<OpcionesDeDiplomas>? ajustar = null)
+    {
         Directory.CreateDirectory(CarpetaDelCatalogo);
         var opciones = new OpcionesDeDiplomas
         {
@@ -142,8 +152,9 @@ public sealed class CuadernoDePrueba : IAsyncDisposable
         foreach (var codigo in DiplomasDePrueba) opciones.DiplomasIncluidos.Add(codigo);
         ajustar?.Invoke(opciones);
 
-        _motor = new MotorDeDiplomas(opciones, Fabrica, ResolutorDxcc.Predeterminado);
-        return _motor;
+        var motor = new MotorDeDiplomas(opciones, Fabrica, ResolutorDxcc.Predeterminado);
+        _motores.Add(motor);
+        return motor;
     }
 
     /// <summary>Abre una conexion de lectura con el catalogo ya adjuntado.</summary>
@@ -321,7 +332,7 @@ public sealed class CuadernoDePrueba : IAsyncDisposable
     /// <returns>La tarea del cierre.</returns>
     public async ValueTask DisposeAsync()
     {
-        if (_motor is not null) await _motor.DisposeAsync().ConfigureAwait(false);
+        foreach (var motor in _motores) await motor.DisposeAsync().ConfigureAwait(false);
         await _escritura.DisposeAsync().ConfigureAwait(false);
         SqliteConnection.ClearAllPools();
 

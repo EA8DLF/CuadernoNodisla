@@ -72,13 +72,14 @@ public class ModuladorPruebas
         {
             var hz = i * hzPorCasilla;
             var potencia = (double)magnitudes[i] * magnitudes[i];
-            // El hueco del modo son sus ocho tonos mas un margen de un tono a cada lado.
-            if (hz >= Tono - p.EspaciadoDeTonosHz && hz <= Tono + p.AnchoDeBandaHz) dentro += potencia;
+            // El hueco que ocupa la senal son sus ocho tonos; se mide lo que queda a mas de
+            // cincuenta hercios de sus bordes, que es donde estarian los corresponsales vecinos.
+            if (hz >= Tono - 50 && hz <= Tono + p.AnchoDeBandaHz + 50) dentro += potencia;
             else fuera += potencia;
         }
 
-        (10 * Math.Log10(fuera / dentro)).Should().BeLessThan(-30,
-            "fuera del hueco del modo no puede quedar ni la milésima parte de la potencia");
+        (10 * Math.Log10(fuera / dentro)).Should().BeLessThan(-45,
+            "a más de cincuenta hercios del hueco del modo no puede quedar nada que moleste al vecino");
     }
 
     [Theory]
@@ -111,8 +112,12 @@ public class SincronizadorPruebas
         var codificador = new Codificador(Tablas);
         codificador.TryCodificar("CQ EA8DLF IL18", modo, out var tonos, out _).Should().BeTrue();
 
-        var ventana = GeneradorDeSenal.Ventana(p, tonos, tono, 0, 0, (int)p.FrecuenciaDeAnalisis, new Random(13));
-        var analisis = AnalisisDeVentana.Calcular(ventana, p);
+        // Se genera a 48000, que es lo que da la tarjeta, y se remuestrea como hace el modem:
+        // la frecuencia de analisis de FT4 no es entera y no se puede sintetizar directamente.
+        const int Frecuencia = 48000;
+        var ventana = GeneradorDeSenal.Ventana(p, tonos, tono, 0, 0, Frecuencia, new Random(13));
+        var analisis = AnalisisDeVentana.Calcular(
+            Remuestreador.Remuestrear(ventana, Frecuencia, p.FrecuenciaDeAnalisis), p);
         var candidatas = Sincronizador.Buscar(analisis, 50);
 
         candidatas.Should().NotBeEmpty();
@@ -130,7 +135,7 @@ public class SincronizadorPruebas
     {
         var p = ParametrosDelModo.Ft8;
         var ventana = new float[p.MuestrasDeLaVentana];
-        GeneradorDeSenal.AnadirRuido(ventana, 0.05, 0, (int)p.FrecuenciaDeAnalisis, new Random(77));
+        GeneradorDeSenal.AnadirRuido(ventana, 0.05, 0, 12800, new Random(77));
 
         var analisis = AnalisisDeVentana.Calcular(ventana, p);
         var candidatas = Sincronizador.Buscar(analisis, 200);
@@ -151,7 +156,7 @@ public class SincronizadorPruebas
         var tonos = new byte[p.SimbolosTotales];
         Array.Fill(tonos, (byte)TonoDePrueba);
 
-        var senal = Modulador.Sintetizar(p, tonos, Tono, (int)p.FrecuenciaDeAnalisis, 0.5);
+        var senal = Modulador.Sintetizar(p, tonos, Tono, 12800, 0.5);
         var ventana = new float[p.MuestrasDeLaVentana];
         senal.AsSpan(0, Math.Min(senal.Length, ventana.Length)).CopyTo(ventana);
 

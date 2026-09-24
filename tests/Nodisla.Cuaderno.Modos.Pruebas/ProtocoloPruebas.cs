@@ -54,6 +54,19 @@ public class Crc14Pruebas
 public class MensajePruebas
 {
     [Theory]
+    [InlineData("HOLA MUNDO")]
+    [InlineData("MUY BUENAS")]
+    public void UnTextoDeDosPalabrasNoSeConfundeConDosIndicativos(string texto)
+    {
+        // Sin el filtro de lo que puede ser un indicativo, «HOLA MUNDO» se emitiria como si
+        // fueran dos estaciones y el receptor leeria «MUNDO» como un indicativo.
+        MensajeDe77Bits.TryEmpaquetar(texto, out var bits, out var motivo).Should().BeTrue(motivo);
+        MensajeDe77Bits.TryDesempaquetar(bits, new CatalogoDeIndicativos(), out var mensaje).Should().BeTrue();
+        mensaje.Tipo.Should().Be(TipoDeMensaje.TextoLibre);
+        mensaje.Texto.Should().Be(texto);
+    }
+
+    [Theory]
     [InlineData("CQ EA8DLF IL18")]
     [InlineData("CQ DX EA8DLF IL18")]
     [InlineData("CQ TEST EA8DLF IL18")]
@@ -164,10 +177,11 @@ public class MensajePruebas
         MensajeDe77Bits.TryEmpaquetar($"EA1ABC EA8DLF {MensajeDe77Bits.InformeMinimo:+00;-00}", out _, out _).Should().BeTrue();
         MensajeDe77Bits.TryEmpaquetar($"EA1ABC EA8DLF {MensajeDe77Bits.InformeMaximo:+00;-00}", out _, out _).Should().BeTrue();
 
-        // Fuera de rango cae a texto libre, que es honesto: dice lo que dice y no un informe falso.
-        MensajeDe77Bits.TryEmpaquetar("EA1ABC EA8DLF -99", out var bits, out _).Should().BeTrue();
-        MensajeDe77Bits.TryDesempaquetar(bits, new CatalogoDeIndicativos(), out var mensaje).Should().BeTrue();
-        mensaje.Tipo.Should().NotBe(TipoDeMensaje.Normal);
+        // Un informe fuera de rango no cabe en el formato y tampoco en los trece caracteres del
+        // texto libre, asi que el modem se niega a emitir. Es lo correcto: emitir un «-99»
+        // recortado diria otro informe distinto y el corresponsal lo apuntaria mal.
+        MensajeDe77Bits.TryEmpaquetar("EA1ABC EA8DLF -99", out _, out var porQueNo).Should().BeFalse();
+        porQueNo.Should().NotBeEmpty();
     }
 }
 

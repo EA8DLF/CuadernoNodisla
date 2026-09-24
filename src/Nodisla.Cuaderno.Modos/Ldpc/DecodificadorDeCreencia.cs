@@ -97,15 +97,13 @@ public sealed class DecodificadorDeCreencia
         Array.Clear(_mensajeDeEcuacionABit);
         UltimasVueltas = 0;
 
-        // De salida, lo unico que sabe cada bit es lo que le dijo el demodulador.
-        for (var a = 0; a < _mensajeDeBitAEcuacion.Length; a++)
-            _mensajeDeBitAEcuacion[a] = Recortar(confianzas[_variableDeCadaArista[a]]);
+        // De salida, la opinion de cada bit es solo lo que dijo el demodulador.
+        for (var v = 0; v < _codigo.Longitud; v++) _opinionTotal[v] = Recortar(confianzas[v]);
 
         for (var vuelta = 1; vuelta <= vueltasMaximas; vuelta++)
         {
             UltimasVueltas = vuelta;
-            PasoDeLasEcuaciones();
-            PasoDeLosBits(confianzas);
+            UnaPasadaPorLasEcuaciones();
 
             for (var v = 0; v < _codigo.Longitud; v++)
                 _decision[v] = (byte)(_opinionTotal[v] < 0 ? 1 : 0);
@@ -125,23 +123,40 @@ public sealed class DecodificadorDeCreencia
     public ReadOnlySpan<float> OpinionFinal => _opinionTotal;
 
     /// <summary>
-    /// Cada ecuacion le dice a cada uno de sus bits lo que deduce de los demas.
+    /// Recorre las ecuaciones una a una, y cada una deja su conclusion puesta antes de que
+    /// trabaje la siguiente.
     /// </summary>
     /// <remarks>
-    /// La cuenta exacta seria multiplicar las tangentes hiperbolicas de las medias confianzas de
-    /// todos los demas bits. Para no repetir el producto una vez por bit se calcula el producto
-    /// entero y se divide por el del bit que toca, con la precaucion de tratar aparte el caso en
-    /// que alguno valga cero.
+    /// <para>
+    /// Hay dos maneras de organizar esto. La ingenua es que todas las ecuaciones opinen a la vez
+    /// sobre la situacion de partida y luego se sumen todas las opiniones. La que se usa aqui es
+    /// que cada ecuacion trabaje ya con lo que dedujeron las anteriores <i>en esta misma vuelta</i>.
+    /// </para>
+    /// <para>
+    /// La diferencia importa: con el barrido secuencial la informacion se propaga por el mensaje
+    /// entero en la mitad de vueltas, y en un mensaje tan corto como este —donde no hay tiempo
+    /// para muchas vueltas— eso se traduce en recuperar senales que de la otra forma se pierden.
+    /// </para>
+    /// <para>
+    /// La cuenta de cada ecuacion es el metodo del minimo: el signo es el producto de los signos
+    /// de los demas bits y la magnitud es la del mas dudoso de ellos, porque una cadena no aguanta
+    /// mas que su eslabon mas debil. Se multiplica por un factor menor que uno porque ese metodo
+    /// es optimista y sin corregirlo el decodificador se convence demasiado pronto.
+    /// </para>
     /// </remarks>
-    private void PasoDeLasEcuaciones()
+    private void UnaPasadaPorLasEcuaciones()
     {
+        // Factor de correccion del metodo del minimo.
+        const float Atenuacion = 0.75f;
+
         for (var e = 0; e < _codigo.Ecuaciones; e++)
         {
             var desde = _primeraAristaDeCadaEcuacion[e];
             var hasta = _primeraAristaDeCadaEcuacion[e + 1];
 
-            // Se lleva el signo aparte y la magnitud por el metodo del minimo, que es estable
-            // y no se va a infinito cuando una confianza es muy alta.
+            // Lo que cada bit le dice a esta ecuacion es su opinion menos lo que ella misma le
+            // aporto la vez anterior: si no, la ecuacion se oiria a si misma y se convenceria
+            // de lo que ya creia.
             var signo = 1;
             var menor = float.MaxValue;
             var siguienteMenor = float.MaxValue;
@@ -149,7 +164,8 @@ public sealed class DecodificadorDeCreencia
 
             for (var a = desde; a < hasta; a++)
             {
-                var m = _mensajeDeBitAEcuacion[a];
+                var m = Recortar(_opinionTotal[_variableDeCadaArista[a]] - _mensajeDeEcuacionABit[a]);
+                _mensajeDeBitAEcuacion[a] = m;
                 if (m < 0) signo = -signo;
                 var magnitud = MathF.Abs(m);
                 if (magnitud < menor)
@@ -164,34 +180,18 @@ public sealed class DecodificadorDeCreencia
                 }
             }
 
-            // Factor de correccion del metodo del minimo: sin el, la confianza sale exagerada y
-            // el decodificador se convence demasiado pronto de cosas que no son.
-            const float Atenuacion = 0.75f;
-
             for (var a = desde; a < hasta; a++)
             {
                 var m = _mensajeDeBitAEcuacion[a];
                 var signoSinEste = m < 0 ? -signo : signo;
                 var magnitud = a == aristaDelMenor ? siguienteMenor : menor;
                 if (magnitud > TopeDeConfianza) magnitud = TopeDeConfianza;
-                _mensajeDeEcuacionABit[a] = signoSinEste * magnitud * Atenuacion;
+                var nuevo = signoSinEste * magnitud * Atenuacion;
+
+                // La opinion del bit se actualiza aqui mismo, no al final de la vuelta.
+                _opinionTotal[_variableDeCadaArista[a]] += nuevo - _mensajeDeEcuacionABit[a];
+                _mensajeDeEcuacionABit[a] = nuevo;
             }
-        }
-    }
-
-    /// <summary>Cada bit suma lo que le llega de sus ecuaciones y reparte de vuelta.</summary>
-    private void PasoDeLosBits(ReadOnlySpan<float> confianzas)
-    {
-        for (var v = 0; v < _codigo.Longitud; v++) _opinionTotal[v] = confianzas[v];
-        for (var a = 0; a < _mensajeDeEcuacionABit.Length; a++)
-            _opinionTotal[_variableDeCadaArista[a]] += _mensajeDeEcuacionABit[a];
-
-        for (var a = 0; a < _mensajeDeEcuacionABit.Length; a++)
-        {
-            // A cada ecuacion se le devuelve la opinion del bit descontando lo que ella misma
-            // aporto: si no, la ecuacion se oiria a si misma y se autoconvenceria.
-            var v = _variableDeCadaArista[a];
-            _mensajeDeBitAEcuacion[a] = Recortar(_opinionTotal[v] - _mensajeDeEcuacionABit[a]);
         }
     }
 

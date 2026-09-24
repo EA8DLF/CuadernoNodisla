@@ -29,6 +29,13 @@ public class BancoDeMedidaPruebas(ITestOutputHelper salida)
 {
     private static readonly TablasDelProtocolo Tablas = TablasDelProtocolo.DePruebas();
 
+    /// <summary>Como se compilo lo que se esta midiendo, que cambia los tiempos por cinco.</summary>
+#if DEBUG
+    private const string Configuracion = "de depuración (Debug)";
+#else
+    private const string Configuracion = "de publicación (Release)";
+#endif
+
     [Fact]
     public void ElBancoDeMedidaSePasaYSeApunta()
     {
@@ -75,6 +82,12 @@ public class BancoDeMedidaPruebas(ITestOutputHelper salida)
         sb.AppendLine("La columna que manda es **Falsos**: tiene que ser cero en todas las franjas. Un mensaje");
         sb.AppendLine("falso mete en el cuaderno un contacto que nunca existió y contamina los diplomas para");
         sb.AppendLine("siempre; perder decodificaciones no deja rastro.");
+        sb.AppendLine();
+        sb.AppendLine("La columna **ms/ventana** solo vale si se dice cómo se compiló, porque entre una");
+        sb.AppendLine("compilación de depuración y una de publicación hay un factor de cinco. Estas cifras son");
+        sb.AppendLine(CultureInfo.GetCultureInfo("es-ES"),
+            $"de una compilación **{Configuracion}**. Para hacerse una idea: FT8 da 15.000 ms por ventana y");
+        sb.AppendLine("FT4 da 7.500, así que aquí se está usando en torno al 3 % del hueco disponible.");
         sb.AppendLine();
         sb.Append(BancoDeMedida.Tabla("FT8", ft8));
         sb.Append(BancoDeMedida.Tabla("FT4", ft4));
