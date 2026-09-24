@@ -229,12 +229,20 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
         Aviso = $"Calculando {elegidos.Count} diploma(s)…";
         try
         {
+            // De una vez, no uno a uno. El motor ya sabe cuales sigue el operador —la eleccion
+            // la guarda el, no esta pantalla—, asi que pedirselos por separado seria un ida y
+            // vuelta por fila sobre la misma cache.
+            var progresos = await _diplomas.ProgresoDeMisDiplomasAsync().ConfigureAwait(true);
+
+            var porClave = progresos.ToDictionary(
+                p => $"{p.Codigo}/{p.Variante}",
+                StringComparer.OrdinalIgnoreCase);
+
             foreach (var fila in elegidos)
             {
-                fila.Progreso = await _diplomas
-                    .ProgresoAsync(fila.Diploma.Codigo, fila.Variante.Variante)
-                    .ConfigureAwait(true);
-
+                // Si el motor no devuelve uno, se deja sin cifra en vez de inventarla: una
+                // casilla vacia se entiende, un cero se confunde con un dato.
+                fila.Progreso = porClave.GetValueOrDefault(fila.Clave);
                 Mios.Add(fila);
             }
 
@@ -288,17 +296,29 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
     /// Se llama en cuanto se marca o se desmarca uno, no al cerrar la ventana: si la
     /// aplicacion se cierra de malas maneras, la eleccion no se pierde.
     /// </remarks>
-    private async Task GuardarLaEleccionAsync()
+    private async Task<bool> GuardarLaEleccionAsync()
     {
+        var claves = Catalogo.Where(f => f.Elegido).Select(f => f.Clave).ToList();
+
         try
         {
-            await _diplomas
-                .FijarMisDiplomasAsync([.. Catalogo.Where(f => f.Elegido).Select(f => f.Clave)])
-                .ConfigureAwait(true);
+            // La lista vacia se guarda igual: «ninguno» es una eleccion del operador, y no es
+            // lo mismo que «todavia no ha elegido».
+            await _diplomas.FijarMisDiplomasAsync(claves).ConfigureAwait(true);
+            return true;
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "No se ha podido guardar la selección de diplomas.");
+            // El motor rechaza la seleccion ENTERA si alguna clave no esta en su catalogo, y
+            // hace bien: media seleccion dejaria a Jose siguiendo un diploma que no existe y
+            // mirando un cero que parece un dato. Lo que no puede es quedarse callado: se dice
+            // que no se ha guardado NADA y se recuerda lo que decia el motor.
+            Log.Error(ex, "No se ha podido guardar la selección de diplomas: {Claves}", string.Join(", ", claves));
+
+            Aviso = "No se ha podido guardar la selección, y no se ha guardado ninguna: "
+                + ex.Message;
+
+            return false;
         }
     }
 
@@ -341,7 +361,8 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
 
         try
         {
-            await GuardarLaEleccionAsync().ConfigureAwait(true);
+            if (!await GuardarLaEleccionAsync().ConfigureAwait(true)) return;
+
             await RefrescarAsync().ConfigureAwait(true);
         }
         catch (Exception ex)
