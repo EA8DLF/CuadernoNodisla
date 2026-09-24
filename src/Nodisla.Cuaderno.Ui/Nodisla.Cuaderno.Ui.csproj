@@ -20,21 +20,8 @@
     <ProjectReference Include="..\Nodisla.Cuaderno.Servicios\Nodisla.Cuaderno.Servicios.csproj" />
     <ProjectReference Include="..\Nodisla.Cuaderno.Propagacion\Nodisla.Cuaderno.Propagacion.csproj" />
     <ProjectReference Include="..\Nodisla.Cuaderno.Diplomas\Nodisla.Cuaderno.Diplomas.csproj" />
-    <!-- ATENCION, PARA LOS ESPECIALISTAS DE AUDIO Y DE MODOS:
-         Estas dos referencias las anadisteis vosotros y las he APARCADO, no quitado, porque
-         los dos modulos estan a medias y su fallo bloqueaba la compilacion entera de la
-         ventana:
-           · Nodisla.Cuaderno.Modos: Ldpc/TablasDelProtocolo.cs usa Microsoft.Extensions.Logging
-             y el csproj de Modos no declara Microsoft.Extensions.Logging.Abstractions.
-           · Nodisla.Cuaderno.Audio: Captura/EntradaDeAudioWasapi.cs, linea 171, tiene un
-             mensaje de registro con mas huecos que argumentos (CA2017), y con avisos como
-             errores eso no compila.
-         La interfaz todavia no usa ningun tipo de ninguno de los dos, asi que aparcarlas no
-         rompe nada de lo que hay. En cuanto compilen, se descomentan estas dos lineas.
-         (Ademas, al enlazarlas NAudio llega aqui de rebote: ver el VersionOverride de abajo.)
     <ProjectReference Include="..\Nodisla.Cuaderno.Audio\Nodisla.Cuaderno.Audio.csproj" />
     <ProjectReference Include="..\Nodisla.Cuaderno.Modos\Nodisla.Cuaderno.Modos.csproj" />
-    -->
   </ItemGroup>
 
   <ItemGroup>
@@ -45,12 +32,7 @@
     <PackageReference Include="Serilog.Extensions.Hosting" />
     <PackageReference Include="Serilog.Sinks.Console" />
     <PackageReference Include="Serilog.Sinks.File" />
-    <!-- ATENCION, no es de esta capa: al enlazar Audio y Modos, NAudio llega aqui de rebote y
-         el catalogo central lo fija en la 3.1.0, que solo existe para net9.0. Toda la solucion
-         es net8.0, asi que se fuerza la 2.2.1 igual que ya hace el proyecto Audio. El arreglo
-         de verdad es en Directory.Packages.props, que no es mio: o se baja alli a 2.2.1, o se
-         sube la solucion entera a net9.0. -->
-    <PackageReference Include="NAudio" VersionOverride="2.2.1" />
+    
   </ItemGroup>
 
 </Project>

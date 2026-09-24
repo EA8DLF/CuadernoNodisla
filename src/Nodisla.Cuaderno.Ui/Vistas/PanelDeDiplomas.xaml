@@ -49,9 +49,17 @@
                            TextWrapping="Wrap"
                            Margin="0,0,0,6" />
 
+                <!--
+                    SIN VIRTUALIZAR, a propósito. Con la lista virtualizada, WPF recicla los
+                    contenedores al desplazarse y una casilla reciclada llega a escribir su
+                    valor viejo en el diploma nuevo al que se la enlaza: la selección se
+                    contaminaba sola y aparecían marcados diplomas que nadie había tocado. En
+                    una lista de unas decenas de filas, virtualizar no ahorra nada y cuesta eso.
+                -->
                 <ListBox ItemsSource="{Binding Catalogo}"
                          BorderThickness="0"
                          Background="Transparent"
+                         VirtualizingPanel.IsVirtualizing="False"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
@@ -61,7 +69,7 @@
                     </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <CheckBox IsChecked="{Binding Elegido}"
+                            <CheckBox IsChecked="{Binding Elegido, Mode=TwoWay}"
                                       ToolTip="{Binding NombreLargo}"
                                       AutomationProperties.Name="{Binding NombreLargo}">
                                 <StackPanel>

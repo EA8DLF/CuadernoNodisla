@@ -162,6 +162,25 @@ public interface IDiplomas
     /// <summary>Progreso de una variante.</summary>
     Task<ProgresoDeDiploma> ProgresoAsync(string codigo, string variante, CancellationToken ct = default);
 
+    /// <summary>Diplomas que el operador ha marcado como suyos.</summary>
+    Task<IReadOnlyList<string>> MisDiplomasAsync(CancellationToken ct = default);
+
+    /// <summary>
+    /// Fija que diplomas sigue el operador.
+    /// </summary>
+    /// <param name="codigos">Claves de los diplomas elegidos. Lista vacia = ninguno.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <remarks>
+    /// La eleccion es del operador y la guarda el motor, no la pantalla. Si viviera en la
+    /// interfaz, cualquier otra cosa que quisiera saber que diplomas sigue —un aviso al teclear
+    /// un indicativo, un resumen al arrancar— tendria que preguntarselo a la ventana, que es
+    /// justo al reves de como deben ir las dependencias.
+    ///
+    /// Con la lista vacia, el motor <b>no calcula nada</b>: computar los 87 diplomas por si
+    /// acaso es trabajo tirado y ademas ensena cifras que el operador no ha pedido.
+    /// </remarks>
+    Task FijarMisDiplomasAsync(IReadOnlyList<string> codigos, CancellationToken ct = default);
+
     /// <summary>Progreso de todos los diplomas que el operador tenga marcados como propios.</summary>
     Task<IReadOnlyList<ProgresoDeDiploma>> ProgresoDeMisDiplomasAsync(CancellationToken ct = default);
 
