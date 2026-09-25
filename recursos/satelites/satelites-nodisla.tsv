@@ -1,0 +1,54 @@
+abreviatura	nombre	norad	estado	transpondedor	clase	modo	subida_ini	subida_fin	bajada_ini	bajada_fin	invertido	subtono	notas
+AO-7	AMSAT-OSCAR 7	7530	intermitente	Modo A	LINEAL	A	145.850	145.950	29.400	29.500	no		Solo funciona con el satélite iluminado; no tiene baterías desde 1981.
+AO-7	AMSAT-OSCAR 7	7530	intermitente	Modo B	LINEAL	UV	432.125	432.175	145.925	145.975	si		Alterna con el modo A cada 24 h.
+AO-7	AMSAT-OSCAR 7	7530	intermitente	Baliza 10 m	BALIZA	A			29.502	29.502	no
+AO-7	AMSAT-OSCAR 7	7530	intermitente	Baliza 2 m	BALIZA	UV			145.972	145.972	no
+AO-27	AMRAD-OSCAR 27	22825	intermitente	Repetidor FM	FM	VU	145.850	145.850	436.795	436.795	no		Se enciende por temporizador solo en parte de los pasos.
+AO-73	AMSAT-OSCAR 73 (FUNcube-1)	39444	activo	Transpondedor lineal	LINEAL	UV	435.130	435.150	145.950	145.970	si		En modo educativo apaga el transpondedor y deja solo la telemetría.
+AO-73	AMSAT-OSCAR 73 (FUNcube-1)	39444	activo	Telemetría	BALIZA	UV			145.935	145.935	no		BPSK 1k2.
+AO-91	AMSAT-OSCAR 91 (RadFxSat)	43017	activo	Repetidor FM	FM	UV	435.250	435.250	145.960	145.960	no	67.0	Necesita subtono de 67,0 Hz.
+AO-109	AMSAT-OSCAR 109 (RadFxSat-2)	46267	intermitente	Transpondedor lineal	LINEAL	UV	435.730	435.750	145.860	145.880	si		Señal muy débil: hace falta antena con ganancia.
+EO-88	EURO OSCAR 88 (Nayif-1)	42017	activo	Transpondedor lineal	LINEAL	UV	435.015	435.045	145.960	145.990	si
+EO-88	EURO OSCAR 88 (Nayif-1)	42017	activo	Telemetría	BALIZA	UV			145.940	145.940	no		BPSK 1k2.
+FO-29	Fuji-OSCAR 29 (JAS-2)	24278	intermitente	Transpondedor lineal	LINEAL	VU	145.900	146.000	435.800	435.900	si		Solo se enciende en campanas anunciadas por JAMSAT.
+FO-29	Fuji-OSCAR 29 (JAS-2)	24278	intermitente	Baliza CW	BALIZA	VU			435.795	435.795	no
+RS-44	Radio Sputnik 44 (DOSAAF-85)	44909	activo	Transpondedor lineal	LINEAL	VU	145.935	145.995	435.610	435.670	si		Órbita alta: pasos largos y buena cobertura.
+RS-44	Radio Sputnik 44 (DOSAAF-85)	44909	activo	Baliza CW	BALIZA	VU			435.605	435.605	no
+SO-50	Saudi-OSCAR 50	27607	activo	Repetidor FM	FM	VU	145.850	145.850	436.795	436.795	no	67.0	Se arma con un pitido de 74,4 Hz y se mantiene con 67,0 Hz.
+PO-101	Diwata-2	43678	intermitente	Repetidor FM	FM	VU	437.500	437.500	145.900	145.900	no	141.3	Solo se enciende en campanas anunciadas.
+LILACSAT-2	LilacSat-2 (CAS-3H)	40908	intermitente	Repetidor FM	FM	VU	144.350	144.350	437.200	437.200	no
+ISS	Estación Espacial Internacional	25544	activo	Repetidor FM	FM	VU	145.990	145.990	437.800	437.800	no	67.0	Repetidor de ARISS en el módulo Columbus.
+ISS	Estación Espacial Internacional	25544	activo	Digipetidor APRS	DIGITAL	VS	145.825	145.825	145.825	145.825	no		Misma frecuencia de subida y bajada: no hay corrección de Doppler que valga, se sintoniza al centro.
+ISS	Estación Espacial Internacional	25544	activo	SSTV	DIGITAL	VS			145.800	145.800	no		Solo durante las campanas de imágenes.
+IO-117	Greencube	53106	activo	Digipetidor	DIGITAL	US	435.310	435.310	435.310	435.310	no		Órbita de 6.000 km: pasos de horas. Paquete a 1k2 en la misma frecuencia.
+QO-100	Qatar-OSCAR 100 (Es'hail-2)	43700	activo	Banda estrecha	LINEAL	SX	2400.050	2400.300	10489.550	10489.800	no		Geoestacionario a 25,9° E. Desde Canarias sale bajo sobre el horizonte este.
+QO-100	Qatar-OSCAR 100 (Es'hail-2)	43700	activo	Banda ancha	LINEAL	SX	2401.500	2409.500	10491.000	10499.000	no		Televisión de aficionado.
+AO-10	AMSAT-OSCAR 10	14129	inactivo								no
+AO-13	AMSAT-OSCAR 13	19216	inactivo								no		Reentró en 1996.
+AO-16	AMSAT-OSCAR 16 (PACSAT)	20439	inactivo								no
+AO-21	OSCAR 21/RS-14	21087	inactivo								no
+AO-40	AMSAT-OSCAR 40	26609	inactivo								no
+AO-51	AMSAT-OSCAR 51	28375	inactivo								no
+AO-85	AMSAT-OSCAR 85 (Fox-1A)	40967	inactivo								no
+AO-92	AMSAT-OSCAR 92 (Fox-1D)	43137	inactivo								no
+DO-64	Delfi OSCAR-64	32789	inactivo								no
+EO-79	EURO OSCAR 79	40025	inactivo								no
+EO-80	EURO OSCAR 80	40024	inactivo								no
+FO-12	Fuji-OSCAR 12	16909	inactivo								no
+FO-20	Fuji-OSCAR 20	20480	inactivo								no
+HO-68	Hope Oscar 68	36122	inactivo								no
+LO-19	Lusat-OSCAR 19	20442	inactivo								no
+NO-44	Navy-OSCAR 44	26931	inactivo								no
+NO-83	Navy-OSCAR 83	40074	inactivo								no
+NO-84	Navy Oscar 84	40075	inactivo								no
+SO-35	Sunsat-OSCAR 35	25636	inactivo								no
+SO-41	Saudi-OSCAR 41	26545	inactivo								no
+SO-67	Sumbandila Oscar 67	35870	inactivo								no
+UO-14	UOSAT-OSCAR 14	20437	inactivo								no
+VO-52	VUsat-OSCAR 52	28650	inactivo								no
+XW-2A	CAS-3A	40903	intermitente								no		Frecuencias sin verificar: consultar el estado de AMSAT antes de operar.
+XW-2B	CAS-3B	40911	intermitente								no		Frecuencias sin verificar: consultar el estado de AMSAT antes de operar.
+XW-2C	CAS-3C	40906	intermitente								no		Frecuencias sin verificar: consultar el estado de AMSAT antes de operar.
+XW-2D	CAS-3D	40907	intermitente								no		Frecuencias sin verificar: consultar el estado de AMSAT antes de operar.
+XW-2E	CAS-3E	40909	intermitente								no		Frecuencias sin verificar: consultar el estado de AMSAT antes de operar.
+XW-2F	CAS-3F	40910	intermitente								no		Frecuencias sin verificar: consultar el estado de AMSAT antes de operar.

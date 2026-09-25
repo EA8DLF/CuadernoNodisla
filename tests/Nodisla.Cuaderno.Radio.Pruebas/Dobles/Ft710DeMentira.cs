@@ -203,6 +203,19 @@ internal sealed class Ft710DeMentira : IAsyncDisposable
             ["TS;"] = "TS0;",
             ["DT0;"] = "DT020260921;",
 
+            // Tercera captura, 25-09-2026: memorias y firmware. El canal son TRES cifras; con
+            // dos, el equipo contesta «?;», que es lo que despistó la primera vez.
+            ["MR001;"] = "MR001007000000+000000100000;",
+            ["MT001;"] = "MT0010            ;",
+            // Misma forma que la trama real, con el modo en su sitio: canal 005, 14.074 MHz y
+            // «C», que es datos por banda lateral superior.
+            ["MR005;"] = "MR005014074000+000000C00000;",
+            ["MT005;"] = "MT0051FT8 20M      ;",
+            ["VE0;"] = "VE00112;",
+            ["VE1;"] = "VE10108;",
+            ["VE2;"] = "VE20104;",
+            ["VE3;"] = "VE30101;",
+
             // El menu, con sus tres formas de valor.
             ["EX010101;"] = "EX010101+00;",
             ["EX030101;"] = "EX030101020;",

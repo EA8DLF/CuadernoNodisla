@@ -192,7 +192,7 @@ public class ControlFt710Pruebas
     }
 
     [Fact]
-    public async Task Del_banco_de_memorias_solo_se_saca_el_canal_actual()
+    public async Task Se_lee_el_banco_de_memorias()
     {
         var (equipo, control) = await MontarAsync();
         await using var _ = equipo;
@@ -200,10 +200,134 @@ public class ControlFt710Pruebas
 
         var memorias = await control.LeerMemoriasAsync();
 
-        // Limitación conocida: MT00; contesta «?;» y MC; solo da el canal en el que está.
-        memorias.Should().ContainSingle();
-        memorias[0].Numero.Should().Be(1);
-        OrdenesFt710.Sondeo.Should().NotContain(orden => orden.StartsWith("MT", StringComparison.Ordinal));
+        // El canal son tres cifras. Con dos, el equipo contesta «?;» y parece que no sepa leer
+        // memorias: ese fue el error que las dio por imposibles.
+        memorias.Should().HaveCount(2);
+
+        var primera = memorias.Single(memoria => memoria.Numero == 1);
+        primera.Frecuencia.Should().Be(Frecuencia.DesdeHercios(7_000_000));
+        primera.Modo.NombreUsual.Should().Be("LSB", "en 40 metros se trabaja en banda lateral inferior");
+        primera.Etiqueta.Should().BeNull("esa memoria no tiene rótulo puesto");
+        primera.Ocupada.Should().BeTrue();
+
+        var otra = memorias.Single(memoria => memoria.Numero == 5);
+        otra.Frecuencia.Should().Be(Frecuencia.DesdeHercios(14_074_000));
+        otra.Etiqueta.Should().Be("FT8 20M");
+    }
+
+    [Fact]
+    public async Task Una_memoria_vacia_no_es_un_fallo()
+    {
+        var (equipo, control) = await MontarAsync();
+        await using var _ = equipo;
+        await using var __ = control;
+
+        // El simulador contesta «?;» a todos los canales menos al 001 y al 005, igual que el
+        // equipo con las memorias vacías. Eso es información, no un error de comunicación.
+        var memorias = await control.LeerMemoriasAsync();
+
+        memorias.Should().OnlyContain(memoria => memoria.Ocupada);
+        memorias.Select(memoria => memoria.Numero).Should().BeEquivalentTo(new[] { 1, 5 });
+        control.Estado.Conectado.Should().BeTrue("un canal vacío no puede tumbar la conexión");
+    }
+
+    [Fact]
+    public async Task Se_lee_la_version_del_firmware()
+    {
+        var (equipo, control) = await MontarAsync();
+        await using var _ = equipo;
+        await using var __ = control;
+
+        var versiones = await control.LeerVersionesDeFirmwareAsync();
+
+        versiones.Should().HaveCount(4);
+        versiones["unidad principal"].Should().Be("01.12");
+        versiones["unidad de pantalla"].Should().Be("01.08");
+        versiones["receptor SDR"].Should().Be("01.04");
+        versiones["procesador de señal"].Should().Be("01.01");
+    }
+
+    [Fact]
+    public async Task El_ancho_de_filtro_se_ensena_en_hercios_segun_el_modo()
+    {
+        var (equipo, control) = await MontarAsync();
+        await using var _ = equipo;
+        await using var __ = control;
+
+        // El equipo está en USB con SH0020: son 3000 Hz, no «índice 20».
+        var rango = control.Rango(MandoDeEquipo.AnchoDeFiltro);
+        rango!.Unidad.Should().Be("Hz");
+        rango.EsDePosiciones.Should().BeTrue();
+        rango.Maximo.Should().Be(23);
+        rango.Etiquetas![20].Should().Be("3000 Hz");
+
+        (await control.LeerAnchoDeFiltroEnHerciosAsync()).Should().Be(3000);
+
+        // Y el índice cero no es un ancho: es «lo que ponga el equipo».
+        rango.Etiquetas[0].Should().Be(AnchosDeFiltroFt710.PorOmision);
+    }
+
+    [Fact]
+    public void El_ancho_de_filtro_depende_del_modo()
+    {
+        // La misma cifra no significa lo mismo en banda lateral que en telegrafía.
+        AnchosDeFiltroFt710.Hercios(13, "USB").Should().Be(2400);
+        AnchosDeFiltroFt710.Hercios(13, "CW").Should().Be(1200);
+        AnchosDeFiltroFt710.Hercios(1, "AM-N").Should().Be(6000);
+        AnchosDeFiltroFt710.Hercios(3, "FM").Should().Be(16000);
+
+        // Cero es «por omisión» y no se convierte; un modo sin tabla tampoco.
+        AnchosDeFiltroFt710.Hercios(0, "USB").Should().BeNull();
+        AnchosDeFiltroFt710.Hercios(13, null).Should().BeNull();
+        AnchosDeFiltroFt710.Etiquetas("mandanga").Should().BeNull();
+    }
+
+    [Fact]
+    public async Task El_retardo_de_voz_se_ensena_en_milisegundos()
+    {
+        var (equipo, control) = await MontarAsync();
+        await using var _ = equipo;
+        await using var __ = control;
+
+        // VD08 son 500 ms. El manual declara cuatro cifras y este firmware contesta con dos:
+        // hay que entender las dos longitudes.
+        (await control.LeerMandoAsync(MandoDeEquipo.RetardoVox)).Should().Be(8);
+        control.Rango(MandoDeEquipo.RetardoVox)!.Unidad.Should().Be("ms");
+        control.Rango(MandoDeEquipo.RetardoVox)!.Etiquetas![8].Should().Be("500 ms");
+
+        RetardosDeVozFt710.Milisegundos(0).Should().Be(30);
+        RetardosDeVozFt710.Milisegundos(6).Should().Be(300);
+        RetardosDeVozFt710.Milisegundos(33).Should().Be(3000, "es el extremo que da el manual");
+        RetardosDeVozFt710.Indice(500).Should().Be(8);
+    }
+
+    [Fact]
+    public async Task Un_puerto_que_ya_no_responde_no_para_la_busqueda()
+    {
+        // El equipo apareció un día en COM3 a 115200 y dos días después en COM15 a 38400:
+        // cambió el puerto y la velocidad a la vez. Lo guardado es una pista, no una certeza.
+        var comprobacion = await AutodeteccionFt710.ComprobarAsync("COM_QUE_NO_EXISTE", 115200);
+
+        comprobacion.Should().BeNull("si por ahí no contesta nadie, hay que volver a barrer");
+
+        // Y las velocidades que se prueban incluyen la que apareció el tercer día.
+        AutodeteccionFt710.Velocidades.Should().Contain(115200).And.Contain(38400);
+    }
+
+    [Fact]
+    public void El_mapa_del_menu_trae_la_version_del_firmware()
+    {
+        MenuFt710.Procedencia!.Firmware.Should().Contain("01.12", "la unidad principal del equipo de Jose");
+    }
+
+    [Fact]
+    public void Un_interrogante_no_prueba_que_la_orden_no_exista()
+    {
+        // Lección cara: «MT00;» contestaba «?;» y se dio por hecho que el equipo no sabía leer
+        // memorias. Faltaba una cifra en el canal.
+        OrdenesFt710.DiceQueNoLoAdmite("?").Should().BeTrue();
+        OrdenesFt710.Sondeo.Should().Contain("MR001;", "el canal de memoria son tres cifras");
+        OrdenesFt710.Sondeo.Should().NotContain("MT00;");
     }
 
     [Fact]
@@ -294,19 +418,6 @@ public class ControlFt710Pruebas
         // AG0089 va de 0 a 255 tal cual.
         (await control.LeerMandoAsync(MandoDeEquipo.Volumen)).Should().Be(89d);
         control.Rango(MandoDeEquipo.Volumen)!.Maximo.Should().Be(255d);
-    }
-
-    [Fact]
-    public async Task El_ancho_de_filtro_se_enseña_como_indice_porque_no_hay_tabla()
-    {
-        var (equipo, control) = await MontarAsync();
-        await using var _ = equipo;
-        await using var __ = control;
-
-        // SH0020 es un índice de filtro. Sin la tabla de equivalencias confirmada se enseña el
-        // índice y se dice que lo es, en vez de inventarse los hercios.
-        (await control.LeerMandoAsync(MandoDeEquipo.AnchoDeFiltro)).Should().Be(20d);
-        control.Rango(MandoDeEquipo.AnchoDeFiltro)!.Unidad.Should().Be("índice");
     }
 
     [Fact]

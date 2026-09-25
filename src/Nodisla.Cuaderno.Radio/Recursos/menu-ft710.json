@@ -7,7 +7,7 @@
   "fechaDeLectura": "2026-09-21",
   "estacion": "EA8DLF",
   "puerto": "COM3 (Enhanced COM Port del CP2105) a 115200 baudios, DTR y RTS en cierto",
-  "firmware": "No consta: el FT-710 no da la version de firmware por CAT dentro de la lista de ordenes seguras. Lo unico que identifica al equipo es su respuesta a ID;, que fue ID0800.",
+  "firmware": "Unidad principal 01.12, unidad de pantalla 01.08, receptor SDR 01.04 y procesador de senal 01.01, leidos del equipo con VE0; a VE3; el 25-09-2026. Antes figuraba como no accesible por no encontrar la orden: esta en el manual de referencia CAT.",
   "metodo": "Barrido de ordenes EX de SOLO LECTURA, una por indice (EXggssii;). No se escribio nada en el equipo: ninguna orden de ajuste, ninguna memoria y ninguna transmision.",
   "cobertura": "Barrido completo verificado el 22-09-2026: el team lead recorrio los grupos 01 a 17 sin podar y salieron las mismas 296 entradas. Solo tienen contenido los grupos 01, 02, 03, 04 y 06. Este mapa esta completo.",
   "valorEnLaCaptura": "Es el valor que tenia la estacion de Jose ese dia, no el de fabrica. Sirve para conocer la forma del dato, no como valor por omision.",

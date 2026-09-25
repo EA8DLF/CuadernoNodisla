@@ -1,0 +1,114 @@
+# Reglas de concurso de Cuaderno NODISLA. ESTE FICHERO SE EDITA A MANO.
+#
+# Lo que hay aqui manda sobre lo que trae contest.csv de Log4OM, que solo aporta
+# el nombre y el identificador Cabrillo de 242 concursos y ni una sola regla.
+#
+# ATENCION: las reglas de abajo estan marcadas como "Aproximado". Se han escrito a
+# partir del conocimiento general de cada concurso, NO leyendo las bases del ano en
+# curso. Las bases cambian todos los anos (bandas, horas, multiplicadores y hasta la
+# puntuacion). Antes de enviar un log hay que contrastarlas con el organizador. El
+# programa ensena ese aviso al abrir una sesion cuyo estado no sea "Verificado".
+#
+# Tipos de registro:
+#   C  concurso   codigo nombre patrocinador estado modos bandas enviado recibido
+#                 mes ordinal completo dia horaInicio duracion ambitoDuplicado notas
+#   P  puntos     codigo ambito puntos bandas modos      (se evaluan en orden; gana el primero)
+#   M  multipl.   codigo tipo alcance
+#
+# ordinal: 1..4 o 5 = "el ultimo".  completo: S = la semana tiene que caber entera en el mes.
+# mes 0 = sin fecha fija en el recurso.  bandas/modos: * = todas.
+C	CQ-WW-CW	CQ WW DX (CW)	CQ Amateur Radio	Aproximado	CW	160m,80m,40m,20m,15m,10m	Informe,ZonaCq	Informe,ZonaCq	11	5	S	sab	0000	48	Banda	Los contactos con la propia entidad valen cero puntos pero siguen contando como multiplicador de zona y de pais.
+C	CQ-WW-SSB	CQ WW DX (SSB)	CQ Amateur Radio	Aproximado	SSB	160m,80m,40m,20m,15m,10m	Informe,ZonaCq	Informe,ZonaCq	10	5	S	sab	0000	48	Banda	Los contactos con la propia entidad valen cero puntos pero siguen contando como multiplicador de zona y de pais.
+C	CQ-WW-RTTY	CQ WW DX RTTY	CQ Amateur Radio	Aproximado	RTTY	160m,80m,40m,20m,15m,10m	Informe,ZonaCq,Estado	Informe,ZonaCq,Estado	9	5	S	sab	0000	48	Banda	Ademas de zona y pais, los estados de EE. UU. y las provincias de Canada son multiplicador propio.
+C	CQ-WPX-CW	CQ WW WPX (CW)	CQ Amateur Radio	Aproximado	CW	160m,80m,40m,20m,15m,10m	Informe,Serie	Informe,Serie	5	5	S	sab	0000	48	Banda	El multiplicador es el prefijo y se cuenta una sola vez en todo el concurso, no por banda. Las bandas bajas puntuan el doble.
+C	CQ-WPX-SSB	CQ WW WPX (SSB)	CQ Amateur Radio	Aproximado	SSB	160m,80m,40m,20m,15m,10m	Informe,Serie	Informe,Serie	3	5	S	sab	0000	48	Banda	El multiplicador es el prefijo y se cuenta una sola vez en todo el concurso, no por banda. Las bandas bajas puntuan el doble.
+C	CQ-WPX-RTTY	CQ WW WPX RTTY	CQ Amateur Radio	Aproximado	RTTY	160m,80m,40m,20m,15m,10m	Informe,Serie	Informe,Serie	2	2	S	sab	0000	48	Banda	El multiplicador es el prefijo y se cuenta una sola vez en todo el concurso, no por banda. Las bandas bajas puntuan el doble.
+C	ARRL-DX-CW	ARRL International DX (CW)	ARRL	Aproximado	CW	160m,80m,40m,20m,15m,10m	Informe,Potencia	Informe,Estado	2	3	S	sab	0000	48	Banda	Visto desde fuera de W/VE: se envia informe y potencia, y se recibe informe y estado o provincia. El multiplicador son los estados y provincias, por banda.
+C	ARRL-DX-SSB	ARRL International DX (SSB)	ARRL	Aproximado	SSB	160m,80m,40m,20m,15m,10m	Informe,Potencia	Informe,Estado	3	1	S	sab	0000	48	Banda	Visto desde fuera de W/VE: se envia informe y potencia, y se recibe informe y estado o provincia. El multiplicador son los estados y provincias, por banda.
+C	ARRL-10	ARRL 10 Meter Contest	ARRL	Aproximado	MIXED	10m	Informe,Serie	Informe,Estado	12	2	S	sab	0000	48	BandaYModo	Una sola banda: el multiplicador se cuenta por modo, no por banda. En telegrafia cada contacto vale el doble.
+C	ARRL-RTTY	ARRL RTTY Roundup	ARRL	Aproximado	RTTY	80m,40m,20m,15m,10m	Informe,Serie	Informe,Estado	1	1	S	sab	1800	30	Banda	El multiplicador se cuenta una sola vez, no por banda. Treinta horas de ventana con un maximo de veinticuatro de operacion.
+C	CQ-160-CW	CQ WW 160 Meter DX (CW)	CQ Amateur Radio	Aproximado	CW	160m	Informe,Texto	Informe,Estado	1	5	S	vie	2200	48	Banda	Empieza el viernes por la noche. Las estaciones de fuera de W/VE envian informe y pais; las de dentro, informe y estado o provincia.
+C	CQ-160-SSB	CQ WW 160 Meter DX (SSB)	CQ Amateur Radio	Aproximado	SSB	160m	Informe,Texto	Informe,Estado	2	5	S	vie	2200	48	Banda	Empieza el viernes por la noche. Las estaciones de fuera de W/VE envian informe y pais; las de dentro, informe y estado o provincia.
+C	IARU-HF	IARU HF World Championship	IARU	Aproximado	MIXED	160m,80m,40m,20m,15m,10m	Informe,ZonaItu	Informe,ZonaItu	7	2	S	sab	1200	24	BandaYModo	Las estaciones de sociedad nacional y los cargos de la IARU envian su abreviatura en vez de la zona, y son multiplicador igual que las zonas.
+C	EA-MAJESTAD-CW	S. M. El Rey de Espana (CW)	URE	Aproximado	CW	160m,80m,40m,20m,15m,10m	Informe,Serie	Informe,Provincia	5	3	S	sab	1200	24	Banda	Las estaciones espanolas envian la provincia y las de fuera un numero de serie. Puntuacion y multiplicadores por confirmar contra las bases del ano.
+C	EA-MAJESTAD-SSB	S. M. El Rey de Espana (SSB)	URE	Aproximado	SSB	160m,80m,40m,20m,15m,10m	Informe,Serie	Informe,Provincia	6	3	S	sab	1200	24	Banda	Las estaciones espanolas envian la provincia y las de fuera un numero de serie. Puntuacion y multiplicadores por confirmar contra las bases del ano.
+C	EA-RTTY	URE RTTY Contest	URE	Aproximado	RTTY	160m,80m,40m,20m,15m,10m	Informe,Serie	Informe,Provincia	0	0	N			24	Banda	Fecha y puntuacion sin fijar en el recurso: hay que mirarlas en las bases del ano.
+C	EA-CNCW	Concurso Nacional de Telegrafia	URE	Aproximado	CW	160m,80m,40m,20m,15m,10m	Informe,Provincia	Informe,Provincia	0	0	N			24	Banda	Concurso nacional: el intercambio es la provincia por los dos lados.
+P	CQ-WW-CW	MismoPais	0	*	*
+P	CQ-WW-CW	MismoContinenteNa	2	*	*
+P	CQ-WW-CW	MismoContinente	1	*	*
+P	CQ-WW-CW	OtroContinente	3	*	*
+P	CQ-WW-SSB	MismoPais	0	*	*
+P	CQ-WW-SSB	MismoContinenteNa	2	*	*
+P	CQ-WW-SSB	MismoContinente	1	*	*
+P	CQ-WW-SSB	OtroContinente	3	*	*
+P	CQ-WW-RTTY	MismoPais	1	*	*
+P	CQ-WW-RTTY	MismoContinente	2	*	*
+P	CQ-WW-RTTY	OtroContinente	3	*	*
+P	CQ-WPX-CW	MismoPais	1	*	*
+P	CQ-WPX-CW	OtroContinente	6	160m,80m,40m	*
+P	CQ-WPX-CW	OtroContinente	3	*	*
+P	CQ-WPX-CW	MismoContinenteNa	4	160m,80m,40m	*
+P	CQ-WPX-CW	MismoContinenteNa	2	*	*
+P	CQ-WPX-CW	MismoContinente	2	160m,80m,40m	*
+P	CQ-WPX-CW	MismoContinente	1	*	*
+P	CQ-WPX-SSB	MismoPais	1	*	*
+P	CQ-WPX-SSB	OtroContinente	6	160m,80m,40m	*
+P	CQ-WPX-SSB	OtroContinente	3	*	*
+P	CQ-WPX-SSB	MismoContinenteNa	4	160m,80m,40m	*
+P	CQ-WPX-SSB	MismoContinenteNa	2	*	*
+P	CQ-WPX-SSB	MismoContinente	2	160m,80m,40m	*
+P	CQ-WPX-SSB	MismoContinente	1	*	*
+P	CQ-WPX-RTTY	MismoPais	1	*	*
+P	CQ-WPX-RTTY	OtroContinente	6	160m,80m,40m	*
+P	CQ-WPX-RTTY	OtroContinente	3	*	*
+P	CQ-WPX-RTTY	MismoContinenteNa	4	160m,80m,40m	*
+P	CQ-WPX-RTTY	MismoContinenteNa	2	*	*
+P	CQ-WPX-RTTY	MismoContinente	2	160m,80m,40m	*
+P	CQ-WPX-RTTY	MismoContinente	1	*	*
+P	ARRL-DX-CW	Cualquiera	3	*	*
+P	ARRL-DX-SSB	Cualquiera	3	*	*
+P	ARRL-10	Cualquiera	4	*	CW
+P	ARRL-10	Cualquiera	2	*	*
+P	ARRL-RTTY	Cualquiera	1	*	*
+P	CQ-160-CW	MismoPais	2	*	*
+P	CQ-160-CW	MismoContinente	5	*	*
+P	CQ-160-CW	OtroContinente	10	*	*
+P	CQ-160-SSB	MismoPais	2	*	*
+P	CQ-160-SSB	MismoContinente	5	*	*
+P	CQ-160-SSB	OtroContinente	10	*	*
+P	IARU-HF	MismaZonaItu	1	*	*
+P	IARU-HF	MismoContinente	3	*	*
+P	IARU-HF	OtroContinente	5	*	*
+P	EA-MAJESTAD-CW	Cualquiera	1	*	*
+P	EA-MAJESTAD-SSB	Cualquiera	1	*	*
+P	EA-RTTY	Cualquiera	1	*	*
+P	EA-CNCW	Cualquiera	1	*	*
+M	CQ-WW-CW	ZonaCq	PorBanda
+M	CQ-WW-CW	Dxcc	PorBanda
+M	CQ-WW-SSB	ZonaCq	PorBanda
+M	CQ-WW-SSB	Dxcc	PorBanda
+M	CQ-WW-RTTY	ZonaCq	PorBanda
+M	CQ-WW-RTTY	Dxcc	PorBanda
+M	CQ-WW-RTTY	Estado	PorBanda
+M	CQ-WPX-CW	PrefijoWpx	Global
+M	CQ-WPX-SSB	PrefijoWpx	Global
+M	CQ-WPX-RTTY	PrefijoWpx	Global
+M	ARRL-DX-CW	Estado	PorBanda
+M	ARRL-DX-SSB	Estado	PorBanda
+M	ARRL-10	Estado	PorModo
+M	ARRL-10	Dxcc	PorModo
+M	ARRL-RTTY	Estado	Global
+M	ARRL-RTTY	Dxcc	Global
+M	CQ-160-CW	Estado	Global
+M	CQ-160-CW	Dxcc	Global
+M	CQ-160-SSB	Estado	Global
+M	CQ-160-SSB	Dxcc	Global
+M	IARU-HF	ZonaItu	PorBanda
+M	IARU-HF	Sociedad	PorBanda
+M	EA-MAJESTAD-CW	Provincia	PorBanda
+M	EA-MAJESTAD-CW	Dxcc	PorBanda
+M	EA-MAJESTAD-SSB	Provincia	PorBanda
+M	EA-MAJESTAD-SSB	Dxcc	PorBanda
+M	EA-RTTY	Provincia	PorBanda
+M	EA-CNCW	Provincia	PorBanda

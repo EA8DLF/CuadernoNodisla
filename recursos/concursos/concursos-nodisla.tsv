@@ -1,0 +1,327 @@
+# Catalogo de concursos de Cuaderno NODISLA. GENERADO: no se edita a mano.
+# Se fabrica con recursos/concursos/generar-concursos.py a partir de
+# reglas-concursos.tsv (escrito a mano) y del contest.csv de Log4OM.
+#
+# Las reglas marcadas 'Aproximado' no se han leido de las bases del ano en curso.
+# Antes de enviar un log hay que contrastarlas con el organizador.
+V	1	2026-09-25	242	17
+C	070-160M-SPRINT	PODXS Great Pumpkin Sprint		SoloCatalogo					0	0	N			0	Banda
+C	070-3-DAY	PODXS Three Day Weekend		SoloCatalogo					0	0	N			0	Banda
+C	070-31-FLAVORS	PODXS 31 Flavors		SoloCatalogo					0	0	N			0	Banda
+C	070-40M-SPRINT	PODXS 40m Firecracker Sprint		SoloCatalogo					0	0	N			0	Banda
+C	070-80M-SPRINT	PODXS 80m Jay Hudak Memorial Sprint		SoloCatalogo					0	0	N			0	Banda
+C	070-PSKFEST	PODXS PSKFest		SoloCatalogo					0	0	N			0	Banda
+C	070-ST-PATS-DAY	PODXS St. Patricks Day		SoloCatalogo					0	0	N			0	Banda
+C	070-VALENTINE-SPRINT	PODXS Valentine Sprint		SoloCatalogo					0	0	N			0	Banda
+C	10-RTTY	Ten-Meter RTTY Contest (2011 onwards)		SoloCatalogo					0	0	N			0	Banda
+C	1010-OPEN-SEASON	Open Season Ten Meter QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	7QP	7th-Area QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	AL-QSO-PARTY	Alabama QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	ALL-ASIAN-DX-CW	JARL All Asian DX Contest (CW)		SoloCatalogo					0	0	N			0	Banda
+C	ALL-ASIAN-DX-PHONE	JARL All Asian DX Contest (PHONE)		SoloCatalogo					0	0	N			0	Banda
+C	ANARTS-RTTY	ANARTS WW RTTY		SoloCatalogo					0	0	N			0	Banda
+C	ANATOLIAN-RTTY	Anatolian WW RTTY		SoloCatalogo					0	0	N			0	Banda
+C	AP-SPRINT	Asia - Pacific Sprint		SoloCatalogo					0	0	N			0	Banda
+C	AR-QSO-PARTY	Arkansas QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	ARI-DX	ARI DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	ARI-EME	ARI Italian EME Trophy		SoloCatalogo					0	0	N			0	Banda
+C	ARI-IAC-13CM	ARI Italian Activity Contest (13cm+)		SoloCatalogo					0	0	N			0	Banda
+C	ARI-IAC-23CM	ARI Italian Activity Contest (23cm)		SoloCatalogo					0	0	N			0	Banda
+C	ARI-IAC-6M	ARI Italian Activity Contest (6m)		SoloCatalogo					0	0	N			0	Banda
+C	ARI-IAC-UHF	ARI Italian Activity Contest (UHF)		SoloCatalogo					0	0	N			0	Banda
+C	ARI-IAC-VHF	ARI Italian Activity Contest (VHF)		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-10	ARRL 10 Meter Contest	ARRL	Aproximado	MIXED	10m	Informe,Serie	Informe,Estado	12	2	S	sab	0000	48	BandaYModo	Una sola banda: el multiplicador se cuenta por modo, no por banda. En telegrafia cada contacto vale el doble.
+C	ARRL-10-GHZ	ARRL 10 GHz and Up Contest		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-160	ARRL 160 Meter Contest		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-222	ARRL 222 MHz and Up Distance Contest		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-DIGI	ARRL International Digital Contest		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-DX-CW	ARRL International DX (CW)	ARRL	Aproximado	CW	160m,80m,40m,20m,15m,10m	Informe,Potencia	Informe,Estado	2	3	S	sab	0000	48	Banda	Visto desde fuera de W/VE: se envia informe y potencia, y se recibe informe y estado o provincia. El multiplicador son los estados y provincias, por banda.
+C	ARRL-DX-SSB	ARRL International DX (SSB)	ARRL	Aproximado	SSB	160m,80m,40m,20m,15m,10m	Informe,Potencia	Informe,Estado	3	1	S	sab	0000	48	Banda	Visto desde fuera de W/VE: se envia informe y potencia, y se recibe informe y estado o provincia. El multiplicador son los estados y provincias, por banda.
+C	ARRL-EME	ARRL EME contest		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-FIELD-DAY	ARRL Field Day		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-RR-CW	ARRL Rookie Roundup (CW)		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-RR-RTTY	ARRL Rookie Roundup (RTTY)		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-RR-SSB	ARRL Rookie Roundup (Phone)		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-RTTY	ARRL RTTY Roundup	ARRL	Aproximado	RTTY	80m,40m,20m,15m,10m	Informe,Serie	Informe,Estado	1	1	S	sab	1800	30	Banda	El multiplicador se cuenta una sola vez, no por banda. Treinta horas de ventana con un maximo de veinticuatro de operacion.
+C	ARRL-SCR	ARRL School Club Roundup		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-SS-CW	ARRL November Sweepstakes (CW)		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-SS-SSB	ARRL November Sweepstakes (Phone)		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-UHF-AUG	ARRL August UHF Contest		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-VHF-JAN	ARRL January VHF Sweepstakes		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-VHF-JUN	ARRL June VHF QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	ARRL-VHF-SEP	ARRL September VHF QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	AZ-QSO-PARTY	Arizona QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	BARTG-RTTY	BARTG Spring RTTY Contest		SoloCatalogo					0	0	N			0	Banda
+C	BARTG-SPRINT	BARTG Sprint Contest		SoloCatalogo					0	0	N			0	Banda
+C	BC-QSO-PARTY	British Columbia QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	CA-QSO-PARTY	California QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	CIS-DX	CIS DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	CO-QSO-PARTY	Colorado QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	CQ-160-CW	CQ WW 160 Meter DX (CW)	CQ Amateur Radio	Aproximado	CW	160m	Informe,Texto	Informe,Estado	1	5	S	vie	2200	48	Banda	Empieza el viernes por la noche. Las estaciones de fuera de W/VE envian informe y pais; las de dentro, informe y estado o provincia.
+C	CQ-160-SSB	CQ WW 160 Meter DX (SSB)	CQ Amateur Radio	Aproximado	SSB	160m	Informe,Texto	Informe,Estado	2	5	S	vie	2200	48	Banda	Empieza el viernes por la noche. Las estaciones de fuera de W/VE envian informe y pais; las de dentro, informe y estado o provincia.
+C	CQ-M	CQ-M International DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	CQ-VHF	CQ World-Wide VHF Contest		SoloCatalogo					0	0	N			0	Banda
+C	CQ-WPX-CW	CQ WW WPX (CW)	CQ Amateur Radio	Aproximado	CW	160m,80m,40m,20m,15m,10m	Informe,Serie	Informe,Serie	5	5	S	sab	0000	48	Banda	El multiplicador es el prefijo y se cuenta una sola vez en todo el concurso, no por banda. Las bandas bajas puntuan el doble.
+C	CQ-WPX-RTTY	CQ WW WPX RTTY	CQ Amateur Radio	Aproximado	RTTY	160m,80m,40m,20m,15m,10m	Informe,Serie	Informe,Serie	2	2	S	sab	0000	48	Banda	El multiplicador es el prefijo y se cuenta una sola vez en todo el concurso, no por banda. Las bandas bajas puntuan el doble.
+C	CQ-WPX-SSB	CQ WW WPX (SSB)	CQ Amateur Radio	Aproximado	SSB	160m,80m,40m,20m,15m,10m	Informe,Serie	Informe,Serie	3	5	S	sab	0000	48	Banda	El multiplicador es el prefijo y se cuenta una sola vez en todo el concurso, no por banda. Las bandas bajas puntuan el doble.
+C	CQ-WW-CW	CQ WW DX (CW)	CQ Amateur Radio	Aproximado	CW	160m,80m,40m,20m,15m,10m	Informe,ZonaCq	Informe,ZonaCq	11	5	S	sab	0000	48	Banda	Los contactos con la propia entidad valen cero puntos pero siguen contando como multiplicador de zona y de pais.
+C	CQ-WW-RTTY	CQ WW DX RTTY	CQ Amateur Radio	Aproximado	RTTY	160m,80m,40m,20m,15m,10m	Informe,ZonaCq,Estado	Informe,ZonaCq,Estado	9	5	S	sab	0000	48	Banda	Ademas de zona y pais, los estados de EE. UU. y las provincias de Canada son multiplicador propio.
+C	CQ-WW-SSB	CQ WW DX (SSB)	CQ Amateur Radio	Aproximado	SSB	160m,80m,40m,20m,15m,10m	Informe,ZonaCq	Informe,ZonaCq	10	5	S	sab	0000	48	Banda	Los contactos con la propia entidad valen cero puntos pero siguen contando como multiplicador de zona y de pais.
+C	CT-QSO-PARTY	Connecticut QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	CVA-DX-CW	Concurso Verde e Amarelo DX CW Contest		SoloCatalogo					0	0	N			0	Banda
+C	CVA-DX-SSB	Concurso Verde e Amarelo DX CW Contest		SoloCatalogo					0	0	N			0	Banda
+C	CWOPS-CW-OPEN	CWops CW Open Competition		SoloCatalogo					0	0	N			0	Banda
+C	CWOPS-CWT	CWops Mini-CWT Test		SoloCatalogo					0	0	N			0	Banda
+C	DARC-FT4	DARC FT4 Contest		SoloCatalogo					0	0	N			0	Banda
+C	DARC-WAEDC-CW	WAE DX Contest (CW)		SoloCatalogo					0	0	N			0	Banda
+C	DARC-WAEDC-RTTY	WAE DX Contest (RTTY)		SoloCatalogo					0	0	N			0	Banda
+C	DARC-WAEDC-SSB	WAE DX Contest (SSB)		SoloCatalogo					0	0	N			0	Banda
+C	DARC-WAG	DARC Worked All Germany		SoloCatalogo					0	0	N			0	Banda
+C	DE-QSO-PARTY	Delaware QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	DL-DX-RTTY	DL-DX RTTY Contest		SoloCatalogo					0	0	N			0	Banda
+C	DMC-RTTY	DMC RTTY Contest		SoloCatalogo					0	0	N			0	Banda
+C	EA-CNCW	Concurso Nacional de Telegrafia	URE	Aproximado	CW	160m,80m,40m,20m,15m,10m	Informe,Provincia	Informe,Provincia	0	0	N			24	Banda	Concurso nacional: el intercambio es la provincia por los dos lados.
+C	EA-DME	Municipios Espanoles		SoloCatalogo					0	0	N			0	Banda
+C	EA-MAJESTAD-CW	S. M. El Rey de Espana (CW)	URE	Aproximado	CW	160m,80m,40m,20m,15m,10m	Informe,Serie	Informe,Provincia	5	3	S	sab	1200	24	Banda	Las estaciones espanolas envian la provincia y las de fuera un numero de serie. Puntuacion y multiplicadores por confirmar contra las bases del ano.
+C	EA-MAJESTAD-SSB	S. M. El Rey de Espana (SSB)	URE	Aproximado	SSB	160m,80m,40m,20m,15m,10m	Informe,Serie	Informe,Provincia	6	3	S	sab	1200	24	Banda	Las estaciones espanolas envian la provincia y las de fuera un numero de serie. Puntuacion y multiplicadores por confirmar contra las bases del ano.
+C	EA-PSK63	EA PSK63		SoloCatalogo					0	0	N			0	Banda
+C	EA-RTTY	URE RTTY Contest	URE	Aproximado	RTTY	160m,80m,40m,20m,15m,10m	Informe,Serie	Informe,Provincia	0	0	N			24	Banda	Fecha y puntuacion sin fijar en el recurso: hay que mirarlas en las bases del ano.
+C	EA-SMRE-CW	Su Majestad El Rey de Espana - CW (2021 and earlier)		SoloCatalogo					0	0	N			0	Banda
+C	EA-SMRE-SSB	Su Majestad El Rey de Espana - SSB (2021 and earlier)		SoloCatalogo					0	0	N			0	Banda
+C	EA-VHF-ATLANTIC	Atlantico V-UHF		SoloCatalogo					0	0	N			0	Banda
+C	EA-VHF-COM	Combinado de V-UHF		SoloCatalogo					0	0	N			0	Banda
+C	EA-VHF-COSTA-SOL	Costa del Sol V-UHF		SoloCatalogo					0	0	N			0	Banda
+C	EA-VHF-EA	Nacional VHF		SoloCatalogo					0	0	N			0	Banda
+C	EA-VHF-EA1RCS	Segovia EA1RCS V-UHF		SoloCatalogo					0	0	N			0	Banda
+C	EA-VHF-QSL	QSL V-UHF & 50MHz		SoloCatalogo					0	0	N			0	Banda
+C	EA-VHF-SADURNI	Sant Sadurni V-UHF		SoloCatalogo					0	0	N			0	Banda
+C	EA-WW-RTTY	Union de Radioaficionados Espanoles RTTY Contest		SoloCatalogo					0	0	N			0	Banda
+C	EPC-PSK63	PSK63 QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	EU Sprint	EU Sprint		SoloCatalogo					0	0	N			0	Banda
+C	EU-HF	EU HF Championship		SoloCatalogo					0	0	N			0	Banda
+C	EU-PSK-DX	EU PSK DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	EUCW160M	European CW Association 160m CW Party		SoloCatalogo					0	0	N			0	Banda
+C	FALL SPRINT	FISTS Fall Sprint		SoloCatalogo					0	0	N			0	Banda
+C	FL-QSO-PARTY	Florida QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	GA-QSO-PARTY	Georgia QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	HA-DX	Hungarian DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	HELVETIA	Helvetia Contest		SoloCatalogo					0	0	N			0	Banda
+C	HI-QSO-PARTY	Hawaiian QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	HOLYLAND	IARC Holyland Contest		SoloCatalogo					0	0	N			0	Banda
+C	IA-QSO-PARTY	Iowa QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	IARU-FIELD-DAY	DARC IARU Region 1 Field Day		SoloCatalogo					0	0	N			0	Banda
+C	IARU-HF	IARU HF World Championship	IARU	Aproximado	MIXED	160m,80m,40m,20m,15m,10m	Informe,ZonaItu	Informe,ZonaItu	7	2	S	sab	1200	24	BandaYModo	Las estaciones de sociedad nacional y los cargos de la IARU envian su abreviatura en vez de la zona, y son multiplicador igual que las zonas.
+C	ICWC-MST	ICWC Medium Speed Test		SoloCatalogo					0	0	N			0	Banda
+C	ID-QSO-PARTY	Idaho QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	IL QSO Party	Illinois QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	IN-QSO-PARTY	Indiana QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	JARTS-WW-RTTY	JARTS WW RTTY		SoloCatalogo					0	0	N			0	Banda
+C	JIDX-CW	Japan International DX Contest (CW)		SoloCatalogo					0	0	N			0	Banda
+C	JIDX-SSB	Japan International DX Contest (SSB)		SoloCatalogo					0	0	N			0	Banda
+C	JT-DX-RTTY	Mongolian RTTY DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	K1USN-SSO	K1USN Slow Speed Open		SoloCatalogo					0	0	N			0	Banda
+C	K1USN-SST	K1USN Slow Speed Test		SoloCatalogo					0	0	N			0	Banda
+C	KS-QSO-PARTY	Kansas QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	KY-QSO-PARTY	Kentucky QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	LA-QSO-PARTY	Louisiana QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	LDC-RTTY	DRCG Long Distance Contest (RTTY)		SoloCatalogo					0	0	N			0	Banda
+C	LZ DX	LZ DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	MAR-QSO-PARTY	Maritimes QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	MD-QSO-PARTY	Maryland QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	ME-QSO-PARTY	Maine QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	MI-QSO-PARTY	Michigan QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	MIDATLANTIC-QSO-PARTY	Mid-Atlantic QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	MN-QSO-PARTY	Minnesota QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	MO-QSO-PARTY	Missouri QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	MS-QSO-PARTY	Mississippi QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	MT-QSO-PARTY	Montana QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	NA-SPRINT-CW	North America Sprint (CW)		SoloCatalogo					0	0	N			0	Banda
+C	NA-SPRINT-RTTY	North America Sprint (RTTY)		SoloCatalogo					0	0	N			0	Banda
+C	NA-SPRINT-SSB	North America Sprint (Phone)		SoloCatalogo					0	0	N			0	Banda
+C	NAQP-CW	North America QSO Party (CW)		SoloCatalogo					0	0	N			0	Banda
+C	NAQP-RTTY	North America QSO Party (RTTY)		SoloCatalogo					0	0	N			0	Banda
+C	NAQP-SSB	North America QSO Party (Phone)		SoloCatalogo					0	0	N			0	Banda
+C	NC-QSO-PARTY	North Carolina QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	ND-QSO-PARTY	North Dakota QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	NE-QSO-PARTY	Nebraska QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	NEQP	New England QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	NH-QSO-PARTY	New Hampshire QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	NJ-QSO-PARTY	New Jersey QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	NM-QSO-PARTY	New Mexico QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	NRAU-BALTIC-CW	NRAU-Baltic Contest (CW)		SoloCatalogo					0	0	N			0	Banda
+C	NRAU-BALTIC-SSB	NRAU-Baltic Contest (SSB)		SoloCatalogo					0	0	N			0	Banda
+C	NV-QSO-PARTY	Nevada QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	NY-QSO-PARTY	New York QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	OCEANIA-DX-CW	Oceania DX Contest (CW)		SoloCatalogo					0	0	N			0	Banda
+C	OCEANIA-DX-SSB	Oceania DX Contest (SSB)		SoloCatalogo					0	0	N			0	Banda
+C	OH-QSO-PARTY	Ohio QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	OK-DX-RTTY	Czech Radio Club OK DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	OK-OM-DX	Czech Radio Club OK-OM DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	OK-QSO-PARTY	Oklahoma QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	OMISS-QSO-PARTY	Old Man International Sideband Society QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	ON-QSO-PARTY	Ontario QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	OR-QSO-PARTY	Oregon QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	PA-QSO-PARTY	Pennsylvania QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	PACC	Dutch PACC Contest		SoloCatalogo					0	0	N			0	Banda
+C	PCC	PCCPro CW Contest		SoloCatalogo					0	0	N			0	Banda
+C	PSK-DEATHMATCH	MDXA PSK DeathMatch (2005-2010)		SoloCatalogo					0	0	N			0	Banda
+C	QC-QSO-PARTY	Quebec QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	RAC	Canadian Amateur Radio Society Contest		SoloCatalogo					0	0	N			0	Banda
+C	RAC-CANADA-DAY	RAC Canada Day Contest		SoloCatalogo					0	0	N			0	Banda
+C	RAC-CANADA-WINTER	RAC Canada Winter Contest		SoloCatalogo					0	0	N			0	Banda
+C	RDAC	Russian District Award Contest		SoloCatalogo					0	0	N			0	Banda
+C	RDXC	Russian DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	REF-160M	Reseau des Emetteurs Francais 160m Contest		SoloCatalogo					0	0	N			0	Banda
+C	REF-CW	Reseau des Emetteurs Francais Contest (CW)		SoloCatalogo					0	0	N			0	Banda
+C	REF-SSB	Reseau des Emetteurs Francais Contest (SSB)		SoloCatalogo					0	0	N			0	Banda
+C	REP-PORTUGAL-DAY-HF	Rede dos Emissores Portugueses Portugal Day HF Contest		SoloCatalogo					0	0	N			0	Banda
+C	RI-QSO-PARTY	Rhode Island QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	RSGB-160	1.8MHz Contest		SoloCatalogo					0	0	N			0	Banda
+C	RSGB-21/28-CW	21/28 MHz Contest (CW)		SoloCatalogo					0	0	N			0	Banda
+C	RSGB-21/28-SSB	21/28 MHz Contest (SSB)		SoloCatalogo					0	0	N			0	Banda
+C	RSGB-80M-CC	80m Club Championships		SoloCatalogo					0	0	N			0	Banda
+C	RSGB-AFS-CW	Affiliated Societies Team Contest (CW)		SoloCatalogo					0	0	N			0	Banda
+C	RSGB-AFS-SSB	Affiliated Societies Team Contest (SSB)		SoloCatalogo					0	0	N			0	Banda
+C	RSGB-CLUB-CALLS	Club Calls		SoloCatalogo					0	0	N			0	Banda
+C	RSGB-COMMONWEALTH	Commonwealth Contest		SoloCatalogo					0	0	N			0	Banda
+C	RSGB-IOTA	IOTA Contest		SoloCatalogo					0	0	N			0	Banda
+C	RSGB-LOW-POWER	Low Power Field Day		SoloCatalogo					0	0	N			0	Banda
+C	RSGB-NFD	National Field Day		SoloCatalogo					0	0	N			0	Banda
+C	RSGB-ROPOCO	RoPoCo		SoloCatalogo					0	0	N			0	Banda
+C	RSGB-SSB-FD	SSB Field Day		SoloCatalogo					0	0	N			0	Banda
+C	RUSSIAN-RTTY	Russian Radio RTTY Worldwide Contest		SoloCatalogo					0	0	N			0	Banda
+C	SAC-CW	Scandinavian Activity Contest (CW)		SoloCatalogo					0	0	N			0	Banda
+C	SAC-SSB	Scandinavian Activity Contest (SSB)		SoloCatalogo					0	0	N			0	Banda
+C	SARTG-RTTY	SARTG WW RTTY		SoloCatalogo					0	0	N			0	Banda
+C	SC-QSO-PARTY	South Carolina QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	SCC-RTTY	SCC RTTY Championship		SoloCatalogo					0	0	N			0	Banda
+C	SD-QSO-PARTY	South Dakota QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	SMP-AUG	SSA Portabeltest		SoloCatalogo					0	0	N			0	Banda
+C	SMP-MAY	SSA Portabeltest		SoloCatalogo					0	0	N			0	Banda
+C	SP-DX-RTTY	PRC SPDX Contest (RTTY)		SoloCatalogo					0	0	N			0	Banda
+C	SPAR-WINTER-FD	SPAR Winter Field Day(2016 and earlier)		SoloCatalogo					0	0	N			0	Banda
+C	SPDXContest	SP DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	SPRING SPRINT	FISTS Spring Sprint		SoloCatalogo					0	0	N			0	Banda
+C	SR-MARATHON	Scottish-Russian Marathon		SoloCatalogo					0	0	N			0	Banda
+C	STEW-PERRY	Stew Perry Topband Distance Challenge		SoloCatalogo					0	0	N			0	Banda
+C	SUMMER SPRINT	FISTS Summer Sprint		SoloCatalogo					0	0	N			0	Banda
+C	TARA-GRID-DIP	TARA Grid Dip PSK-RTTY Shindig		SoloCatalogo					0	0	N			0	Banda
+C	TARA-RTTY	TARA RTTY Mêlee		SoloCatalogo					0	0	N			0	Banda
+C	TARA-RUMBLE	TARA Rumble PSK Contest		SoloCatalogo					0	0	N			0	Banda
+C	TARA-SKIRMISH	TARA Skirmish Digital Prefix Contest		SoloCatalogo					0	0	N			0	Banda
+C	TEN-RTTY	Ten-Meter RTTY Contest (before 2011)		SoloCatalogo					0	0	N			0	Banda
+C	TMC-RTTY	The Makrothen Contest		SoloCatalogo					0	0	N			0	Banda
+C	TN-QSO-PARTY	Tennessee QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	TX-QSO-PARTY	Texas QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	UBA-DX-CW	UBA Contest (CW)		SoloCatalogo					0	0	N			0	Banda
+C	UBA-DX-SSB	UBA Contest (SSB)		SoloCatalogo					0	0	N			0	Banda
+C	UK-DX-BPSK63	European PSK Club BPSK63 Contest		SoloCatalogo					0	0	N			0	Banda
+C	UK-DX-RTTY	UK DX RTTY Contest		SoloCatalogo					0	0	N			0	Banda
+C	UKR-CHAMP-RTTY	Open Ukraine RTTY Championship		SoloCatalogo					0	0	N			0	Banda
+C	UKRAINIAN DX	Ukrainian DX		SoloCatalogo					0	0	N			0	Banda
+C	UKSMG-6M-MARATHON	UKSMG 6m Marathon		SoloCatalogo					0	0	N			0	Banda
+C	UKSMG-SUMMER-ES	UKSMG Summer Es Contest		SoloCatalogo					0	0	N			0	Banda
+C	URE-DX	Ukrainian DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	US-COUNTIES-QSO	Mobile Amateur Awards Club		SoloCatalogo					0	0	N			0	Banda
+C	UT-QSO-PARTY	Utah QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	VA-QSO-PARTY	Virginia QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	VENEZ-IND-DAY	RCV Venezuelan Independence Day Contest		SoloCatalogo					0	0	N			0	Banda
+C	VIRGINIA QSO PARTY	Virginia QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	VOLTA-RTTY	Alessandro Volta RTTY DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	VT-QSO-PARTY	Vermont QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	WA-QSO-PARTY	Washington QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	WFD	Winter Field Day (2017 and later)		SoloCatalogo					0	0	N			0	Banda
+C	WI-QSO-PARTY	Wisconsin QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	WIA-HARRY ANGEL	WIA Harry Angel Memorial 80m Sprint		SoloCatalogo					0	0	N			0	Banda
+C	WIA-JMMFD	WIA John Moyle Memorial Field Day		SoloCatalogo					0	0	N			0	Banda
+C	WIA-OCDX	WIA Oceania DX (OCDX) Contest		SoloCatalogo					0	0	N			0	Banda
+C	WIA-REMEMBRANCE	WIA Remembrance Day		SoloCatalogo					0	0	N			0	Banda
+C	WIA-ROSS HULL	WIA Ross Hull Memorial VHF/UHF Contest		SoloCatalogo					0	0	N			0	Banda
+C	WIA-TRANS TASMAN	WIA Trans Tasman Low Bands Challenge		SoloCatalogo					0	0	N			0	Banda
+C	WIA-VHF/UHF FD	WIA VHF UHF Field Days		SoloCatalogo					0	0	N			0	Banda
+C	WIA-VK SHIRES	WIA VK Shires		SoloCatalogo					0	0	N			0	Banda
+C	WINTER SPRINT	FISTS Winter Sprint		SoloCatalogo					0	0	N			0	Banda
+C	WV-QSO-PARTY	West Virginia QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	WW-DIGI	World Wide Digi DX Contest		SoloCatalogo					0	0	N			0	Banda
+C	WY-QSO-PARTY	Wyoming QSO Party		SoloCatalogo					0	0	N			0	Banda
+C	XE-INTL-RTTY	Mexico International Contest (RTTY)		SoloCatalogo					0	0	N			0	Banda
+C	YOHFDX	YODX HF contest		SoloCatalogo					0	0	N			0	Banda
+C	YUDXC	YU DX Contest		SoloCatalogo					0	0	N			0	Banda
+P	ARRL-10	Cualquiera	4	*	CW
+P	ARRL-10	Cualquiera	2	*	*
+P	ARRL-DX-CW	Cualquiera	3	*	*
+P	ARRL-DX-SSB	Cualquiera	3	*	*
+P	ARRL-RTTY	Cualquiera	1	*	*
+P	CQ-160-CW	MismoPais	2	*	*
+P	CQ-160-CW	MismoContinente	5	*	*
+P	CQ-160-CW	OtroContinente	10	*	*
+P	CQ-160-SSB	MismoPais	2	*	*
+P	CQ-160-SSB	MismoContinente	5	*	*
+P	CQ-160-SSB	OtroContinente	10	*	*
+P	CQ-WPX-CW	MismoPais	1	*	*
+P	CQ-WPX-CW	OtroContinente	6	160m,80m,40m	*
+P	CQ-WPX-CW	OtroContinente	3	*	*
+P	CQ-WPX-CW	MismoContinenteNa	4	160m,80m,40m	*
+P	CQ-WPX-CW	MismoContinenteNa	2	*	*
+P	CQ-WPX-CW	MismoContinente	2	160m,80m,40m	*
+P	CQ-WPX-CW	MismoContinente	1	*	*
+P	CQ-WPX-RTTY	MismoPais	1	*	*
+P	CQ-WPX-RTTY	OtroContinente	6	160m,80m,40m	*
+P	CQ-WPX-RTTY	OtroContinente	3	*	*
+P	CQ-WPX-RTTY	MismoContinenteNa	4	160m,80m,40m	*
+P	CQ-WPX-RTTY	MismoContinenteNa	2	*	*
+P	CQ-WPX-RTTY	MismoContinente	2	160m,80m,40m	*
+P	CQ-WPX-RTTY	MismoContinente	1	*	*
+P	CQ-WPX-SSB	MismoPais	1	*	*
+P	CQ-WPX-SSB	OtroContinente	6	160m,80m,40m	*
+P	CQ-WPX-SSB	OtroContinente	3	*	*
+P	CQ-WPX-SSB	MismoContinenteNa	4	160m,80m,40m	*
+P	CQ-WPX-SSB	MismoContinenteNa	2	*	*
+P	CQ-WPX-SSB	MismoContinente	2	160m,80m,40m	*
+P	CQ-WPX-SSB	MismoContinente	1	*	*
+P	CQ-WW-CW	MismoPais	0	*	*
+P	CQ-WW-CW	MismoContinenteNa	2	*	*
+P	CQ-WW-CW	MismoContinente	1	*	*
+P	CQ-WW-CW	OtroContinente	3	*	*
+P	CQ-WW-RTTY	MismoPais	1	*	*
+P	CQ-WW-RTTY	MismoContinente	2	*	*
+P	CQ-WW-RTTY	OtroContinente	3	*	*
+P	CQ-WW-SSB	MismoPais	0	*	*
+P	CQ-WW-SSB	MismoContinenteNa	2	*	*
+P	CQ-WW-SSB	MismoContinente	1	*	*
+P	CQ-WW-SSB	OtroContinente	3	*	*
+P	EA-CNCW	Cualquiera	1	*	*
+P	EA-MAJESTAD-CW	Cualquiera	1	*	*
+P	EA-MAJESTAD-SSB	Cualquiera	1	*	*
+P	EA-RTTY	Cualquiera	1	*	*
+P	IARU-HF	MismaZonaItu	1	*	*
+P	IARU-HF	MismoContinente	3	*	*
+P	IARU-HF	OtroContinente	5	*	*
+M	ARRL-10	Dxcc	PorModo
+M	ARRL-10	Estado	PorModo
+M	ARRL-DX-CW	Estado	PorBanda
+M	ARRL-DX-SSB	Estado	PorBanda
+M	ARRL-RTTY	Dxcc	Global
+M	ARRL-RTTY	Estado	Global
+M	CQ-160-CW	Dxcc	Global
+M	CQ-160-CW	Estado	Global
+M	CQ-160-SSB	Dxcc	Global
+M	CQ-160-SSB	Estado	Global
+M	CQ-WPX-CW	PrefijoWpx	Global
+M	CQ-WPX-RTTY	PrefijoWpx	Global
+M	CQ-WPX-SSB	PrefijoWpx	Global
+M	CQ-WW-CW	Dxcc	PorBanda
+M	CQ-WW-CW	ZonaCq	PorBanda
+M	CQ-WW-RTTY	Dxcc	PorBanda
+M	CQ-WW-RTTY	Estado	PorBanda
+M	CQ-WW-RTTY	ZonaCq	PorBanda
+M	CQ-WW-SSB	Dxcc	PorBanda
+M	CQ-WW-SSB	ZonaCq	PorBanda
+M	EA-CNCW	Provincia	PorBanda
+M	EA-MAJESTAD-CW	Dxcc	PorBanda
+M	EA-MAJESTAD-CW	Provincia	PorBanda
+M	EA-MAJESTAD-SSB	Dxcc	PorBanda
+M	EA-MAJESTAD-SSB	Provincia	PorBanda
+M	EA-RTTY	Provincia	PorBanda
+M	IARU-HF	Sociedad	PorBanda
+M	IARU-HF	ZonaItu	PorBanda

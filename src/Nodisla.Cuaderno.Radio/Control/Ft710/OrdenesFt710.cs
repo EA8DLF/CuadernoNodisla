@@ -57,6 +57,10 @@ public static class OrdenesFt710
         // Añadidas con el barrido completo del 22-09-2026.
         "MD1;", "NB1;", "AG1;", "SQ1;", "PA1;", "CN00;",
         "IS0;", "IS1;", "OS0;", "OS1;", "RI0;", "DT1;",
+
+        // Añadidas con el manual CAT, 25-09-2026. El canal de memoria son TRES cifras: con dos
+        // el equipo contesta «?;» y parece que no sepa leer memorias.
+        "MR001;", "MT001;", "VE0;", "VE1;", "VE2;", "VE3;",
     ];
 
     /// <summary>
@@ -105,9 +109,25 @@ public static class OrdenesFt710
         }
     }
 
-    /// <summary>La respuesta del equipo dice que no admite esa orden.</summary>
+    /// <summary>
+    /// La respuesta del equipo dice que no admite esa orden <b>tal y como se ha escrito</b>.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Un <c>?;</c> <b>no prueba que la orden no exista</b>. Puede ser que falte un parametro o
+    /// que tenga otra longitud. Paso de verdad: se probo <c>MT00;</c> con dos cifras de canal,
+    /// contesto <c>?;</c> y se dio por hecho que este equipo no sabia leer memorias. El canal
+    /// son tres cifras: con <c>MT001;</c> contesta perfectamente.
+    /// </para>
+    /// <para>
+    /// Asi que antes de dar una capacidad por ausente hay que mirar el <b>manual de referencia
+    /// CAT</b> —que no es el manual de operacion— y comprobar el formato. Y al reves: en algunos
+    /// sitios el <c>?;</c> es informacion util, como en la lectura de memorias, donde significa
+    /// que ese canal esta vacio.
+    /// </para>
+    /// </remarks>
     /// <param name="respuesta">Lo que contesto el equipo.</param>
-    /// <returns>Verdadero si el equipo no admite la orden.</returns>
+    /// <returns>Verdadero si el equipo no admite la orden tal y como se escribio.</returns>
     public static bool DiceQueNoLoAdmite(string? respuesta) =>
         respuesta is null || respuesta.Trim() == Cat.NoAdmitido;
 }

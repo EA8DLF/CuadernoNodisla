@@ -53,7 +53,16 @@ public sealed class ServicioDePropagacion : IPropagacion
         ajustes = opciones ?? new OpcionesPropagacion();
         traza = registro ?? NullLogger<ServicioDePropagacion>.Instance;
         this.reloj = reloj ?? TimeProvider.System;
-        motor = motorDePrediccion ?? new MotorAproximacionNodisla(ajustes);
+        // Si ITURHFProp esta instalado se usa el, con la aproximacion propia debajo por si el
+        // proceso falla o la banda se le sale del rango. Si no esta, se usa solo la aproximacion.
+        var aproximacion = new MotorAproximacionNodisla(ajustes);
+        motor = motorDePrediccion
+                ?? MotorIturHfProp.Localizar(ajustes, aproximacion)
+                ?? (IMotorDePrediccion)aproximacion;
+        traza.LogInformation(
+            "Motor de propagación: {Motor} (aproximación: {EsAproximacion})",
+            motor.Nombre,
+            motor.EsAproximacion);
         proveedor = new ProveedorDeIndicesSolaresSwpc(fabricaHttp, ajustes, null);
         cache = new CacheDeIndicesEnDisco(ajustes.RutaDeCache);
 

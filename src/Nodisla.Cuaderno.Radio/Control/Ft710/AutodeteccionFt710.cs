@@ -34,8 +34,43 @@ public sealed record EquipoEncontrado(string Puerto, int Baudios, string Identif
 [SupportedOSPlatform("windows")]
 public static partial class AutodeteccionFt710
 {
-    /// <summary>Velocidades que se prueban, en orden. En el FT-710 no funciona ninguna otra.</summary>
-    public static IReadOnlyList<int> Velocidades { get; } = [115200, 4800];
+    /// <summary>
+    /// Velocidades que se prueban, en orden.
+    /// </summary>
+    /// <remarks>
+    /// El equipo aparecio un dia en COM3 a 115200 y dos dias despues en COM15 a 38400:
+    /// <b>cambiaron el puerto y la velocidad a la vez</b>. Por eso se prueban todas las que el
+    /// equipo admite y se identifica por <c>ID;</c>, nunca por donde estaba la ultima vez.
+    /// </remarks>
+    public static IReadOnlyList<int> Velocidades { get; } = [115200, 38400, 19200, 9600, 4800];
+
+    /// <summary>
+    /// Comprueba si por un puerto y velocidad concretos contesta un equipo Yaesu.
+    /// </summary>
+    /// <remarks>
+    /// Sirve para probar primero por donde estaba la ultima vez, que es lo rapido. Si no
+    /// contesta, hay que barrer: lo guardado es una pista, nunca una certeza.
+    /// </remarks>
+    /// <param name="puerto">Puerto a probar.</param>
+    /// <param name="baudios">Velocidad a probar.</param>
+    /// <param name="registro">Donde anotar la comprobacion.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>El equipo si contesta, o nulo.</returns>
+    public static async Task<EquipoEncontrado?> ComprobarAsync(
+        string puerto,
+        int baudios,
+        ILogger? registro = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(puerto))
+        {
+            return null;
+        }
+
+        var anotador = registro ?? NullLogger.Instance;
+        var identificador = await ProbarAsync(puerto, baudios, anotador, ct).ConfigureAwait(false);
+        return identificador is null ? null : new EquipoEncontrado(puerto, baudios, identificador);
+    }
 
     /// <summary>
     /// Recorre los puertos serie buscando equipos Yaesu.

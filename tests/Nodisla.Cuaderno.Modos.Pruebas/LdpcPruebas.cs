@@ -180,6 +180,90 @@ public class TablasDelProtocoloPruebas
     }
 
     [Fact]
+    public void LaTablaDeVerdadEstaYEsLaQueDiceSerLLDPC()
+    {
+        // Se carga como la carga el módem, del fichero que va junto al programa.
+        var tablas = TablasDelProtocolo.Cargar();
+        tablas.EsElCodigoReal.Should().BeTrue(
+            "sin la tabla real el módem funciona consigo mismo pero no decodifica a nadie más");
+
+        var codigo = tablas.Ldpc;
+        codigo.Longitud.Should().Be(174);
+        codigo.BitsDeMensaje.Should().Be(91);
+        codigo.Ecuaciones.Should().Be(83);
+
+        // El protocolo declara 24 ecuaciones de siete bits y 59 de seis.
+        var pesos = codigo.VariablesDeCadaEcuacion.GroupBy(f => f.Length).ToDictionary(g => g.Key, g => g.Count());
+        pesos.Should().BeEquivalentTo(new Dictionary<int, int> { [7] = 24, [6] = 59 });
+
+        // Y cada uno de los 174 bits tiene que aparecer en exactamente tres ecuaciones.
+        codigo.EcuacionesDeCadaBit.Should().AllSatisfy(e => e.Should().HaveCount(3));
+
+        // Las dos cuentas del número de unos tienen que dar lo mismo por los dos caminos: es la
+        // comprobación que caza una fila mal transcrita sin tener que mirarlas una a una.
+        var porFilas = codigo.VariablesDeCadaEcuacion.Sum(f => f.Length);
+        var porColumnas = codigo.EcuacionesDeCadaBit.Sum(e => e.Length);
+        porFilas.Should().Be(522);
+        porColumnas.Should().Be(522);
+    }
+
+    [Fact]
+    public void LaTablaDeVerdadNoTieneCiclosCortos()
+    {
+        // Un código bueno no tiene dos ecuaciones que compartan más de un bit. Si la tabla real
+        // los tuviera, no sería que el protocolo esté mal: sería que la hemos leído mal.
+        TablasDelProtocolo.Cargar().Ldpc.ParejasDeEcuacionesQueSeSolapan().Should().Be(0);
+    }
+
+    [Fact]
+    public void LaMezclaDeFt4EsSuPropiaInversa()
+    {
+        var tablas = TablasDelProtocolo.Cargar();
+        tablas.MezclaDeFt4.Should().HaveCount(10);
+        tablas.MezclaDeFt4.Should().NotBeEquivalentTo(new byte[10], "sin la secuencia, FT4 no revuelve nada");
+
+        // Aplicarla dos veces tiene que dejar el mensaje como estaba: si no, emitir y recibir no
+        // serían la misma operación al revés y FT4 no hablaría ni consigo mismo.
+        var codificador = new Ft8.Codificador(tablas);
+        var azar = new Random(3);
+        var original = new byte[Ft8.MensajeDe77Bits.Bits];
+        for (var i = 0; i < original.Length; i++) original[i] = (byte)azar.Next(2);
+
+        var revuelto = original.ToArray();
+        codificador.AplicarMezclaDeFt4(revuelto);
+        revuelto.Should().NotEqual(original);
+        codificador.AplicarMezclaDeFt4(revuelto);
+        revuelto.Should().Equal(original);
+    }
+
+    [Fact]
+    public void ConLaTablaDeVerdadUnMensajeVaYVuelveIgual()
+    {
+        // La comprobación que de verdad importa: los 91 bits entran, salen 174, se corrigen y
+        // vuelven idénticos. Si la matriz estuviera mal transcrita en una sola fila, el
+        // codificador la usaría igual pero el corrector no convergería.
+        var tablas = TablasDelProtocolo.Cargar();
+        var corrector = new DecodificadorDeCreencia(tablas.Ldpc);
+        var azar = new Random(17);
+
+        for (var intento = 0; intento < 100; intento++)
+        {
+            var mensaje = new byte[tablas.Ldpc.BitsDeMensaje];
+            for (var i = 0; i < mensaje.Length; i++) mensaje[i] = (byte)azar.Next(2);
+
+            var palabra = tablas.Ldpc.Codificar(mensaje);
+            tablas.Ldpc.CumpleParidad(palabra).Should().BeTrue();
+
+            var confianzas = new float[tablas.Ldpc.Longitud];
+            for (var i = 0; i < confianzas.Length; i++) confianzas[i] = palabra[i] == 0 ? 4f : -4f;
+
+            var recuperada = new byte[tablas.Ldpc.Longitud];
+            corrector.TryDecodificar(confianzas, recuperada).Should().BeTrue();
+            recuperada.Should().Equal(palabra);
+        }
+    }
+
+    [Fact]
     public void UnaTablaAMediasSeDescartaEntera()
     {
         // Una tabla incompleta decodificaría basura con el sello cuadrando de vez en cuando.

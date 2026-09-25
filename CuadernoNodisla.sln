@@ -61,6 +61,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodisla.Cuaderno.Audio.Prue
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodisla.Cuaderno.Modos.Pruebas", "tests\Nodisla.Cuaderno.Modos.Pruebas\Nodisla.Cuaderno.Modos.Pruebas.csproj", "{CFC57B93-FE70-4A30-985F-18A086E829AC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodisla.Cuaderno.Satelites", "src\Nodisla.Cuaderno.Satelites\Nodisla.Cuaderno.Satelites.csproj", "{36202CD0-46A7-484D-84F6-B00DA69D9DAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodisla.Cuaderno.Satelites.Pruebas", "tests\Nodisla.Cuaderno.Satelites.Pruebas\Nodisla.Cuaderno.Satelites.Pruebas.csproj", "{4E975030-63A1-4AFD-AEB6-788FB81F94CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodisla.Cuaderno.Concursos", "src\Nodisla.Cuaderno.Concursos\Nodisla.Cuaderno.Concursos.csproj", "{0A021B44-089D-403C-99C4-1391F4642192}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodisla.Cuaderno.Concursos.Pruebas", "tests\Nodisla.Cuaderno.Concursos.Pruebas\Nodisla.Cuaderno.Concursos.Pruebas.csproj", "{35397673-4E94-4F27-9EE0-E13740BB9692}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -174,6 +182,22 @@ Global
 		{CFC57B93-FE70-4A30-985F-18A086E829AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFC57B93-FE70-4A30-985F-18A086E829AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFC57B93-FE70-4A30-985F-18A086E829AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36202CD0-46A7-484D-84F6-B00DA69D9DAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36202CD0-46A7-484D-84F6-B00DA69D9DAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36202CD0-46A7-484D-84F6-B00DA69D9DAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36202CD0-46A7-484D-84F6-B00DA69D9DAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E975030-63A1-4AFD-AEB6-788FB81F94CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E975030-63A1-4AFD-AEB6-788FB81F94CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E975030-63A1-4AFD-AEB6-788FB81F94CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E975030-63A1-4AFD-AEB6-788FB81F94CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A021B44-089D-403C-99C4-1391F4642192}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A021B44-089D-403C-99C4-1391F4642192}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A021B44-089D-403C-99C4-1391F4642192}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A021B44-089D-403C-99C4-1391F4642192}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35397673-4E94-4F27-9EE0-E13740BB9692}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35397673-4E94-4F27-9EE0-E13740BB9692}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35397673-4E94-4F27-9EE0-E13740BB9692}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35397673-4E94-4F27-9EE0-E13740BB9692}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{79062BAC-7D12-4142-816F-0350C82D295D} = {B7B1D405-5EC1-42A0-864C-CD2F305C03A1}
@@ -202,5 +226,9 @@ Global
 		{0406DF89-B058-4761-8503-86B6245DF58C} = {B7B1D405-5EC1-42A0-864C-CD2F305C03A1}
 		{A13BD82A-29A3-4B86-A7FF-A78068D81C90} = {2AB7AA5C-8CDE-4AE9-BB6C-042963F29BB7}
 		{CFC57B93-FE70-4A30-985F-18A086E829AC} = {2AB7AA5C-8CDE-4AE9-BB6C-042963F29BB7}
+		{36202CD0-46A7-484D-84F6-B00DA69D9DAD} = {B7B1D405-5EC1-42A0-864C-CD2F305C03A1}
+		{4E975030-63A1-4AFD-AEB6-788FB81F94CB} = {2AB7AA5C-8CDE-4AE9-BB6C-042963F29BB7}
+		{0A021B44-089D-403C-99C4-1391F4642192} = {B7B1D405-5EC1-42A0-864C-CD2F305C03A1}
+		{35397673-4E94-4F27-9EE0-E13740BB9692} = {2AB7AA5C-8CDE-4AE9-BB6C-042963F29BB7}
 	EndGlobalSection
 EndGlobal

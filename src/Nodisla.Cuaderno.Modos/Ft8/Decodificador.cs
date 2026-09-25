@@ -21,7 +21,11 @@ public sealed record ResultadoDeVentana(
     int Candidatas,
     int PalabrasValidas,
     int RechazadasPorElCrc,
-    TimeSpan Duracion);
+    TimeSpan Duracion)
+{
+    /// <summary>Decodificaciones que salieron por la recuperacion profunda y no por la pasada normal.</summary>
+    public int PorRecuperacionProfunda { get; init; }
+}
 
 /// <summary>
 /// Decodifica una ventana entera de audio.
@@ -52,6 +56,7 @@ public sealed class Decodificador
     private readonly TablasDelProtocolo _tablas;
     private readonly Codificador _codificador;
     private readonly DecodificadorDeCreencia _corrector;
+    private readonly RecuperacionProfunda _recuperacionProfunda;
     private readonly ILogger _registro;
 
     /// <summary>
@@ -71,6 +76,17 @@ public sealed class Decodificador
     /// <summary>Candidatas que se miran como mucho en cada ventana.</summary>
     public int CandidatasPorVentana { get; set; } = 200;
 
+    /// <summary>
+    /// Se intenta la recuperacion profunda con las candidatas que la propagacion de creencias
+    /// no consiga sacar.
+    /// </summary>
+    /// <remarks>
+    /// Es lo que permite bajar unos decibelios mas, y es tambien lo unico de este decodificador
+    /// que reconstruye un mensaje en lugar de corregirlo. Se puede apagar: cada decodificacion
+    /// que sale por aqui viene marcada como tal, precisamente para poder decidir si compensa.
+    /// </remarks>
+    public bool UsarRecuperacionProfunda { get; set; } = true;
+
     /// <summary>Crea el decodificador.</summary>
     /// <param name="tablas">Tablas del protocolo.</param>
     /// <param name="registro">Para dejar constancia; por omision no se traza nada.</param>
@@ -80,6 +96,7 @@ public sealed class Decodificador
         _tablas = tablas;
         _codificador = new Codificador(tablas);
         _corrector = new DecodificadorDeCreencia(tablas.Ldpc);
+        _recuperacionProfunda = new RecuperacionProfunda(tablas.Ldpc);
         _registro = registro ?? NullLogger.Instance;
     }
 
@@ -128,10 +145,23 @@ public sealed class Decodificador
         var palabrasValidas = 0;
         var rechazadasPorElCrc = 0;
 
+        var porRecuperacionProfunda = 0;
+
         foreach (var candidata in candidatas)
         {
             var medida = demodulador.Medir(candidata, segundosDelPrimerMuestreo);
-            if (!_corrector.TryDecodificar(demodulador.Confianzas, palabra, VueltasDelCorrector)) continue;
+
+            // Primero la pasada normal. Si no cuaja, se reconstruye a partir de los bits mas
+            // fiables. La recuperacion profunda devuelve <b>un solo</b> candidato, asi que el
+            // CRC se comprueba una vez por candidata pase lo que pase y el riesgo de inventar
+            // un mensaje no sube por usarla.
+            var profunda = false;
+            if (!_corrector.TryDecodificar(demodulador.Confianzas, palabra, VueltasDelCorrector))
+            {
+                if (!UsarRecuperacionProfunda) continue;
+                if (!_recuperacionProfunda.TryRecuperar(demodulador.Confianzas, palabra)) continue;
+                profunda = true;
+            }
             palabrasValidas++;
 
             var conCrc = palabra.AsSpan(0, Crc14.BitsConCrc);
@@ -147,6 +177,7 @@ public sealed class Decodificador
             if (YaEstaba(vistas, mensaje.Texto, tonoHz)) continue;
             vistas.Add((mensaje.Texto, tonoHz));
 
+            if (profunda) porRecuperacionProfunda++;
             salida.Add(new DecodificacionPropia(
                 mensaje.Texto,
                 Informe(medida, p),
@@ -159,16 +190,19 @@ public sealed class Decodificador
                 Llamado = mensaje.Llamado,
                 Locator = mensaje.Locator,
                 EsCq = mensaje.EsCq,
-                EsRecuperacionProfunda = false,
+                EsRecuperacionProfunda = profunda,
             });
         }
 
         salida.Sort(static (x, y) => x.TonoHz.CompareTo(y.TonoHz));
         _registro.LogDebug(
-            "Ventana {Ventana}: {Candidatas} candidatas, {Validas} palabras válidas, {Rechazadas} rechazadas por el CRC, {Salieron} decodificaciones en {Milisegundos} ms.",
-            ventanaUtc, candidatas.Count, palabrasValidas, rechazadasPorElCrc, salida.Count, reloj.ElapsedMilliseconds);
+            "Ventana {Ventana}: {Candidatas} candidatas, {Validas} palabras válidas, {Rechazadas} rechazadas por el CRC, {Salieron} decodificaciones ({Profundas} por recuperación profunda) en {Milisegundos} ms.",
+            ventanaUtc, candidatas.Count, palabrasValidas, rechazadasPorElCrc, salida.Count, porRecuperacionProfunda, reloj.ElapsedMilliseconds);
 
-        return new ResultadoDeVentana(salida, candidatas.Count, palabrasValidas, rechazadasPorElCrc, reloj.Elapsed);
+        return new ResultadoDeVentana(salida, candidatas.Count, palabrasValidas, rechazadasPorElCrc, reloj.Elapsed)
+        {
+            PorRecuperacionProfunda = porRecuperacionProfunda,
+        };
     }
 
     /// <summary>

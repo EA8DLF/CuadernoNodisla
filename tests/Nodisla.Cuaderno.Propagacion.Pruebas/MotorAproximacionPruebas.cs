@@ -113,6 +113,24 @@ public class MotorAproximacionPruebas
     }
 
     [Fact]
+    public void Por_encima_de_la_muf_no_se_da_un_nivel_de_senal_que_no_llega()
+    {
+        // Comparando con la P.533 se vio que casi una de cada tres filas publicaba una senal de
+        // una banda que estaba muy por encima de la MUF: el presupuesto de perdidas sigue dando
+        // un numero grande, pero por encima de la MUF la onda no vuelve y ese numero no existe.
+        var prediccion = Predecir(Tenerife, Madrid, Madrugada).ToDictionary(p => p.Banda.Nombre);
+
+        // De madrugada la MUF esta baja; diez metros esta muy por encima.
+        prediccion["10m"].Fiabilidad.Should().BeLessThan(ModeloMufLuf.ProbabilidadMinimaDeModo);
+        prediccion["10m"].SenalDbw.Should().BeNull();
+        prediccion["10m"].RelacionSenalRuido.Should().BeNull();
+
+        // Y las que si estan por debajo de la MUF siguen dando su cifra.
+        prediccion["80m"].SenalDbw.Should().NotBeNull();
+        prediccion["80m"].RelacionSenalRuido.Should().NotBeNull();
+    }
+
+    [Fact]
     public void Mas_potencia_nunca_empeora_la_prediccion()
     {
         var pocos = Motor.Predecir(Solicitud(Tenerife, Madrid, Mediodia, 5));

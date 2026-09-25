@@ -93,6 +93,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     private EstadoDelEquipo _estado = EstadoDelEquipo.Desconectado;
     private bool _pttPedido;
     private bool _desechado;
+    private string? _modoDelEquipo;
 
     /// <summary>Crea el control sobre un canal CAT ya construido.</summary>
     /// <param name="canal">Canal por el que se habla con el equipo.</param>
@@ -348,7 +349,57 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
             }
         }
 
-        return MandosFt710.Buscar(mando)?.Rango;
+        var descripcion = MandosFt710.Buscar(mando);
+        if (descripcion is null)
+        {
+            return null;
+        }
+
+        return mando == MandoDeEquipo.AnchoDeFiltro
+            ? RangoDelAnchoDeFiltro(descripcion.Rango)
+            : descripcion.Rango;
+    }
+
+    /// <summary>
+    /// Arma el rango del ancho de filtro con el modo que tenga puesto el equipo.
+    /// </summary>
+    /// <remarks>
+    /// El indice de <c>SH</c> no significa lo mismo en banda lateral que en telegrafia, asi que
+    /// las etiquetas se calculan con el modo de ahora: el operador ve «2400 Hz», no «13». Si
+    /// todavia no se sabe en que modo esta el equipo, se deja el indice, que es lo honesto.
+    /// </remarks>
+    private RangoDeMando RangoDelAnchoDeFiltro(RangoDeMando deReserva)
+    {
+        var modo = Volatile.Read(ref _modoDelEquipo);
+        var etiquetas = AnchosDeFiltroFt710.Etiquetas(modo);
+        if (etiquetas is null)
+        {
+            return deReserva;
+        }
+
+        return new RangoDeMando(
+            MandoDeEquipo.AnchoDeFiltro,
+            0,
+            AnchosDeFiltroFt710.IndiceMaximo(modo),
+            1,
+            "Hz",
+            etiquetas);
+    }
+
+    /// <summary>
+    /// Ancho del filtro en hercios, si se sabe.
+    /// </summary>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>
+    /// Los hercios, o nulo si el equipo esta en «por omision», si no se conoce el modo o si el
+    /// modo no tiene tabla de anchos.
+    /// </returns>
+    public async Task<int?> LeerAnchoDeFiltroEnHerciosAsync(CancellationToken ct = default)
+    {
+        var indice = await LeerMandoAsync(MandoDeEquipo.AnchoDeFiltro, ct).ConfigureAwait(false);
+        return indice is null
+            ? null
+            : AnchosDeFiltroFt710.Hercios((int)indice.Value, Volatile.Read(ref _modoDelEquipo));
     }
 
     /// <inheritdoc />
@@ -484,36 +535,149 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
         return medidores;
     }
 
+    /// <summary>Cuantos canales de memoria se recorren al leer el banco.</summary>
+    public const int MemoriasDelEquipo = 99;
+
     /// <inheritdoc />
     /// <remarks>
     /// <para>
-    /// <b>Limitacion conocida.</b> Este equipo no deja leer el banco de memorias entero con
-    /// ninguna orden de las que se han podido comprobar: <c>MT00;</c> contesta <c>?;</c> y
-    /// <c>MC;</c> solo dice en que canal esta. Asi que esto devuelve la memoria actual y nada
-    /// mas.
+    /// Se recorren los canales con <c>MR</c>, <b>y el canal son tres cifras</b>. Aqui se dio por
+    /// imposible leer memorias porque se probo <c>MT00;</c>, con dos: el equipo contestaba
+    /// <c>?;</c> y se tomo por «no lo sabe hacer». No era eso.
     /// </para>
     /// <para>
-    /// Esta escrito aqui para que nadie vuelva a intentarlo a base de sondear ordenes
-    /// desconocidas: en Yaesu hay ordenes que parecen consultas y son acciones —<c>SV;</c>
-    /// intercambia los VFO— y otras que escriben memorias. Si algun dia aparece la orden en la
-    /// documentacion del fabricante, se anade aqui.
+    /// <b>Regla que conviene no olvidar:</b> un <c>?;</c> quiere decir «no lo admito <i>tal y
+    /// como lo has escrito</i>», no que la orden no exista. Antes de dar una capacidad por
+    /// ausente hay que mirar el manual de ordenes —el de CAT, no el de operacion—. Aqui, de
+    /// hecho, el <c>?;</c> de un canal significa justo lo contrario de un fallo: <b>esa memoria
+    /// esta vacia</b>.
     /// </para>
     /// </remarks>
     public async Task<IReadOnlyList<MemoriaDeEquipo>> LeerMemoriasAsync(CancellationToken ct = default)
     {
-        var respuesta = await PreguntarAsync("MC;", ct).ConfigureAwait(false);
-        if (OrdenesFt710.DiceQueNoLoAdmite(respuesta) || !respuesta!.StartsWith("MC", StringComparison.Ordinal))
+        var memorias = new List<MemoriaDeEquipo>();
+
+        for (var canal = 1; canal <= MemoriasDelEquipo; canal++)
         {
-            return [];
+            ct.ThrowIfCancellationRequested();
+
+            var respuesta = await PreguntarAsync(
+                string.Create(CultureInfo.InvariantCulture, $"MR{canal:D3}{Cat.Fin}"),
+                ct).ConfigureAwait(false);
+
+            if (OrdenesFt710.DiceQueNoLoAdmite(respuesta))
+            {
+                // Memoria vacia: no hay nada que apuntar y no es ningun error.
+                continue;
+            }
+
+            if (!TryLeerMemoria(respuesta!, out var memoria))
+            {
+                continue;
+            }
+
+            var etiqueta = await LeerRotuloDeMemoriaAsync(canal, ct).ConfigureAwait(false);
+            memorias.Add(memoria! with { Etiqueta = etiqueta });
         }
 
-        if (!int.TryParse(respuesta[2..], NumberStyles.Integer, CultureInfo.InvariantCulture, out var numero))
+        return memorias;
+    }
+
+    /// <summary>
+    /// Lee una trama de memoria: canal, frecuencia y modo.
+    /// </summary>
+    /// <remarks>
+    /// La trama es <c>MR</c> + canal (3) + frecuencia en hercios (9) + clarificador (5) + dos
+    /// cifras + el modo (1) + el resto. La posicion del modo esta sacada de comparar esta trama
+    /// con la de <c>IF</c>, que tiene la misma forma: en la captura del equipo, <c>IF</c> traia
+    /// un <c>2</c> con el equipo en banda lateral superior, y la memoria 001, en 7 MHz, trae un
+    /// <c>1</c>, que es banda lateral inferior —lo que corresponde en 40 metros—. Si algun dia
+    /// se ve un modo que no cuadra, es este desplazamiento lo que hay que revisar.
+    /// </remarks>
+    private bool TryLeerMemoria(string respuesta, out MemoriaDeEquipo? memoria)
+    {
+        memoria = null;
+        if (!respuesta.StartsWith("MR", StringComparison.OrdinalIgnoreCase) || respuesta.Length < 22)
         {
-            return [];
+            return false;
         }
 
-        var estado = Estado;
-        return [new MemoriaDeEquipo(numero, estado.Frecuencia, estado.Modo, null, Ocupada: true)];
+        var cuerpo = respuesta[2..];
+        if (!int.TryParse(cuerpo[..3], NumberStyles.Integer, CultureInfo.InvariantCulture, out var canal)
+            || !long.TryParse(cuerpo[3..12], NumberStyles.Integer, CultureInfo.InvariantCulture, out var hercios))
+        {
+            return false;
+        }
+
+        var modo = Modo.Vacio;
+        if (cuerpo.Length > 19 && ModosFt710.DesdeElEquipo(cuerpo[19]) is { } nombre)
+        {
+            modo = _opciones.Traductor.DesdeElEquipo(nombre);
+        }
+
+        memoria = new MemoriaDeEquipo(
+            canal,
+            Frecuencia.DesdeHercios(hercios),
+            modo,
+            Etiqueta: null,
+            Ocupada: true);
+        return true;
+    }
+
+    /// <summary>
+    /// Lee el rotulo de una memoria.
+    /// </summary>
+    /// <remarks>
+    /// <c>MT001;</c> contesta <c>MT0010</c> mas el rotulo con relleno de espacios; la cifra que
+    /// va antes del texto dice si el equipo lo ensena.
+    /// </remarks>
+    private async Task<string?> LeerRotuloDeMemoriaAsync(int canal, CancellationToken ct)
+    {
+        var respuesta = await PreguntarAsync(
+            string.Create(CultureInfo.InvariantCulture, $"MT{canal:D3}{Cat.Fin}"),
+            ct).ConfigureAwait(false);
+
+        if (OrdenesFt710.DiceQueNoLoAdmite(respuesta) || respuesta!.Length <= 6)
+        {
+            return null;
+        }
+
+        var rotulo = respuesta[6..].Trim();
+        return rotulo.Length == 0 ? null : rotulo;
+    }
+
+    /// <summary>
+    /// Lee la version del firmware de cada procesador del equipo.
+    /// </summary>
+    /// <remarks>
+    /// Con <c>VE</c>: el 0 es la unidad principal, el 1 la de pantalla, el 2 el receptor por
+    /// muestreo directo y el 3 el procesador de senal. Contesta cuatro cifras, que son la
+    /// version con dos decimales: <c>VE00112</c> es la 01.12.
+    /// </remarks>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>Cada procesador con su version.</returns>
+    public async Task<IReadOnlyDictionary<string, string>> LeerVersionesDeFirmwareAsync(
+        CancellationToken ct = default)
+    {
+        var versiones = new Dictionary<string, string>(StringComparer.Ordinal);
+        var nombres = new[] { "unidad principal", "unidad de pantalla", "receptor SDR", "procesador de señal" };
+
+        for (var i = 0; i < nombres.Length; i++)
+        {
+            var respuesta = await PreguntarAsync(
+                string.Create(CultureInfo.InvariantCulture, $"VE{i}{Cat.Fin}"),
+                ct).ConfigureAwait(false);
+
+            if (OrdenesFt710.DiceQueNoLoAdmite(respuesta) || respuesta!.Length < 7)
+            {
+                continue;
+            }
+
+            var cifras = respuesta[3..7];
+            versiones[nombres[i]] = $"{cifras[..2]}.{cifras[2..]}";
+        }
+
+        return versiones;
     }
 
     /// <inheritdoc />
@@ -715,6 +879,9 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
             if (nombre is not null)
             {
                 modo = _opciones.Traductor.DesdeElEquipo(nombre);
+
+                // El ancho de filtro solo se puede dar en hercios sabiendo el modo.
+                Volatile.Write(ref _modoDelEquipo, nombre);
             }
         }
 

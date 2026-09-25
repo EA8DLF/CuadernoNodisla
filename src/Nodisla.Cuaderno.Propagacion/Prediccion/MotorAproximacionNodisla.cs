@@ -78,9 +78,12 @@ public sealed class MotorAproximacionNodisla(OpcionesPropagacion? opciones = nul
             var porSenal = ModeloMufLuf.ProbabilidadDeSenal(relacion, ajustes.RelacionSenalRuidoRequeridaDb);
             var fiabilidad = Math.Clamp(porMuf * porSenal, 0.0, 1.0);
 
-            // Por debajo de cierto punto la senal calculada deja de querer decir nada: no se
-            // ensena una cifra, se ensena que no hay circuito.
-            var hayAlgoQueDecir = relacion > ModeloMufLuf.RelacionSinSentidoDb;
+            // Hay dos formas de que la cifra de senal no quiera decir nada, y las dos acaban en
+            // nulo: que la absorcion se haya comido el circuito, y que la frecuencia este por
+            // encima de la MUF, donde la onda no vuelve y el presupuesto de perdidas sigue dando
+            // un numero grande de una senal que no llega.
+            var hayAlgoQueDecir = relacion > ModeloMufLuf.RelacionSinSentidoDb
+                                  && porMuf >= ModeloMufLuf.ProbabilidadMinimaDeModo;
 
             resultado.Add(new PrediccionDeBanda(
                 banda,

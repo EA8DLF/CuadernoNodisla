@@ -17,7 +17,10 @@ namespace Nodisla.Cuaderno.Modos.Pruebas;
 /// </remarks>
 public class CadenaCompletaPruebas
 {
-    private static readonly TablasDelProtocolo Tablas = TablasDelProtocolo.DePruebas();
+    private static readonly TablasDelProtocolo Tablas = TablasDelProtocolo.Cargar();
+
+    // Se carga la tabla de verdad, no la de pruebas: estas comprobaciones tienen que
+    // recorrer el mismo camino que recorrerá el módem cuando esté escuchando la banda.
 
     [Theory]
     [InlineData(ModoDelModem.Ft8, "CQ EA8DLF IL18")]

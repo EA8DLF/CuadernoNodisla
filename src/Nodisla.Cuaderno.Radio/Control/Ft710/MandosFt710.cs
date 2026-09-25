@@ -140,46 +140,31 @@ public sealed record MandoFt710(
 /// el volumen y la ganancia de radiofrecuencia van de 0 a 255 tal y como dice la captura.
 /// </para>
 /// <para>
-/// Lo que <b>no</b> se convierte es lo que no se puede confirmar sin escribir en el equipo de
-/// Jose. Ver <see cref="ComoResolverElAnchoDeFiltro"/> y
-/// <see cref="ComoResolverElRetardoDeVoz"/>: ahi esta escrito, paso a paso, lo que hay que
-/// hacer el dia que haya permiso. Mientras tanto se ensena el indice y se dice que lo es.
+/// El ancho de filtro y el retardo del circuito de voz ya salen en sus unidades: las tablas
+/// estaban en el manual de referencia CAT, que no es el manual de operacion. Ver
+/// <see cref="DeDondeSalenLasTablas"/>, <see cref="AnchosDeFiltroFt710"/> y
+/// <see cref="RetardosDeVozFt710"/>.
+/// </para>
+/// <para>
+/// Lo unico que sigue sin convertirse es lo que Yaesu llama «nivel» de la muesca
+/// (<c>BP01</c>), porque ni el manual ni ninguna captura dicen en que unidad viene.
 /// </para>
 /// </remarks>
 public static class MandosFt710
 {
     /// <summary>
-    /// Receta para resolver la tabla del ancho de filtro (<c>SH0</c>), pendiente de permiso.
+    /// De donde salen las tablas de este modulo.
     /// </summary>
     /// <remarks>
-    /// Con el equipo <b>en recepcion</b> y sin tocar el PTT:
-    /// <list type="number">
-    /// <item>Leer y apuntar el valor actual: <c>SH0;</c> (en la captura, <c>SH0020</c>).</item>
-    /// <item>Leer tambien el modo, <c>MD0;</c>: la tabla de anchos depende del modo.</item>
-    /// <item>Escribir un indice, por ejemplo <c>SH0001;</c>, y mirar en la pantalla del equipo
-    /// que ancho en hercios ensena.</item>
-    /// <item>Repetir subiendo de uno en uno y anotando la pareja indice → hercios.</item>
-    /// <item>Dejarlo como estaba: escribir el valor apuntado en el primer paso.</item>
-    /// <item>Repetir la tabla para cada modo que le interese al operador, al menos banda
-    /// lateral y telegrafia.</item>
-    /// </list>
-    /// Con esa tabla, este mando pasa de indice a hercios y se le quita la unidad «índice».
+    /// Del <b>manual de referencia CAT</b> de Yaesu, <c>FT-710_CAT_OM_ENG_2306-C.pdf</c>, que no
+    /// es el mismo documento que el manual de operacion: aquel describe el frontal y este las
+    /// ordenes. El ancho de filtro y el retardo de voz se dieron por irresolubles mirando el
+    /// documento equivocado, y estuvieron a punto de costar escribir en el equipo del operador
+    /// para deducirlos a mano.
     /// </remarks>
-    public const string ComoResolverElAnchoDeFiltro =
-        "Leer SH0; y MD0;, escribir índices uno a uno anotando los hercios que muestre el "
-        + "equipo, y devolver el valor original. Con el equipo en recepción y con permiso.";
-
-    /// <summary>
-    /// Receta para resolver la tabla del retardo del circuito de voz (<c>VD</c>), pendiente.
-    /// </summary>
-    /// <remarks>
-    /// Igual que la del ancho de filtro: leer <c>VD;</c> y apuntarlo, escribir indices uno a uno
-    /// mirando los milisegundos que ensena el menu del equipo, y devolver el valor original.
-    /// No hace falta transmitir para verlo.
-    /// </remarks>
-    public const string ComoResolverElRetardoDeVoz =
-        "Leer VD; y apuntarlo, escribir índices uno a uno anotando los milisegundos que muestre "
-        + "el equipo, y devolver el valor original. Con el equipo en recepción y con permiso.";
+    public const string DeDondeSalenLasTablas =
+        "Manual de referencia CAT de Yaesu (FT-710_CAT_OM_ENG_2306-C.pdf), distinto del manual "
+        + "de operación.";
 
     private static readonly Func<int, double> Igual = valor => valor;
     private static readonly Func<double, int> IgualInverso = valor => (int)Math.Round(valor, MidpointRounding.AwayFromZero);
@@ -266,9 +251,10 @@ public static class MandosFt710
             Igual,
             IgualInverso),
 
-        // Indice de filtro: el equipo no da hercios y la tabla no esta confirmada.
-        // Ver ComoResolverElAnchoDeFiltro.
-        new(MandoDeEquipo.AnchoDeFiltro, "SH0", 3, new RangoDeMando(MandoDeEquipo.AnchoDeFiltro, 0, 21, 1, "índice"), Igual, IgualInverso),
+        // El ancho en hercios depende del modo, asi que el rango de verdad lo arma el control
+        // con el modo que tenga puesto el equipo (ver AnchosDeFiltroFt710). Esto es el de
+        // reserva, para cuando todavia no se sabe en que modo esta.
+        new(MandoDeEquipo.AnchoDeFiltro, "SH0", 3, new RangoDeMando(MandoDeEquipo.AnchoDeFiltro, 0, 23, 1, "índice"), Igual, IgualInverso),
 
         // Desplazamiento de la frecuencia intermedia. El equipo contesta con signo (IS00+0000).
         // Se deja de solo lectura porque el recorrido no consta en ninguna captura, y accionarlo
@@ -301,9 +287,22 @@ public static class MandosFt710
         new(MandoDeEquipo.Vox, "VX", 1, new RangoDeMando(MandoDeEquipo.Vox, 0, 1, 1), Igual, IgualInverso),
         new(MandoDeEquipo.GananciaVox, "VG", 3, new RangoDeMando(MandoDeEquipo.GananciaVox, 0, 100, 1), Igual, IgualInverso),
 
-        // Indice de retardo: la tabla en milisegundos no esta confirmada.
-        // Ver ComoResolverElRetardoDeVoz.
-        new(MandoDeEquipo.RetardoVox, "VD", 2, new RangoDeMando(MandoDeEquipo.RetardoVox, 0, 99, 1, "índice"), Igual, IgualInverso),
+        // Retardo del circuito de voz, ya en milisegundos: la tabla esta en el manual CAT.
+        // Se escribe con dos cifras porque es lo que contesta este firmware, aunque el manual
+        // declare cuatro; al leer se admiten las dos longitudes.
+        new(
+            MandoDeEquipo.RetardoVox,
+            "VD",
+            2,
+            new RangoDeMando(
+                MandoDeEquipo.RetardoVox,
+                0,
+                RetardosDeVozFt710.IndiceMaximo,
+                1,
+                "ms",
+                RetardosDeVozFt710.Etiquetas()),
+            Igual,
+            IgualInverso),
 
         // El acoplador: sintonizar emite portadora, asi que va marcado y solo se acciona dentro
         // de una transmision pedida al vigilante del PTT.

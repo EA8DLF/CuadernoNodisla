@@ -26,11 +26,12 @@ public sealed record MotorExternoEncontrado(TipoDeMotorExterno Tipo, string Ruta
 /// cualquiera de los dos instalado, lo correcto seria lanzarlo como proceso y leer su salida.
 /// </para>
 /// <para>
-/// <b>Por que aqui solo se busca y no se ejecuta.</b> En esta maquina no hay ninguno instalado.
-/// Escribir el analizador de la salida de VOACAP sin un VOACAP contra el que comprobarlo daria
-/// exactamente lo que el puerto prohibe: numeros con pinta de calculados que en realidad nadie
-/// ha validado. Asi que se detecta y se avisa, y el enchufe queda hecho en
-/// <see cref="IMotorDePrediccion"/> para el dia que haya uno con el que contrastar.
+/// ITURHFProp ya no se busca por aqui: vive dentro del proyecto y lo encuentra
+/// <see cref="MotorIturHfProp.Localizar"/>. Lo que queda de esta clase es la busqueda de un
+/// <b>VOACAP</b> instalado en el sistema, que no se ejecuta: no hay ninguno en esta maquina
+/// contra el que comprobar un analizador de su salida, y escribirlo a ciegas daria exactamente
+/// lo que el puerto prohibe, numeros con pinta de calculados que nadie ha validado. Se detecta
+/// y se avisa, por si algun dia interesa contrastar los dos modelos.
 /// </para>
 /// </remarks>
 public static class DetectorDeMotorExterno

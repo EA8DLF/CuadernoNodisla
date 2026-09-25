@@ -62,9 +62,37 @@ public static class FabricaDeControlEquipo
     {
         var ajustes = opciones ?? new OpcionesDeRadio();
 
-        if (ajustes.Via != ViaDeControl.CatNativo || !string.IsNullOrWhiteSpace(ajustes.Ft710.Puerto))
+        if (ajustes.Via != ViaDeControl.CatNativo)
         {
             return Crear(ajustes, registro);
+        }
+
+        // Lo guardado es una pista, no una certeza: este equipo ha llegado a cambiar de puerto y
+        // de velocidad a la vez entre dos encendidos —de COM3 a 115200 a COM15 a 38400—. Se
+        // prueba primero por donde estaba, que es lo rápido, y si ya no contesta se barre en vez
+        // de darse por vencido.
+        if (!string.IsNullOrWhiteSpace(ajustes.Ft710.Puerto))
+        {
+            var dondeEstaba = await AutodeteccionFt710.ComprobarAsync(
+                ajustes.Ft710.Puerto,
+                ajustes.Ft710.Baudios,
+                registro,
+                ct).ConfigureAwait(false);
+
+            if (dondeEstaba is not null)
+            {
+                var canalConocido = new CanalSerieCat(
+                    dondeEstaba.Puerto,
+                    dondeEstaba.Baudios,
+                    ajustes.Ft710.EsperaDeOrden,
+                    registro);
+                return new ControlFt710(canalConocido, ajustes.Ft710, registro);
+            }
+
+            (registro ?? NullLogger.Instance).LogInformation(
+                "Por {Puerto} a {Baudios} ya no contesta el equipo; se buscan todos los puertos.",
+                ajustes.Ft710.Puerto,
+                ajustes.Ft710.Baudios);
         }
 
         var equipos = await AutodeteccionFt710.BuscarAsync(registro, ct).ConfigureAwait(false);

@@ -99,9 +99,40 @@ public sealed record GeometriaIonosferica(
 /// </item>
 /// </list>
 /// <para>
-/// <b>Que precision cabe esperar.</b> En la MUF, del orden del 20 % en trayectos de latitud media
-/// y campo tranquilo. En la senal, no menos de 10 dB de error. La ordenacion de las bandas entre
-/// si es bastante mas fiable que el numero de cada una.
+/// <b>Que precision tiene, medida.</b> El 25 de septiembre de 2026 se comparo contra ITURHFProp,
+/// la implementacion de referencia de la UIT-R P.533, en 11 520 casos: doce destinos desde
+/// Canarias, de 150 a 18 000 km, cuatro meses, ocho horas y tres niveles de actividad solar
+/// (10, 52 y 150 manchas). Los numeros son estos, y sustituyen a la estimacion que habia antes:
+/// </para>
+/// <list type="bullet">
+/// <item><description>
+/// <b>MUF: error absoluto mediano del 24 %</b>, y uno de cada diez casos por encima del 54 %. El
+/// sesgo medio es pequeno (entre -19 % en trayectos cortos y +8 % en los medios), asi que no se
+/// equivoca siempre para el mismo lado: se dispersa. Es peor de lo que se habia estimado a ojo.
+/// </description></item>
+/// <item><description>
+/// <b>Fiabilidad: diferencia absoluta mediana de 0,05 a 0,15</b> segun la banda, con una cola
+/// larga (el percentil 90 llega a 0,80). Va mejor en las bandas bajas que en las altas.
+/// </description></item>
+/// <item><description>
+/// <b>Elegir banda: acierta la misma que la P.533 el 36 % de las veces y una contigua el 46 %.</b>
+/// Se equivoca de verdad en el 18 %. Para Canarias hacia Europa y America, que es lo que mas se
+/// usa, sale 35 % / 45 % / 20 %. Dicho de otra forma: cuatro de cada cinco veces senala la banda
+/// buena o la de al lado, que para decidir donde llamar sirve.
+/// </description></item>
+/// <item><description>
+/// <b>Senal-ruido: mediana de 1 a 2 dB en 60, 40, 30 y 20 metros</b> cuando la banda esta abierta,
+/// que es mejor de lo esperado. Pero <b>en 15, 12 y 10 metros se queda corto de perdidas</b> y da
+/// de 11 a 24 dB de mas, y en 160 metros unos 7 dB de mas.
+/// </description></item>
+/// <item><description><b>Numero de saltos: coincide en el 86 % de los casos.</b></description></item>
+/// </list>
+/// <para>
+/// <b>Cuidado con lo anterior:</b> parte de ese acuerdo es de familia. La absorcion de aqui sale
+/// de la misma P.533 contra la que se compara, asi que en las bandas bajas se estan comparando dos
+/// implementaciones de la misma formula, no dos modelos. El contraste limpio es la MUF, donde esto
+/// usa una envolvente de Chapman y la P.533 usa los mapas de coeficientes CCIR medidos; y ahi es
+/// donde sale el 24 %.
 /// </para>
 /// <para>
 /// <b>Donde falla, y falla de verdad.</b>
@@ -118,6 +149,13 @@ public sealed record GeometriaIonosferica(
 /// <item><description>
 /// <b>Bandas altas en minimo solar.</b> Sin capa E esporadica ni dispersion transecuatorial, 10 m
 /// y 6 m salen cerrados cuando en la realidad abren a ratos. Lo que diga de 6 m es solo capa F2.
+/// </description></item>
+/// <item><description>
+/// <b>Bandas altas, faltan perdidas.</b> La comparacion con la P.533 lo dejo medido: en 15, 12 y
+/// 10 metros esto da de 11 a 24 dB de senal de mas incluso con la banda abierta. Falta el
+/// apantallamiento de la capa E y el aumento de perdidas al acercarse la frecuencia a la MUF. La
+/// fiabilidad si baja, porque la corrige la probabilidad de MUF, pero el nivel de senal de esas
+/// bandas hay que leerlo como optimista.
 /// </description></item>
 /// <item><description>
 /// <b>Anomalia estacional y anomalia ecuatorial.</b> No estan. En invierno a mediodia la capa F2
@@ -167,6 +205,18 @@ public static class ModeloMufLuf
     /// Relacion senal-ruido por debajo de la cual no se da ninguna cifra: no significa nada.
     /// </summary>
     public const double RelacionSinSentidoDb = -40.0;
+
+    /// <summary>
+    /// Probabilidad minima de que la MUF aguante la frecuencia para dar un nivel de senal.
+    /// </summary>
+    /// <remarks>
+    /// Por encima de la MUF la onda no vuelve: el modo no existe. El presupuesto de espacio libre
+    /// mas absorcion sigue dando un numero grande, pero es un numero de una senal que no llega.
+    /// Comparando con la P.533 se vio que en casi una de cada tres filas se estaba publicando una
+    /// senal asi. Por debajo de este umbral no se da cifra, igual que no se da cuando el circuito
+    /// se lo come la absorcion.
+    /// </remarks>
+    public const double ProbabilidadMinimaDeModo = 0.05;
 
     private const double RadioTerrestreKm = Geodesia.RadioTerrestreKm;
     private const double Rad = Math.PI / 180.0;

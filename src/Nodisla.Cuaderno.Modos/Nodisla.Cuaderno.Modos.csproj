@@ -14,4 +14,14 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
 
+  <!-- Las constantes del protocolo que no se pueden deducir: la matriz de paridad del LDPC y la
+       mezcla de FT4. Van junto al programa, no empotradas, para que se puedan mirar y comparar
+       sin recompilar. Ver Tablas/LEEME.md para la procedencia y la licencia. -->
+  <ItemGroup>
+    <None Update="Tablas\tablas-ft8.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>tablas-ft8.txt</Link>
+    </None>
+  </ItemGroup>
+
 </Project>

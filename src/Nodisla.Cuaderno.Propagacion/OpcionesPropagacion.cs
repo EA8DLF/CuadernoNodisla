@@ -55,10 +55,25 @@ public sealed record OpcionesPropagacion
     public double RelacionSenalRuidoRequeridaDb { get; init; } = 3.0;
 
     /// <summary>
-    /// Ruta de un motor externo de prediccion, si el operador lo tiene instalado. Vacio significa
-    /// que se usa la aproximacion propia.
+    /// Ruta del ejecutable de ITURHFProp. Vacio significa que se busca donde suele estar, dentro
+    /// del propio proyecto.
     /// </summary>
     public string? RutaDelMotorExterno { get; init; }
+
+    /// <summary>
+    /// Usar ITURHFProp cuando este instalado. En falso se calcula siempre con la aproximacion
+    /// propia, que es lo que hace falta para compararlas.
+    /// </summary>
+    public bool UsarMotorExterno { get; init; } = true;
+
+    /// <summary>
+    /// Tiempo maximo que se le da al motor externo antes de cortarlo y tirar de la aproximacion.
+    /// </summary>
+    /// <remarks>
+    /// Una prediccion de once bandas tarda menos de un segundo en esta maquina. Diez segundos es
+    /// margen de sobra; si los pasa, algo va mal y el operador no debe quedarse esperando.
+    /// </remarks>
+    public TimeSpan EsperaDelMotorExterno { get; init; } = TimeSpan.FromSeconds(10);
 
     private static string RutaDeCachePredeterminada() => Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),

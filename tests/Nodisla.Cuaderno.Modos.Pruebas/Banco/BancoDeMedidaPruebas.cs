@@ -27,7 +27,10 @@ namespace Nodisla.Cuaderno.Modos.Pruebas.Banco;
 /// </remarks>
 public class BancoDeMedidaPruebas(ITestOutputHelper salida)
 {
-    private static readonly TablasDelProtocolo Tablas = TablasDelProtocolo.DePruebas();
+    private static readonly TablasDelProtocolo Tablas = TablasDelProtocolo.Cargar();
+
+    // Se carga la tabla de verdad, no la de pruebas: estas comprobaciones tienen que
+    // recorrer el mismo camino que recorrerá el módem cuando esté escuchando la banda.
 
     /// <summary>Como se compilo lo que se esta midiendo, que cambia los tiempos por cinco.</summary>
 #if DEBUG
@@ -55,7 +58,14 @@ public class BancoDeMedidaPruebas(ITestOutputHelper salida)
         var ft8 = BancoDeMedida.Recorrer(Tablas, ModoDelModem.Ft8, desde: 0, hasta: -24, paso: -3, ventanasPorFranja: VentanasPorFranja);
         var ft4 = BancoDeMedida.Recorrer(Tablas, ModoDelModem.Ft4, desde: 0, hasta: -21, paso: -3, ventanasPorFranja: VentanasPorFranja);
 
-        var informe = Componer(ft8, ft4);
+        // Barrido fino alrededor del filo, de decibelio en decibelio y con mas ventanas. El
+        // barrido grueso va de tres en tres, y ahi la diferencia entre «saca todo» y «no saca
+        // nada» cabe entera en un solo escalon: sin esto no se puede decir donde esta el limite
+        // ni notar si un cambio lo mueve medio decibelio.
+        var filo = BancoDeMedida.Recorrer(
+            Tablas, ModoDelModem.Ft8, desde: -16, hasta: -23, paso: -1, ventanasPorFranja: VentanasPorFranja * 2);
+
+        var informe = Componer(ft8, ft4, filo);
         salida.WriteLine(informe);
 
         // El informe que queda en el repositorio se escribe solo desde una compilacion de
@@ -75,11 +85,14 @@ public class BancoDeMedidaPruebas(ITestOutputHelper salida)
         ft4.First(f => Math.Abs(f.Decibelios) < 0.1).Porcentaje.Should().BeGreaterThan(95);
 
         // Y por debajo del ruido tiene que seguir sacando cosas, que es la gracia del modo.
-        ft8.First(f => Math.Abs(f.Decibelios + 12) < 0.1).Porcentaje.Should().BeGreaterThan(70,
-            "a −12 dB un decodificador sano recupera casi todo");
+        ft8.First(f => Math.Abs(f.Decibelios + 12) < 0.1).Porcentaje.Should().BeGreaterThan(90,
+            "a −12 dB un decodificador sano con el código de verdad recupera prácticamente todo");
+        ft8.First(f => Math.Abs(f.Decibelios + 18) < 0.1).Porcentaje.Should().BeGreaterThan(70,
+            "−18 dB es terreno normal de FT8, no un caso extremo");
     }
 
-    private static string Componer(IReadOnlyList<FranjaDelBanco> ft8, IReadOnlyList<FranjaDelBanco> ft4)
+    private static string Componer(
+        IReadOnlyList<FranjaDelBanco> ft8, IReadOnlyList<FranjaDelBanco> ft4, IReadOnlyList<FranjaDelBanco> filo)
     {
         var sb = new StringBuilder();
         sb.AppendLine("# Banco de medida del módem propio");
@@ -92,12 +105,12 @@ public class BancoDeMedidaPruebas(ITestOutputHelper salida)
         sb.AppendLine("frecuencia al azar entre 500 y 2500 Hz y con un desfase al azar de ±0,3 s. La semilla es");
         sb.AppendLine("fija, así que la medida se repite igual en cualquier máquina.");
         sb.AppendLine();
-        sb.AppendLine("> **Aviso importante.** Estas cifras se han obtenido con el **código corrector de");
-        sb.AppendLine("> pruebas**, no con el de FT8 de verdad: la tabla del LDPC(174,91) todavía no está en el");
-        sb.AppendLine("> repositorio. El código de pruebas tiene las mismas dimensiones y una densidad parecida,");
-        sb.AppendLine("> así que la curva es representativa de toda la cadena —modulación, sincronismo,");
-        sb.AppendLine("> demodulación y corrección— pero **no es la sensibilidad final**. Al poner la tabla");
-        sb.AppendLine("> real hay que volver a pasar el banco y sustituir esta tabla.");
+        sb.AppendLine("Las cifras son con el **código corrector LDPC(174,91) de verdad**, el mismo que usa todo");
+        sb.AppendLine("el mundo en FT8 y FT4; su tabla está en `src/Nodisla.Cuaderno.Modos/Tablas/` con su");
+        sb.AppendLine("procedencia y su licencia. Lo que se mide aquí es, por tanto, la sensibilidad real del");
+        sb.AppendLine("módem contra ruido blanco. **El escalón que queda con señal muy débil es el hueco de la");
+        sb.AppendLine("recuperación profunda**, que todavía no está puesta: es lo que el programa de referencia");
+        sb.AppendLine("usa por debajo de −20 dB y lo que le permite seguir sacando mensajes ahí.");
         sb.AppendLine();
         sb.AppendLine("La columna que manda es **Falsos**: tiene que ser cero en todas las franjas. Un mensaje");
         sb.AppendLine("falso mete en el cuaderno un contacto que nunca existió y contamina los diplomas para");
@@ -113,6 +126,12 @@ public class BancoDeMedidaPruebas(ITestOutputHelper salida)
         sb.AppendLine();
         sb.Append(BancoDeMedida.Tabla("FT8", ft8));
         sb.Append(BancoDeMedida.Tabla("FT4", ft4));
+        sb.AppendLine("### FT8 en el filo, de decibelio en decibelio");
+        sb.AppendLine();
+        sb.AppendLine("Donde el módem deja de sacar mensajes. El doble de ventanas por franja, porque aquí es");
+        sb.AppendLine("donde un cambio se nota y donde el azar engaña más.");
+        sb.AppendLine();
+        sb.Append(BancoDeMedida.Tabla("FT8, −16 a −23 dB", filo));
         return sb.ToString();
     }
 

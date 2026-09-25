@@ -16,19 +16,29 @@ namespace Nodisla.Cuaderno.Modos.Pruebas;
 /// </remarks>
 public class ModemPropioPruebas
 {
-    private static readonly TablasDelProtocolo Tablas = TablasDelProtocolo.DePruebas();
+    private static readonly TablasDelProtocolo Tablas = TablasDelProtocolo.Cargar();
+
+    // Se carga la tabla de verdad, no la de pruebas: estas comprobaciones tienen que
+    // recorrer el mismo camino que recorrerá el módem cuando esté escuchando la banda.
 
     /// <summary>Un reloj de mentira que no se desvia, para poder probar sin red ni radio.</summary>
     private sealed class RelojDePruebas : IRelojDelModem
     {
         public DateTimeOffset Ahora { get; set; } = DateTimeOffset.UnixEpoch;
+
         public DesvioDelReloj Desvio { get; } = new(0, "pruebas", DateTimeOffset.UnixEpoch, EsFiable: true);
-        public event EventHandler<DesvioDelReloj>? DesvioMedido;
-        public Task<DesvioDelReloj> MedirAsync(CancellationToken ct = default)
+
+        public EstadoDelReloj Estado => new(
+            Desvio, CalidadDelReloj.Bien, "El reloj está en hora.", string.Empty, "0 ms");
+
+        public event EventHandler<EstadoDelReloj>? DesvioMedido;
+
+        public Task<DesvioDelReloj> MedirAsync(bool forzar = false, CancellationToken ct = default)
         {
-            DesvioMedido?.Invoke(this, Desvio);
+            DesvioMedido?.Invoke(this, Estado);
             return Task.FromResult(Desvio);
         }
+
         public DateTimeOffset ProximaVentana(TimeSpan periodo)
         {
             var ticks = Ahora.UtcTicks;
@@ -123,12 +133,17 @@ public class ModemPropioPruebas
     }
 
     [Fact]
-    public async Task ElModemDiceQueTrabajaConElCodigoDePruebas()
+    public async Task ElModemTrabajaConLaTablaDeVerdadYLoDice()
     {
-        // Mientras no este la tabla de verdad, el modem no puede dar a entender que decodifica
-        // a otras estaciones. Que lo diga es parte del encargo, no un detalle.
+        // El módem tiene que saber, y poder decir, si está decodificando con el código real o
+        // con el de pruebas. Con el de pruebas funciona consigo mismo pero no entiende a nadie
+        // más, y eso la pantalla tiene que poder advertirlo en vez de dar a entender que la
+        // banda está vacía.
         await using var modem = new ModemPropio(Tablas, new RelojDePruebas());
-        modem.Tablas.EsElCodigoReal.Should().BeFalse();
-        modem.Tablas.Procedencia.Should().Contain("prueba");
+        modem.Tablas.EsElCodigoReal.Should().BeTrue();
+        modem.Tablas.Procedencia.Should().EndWith("tablas-ft8.txt");
+
+        await using var sinTabla = new ModemPropio(TablasDelProtocolo.DePruebas(), new RelojDePruebas());
+        sinTabla.Tablas.EsElCodigoReal.Should().BeFalse();
     }
 }

@@ -1,0 +1,12 @@
+# Aqui dentro git no toca nada.
+#
+# La raiz del repositorio tiene "* text=auto eol=crlf", que reescribe los finales de linea. Los
+# mapas ionosfericos y los coeficientes de la UIT tienen que llegar byte a byte como se validaron
+# contra sus nueve casos de referencia, y las salidas de ejemplo se comparan caracter a caracter:
+# si git les cambia los finales de linea, validar.sh empieza a dar diferencias que no existen.
+* -text
+
+# Estos dos si son texto nuestro y se editan.
+LEEME.md text eol=lf
+validar.sh text eol=lf
+.gitattributes text eol=lf

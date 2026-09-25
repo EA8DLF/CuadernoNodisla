@@ -102,7 +102,7 @@ public class ServicioDePropagacionPruebas : IDisposable
     }
 
     [Fact]
-    public void El_servicio_dice_que_motor_lleva_dentro()
+    public void Sin_motor_externo_el_servicio_dice_que_lo_suyo_es_una_aproximacion()
     {
         using var fabrica = FabricaFalsa.Caida();
         var servicio = new ServicioDePropagacion(fabrica, Opciones());
@@ -110,6 +110,25 @@ public class ServicioDePropagacionPruebas : IDisposable
         servicio.EsAproximacion.Should().BeTrue();
         servicio.MotorDePrediccion.Should().Be(MotorAproximacionNodisla.NombreDelMotor);
         servicio.MotorDePrediccion.Should().Contain("no es VOACAP");
+    }
+
+    [Fact]
+    public void Con_iturhfprop_instalado_el_servicio_lo_coge_solo()
+    {
+        // Esta prueba se salta cuando el motor no esta compilado, para que un clon recien hecho
+        // del repositorio no falle por algo que no es un fallo.
+        var motor = MotorIturHfProp.Localizar();
+        if (motor is null)
+        {
+            return;
+        }
+
+        using var fabrica = FabricaFalsa.Caida();
+        var servicio = new ServicioDePropagacion(fabrica, Opciones() with { UsarMotorExterno = true });
+
+        servicio.EsAproximacion.Should().BeFalse();
+        servicio.MotorDePrediccion.Should().Be(MotorIturHfProp.NombreDelMotor);
+        servicio.MotorDePrediccion.Should().Contain("P.533");
     }
 
     [Fact]
@@ -207,6 +226,8 @@ public class ServicioDePropagacionPruebas : IDisposable
         RutaDeCache = Path.Combine(carpeta, "indices.json"),
         Reintentos = 0,
         EsperaDeRed = TimeSpan.FromSeconds(2),
+        // Las pruebas de unidad no lanzan el proceso externo: son de este modulo, no de la UIT.
+        UsarMotorExterno = false,
     };
 
     /// <summary>Borra la carpeta temporal del cache.</summary>
