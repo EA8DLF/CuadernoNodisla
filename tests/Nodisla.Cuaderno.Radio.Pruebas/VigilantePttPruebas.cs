@@ -1,6 +1,6 @@
-using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Radio.Ptt;
 using Nodisla.Cuaderno.Radio.Pruebas.Dobles;
@@ -40,22 +40,6 @@ public class VigilantePttPruebas
             : opciones.TiempoSinLatido;
 
         return loQueVigila + opciones.PasoDeVigilancia + vigilante.PlazoDeSuelta + TimeSpan.FromSeconds(5);
-    }
-
-    private static async Task EsperarAQue(Func<bool> condicion, int milisegundos = 3000)
-    {
-        var reloj = Stopwatch.StartNew();
-        while (reloj.ElapsedMilliseconds < milisegundos)
-        {
-            if (condicion())
-            {
-                return;
-            }
-
-            await Task.Delay(5);
-        }
-
-        condicion().Should().BeTrue("la condición debía cumplirse antes de agotarse la espera");
     }
 
     [Fact]
@@ -237,15 +221,31 @@ public class VigilantePttPruebas
             equipo,
             OpcionesRapidas(tiempoMaximoMs: 5000, tiempoSinLatidoMs: 500));
 
+        var sueltas = new EsperaDeSueltas(vigilante);
         await using var transmision = await vigilante.PedirAntenaAsync("un módem que late");
-        var reloj = Stopwatch.StartNew();
-        while (reloj.ElapsedMilliseconds < 1000)
-        {
-            transmision.Latir();
-            await Task.Delay(25);
-        }
 
-        equipo.PttArriba.Should().BeTrue("mientras se late el vigilante no debe soltar");
+        // El latido va en hilo propio, como el del vigilante. Si latiera desde una tarea, un
+        // día con la máquina cargada el latido llegaría tarde y esta prueba fallaría sin que
+        // nada estuviera roto: estaría midiendo el repartidor de tareas, no al vigilante.
+        var latidos = new Thread(() =>
+        {
+            var reloj = Stopwatch.StartNew();
+            while (reloj.ElapsedMilliseconds < 1000)
+            {
+                transmision.Latir();
+                Thread.Sleep(25);
+            }
+        })
+        {
+            IsBackground = true,
+            Priority = ThreadPriority.AboveNormal,
+        };
+
+        latidos.Start();
+        latidos.Join(TimeSpan.FromSeconds(30)).Should().BeTrue();
+
+        sueltas.Motivos.Should().BeEmpty("mientras se late el vigilante no debe soltar");
+        equipo.PttArriba.Should().BeTrue();
         transmision.EnAntena.Should().BeTrue();
     }
 
@@ -465,7 +465,8 @@ public class VigilantePttPruebas
             await Task.WhenAll(tareas);
         }
 
-        await EsperarAQue(() => !equipo.PttArriba);
+        // Ninguna espera a ojo: se pide la suelta y se espera a que termine esa misma suelta.
+        await vigilante.SoltarYaAsync();
         equipo.PttArriba.Should().BeFalse("después de la tormenta el PTT tiene que estar abajo");
         vigilante.EnAntena.Should().BeFalse();
     }

@@ -26,8 +26,16 @@ public sealed class OpcionesFt710
     /// <summary>Lo que se espera antes de volver a intentar hablar con un equipo que se ha perdido.</summary>
     public TimeSpan EsperaDeReconexion { get; set; } = TimeSpan.FromSeconds(2);
 
-    /// <summary>Tope de la espera entre reintentos, para no machacar el puerto si el equipo no vuelve.</summary>
-    public TimeSpan EsperaMaximaDeReconexion { get; set; } = TimeSpan.FromSeconds(30);
+    /// <summary>
+    /// Tope de la espera entre reintentos, para no machacar el puerto si el equipo no vuelve.
+    /// </summary>
+    /// <remarks>
+    /// Cinco segundos y no mas: esto no es un servidor remoto al que convenga dejar en paz, es
+    /// un puerto serie local que no le cuesta nada a nadie. Un tope largo se traduce en que el
+    /// operador enciende la radio y el cuaderno tarda en enterarse, que es justo lo que no
+    /// queremos.
+    /// </remarks>
+    public TimeSpan EsperaMaximaDeReconexion { get; set; } = TimeSpan.FromSeconds(5);
 
     /// <summary>Lo que se espera a que el equipo conteste cada orden.</summary>
     public TimeSpan EsperaDeOrden { get; set; } = TimeSpan.FromMilliseconds(350);
@@ -153,6 +161,15 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     /// <inheritdoc />
     public event EventHandler<string>? ComunicacionPerdida;
 
+    /// <summary>
+    /// Salta cuando se recupera la comunicacion con un equipo que se habia perdido.
+    /// </summary>
+    /// <remarks>
+    /// La interfaz lo necesita para dejar de avisar de que no hay radio, y sirve ademas para
+    /// que nadie tenga que esperar «un rato a ver si vuelve»: hay una senal concreta.
+    /// </remarks>
+    public event EventHandler<string>? ComunicacionRecuperada;
+
     /// <inheritdoc />
     /// <exception cref="CanalNoDisponibleException">Si el puerto no existe o esta ocupado.</exception>
     /// <exception cref="EquipoNoContestaException">
@@ -240,17 +257,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
 
         cts?.Dispose();
 
-        try
-        {
-            if (_canal.Abierto)
-            {
-                await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false);
-            }
-        }
-        catch (Exception ex)
-        {
-            _registro.LogWarning(ex, "No se pudo bajar el PTT antes de desconectar.");
-        }
+        await BajarElPttComoSeaAsync(ct).ConfigureAwait(false);
 
         _canal.Cerrar();
         Actualizar(estado => estado with { Conectado = false, Transmitiendo = false });
@@ -879,21 +886,32 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
 
                 if (perdido)
                 {
-                    await Task.Delay(espera, ct).ConfigureAwait(false);
-
-                    if (!MereceLaPenaReintentar())
+                    var seVeElCodec = ElCodecEstaPresente();
+                    if (seVeElCodec == false)
                     {
                         // El códec de audio del equipo no está: la radio sigue apagada. No se
                         // abre el puerto para nada; se espera a que vuelva.
+                        await Task.Delay(espera, ct).ConfigureAwait(false);
                         espera = Espaciar(espera);
                         continue;
                     }
 
+                    if (seVeElCodec == true && espera > _opciones.EsperaDeReconexion)
+                    {
+                        // El códec ha vuelto a aparecer: la radio está otra vez encendida. No
+                        // tiene ningún sentido seguir esperando lo que tocaba por el retroceso:
+                        // se vuelve a intentar de inmediato.
+                        _registro.LogDebug("El códec de audio del equipo ha vuelto; se reintenta ya.");
+                        espera = _opciones.EsperaDeReconexion;
+                    }
+
+                    await Task.Delay(espera, ct).ConfigureAwait(false);
                     await ReconectarAsync(ct).ConfigureAwait(false);
                     perdido = false;
                     fallosSeguidos = 0;
                     espera = _opciones.EsperaDeReconexion;
                     _registro.LogInformation("El equipo ha vuelto.");
+                    ComunicacionRecuperada?.Invoke(this, _canal.Descripcion);
                     continue;
                 }
 
@@ -978,6 +996,34 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     }
 
     /// <summary>
+    /// Lo que puede tardar, como mucho, en volver a conectarse con un equipo que reaparece.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Mientras el equipo no esta, el reintento se va espaciando hasta
+    /// <see cref="OpcionesFt710.EsperaMaximaDeReconexion"/>; en el peor caso hay que esperar ese
+    /// ciclo entero mas lo que cueste un intento. Por eso el tope de espera importa: <b>es lo
+    /// que tarda el cuaderno en enterarse de que el operador ha encendido la radio</b>. Medido
+    /// con sondeo de 50 ms y espera de orden de 500 ms: 336 ms tras medio segundo apagada, 861
+    /// ms tras cinco segundos y 4,9 s tras diez.
+    /// </para>
+    /// <para>
+    /// Cuando se habla por el puerto serie del propio equipo hay un atajo que se salta todo
+    /// esto: en cuanto reaparece el codec de audio USB, el retroceso se descarta y se reintenta
+    /// en la siguiente pasada.
+    /// </para>
+    /// </remarks>
+    /// <param name="opciones">Ajustes con los que corre el control.</param>
+    /// <returns>La cota de tiempo hasta volver a estar conectado.</returns>
+    public static TimeSpan TiempoMaximoDeReconexion(OpcionesFt710 opciones)
+    {
+        ArgumentNullException.ThrowIfNull(opciones);
+
+        var teorica = opciones.EsperaMaximaDeReconexion + opciones.IntervaloDeSondeo + opciones.EsperaDeOrden;
+        return teorica * MargenDelPlanificador;
+    }
+
+    /// <summary>
     /// Holgura sobre el tiempo teorico, porque el sondeo espera con el repartidor de tareas y
     /// con la maquina cargada las esperas se pasan de largo.
     /// </summary>
@@ -1001,11 +1047,13 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     /// abrir el puerto una y otra vez no la va a encender. Solo se mira cuando el canal es el
     /// puerto serie del propio equipo; con un puente por red esto no dice nada.
     /// </remarks>
-    private bool MereceLaPenaReintentar()
+    private bool? ElCodecEstaPresente()
     {
+        // Nulo quiere decir «aquí el códec no dice nada»: con un puente por red o con el aviso
+        // desactivado, hay que reintentar a la manera clásica.
         if (!_opciones.ComprobarElCodecDeAudio || _canal is not CanalSerieCat)
         {
-            return true;
+            return null;
         }
 
         if (AudioDelFt710.EquipoEncendido())
@@ -1057,6 +1105,47 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
         }
 
         await LeerEstadoAsync(ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Baja el PTT antes de cerrar, pase lo que pase con el canal.
+    /// </summary>
+    /// <remarks>
+    /// Si el canal se ha roto no basta con intentarlo por la via normal y anotar el fallo:
+    /// cerrar con el equipo en antena es justo lo que no puede pasar. Se prueban las vias de
+    /// emergencia, las mismas que usa el vigilante.
+    /// </remarks>
+    private async Task BajarElPttComoSeaAsync(CancellationToken ct)
+    {
+        try
+        {
+            if (_canal.Abierto)
+            {
+                await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false);
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            _registro.LogWarning(ex, "No se pudo bajar el PTT por la vía normal antes de desconectar.");
+        }
+
+        foreach (var via in ViasDeSuelta)
+        {
+            try
+            {
+                using var espera = new CancellationTokenSource(_opciones.EsperaDeOrden);
+                await via.SoltarAsync(espera.Token).ConfigureAwait(false);
+                _registro.LogInformation("PTT abajo antes de desconectar por «{Via}».", via.Nombre);
+                return;
+            }
+            catch (Exception ex)
+            {
+                _registro.LogWarning(ex, "Falló la vía «{Via}» al bajar el PTT antes de desconectar.", via.Nombre);
+            }
+        }
+
+        _registro.LogError("No se ha podido bajar el PTT antes de desconectar por ninguna vía.");
     }
 
     private async Task<string?> PreguntarAsync(string orden, CancellationToken ct)

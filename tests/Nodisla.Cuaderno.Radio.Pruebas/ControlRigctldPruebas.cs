@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using FluentAssertions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
@@ -23,22 +22,6 @@ public class ControlRigctldPruebas
         EsperaDeOrden = TimeSpan.FromMilliseconds(500),
         EsperaDeReconexion = TimeSpan.FromMilliseconds(50),
     };
-
-    private static async Task EsperarAQue(Func<bool> condicion, int milisegundos = 4000)
-    {
-        var reloj = Stopwatch.StartNew();
-        while (reloj.ElapsedMilliseconds < milisegundos)
-        {
-            if (condicion())
-            {
-                return;
-            }
-
-            await Task.Delay(10);
-        }
-
-        condicion().Should().BeTrue("la condición debía cumplirse antes de agotarse la espera");
-    }
 
     [Fact]
     public async Task Se_lee_el_estado_del_equipo()
@@ -75,11 +58,15 @@ public class ControlRigctldPruebas
         await using var control = new ControlRigctld(Opciones(demonio.Puerto));
         await control.ConectarAsync();
 
+        var senales = new EsperaDeSenales(control);
+
         // El operador mueve el dial a mano, sin pasar por el programa.
         demonio.Hercios = 21_074_000;
 
-        await EsperarAQue(() => control.Estado.Frecuencia == Frecuencia.DesdeHercios(21_074_000));
-        control.Estado.Frecuencia.Should().Be(Frecuencia.DesdeHercios(21_074_000));
+        var estado = await senales.EstadoAsync(
+            e => e.Frecuencia == Frecuencia.DesdeHercios(21_074_000),
+            control.Estado);
+        estado.Frecuencia.Should().Be(Frecuencia.DesdeHercios(21_074_000));
     }
 
     [Fact]
@@ -89,11 +76,14 @@ public class ControlRigctldPruebas
         await using var control = new ControlRigctld(Opciones(demonio.Puerto));
         await control.ConectarAsync();
 
+        var senales = new EsperaDeSenales(control);
         demonio.Hercios = 27_555_000;
 
-        await EsperarAQue(() => control.Estado.Frecuencia == Frecuencia.DesdeHercios(27_555_000));
-        control.Estado.Banda.EsVacia.Should().BeTrue();
-        control.Estado.Conectado.Should().BeTrue();
+        var estado = await senales.EstadoAsync(
+            e => e.Frecuencia == Frecuencia.DesdeHercios(27_555_000),
+            control.Estado);
+        estado.Banda.EsVacia.Should().BeTrue();
+        estado.Conectado.Should().BeTrue();
     }
 
     [Fact]
@@ -177,10 +167,12 @@ public class ControlRigctldPruebas
         await control.ConectarAsync();
         control.Estado.Conectado.Should().BeTrue();
 
+        var senales = new EsperaDeSenales(control);
+
         await demonio.DisposeAsync();
 
-        await EsperarAQue(() => !control.Estado.Conectado);
-        control.Estado.Conectado.Should().BeFalse();
+        var estado = await senales.EstadoAsync(e => !e.Conectado, control.Estado);
+        estado.Conectado.Should().BeFalse();
     }
 
     [Fact]

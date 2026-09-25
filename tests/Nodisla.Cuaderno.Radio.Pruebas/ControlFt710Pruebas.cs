@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using FluentAssertions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
@@ -35,22 +34,6 @@ public class ControlFt710Pruebas
         }
 
         return (equipo, control);
-    }
-
-    private static async Task EsperarAQue(Func<bool> condicion, int milisegundos = 4000)
-    {
-        var reloj = Stopwatch.StartNew();
-        while (reloj.ElapsedMilliseconds < milisegundos)
-        {
-            if (condicion())
-            {
-                return;
-            }
-
-            await Task.Delay(10);
-        }
-
-        condicion().Should().BeTrue("la condición debía cumplirse antes de agotarse la espera");
     }
 
     [Fact]
@@ -101,11 +84,10 @@ public class ControlFt710Pruebas
             await control.EscribirMandoAsync(MandoDeEquipo.Sintonizador, 2);
         }
 
-        await EsperarAQue(() => equipo.Recibidas.Contains("AC002;"));
-        equipo.Recibidas.Should().Contain("AC002;");
+        await equipo.EsperarOrdenAsync("AC002;", EsperaDeSenales.PlazoDeSeguridad);
 
         // Y pase lo que pase con el acoplador, el PTT queda abajo.
-        await EsperarAQue(() => !equipo.EnAntena);
+        await equipo.EsperarAntenaAsync(enAntena: false, EsperaDeSenales.PlazoDeSeguridad);
         equipo.EnAntena.Should().BeFalse();
     }
 
@@ -146,7 +128,7 @@ public class ControlFt710Pruebas
 
         await control.EscribirMandoAsync(MandoDeEquipo.Volumen, 120, VfoDelEquipo.Secundario);
 
-        await EsperarAQue(() => equipo.Recibidas.Contains("AG1120;"));
+        await equipo.EsperarOrdenAsync("AG1120;", EsperaDeSenales.PlazoDeSeguridad);
         equipo.Recibidas.Should().Contain("AG1120;").And.NotContain("AG0120;");
     }
 
@@ -337,7 +319,7 @@ public class ControlFt710Pruebas
         await control.EscribirMandoAsync(MandoDeEquipo.TonoCw, 700);
 
         // Las órdenes de escritura no llevan respuesta, así que se espera a verla llegar.
-        await EsperarAQue(() => equipo.Recibidas.Contains("KP40;"));
+        await equipo.EsperarOrdenAsync("KP40;", EsperaDeSenales.PlazoDeSeguridad);
         equipo.Recibidas.Should().Contain("KP40;");
     }
 
@@ -351,7 +333,7 @@ public class ControlFt710Pruebas
         await control.EscribirMandoAsync(MandoDeEquipo.TonoCw, 5000);
 
         // El tope son 1050 Hz, que es el índice 75.
-        await EsperarAQue(() => equipo.Recibidas.Contains("KP75;"));
+        await equipo.EsperarOrdenAsync("KP75;", EsperaDeSenales.PlazoDeSeguridad);
         equipo.Recibidas.Should().Contain("KP75;");
         equipo.Recibidas.Should().NotContain(orden => orden.StartsWith("KP4", StringComparison.Ordinal));
     }
@@ -446,11 +428,11 @@ public class ControlFt710Pruebas
 
         await using (await vigilante.PedirAntenaAsync("prueba contra el equipo de mentira"))
         {
-            await EsperarAQue(() => equipo.EnAntena);
+            await equipo.EsperarAntenaAsync(enAntena: true, EsperaDeSenales.PlazoDeSeguridad);
             equipo.EnAntena.Should().BeTrue();
         }
 
-        await EsperarAQue(() => !equipo.EnAntena);
+        await equipo.EsperarAntenaAsync(enAntena: false, EsperaDeSenales.PlazoDeSeguridad);
         equipo.EnAntena.Should().BeFalse();
         equipo.Recibidas.Should().Contain("TX1;").And.Contain("TX0;");
     }
@@ -494,7 +476,7 @@ public class ControlFt710Pruebas
 
         var sueltas = new EsperaDeSueltas(vigilante);
         var transmision = await vigilante.PedirAntenaAsync("una transmisión que se queda sin equipo");
-        await EsperarAQue(() => equipo.EnAntena);
+        await equipo.EsperarAntenaAsync(enAntena: true, EsperaDeSenales.PlazoDeSeguridad);
 
         // Jose apaga la radio en mitad de la transmisión.
         equipo.Enmudecer();
@@ -514,18 +496,70 @@ public class ControlFt710Pruebas
     }
 
     [Fact]
+    public async Task Al_desconectar_se_baja_el_ptt_aunque_el_canal_este_roto()
+    {
+        var ajustes = new OpcionesFt710
+        {
+            IntervaloDeSondeo = TimeSpan.FromMilliseconds(50),
+            EsperaDeOrden = TimeSpan.FromMilliseconds(500),
+        };
+
+        await using var equipo = new Ft710DeMentira();
+        var canal = new CanalTcpCat("127.0.0.1", equipo.Puerto, ajustes.EsperaDeOrden);
+        var control = new ControlFt710(canal, ajustes);
+        await control.ConectarAsync();
+
+        var vigilante = new VigilantePtt(control, new OpcionesDelVigilante
+        {
+            TiempoMaximo = TimeSpan.FromSeconds(30),
+            TiempoSinLatido = TimeSpan.FromSeconds(30),
+            EngancharseAlCierreDelProceso = false,
+        });
+
+        var transmision = await vigilante.PedirAntenaAsync("prueba");
+        await equipo.EsperarAntenaAsync(enAntena: true, EsperaDeSenales.PlazoDeSeguridad);
+
+        // El canal se rompe justo antes de cerrar, que es lo que pasa de verdad cuando se
+        // cancela el sondeo a mitad de una orden.
+        canal.Cerrar();
+
+        await control.DesconectarAsync();
+
+        // Cerrar con el equipo en antena es lo peor que puede hacer este programa: si la vía
+        // normal no está, hay que bajarlo por una de emergencia.
+        await equipo.EsperarAntenaAsync(enAntena: false, EsperaDeSenales.PlazoDeSeguridad);
+        equipo.EnAntena.Should().BeFalse();
+
+        await transmision.DisposeAsync();
+        await vigilante.DisposeAsync();
+        await control.DisposeAsync();
+    }
+
+    [Fact]
     public async Task Cuando_el_equipo_vuelve_se_reconecta_solo()
     {
-        var (equipo, control) = await MontarAsync();
+        var ajustes = new OpcionesFt710
+        {
+            IntervaloDeSondeo = TimeSpan.FromMilliseconds(50),
+            EsperaDeOrden = TimeSpan.FromMilliseconds(500),
+            EsperaDeReconexion = TimeSpan.FromMilliseconds(50),
+        };
+
+        var (equipo, control) = await MontarAsync(opciones: ajustes);
         await using var _ = equipo;
         await using var __ = control;
+        var senales = new EsperaDeSenales(control);
 
         equipo.Enmudecer();
-        await EsperarAQue(() => !control.Estado.Conectado);
+        await senales.PerdidaAsync();
 
         equipo.Despertar();
-        await EsperarAQue(() => control.Estado.Conectado);
 
+        // Se espera a que el control avise de que ha vuelto, no a que pase un rato. El plazo es
+        // la cota que el propio control declara para reconectar, no un número a ojo.
+        var canal = await senales.RecuperadaAsync(ControlFt710.TiempoMaximoDeReconexion(ajustes));
+
+        canal.Should().NotBeNullOrWhiteSpace();
         control.Estado.Conectado.Should().BeTrue();
     }
 

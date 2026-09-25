@@ -20,6 +20,7 @@ internal sealed class Ft710DeMentira : IAsyncDisposable
     private readonly CancellationTokenSource _cts = new();
     private readonly ConcurrentQueue<string> _recibidas = new();
     private readonly ConcurrentDictionary<string, string> _valores = new(StringComparer.Ordinal);
+    private readonly ConcurrentDictionary<string, TaskCompletionSource> _esperadas = new(StringComparer.Ordinal);
     private readonly Thread _bucle;
 
     private int _enAntena;
@@ -46,6 +47,59 @@ internal sealed class Ft710DeMentira : IAsyncDisposable
 
     /// <summary>Ordenes que ha recibido, en orden.</summary>
     internal IReadOnlyCollection<string> Recibidas => _recibidas;
+
+    /// <summary>
+    /// Espera a que llegue una orden concreta.
+    /// </summary>
+    /// <remarks>
+    /// Las ordenes de escritura del CAT no llevan respuesta, asi que no hay forma de confirmar
+    /// que han llegado mas que verlas aqui. Esto avisa en cuanto llega, en vez de obligar a la
+    /// prueba a esperar un plazo a ver si aparece: el plazo que se le pasa es solo una red por
+    /// si no llega nunca, no una medida de nada.
+    /// </remarks>
+    /// <param name="orden">Orden esperada, con su punto y coma.</param>
+    /// <param name="plazo">Tope de espera.</param>
+    /// <returns>La tarea que termina cuando llega la orden.</returns>
+    internal async Task EsperarOrdenAsync(string orden, TimeSpan plazo)
+    {
+        if (_recibidas.Contains(orden))
+        {
+            return;
+        }
+
+        var llegada = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _esperadas[orden] = llegada;
+
+        // Pudo llegar justo entre la comprobacion y el apunte.
+        if (_recibidas.Contains(orden))
+        {
+            llegada.TrySetResult();
+        }
+
+        try
+        {
+            await llegada.Task.WaitAsync(plazo);
+        }
+        finally
+        {
+            _esperadas.TryRemove(orden, out _);
+        }
+    }
+
+    /// <summary>Espera a que el equipo de mentira este —o deje de estar— en antena.</summary>
+    /// <param name="enAntena">Lo que se espera.</param>
+    /// <param name="plazo">Tope de espera.</param>
+    /// <returns>La tarea que termina cuando el PTT queda como se pide.</returns>
+    internal async Task EsperarAntenaAsync(bool enAntena, TimeSpan plazo)
+    {
+        var esperado = enAntena ? "TX1;" : "TX0;";
+        if (EnAntena == enAntena)
+        {
+            return;
+        }
+
+        await EsperarOrdenAsync(esperado, plazo);
+    }
 
     /// <summary>El equipo de mentira tiene el PTT puesto.</summary>
     internal bool EnAntena => Volatile.Read(ref _enAntena) != 0;
@@ -240,6 +294,10 @@ internal sealed class Ft710DeMentira : IAsyncDisposable
     private string? Responder(string orden)
     {
         _recibidas.Enqueue(orden);
+        if (_esperadas.TryGetValue(orden, out var esperando))
+        {
+            esperando.TrySetResult();
+        }
 
         if (Volatile.Read(ref _mudo) != 0)
         {

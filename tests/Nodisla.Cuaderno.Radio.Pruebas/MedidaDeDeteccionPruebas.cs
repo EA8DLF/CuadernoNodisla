@@ -44,6 +44,58 @@ public class MedidaDeDeteccionPruebas
         await MedirAsync("máquina ahogada", conCarga: true);
     }
 
+    [Fact]
+    [Trait("Categoria", "Medida")]
+    public async Task Medir_lo_que_tarda_en_reconectar_cuando_la_radio_vuelve()
+    {
+        if (Environment.GetEnvironmentVariable(Interruptor) is not "1")
+        {
+            _salida.WriteLine($"Medida apagada. Para encenderla, {Interruptor}=1.");
+            return;
+        }
+
+        // Se mide cuánto tarda el control en volver a conectarse según lo que haya estado la
+        // radio apagada. Si el reintento se va espaciando, aquí se ve la curva.
+        foreach (var apagadaMs in new[] { 500, 2000, 5000, 10000 })
+        {
+            var tardanza = await UnaReconexionAsync(TimeSpan.FromMilliseconds(apagadaMs));
+            _salida.WriteLine($"[apagada {apagadaMs} ms] tardó en reconectar: {tardanza} ms");
+        }
+    }
+
+    private static async Task<long> UnaReconexionAsync(TimeSpan apagada)
+    {
+        var ajustes = new OpcionesFt710
+        {
+            IntervaloDeSondeo = TimeSpan.FromMilliseconds(50),
+            EsperaDeOrden = TimeSpan.FromMilliseconds(500),
+            EsperaDeReconexion = TimeSpan.FromMilliseconds(50),
+        };
+
+        await using var equipo = new Ft710DeMentira();
+        var canal = new CanalTcpCat("127.0.0.1", equipo.Puerto, ajustes.EsperaDeOrden);
+        await using var control = new ControlFt710(canal, ajustes);
+        await control.ConectarAsync();
+
+        equipo.Enmudecer();
+        while (control.Estado.Conectado)
+        {
+            await Task.Delay(10);
+        }
+
+        await Task.Delay(apagada);
+
+        var reloj = Stopwatch.StartNew();
+        equipo.Despertar();
+        while (!control.Estado.Conectado && reloj.ElapsedMilliseconds < 60_000)
+        {
+            await Task.Delay(10);
+        }
+
+        reloj.Stop();
+        return reloj.ElapsedMilliseconds;
+    }
+
     private async Task MedirAsync(string caso, bool conCarga)
     {
         using var carga = new CancellationTokenSource();

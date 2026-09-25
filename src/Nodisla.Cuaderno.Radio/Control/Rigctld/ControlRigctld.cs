@@ -127,17 +127,7 @@ public sealed class ControlRigctld : IControlEquipo, IPttDirecto, ISueltaDeEmerg
 
         cts?.Dispose();
 
-        try
-        {
-            if (_cliente.Conectado)
-            {
-                await MandarAsync("\\set_ptt 0", ct).ConfigureAwait(false);
-            }
-        }
-        catch (Exception ex)
-        {
-            _registro.LogWarning(ex, "No se pudo bajar el PTT antes de desconectar.");
-        }
+        await BajarElPttComoSeaAsync(ct).ConfigureAwait(false);
 
         _cliente.Cerrar();
         _lanzador?.Matar();
@@ -400,6 +390,48 @@ public sealed class ControlRigctld : IControlEquipo, IPttDirecto, ISueltaDeEmerg
             var unidadesS = Math.Clamp(9d + (decibelios / 6d), 0d, 60d);
             Actualizar(estado => estado with { SenalRecibida = unidadesS });
         }
+    }
+
+    /// <summary>
+    /// Baja el PTT antes de cerrar, pase lo que pase con el canal.
+    /// </summary>
+    /// <remarks>
+    /// Cerrar con el equipo en antena es lo peor que puede hacer este programa, asi que no vale
+    /// con intentarlo por la via normal y anotar el fallo: si el canal se ha roto —cancelar el
+    /// sondeo puede dejar el socket inservible—, se prueban las vias de emergencia, las mismas
+    /// que usa el vigilante.
+    /// </remarks>
+    private async Task BajarElPttComoSeaAsync(CancellationToken ct)
+    {
+        try
+        {
+            if (_cliente.Conectado)
+            {
+                await MandarAsync("\\set_ptt 0", ct).ConfigureAwait(false);
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            _registro.LogWarning(ex, "No se pudo bajar el PTT por la vía normal antes de desconectar.");
+        }
+
+        foreach (var via in ViasDeSuelta)
+        {
+            try
+            {
+                using var espera = new CancellationTokenSource(_opciones.EsperaDeOrden);
+                await via.SoltarAsync(espera.Token).ConfigureAwait(false);
+                _registro.LogInformation("PTT abajo antes de desconectar por «{Via}».", via.Nombre);
+                return;
+            }
+            catch (Exception ex)
+            {
+                _registro.LogWarning(ex, "Falló la vía «{Via}» al bajar el PTT antes de desconectar.", via.Nombre);
+            }
+        }
+
+        _registro.LogError("No se ha podido bajar el PTT antes de desconectar por ninguna vía.");
     }
 
     private async Task<RespuestaRigctld> MandarAsync(string orden, CancellationToken ct)
