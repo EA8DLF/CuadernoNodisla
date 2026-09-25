@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
@@ -17,7 +16,10 @@ namespace Nodisla.Cuaderno.Modos.Pruebas.Banco;
 /// </param>
 /// <param name="RechazadosPorElCrc">Palabras que el corrector dio por buenas y el CRC tiro.</param>
 /// <param name="ErrorDelInforme">Diferencia media entre el informe medido y el de verdad.</param>
-/// <param name="MilisegundosPorVentana">Lo que costo cada ventana, de media.</param>
+/// <param name="MilisegundosPorVentana">
+/// Lo que costo cada ventana, de media, en <b>milisegundos de procesador</b>. No es tiempo de
+/// reloj: si la maquina esta ocupada con otras cosas, el reloj se estira pero esta cifra no.
+/// </param>
 public sealed record FranjaDelBanco(
     double Decibelios,
     int Intentos,
@@ -95,7 +97,7 @@ public static class BancoDeMedida
         {
             int aciertos = 0, falsos = 0, rechazados = 0;
             double sumaDeErrores = 0;
-            var reloj = Stopwatch.StartNew();
+            double coste = 0;
 
             for (var v = 0; v < ventanasPorFranja; v++)
             {
@@ -110,8 +112,9 @@ public static class BancoDeMedida
                     throw new InvalidOperationException(motivo);
 
                 var ventana = GeneradorDeSenal.Ventana(p, tonos, tono, desfase, db, Frecuencia, azar);
-                var resultado = decodificador.Decodificar(
-                    ventana, Frecuencia, modo, DateTimeOffset.UnixEpoch, new CatalogoDeIndicativos());
+                ResultadoDeVentana resultado = null!;
+                coste += Medidas.TiempoDeProceso.De(() => resultado = decodificador.Decodificar(
+                    ventana, Frecuencia, modo, DateTimeOffset.UnixEpoch, new CatalogoDeIndicativos()));
 
                 rechazados += resultado.RechazadasPorElCrc;
                 var acertada = resultado.Decodificaciones.FirstOrDefault(d => d.Texto == texto);
@@ -123,11 +126,10 @@ public static class BancoDeMedida
                 falsos += resultado.Decodificaciones.Count(d => d.Texto != texto);
             }
 
-            reloj.Stop();
             franjas.Add(new FranjaDelBanco(
                 db, ventanasPorFranja, aciertos, falsos, rechazados,
                 aciertos == 0 ? 0 : sumaDeErrores / aciertos,
-                (double)reloj.ElapsedMilliseconds / ventanasPorFranja));
+                coste / ventanasPorFranja));
         }
         return franjas;
     }
@@ -141,7 +143,7 @@ public static class BancoDeMedida
         var sb = new StringBuilder();
         var c = CultureInfo.GetCultureInfo("es-ES");
         sb.Append("### ").AppendLine(titulo).AppendLine();
-        sb.AppendLine("| S/R (dB) | Ventanas | Recuperados | % | Falsos | Rechazos del CRC | Error del informe (dB) | ms/ventana |");
+        sb.AppendLine("| S/R (dB) | Ventanas | Recuperados | % | Falsos | Rechazos del CRC | Error del informe (dB) | ms de CPU/ventana |");
         sb.AppendLine("|---:|---:|---:|---:|---:|---:|---:|---:|");
         foreach (var f in franjas)
             sb.AppendLine(string.Format(c,

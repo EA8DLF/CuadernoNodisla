@@ -1,10 +1,10 @@
-using System.Diagnostics;
 using System.Globalization;
 using FluentAssertions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Modos.Banco;
 using Nodisla.Cuaderno.Modos.Ft8;
 using Nodisla.Cuaderno.Modos.Ldpc;
+using Nodisla.Cuaderno.Modos.Pruebas.Medidas;
 using Nodisla.Cuaderno.Modos.Senal;
 using Xunit.Abstractions;
 
@@ -22,8 +22,18 @@ namespace Nodisla.Cuaderno.Modos.Pruebas;
 /// <b>gastar la mitad del hueco ya es demasiado</b>.
 /// </para>
 /// <para>
-/// Esta prueba no solo pone un tope: tambien reparte el tiempo entre las cuatro fases, que es lo
-/// unico que permite saber donde merece la pena tocar. Sin ese reparto, optimizar es adivinar.
+/// <b>Se mide en tiempo de procesador y no con un reloj de pared</b>, porque lo que se quiere
+/// saber es cuanto trabajo cuesta una ventana, no cuanto tardo el ordenador en hacerlo mientras
+/// atendia a otros diez. Ver <see cref="TiempoDeProceso"/>.
+/// </para>
+/// <para>
+/// <b>El presupuesto se exige en las dos compilaciones</b>, y con el mismo numero. Se penso en
+/// exigirlo solo en publicacion —que es lo que se hace con el informe del banco, porque ahi lo
+/// que se publica son cifras comparables— pero aqui no hace falta y ademas seria peor: la serie
+/// de pruebas se pasa en depuracion, asi que un presupuesto que solo valiera en publicacion no
+/// lo comprobaria nadie casi nunca. Midiendo trabajo en vez de reloj, el mismo numero vale para
+/// las dos: hoy son unos 1200 ms en depuracion y unos 400 en publicacion, las dos holgadamente
+/// por debajo del tope.
 /// </para>
 /// </remarks>
 public class RendimientoPruebas(ITestOutputHelper salida)
@@ -31,84 +41,110 @@ public class RendimientoPruebas(ITestOutputHelper salida)
     private static readonly TablasDelProtocolo Tablas = TablasDelProtocolo.DePruebas();
 
     /// <summary>
-    /// Presupuesto de tiempo por ventana de FT8, en milisegundos.
+    /// Presupuesto de trabajo por ventana de FT8, en milisegundos de procesador.
     /// </summary>
     /// <remarks>
-    /// Un tercio del hueco de quince segundos. Deja margen de sobra para que el ordenador este
-    /// ocupado con otras cosas y aun asi no se pierda ninguna ventana.
+    /// Cinco segundos son un tercio del hueco de quince que da el modo. Hoy se gastan unos 1200
+    /// milisegundos compilando en depuracion y unos 400 en publicacion, asi que hay un margen de
+    /// cuatro veces en el peor caso: el presupuesto no esta para afinar decimas sino para que
+    /// salte si alguien deja el decodificador varias veces mas lento sin darse cuenta.
     /// </remarks>
     private const int PresupuestoPorVentanaMs = 5000;
+
+    /// <summary>Pases que se miden; vale el mas barato de todos.</summary>
+    private const int Pases = 3;
 
     [Fact]
     public void UnaVentanaDeFt8CabeEnSuPresupuesto()
     {
         var p = ParametrosDelModo.Ft8;
         const int Frecuencia = 48000;
-        var codificador = new Codificador(Tablas);
         var decodificador = new Decodificador(Tablas);
-
-        // Una ventana con cuatro estaciones y ruido, que es lo que hay en una banda de verdad.
-        var azar = new Random(2026);
-        var ventana = new float[(int)(p.PeriodoSegundos * Frecuencia)];
-        double potencia = 0;
-        for (var i = 0; i < 4; i++)
-        {
-            codificador.TryCodificar("CQ EA8DLF IL18", ModoDelModem.Ft8, out var tonos, out _).Should().BeTrue();
-            var senal = Modulador.Sintetizar(p, tonos, 700 + (i * 500), Frecuencia, 0.2);
-            potencia = GeneradorDeSenal.PotenciaMedia(senal);
-            var comienzo = (int)(p.ComienzoNominalSegundos * Frecuencia);
-            for (var k = 0; k < senal.Length; k++) ventana[comienzo + k] += senal[k];
-        }
-        GeneradorDeSenal.AnadirRuido(ventana, potencia, -10, Frecuencia, azar);
+        var ventana = VentanaConCuatroEstaciones(p, Frecuencia);
 
         // Una pasada en vacio para que el compilador de tiempo de ejecucion haga su trabajo:
         // si no, la primera medida incluye la compilacion y no mide el modem.
-        decodificador.Decodificar(ventana, Frecuencia, ModoDelModem.Ft8, DateTimeOffset.UnixEpoch, new CatalogoDeIndicativos());
+        var primera = Decodificar(decodificador, ventana, Frecuencia);
+        primera.Decodificaciones.Should().HaveCount(4, "la ventana de prueba lleva cuatro estaciones");
 
         var reparto = Repartir(ventana, Frecuencia, p);
-        var reloj = Stopwatch.StartNew();
-        const int Vueltas = 3;
-        for (var i = 0; i < Vueltas; i++)
-            decodificador.Decodificar(ventana, Frecuencia, ModoDelModem.Ft8, DateTimeOffset.UnixEpoch, new CatalogoDeIndicativos());
-        reloj.Stop();
-        var porVentana = reloj.ElapsedMilliseconds / (double)Vueltas;
+        var porVentana = TiempoDeProceso.MejorDe(Pases, () => Decodificar(decodificador, ventana, Frecuencia));
 
         var c = CultureInfo.GetCultureInfo("es-ES");
-        salida.WriteLine(string.Format(c, "Ventana completa: {0:0} ms (presupuesto {1} ms)", porVentana, PresupuestoPorVentanaMs));
+        salida.WriteLine(string.Format(c,
+            "Ventana completa: {0:0} ms de procesador (presupuesto {1} ms, {2})",
+            porVentana, PresupuestoPorVentanaMs, Configuracion));
         foreach (var (fase, ms) in reparto)
-            salida.WriteLine(string.Format(c, "  {0,-22} {1,6:0.0} ms", fase, ms));
+            salida.WriteLine(string.Format(c, "  {0,-24} {1,6:0.0} ms", fase, ms));
 
         porVentana.Should().BeLessThan(PresupuestoPorVentanaMs,
             "decodificar una ventana tiene que caber holgadamente en los quince segundos del modo");
     }
 
+#if DEBUG
+    private const string Configuracion = "compilación de depuración";
+#else
+    private const string Configuracion = "compilación de publicación";
+#endif
+
+    private static ResultadoDeVentana Decodificar(Decodificador decodificador, float[] ventana, int frecuencia) =>
+        decodificador.Decodificar(ventana, frecuencia, ModoDelModem.Ft8, DateTimeOffset.UnixEpoch, new CatalogoDeIndicativos());
+
+    /// <summary>Una ventana con cuatro estaciones y ruido, que es lo que hay en una banda de verdad.</summary>
+    private static float[] VentanaConCuatroEstaciones(ParametrosDelModo p, int frecuencia)
+    {
+        var codificador = new Codificador(Tablas);
+        var azar = new Random(2026);
+        var ventana = new float[(int)(p.PeriodoSegundos * frecuencia)];
+        double potencia = 0;
+
+        string[] mensajes = ["CQ EA8DLF IL18", "EA8DLF EA1ABC IN80", "EA1ABC EA8DLF -07", "CQ K1ABC FN42"];
+        for (var i = 0; i < mensajes.Length; i++)
+        {
+            codificador.TryCodificar(mensajes[i], ModoDelModem.Ft8, out var tonos, out _).Should().BeTrue();
+            var senal = Modulador.Sintetizar(p, tonos, 700 + (i * 500), frecuencia, 0.2);
+            potencia = GeneradorDeSenal.PotenciaMedia(senal);
+            var comienzo = (int)(p.ComienzoNominalSegundos * frecuencia);
+            for (var k = 0; k < senal.Length; k++) ventana[comienzo + k] += senal[k];
+        }
+        GeneradorDeSenal.AnadirRuido(ventana, potencia, -10, frecuencia, azar);
+        return ventana;
+    }
+
     /// <summary>Cronometra cada fase por separado, para saber donde se va el tiempo.</summary>
+    /// <remarks>
+    /// El reparto es informativo y no se exige nada sobre el: esta para que quien vaya a
+    /// optimizar sepa donde merece la pena tocar en vez de adivinar.
+    /// </remarks>
     private static List<(string Fase, double Milisegundos)> Repartir(float[] ventana, int frecuencia, ParametrosDelModo p)
     {
         var reparto = new List<(string, double)>();
-        var reloj = Stopwatch.StartNew();
+        float[] muestras = [];
+        AnalisisDeVentana? analisis = null;
+        List<Candidata> candidatas = [];
+        Demodulador? demodulador = null;
 
-        var muestras = Remuestreador.Remuestrear(ventana, frecuencia, p.FrecuenciaDeAnalisis);
-        reparto.Add(("remuestrear", reloj.Elapsed.TotalMilliseconds));
+        reparto.Add(("remuestrear", TiempoDeProceso.De(() =>
+            muestras = Remuestreador.Remuestrear(ventana, frecuencia, p.FrecuenciaDeAnalisis))));
 
-        reloj.Restart();
-        var analisis = AnalisisDeVentana.Calcular(muestras, p);
-        reparto.Add(("analizar la ventana", reloj.Elapsed.TotalMilliseconds));
+        reparto.Add(("analizar la ventana", TiempoDeProceso.De(() =>
+            analisis = AnalisisDeVentana.Calcular(muestras, p))));
 
-        reloj.Restart();
-        var candidatas = Sincronizador.Buscar(analisis, 200);
-        reparto.Add(($"buscar ({candidatas.Count} candidatas)", reloj.Elapsed.TotalMilliseconds));
+        reparto.Add(("buscar candidatas", TiempoDeProceso.De(() =>
+            candidatas = Sincronizador.Buscar(analisis!, 200))));
 
-        reloj.Restart();
-        var demodulador = new Demodulador(analisis);
-        foreach (var candidata in candidatas) demodulador.Medir(candidata);
-        reparto.Add(("demodular las candidatas", reloj.Elapsed.TotalMilliseconds));
+        reparto.Add(($"demodular ({candidatas.Count} candidatas)", TiempoDeProceso.De(() =>
+        {
+            demodulador = new Demodulador(analisis!);
+            foreach (var candidata in candidatas) demodulador.Medir(candidata);
+        })));
 
-        reloj.Restart();
-        var corrector = new DecodificadorDeCreencia(Tablas.Ldpc);
-        var palabra = new byte[Tablas.Ldpc.Longitud];
-        foreach (var _ in candidatas) corrector.TryDecodificar(demodulador.Confianzas, palabra, 60);
-        reparto.Add(("corregir errores", reloj.Elapsed.TotalMilliseconds));
+        reparto.Add(("corregir errores", TiempoDeProceso.De(() =>
+        {
+            var corrector = new DecodificadorDeCreencia(Tablas.Ldpc);
+            var palabra = new byte[Tablas.Ldpc.Longitud];
+            foreach (var _ in candidatas) corrector.TryDecodificar(demodulador!.Confianzas, palabra, 60);
+        })));
 
         return reparto;
     }

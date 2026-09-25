@@ -32,15 +32,28 @@ public class BancoDeMedidaPruebas(ITestOutputHelper salida)
     /// <summary>Como se compilo lo que se esta midiendo, que cambia los tiempos por cinco.</summary>
 #if DEBUG
     private const string Configuracion = "de depuración (Debug)";
+
+    /// <summary>
+    /// Ventanas por franja en depuracion.
+    /// </summary>
+    /// <remarks>
+    /// En depuracion el banco no publica nada —el informe solo se escribe desde publicacion— y
+    /// en cambio se lleva varios minutos de la serie de pruebas, que es la que se pasa veinte
+    /// veces al dia mientras se trabaja. Con cuatro ventanas por franja se sigue comprobando lo
+    /// unico que no se negocia, que es que no salga ni un mensaje falso, y la serie deja de
+    /// estar dominada por esto. La curva fina se saca en publicacion.
+    /// </remarks>
+    private const int VentanasPorFranja = 4;
 #else
     private const string Configuracion = "de publicación (Release)";
+    private const int VentanasPorFranja = 12;
 #endif
 
     [Fact]
     public void ElBancoDeMedidaSePasaYSeApunta()
     {
-        var ft8 = BancoDeMedida.Recorrer(Tablas, ModoDelModem.Ft8, desde: 0, hasta: -24, paso: -3, ventanasPorFranja: 12);
-        var ft4 = BancoDeMedida.Recorrer(Tablas, ModoDelModem.Ft4, desde: 0, hasta: -21, paso: -3, ventanasPorFranja: 12);
+        var ft8 = BancoDeMedida.Recorrer(Tablas, ModoDelModem.Ft8, desde: 0, hasta: -24, paso: -3, ventanasPorFranja: VentanasPorFranja);
+        var ft4 = BancoDeMedida.Recorrer(Tablas, ModoDelModem.Ft4, desde: 0, hasta: -21, paso: -3, ventanasPorFranja: VentanasPorFranja);
 
         var informe = Componer(ft8, ft4);
         salida.WriteLine(informe);
@@ -90,11 +103,13 @@ public class BancoDeMedidaPruebas(ITestOutputHelper salida)
         sb.AppendLine("falso mete en el cuaderno un contacto que nunca existió y contamina los diplomas para");
         sb.AppendLine("siempre; perder decodificaciones no deja rastro.");
         sb.AppendLine();
-        sb.AppendLine("La columna **ms/ventana** solo vale si se dice cómo se compiló, porque entre una");
-        sb.AppendLine("compilación de depuración y una de publicación hay un factor de cinco. Estas cifras son");
+        sb.AppendLine("La columna **ms de CPU/ventana** es tiempo de **procesador**, no de reloj: cuenta los");
+        sb.AppendLine("ciclos que el sistema apunta a este proceso, así que no se estira porque la máquina");
+        sb.AppendLine("esté ocupada con otra cosa. Aun así solo vale si se dice cómo se compiló, porque entre");
+        sb.AppendLine("depuración y publicación hay un factor de cinco; estas cifras son de una compilación");
         sb.AppendLine(CultureInfo.GetCultureInfo("es-ES"),
-            $"de una compilación **{Configuracion}**. Para hacerse una idea: FT8 da 15.000 ms por ventana y");
-        sb.AppendLine("FT4 da 7.500, así que aquí se está usando en torno al 3 % del hueco disponible.");
+            $"**{Configuracion}**. Para hacerse una idea: FT8 da 15.000 ms por ventana y FT4 da 7.500, así");
+        sb.AppendLine("que aquí se está usando en torno al 3 % del hueco disponible.");
         sb.AppendLine();
         sb.Append(BancoDeMedida.Tabla("FT8", ft8));
         sb.Append(BancoDeMedida.Tabla("FT4", ft4));
