@@ -112,6 +112,107 @@ public interface ISalidaDeAudio : IAsyncDisposable
 /// <param name="EsFiable">La medida es de fiar y no un valor de partida.</param>
 public sealed record DesvioDelReloj(double DesvioMs, string Fuente, DateTimeOffset MedidoUtc, bool EsFiable);
 
+/// <summary>Como de bien esta el reloj para los modos digitales.</summary>
+public enum CalidadDelReloj
+{
+    /// <summary>Todavia no se ha podido medir.</summary>
+    SinMedir,
+    /// <summary>El desvio no estorba.</summary>
+    Bien,
+    /// <summary>Se decodifica peor de lo que se podria. Conviene sincronizar.</summary>
+    Regular,
+    /// <summary>
+    /// Ademas de decodificar mal, <b>se transmite fuera de ventana</b>.
+    /// </summary>
+    /// <remarks>
+    /// Este escalon no es una molestia propia: es una molestia <b>a los demas</b>. Quien
+    /// transmite desalineado ocupa el periodo de otros y ensucia sus decodificaciones sin
+    /// enterarse. Por eso se dice con esas palabras y no con un tecnicismo.
+    /// </remarks>
+    FueraDeVentana,
+}
+
+/// <summary>El estado del reloj, ya interpretado y listo para mostrar.</summary>
+/// <param name="Desvio">La medida en bruto.</param>
+/// <param name="Calidad">En que escalon cae.</param>
+/// <param name="Veredicto">Una frase en espanol que dice como esta.</param>
+/// <param name="Consejo">Que hacer al respecto, o vacio si no hay nada que hacer.</param>
+/// <param name="DesvioParaMostrar">El desvio escrito para leer: «-1,29 s», «+350 ms».</param>
+public sealed record EstadoDelReloj(
+    DesvioDelReloj Desvio,
+    CalidadDelReloj Calidad,
+    string Veredicto,
+    string Consejo,
+    string DesvioParaMostrar)
+{
+    /// <summary>Hay algo que el operador deberia hacer.</summary>
+    public bool HayQueHacerAlgo => Calidad is CalidadDelReloj.Regular or CalidadDelReloj.FueraDeVentana;
+
+    /// <summary>La medida es de fiar.</summary>
+    public bool EsFiable => Desvio.EsFiable;
+}
+
+/// <summary>Por que via se puso el reloj en hora.</summary>
+public enum ViaDeSincronizacion
+{
+    /// <summary>Se escribio la hora del sistema una vez.</summary>
+    HoraPuestaAMano,
+    /// <summary>Se configuro el servicio de hora de Windows contra un servidor.</summary>
+    ServicioConfigurado,
+}
+
+/// <summary>
+/// Como fue un intento de poner el reloj en hora.
+/// </summary>
+/// <remarks>
+/// No se llama «resultado de sincronizacion» a secas porque ese nombre ya es el de las
+/// sincronizaciones con los servicios de QSL, y son cosas distintas.
+/// </remarks>
+/// <param name="Hecho">Se consiguio.</param>
+/// <param name="Via">Por que camino.</param>
+/// <param name="Mensaje">Que paso, en espanol, para ensenarselo al operador.</param>
+/// <param name="Detalle">
+/// Informacion de apoyo: cuando no se ha podido, las ordenes exactas para hacerlo a mano.
+/// </param>
+/// <param name="DesvioAntesMs">Desvio antes de corregir.</param>
+/// <param name="DesvioDespuesMs">Desvio despues, si se pudo volver a medir.</param>
+public sealed record ResultadoDePuestaEnHora(
+    bool Hecho,
+    ViaDeSincronizacion Via,
+    string Mensaje,
+    string? Detalle,
+    double? DesvioAntesMs,
+    double? DesvioDespuesMs);
+
+/// <summary>
+/// Pone en hora el reloj del ordenador, si el operador lo pide.
+/// </summary>
+/// <remarks>
+/// <b>Nunca por su cuenta.</b> Es el reloj de la maquina de quien opera, no el nuestro: lo
+/// corregimos solo cuando lo pulsa. Cambiar la hora del sistema exige permisos de
+/// administrador, y cuando no los hay <b>no se falla con un error de acceso denegado</b>: se
+/// explica en espanol y se ofrece la alternativa, que es dejar el servicio de hora de Windows
+/// configurado contra un buen servidor —lo que ademas arregla el problema para siempre y no
+/// solo hoy—.
+/// </remarks>
+public interface ISincronizadorDeHora
+{
+    /// <summary>Se puede poner el reloj en hora desde aqui, con los permisos que hay.</summary>
+    bool SePuedePonerEnHora { get; }
+
+    /// <summary>Cuando se sincronizo por ultima vez desde el programa.</summary>
+    DateTimeOffset? UltimaSincronizacion { get; }
+
+    /// <summary>Ordenes para hacerlo a mano, por si no hay permisos.</summary>
+    string InstruccionesParaHacerloAMano { get; }
+
+    /// <summary>Mide y escribe la hora del sistema.</summary>
+    Task<ResultadoDePuestaEnHora> PonerElRelojEnHoraAsync(CancellationToken ct = default);
+
+    /// <summary>Deja el servicio de hora de Windows apuntando a un buen servidor.</summary>
+    Task<ResultadoDePuestaEnHora> ConfigurarServicioDeHoraAsync(CancellationToken ct = default);
+}
+
 /// <summary>
 /// La hora, corregida, que usa el modem digital.
 /// </summary>
@@ -130,11 +231,27 @@ public interface IRelojDelModem
     /// <summary>Ultimo desvio medido.</summary>
     DesvioDelReloj Desvio { get; }
 
-    /// <summary>Salta cuando se mide un desvio nuevo.</summary>
-    event EventHandler<DesvioDelReloj>? DesvioMedido;
+    /// <summary>El estado del reloj ya interpretado, listo para pintar sin calcular nada.</summary>
+    EstadoDelReloj Estado { get; }
 
-    /// <summary>Mide el desvio contra la fuente configurada.</summary>
-    Task<DesvioDelReloj> MedirAsync(CancellationToken ct = default);
+    /// <summary>
+    /// Salta cuando se mide un desvio nuevo, con el veredicto ya hecho.
+    /// </summary>
+    /// <remarks>
+    /// Lleva el estado y no solo la medida para que la ventana no tenga que saber cuantos
+    /// milisegundos son demasiados. Esa regla es del reloj, no de la pantalla.
+    /// </remarks>
+    event EventHandler<EstadoDelReloj>? DesvioMedido;
+
+    /// <summary>
+    /// Mide el desvio contra la fuente configurada.
+    /// </summary>
+    /// <param name="forzar">
+    /// Medir ahora aunque haya una medida reciente guardada. Hace falta antes de corregir el
+    /// reloj: corregir con una medida de hace media hora mete un error nuevo en vez de quitarlo.
+    /// </param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    Task<DesvioDelReloj> MedirAsync(bool forzar = false, CancellationToken ct = default);
 
     /// <summary>Momento en que empieza la siguiente ventana del periodo indicado.</summary>
     /// <param name="periodo">Duracion de la ventana: 15 s en FT8, 7,5 s en FT4.</param>

@@ -37,10 +37,18 @@ public static class ExtensionesDeServicio
 
         // Como en el modulo de radio: se pide la fabrica de registros y se crea uno con su
         // categoria, para que en el registro se vea de donde sale cada apunte.
+        servicios.AddSingleton<IRelojDelSistema, RelojDelSistemaDeWindows>();
+
         servicios.AddSingleton<IRelojDelModem>(proveedor => new RelojDelModem(
             opciones.Reloj,
             fuentes: null,
             relojDelSistema: null,
+            proveedor.GetService<ILoggerFactory>()?.CreateLogger("Nodisla.Cuaderno.Audio.Reloj")));
+
+        servicios.AddSingleton<ISincronizadorDeHora>(proveedor => new SincronizadorDeHora(
+            proveedor.GetRequiredService<IRelojDelModem>(),
+            proveedor.GetRequiredService<IRelojDelSistema>(),
+            opciones.Reloj,
             proveedor.GetService<ILoggerFactory>()?.CreateLogger("Nodisla.Cuaderno.Audio.Reloj")));
 
         servicios.AddSingleton<IEntradaDeAudio>(proveedor => new EntradaDeAudioWasapi(

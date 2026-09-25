@@ -64,6 +64,11 @@ public sealed class RelojDelModem : IRelojDelModem, IDisposable
                 _relojDelSistema,
                 _registro))
             .ToList();
+
+        if (_opciones.SeguimientoAutomatico)
+        {
+            IniciarSeguimiento();
+        }
     }
 
     /// <inheritdoc />
@@ -79,53 +84,38 @@ public sealed class RelojDelModem : IRelojDelModem, IDisposable
     /// <inheritdoc />
     public DesvioDelReloj Desvio => Volatile.Read(ref _desvio);
 
+    /// <inheritdoc />
+    public EstadoDelReloj Estado => VeredictoDelReloj.Componer(Volatile.Read(ref _desvio), _opciones);
+
     /// <summary>
     /// El desvio esta medido y es pequeno. Si es falso, hay que mirarlo antes que nada.
     /// </summary>
-    public bool EnHora
-    {
-        get
-        {
-            var desvio = Volatile.Read(ref _desvio);
-            return desvio.EsFiable && Math.Abs(desvio.DesvioMs) <= _opciones.MargenDeAvisoMs;
-        }
-    }
+    public bool EnHora => Estado.Calidad == CalidadDelReloj.Bien;
+
+    /// <summary>El seguimiento esta en marcha y el desvio se remide solo.</summary>
+    public bool SeSigueSolo => _seguimiento is not null;
 
     /// <inheritdoc />
-    public event EventHandler<DesvioDelReloj>? DesvioMedido;
+    public event EventHandler<EstadoDelReloj>? DesvioMedido;
 
     /// <summary>Frase corta con el estado del reloj, lista para la barra de estado.</summary>
     /// <returns>Lo que hay que ensenarle al operador.</returns>
-    public string Resumen() => Describir(Volatile.Read(ref _desvio));
-
-    /// <summary>Pone en palabras un desvio.</summary>
-    /// <param name="desvio">El desvio a describir.</param>
-    /// <returns>Una frase para el operador.</returns>
-    public static string Describir(DesvioDelReloj desvio)
+    public string Resumen()
     {
-        ArgumentNullException.ThrowIfNull(desvio);
-
-        if (!desvio.EsFiable)
-        {
-            return "Reloj sin comprobar: no se ha podido medir el desvío, así que no se sabe si el módem está en hora.";
-        }
-
-        var sentido = desvio.DesvioMs >= 0 ? "adelantado" : "atrasado";
-        return string.Create(
-            CultureInfo.CurrentCulture,
-            $"Reloj {sentido} {Math.Abs(desvio.DesvioMs):F0} ms según {desvio.Fuente}.");
+        var estado = Estado;
+        return estado.Calidad == CalidadDelReloj.Bien
+            ? estado.Veredicto
+            : string.Create(CultureInfo.CurrentCulture, $"{estado.Veredicto} {estado.Consejo}");
     }
 
-    /// <inheritdoc />
-    public Task<DesvioDelReloj> MedirAsync(CancellationToken ct = default) => MedirAsync(false, ct);
+    /// <summary>Pone en palabras un desvio, con los umbrales de partida.</summary>
+    /// <param name="desvio">El desvio a describir.</param>
+    /// <returns>Una frase para el operador.</returns>
+    public static string Describir(DesvioDelReloj desvio) =>
+        VeredictoDelReloj.Componer(desvio, new OpcionesDelReloj()).Veredicto;
 
-    /// <summary>
-    /// Mide el desvio, aprovechando la ultima medida si todavia vale.
-    /// </summary>
-    /// <param name="forzar">Verdadero para preguntar aunque la ultima medida siga siendo buena.</param>
-    /// <param name="ct">Testigo de cancelacion.</param>
-    /// <returns>El desvio, fiable o no.</returns>
-    public async Task<DesvioDelReloj> MedirAsync(bool forzar, CancellationToken ct = default)
+    /// <inheritdoc />
+    public async Task<DesvioDelReloj> MedirAsync(bool forzar = false, CancellationToken ct = default)
     {
         ObjectDisposedException.ThrowIf(_desechado, this);
 
@@ -161,10 +151,17 @@ public sealed class RelojDelModem : IRelojDelModem, IDisposable
                     nuevo.Fuente,
                     nuevo.DesvioMs);
 
-                if (Math.Abs(nuevo.DesvioMs) > _opciones.MargenDeAvisoMs)
+                if (Math.Abs(nuevo.DesvioMs) >= _opciones.MargenFueraDeVentanaMs)
                 {
                     _registro.LogWarning(
-                        "El reloj del ordenador está {Desvio:F0} ms fuera de hora: con este desvío FT8 decodifica mal.",
+                        "El reloj del ordenador está {Desvio:F0} ms fuera de hora: con este desvío se "
+                            + "transmite FUERA DE VENTANA y se molesta a los demás.",
+                        nuevo.DesvioMs);
+                }
+                else if (Math.Abs(nuevo.DesvioMs) > _opciones.MargenBuenoMs)
+                {
+                    _registro.LogWarning(
+                        "El reloj del ordenador está {Desvio:F0} ms fuera de hora: FT8 empieza a decodificar peor.",
                         nuevo.DesvioMs);
                 }
             }
@@ -174,7 +171,7 @@ public sealed class RelojDelModem : IRelojDelModem, IDisposable
                     "No contestó ningún servidor de hora: el módem trabaja sin saber si está en hora.");
             }
 
-            DesvioMedido?.Invoke(this, nuevo);
+            Avisar(nuevo);
             return nuevo;
         }
         finally
@@ -288,6 +285,21 @@ public sealed class RelojDelModem : IRelojDelModem, IDisposable
         _unaMedidaCadaVez.Dispose();
     }
 
+    /// <summary>
+    /// Cuenta la medida nueva, sin dejar que un oyente roto tumbe al reloj.
+    /// </summary>
+    private void Avisar(DesvioDelReloj desvio)
+    {
+        try
+        {
+            DesvioMedido?.Invoke(this, VeredictoDelReloj.Componer(desvio, _opciones));
+        }
+        catch (Exception fallo)
+        {
+            _registro.LogError(fallo, "Falló quien escuchaba las medidas del reloj.");
+        }
+    }
+
     /// <summary>Una medida sigue valiendo si es fiable y no ha caducado.</summary>
     private bool SigueValiendo(DesvioDelReloj desvio) =>
         desvio.EsFiable && _relojDelSistema() - desvio.MedidoUtc < _opciones.ValidezDeLaMedida;
@@ -340,7 +352,7 @@ public sealed class RelojDelModem : IRelojDelModem, IDisposable
     {
         try
         {
-            using var espera = new PeriodicTimer(_opciones.ValidezDeLaMedida);
+            using var espera = new PeriodicTimer(_opciones.PeriodoDeSeguimiento);
 
             await MedirAsync(true, ct).ConfigureAwait(false);
 

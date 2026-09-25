@@ -52,13 +52,19 @@ public class RelojDelModemPruebas
         }
     }
 
+    /// <summary>
+    /// Ajustes sin seguimiento automatico: en las pruebas se mide cuando la prueba lo diga, no
+    /// cuando al reloj le apetezca, o las cuentas de consultas no valdrian nada.
+    /// </summary>
+    private static OpcionesDelReloj Quietas() => new() { SeguimientoAutomatico = false };
+
     private static RelojDelModem Crear(IFuenteDeHora fuente, DateTimeOffset hora) =>
-        new(new OpcionesDelReloj(), new[] { fuente }, () => hora);
+        new(Quietas(), new[] { fuente }, () => hora);
 
     [Fact]
     public void SinMedirElDesvioNoEsFiable()
     {
-        using var reloj = new RelojDelModem(new OpcionesDelReloj(), Array.Empty<IFuenteDeHora>());
+        using var reloj = new RelojDelModem(Quietas(), Array.Empty<IFuenteDeHora>());
 
         reloj.Desvio.EsFiable.Should().BeFalse();
         reloj.Desvio.DesvioMs.Should().Be(0);
@@ -87,8 +93,8 @@ public class RelojDelModemPruebas
         var hora = new DateTimeOffset(2026, 9, 22, 12, 0, 0, TimeSpan.Zero);
         using var reloj = Crear(new FuenteFija(1500.0), hora);
 
-        var avisos = new List<DesvioDelReloj>();
-        reloj.DesvioMedido += (_, desvio) => avisos.Add(desvio);
+        var avisos = new List<EstadoDelReloj>();
+        reloj.DesvioMedido += (_, estado) => avisos.Add(estado);
 
         var medido = await reloj.MedirAsync();
 
@@ -127,7 +133,7 @@ public class RelojDelModemPruebas
         var rapida = new FuenteFija(12.0, idaYVuelta: 8.0, nombre: "rápida");
 
         using var reloj = new RelojDelModem(
-            new OpcionesDelReloj(),
+            Quietas(),
             new IFuenteDeHora[] { lenta, rapida },
             () => DateTimeOffset.UtcNow);
 
@@ -202,6 +208,71 @@ public class RelojDelModemPruebas
         reloj.ProximaVentana(TimeSpan.FromSeconds(15))
             .Should().Be(new DateTimeOffset(2026, 9, 22, 12, 0, 30, TimeSpan.Zero));
         reloj.Resumen().Should().Contain("atrasado");
+    }
+
+    [Fact]
+    public async Task ElDesvioSeRemidePorSuCuentaSinQueNadieLoPida()
+    {
+        // Un reloj puede irse durante una sesión larga, así que se vuelve a medir solo. Aquí el
+        // periodo es de milisegundos para no tener la prueba esperando cinco minutos.
+        var fuente = new FuenteFija(300.0);
+        var opciones = new OpcionesDelReloj
+        {
+            SeguimientoAutomatico = true,
+            PeriodoDeSeguimiento = TimeSpan.FromMilliseconds(100),
+            ValidezDeLaMedida = TimeSpan.FromMilliseconds(1),
+        };
+
+        using var reloj = new RelojDelModem(opciones, new[] { fuente }, () => DateTimeOffset.UtcNow);
+        reloj.SeSigueSolo.Should().BeTrue();
+
+        var medidas = 0;
+        reloj.DesvioMedido += (_, _) => Interlocked.Increment(ref medidas);
+
+        await Task.Delay(500);
+        await reloj.PararSeguimientoAsync();
+
+        // Sin tocar nada, el reloj ha preguntado la hora varias veces.
+        fuente.Consultas.Should().BeGreaterThan(2);
+        medidas.Should().BeGreaterThan(0);
+        reloj.SeSigueSolo.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ElEstadoLlegaEnPalabrasYConElVeredictoHecho()
+    {
+        var hora = new DateTimeOffset(2026, 9, 25, 12, 0, 0, TimeSpan.Zero);
+        using var reloj = Crear(new FuenteFija(-870.0), hora);
+
+        EstadoDelReloj? avisado = null;
+        reloj.DesvioMedido += (_, estado) => avisado = estado;
+
+        await reloj.MedirAsync();
+
+        avisado.Should().NotBeNull();
+        avisado!.Calidad.Should().Be(CalidadDelReloj.Regular);
+        avisado.Consejo.Should().Contain("decodificar peor");
+
+        reloj.Estado.Calidad.Should().Be(CalidadDelReloj.Regular);
+        reloj.Estado.Desvio.Fuente.Should().Be("fuente de prueba");
+        reloj.Estado.EsFiable.Should().BeTrue();
+        reloj.Estado.Desvio.MedidoUtc.Should().Be(hora);
+        reloj.Estado.DesvioParaMostrar.Should().Be("-870 ms");
+    }
+
+    [Fact]
+    public async Task ElModemSigueCorrigiendoAunqueElOperadorNoHagaNada()
+    {
+        var hora = new DateTimeOffset(2026, 9, 25, 12, 0, 14, 500, TimeSpan.Zero);
+        using var reloj = Crear(new FuenteFija(2000.0), hora);
+        await reloj.MedirAsync();
+
+        // Nadie ha tocado el reloj de Windows —sigue marcando lo mismo— y aun así el módem
+        // trabaja con la hora buena y con la ventana que toca.
+        reloj.Estado.Calidad.Should().Be(CalidadDelReloj.FueraDeVentana);
+        reloj.Ahora.Should().Be(new DateTimeOffset(2026, 9, 25, 12, 0, 12, 500, TimeSpan.Zero));
+        reloj.ProximaVentana(TimeSpan.FromSeconds(15))
+            .Should().Be(new DateTimeOffset(2026, 9, 25, 12, 0, 15, TimeSpan.Zero));
     }
 
     [Fact]
