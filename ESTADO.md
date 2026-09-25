@@ -2,89 +2,66 @@
 
 Clon en español de Log4OM NextGen 2.40.0.0, para uso particular de EA8DLF.
 
-## Estado — 22-09-2026
+## Estado — 25-09-2026
 
-**Fase 1 (núcleo del cuaderno) completada.**
-**Fase 2 (operar) completada**: control nativo del FT-710, vigilante de PTT, cluster de DX,
-bandplan, FLDigi, puente con WSJT-X y JTDX, mapa y cabina de operación.
-**Fase 3 (servicios y diplomas) en curso**: servicios de QSL y propagación cerrados; falta el
-motor de diplomas.
-
-### Cifras
+**Fases 1 a 4 hechas.** La aplicación guarda el cuaderno de verdad: **1.795 contactos de EA8DLF**
+importados de Log4OM y viviendo en `%AppData%\CuadernoNodisla\cuaderno.sqlite`.
 
 | Capa | Pruebas |
-|---|---|
-| Dominio y DXCC | 550 |
-| Integraciones | 169 |
-| Aplicación | 152 |
-| Servicios | 98 |
+|---|---:|
+| Dominio y DXCC | 567 |
+| Aplicación | 177 |
+| Integraciones (cluster, bandplan, FLDigi, WSJT-X/JTDX, N1MM) | 169 |
+| Servicios de QSL | 98 |
 | Propagación | 95 |
-| Radio | 90 |
-| ADIF | 87 |
-| Datos | 53 |
+| Módem propio de FT8 y FT4 | 94 |
+| ADIF | 91 |
+| Radio (FT-710 y vigilante de PTT) | 90 |
+| Diplomas | 80 |
+| Audio | 60 |
+| Datos | 59 |
+| **Total** | **1.680** |
 
-Compilación de la solución entera: **0 avisos, 0 errores**.
+Compilación de la solución: **0 avisos, 0 errores**.
 
-### Decisiones de la Fase 3
+### Lo que hace hoy
 
-- **Credenciales cifradas con DPAPI.** El `config.ini` del original guarda una clave de ClubLog
-  en claro; aquí no.
-- **LoTW descarga con `qso_qslsince`**, no `qso_qsorxsince`: con el segundo, un contacto subido
-  hace años y confirmado ayer no aparecería nunca.
-- **ClubLog no ofrece descarga de confirmaciones** y se dice, en vez de devolver vacío fingiendo.
-- **Las confirmaciones sin pareja se devuelven al operador**: suelen significar que el cuaderno
-  tiene mal la hora, la banda o el modo.
-- **La predicción de bandas es una aproximación propia y lo declara.** Cada predicción firma su
-  motor, porque un motor real también cae en la estimación cuando falla o se sale de rango.
-- **El paso gris exige el Sol a ±6° en los dos extremos**; «cruza el terminador» a secas sería
-  cierto casi siempre y no serviría de nada.
+- **Cuaderno**: entrada por teclado, rejilla paginada, trabajado antes, ADIF de ida y vuelta sin
+  pérdida, fusión de duplicados.
+- **Cabina**: frontal del FT-710 dibujado con sus 24 mandos, dos VFO, franja solar con datos
+  reales, matriz de novedad y matriz de banda por modo.
+- **Cluster** por Telnet con bandmap, **mapa** con paso gris y trayectos, **diplomas** con las
+  553.064 referencias, **ajustes** con credenciales cifradas.
+- **Módem propio de FT8/FT4**: modula, sincroniza y decodifica. Recupera el 100 % hasta −15 dB y
+  el 91,7 % a −18 dB, **con cero decodificaciones falsas en todas las franjas**.
 
-### Pendiente de decisión de Jose
+### Nada se conecta solo
 
-- Instalar un motor de predicción real (**ITURHFProp** o el paquete **VOACAP/ITSHFBC**) o
-  quedarse con la aproximación honesta.
-- Dos escrituras en el FT-710 para resolver las tablas de ancho de filtro y retardo de VOX.
+El equipo y el cluster arrancan **sin conexión**; conectar es siempre una acción del operador.
+El audio y el módem se registran sin abrir ningún dispositivo.
 
-### Prueba de integración sobre el respaldo real
+## Pendiente de decisión de Jose
 
-```
-1.838 registros leídos → 1.795 contactos, ninguno perdido
-43 pares fundidos · 41 de ellos recuperan confirmaciones
-1.703 contactos confirmados · 10.868 campos ajenos conservados
-Reimportar: 0 nuevos, 0 cambios
-TODO CORRECTO
-```
+1. **Tabla del LDPC(174,91) real** (`ft8_lib`, licencia MIT). Sin ella el módem se queda donde
+   está; con ella debería alcanzar la sensibilidad de FT8 de verdad.
+2. **Motor de propagación real** (ITURHFProp o el paquete VOACAP) o seguir con la aproximación,
+   que está honestamente etiquetada como tal.
+3. **Dos escrituras en el FT-710** para resolver las tablas de ancho de filtro y retardo de VOX.
+   Hoy se muestran como índice en vez de en hercios y milisegundos.
 
-### Lo que se aprendió por el camino
+## Lo que Jose debería arreglar en su estación
 
-- **El cuaderno de Log4OM de EA8DLF tiene 43 contactos duplicados.** Las dos copias de cada
-  par difieren en las confirmaciones. Por eso la importación funde en vez de descartar;
-  descartar habría costado 41 confirmaciones.
-- El fallo más grave lo encontró la prueba de punta a punta, no las 550 por capas: los
-  repositorios devolvían los contactos sin sus colecciones hijas, así que un respaldo ADIF
-  hecho desde el programa habría salido **sin ninguna QSL**.
-- **OmniRig es servidor COM fuera de proceso**, así que la aplicación no tiene que compilarse
-  en 32 bits. El módem digital de la Fase 4 se salva de un estrangulamiento.
-- En el FT-710, **preguntar por el PTT es ponerlo**, y `SV;` no es una consulta sino una
-  acción que intercambia los VFO. La lista de órdenes seguras se escribe a mano.
-- `NA`, `AF` y `OC` son **localizadores Maidenhead válidos** además de continentes: sin
-  exigir 4 caracteres, un spot pondría al corresponsal en mitad del Atlántico.
-- El campo que el protocolo de WSJT-X llama «modo» **no es un modo**: es el carácter que el
-  programa pinta en su ventana y hay que devolvérselo intacto.
+- **El reloj del PC atrasa unos 870 ms**, medido contra cuatro servidores concordantes. Con eso
+  FT8 ya decodifica mal; con dos segundos, además se transmite fuera de ventana.
+- **El nivel de audio de entrada llega al borde del recorte** (0,91-0,99). Con la señal saturada
+  las relaciones señal-ruido son mentira y las señales débiles se pierden.
+- **Su cuaderno de Log4OM tiene 43 contactos duplicados** cuyas dos copias discrepan en las
+  confirmaciones. Al importar se funden y se rescatan 41 confirmaciones.
 
-## Equipo de Jose
+## Siguiente
 
-- **Yaesu FT-710** por USB (CP2105 dual). CAT en **COM3 a 115200**; COM4 a 4800 también
-  responde. `ID;` → `ID0800;`. Ver `docs/04-ft710-cat.md`.
-- Cuidado: **COM8 no es la radio**, es un Meshtastic. Identificar siempre por `ID;`.
-- OmniRig 1.20 instalado · Hamlib 4.6.2 con `rigctld.exe` viene con Log4OM.
-
-## Pendiente de comprobar con el equipo encendido
-
-- Tabla de `SH` (ancho de filtro) y de `VD` (retardo de VOX): hoy van como índice, sin
-  inventar la conversión.
-- Orden de lectura del banco de memorias, que no está en la captura.
-- Una escritura de prueba (leer `SH0;`, mover un paso, devolverlo) **previa autorización**.
+**Fase 5**: concursos, satélites, manipulador y entrenador de CW, macros, net control, etiquetas
+e impresión de QSL, y la ayuda en español con capturas.
 
 ## Decisiones tomadas (2026-09-21)
 
