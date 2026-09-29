@@ -1,0 +1,75 @@
+# Componentes de terceros
+
+Cuaderno NODISLA se publica bajo la GPL-3.0 (fichero `LICENSE`). Este documento reúne lo que no
+es código propio: qué es, de dónde sale, con qué licencia, y lo que **no** se incluye y hay que
+conseguir aparte.
+
+## Incluido en el repositorio
+
+### Constantes y tablas de protocolos digitales
+
+| Componente | Dónde | Procedencia | Licencia |
+|---|---|---|---|
+| Matrices del LDPC(174,91) y secuencia de mezcla de FT4 | `src/Nodisla.Cuaderno.Modos/Tablas/tablas-ft8.txt` | [`ft8_lib`](https://github.com/kgoba/ft8_lib), Kārlis Goba (YL3JG) | MIT, © 2018 Kārlis Goba |
+| Tablas de FST4/FST4W y MSK144/MSK40 | `src/Nodisla.Cuaderno.Modos/Tablas/tablas-fst4*.txt`, `tablas-msk*.txt` | Rama de `ft8_lib` de howard0su sobre el trabajo de Kārlis Goba | MIT, © 2018 Kārlis Goba |
+| Constantes de protocolo de Q65, JT65, JT9, WSPR, MSK144 y FST4 | `src/Nodisla.Cuaderno.Modos/Tablas/` y las clases `Tablas*.cs` | Especificaciones publicadas de [WSJT-X](https://sourceforge.net/projects/wsjt/) (K1JT, K9AN y colaboradores) y artículos de QEX | WSJT-X es GPL-3.0, compatible. No se ha copiado código de WSJT-X: solo constantes del protocolo, con su procedencia anotada en cada `LEEME` de esa carpeta |
+| Función de resumen `lookup3` (`hashlittle`) | `src/Nodisla.Cuaderno.Modos/Wspr/HashDeIndicativo.cs` | Bob Jenkins, 2006 | Dominio público |
+
+### Protocolos CAT de las radios
+
+| Componente | Dónde | Procedencia |
+|---|---|---|
+| CAT ASCII de Yaesu (FT-710, FT-891, FT-991/991A, FTDX10, FTDX101D/MP, FTDX3000, FTDX5000, FTDX1200) y CAT binario de 5 bytes (FT-817/818, FT-857, FT-897) | `src/Nodisla.Cuaderno.Radio/Control/Ft710/`, `Control/Yaesu/` | Escrito desde cero a partir de los manuales CAT públicos de Yaesu. Solo el FT-710 está validado contra la radio real |
+| CI-V de ICOM (IC-7300, IC-705, IC-7610, IC-9700, IC-7100, IC-7851) | `src/Nodisla.Cuaderno.Radio/Control/Icom/` | Escrito desde cero a partir de los manuales CI-V públicos de ICOM. Sin probar con radio real |
+
+Los manuales no se incluyen: se descargan de yaesu.com e icomjapan.com.
+
+### Datos de referencia
+
+| Componente | Dónde | Procedencia | Licencia / notas |
+|---|---|---|---|
+| Tabla de países DXCC, prefijos y excepciones | `recursos/paises-nodisla.tsv`, `src/Nodisla.Cuaderno.Dominio/Dxcc/DatosPaises.cs` | `cty.dat` de AD1C ([country-files.com](https://www.country-files.com/)) y `country.xml` de Log4OM | Datos factuales de libre uso en programas de registro; sin licencia explícita |
+| Plan de bandas | `recursos/bandplan-nodisla.tsv`, `.../Bandplan/DatosBandplan.cs` | Planes de banda IARU (regiones 1-3) tal como los trae Log4OM | Datos factuales; sin licencia explícita |
+| Catálogo de concursos | `recursos/concursos/`, `.../Concursos/Recursos/catalogo-concursos.tsv.gz` | Nombres e identificadores Cabrillo del `contest.csv` de Log4OM; reglas escritas a mano | Datos factuales; sin licencia explícita |
+| Catálogo de satélites | `recursos/satelites/satelites-nodisla.tsv` | Datos públicos de AMSAT y de los propios satélites, escritos a mano | Datos factuales |
+| Catálogo reducido de diplomas para las pruebas | `tests/Nodisla.Cuaderno.Diplomas.Pruebas/Datos/catalogo-de-prueba.tsv.gz` | Definiciones de los 87 diplomas y solo referencias factuales: entidades DXCC, estados de EE. UU., cantones suizos, prefijos de la Commonwealth, bases antárticas y un puñado de IOTA y POTA | Solo para las pruebas; no es el catálogo del programa |
+| Casos de verificación de SGP4 | `tests/Nodisla.Cuaderno.Satelites.Pruebas/Datos/SGP4-VER.TLE`, `tcppver.out` | Vallado, Crawford, Hujsak y Kelso, *Revisiting Spacetrack Report #3* (AIAA 2006), distribuidos por CelesTrak | Distribuidos libremente como banco de verificación |
+
+### Material propio basado en terceros
+
+- **Frontales de las radios** (FT-710, FT-891, FT-991A, FTDX10, FTDX101, IC-705, IC-7300,
+  IC-7610 y uno genérico): dibujados en vector desde cero; no incluyen imágenes de los
+  fabricantes. «Yaesu», «ICOM» y los nombres de los modelos son marcas de sus dueños y se
+  nombran solo para decir con qué equipos funciona el programa.
+- **Grabación de aire** `tests/Nodisla.Cuaderno.Modos.Pruebas/Aire/*.wav`: emisiones públicas
+  de FT8 de otras estaciones, grabadas en recepción para probar el decodificador.
+- **Capturas de CAT y del analizador del FT-710** `tests/Nodisla.Cuaderno.Radio.Pruebas/Capturas/`:
+  respuestas técnicas de la radio, sin datos personales.
+- **Mapa**: los mosaicos se descargan en ejecución de OpenStreetMap
+  (© colaboradores de OpenStreetMap, ODbL); no se incluye ninguno en el repositorio.
+
+### Paquetes NuGet (se descargan al compilar, no están en el repositorio)
+
+| Paquete | Licencia |
+|---|---|
+| Microsoft.EntityFrameworkCore(.Sqlite/.Design), Microsoft.Data.Sqlite, Microsoft.Extensions.*, System.IO.Ports, System.Security.Cryptography.ProtectedData | MIT |
+| CommunityToolkit.Mvvm | MIT |
+| Dapper | Apache-2.0 |
+| Serilog, Serilog.Extensions.Hosting, Serilog.Sinks.File, Serilog.Sinks.Console | Apache-2.0 |
+| FluentValidation | Apache-2.0 |
+| NAudio | MS-PL |
+| Mapsui.Wpf | MIT |
+| PDFsharp | MIT |
+| xunit, xunit.runner.visualstudio, AwesomeAssertions | Apache-2.0 |
+| Microsoft.NET.Test.Sdk, coverlet.collector | MIT |
+
+## No incluido: hay que conseguirlo aparte
+
+| Componente | Por qué no está | Cómo conseguirlo |
+|---|---|---|
+| **Catálogo de diplomas** (553.064 referencias de 87 diplomas) | Sale de la base `Activations.SQLite` de Log4OM y de las listas de cada programa (IOTA, POTA, SOTA, WWFF…), sin licencia para redistribuirlo | `recursos/diplomas/generar-diplomas.py` con su propio Log4OM; ver `recursos/diplomas/LEEME.md`. Sin él la pestaña Diplomas queda vacía y dice cómo conseguirlo |
+| **LibFT4222** de FTDI (`LibFT4222-64.dll`) | Su licencia prohíbe entregarla a terceros | [ftdichip.com](https://ftdichip.com/products/ft4222h/); ver `lib/ftdi/LEEME.md`. Sin ella todo funciona salvo el analizador de espectro del FT-710 |
+| **ITURHFProp** (motor P.533 de la UIT) | Su permiso cubre a quien implementa la Recomendación, no la redistribución | [ITU-R-HF](https://github.com/ITU-R-Study-Group-3/ITU-R-HF); ver `herramientas/ITURHFProp/LEEME.md`. Sin él se usa la aproximación propia |
+| **Manuales CAT/CI-V** de Yaesu e ICOM | Derechos de autor de los fabricantes | [yaesu.com](https://www.yaesu.com), [icomjapan.com](https://www.icomjapan.com) |
+| **Hamlib** (`rigctld`) y **OmniRig** | Programas externos opcionales | [hamlib.github.io](https://hamlib.github.io/), [OmniRig](https://www.dxatlas.com/omnirig/) |
+| **WSJT-X / JTDX** | Opcionales: el programa trae su módem propio | Sus webs oficiales |

@@ -1,0 +1,113 @@
+# Ajustes a mano del catalogo de diplomas de Cuaderno NODISLA.
+#
+# Este fichero SI se edita a mano; el resto del recurso se genera.
+# Lo que se escriba aqui manda sobre lo que deduce el generador.
+#
+# Columnas (separadas por tabulador):
+#   codigo         codigo del diploma, tal y como sale en diplomas-nodisla.tsv
+#   variante       nombre de la variante, o * para todas las del diploma
+#   nombre_es      nombre en espanol para mostrar
+#   gestor         entidad que otorga el diploma
+#   exigencia      Trabajado | Confirmado | Verificado   (por omision, Confirmado)
+#   medios         vias de confirmacion admitidas, separadas por comas:
+#                  Papel, Lotw, Eqsl, ClubLog, QrzCom, HamQth, HrdLog, QrzCq.
+#                  Vacio = las que diga el original; si el original no dice
+#                  ninguna comprobable, vale cualquiera.
+#   objetivo       cuantas referencias distintas hacen falta. Vacio = no se sabe.
+#                  SOLO se rellena cuando la cifra es la del reglamento del
+#                  diploma. Un objetivo inventado enganaria al operador.
+#   solo_vigentes  1 si las entidades DXCC borradas no cuentan para el diploma
+#
+# La linea mas concreta gana: primero se busca (codigo, variante) y luego
+# (codigo, *).
+codigo	variante	nombre_es	gestor	exigencia	medios	objetivo	solo_vigentes
+160MMI	*	160 años de la Marina Militar Italiana					
+AA	*	Diploma de la Antártida					
+AOSA2025	*	Todos los Santos Ortodoxos 2025					
+ARLHS_WLOL	*	Lista Mundial de Faros ARLHS	ARLHS				
+ARM	*	Diploma Regia Marina (Italia)					
+ASC	*	Diploma de Secciones ARI	ARI				
+ATDA	*	Todos los Distritos de Turquía					
+BCA	*	Castillos de Bélgica					
+CATCH22	*	Diploma CATCH 22					
+CCC	*	Commonwealth Century Club	RSGB				
+CDM	*	Certificado del Mediterráneo					
+CHINESE_PROVINCES	*	Trabajadas Todas las Provincias Chinas					
+CNPA	*	Parques Nacionales de Croacia					
+COTA-9A	*	Castillos en el Aire - Croacia					
+DAI	*	Diploma de las Abadías Italianas					
+DCI	*	Diploma de los Castillos Italianos					
+DDFM	*	Diploma de los Departamentos Franceses Metropolitanos					
+DFCF	*	Diploma de Fuertes y Castillos de Francia					
+DIA	*	Diploma de las Islas Danesas					
+DIFM	*	Diploma de las Islas Francesas Metropolitanas					
+DIFO	*	Diploma de las Islas Francesas de Ultramar					
+DIP	*	Diploma de las Islas Portuguesas					
+DLD	*	Diploma de DOK del DARC	DARC				
+DLI	*	Diploma de los Lagos Italianos					
+DME	*	Diploma Municipios de España					
+DMSM	*	Diploma de los Monumentos de San Miguel					
+DRB	*	Diploma Real Borbónico					
+DTC	*	Diploma de Puertos y Torres Costeras					
+DTMBA	*	Diploma de Teatros, Museos y Bellas Artes					
+DVV	*	Diploma de las Villas Vénetas					
+DXCC	MIXED	Centenario DXCC	ARRL			100	
+DXCC	*	Centenario DXCC	ARRL				
+ECA	*	Castillos Ingleses en el Aire					
+ELK	*	Diploma del Alce (Finlandia)					
+FFMA	*	Diploma Conmemorativo Fred Fish	ARRL				
+GIA	*	Diploma de las Islas Alemanas					
+GIOTA	*	Islas Griegas en el Aire					
+H26	*	Diploma Helvetica 26	USKA				
+HOLYLAND	*	Diploma de Tierra Santa	IARC				
+IARUR1	*	Diploma de la Región 1 de la IARU	IARU				
+IIA	*	Diploma de las Islas Italianas					
+IOCA	*	Diploma de las Islas de Croacia					
+IONIA	*	Islas de Irlanda del Norte					
+IOTA	*	Islas en el Aire	IOTA Ltd.				
+IPA_ALL_MEMBERS	*	Todos los Miembros de la IPA	IPA				
+JCC	*	Diploma de las Cien Ciudades de Japón	JARL				
+MD_2020	*	Día de Marconi 2020					
+OKCA	*	Diploma de los Distritos de Chequia					
+POLSKA	*	Diploma POLSKA	PZK				
+POTA	*	Parques en el Aire	Parks on the Air				
+RAC	*	Provincias Canadienses de la RAC	RAC				
+RDA	*	Diploma de los Distritos Rusos					
+RUSSIA	*	Diploma Rusia					
+SIOTA	*	Refugios en el Aire					
+SOTA	*	Cumbres en el Aire	SOTA Management Team				
+SPPA	*	Diploma de los Condados de Polonia	PZK				
+TPEA	*	Trabajadas las Provincias EA	URE				
+USA-CA	*	Diploma de los Condados de EE. UU. de CQ	CQ Magazine				
+USI	*	Programa de Diplomas de Islas de EE. UU.					
+VK_SHIRES	*	Diploma de los Municipios de Australia					
+VUCC	*	Century Club de VHF/UHF	ARRL				
+W21M	*	Diploma Meridiano 21					
+WAB	*	Trabajada Toda Gran Bretaña	WAB				
+WABP	*	Trabajadas Todas las Provincias Belgas	UBA				
+WAC	*	Trabajados Todos los Continentes	IARU				
+WAE	*	Trabajada Toda Europa	DARC				
+WAEIC	*	Trabajados Todos los Condados de Irlanda	IRTS				
+WAI	*	Trabajada Toda Irlanda	IRTS				
+WAIL	*	Trabajados Todos los Faros Italianos					
+WAIP	*	Trabajadas Todas las Provincias Italianas	ARI				
+WAJA	*	Trabajadas Todas las Prefecturas Japonesas	JARL				
+WALA	*	Trabajada Toda Noruega	NRRL				
+WANCA	*	Trabajados Todos los Municipios Noruegos	NRRL				
+WAP_WADA	*	Diploma WAP de Bases Antárticas	WAP				
+WAS	WAS	Trabajados Todos los Estados	ARRL			50	
+WAS	*	Trabajados Todos los Estados	ARRL				
+WASD	*	Trabajados Todos los Distritos Suizos	USKA				
+WAZ	WAZ_MIXED	Trabajadas Todas las Zonas	CQ Magazine			40	
+WAZ	*	Trabajadas Todas las Zonas	CQ Magazine				
+WCA	*	Diploma Mundial de Castillos					
+WCQZ15	*	Trabajada la Zona CQ 15					
+WDRC	*	Trabajados los Países del Danubio					
+WHSA	*	Diploma del Patrimonio de la Humanidad					
+WITUZ	*	Trabajadas las Zonas ITU					
+WOEC	*	Trabajadas las Capitales Austriacas	ÖVSV				
+WPX	*	Diploma Mundial de Prefijos	CQ Magazine				
+WUST	*	Trabajados los Territorios de EE. UU.					
+WWBOTA	*	Búnkeres en el Aire					
+WWFF	*	Flora y Fauna Mundial	WWFF				
+ZWP	*	Castillos de Polonia					

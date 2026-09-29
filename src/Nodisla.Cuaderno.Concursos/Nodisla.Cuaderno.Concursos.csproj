@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nodisla.Cuaderno.Aplicacion\Nodisla.Cuaderno.Aplicacion.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+  <!-- El catalogo de concursos viaja dentro del ensamblado, comprimido. Asi la sesion de
+       concurso no depende en ejecucion de ningun fichero de Log4OM ni de nada suelto en
+       disco. Se genera con recursos\concursos\generar-concursos.py. -->
+  <ItemGroup>
+    <EmbeddedResource Include="Recursos\catalogo-concursos.tsv.gz" />
+  </ItemGroup>
+
+</Project>

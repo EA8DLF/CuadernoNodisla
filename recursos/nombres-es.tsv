@@ -1,0 +1,405 @@
+# Nombres en espanol de las entidades DXCC.
+# Formato: numero<TAB>nombre. Las lineas que empiezan por # se ignoran.
+# Se edita a mano; lo que falte se muestra con el nombre ingles de la ARRL.
+1	Canadá
+2	Isla Abu Ail
+3	Afganistán
+4	Islas Agalega y San Brandón
+5	Islas Åland
+6	Alaska
+7	Albania
+8	Aldabra
+9	Samoa Americana
+10	Islas Ámsterdam y San Pablo
+11	Islas Andamán y Nicobar
+12	Anguila
+13	Antártida
+14	Armenia
+15	Rusia asiática
+16	Islas Subantárticas de Nueva Zelanda
+17	Isla de Aves
+18	Azerbaiyán
+19	Bajo Nuevo
+20	Islas Baker y Howland
+21	Islas Baleares
+22	Palaos
+23	Arrecife Blenheim
+24	Isla Bouvet
+25	Borneo Septentrional Británico
+26	Somalilandia Británica
+27	Bielorrusia
+28	Zona del Canal
+29	Islas Canarias
+30	Islas Célebes y Molucas
+31	Kiribati Central
+32	Ceuta y Melilla
+33	Islas Chagos
+34	Isla Chatham
+35	Isla Christmas
+36	Isla Clipperton
+37	Isla del Coco
+38	Islas Cocos (Keeling)
+39	Islas Comores
+40	Creta
+41	Islas Crozet
+42	Damão y Diu
+43	Isla Desecheo
+44	Desroches
+45	Dodecaneso
+46	Malasia Oriental
+47	Isla de Pascua
+48	Kiribati Oriental
+49	Guinea Ecuatorial
+50	México
+51	Eritrea
+52	Estonia
+53	Etiopía
+54	Rusia europea
+55	Farquhar
+56	Fernando de Noronha
+57	África Ecuatorial Francesa
+58	Indochina Francesa
+59	África Occidental Francesa
+60	Bahamas
+61	Tierra de Francisco José
+62	Barbados
+63	Guayana Francesa
+64	Bermudas
+65	Islas Vírgenes Británicas
+66	Belice
+67	India Francesa
+68	Zona Neutral Kuwait-Arabia Saudí
+69	Islas Caimán
+70	Cuba
+71	Islas Galápagos
+72	República Dominicana
+74	El Salvador
+75	Georgia
+76	Guatemala
+77	Granada
+78	Haití
+79	Guadalupe
+80	Honduras
+81	Alemania (anterior)
+82	Jamaica
+84	Martinica
+85	Bonaire y Curazao (Antillas Neerlandesas)
+86	Nicaragua
+88	Panamá
+89	Islas Turcas y Caicos
+90	Trinidad y Tobago
+91	Aruba
+93	Arrecife Geyser
+94	Antigua y Barbuda
+95	Dominica
+96	Montserrat
+97	Santa Lucía
+98	San Vicente
+99	Isla Gloriosa
+100	Argentina
+101	Goa
+102	Costa de Oro y Togoland
+103	Guam
+104	Bolivia
+105	Bahía de Guantánamo
+106	Guernsey
+107	Guinea
+108	Brasil
+109	Guinea-Bisáu
+110	Hawái
+111	Isla Heard
+112	Chile
+113	Ifni
+114	Isla de Man
+115	Somalia Italiana
+116	Colombia
+117	Sede de la UIT
+118	Jan Mayen
+119	Java
+120	Ecuador
+122	Jersey
+123	Isla Johnston
+124	Juan de Nova y Europa
+125	Islas Juan Fernández
+126	Kaliningrado
+127	Islas Kamarán
+128	República Carelo-Finesa
+129	Guyana
+130	Kazajistán
+131	Islas Kerguelen
+132	Paraguay
+133	Islas Kermadec
+134	Arrecife Kingman
+135	Kirguistán
+136	Perú
+137	República de Corea
+138	Isla Kure
+139	Islas Kuria Muria
+140	Surinam
+141	Islas Malvinas
+142	Islas Lakshadweep
+143	Laos
+144	Uruguay
+145	Letonia
+146	Lituania
+147	Isla Lord Howe
+148	Venezuela
+149	Azores
+150	Australia
+151	Isla Malyj Vysotskij
+152	Macao
+153	Isla Macquarie
+154	República Árabe de Yemen
+155	Malaya
+157	Nauru
+158	Vanuatu
+159	Maldivas
+160	Tonga
+161	Isla Malpelo
+162	Nueva Caledonia
+163	Papúa Nueva Guinea
+164	Manchuria
+165	Isla Mauricio
+166	Islas Marianas
+167	Arrecife Market
+168	Islas Marshall
+169	Mayotte
+170	Nueva Zelanda
+171	Arrecife Mellish
+172	Isla Pitcairn
+173	Micronesia
+174	Isla Midway
+175	Polinesia Francesa
+176	Islas Fiyi
+177	Minami Torishima
+178	Arrecife Minerva
+179	Moldavia
+180	Monte Athos
+181	Mozambique
+182	Isla Navassa
+183	Borneo Neerlandés
+184	Nueva Guinea Neerlandesa
+185	Islas Salomón
+186	Terranova y Labrador
+187	Níger
+188	Niue
+189	Isla Norfolk
+190	Samoa
+191	Islas Cook del Norte
+192	Ogasawara
+193	Okinawa
+194	Okino Tori-Shima
+195	Annobón
+196	Palestina (suprimida)
+197	Islas Palmyra y Jarvis
+198	Territorio de Papúa
+199	Isla Pedro I
+200	Timor Portugués
+201	Islas Príncipe Eduardo y Marión
+202	Puerto Rico
+203	Andorra
+204	Revillagigedo
+205	Isla Ascensión
+206	Austria
+207	Isla Rodrigues
+208	Ruanda-Urundi
+209	Bélgica
+210	Sarre
+211	Isla Sable
+212	Bulgaria
+213	San Martín (Francia)
+214	Córcega
+215	Chipre
+216	Isla de San Andrés
+217	Islas San Félix
+218	Checoslovaquia
+219	Santo Tomé y Príncipe
+220	Sarawak
+221	Dinamarca
+222	Islas Feroe
+223	Inglaterra
+224	Finlandia
+225	Cerdeña
+226	Zona Neutral Arabia Saudí-Irak
+227	Francia
+228	Banco Serrana e Isla Roncador
+229	República Democrática Alemana
+230	Alemania
+231	Sikkim
+232	Somalia
+233	Gibraltar
+234	Islas Cook del Sur
+235	Isla San Pedro
+236	Grecia
+237	Groenlandia
+238	Islas Orcadas del Sur
+239	Hungría
+240	Islas Sandwich del Sur
+241	Islas Shetland del Sur
+242	Islandia
+243	República Democrática Popular de Yemen
+244	Sudán del Sur (anterior)
+245	Irlanda
+246	Soberana Orden Militar de Malta
+247	Islas Spratly
+248	Italia
+249	San Cristóbal y Nieves
+250	Santa Elena
+251	Liechtenstein
+252	Isla Saint Paul
+253	Peñascos de San Pedro y San Pablo
+254	Luxemburgo
+255	San Martín, Saba y San Eustaquio
+256	Islas Madeira
+257	Malta
+258	Sumatra
+259	Svalbard
+260	Mónaco
+261	Isla del Cisne
+262	Tayikistán
+263	Países Bajos
+264	Tánger
+265	Irlanda del Norte
+266	Noruega
+267	Territorio de Nueva Guinea
+268	Tíbet
+269	Polonia
+270	Islas Tokelau
+271	Trieste
+272	Portugal
+273	Islas Trindade y Martín Vaz
+274	Tristán de Acuña y Gough
+275	Rumanía
+276	Isla Tromelin
+277	San Pedro y Miquelón
+278	San Marino
+279	Escocia
+280	Turkmenistán
+281	España
+282	Tuvalu
+283	Bases británicas en Chipre
+284	Suecia
+285	Islas Vírgenes de EE.UU.
+286	Uganda
+287	Suiza
+288	Ucrania
+289	Sede de la ONU
+291	Estados Unidos de América
+292	Uzbekistán
+293	Vietnam
+294	Gales
+295	Ciudad del Vaticano
+296	Serbia
+297	Isla Wake
+298	Islas Wallis y Futuna
+299	Malasia Occidental
+301	Kiribati Occidental
+302	Sáhara Occidental
+303	Isla Willis
+304	Baréin
+305	Bangladés
+306	Bután
+307	Zanzíbar
+308	Costa Rica
+309	Myanmar
+312	Camboya
+315	Sri Lanka
+318	China
+321	Hong Kong
+324	India
+327	Indonesia
+330	Irán
+333	Irak
+336	Israel
+339	Japón
+342	Jordania
+344	Corea del Norte
+345	Brunéi
+348	Kuwait
+354	Líbano
+363	Mongolia
+369	Nepal
+370	Omán
+372	Pakistán
+375	Filipinas
+376	Catar
+378	Arabia Saudí
+379	Islas Seychelles
+381	Singapur
+382	Yibuti
+384	Siria
+386	Taiwán
+387	Tailandia
+390	Turquía
+391	Emiratos Árabes Unidos
+400	Argelia
+401	Angola
+402	Botsuana
+404	Burundi
+406	Camerún
+408	República Centroafricana
+409	Cabo Verde
+410	Chad
+411	Comoras
+412	República del Congo
+414	República Democrática del Congo
+416	Benín
+420	Gabón
+422	Gambia
+424	Ghana
+428	Costa de Marfil
+430	Kenia
+432	Lesoto
+434	Liberia
+436	Libia
+438	Madagascar
+440	Malaui
+442	Malí
+444	Mauritania
+446	Marruecos
+450	Nigeria
+452	Zimbabue
+453	Isla Reunión
+454	Ruanda
+456	Senegal
+458	Sierra Leona
+460	Rotuma
+462	República de Sudáfrica
+464	Namibia
+466	Sudán
+468	Reino de Esuatini
+470	Tanzania
+474	Túnez
+478	Egipto
+480	Burkina Faso
+482	Zambia
+483	Togo
+488	Bahía de Walvis
+489	Arrecife Conway
+490	Isla Banaba
+492	Yemen
+493	Islas Pingüino
+497	Croacia
+499	Eslovenia
+501	Bosnia-Herzegovina
+502	Macedonia del Norte
+503	República Checa
+504	República Eslovaca
+505	Isla Pratas
+506	Arrecife Scarborough
+507	Provincia de Temotu
+508	Islas Australes
+509	Islas Marquesas
+510	Palestina
+511	Timor Oriental
+512	Islas Chesterfield
+513	Isla Ducie
+514	Montenegro
+515	Isla Swains
+516	San Bartolomé
+517	Curazao
+518	San Martín (Países Bajos)
+519	Saba y San Eustaquio
+520	Bonaire
+521	República de Sudán del Sur
+522	República de Kosovo

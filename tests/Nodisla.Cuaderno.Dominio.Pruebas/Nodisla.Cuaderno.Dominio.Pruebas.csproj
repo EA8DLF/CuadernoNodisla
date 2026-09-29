@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="AwesomeAssertions" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Nodisla.Cuaderno.Dominio\Nodisla.Cuaderno.Dominio.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Banco de pruebas de oro: QSOs reales ya resueltos por Log4OM. No se publica (es el cuaderno
+         de una persona); si no esta, las pruebas que lo usan se saltan con su motivo. -->
+    <EmbeddedResource Include="Datos\qsos-log4om.tsv" Condition="Exists('Datos\qsos-log4om.tsv')" />
+  </ItemGroup>
+</Project>

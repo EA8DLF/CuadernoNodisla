@@ -1,0 +1,551 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.VisorDeVfos"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
+             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <!--
+        LA PANTALLA DEL EQUIPO, dibujada como la de la foto de la radio del operador
+        (docs\capturas\referencia-ft710-frontal.jpg), de arriba abajo:
+
+          · arriba a la izquierda, el medidor S de arco (MedidorDeArco; en TX, la potencia);
+          · a su derecha, el VFO activo: etiqueta azul, modo y la frecuencia grande en siete
+            segmentos; debajo, el otro VFO en pequeño y la etiqueta ámbar del mando del FUNC;
+          · las cuatro casillas ATT / IPO / DNF / AGC (rótulo ámbar, valor blanco) y la
+            miniatura de banda (MiniaturaDeBanda) con la marca del dial;
+          · la línea de estado y, a la derecha, el rótulo azul claro del analizador;
+          · EL ANALIZADOR (hueco con nombre, AreaDelAnalizador) y su escala de cinco marcas;
+          · las teclas táctiles CENTER, 3DSS, MULTI, EXPAND, SPAN, SPEED.
+
+        Los colores son FIJOS: la pantalla es negra con el tema claro y con el oscuro.
+
+        El analizador NO es de este dibujo: lo que se pinta dentro llega por
+        ContenidoDelAnalizador. Mientras nadie lo ponga, dentro va la cascada del audio de
+        recepción del módem propio (plantilla CascadaDelAudio, más abajo).
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+        <conversores:NoEsVacio x:Key="NoEsVacio" />
+        <conversores:VisibleSiEsFalso x:Key="VisibleSiEsFalso" />
+        <conversores:EscalaDelAnalizador x:Key="EscalaDelAnalizador" />
+        <conversores:RotuloDelAnalizador x:Key="RotuloDelAnalizador" />
+
+        <SolidColorBrush x:Key="Pantalla" Color="#FF030405" />
+        <SolidColorBrush x:Key="Rejilla" Color="#FF2A333D" />
+        <SolidColorBrush x:Key="Blanco" Color="#FFF4F7FA" />
+        <SolidColorBrush x:Key="GrisDelVisor" Color="#FF9BA6B2" />
+        <SolidColorBrush x:Key="AzulVfo" Color="#FF2F7FE6" />
+        <SolidColorBrush x:Key="AzulVfoOscuro" Color="#FF123C7A" />
+        <SolidColorBrush x:Key="AzulClaro" Color="#FF6CC3FF" />
+        <SolidColorBrush x:Key="Ambar" Color="#FFF2A93B" />
+        <SolidColorBrush x:Key="Rojo" Color="#FFE2352B" />
+        <SolidColorBrush x:Key="Verde" Color="#FF3FBF6A" />
+
+        <FontFamily x:Key="LetraDelVisor">Arial</FontFamily>
+
+        <!-- Las casillas ATT / IPO / DNF / AGC: rótulo ámbar arriba, valor blanco debajo. -->
+        <Style x:Key="RotuloDeCasilla" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource Ambar}" />
+            <Setter Property="FontFamily" Value="{StaticResource LetraDelVisor}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="None" />
+        </Style>
+        <Style x:Key="ValorDeCasilla" TargetType="TextBlock" BasedOn="{StaticResource RotuloDeCasilla}">
+            <Setter Property="Foreground" Value="{StaticResource Blanco}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Margin" Value="0,-1,0,0" />
+        </Style>
+        <Style x:Key="Casilla" TargetType="Border">
+            <Setter Property="Background" Value="#FF14191F" />
+            <Setter Property="BorderBrush" Value="#FF050607" />
+            <Setter Property="BorderThickness" Value="0,0,1,0" />
+            <Setter Property="Padding" Value="0,1,0,0" />
+        </Style>
+
+        <!-- Teclas táctiles de abajo: gris claro con degradado, rótulo blanco. -->
+        <Style x:Key="TeclaTactil" TargetType="Border">
+            <Setter Property="BorderBrush" Value="#FF0E1114" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Margin" Value="0.5,0" />
+            <Setter Property="ToolTip" Value="Tecla táctil de la pantalla del equipo: se toca en la radio." />
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Offset="0" Color="#FF6A7581" />
+                        <GradientStop Offset="0.5" Color="#FF45505B" />
+                        <GradientStop Offset="1" Color="#FF2B333C" />
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--
+            La misma tecla táctil, pulsable. Tag = True: la opción está puesta (azul claro).
+            Disparador de propiedad sobre Tag con un Boolean de verdad: el DataTrigger con
+            RelativeSource TemplatedParent no encontraba la tecla desde los disparadores de la
+            plantilla y Tag (object) no convierte el texto "True"; la tecla no se iluminaba nunca.
+        -->
+        <sys:Boolean x:Key="Verdadero">True</sys:Boolean>
+        <Style x:Key="TeclaTactilBoton" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="0.5,0" />
+            <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="fondo" BorderBrush="#FF0E1114" BorderThickness="1">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Offset="0" Color="#FF6A7581" />
+                                    <GradientStop Offset="0.5" Color="#FF45505B" />
+                                    <GradientStop Offset="1" Color="#FF2B333C" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="fondo" Property="Background" Value="#FF2B333C" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="fondo" Property="Opacity" Value="0.45" />
+                            </Trigger>
+                            <Trigger Property="Tag" Value="{StaticResource Verdadero}">
+                                <Setter TargetName="fondo" Property="Background" Value="#FF1F5FAF" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TextoDeTeclaTactil" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource Blanco}" />
+            <Setter Property="FontFamily" Value="{StaticResource LetraDelVisor}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="None" />
+        </Style>
+
+        <Style x:Key="MarcaDeEscala" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource GrisDelVisor}" />
+            <Setter Property="FontFamily" Value="{StaticResource LetraDelVisor}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="None" />
+        </Style>
+
+        <!--
+            LO QUE VA DENTRO DEL ANALIZADOR MIENTRAS NADIE PONGA OTRA COSA: la cascada del audio
+            de recepción que calcula el módem propio. No es de este dibujo; se deja tal cual.
+        -->
+        <DataTemplate x:Key="CascadaDelAudio">
+            <Grid>
+                <Image Source="{Binding DataContext.Modem.ImagenDeLaCascada, RelativeSource={RelativeSource AncestorType=Window}}"
+                       Stretch="Fill"
+                       RenderOptions.BitmapScalingMode="Linear"
+                       AutomationProperties.Name="Espectro del audio de recepción" />
+
+                <!-- Con el audio cerrado no se deja un hueco negro: se dice y se ofrece abrirlo. -->
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Visibility="{Binding DataContext.Modem.Escuchando, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource VisibleSiEsFalso}}">
+                    <TextBlock Text="ESPECTRO SIN AUDIO"
+                               Foreground="{StaticResource Ambar}"
+                               FontSize="13"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               TextTrimming="None" />
+                    <TextBlock Text="El audio USB del equipo está cerrado."
+                               Foreground="{StaticResource GrisDelVisor}"
+                               FontSize="12"
+                               HorizontalAlignment="Center"
+                               Margin="0,1,0,3"
+                               TextTrimming="None" />
+                    <Button Content="Abrir el audio de recepción"
+                            Command="{Binding DataContext.Modem.EscucharCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            FontSize="12"
+                            Padding="8,1"
+                            HorizontalAlignment="Center"
+                            ToolTip="Abre la entrada de audio del equipo (la misma que usa el módem propio). No transmite."
+                            AutomationProperties.Name="Abrir el audio de recepción" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <!--
+        FIEL A LA RADIO Y LEGIBLE (29-09-2026). El sitio de cada cosa es el de la foto; los
+        tamaños, los mínimos legibles: el dibujo se ve a unos 0,75 de su tamaño a 1920 × 1000 y
+        1366 × 900, así que fuera del medidor de arco NINGÚN texto baja de 12 unidades y ninguno
+        se recorta. Lo que no cabe en corto va en la ayuda emergente. El aviso del plan de
+        bandas no está en la pantalla de la radio: va en la barra del equipo y en la ayuda
+        emergente de la frecuencia.
+    -->
+    <Border Background="{StaticResource Pantalla}" Padding="4,2,4,2">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="58" />
+                <!-- EXPAND: como en la radio, el analizador sube y tapa la fila de casillas. -->
+                <RowDefinition>
+                    <RowDefinition.Style>
+                        <Style TargetType="RowDefinition">
+                            <Setter Property="Height" Value="34" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding AnalizadorAmpliado, RelativeSource={RelativeSource AncestorType=vistas:VisorDeVfos}}" Value="True">
+                                    <Setter Property="Height" Value="0" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RowDefinition.Style>
+                </RowDefinition>
+                <RowDefinition Height="17" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="14" />
+                <RowDefinition Height="23" />
+            </Grid.RowDefinitions>
+
+            <!-- ══ Arriba: el medidor de arco y, a su derecha, los dos VFO ══ -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- El medidor S de arco: la aguja, la señal; transmitiendo, la potencia. -->
+                <vistas:MedidorDeArco Grid.Column="0"
+                                      x:Name="MedidorS"
+                                      NivelDeSenal="{Binding NivelDeSenal}"
+                                      NivelDePotencia="{Binding NivelDePotencia}"
+                                      Transmitiendo="{Binding Transmitiendo}"
+                                      AutomationProperties.Name="Medidor de señal">
+                    <vistas:MedidorDeArco.ToolTip>
+                        <TextBlock>
+                            <Run Text="Señal" />
+                            <Run Text="{Binding MedidorS, Mode=OneWay}" />
+                            <Run Text="· potencia" />
+                            <Run Text="{Binding MedidorPotencia, Mode=OneWay}" />
+                            <Run Text="· ROE" />
+                            <Run Text="{Binding MedidorRoe, Mode=OneWay}" />
+                            <Run Text="·" />
+                            <Run Text="{Binding MedidorTension, Mode=OneWay}" />
+                            <Run Text="· filtro" />
+                            <Run Text="{Binding Principal.AnchoDeFiltro, Mode=OneWay}" />
+                        </TextBlock>
+                    </vistas:MedidorDeArco.ToolTip>
+                </vistas:MedidorDeArco>
+
+                <Grid Grid.Column="1" Margin="4,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="36" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- VFO activo: etiqueta azul, modo debajo y la frecuencia grande. -->
+                    <StackPanel Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="54">
+                        <Border Background="{StaticResource AzulVfo}" CornerRadius="1" Padding="0,0,0,1">
+                            <TextBlock Text="{Binding Principal.Etiqueta}" Foreground="{StaticResource Blanco}"
+                                       FontFamily="{StaticResource LetraDelVisor}" FontSize="12" FontWeight="Bold"
+                                       HorizontalAlignment="Center" TextTrimming="None" />
+                        </Border>
+                        <Border Background="{StaticResource AzulVfoOscuro}" CornerRadius="1" Margin="0,1,0,0" Padding="0,0,0,1">
+                            <TextBlock Text="{Binding Principal.Modo}" Foreground="{StaticResource Blanco}"
+                                       FontFamily="{StaticResource LetraDelVisor}" FontSize="12" FontWeight="Bold"
+                                       HorizontalAlignment="Center" TextTrimming="None" />
+                        </Border>
+                    </StackPanel>
+
+                    <vistas:CifrasDeSieteSegmentos Grid.Row="0"
+                                                   Texto="{Binding Principal.FrecuenciaDelVisor}"
+                                                   Relleno="{StaticResource Blanco}"
+                                                   AltoDeCifra="34"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   AutomationProperties.Name="Frecuencia del VFO activo">
+                        <vistas:CifrasDeSieteSegmentos.ToolTip>
+                            <TextBlock MaxWidth="360" TextWrapping="Wrap">
+                                <Run Text="{Binding Principal.Banda, Mode=OneWay}" />
+                                <Run Text="·" />
+                                <Run Text="{Binding OrigenDeLaFrecuencia, Mode=OneWay}" />
+                                <LineBreak />
+                                <Run Text="{Binding Principal.AvisoDelBandplan, Mode=OneWay}" />
+                                <Run Text="{Binding Principal.TramoDelBandplan, Mode=OneWay}" />
+                            </TextBlock>
+                        </vistas:CifrasDeSieteSegmentos.ToolTip>
+                    </vistas:CifrasDeSieteSegmentos>
+
+                    <!-- El otro VFO, en pequeño, y la etiqueta ámbar del mando del FUNC. -->
+                    <DockPanel Grid.Row="1" LastChildFill="False">
+                        <Border DockPanel.Dock="Right" BorderBrush="{StaticResource Ambar}" BorderThickness="1"
+                                Background="#FF2A1D05" CornerRadius="1" Padding="3,0" VerticalAlignment="Center"
+                                ToolTip="Lo que ajusta ahora el mando FUNC, y su valor"
+                                AutomationProperties.Name="Mando del FUNC">
+                            <TextBlock Foreground="{StaticResource Ambar}" FontFamily="{StaticResource LetraDelVisor}"
+                                       FontSize="12" FontWeight="Bold" TextTrimming="None">
+                                <Run Text="{Binding RotuloDelFunc, Mode=OneWay}" />
+                                <Run Text="{Binding ValorDelFunc, Mode=OneWay}" Foreground="{StaticResource Blanco}" />
+                            </TextBlock>
+                        </Border>
+
+                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center"
+                                    ToolTip="{Binding Secundario.Banda}">
+                            <Border Background="{StaticResource AzulVfo}" CornerRadius="1" Width="54" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Secundario.Etiqueta}" Foreground="{StaticResource Blanco}"
+                                           FontFamily="{StaticResource LetraDelVisor}" FontSize="12" FontWeight="Bold"
+                                           HorizontalAlignment="Center" TextTrimming="None" />
+                            </Border>
+                            <vistas:CifrasDeSieteSegmentos Texto="{Binding Secundario.FrecuenciaDelVisor}"
+                                                           Relleno="{StaticResource Blanco}"
+                                                           AltoDeCifra="17"
+                                                           Margin="4,0,0,0"
+                                                           VerticalAlignment="Center"
+                                                           AutomationProperties.Name="Frecuencia del otro VFO" />
+                        </StackPanel>
+                    </DockPanel>
+                </Grid>
+            </Grid>
+
+            <!-- ══ Las cuatro casillas ATT · IPO · DNF · AGC y la miniatura de banda ══ -->
+            <Grid Grid.Row="1" Margin="0,1,0,1"
+                  Visibility="{Binding AnalizadorAmpliado, RelativeSource={RelativeSource AncestorType=vistas:VisorDeVfos}, Converter={StaticResource VisibleSiEsFalso}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="56*" />
+                    <ColumnDefinition Width="44*" />
+                </Grid.ColumnDefinitions>
+
+                <UniformGrid Grid.Column="0" Columns="4">
+                    <Border Style="{StaticResource Casilla}" ToolTip="{Binding Pilotos[Atenuador].ValorTexto}">
+                        <StackPanel>
+                            <TextBlock Text="ATT" Style="{StaticResource RotuloDeCasilla}" />
+                            <TextBlock Text="{Binding Atenuador}" Style="{StaticResource ValorDeCasilla}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Casilla}" ToolTip="{Binding Pilotos[Preamplificador].ValorTexto}">
+                        <StackPanel>
+                            <TextBlock Text="IPO" Style="{StaticResource RotuloDeCasilla}" />
+                            <TextBlock Text="{Binding Preamplificador}" Style="{StaticResource ValorDeCasilla}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Casilla}" ToolTip="Filtro de muesca automático (DNF)">
+                        <StackPanel>
+                            <TextBlock Text="DNF" Style="{StaticResource RotuloDeCasilla}" />
+                            <TextBlock Text="{Binding MuescaAutomatica}" Style="{StaticResource ValorDeCasilla}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Casilla}" ToolTip="{Binding Pilotos[Agc].ValorTexto}">
+                        <StackPanel>
+                            <TextBlock Text="AGC" Style="{StaticResource RotuloDeCasilla}" />
+                            <TextBlock Text="{Binding Agc}" Style="{StaticResource ValorDeCasilla}" />
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <!-- La miniatura de banda: la forma de la banda y la marca del dial. -->
+                <vistas:MiniaturaDeBanda Grid.Column="1" Margin="3,0,0,0"
+                                         x:Name="MiniaturaDeBanda"
+                                         Posicion="{Binding Principal.PosicionEnBanda}"
+                                         AutomationProperties.Name="Miniatura de la banda">
+                    <vistas:MiniaturaDeBanda.ToolTip>
+                        <TextBlock>
+                            <Run Text="Banda" />
+                            <Run Text="{Binding Principal.Banda, Mode=OneWay}" />
+                            <Run Text="·" />
+                            <Run Text="{Binding EstadoDelEspectro, Mode=OneWay}" />
+                        </TextBlock>
+                    </vistas:MiniaturaDeBanda.ToolTip>
+                </vistas:MiniaturaDeBanda>
+            </Grid>
+
+            <!-- ══ Línea de estado y rótulo del analizador ══ -->
+            <DockPanel Grid.Row="2">
+                <TextBlock DockPanel.Dock="Right"
+                           x:Name="LineaDelAnalizador"
+                           Foreground="{StaticResource AzulClaro}"
+                           FontFamily="{StaticResource LetraDelVisor}"
+                           FontSize="12"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"
+                           TextTrimming="None">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource RotuloDelAnalizador}">
+                            <Binding Path="RotuloDelAnalizador" RelativeSource="{RelativeSource AncestorType=vistas:VisorDeVfos}" />
+                            <Binding Path="DataContext.Modem.AnchoVisibleHz" RelativeSource="{RelativeSource AncestorType=Window}" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="{StaticResource Rojo}" CornerRadius="1" Padding="3,0" Margin="0,0,5,0"
+                            Visibility="{Binding Transmitiendo, Converter={StaticResource BooleanoAVisible}}">
+                        <TextBlock Text="TX" Foreground="{StaticResource Blanco}" FontSize="12" FontWeight="Bold" TextTrimming="None" />
+                    </Border>
+                    <TextBlock Text="{Binding TextoDeSplit}" Foreground="{StaticResource Ambar}" FontFamily="{StaticResource LetraDelVisor}"
+                               FontSize="12" FontWeight="Bold" Margin="0,0,5,0" TextTrimming="None" />
+                    <TextBlock Text="{Binding TextoDeRit}" Foreground="{StaticResource GrisDelVisor}" FontFamily="{StaticResource LetraDelVisor}"
+                               FontSize="12" FontWeight="Bold" Margin="0,0,5,0" TextTrimming="None" />
+                    <TextBlock Text="{Binding TextoDeXit}" Foreground="{StaticResource GrisDelVisor}" FontFamily="{StaticResource LetraDelVisor}"
+                               FontSize="12" FontWeight="Bold" Margin="0,0,5,0" TextTrimming="None" />
+                    <!-- Quién está anunciado en la frecuencia del VFO activo. -->
+                    <TextBlock Text="{Binding Principal.Anunciado}" FontFamily="{StaticResource LetraDelVisor}"
+                               FontSize="12" FontWeight="Bold" Margin="0,0,5,0" TextTrimming="None"
+                               Visibility="{Binding Principal.HayAnuncio, Converter={StaticResource BooleanoAVisible}}"
+                               ToolTip="Anunciado en el cluster en esta frecuencia">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{StaticResource Blanco}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Principal.AnuncioEsNuevo}" Value="True">
+                                        <Setter Property="Foreground" Value="{StaticResource Verde}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+            </DockPanel>
+
+            <!-- ══ EL ANALIZADOR: hueco con nombre; lo de dentro no es de este dibujo ══ -->
+            <Border Grid.Row="3" Background="Black" BorderBrush="{StaticResource Rejilla}" BorderThickness="0,1,0,1">
+                <ContentPresenter x:Name="AreaDelAnalizador">
+                    <ContentPresenter.Style>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Content" Value="{Binding ContenidoDelAnalizador, RelativeSource={RelativeSource AncestorType=vistas:VisorDeVfos}}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ContenidoDelAnalizador, RelativeSource={RelativeSource AncestorType=vistas:VisorDeVfos}}" Value="{x:Null}">
+                                    <Setter Property="Content" Value="{Binding}" />
+                                    <Setter Property="ContentTemplate" Value="{StaticResource CascadaDelAudio}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentPresenter.Style>
+                </ContentPresenter>
+            </Border>
+
+            <!-- ══ La escala, como en la radio: -80k -40k dial +40k +80k ══ -->
+            <UniformGrid Grid.Row="4" x:Name="EscalaDelAnalizador" Columns="5">
+                <TextBlock Style="{StaticResource MarcaDeEscala}" HorizontalAlignment="Center">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource EscalaDelAnalizador}" ConverterParameter="0.1">
+                            <Binding Path="AnchoDelAnalizadorHz" RelativeSource="{RelativeSource AncestorType=vistas:VisorDeVfos}" />
+                            <Binding Path="A.Frecuencia" />
+                            <Binding Path="A.Recibe" />
+                            <Binding Path="B.Frecuencia" />
+                            <Binding Path="A.Modo" />
+                            <Binding Path="B.Modo" />
+                            <Binding Path="DataContext.Modem.AnchoVisibleHz" RelativeSource="{RelativeSource AncestorType=Window}" />
+                            <Binding Path="InicioFijoDelAnalizadorHz" RelativeSource="{RelativeSource AncestorType=vistas:VisorDeVfos}" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Style="{StaticResource MarcaDeEscala}" HorizontalAlignment="Center">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource EscalaDelAnalizador}" ConverterParameter="0.3">
+                            <Binding Path="AnchoDelAnalizadorHz" RelativeSource="{RelativeSource AncestorType=vistas:VisorDeVfos}" />
+                            <Binding Path="A.Frecuencia" />
+                            <Binding Path="A.Recibe" />
+                            <Binding Path="B.Frecuencia" />
+                            <Binding Path="A.Modo" />
+                            <Binding Path="B.Modo" />
+                            <Binding Path="DataContext.Modem.AnchoVisibleHz" RelativeSource="{RelativeSource AncestorType=Window}" />
+                            <Binding Path="InicioFijoDelAnalizadorHz" RelativeSource="{RelativeSource AncestorType=vistas:VisorDeVfos}" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Style="{StaticResource MarcaDeEscala}" HorizontalAlignment="Center" Foreground="{StaticResource Blanco}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource EscalaDelAnalizador}" ConverterParameter="0.5">
+                            <Binding Path="AnchoDelAnalizadorHz" RelativeSource="{RelativeSource AncestorType=vistas:VisorDeVfos}" />
+                            <Binding Path="A.Frecuencia" />
+                            <Binding Path="A.Recibe" />
+                            <Binding Path="B.Frecuencia" />
+                            <Binding Path="A.Modo" />
+                            <Binding Path="B.Modo" />
+                            <Binding Path="DataContext.Modem.AnchoVisibleHz" RelativeSource="{RelativeSource AncestorType=Window}" />
+                            <Binding Path="InicioFijoDelAnalizadorHz" RelativeSource="{RelativeSource AncestorType=vistas:VisorDeVfos}" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Style="{StaticResource MarcaDeEscala}" HorizontalAlignment="Center">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource EscalaDelAnalizador}" ConverterParameter="0.7">
+                            <Binding Path="AnchoDelAnalizadorHz" RelativeSource="{RelativeSource AncestorType=vistas:VisorDeVfos}" />
+                            <Binding Path="A.Frecuencia" />
+                            <Binding Path="A.Recibe" />
+                            <Binding Path="B.Frecuencia" />
+                            <Binding Path="A.Modo" />
+                            <Binding Path="B.Modo" />
+                            <Binding Path="DataContext.Modem.AnchoVisibleHz" RelativeSource="{RelativeSource AncestorType=Window}" />
+                            <Binding Path="InicioFijoDelAnalizadorHz" RelativeSource="{RelativeSource AncestorType=vistas:VisorDeVfos}" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Style="{StaticResource MarcaDeEscala}" HorizontalAlignment="Center">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource EscalaDelAnalizador}" ConverterParameter="0.9">
+                            <Binding Path="AnchoDelAnalizadorHz" RelativeSource="{RelativeSource AncestorType=vistas:VisorDeVfos}" />
+                            <Binding Path="A.Frecuencia" />
+                            <Binding Path="A.Recibe" />
+                            <Binding Path="B.Frecuencia" />
+                            <Binding Path="A.Modo" />
+                            <Binding Path="B.Modo" />
+                            <Binding Path="DataContext.Modem.AnchoVisibleHz" RelativeSource="{RelativeSource AncestorType=Window}" />
+                            <Binding Path="InicioFijoDelAnalizadorHz" RelativeSource="{RelativeSource AncestorType=vistas:VisorDeVfos}" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </UniformGrid>
+
+            <!-- ══ Teclas táctiles ══ -->
+            <!--
+                Las teclas táctiles: mandan las órdenes del analizador del propio equipo (SS06 modo,
+                SS05 ancho, SS00 velocidad; docs/15-botones-ft710-validados.md). En azul claro la
+                que está puesta. MULTI no tiene orden CAT: apagada y lo dice.
+            -->
+            <UniformGrid Grid.Row="5" Columns="6" Margin="0,1,0,0">
+                <Button Style="{StaticResource TeclaTactilBoton}" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="CENTER"
+                        AutomationProperties.Name="CENTER, CURSOR o FIX del analizador"
+                        ToolTip="CENTER — Cada toque: CENTER → CURSOR → FIX (SS06). Rótulo: lo que tiene puesto el analizador.">
+                    <TextBlock Text="{Binding RotuloDeCenter}" Style="{StaticResource TextoDeTeclaTactil}" />
+                </Button>
+                <Button Style="{StaticResource TeclaTactilBoton}" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="3DSS"
+                        Tag="{Binding AnalizadorEnTresD}" AutomationProperties.Name="Vista 3DSS o cascada"
+                        ToolTip="3DSS — Pasa el analizador de 3DSS a cascada (W/F) y al revés (SS06). Iluminada en 3DSS; el dibujo pasa a la vista en perspectiva.">
+                    <TextBlock Text="3DSS" Style="{StaticResource TextoDeTeclaTactil}" />
+                </Button>
+                <Button Style="{StaticResource TeclaTactilBoton}" AutomationProperties.Name="MULTI: osciloscopio y AF-FFT"
+                        Command="{Binding DataContext.Analizador.AlternarMultipleCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        CommandParameter="MULTI"
+                        Tag="{Binding DataContext.Analizador.Multiple, RelativeSource={RelativeSource AncestorType=Window}}"
+                        ToolTip="MULTI — Como en la radio: el analizador arriba y, debajo, el osciloscopio y el AF-FFT del audio de recepción. Es de la pantalla del programa (el FT-710 no tiene orden CAT para MULTI): no manda nada a la radio y la de la radio no cambia. Iluminada con la vista múltiple.">
+                    <TextBlock Text="MULTI" Style="{StaticResource TextoDeTeclaTactil}" />
+                </Button>
+                <Button Style="{StaticResource TeclaTactilBoton}" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="EXPAND"
+                        Tag="{Binding AnalizadorAmpliado}" AutomationProperties.Name="Ampliar la cascada (EXPAND)"
+                        ToolTip="EXPAND — Amplía el analizador o lo deja normal (SS06): gana alto y tapa la fila ATT/IPO/DNF/AGC. El FT-710 solo admite el ampliado por CAT en cascada: desde 3DSS pasa a la cascada ampliada.">
+                    <TextBlock Text="EXPAND" Style="{StaticResource TextoDeTeclaTactil}" />
+                </Button>
+                <Button Style="{StaticResource TeclaTactilBoton}" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="SPAN+"
+                        AutomationProperties.Name="Ancho del analizador (SPAN)"
+                        ToolTip="{Binding Pilotos[EspectroAncho].ValorTexto, FallbackValue=SPAN, TargetNullValue=SPAN}">
+                    <Button.InputBindings>
+                        <MouseBinding Gesture="RightClick" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="SPAN-" />
+                    </Button.InputBindings>
+                    <TextBlock Text="SPAN" Style="{StaticResource TextoDeTeclaTactil}" />
+                </Button>
+                <Button Style="{StaticResource TeclaTactilBoton}" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="SPEED+"
+                        AutomationProperties.Name="Velocidad del analizador (SPEED)"
+                        ToolTip="{Binding Pilotos[EspectroVelocidad].ValorTexto, FallbackValue=SPEED, TargetNullValue=SPEED}">
+                    <Button.InputBindings>
+                        <MouseBinding Gesture="RightClick" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="SPEED-" />
+                    </Button.InputBindings>
+                    <TextBlock Text="SPEED" Style="{StaticResource TextoDeTeclaTactil}" />
+                </Button>
+            </UniformGrid>
+        </Grid>
+    </Border>
+</UserControl>

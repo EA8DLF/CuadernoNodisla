@@ -1,0 +1,1794 @@
+{
+  "equipo": "Yaesu FT-710",
+  "identificador": "0800",
+  "procedencia": "LEIDO DEL EQUIPO REAL",
+  "leidoDelEquipoReal": true,
+  "ningunaEntradaEsDeducida": true,
+  "fechaDeLectura": "2026-09-21",
+  "estacion": "EA8DLF",
+  "puerto": "COM3 (Enhanced COM Port del CP2105) a 115200 baudios, DTR y RTS en cierto",
+  "firmware": "Unidad principal 01.12, unidad de pantalla 01.08, receptor SDR 01.04 y procesador de senal 01.01, leidos del equipo con VE0; a VE3; el 25-09-2026. Antes figuraba como no accesible por no encontrar la orden: esta en el manual de referencia CAT.",
+  "metodo": "Barrido de ordenes EX de SOLO LECTURA, una por indice (EXggssii;). No se escribio nada en el equipo: ninguna orden de ajuste, ninguna memoria y ninguna transmision.",
+  "cobertura": "Barrido completo verificado el 22-09-2026: el team lead recorrio los grupos 01 a 17 sin podar y salieron las mismas 296 entradas. Solo tienen contenido los grupos 01, 02, 03, 04 y 06. Este mapa esta completo.",
+  "valorEnLaCaptura": "Es el valor que tenia la estacion del operador ese dia, no el de fabrica. Sirve para conocer la forma del dato, no como valor por omision.",
+  "nombresDeLosAjustes": "El equipo no dice como se llama cada ajuste, solo su indice y su valor. Los nombres hay que ponerlos a mano desde el manual.",
+  "entradas": [
+    {
+      "indice": "010101",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010102",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010103",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010104",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0300"
+    },
+    {
+      "indice": "010105",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "1000"
+    },
+    {
+      "indice": "010106",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "3000"
+    },
+    {
+      "indice": "010107",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "01"
+    },
+    {
+      "indice": "010108",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010109",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "47"
+    },
+    {
+      "indice": "010110",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010111",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010112",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010113",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "010114",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "010115",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010116",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010117",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010118",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "06"
+    },
+    {
+      "indice": "010119",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010201",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010202",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010203",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010204",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "1000"
+    },
+    {
+      "indice": "010205",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "2000"
+    },
+    {
+      "indice": "010206",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "4000"
+    },
+    {
+      "indice": "010207",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "00"
+    },
+    {
+      "indice": "010208",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010209",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "00"
+    },
+    {
+      "indice": "010210",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010211",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010212",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010213",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010214",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "010215",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010216",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010217",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010301",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010302",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010303",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010304",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0160"
+    },
+    {
+      "indice": "010305",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0500"
+    },
+    {
+      "indice": "010306",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "1500"
+    },
+    {
+      "indice": "010307",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "05"
+    },
+    {
+      "indice": "010308",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "010309",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "47"
+    },
+    {
+      "indice": "010310",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "010311",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010312",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010313",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "010314",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010315",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010316",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010317",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "010318",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0100"
+    },
+    {
+      "indice": "010319",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0500"
+    },
+    {
+      "indice": "010320",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010321",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "012"
+    },
+    {
+      "indice": "010401",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010402",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010403",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010404",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0160"
+    },
+    {
+      "indice": "010405",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0500"
+    },
+    {
+      "indice": "010406",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "1500"
+    },
+    {
+      "indice": "010407",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "01"
+    },
+    {
+      "indice": "010408",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "010409",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "51"
+    },
+    {
+      "indice": "010410",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "010411",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010412",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010413",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010414",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "010415",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010416",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010417",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010418",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "05"
+    },
+    {
+      "indice": "010419",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010420",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "1500"
+    },
+    {
+      "indice": "010501",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010502",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010503",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "010504",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0160"
+    },
+    {
+      "indice": "010505",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0500"
+    },
+    {
+      "indice": "010506",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "1500"
+    },
+    {
+      "indice": "010507",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "05"
+    },
+    {
+      "indice": "010508",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "010509",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "47"
+    },
+    {
+      "indice": "010510",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "010511",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010512",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "010513",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010514",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "05"
+    },
+    {
+      "indice": "010515",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "010516",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "010517",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "020101",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "020102",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "020103",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "020104",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0160"
+    },
+    {
+      "indice": "020105",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0500"
+    },
+    {
+      "indice": "020106",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "1500"
+    },
+    {
+      "indice": "020107",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "04"
+    },
+    {
+      "indice": "020108",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "020109",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "11"
+    },
+    {
+      "indice": "020110",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "020111",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "020112",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "020113",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "020114",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "04"
+    },
+    {
+      "indice": "020115",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "020116",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "020117",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "020118",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "020119",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "020120",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "020201",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "020202",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "020203",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "05"
+    },
+    {
+      "indice": "020204",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "020205",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0001"
+    },
+    {
+      "indice": "020206",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "020207",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "020208",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "020209",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "020210",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "020211",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "05"
+    },
+    {
+      "indice": "030101",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "020"
+    },
+    {
+      "indice": "030102",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030103",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030104",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "030105",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "4"
+    },
+    {
+      "indice": "030106",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030107",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030108",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030109",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030110",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "030111",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030112",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030113",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "030114",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030115",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "10"
+    },
+    {
+      "indice": "030116",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "030117",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "030118",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "030119",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "05"
+    },
+    {
+      "indice": "030120",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "00"
+    },
+    {
+      "indice": "030121",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "01"
+    },
+    {
+      "indice": "030122",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "02"
+    },
+    {
+      "indice": "030123",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "03"
+    },
+    {
+      "indice": "030124",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "13"
+    },
+    {
+      "indice": "030125",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "14"
+    },
+    {
+      "indice": "030126",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030201",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "030202",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "030203",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "030204",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "030205",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "-15"
+    },
+    {
+      "indice": "030206",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "10"
+    },
+    {
+      "indice": "030301",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "030302",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "00"
+    },
+    {
+      "indice": "030303",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+05"
+    },
+    {
+      "indice": "030304",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "10"
+    },
+    {
+      "indice": "030305",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "00"
+    },
+    {
+      "indice": "030306",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+05"
+    },
+    {
+      "indice": "030307",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "10"
+    },
+    {
+      "indice": "030308",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "00"
+    },
+    {
+      "indice": "030309",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+05"
+    },
+    {
+      "indice": "030310",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "10"
+    },
+    {
+      "indice": "030311",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "00"
+    },
+    {
+      "indice": "030312",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "030313",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "02"
+    },
+    {
+      "indice": "030314",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "00"
+    },
+    {
+      "indice": "030315",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "030316",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "01"
+    },
+    {
+      "indice": "030317",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "00"
+    },
+    {
+      "indice": "030318",
+      "forma": "ConSigno",
+      "longitud": 3,
+      "valorEnLaCaptura": "+00"
+    },
+    {
+      "indice": "030319",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "01"
+    },
+    {
+      "indice": "030401",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "100"
+    },
+    {
+      "indice": "030402",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "100"
+    },
+    {
+      "indice": "030403",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "030404",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "025"
+    },
+    {
+      "indice": "030405",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030406",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030407",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030408",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030501",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "2"
+    },
+    {
+      "indice": "030502",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "030503",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "2"
+    },
+    {
+      "indice": "030504",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "030505",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "030506",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "2"
+    },
+    {
+      "indice": "040101",
+      "forma": "Texto",
+      "longitud": 12,
+      "valorEnLaCaptura": "FT-710      "
+    },
+    {
+      "indice": "040102",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "040103",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "040104",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "040105",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "20"
+    },
+    {
+      "indice": "040106",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "10"
+    },
+    {
+      "indice": "040201",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "040202",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "040203",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "040204",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "040301",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "040302",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "040303",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "2"
+    },
+    {
+      "indice": "040304",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "040401",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "040402",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060101",
+      "forma": "Texto",
+      "longitud": 12,
+      "valorEnLaCaptura": "FT-8        "
+    },
+    {
+      "indice": "060102",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "060103",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060104",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060105",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0160"
+    },
+    {
+      "indice": "060106",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0500"
+    },
+    {
+      "indice": "060107",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "1500"
+    },
+    {
+      "indice": "060108",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "01"
+    },
+    {
+      "indice": "060109",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060110",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "51"
+    },
+    {
+      "indice": "060111",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060112",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060113",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060114",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060115",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "060116",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060117",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060118",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060201",
+      "forma": "Texto",
+      "longitud": 12,
+      "valorEnLaCaptura": "PRESET2     "
+    },
+    {
+      "indice": "060202",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "060203",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060204",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060205",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0160"
+    },
+    {
+      "indice": "060206",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0500"
+    },
+    {
+      "indice": "060207",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "1500"
+    },
+    {
+      "indice": "060208",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "01"
+    },
+    {
+      "indice": "060209",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060210",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "51"
+    },
+    {
+      "indice": "060211",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060212",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060213",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060214",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060215",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "060216",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060217",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060218",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060301",
+      "forma": "Texto",
+      "longitud": 12,
+      "valorEnLaCaptura": "PRESET3     "
+    },
+    {
+      "indice": "060302",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "060303",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060304",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060305",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0160"
+    },
+    {
+      "indice": "060306",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0500"
+    },
+    {
+      "indice": "060307",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "1500"
+    },
+    {
+      "indice": "060308",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "01"
+    },
+    {
+      "indice": "060309",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060310",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "51"
+    },
+    {
+      "indice": "060311",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060312",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060313",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060314",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060315",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "060316",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060317",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060318",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060401",
+      "forma": "Texto",
+      "longitud": 12,
+      "valorEnLaCaptura": "PRESET4     "
+    },
+    {
+      "indice": "060402",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "060403",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060404",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060405",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0160"
+    },
+    {
+      "indice": "060406",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0500"
+    },
+    {
+      "indice": "060407",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "1500"
+    },
+    {
+      "indice": "060408",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "01"
+    },
+    {
+      "indice": "060409",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060410",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "51"
+    },
+    {
+      "indice": "060411",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060412",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060413",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060414",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060415",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "060416",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060417",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060418",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060501",
+      "forma": "Texto",
+      "longitud": 12,
+      "valorEnLaCaptura": "PRESET5     "
+    },
+    {
+      "indice": "060502",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "060503",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060504",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060505",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0160"
+    },
+    {
+      "indice": "060506",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "0500"
+    },
+    {
+      "indice": "060507",
+      "forma": "Numero",
+      "longitud": 4,
+      "valorEnLaCaptura": "1500"
+    },
+    {
+      "indice": "060508",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "01"
+    },
+    {
+      "indice": "060509",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060510",
+      "forma": "Numero",
+      "longitud": 2,
+      "valorEnLaCaptura": "51"
+    },
+    {
+      "indice": "060511",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    },
+    {
+      "indice": "060512",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060513",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060514",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "0"
+    },
+    {
+      "indice": "060515",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "3"
+    },
+    {
+      "indice": "060516",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060517",
+      "forma": "Numero",
+      "longitud": 3,
+      "valorEnLaCaptura": "050"
+    },
+    {
+      "indice": "060518",
+      "forma": "Numero",
+      "longitud": 1,
+      "valorEnLaCaptura": "1"
+    }
+  ],
+  "verificado": "2026-09-22, contra barrido completo sin poda (docs/ft710-menu-completo.json)"
+}

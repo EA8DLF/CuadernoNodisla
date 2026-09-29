@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+       Pruebas de la interfaz. No abren ventanas ni hilos de WPF: lo que se prueba aqui es lo
+       que hay DETRAS de la pantalla —los ajustes que se guardan en disco—, y eso tiene que
+       poder probarse sin pintar nada.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <UseWPF>true</UseWPF>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="AwesomeAssertions" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Nodisla.Cuaderno.Ui\Nodisla.Cuaderno.Ui.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <!-- Tramas reales del analizador del FT-710 de EA8DLF (las mismas que usa Radio.Pruebas). -->
+  <ItemGroup>
+    <None Include="..\Nodisla.Cuaderno.Radio.Pruebas\Capturas\espectro-ft710-*.bin" Link="Capturas\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\Nodisla.Cuaderno.Radio.Pruebas\Capturas\analizador-ft710-*.bin" Link="Capturas\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Respuestas reales del FT-710 al pulsar los botones del frontal (28-09-2026). -->
+    <None Include="..\Nodisla.Cuaderno.Radio.Pruebas\Capturas\ft710-2026-09-28.tsv" Link="Capturas\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

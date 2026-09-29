@@ -1,0 +1,320 @@
+﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PanelDeAjustes"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
+             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        LA PANTALLA DE AJUSTES.
+
+        Lo que se toca una vez y se olvida, y lo que hace falta para diagnosticar cuando algo no
+        va. Lo que se mira mientras se opera —el estado de las conexiones— se queda en Operar.
+
+        LAS CREDENCIALES SE GUARDAN CIFRADAS Y NO SE VUELVEN A ENSEÑAR. El almacén usa la
+        protección de datos del usuario de Windows, así que el fichero solo lo puede descifrar
+        la cuenta que lo escribió, y solo sabe decir si hay algo guardado, no qué. El campo sale
+        siempre vacío: un secreto repintado en pantalla es un secreto que alguien lee por encima
+        del hombro.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+        <conversores:NoEsVacio x:Key="NoEsVacio" />
+        <conversores:VisibleSiEsFalso x:Key="VisibleSiEsFalso" />
+
+        <!--
+            Cada apartado se pinta por el TIPO de su modelo. Con el modelo nulo (puertos
+            simulados) no se pinta nada: una plantilla puesta a mano se monta igual con el
+            contexto nulo, y cada enlace suyo contaba como roto.
+        -->
+        <DataTemplate DataType="{x:Type vistamodelos:VistaModeloAjustesCat}">
+            <vistas:AjustesDelEquipo />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vistamodelos:VistaModeloAjustesAudio}">
+            <vistas:AjustesDeAudio />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vistamodelos:VistaModeloAjustesFonia}">
+            <vistas:AjustesDeFonia />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vistamodelos:VistaModeloAjustesCluster}">
+            <vistas:ConexionDelCluster />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vistamodelos:VistaModeloSubidas}">
+            <vistas:AjustesDeSubidas />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vistamodelos:VistaModeloCorreoQsl}">
+            <vistas:AjustesDeCorreo />
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" MinWidth="280" />
+            <ColumnDefinition Width="1*" MinWidth="280" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ══ Credenciales y LoTW ══ -->
+        <Border Grid.Column="0" Style="{StaticResource Tarjeta}" Margin="0,0,5,0" Padding="8,6">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <TextBlock Text="Servicios y credenciales" Style="{StaticResource TituloDeSeccion}" />
+                    <TextBlock Text="Se guardan cifradas con la protección de datos de su cuenta de Windows. Una vez escritas no se vuelven a mostrar: solo se dice si están guardadas."
+                               Style="{StaticResource TextoTenueEstilo}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,8" />
+
+                    <ItemsControl ItemsSource="{Binding Secretos}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,6"
+                                        Padding="8,6"
+                                        CornerRadius="4"
+                                        Background="{DynamicResource FondoAlterno}"
+                                        BorderBrush="{DynamicResource BordeSuave}"
+                                        BorderThickness="1">
+                                    <StackPanel>
+                                        <DockPanel>
+                                            <Border DockPanel.Dock="Right"
+                                                    CornerRadius="8"
+                                                    Padding="7,1"
+                                                    Margin="6,0,0,0"
+                                                    VerticalAlignment="Center">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+                                                        <Setter Property="BorderThickness" Value="1" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Guardado}" Value="True">
+                                                                <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                                                                <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding Estado}" FontSize="10" TextTrimming="None" />
+                                            </Border>
+
+                                            <TextBlock Text="{Binding Titulo}" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+                                        </DockPanel>
+
+                                        <TextBlock Text="{Binding Explicacion}"
+                                                   Style="{StaticResource TextoTenueEstilo}"
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,1,0,4" />
+
+                                        <DockPanel>
+                                            <Button DockPanel.Dock="Right"
+                                                    Content="Borrar"
+                                                    Command="{Binding BorrarCommand}"
+                                                    Margin="5,0,0,0"
+                                                    Padding="8,2"
+                                                    AutomationProperties.Name="Borrar la credencial guardada" />
+                                            <Button DockPanel.Dock="Right"
+                                                    Content="Guardar"
+                                                    Command="{Binding GuardarCommand}"
+                                                    Margin="5,0,0,0"
+                                                    Padding="8,2"
+                                                    AutomationProperties.Name="Guardar la credencial cifrada" />
+                                            <PasswordBox x:Name="Campo"
+                                                         PasswordChanged="AlEscribirElSecreto"
+                                                         Loaded="AlMontarLaCasillaDelSecreto"
+                                                         Unloaded="AlDesmontarLaCasillaDelSecreto"
+                                                         Padding="6,3"
+                                                         Background="{DynamicResource FondoCampo}"
+                                                         Foreground="{DynamicResource Texto}"
+                                                         BorderBrush="{DynamicResource Borde}"
+                                                         BorderThickness="1"
+                                                         AutomationProperties.Name="{Binding Titulo}" />
+                                        </DockPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--
+                        El aviso de la frase de paso, ANTES de pedirla. TQSL solo la acepta por
+                        línea de órdenes, donde queda visible en la lista de procesos mientras
+                        dura la subida. No podemos cerrar esa ventana; sí podemos decirlo antes.
+                    -->
+                    <Border Padding="8,6"
+                            CornerRadius="4"
+                            Margin="0,2,0,8"
+                            Background="{DynamicResource AvisoFondo}"
+                            BorderBrush="{DynamicResource AvisoBorde}"
+                            BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock Text="Antes de escribir la frase de paso del certificado"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource AvisoTexto}"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding AvisoDeLaFraseDePaso}"
+                                       Foreground="{DynamicResource AvisoTexto}"
+                                       TextWrapping="Wrap"
+                                       Margin="0,3,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Por qué no se puede subir a LoTW, en vez de un botón gris sin motivo. -->
+                    <TextBlock Text="Subida a LoTW" Style="{StaticResource TituloDeSeccion}" />
+
+                    <Border Padding="8,6"
+                            CornerRadius="4"
+                            Background="{DynamicResource ErrorFondo}"
+                            BorderBrush="{DynamicResource ErrorBorde}"
+                            BorderThickness="1"
+                            Visibility="{Binding SePuedeSubirALotw, Converter={StaticResource VisibleSiEsFalso}}">
+                        <TextBlock Text="{Binding MotivoDeNoPoderSubirALotw}"
+                                   Foreground="{DynamicResource ErrorTexto}"
+                                   TextWrapping="Wrap" />
+                    </Border>
+
+                    <TextBlock Text="Todo listo: se puede firmar y subir a LoTW desde este equipo."
+                               Style="{StaticResource TextoTenueEstilo}"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding SePuedeSubirALotw, Converter={StaticResource BooleanoAVisible}}" />
+
+                    <Button Content="Volver a comprobar"
+                            Command="{Binding RefrescarCommand}"
+                            HorizontalAlignment="Left"
+                            Margin="0,6,0,0"
+                            AutomationProperties.Name="Volver a comprobar si se puede subir a LoTW" />
+
+                    <!-- Subida automática a LoTW, eQSL, Club Log y QRZ, y la ficha de QRZ.com. -->
+                    <ContentControl Content="{Binding Subidas}" Focusable="False" />
+
+                    <!-- El correo con el que se mandan las QSL (pestaña Imprimir → Tarjeta QSL). -->
+                    <ContentControl Content="{Binding CorreoQsl}" Focusable="False" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- ══ Cuaderno, equipo y cluster ══ -->
+        <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <!-- ── El cuaderno y el ADIF ── -->
+                    <TextBlock Text="Cuaderno" Style="{StaticResource TituloDeSeccion}" />
+                    <TextBlock Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap">
+                        <Run Text="Contactos:" />
+                        <Run Text="{Binding ContactosDelCuaderno, Mode=OneWay}" FontWeight="Bold" />
+                    </TextBlock>
+
+                    <WrapPanel Margin="0,6,0,0">
+                        <Button Content="Importar ADIF…"
+                                Command="{Binding ImportarAdifCommand}"
+                                Margin="0,0,6,6"
+                                AutomationProperties.Name="Importar un fichero ADIF en el cuaderno" />
+                        <Button Content="Exportar ADIF…"
+                                Command="{Binding ExportarAdifCommand}"
+                                Margin="0,0,6,6"
+                                AutomationProperties.Name="Exportar el cuaderno a un fichero ADIF" />
+                    </WrapPanel>
+
+                    <TextBlock Text="En esta sesión no hay escritor de ADIF: la exportación está apagada."
+                               Style="{StaticResource TextoTenueEstilo}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,6"
+                               Visibility="{Binding SePuedeExportar, Converter={StaticResource VisibleSiEsFalso}}" />
+
+                    <!--
+                        El parte de la importación, entero. La cifra de confirmaciones
+                        rescatadas es la que justifica fundir las copias en vez de saltarlas:
+                        cada una es un diploma que no se pierde.
+                    -->
+                    <Border Padding="8,6"
+                            CornerRadius="4"
+                            Margin="0,0,0,8"
+                            Background="{DynamicResource FondoAlterno}"
+                            BorderBrush="{DynamicResource BordeSuave}"
+                            BorderThickness="1"
+                            Visibility="{Binding ParteDeLaImportacion, Converter={StaticResource NoEsVacio}}">
+                        <StackPanel>
+                            <TextBlock Text="{Binding ParteDeLaImportacion}" TextWrapping="Wrap" />
+
+                            <Expander Header="Datos que no cuadraban entre copias"
+                                      Margin="0,6,0,0"
+                                      Visibility="{Binding HayChoques, Converter={StaticResource BooleanoAVisible}}">
+                                <ItemsControl ItemsSource="{Binding Choques}" Margin="0,4,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}"
+                                                       Style="{StaticResource TextoDeConsola}"
+                                                       TextWrapping="Wrap" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Expander>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ── Cómo está el equipo ahora mismo, en una línea ── -->
+                    <Border Padding="8,5"
+                            CornerRadius="4"
+                            Margin="0,0,0,8"
+                            Background="{DynamicResource FondoAlterno}"
+                            BorderBrush="{DynamicResource BordeSuave}"
+                            BorderThickness="1"
+                            DataContext="{Binding DataContext.Equipo, RelativeSource={RelativeSource AncestorType=Window}}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap">
+                                <Run Text="Equipo:" />
+                                <Run Text="{Binding NombreDelEquipo, Mode=OneWay}" FontWeight="Bold" />
+                                <Run Text="  ·  " />
+                                <Run Text="{Binding ViaTexto, Mode=OneWay}" FontWeight="Bold" />
+                                <Run Text="  ·  " />
+                                <Run Text="{Binding EstadoTexto, Mode=OneWay}" FontWeight="Bold" />
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ── El equipo: la configuración del CAT ── -->
+                    <!--
+                        Los tres apartados se montan SOLO si hay modelo detrás (plantilla por tipo,
+                        en los recursos): antes se montaban siempre, ocultos y con el contexto
+                        nulo, y cada uno de sus enlaces contaba como roto con los simulados.
+                    -->
+                    <ContentControl Content="{Binding Cat}"
+                                    Focusable="False"
+                                    Visibility="{Binding HayCat, Converter={StaticResource BooleanoAVisible}}">
+                    </ContentControl>
+
+                    <TextBlock Text="Se está funcionando con los puertos simulados, así que no hay equipo de verdad que configurar. Cierre el programa y vuelva a abrirlo sin CUADERNO_SIMULADO para configurar el CAT."
+                               Style="{StaticResource TextoTenueEstilo}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,8"
+                               Visibility="{Binding HayCat, Converter={StaticResource VisibleSiEsFalso}}" />
+
+                    <!-- ── El audio y los modos digitales: por dónde entra y quién decodifica ── -->
+                    <ContentControl Margin="0,0,0,8"
+                                    Content="{Binding Audio}"
+                                    Focusable="False"
+                                    Visibility="{Binding HayAudio, Converter={StaticResource BooleanoAVisible}}">
+                    </ContentControl>
+
+                    <!-- ── La fonía por el PC: altavoces, micrófono y PTT de fonía ── -->
+                    <ContentControl Content="{Binding Fonia}" Focusable="False" />
+
+                    <!-- ── El cluster: a qué nodo se entra ── -->
+                    <ContentControl Content="{Binding Cluster}"
+                                    Focusable="False"
+                                    Visibility="{Binding HayCluster, Converter={StaticResource BooleanoAVisible}}">
+                    </ContentControl>
+
+                    <TextBlock Text="Con los puertos simulados el cluster es de mentira, así que no hay nodo que configurar. Cierre el programa y vuelva a abrirlo sin CUADERNO_SIMULADO para elegir nodo, indicativo y contraseña."
+                               Style="{StaticResource TextoTenueEstilo}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,8"
+                               Visibility="{Binding HayCluster, Converter={StaticResource VisibleSiEsFalso}}" />
+
+                    <!-- ── El cluster, con su consola cruda ── -->
+                    <vistas:AjustesDelCluster DataContext="{Binding DataContext.Cluster, RelativeSource={RelativeSource AncestorType=Window}}"
+                                              Height="260" />
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,78 @@
+﻿<!-- Paleta del tema oscuro. Mismas claves que el tema claro, nada mas. -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        Tres niveles, del mas oscuro al mas claro: CROMO (barras), PANEL (contenido) y CAMPO
+        (lo que se escribe). Ese escalonado es lo que hace que un cuaderno de radioaficionado
+        se lea de un vistazo: el marco no compite con los datos.
+
+        Lo que no se copia es el recuadro hundido gris de Windows Forms ni el campo blanco
+        puro dentro del panel oscuro: eso deslumbra de noche, que es justo cuando se opera.
+        El campo va claramente mas claro que el panel, pero sin quemar.
+    -->
+    <SolidColorBrush x:Key="FondoCromo" Color="#FF0B0E12" />
+    <SolidColorBrush x:Key="TextoCromo" Color="#FFD7DEE8" />
+    <SolidColorBrush x:Key="BordeCromo" Color="#FF272F3A" />
+
+    <SolidColorBrush x:Key="FondoVentana" Color="#FF14181E" />
+    <SolidColorBrush x:Key="FondoPanel" Color="#FF1E242D" />
+    <SolidColorBrush x:Key="FondoCampo" Color="#FF2C3540" />
+    <SolidColorBrush x:Key="FondoCabecera" Color="#FF161B22" />
+    <SolidColorBrush x:Key="FondoAlterno" Color="#FF222932" />
+    <SolidColorBrush x:Key="FondoResalte" Color="#FF313C4A" />
+
+    <SolidColorBrush x:Key="Texto" Color="#FFE8ECF2" />
+    <SolidColorBrush x:Key="TextoTenue" Color="#FFA3AEBE" />
+    <SolidColorBrush x:Key="TextoSobreAcento" Color="#FF0C141E" />
+
+    <SolidColorBrush x:Key="Borde" Color="#FF3B4756" />
+    <SolidColorBrush x:Key="BordeSuave" Color="#FF2C3542" />
+
+    <SolidColorBrush x:Key="Acento" Color="#FF69B4F5" />
+    <SolidColorBrush x:Key="AcentoSuave" Color="#FF4A90D0" />
+
+    <SolidColorBrush x:Key="SeleccionFondo" Color="#FF2F4F72" />
+    <SolidColorBrush x:Key="SeleccionTexto" Color="#FFFFFFFF" />
+
+    <SolidColorBrush x:Key="AvisoFondo" Color="#FF3E3218" />
+    <SolidColorBrush x:Key="AvisoBorde" Color="#FFB98D2A" />
+    <SolidColorBrush x:Key="AvisoTexto" Color="#FFF5D98A" />
+
+    <SolidColorBrush x:Key="ErrorFondo" Color="#FF3E1E1E" />
+    <SolidColorBrush x:Key="ErrorBorde" Color="#FFC05252" />
+    <SolidColorBrush x:Key="ErrorTexto" Color="#FFF7B4B4" />
+
+    <SolidColorBrush x:Key="CorrectoFondo" Color="#FF1C3A26" />
+    <SolidColorBrush x:Key="CorrectoBorde" Color="#FF4F9E6B" />
+    <SolidColorBrush x:Key="CorrectoTexto" Color="#FFA9E5BE" />
+
+    <!--
+        ── El libro de contactos ──────────────────────────────────────────────
+        Igual en los DOS temas, como en Log4OM: el cromo puede ser oscuro, pero el contenido
+        que se lee renglon a renglon va CLARO —blanco roto con una alternancia de dos puntos—,
+        con texto oscuro de peso normal y cabecera gris medio. La rejilla oscura con letra
+        clara en negrita cansaba la vista: la pidio cambiar el operador (2026-09-27).
+    -->
+    <SolidColorBrush x:Key="RejillaFondo" Color="#FFFBFBF9" />
+    <SolidColorBrush x:Key="RejillaAlterna" Color="#FFF1F3F5" />
+    <SolidColorBrush x:Key="RejillaLinea" Color="#FFDDE1E6" />
+    <SolidColorBrush x:Key="RejillaCabecera" Color="#FFB9BFC7" />
+    <SolidColorBrush x:Key="RejillaCabeceraResalte" Color="#FFC9CED5" />
+    <SolidColorBrush x:Key="RejillaCabeceraTexto" Color="#FF1E252E" />
+    <SolidColorBrush x:Key="RejillaTexto" Color="#FF1E252E" />
+    <SolidColorBrush x:Key="RejillaTextoTenue" Color="#FF56616F" />
+    <SolidColorBrush x:Key="FilaElegida" Color="#FFCFE0F3" />
+    <SolidColorBrush x:Key="FilaElegidaTexto" Color="#FF0B2540" />
+    <SolidColorBrush x:Key="FilaElegidaBarra" Color="#FF0F5FA8" />
+    <SolidColorBrush x:Key="FilaBajoElRaton" Color="#FFE7EDF4" />
+    <!-- Color con significado: cada via de confirmacion tiene el suyo y nada mas lo lleva. -->
+    <SolidColorBrush x:Key="QslLotwTinta" Color="#FF1B6E3F" />
+    <SolidColorBrush x:Key="QslLotwFondo" Color="#402E9E60" />
+    <SolidColorBrush x:Key="QslEqslTinta" Color="#FF14618F" />
+    <SolidColorBrush x:Key="QslEqslFondo" Color="#402E8CC8" />
+    <SolidColorBrush x:Key="QslPapelTinta" Color="#FF8A5B0A" />
+    <SolidColorBrush x:Key="QslPapelFondo" Color="#40D9A441" />
+    <SolidColorBrush x:Key="QslQrzTinta" Color="#FF5B3899" />
+    <SolidColorBrush x:Key="QslQrzFondo" Color="#409B72D8" />
+</ResourceDictionary>

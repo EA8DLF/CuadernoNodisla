@@ -1,0 +1,256 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.Frontales.PantallaIcom"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
+             xmlns:frontales="clr-namespace:Nodisla.Cuaderno.Ui.Vistas.Frontales"
+             AutomationProperties.Name="Pantalla del equipo">
+
+    <!--
+        LA PANTALLA TÁCTIL A COLOR DE LOS ICOM (IC-7300, IC-705, IC-7610), en lo esencial:
+
+          · arriba, la fila de indicadores (P.AMP, ATT, AGC, NB, NR, NOTCH, VOX, SPLIT, LOCK)
+            en cajitas que se encienden con la función puesta;
+          · a la izquierda, el medidor de barra (S; en TX, Po); a la derecha el modo en su caja
+            azul y el filtro;
+          · la frecuencia grande en blanco, con letra proporcional (ICOM no usa siete segmentos);
+          · debajo, el otro VFO pequeño (o, con DosReceptores, MAIN y SUB a la par, IC-7610);
+          · el analizador de la propia radio (AnalizadorDelEquipo) y la franja de menú de abajo.
+
+        Se dibuja en 480 × 272 (la proporción del panel de 4,3") dentro de un Viewbox. Colores
+        fijos: fondo negro azulado como el del equipo.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+        <SolidColorBrush x:Key="Blanco" Color="#FFF4F7FA" />
+        <SolidColorBrush x:Key="Gris" Color="#FF9AA6B4" />
+        <SolidColorBrush x:Key="AzulIcom" Color="#FF2A6FD6" />
+        <SolidColorBrush x:Key="Naranja" Color="#FFFF9A2E" />
+
+        <Style x:Key="Indicador" TargetType="Border">
+            <Setter Property="Margin" Value="0,0,3,0" />
+            <Setter Property="Padding" Value="3,0" />
+            <Setter Property="CornerRadius" Value="2" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#FF3A4452" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="TextElement.Foreground" Value="#FF5D6878" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="True">
+                    <Setter Property="Background" Value="#FF1D4E9A" />
+                    <Setter Property="BorderBrush" Value="#FF4F8FEF" />
+                    <Setter Property="TextElement.Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Una zona táctil de la pantalla: sin marco, solo cambia el cursor y se aclara al pasar. -->
+        <Style x:Key="Tactil" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="zona" Background="Transparent" CornerRadius="2">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="zona" Property="Background" Value="#22FFFFFF" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="zona" Property="Opacity" Value="0.45" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TextoDeIndicador" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="9" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+    </UserControl.Resources>
+
+    <Viewbox Stretch="Fill">
+        <Grid Width="480" Height="272" ClipToBounds="True">
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0" Color="#FF0A1220" />
+                    <GradientStop Offset="0.45" Color="#FF050912" />
+                    <GradientStop Offset="1" Color="#FF000000" />
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="18" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="52" />
+                <RowDefinition Height="18" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="16" />
+            </Grid.RowDefinitions>
+
+            <!-- ══ Fila de indicadores ══ -->
+            <DockPanel Grid.Row="0" Margin="4,3,4,0" LastChildFill="False">
+                <TextBlock DockPanel.Dock="Right" FontFamily="Arial" FontSize="10" FontWeight="Bold" Margin="4,0,0,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="RX" />
+                            <Setter Property="Foreground" Value="#FF3FBF6A" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Transmitiendo}" Value="True">
+                                    <Setter Property="Text" Value="TX" />
+                                    <Setter Property="Foreground" Value="#FFFF3B30" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <Border Style="{StaticResource Indicador}" ToolTip="{Binding Preamplificador}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="P.AMP" /></Border>
+                <Border Style="{StaticResource Indicador}" ToolTip="{Binding Atenuador}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="ATT" /></Border>
+                <Border Style="{StaticResource Indicador}" ToolTip="Control automático de ganancia"><TextBlock Style="{StaticResource TextoDeIndicador}"><Run Text="AGC-" /><Run Text="{Binding Agc, Mode=OneWay}" /></TextBlock></Border>
+                <Border Style="{StaticResource Indicador}" Tag="{Binding Pilotos[SupresorDeRuido].Encendido}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="NB" /></Border>
+                <Border Style="{StaticResource Indicador}" Tag="{Binding Pilotos[ReductorDeRuido].Encendido}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="NR" /></Border>
+                <Border Style="{StaticResource Indicador}" Tag="{Binding Pilotos[MuescaAutomatica].Encendido}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="NOTCH" /></Border>
+                <Border Style="{StaticResource Indicador}" Tag="{Binding Pilotos[Vox].Encendido}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="VOX" /></Border>
+                <Border Style="{StaticResource Indicador}" Tag="{Binding Pilotos[BreakIn].Encendido}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="BK-IN" /></Border>
+                <Border Style="{StaticResource Indicador}" Tag="{Binding Split}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="SPLIT" /></Border>
+                <Border Style="{StaticResource Indicador}" Tag="{Binding Pilotos[Bloqueo].Encendido}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="LOCK" /></Border>
+            </DockPanel>
+
+            <!-- ══ Medidor de barra · modo y filtro ══ -->
+            <Grid Grid.Row="1" Margin="6,2,6,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <frontales:MedidorDeBarra Grid.Column="0" Margin="0,2,0,4"
+                                          NivelDeSenal="{Binding NivelDeSenal}"
+                                          NivelDePotencia="{Binding NivelDePotencia}"
+                                          Transmitiendo="{Binding Transmitiendo}"
+                                          Tinta="{StaticResource Blanco}"
+                                          TintaFuerte="#FFFF3B30"
+                                          ToolTip="{Binding MedidorS}"
+                                          AutomationProperties.Name="Medidor de señal" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Style="{StaticResource Tactil}" Margin="0,0,6,0" Command="{Binding SiguienteModoCommand}"
+                            ToolTip="Modo (se toca en la pantalla): pasa al modo siguiente">
+                        <Border Background="{StaticResource AzulIcom}" CornerRadius="2" Padding="6,1">
+                            <TextBlock Text="{Binding Principal.Modo}" Foreground="White" FontFamily="Arial" FontWeight="Bold" FontSize="14" />
+                        </Border>
+                    </Button>
+                    <Border BorderBrush="{StaticResource Gris}" BorderThickness="1" CornerRadius="2" Padding="5,1">
+                        <TextBlock Foreground="{StaticResource Blanco}" FontFamily="Arial" FontSize="12" FontWeight="Bold">
+                            <Run Text="FIL" /><Run Text="{Binding Principal.AnchoDeFiltro, Mode=OneWay}" />
+                        </TextBlock>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <!-- ══ La frecuencia: un VFO grande, o MAIN y SUB a la par ══ -->
+            <Grid Grid.Row="2" Margin="6,0,8,0" x:Name="UnVfo">
+                <TextBlock Text="{Binding Principal.Etiqueta}" Foreground="{StaticResource Gris}" FontFamily="Arial"
+                           FontSize="12" FontWeight="Bold" VerticalAlignment="Top" Margin="0,6,0,0" />
+                <Viewbox HorizontalAlignment="Right" StretchDirection="DownOnly" Margin="40,0,0,0">
+                    <TextBlock Text="{Binding Principal.FrecuenciaDelVisor}" Foreground="{StaticResource Blanco}"
+                               FontFamily="Arial" FontSize="46" FontWeight="SemiBold" TextTrimming="None" />
+                </Viewbox>
+            </Grid>
+            <Grid Grid.Row="2" Margin="6,0,8,0" x:Name="DosVfos" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="MAIN" Foreground="{StaticResource Naranja}" FontFamily="Arial" FontSize="10" FontWeight="Bold" />
+                    <Viewbox HorizontalAlignment="Left" StretchDirection="DownOnly">
+                        <TextBlock Text="{Binding Principal.FrecuenciaDelVisor}" Foreground="{StaticResource Blanco}"
+                                   FontFamily="Arial" FontSize="32" FontWeight="SemiBold" />
+                    </Viewbox>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                    <TextBlock Foreground="{StaticResource Gris}" FontFamily="Arial" FontSize="10" FontWeight="Bold">
+                        <Run Text="SUB" /><Run Text="  " /><Run Text="{Binding Secundario.Modo, Mode=OneWay}" />
+                    </TextBlock>
+                    <Viewbox HorizontalAlignment="Left" StretchDirection="DownOnly">
+                        <TextBlock Text="{Binding Secundario.FrecuenciaDelVisor}" Foreground="#FFC9D3DE"
+                                   FontFamily="Arial" FontSize="32" FontWeight="SemiBold" />
+                    </Viewbox>
+                </StackPanel>
+            </Grid>
+
+            <!-- ══ El otro VFO y los avisos ══ -->
+            <DockPanel Grid.Row="3" Margin="6,0,8,0">
+                <TextBlock DockPanel.Dock="Right" FontFamily="Arial" FontSize="10" FontWeight="Bold" Foreground="{StaticResource Naranja}">
+                    <Run Text="{Binding TextoDeSplit, Mode=OneWay}" /><Run Text=" " /><Run Text="{Binding TextoDeRit, Mode=OneWay}" /><Run Text=" " /><Run Text="{Binding TextoDeXit, Mode=OneWay}" />
+                </TextBlock>
+                <TextBlock FontFamily="Arial" FontSize="11" FontWeight="Bold" Foreground="{StaticResource Gris}" x:Name="OtroVfo">
+                    <Run Text="{Binding Secundario.Etiqueta, Mode=OneWay}" /><Run Text="  " /><Run Text="{Binding Secundario.FrecuenciaDelVisor, Mode=OneWay}" /><Run Text="  " /><Run Text="{Binding Secundario.Modo, Mode=OneWay}" />
+                </TextBlock>
+            </DockPanel>
+
+            <!-- ══ El analizador de la propia radio ══ -->
+            <Border Grid.Row="4" Margin="4,2,4,2" BorderBrush="#FF26303C" BorderThickness="1" x:Name="HuecoDelAnalizador">
+                <Grid>
+                    <vistas:AnalizadorDelEquipo DataContext="{Binding DataContext.Analizador, RelativeSource={RelativeSource AncestorType=Window}}" />
+                    <TextBlock Text="{Binding DataContext.Analizador.RotuloEnPantalla, RelativeSource={RelativeSource AncestorType=Window}}"
+                               Foreground="#FF6CC3FF" FontFamily="Arial" FontSize="9" FontWeight="Bold"
+                               HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,4,0" />
+                </Grid>
+            </Border>
+            <Border Grid.Row="4" Margin="4,2,4,2" x:Name="SinAnalizador" Visibility="Collapsed">
+                <TextBlock Text="{Binding EstadoDelEspectro}" Foreground="{StaticResource Gris}" FontFamily="Arial" FontSize="11"
+                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+
+            <!-- ══ La franja de menú de abajo (se toca en la radio; aquí solo se ve) ══ -->
+            <UniformGrid Grid.Row="5" Rows="1" Margin="2,0,2,1">
+                <UniformGrid.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="#FFB9C4D2" />
+                        <Setter Property="FontFamily" Value="Arial" />
+                        <Setter Property="FontSize" Value="9" />
+                        <Setter Property="FontWeight" Value="Bold" />
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                    </Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Margin" Value="1,0" />
+                        <Setter Property="CornerRadius" Value="2" />
+                        <Setter Property="Background" Value="#FF1A2230" />
+                    </Style>
+                </UniformGrid.Resources>
+                <Button Style="{StaticResource Tactil}" Command="{Binding SiguienteBandaCommand}" ToolTip="Banda (se toca en la pantalla): banda siguiente">
+                    <Border><TextBlock Text="{Binding Principal.Banda}" /></Border>
+                </Button>
+                <Button Style="{StaticResource Tactil}" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="SPAN+"
+                        ToolTip="SPAN — Ancho del analizador. Clic derecho: más estrecho.">
+                    <Button.InputBindings>
+                        <MouseBinding Gesture="RightClick" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="SPAN-" />
+                    </Button.InputBindings>
+                    <Border><TextBlock Text="SPAN" /></Border>
+                </Button>
+                <Button Style="{StaticResource Tactil}" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="CENTER"
+                        ToolTip="CENT/FIX — Analizador centrado o fijo">
+                    <Border><TextBlock Text="CENT/FIX" /></Border>
+                </Button>
+                <Button Style="{StaticResource Tactil}" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="EXPAND"
+                        ToolTip="EXPD — Analizador ampliado">
+                    <Border><TextBlock Text="EXPD/SET" /></Border>
+                </Button>
+                <Button Style="{StaticResource Tactil}" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="SPEED+"
+                        ToolTip="SPEED — Velocidad de la cascada. Clic derecho: más lenta.">
+                    <Button.InputBindings>
+                        <MouseBinding Gesture="RightClick" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="SPEED-" />
+                    </Button.InputBindings>
+                    <Border><TextBlock Text="SPEED" /></Border>
+                </Button>
+                <Button Style="{StaticResource Tactil}" IsEnabled="False" ToolTip="REF — Nivel de referencia: se ajusta en la radio">
+                    <Border><TextBlock Text="REF" /></Border>
+                </Button>
+            </UniformGrid>
+        </Grid>
+    </Viewbox>
+</UserControl>

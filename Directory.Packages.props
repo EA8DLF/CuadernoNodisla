@@ -1,0 +1,46 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <!-- Rama 8.0.x fijada a proposito: las versiones 10.x exigen net10.0 -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.31" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.31" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.31" />
+    <PackageVersion Include="Microsoft.Data.Sqlite" Version="8.0.31" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.1" />
+    <PackageVersion Include="Dapper" Version="2.1.66" />
+    <!-- Los modulos de infraestructura trazan contra la abstraccion, no contra Serilog:
+         asi no arrastran una implementacion concreta ni se atan a ella. -->
+    <!-- 8.0.3 y no 8.0.2: PDFsharp exige al menos esa version. Sigue en la rama 8.0.x. -->
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.3" />
+    <PackageVersion Include="Serilog" Version="4.4.0" />
+    <PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageVersion Include="FluentValidation" Version="11.11.0" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+    <PackageVersion Include="System.IO.Ports" Version="8.0.0" />
+    <!-- Audio del equipo para el modem propio. -->
+    <PackageVersion Include="NAudio" Version="2.2.1" />
+    <!-- Mapas. Mapsui y no GMap.NET: el paquete WPF de GMap no se publica desde junio de 2022. -->
+    <PackageVersion Include="Mapsui.Wpf" Version="5.1.0" />
+    <!-- Etiquetas y tarjetas de QSL. MIT, gestionado, sin dependencias nativas; ver
+         src\Nodisla.Cuaderno.Impresion\Nodisla.Cuaderno.Impresion.csproj. -->
+    <PackageVersion Include="PDFsharp" Version="6.2.4" />
+  </ItemGroup>
+  <!-- Pruebas -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="AwesomeAssertions" Version="8.0.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+  </ItemGroup>
+</Project>

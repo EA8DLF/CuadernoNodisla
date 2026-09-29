@@ -1,0 +1,62 @@
+﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PestanaDigital"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        LA PESTAÑA DE LOS MODOS DIGITALES.
+
+        Está montada alrededor de NUESTRO módem, y sólo de él. FT8 y FT4 los hace esta
+        aplicación: el audio entra por el codec USB del equipo, la cascada se calcula aquí y
+        las decodificaciones salen por el puerto del módem propio. No hay puente con WSJT-X ni
+        con JTDX: es la filosofía del grupo NODISLA, todo propio.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+    </UserControl.Resources>
+
+    <Grid x:Name="Raiz" SizeChanged="AlCambiarDeTamano">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--
+            EL FRONTAL TAMBIEN AQUI. Operando en FT8 hace falta ver y tocar la radio igual que
+            operando en fonia: la frecuencia, el modo, el filtro y el boton de soltar el PTT.
+            Es el MISMO control sobre el MISMO modelo de vista que en Operar, asi que no hay
+            dos estados: lo que se toca aqui se ve alla, y el pliegue es el mismo interruptor.
+        -->
+        <Border Grid.Row="0" Style="{StaticResource Tarjeta}" Margin="0,0,0,5" Padding="8,4">
+            <vistas:BarraDelEquipo x:Name="Barra" />
+        </Border>
+
+        <!--
+            El frontal, aquí, cede el alto: mide lo que sobre después de dar al módem lo mínimo
+            para operar, hasta 300 puntos. Si no llega a un tamaño legible se pliega solo y no
+            ocupa nada (a 1366×768 no cabe; sigue entero en Operar). Antes era al revés: el
+            frontal se quedaba sus 300 puntos y la cascada se quedaba en una tira de 20 píxeles.
+        -->
+        <Grid Grid.Row="1" x:Name="HuecoDelFrontal">
+            <Border Style="{StaticResource Tarjeta}"
+                    Margin="0,0,0,5"
+                    Padding="5"
+                    DataContext="{Binding Equipo}"
+                    Visibility="{Binding DataContext.FrontalDibujadoVisible, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanoAVisible}}">
+                <vistas:FrontalConBotonera x:Name="Frontal" AltoMaximoDelFrontal="300" />
+            </Border>
+        </Grid>
+
+        <!-- ══ El módem propio ocupa la pestaña entera ══ -->
+        <Border Grid.Row="2"
+                Style="{StaticResource Tarjeta}"
+                Margin="0"
+                Padding="8,6"
+                MinWidth="320">
+            <vistas:PanelDelModem DataContext="{Binding Modem}" />
+        </Border>
+    </Grid>
+</UserControl>

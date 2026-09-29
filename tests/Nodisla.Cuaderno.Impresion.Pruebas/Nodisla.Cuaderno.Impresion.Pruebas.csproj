@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="AwesomeAssertions" />
+    <!-- Solo para las pruebas que miden texto y reabren el PDF con el lector de la propia
+         biblioteca (XGraphics.MeasureString, PdfReader): la generacion en si no necesita que
+         el proyecto de pruebas conozca PDFsharp, solo IGeneradorDeImpresos. -->
+    <PackageReference Include="PDFsharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Nodisla.Cuaderno.Impresion\Nodisla.Cuaderno.Impresion.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

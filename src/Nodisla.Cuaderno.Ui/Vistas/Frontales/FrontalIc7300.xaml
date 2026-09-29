@@ -1,0 +1,172 @@
+<frontales:FrontalDibujado x:Class="Nodisla.Cuaderno.Ui.Vistas.Frontales.FrontalIc7300"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
+             xmlns:frontales="clr-namespace:Nodisla.Cuaderno.Ui.Vistas.Frontales"
+             xmlns:puertos="clr-namespace:Nodisla.Cuaderno.Aplicacion.Puertos;assembly=Nodisla.Cuaderno.Aplicacion">
+
+    <!--
+        EL FRONTAL DEL ICOM IC-7300 (docs/18-frontales.md). Cuerpo de 240 × 95 mm, proporción
+        2,5:1: en el lienzo común de 1040 × 335 va centrado, 850 de ancho.
+
+          · Izquierda: POWER, TRANSMIT, TUNER, VOX/BK-IN y las tomas PHONES y MIC; el mando
+            doble AF/RF-SQL y, debajo, P.AMP/ATT · NB · NR · NOTCH · AGC.
+          · La pantalla táctil a color de 4,3" (PantallaIcom, con el analizador) y, debajo,
+            MENU · FUNCTION · M.SCOPE · QUICK · EXIT (se tocan en la radio: aquí, apagadas).
+          · Derecha: MULTI arriba, el dial, TWIN PBT y RIT/ΔTX; SPLIT · A/B · V/M · LOCK · TS y
+            RIT · ΔTX · CLEAR.
+
+        El modo y la banda se tocan en la pantalla, como en la radio.
+    -->
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="PiezasDeLosFrontales.xaml" />
+    </UserControl.Resources>
+
+    <Viewbox Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Top">
+        <Canvas Width="1040" Height="335">
+            <Border Canvas.Left="95" Canvas.Top="0" Width="850" Height="335" CornerRadius="10"
+                    Background="{StaticResource CuerpoIcom}" BorderBrush="{StaticResource CuerpoBorde}" BorderThickness="1.5" />
+
+            <!-- ══ Columna izquierda ══ -->
+            <Button Canvas.Left="106" Canvas.Top="14" Width="62" Height="24" Style="{StaticResource TeclaIcom}"
+                    Click="AlEncender" IsEnabled="{Binding PuedeEncenderOApagar}"
+                    ToolTip="POWER — Enciende o apaga la radio (apagar pide confirmación)">
+                <TextBlock><Run Text="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontWeight="Normal" /><Run Text=" POWER" FontSize="9" /></TextBlock>
+            </Button>
+            <Button Canvas.Left="106" Canvas.Top="46" Width="62" Height="24" Style="{StaticResource TeclaIcom}"
+                    Command="{Binding MoxCommand}" Tag="{Binding EnMox}"
+                    ToolTip="TRANSMIT — TRANSMITE (pide confirmación y va por el vigilante del PTT); otro clic lo quita.">
+                <TextBlock Text="TRANSMIT" FontSize="9" />
+            </Button>
+            <Border Canvas.Left="128" Canvas.Top="74" Width="18" Height="4" Style="{StaticResource PilotoTx}" />
+            <Button Canvas.Left="106" Canvas.Top="84" Width="62" Height="24" Style="{StaticResource TeclaIcom}" Content="TUNER"
+                    FontSize="10" Command="{Binding AlternarMandoCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.Sintonizador}"
+                    Tag="{Binding Pilotos[Sintonizador].Encendido}"
+                    ToolTip="TUNER — Clic: acoplador en línea o fuera (no emite). Clic derecho: sintonizar, EMITE PORTADORA (pide confirmación, corte a los 10 s).">
+                <Button.InputBindings>
+                    <MouseBinding Gesture="RightClick" Command="{Binding SintonizarAcopladorCommand}" />
+                </Button.InputBindings>
+            </Button>
+            <Button Canvas.Left="106" Canvas.Top="116" Width="62" Height="24" Style="{StaticResource TeclaIcom}"
+                    Command="{Binding AlternarMandoCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.Vox}"
+                    Tag="{Binding Pilotos[Vox].Encendido}"
+                    ToolTip="VOX/BK-IN — Clic: VOX. Clic derecho: break-in de telegrafía.">
+                <Button.InputBindings>
+                    <MouseBinding Gesture="RightClick" Command="{Binding AlternarMandoCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.BreakIn}" />
+                </Button.InputBindings>
+                <TextBlock Text="VOX/BK-IN" FontSize="8" />
+            </Button>
+            <TextBlock Canvas.Left="100" Canvas.Top="180" Width="74" Text="PHONES" Style="{StaticResource Serigrafiado}" FontSize="9" />
+            <Grid Canvas.Left="119" Canvas.Top="194" Width="36" Height="36" ToolTip="PHONES — Toma de auriculares">
+                <Ellipse Fill="{StaticResource Hueco}" />
+                <Ellipse Margin="5" Stroke="{StaticResource CantoMetalico}" StrokeThickness="3" Fill="#FF15171A" />
+                <Ellipse Margin="12" Fill="#FF020203" />
+            </Grid>
+            <TextBlock Canvas.Left="100" Canvas.Top="246" Width="74" Text="MIC" Style="{StaticResource Serigrafiado}" FontSize="9" />
+            <Grid Canvas.Left="113" Canvas.Top="260" Width="48" Height="48" ToolTip="MIC — Conector de micrófono">
+                <Ellipse Fill="{StaticResource Hueco}" />
+                <Ellipse Margin="5" Stroke="{StaticResource CantoMetalico}" StrokeThickness="4" Fill="#FF0D0F11" />
+                <Ellipse Margin="14" Fill="#FF050607" />
+            </Grid>
+
+            <!-- ══ AF/RF-SQL y las teclas de recepción ══ -->
+            <TextBlock Canvas.Left="176" Canvas.Top="8" Width="86" Text="AF ◎ RF/SQL" Style="{StaticResource Serigrafiado}" FontSize="9" />
+            <vistas:MandoGiratorio Canvas.Left="182" Canvas.Top="22" Width="74" Height="74"
+                                   Rotulo="AF/RF-SQL" Explicacion="Ganancia de RF y silenciador (anillo) y volumen (centro)"
+                                   Mando="{Binding MandoDeGananciaRf}" MandoInterior="{Binding MandoDeVolumen}" />
+            <Button Canvas.Left="180" Canvas.Top="110" Width="78" Height="24" Style="{StaticResource TeclaIcom}"
+                    Command="{Binding SiguientePosicionCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.Preamplificador}"
+                    ToolTip="P.AMP/ATT — Clic: preamplificador siguiente. Clic derecho: atenuador.">
+                <Button.InputBindings>
+                    <MouseBinding Gesture="RightClick" Command="{Binding SiguientePosicionCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.Atenuador}" />
+                </Button.InputBindings>
+                <TextBlock Text="P.AMP/ATT" FontSize="9" />
+            </Button>
+            <Button Canvas.Left="180" Canvas.Top="140" Width="37" Height="24" Style="{StaticResource TeclaIcom}" Content="NB"
+                    Command="{Binding AlternarMandoCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.SupresorDeRuido}"
+                    Tag="{Binding Pilotos[SupresorDeRuido].Encendido}" ToolTip="NB — Supresor de ruido de impulsos" />
+            <Button Canvas.Left="221" Canvas.Top="140" Width="37" Height="24" Style="{StaticResource TeclaIcom}" Content="NR"
+                    Command="{Binding AlternarMandoCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.ReductorDeRuido}"
+                    Tag="{Binding Pilotos[ReductorDeRuido].Encendido}" ToolTip="NR — Reductor de ruido" />
+            <Button Canvas.Left="180" Canvas.Top="170" Width="78" Height="24" Style="{StaticResource TeclaIcom}" Content="NOTCH"
+                    FontSize="10" Command="{Binding AlternarMandoCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.MuescaAutomatica}"
+                    Tag="{Binding Pilotos[MuescaAutomatica].Encendido}"
+                    ToolTip="NOTCH — Muesca automática. Clic derecho: muesca manual.">
+                <Button.InputBindings>
+                    <MouseBinding Gesture="RightClick" Command="{Binding AlternarMandoCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.MuescaManual}" />
+                </Button.InputBindings>
+            </Button>
+            <Button Canvas.Left="180" Canvas.Top="200" Width="78" Height="24" Style="{StaticResource TeclaIcom}" Content="AGC"
+                    FontSize="10" Command="{Binding SiguientePosicionCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.Agc}"
+                    ToolTip="{Binding Pilotos[Agc].ValorTexto}" />
+            <TextBlock Canvas.Left="180" Canvas.Top="240" Width="78" Text="MIC GAIN" Style="{StaticResource Serigrafiado}" FontSize="9" />
+            <vistas:MandoGiratorio Canvas.Left="194" Canvas.Top="254" Width="50" Height="50"
+                                   Rotulo="MIC GAIN" Explicacion="Ganancia del micrófono"
+                                   Mando="{Binding Frontal[GananciaMicrofono]}" />
+
+            <!-- ══ La pantalla ══ -->
+            <TextBlock Canvas.Left="270" Canvas.Top="5" Text="ICOM" Style="{StaticResource Marca}" FontSize="14" />
+            <TextBlock Canvas.Left="560" Canvas.Top="6" Text="IC-7300" Style="{StaticResource Marca}" FontSize="13" FontWeight="Normal" />
+            <Border Canvas.Left="266" Canvas.Top="26" Width="352" Height="204" CornerRadius="4" Background="#FF050607"
+                    BorderBrush="#FF16181B" BorderThickness="3" Padding="3">
+                <frontales:PantallaIcom ConAnalizador="{Binding ConAnalizador, RelativeSource={RelativeSource AncestorType=frontales:FrontalDibujado}}" />
+            </Border>
+            <Button Canvas.Left="268" Canvas.Top="240" Width="64" Height="22" Style="{StaticResource TeclaIcom}" Content="MENU" FontSize="9"
+                    IsEnabled="False" ToolTip="MENU — Se toca en la radio: el programa no abre sus menús" />
+            <Button Canvas.Left="338" Canvas.Top="240" Width="64" Height="22" Style="{StaticResource TeclaIcom}" Content="FUNCTION" FontSize="8"
+                    IsEnabled="False" ToolTip="FUNCTION — Se toca en la radio" />
+            <Button Canvas.Left="408" Canvas.Top="240" Width="64" Height="22" Style="{StaticResource TeclaIcom}" Content="M.SCOPE" FontSize="8"
+                    IsEnabled="False" ToolTip="M.SCOPE — El analizador ya se ve en la pantalla dibujada" />
+            <Button Canvas.Left="478" Canvas.Top="240" Width="64" Height="22" Style="{StaticResource TeclaIcom}" Content="QUICK" FontSize="9"
+                    IsEnabled="False" ToolTip="QUICK — Se toca en la radio" />
+            <Button Canvas.Left="548" Canvas.Top="240" Width="64" Height="22" Style="{StaticResource TeclaIcom}" Content="EXIT" FontSize="9"
+                    IsEnabled="False" ToolTip="EXIT — Se toca en la radio" />
+            <TextBlock Canvas.Left="270" Canvas.Top="272" Style="{StaticResource SinProbar}" />
+
+            <!-- ══ Derecha ══ -->
+            <TextBlock Canvas.Left="840" Canvas.Top="8" Width="90" Text="MULTI" Style="{StaticResource Serigrafiado}" FontSize="9" />
+            <vistas:MandoGiratorio Canvas.Left="852" Canvas.Top="22" Width="66" Height="66"
+                                   Rotulo="MULTI" Explicacion="Mando multifunción; aquí, la potencia de emisión" Mando="{Binding MandoDePotencia}" />
+            <Button Canvas.Left="630" Canvas.Top="14" Width="46" Height="22" Style="{StaticResource TeclaIcom}" Content="SPLIT" FontSize="9"
+                    Command="{Binding AlternarMandoCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.Split}"
+                    Tag="{Binding Pilotos[Split].Encendido}" ToolTip="SPLIT — Trabajo en dos frecuencias" />
+            <Button Canvas.Left="680" Canvas.Top="14" Width="46" Height="22" Style="{StaticResource TeclaIcom}" Content="A/B" FontSize="10"
+                    Command="{Binding ActivarVfoCommand}" CommandParameter="{Binding Secundario}"
+                    ToolTip="A/B — Pasa a operar con el otro VFO. Clic derecho: A=B (pide confirmación).">
+                <Button.InputBindings>
+                    <MouseBinding Gesture="RightClick" Command="{Binding IgualarVfosCommand}" />
+                </Button.InputBindings>
+            </Button>
+            <Button Canvas.Left="730" Canvas.Top="14" Width="46" Height="22" Style="{StaticResource TeclaIcom}" Content="V/M" FontSize="10"
+                    Command="{Binding PulsarTeclaCommand}" CommandParameter="{x:Static puertos:TeclaDelEquipo.VfoOMemoria}"
+                    Tag="{Binding EnMemoria}" ToolTip="V/M — Alterna entre VFO y memorias" />
+            <Button Canvas.Left="780" Canvas.Top="14" Width="56" Height="22" Style="{StaticResource TeclaIcom}" Content="LOCK" FontSize="9"
+                    Command="{Binding AlternarMandoCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.Bloqueo}"
+                    Tag="{Binding Pilotos[Bloqueo].Encendido}" ToolTip="LOCK — Bloqueo del dial" />
+
+            <frontales:DialDelFrontal Canvas.Left="648" Canvas.Top="52" Width="190" Height="190" />
+            <Button Canvas.Left="852" Canvas.Top="110" Width="66" Height="22" Style="{StaticResource TeclaIcom}" Content="TS" FontSize="10"
+                    Command="{Binding SiguientePosicionCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.SintoniaFinaRapida}"
+                    Tag="{Binding Pilotos[SintoniaFinaRapida].Encendido}" ToolTip="TS — Paso de sintonía (fino / rápido)" />
+
+            <TextBlock Canvas.Left="626" Canvas.Top="246" Width="84" Text="TWIN PBT" Style="{StaticResource Serigrafiado}" FontSize="9" />
+            <vistas:MandoGiratorio Canvas.Left="638" Canvas.Top="260" Width="62" Height="62"
+                                   Rotulo="TWIN PBT" Explicacion="Desplazamiento de FI (anillo) y ancho del filtro (centro)"
+                                   Mando="{Binding Frontal[DesplazamientoFi]}" MandoInterior="{Binding MandoDeAnchoDeFiltro}" />
+            <Button Canvas.Left="714" Canvas.Top="268" Width="42" Height="22" Style="{StaticResource TeclaIcom}" Content="RIT" FontSize="10"
+                    Command="{Binding AlternarMandoCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.Rit}"
+                    Tag="{Binding Pilotos[Rit].Encendido}" MouseWheel="AlGirarSobreClar"
+                    ToolTip="RIT — Desplazamiento de recepción. Rueda encima: desplazamiento." />
+            <Button Canvas.Left="760" Canvas.Top="268" Width="42" Height="22" Style="{StaticResource TeclaIcom}" Content="ΔTX" FontSize="10"
+                    Command="{Binding AlternarMandoCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.Xit}"
+                    Tag="{Binding Pilotos[Xit].Encendido}" ToolTip="ΔTX — Desplazamiento de transmisión (XIT)" />
+            <Button Canvas.Left="714" Canvas.Top="296" Width="88" Height="22" Style="{StaticResource TeclaIcom}" Content="CLEAR" FontSize="9"
+                    Command="{Binding PulsarTeclaCommand}" CommandParameter="{x:Static puertos:TeclaDelEquipo.BorrarClarificador}"
+                    ToolTip="CLEAR — Pone a cero el desplazamiento RIT/ΔTX" />
+            <TextBlock Canvas.Left="840" Canvas.Top="246" Width="90" Text="RIT/ΔTX" Style="{StaticResource Serigrafiado}" FontSize="9" />
+            <vistas:MandoGiratorio Canvas.Left="854" Canvas.Top="260" Width="62" Height="62"
+                                   Rotulo="RIT/ΔTX" Explicacion="Desplazamiento del RIT" Mando="{Binding Frontal[DesplazamientoRit]}" />
+        </Canvas>
+    </Viewbox>
+</frontales:FrontalDibujado>

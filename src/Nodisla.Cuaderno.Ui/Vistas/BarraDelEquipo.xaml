@@ -1,0 +1,118 @@
+﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.BarraDelEquipo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        LA BARRA DEL EQUIPO.
+
+        Está en un control propio porque sale en DOS sitios —Operar y Digital— y tiene que ser
+        exactamente la misma: el mismo modelo de vista, el mismo estado y el mismo botón de
+        pánico. Copiarla dos veces habría terminado en dos barras que se parecen pero no hacen
+        lo mismo, que es la manera más segura de que un día el botón de soltar el PTT esté en
+        una pantalla y no en la otra.
+
+        Espera como contexto el modelo de la ventana, no el del equipo: necesita «Equipo.*» y
+        también los interruptores de plegado, que son de la ventana.
+    -->
+
+    <UserControl.Resources>
+        <conversores:NoEsVacio x:Key="NoEsVacio" />
+    </UserControl.Resources>
+
+    <DockPanel>
+        <Button DockPanel.Dock="Right"
+                Content="SOLTAR PTT"
+                Command="{Binding Equipo.SoltarPttCommand}"
+                Style="{StaticResource BotonDePanico}"
+                Margin="6,0,0,0"
+                ToolTip="Suelta el PTT ahora mismo, pase lo que pase. No pide confirmación."
+                AutomationProperties.Name="Soltar el PTT ahora mismo" />
+
+        <Button DockPanel.Dock="Right"
+                Content="{Binding Equipo.TextoDelBotonDeConexion}"
+                Margin="6,0,0,0"
+                ToolTip="Abre o cierra la comunicación con el equipo">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                    <Setter Property="Command" Value="{Binding Equipo.ConectarCommand}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Equipo.Conectado}" Value="True">
+                            <Setter Property="Command" Value="{Binding Equipo.DesconectarCommand}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <!-- La vista complementaria: se abre cuando se quiere, no sustituye al dibujo. -->
+        <ToggleButton DockPanel.Dock="Right"
+                      Content="{Binding TextoDeLaListaDeMandos}"
+                      IsChecked="{Binding ListaDeMandosVisible}"
+                      Margin="6,0,0,0"
+                      ToolTip="Enseña todos los mandos que declara el equipo, con su valor y su recorrido"
+                      AutomationProperties.Name="Ver todos los mandos del equipo" />
+
+        <ToggleButton DockPanel.Dock="Right"
+                      Content="{Binding TextoDelPliegueDelFrontal}"
+                      IsChecked="{Binding FrontalDesplegado}"
+                      Margin="6,0,0,0"
+                      ToolTip="Pliega el frontal del equipo para dejar sitio a lo demás"
+                      AutomationProperties.Name="Plegar o desplegar el frontal del equipo" />
+
+        <Border DockPanel.Dock="Right"
+                CornerRadius="3"
+                Padding="8,2"
+                VerticalAlignment="Center"
+                Margin="6,0,0,0">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="{DynamicResource FondoResalte}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Equipo.Conectado}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Equipo.Transmitiendo}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource ErrorFondo}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorde}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <TextBlock Text="{Binding Equipo.EstadoTexto}" FontWeight="Bold" TextTrimming="None" />
+        </Border>
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Text="{Binding Equipo.NombreDelEquipo}" FontWeight="Bold" />
+            <!--
+                El aviso del plan de bandas («Fuera de banda», «Solo CW»…): la radio no lo tiene
+                en su pantalla, así que va aquí y no en el visor dibujado. Avisa, no impide.
+            -->
+            <TextBlock Text="{Binding Equipo.Principal.AvisoCortoDelBandplan}"
+                       Foreground="{DynamicResource AvisoTexto}"
+                       FontWeight="Bold"
+                       Margin="10,0,0,0"
+                       TextTrimming="None"
+                       AutomationProperties.Name="Aviso del plan de bandas"
+                       Visibility="{Binding Equipo.Principal.AvisoCortoDelBandplan, Converter={StaticResource NoEsVacio}}">
+                <TextBlock.ToolTip>
+                    <TextBlock MaxWidth="360" TextWrapping="Wrap">
+                        <Run Text="{Binding Equipo.Principal.AvisoDelBandplan, Mode=OneWay}" />
+                        <LineBreak />
+                        <Run Text="{Binding Equipo.Principal.TramoDelBandplan, Mode=OneWay}" />
+                    </TextBlock>
+                </TextBlock.ToolTip>
+            </TextBlock>
+            <TextBlock Text="{Binding Equipo.Aviso}"
+                       Style="{StaticResource TextoTenueEstilo}"
+                       Foreground="{DynamicResource AvisoTexto}"
+                       Margin="10,0,0,0"
+                       TextTrimming="CharacterEllipsis"
+                       Visibility="{Binding Equipo.Aviso, Converter={StaticResource NoEsVacio}}" />
+        </StackPanel>
+    </DockPanel>
+</UserControl>

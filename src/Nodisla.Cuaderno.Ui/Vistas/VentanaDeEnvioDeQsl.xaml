@@ -1,0 +1,103 @@
+<Window x:Class="Nodisla.Cuaderno.Ui.Vistas.VentanaDeEnvioDeQsl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Ver / enviar QSL — Cuaderno NODISLA"
+        Width="1180" Height="700" MinWidth="820" MinHeight="500"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Background="{DynamicResource FondoVentana}"
+        Foreground="{DynamicResource Texto}">
+
+    <!--
+        VER Y ENVIAR LA QSL DE LOS CONTACTOS ELEGIDOS.
+
+        Una fila por estación (sus contactos van juntos en el mismo correo, una tarjeta por
+        contacto). La dirección sale del contacto o de su ficha de QRZ; si no publica, se
+        escribe a mano o se salta. Al mandar, el contacto queda con QSL_SENT=Y, fecha de hoy y
+        vía E (electrónica).
+    -->
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.35*" MinWidth="420" />
+            <ColumnDefinition Width="1*" MinWidth="320" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ══ Destinatarios ══ -->
+        <DockPanel Grid.Column="0" Grid.Row="0" Margin="0,0,10,0">
+            <TextBlock DockPanel.Dock="Top" Text="Destinatarios" Style="{StaticResource TituloDeSeccion}" />
+            <TextBlock DockPanel.Dock="Top" Text="{Binding DesdeTexto}" Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,0,0,6" />
+            <DataGrid ItemsSource="{Binding Destinatarios}" SelectedItem="{Binding Elegido}"
+                      HorizontalScrollBarVisibility="Auto" VerticalAlignment="Top"
+                      AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                      HeadersVisibility="Column" SelectionMode="Single" GridLinesVisibility="Horizontal"
+                      AutomationProperties.Name="Estaciones a las que se manda la tarjeta">
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn Header="Enviar" Binding="{Binding Enviar, UpdateSourceTrigger=PropertyChanged}" Width="Auto" />
+                    <DataGridTextColumn Header="Indicativo" Binding="{Binding Indicativo}" IsReadOnly="True" Width="Auto" FontWeight="SemiBold" />
+                    <DataGridTextColumn Header="Contacto(s)" Binding="{Binding ContactosTexto}" IsReadOnly="True" Width="Auto" />
+                    <DataGridTextColumn Header="Correo" Binding="{Binding Correo, UpdateSourceTrigger=PropertyChanged}" Width="*" MinWidth="170" />
+                    <DataGridTextColumn Header="De" Binding="{Binding OrigenTexto}" IsReadOnly="True" Width="Auto" />
+                    <DataGridTextColumn Header="Estado" Binding="{Binding Estado}" IsReadOnly="True" Width="*" MinWidth="170">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextWrapping" Value="Wrap" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+
+        <!-- ══ Tarjeta y correo ══ -->
+        <DockPanel Grid.Column="1" Grid.Row="0">
+            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                <TextBlock Text="Plantilla" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold" />
+                <ComboBox ItemsSource="{Binding Disenos}" SelectedItem="{Binding Diseno}"
+                          AutomationProperties.Name="Plantilla de tarjeta">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Nombre}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </DockPanel>
+
+            <Border DockPanel.Dock="Top" Background="{DynamicResource FondoCampo}" Padding="6" Height="250">
+                <Image Source="{Binding VistaPrevia}" Stretch="Uniform" AutomationProperties.Name="Vista previa de la tarjeta" />
+            </Border>
+
+            <TextBlock DockPanel.Dock="Top" Text="Asunto" FontWeight="SemiBold" Margin="0,8,0,2" />
+            <TextBox DockPanel.Dock="Top" Text="{Binding Asunto, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Asunto del correo" />
+            <TextBlock DockPanel.Dock="Top" Text="Texto ({indicativo}, {fecha}, {banda}, {contactos}…)" FontWeight="SemiBold" Margin="0,6,0,2" />
+            <TextBox Text="{Binding Texto, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" VerticalAlignment="Top" MinLines="9" MaxLines="14"
+                     VerticalScrollBarVisibility="Auto"
+                     AutomationProperties.Name="Texto del correo" />
+        </DockPanel>
+
+        <!-- ══ Botones ══ -->
+        <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,0">
+            <Button DockPanel.Dock="Right" Content="Cerrar" IsCancel="True" Padding="14,4" Margin="6,0,0,0" Click="AlCerrar"
+                    AutomationProperties.Name="Cerrar la ventana" />
+            <Button DockPanel.Dock="Right" Content="PDF…" Command="{Binding GuardarPdfCommand}" Padding="10,4" Margin="6,0,0,0"
+                    AutomationProperties.Name="Guardar todas las tarjetas en PDF" />
+            <Button DockPanel.Dock="Right" Content="Guardar imágenes…" Command="{Binding GuardarImagenesCommand}" Padding="10,4" Margin="6,0,0,0"
+                    AutomationProperties.Name="Guardar las tarjetas como imágenes" />
+            <Button DockPanel.Dock="Right" Content="Parar" Command="{Binding CancelarCommand}" Padding="10,4" Margin="6,0,0,0"
+                    Visibility="{Binding Ocupado, Converter={StaticResource BooleanoAVisible}}"
+                    AutomationProperties.Name="Parar el envío" />
+            <Button DockPanel.Dock="Right" Content="Enviar por correo" Command="{Binding EnviarCommand}" Style="{StaticResource BotonPrincipal}"
+                    Padding="14,4" Margin="6,0,0,0"
+                    AutomationProperties.Name="Enviar las tarjetas marcadas por correo" />
+            <TextBlock Text="{Binding Aviso}" VerticalAlignment="Center" TextWrapping="Wrap" FontWeight="SemiBold" />
+        </DockPanel>
+    </Grid>
+</Window>

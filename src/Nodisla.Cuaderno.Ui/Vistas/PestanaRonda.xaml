@@ -1,0 +1,234 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PestanaRonda"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
+             xmlns:conv="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             d:DataContext="{d:DesignInstance Type=vm:VistaModeloRonda}"
+             mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        LA RONDA DE CONTROL (NET Control): una red de radioaficionados con un director, una
+        lista de participantes que van entrando y saliendo, y un QSO activo que se edita sobre
+        la marcha. Cada participante que se confirma se convierte en un contacto real del
+        cuaderno, con la banda, el modo y la frecuencia de la ronda y su propia hora de entrada.
+
+        Solo puede haber una ronda abierta a la vez, y se reabre sola al arrancar el programa si
+        quedo una a medias: la pantalla no distingue si acaba de abrirse o si venia de antes.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+        <conv:BooleanoInvertidoAVisible x:Key="BooleanoAVisibleInvertido" />
+        <conv:NoEsVacio x:Key="NoEsVacio" />
+
+        <!--
+            El mensaje de la ronda, con el color de lo que dice. Va en las DOS tarjetas: antes
+            solo estaba en la barra de participantes, que no se ve sin ronda abierta, y los
+            fallos al abrir («falta el nombre», «el modo no vale») no los leia nadie.
+        -->
+        <Style x:Key="MensajeDeLaRonda" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextoTenue}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,6,0,0" />
+            <Setter Property="Visibility" Value="{Binding Mensaje, Converter={StaticResource NoEsVacio}}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Tono}" Value="Error">
+                    <Setter Property="Foreground" Value="{DynamicResource ErrorTexto}" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Tono}" Value="Correcto">
+                    <Setter Property="Foreground" Value="{DynamicResource CorrectoTexto}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" MinHeight="160" />
+        </Grid.RowDefinitions>
+
+        <!-- ══ Abrir una ronda: solo se ve mientras no hay ninguna abierta ══ -->
+        <Border Grid.Row="0"
+                Style="{StaticResource Tarjeta}"
+                Margin="0,0,0,5"
+                Padding="10,8"
+                Visibility="{Binding HayRondaAbierta, Converter={StaticResource BooleanoAVisibleInvertido}}">
+            <StackPanel>
+                <TextBlock Text="Abrir una ronda de control" FontWeight="SemiBold" Margin="0,0,0,6" />
+                <WrapPanel Orientation="Horizontal">
+                    <StackPanel Style="{StaticResource BloqueDeCampo}" Width="220">
+                        <TextBlock Text="Nombre de la ronda" Style="{StaticResource EtiquetaDeCampo}" />
+                        <TextBox Text="{Binding NombreRonda, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource BloqueDeCampo}" Width="180">
+                        <TextBlock Text="Club o evento (opcional)" Style="{StaticResource EtiquetaDeCampo}" />
+                        <TextBox Text="{Binding ClubOEvento, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource BloqueDeCampo}" Width="90">
+                        <TextBlock Text="Banda" Style="{StaticResource EtiquetaDeCampo}" />
+                        <ComboBox ItemsSource="{Binding Bandas}" SelectedItem="{Binding Banda}"
+                                  AutomationProperties.Name="Banda de la ronda" />
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource BloqueDeCampo}" Width="90">
+                        <TextBlock Text="Modo" Style="{StaticResource EtiquetaDeCampo}" />
+                        <ComboBox ItemsSource="{Binding Modos}" SelectedItem="{Binding Modo}"
+                                  AutomationProperties.Name="Modo de la ronda" />
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource BloqueDeCampo}" Width="110">
+                        <TextBlock Text="Frecuencia MHz" Style="{StaticResource EtiquetaDeCampo}" />
+                        <TextBox Text="{Binding Frecuencia, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="En MHz, por ejemplo 7.150. Vacía si no se sabe." />
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource BloqueDeCampo}" Width="180">
+                        <TextBlock Text="Perfil de estación" Style="{StaticResource EtiquetaDeCampo}" />
+                        <ComboBox ItemsSource="{Binding Estaciones}" SelectedItem="{Binding EstacionElegida}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding NombrePerfil}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource BloqueDeCampo}" VerticalAlignment="Bottom">
+                        <Button Content="Abrir ronda" Command="{Binding AbrirCommand}" Padding="10,4"
+                                ToolTip="Hace falta al menos el nombre de la ronda" />
+                    </StackPanel>
+                </WrapPanel>
+                <StackPanel Style="{StaticResource BloqueDeCampo}" Margin="0,4,0,0">
+                    <TextBlock Text="Notas" Style="{StaticResource EtiquetaDeCampo}" />
+                    <TextBox Text="{Binding Notas, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <TextBlock Text="{Binding Mensaje}" Style="{StaticResource MensajeDeLaRonda}" />
+            </StackPanel>
+        </Border>
+
+        <!-- ══ La ronda abierta: cabecera con el resumen y el botón de cerrar ══ -->
+        <Border Grid.Row="0"
+                Style="{StaticResource Tarjeta}"
+                Margin="0,0,0,5"
+                Padding="10,8"
+                Visibility="{Binding HayRondaAbierta, Converter={StaticResource BooleanoAVisible}}">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="Cerrar ronda" Command="{Binding CerrarCommand}" Padding="10,4" />
+                <StackPanel>
+                    <TextBlock Text="{Binding TituloDeLaRonda}" FontWeight="SemiBold" FontSize="14" />
+                    <TextBlock Text="{Binding ClubOEvento, StringFormat='Club o evento: {0}'}"
+                               Style="{StaticResource TextoTenueEstilo}"
+                               Visibility="{Binding ClubOEvento, Converter={StaticResource NoEsVacio}}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ══ Anadir un participante ══ -->
+        <Border Grid.Row="1"
+                Style="{StaticResource Tarjeta}"
+                Margin="0,0,0,5"
+                Padding="10,8"
+                Visibility="{Binding HayRondaAbierta, Converter={StaticResource BooleanoAVisible}}">
+            <StackPanel>
+                <DockPanel LastChildFill="False">
+                    <TextBlock DockPanel.Dock="Left" Text="Indicativo" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <TextBox DockPanel.Dock="Left" Width="140" VerticalAlignment="Center"
+                             CharacterCasing="Upper"
+                             AutomationProperties.Name="Indicativo del participante nuevo"
+                             Text="{Binding IndicativoNuevo, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Return" Command="{Binding AnadirParticipanteCommand}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
+                    <Button DockPanel.Dock="Left" Content="Añadir a la ronda" Margin="6,0,0,0"
+                            Command="{Binding AnadirParticipanteCommand}" Padding="8,4"
+                            ToolTip="También con Intro en la casilla del indicativo" />
+
+                    <Button DockPanel.Dock="Right" Content="Quitar" Command="{Binding EliminarParticipanteCommand}" Padding="8,4"
+                            ToolTip="Quita al elegido de la ronda; si ya estaba confirmado, su contacto sigue en el cuaderno" />
+                    <Button DockPanel.Dock="Right" Content="Guardar RST/comentario" Margin="0,0,6,0"
+                            Command="{Binding GuardarParticipanteCommand}" Padding="8,4"
+                            ToolTip="Guarda el RST y el comentario tecleados en la lista para el elegido" />
+                    <Button DockPanel.Dock="Right" Content="Confirmar trabajado" Margin="0,0,6,0"
+                            Command="{Binding MarcarTrabajadoCommand}" Padding="8,4" Background="{DynamicResource IconoVerde}"
+                            ToolTip="Mete al elegido en el cuaderno con la banda, el modo y la frecuencia de la ronda" />
+                </DockPanel>
+
+                <TextBlock Text="Elija un participante en la lista y escriba su RST y el comentario directamente en las columnas."
+                           Style="{StaticResource TextoTenueEstilo}"
+                           TextWrapping="Wrap"
+                           Margin="0,6,0,0" />
+                <TextBlock Text="{Binding Mensaje}" Style="{StaticResource MensajeDeLaRonda}" />
+            </StackPanel>
+        </Border>
+
+        <!-- ══ La lista de participantes, o el historial si no hay ronda abierta ══ -->
+        <Grid Grid.Row="2">
+            <DataGrid ItemsSource="{Binding Participantes}"
+                      SelectedItem="{Binding ParticipanteElegido}"
+                      Style="{StaticResource RejillaDeContactos}"
+                      Visibility="{Binding HayRondaAbierta, Converter={StaticResource BooleanoAVisible}}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="False">
+                <!--
+                    IsReadOnly a mano: el estilo de la rejilla del cuaderno la pone de solo
+                    lectura, y aqui el RST y el comentario se escriben en la propia lista. Con
+                    el estilo tal cual, «Guardar RST/comentario» no tenia nada que guardar.
+                -->
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource CabeceraDelCuaderno}" />
+                    <Style TargetType="DataGridCell" BasedOn="{StaticResource CeldaDelCuaderno}" />
+                    <Style TargetType="DataGridRow" BasedOn="{StaticResource FilaDelCuaderno}" />
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ENTRADA UTC" Binding="{Binding HoraEntrada}" IsReadOnly="True"
+                                        ElementStyle="{StaticResource CeldaDeCifras}" Width="100" />
+                    <DataGridTextColumn Header="INDICATIVO" Binding="{Binding Indicativo}" IsReadOnly="True"
+                                        ElementStyle="{StaticResource CeldaDeIndicativo}" Width="110" />
+                    <DataGridTextColumn Header="PAIS" Binding="{Binding Pais}" IsReadOnly="True"
+                                        ElementStyle="{StaticResource CeldaDeTexto}" Width="140" />
+                    <DataGridTextColumn Header="RST TX" Binding="{Binding RstEnviadoTexto, UpdateSourceTrigger=PropertyChanged}"
+                                        ElementStyle="{StaticResource CeldaDeCifras}" Width="70" />
+                    <DataGridTextColumn Header="RST RX" Binding="{Binding RstRecibidoTexto, UpdateSourceTrigger=PropertyChanged}"
+                                        ElementStyle="{StaticResource CeldaDeCifras}" Width="70" />
+                    <DataGridTextColumn Header="COMENTARIO" Binding="{Binding Comentario, UpdateSourceTrigger=PropertyChanged}"
+                                        ElementStyle="{StaticResource CeldaDeTexto}" Width="*" />
+                    <DataGridCheckBoxColumn Header="TRABAJADO" Binding="{Binding Trabajado}" IsReadOnly="True" Width="90" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- ══ Sin ronda abierta: el historial de rondas anteriores ══ -->
+            <Border Style="{StaticResource Tarjeta}" Padding="10,8"
+                    Visibility="{Binding HayRondaAbierta, Converter={StaticResource BooleanoAVisibleInvertido}}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Historial de rondas" FontWeight="SemiBold" Margin="0,0,0,6" />
+                    <DataGrid ItemsSource="{Binding Historial}"
+                              Style="{StaticResource RejillaDeContactos}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              IsReadOnly="True">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource CabeceraDelCuaderno}" />
+                            <Style TargetType="DataGridCell" BasedOn="{StaticResource CeldaDelCuaderno}" />
+                            <Style TargetType="DataGridRow" BasedOn="{StaticResource FilaDelCuaderno}" />
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" Width="220" />
+                            <DataGridTextColumn Header="CLUB/EVENTO" Binding="{Binding ClubOEvento}" Width="160" />
+                            <DataGridTextColumn Header="BANDA" Binding="{Binding Band.Nombre}" Width="80" />
+                            <DataGridTextColumn Header="MODO" Binding="{Binding Mode.NombreUsual}" Width="80" />
+                            <DataGridTextColumn Header="INICIO UTC" Binding="{Binding InicioUtc, StringFormat='dd-MM-yyyy HH:mm'}" Width="150" />
+                            <DataGridTextColumn Header="FIN UTC" Binding="{Binding FinUtc, StringFormat='dd-MM-yyyy HH:mm', TargetNullValue='abierta'}" Width="150" />
+                            <DataGridTextColumn Header="PARTICIPANTES" Binding="{Binding Participantes.Count}" Width="110" />
+                            <DataGridTextColumn Header="TRABAJADOS" Binding="{Binding Trabajados}" Width="100" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

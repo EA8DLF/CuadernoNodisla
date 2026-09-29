@@ -1,0 +1,109 @@
+﻿<Window x:Class="Nodisla.Cuaderno.Ui.Vistas.VentanaDeCuadernoVacio"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+        Title="Su cuaderno está vacío"
+        Width="640"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Background="{DynamicResource FondoVentana}"
+        Foreground="{DynamicResource Texto}"
+        FontFamily="Segoe UI"
+        FontSize="14">
+
+    <!--
+        LA PRIMERA VEZ, CON EL CUADERNO VACÍO.
+
+        Un cuaderno recién creado no tiene ni un contacto, y una rejilla vacía sin explicación
+        parece un programa roto. Así que se dice qué pasa, dónde vive el cuaderno, y se ofrece
+        traer lo que ya tiene: su respaldo de Log4OM.
+
+        NO SE IMPORTA NADA SOLO. Meter miles de contactos en el cuaderno de alguien sin que lo
+        haya pedido no se hace, por muy bien que salga. Se ofrece, se explica qué va a pasar y
+        decide él.
+
+        Y cuando termina se enseña el parte ENTERO, con las confirmaciones rescatadas al frente:
+        es la cifra que justifica fundir las copias en vez de saltarlas, y cada una es un
+        diploma que no se pierde.
+    -->
+
+    <Window.Resources>
+        <conversores:NoEsVacio x:Key="NoEsVacio" />
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+    </Window.Resources>
+
+    <Border Padding="18">
+        <StackPanel>
+            <TextBlock Text="Su cuaderno está vacío"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource Acento}"
+                       TextWrapping="Wrap" />
+
+            <TextBlock TextWrapping="Wrap" Margin="0,8,0,0">
+                Acaba de crearse un cuaderno nuevo y todavía no tiene ningún contacto. Si ya
+                lleva su cuaderno en otro programa, puede traérselo ahora desde un fichero ADIF.
+            </TextBlock>
+
+            <Border Margin="0,12,0,0"
+                    Padding="10,8"
+                    CornerRadius="4"
+                    Background="{DynamicResource FondoResalte}"
+                    BorderBrush="{DynamicResource Borde}"
+                    BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="Dónde vive su cuaderno" FontWeight="Bold" />
+                    <TextBlock Text="{Binding RutaDelCuaderno}"
+                               FontFamily="Consolas, Cascadia Mono, Courier New"
+                               TextWrapping="Wrap"
+                               Margin="0,3,0,0" />
+                    <TextBlock Text="Es un solo fichero: se puede copiar, llevar a otro equipo o guardar como respaldo. Al lado hay una carpeta «copias» con las de seguridad."
+                               Style="{StaticResource TextoTenueEstilo}"
+                               TextWrapping="Wrap"
+                               Margin="0,3,0,0" />
+                </StackPanel>
+            </Border>
+
+            <!-- El parte de la importación, cuando ya se ha hecho -->
+            <Border Margin="0,12,0,0"
+                    Padding="10,8"
+                    CornerRadius="4"
+                    Background="{DynamicResource FondoAlterno}"
+                    BorderBrush="{DynamicResource BordeSuave}"
+                    BorderThickness="1"
+                    Visibility="{Binding Parte, Converter={StaticResource NoEsVacio}}">
+                <StackPanel>
+                    <TextBlock Text="{Binding Parte}" TextWrapping="Wrap" />
+
+                    <TextBlock Text="{Binding Rescatadas}"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource CorrectoTexto}"
+                               TextWrapping="Wrap"
+                               Margin="0,6,0,0"
+                               Visibility="{Binding Rescatadas, Converter={StaticResource NoEsVacio}}" />
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="{Binding Aviso}"
+                       Foreground="{DynamicResource AvisoTexto}"
+                       TextWrapping="Wrap"
+                       Margin="0,10,0,0"
+                       Visibility="{Binding Aviso, Converter={StaticResource NoEsVacio}}" />
+
+            <WrapPanel Margin="0,16,0,0" HorizontalAlignment="Right">
+                <Button Content="Importar un ADIF…"
+                        Click="AlPedirImportar"
+                        Style="{StaticResource BotonPrincipal}"
+                        Margin="0,0,8,0"
+                        x:Name="BotonImportar"
+                        AutomationProperties.Name="Importar un fichero ADIF en el cuaderno" />
+
+                <Button Content="Empezar de cero"
+                        Click="AlEmpezarDeCero"
+                        AutomationProperties.Name="Empezar con el cuaderno vacío" />
+            </WrapPanel>
+        </StackPanel>
+    </Border>
+</Window>

@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.Cascada"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        LA CASCADA.
+
+        Es el instrumento de esta pestaña: lo que hay en el aire, de un vistazo, antes de leer
+        una sola línea de texto. La imagen la pinta el modelo de vista y aquí sólo se estira
+        hasta donde llegue el hueco; encima van los dos cursores de WSJT-X —verde el de
+        recepción, rojo el de transmisión— y pulsar en la cascada lleva la recepción (y la
+        transmisión, si no está fijada) a donde se ha pulsado. Mayúsculas y clic mueve sólo la
+        transmisión.
+
+        Se estira con interpolación de baja calidad a propósito: una cascada suavizada se ve
+        más bonita y se lee peor, porque emborrona justo las señales de un punto de ancho, que
+        son las débiles.
+    -->
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0"
+                x:Name="Marco"
+                CornerRadius="3"
+                ClipToBounds="True"
+                BorderThickness="1"
+                BorderBrush="#FF2A2F36"
+                Background="#FF060809"
+                Cursor="Cross"
+                MouseLeftButtonDown="AlPulsarEnLaCascada"
+                ToolTip="Clic: pone la recepción (y la transmisión si no está fijada). Mayús+clic: sólo la transmisión.">
+            <Grid>
+                <Image x:Name="Lienzo"
+                       Stretch="Fill"
+                       RenderOptions.BitmapScalingMode="LowQuality"
+                       SnapsToDevicePixels="True" />
+
+                <TextBlock x:Name="Hueco"
+                           Text="Sin cascada. Pulse «Escuchar» para abrir la entrada de audio."
+                           Foreground="#FF9BA6B2"
+                           FontSize="11"
+                           MaxWidth="320"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+
+                <!-- El cursor de recepción, verde, como en WSJT-X -->
+                <Rectangle x:Name="CursorDeRx"
+                           Width="2"
+                           Fill="#FF3DDC84"
+                           Opacity="0.85"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Stretch"
+                           IsHitTestVisible="False" />
+
+                <!-- El cursor de transmisión, rojo -->
+                <Rectangle x:Name="CursorDeTono"
+                           Width="2"
+                           Fill="#FFFF4A3D"
+                           Opacity="0.9"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Stretch"
+                           IsHitTestVisible="False" />
+            </Grid>
+        </Border>
+
+        <!-- La regla de frecuencias: sin ella, la cascada es un dibujo bonito sin escala. -->
+        <Grid Grid.Row="1" x:Name="Regla" Margin="0,2,0,0" Height="14" />
+    </Grid>
+</UserControl>

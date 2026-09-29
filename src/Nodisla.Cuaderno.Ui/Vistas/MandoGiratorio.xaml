@@ -1,0 +1,93 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.MandoGiratorio"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="True">
+
+    <!--
+        Un mando giratorio del frontal, DOBLE Y CONCÉNTRICO como los de la radio del operador
+        (docs\capturas\referencia-ft710-frontal.jpg): una falda ancha y estriada con la raya
+        blanca que marca la posición, y encima un mando más pequeño, también estriado, con la
+        tapa negra brillante.
+
+        Solo es el mando: el rótulo serigrafiado («RF GAIN/SQL») lo pone el frontal encima, donde
+        está en el equipo. El valor va en la tapa, pequeño: un mando dibujado sin su número no
+        sirve para operar, porque el operador no sabe dónde lo ha dejado.
+
+        Se dibuja en 100 × 100 dentro de un Viewbox: mide lo que le dé el frontal.
+        La raya gira en el arco útil de un potenciómetro de verdad, 270 grados.
+        Colores fijos: el equipo es negro con cualquier tema.
+    -->
+
+    <UserControl.Resources>
+        <RadialGradientBrush x:Key="Falda" GradientOrigin="0.35,0.25" Center="0.5,0.5" RadiusX="0.6" RadiusY="0.6">
+            <GradientStop Offset="0" Color="#FF30353B" />
+            <GradientStop Offset="0.7" Color="#FF15181B" />
+            <GradientStop Offset="1" Color="#FF070809" />
+        </RadialGradientBrush>
+
+        <LinearGradientBrush x:Key="Estriado" StartPoint="0.15,0" EndPoint="0.85,1">
+            <GradientStop Offset="0" Color="#FF8E97A1" />
+            <GradientStop Offset="0.4" Color="#FF3E444B" />
+            <GradientStop Offset="0.75" Color="#FF15181B" />
+            <GradientStop Offset="1" Color="#FF4A5058" />
+        </LinearGradientBrush>
+
+        <RadialGradientBrush x:Key="Tapa" GradientOrigin="0.3,0.22" Center="0.5,0.5" RadiusX="0.7" RadiusY="0.7">
+            <GradientStop Offset="0" Color="#FF5A616A" />
+            <GradientStop Offset="0.35" Color="#FF1E2226" />
+            <GradientStop Offset="1" Color="#FF050607" />
+        </RadialGradientBrush>
+    </UserControl.Resources>
+
+    <Viewbox Stretch="Uniform">
+        <Grid Width="100" Height="100">
+            <!-- La sombra sobre la chapa. -->
+            <Ellipse Fill="#80000000" Margin="3,5,-3,-5" />
+
+            <!-- La falda, con su canto estriado. -->
+            <Ellipse Fill="{StaticResource Falda}" Stroke="#FF050607" StrokeThickness="1" />
+            <Ellipse Margin="2" Stroke="{StaticResource Estriado}" StrokeThickness="5"
+                     StrokeDashArray="0.45 0.45" Opacity="0.8" />
+
+            <!-- La raya blanca de la falda, que dice por dónde va el mando. -->
+            <Grid RenderTransformOrigin="0.5,0.5">
+                <Grid.RenderTransform>
+                    <RotateTransform Angle="{Binding Giro, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                </Grid.RenderTransform>
+                <Rectangle Width="3.5" Height="17" Fill="#FFF2F6FA" RadiusX="1.5" RadiusY="1.5"
+                           HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,2,0,0" />
+            </Grid>
+
+            <!-- El mando de encima: canto estriado y tapa brillante. -->
+            <Ellipse Margin="21" Fill="#FF0B0D0F">
+                <Ellipse.Effect>
+                    <DropShadowEffect BlurRadius="6" ShadowDepth="2" Direction="300" Opacity="0.8" />
+                </Ellipse.Effect>
+            </Ellipse>
+            <Ellipse Margin="22" Stroke="{StaticResource Estriado}" StrokeThickness="6"
+                     StrokeDashArray="0.4 0.4" />
+            <Ellipse Margin="29" Fill="{StaticResource Tapa}" Stroke="#FF6A727C" StrokeThickness="0.8" />
+            <Ellipse Margin="33" Stroke="#22FFFFFF" StrokeThickness="1" />
+
+            <!-- El valor, en la tapa. -->
+            <TextBlock Text="{Binding ValorTexto, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                       FontSize="11"
+                       FontWeight="Bold"
+                       FontFamily="Arial Narrow, Arial"
+                       Foreground="#FFD8DEE4"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       TextTrimming="None" />
+
+            <!-- El valor del mando de encima (el centro), pequeño y en gris, si tiene. -->
+            <TextBlock Text="{Binding ValorInteriorTexto, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                       FontSize="7"
+                       FontFamily="Arial Narrow, Arial"
+                       Foreground="#FF9AA3AD"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Margin="0,26,0,0"
+                       TextTrimming="None" />
+        </Grid>
+    </Viewbox>
+</UserControl>

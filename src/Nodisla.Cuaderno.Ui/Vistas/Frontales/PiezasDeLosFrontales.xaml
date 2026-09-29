@@ -1,0 +1,222 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        LAS PIEZAS COMUNES DE LOS FRONTALES DIBUJADOS (docs/18-frontales.md): los colores, la
+        tecla de goma y el rótulo serigrafiado, sacados del FT-710 (FrontalFt710.xaml) para que
+        todos los modelos se hagan con las mismas piezas. Colores FIJOS: las radios son negras
+        con cualquier tema.
+
+        Una tecla ENCENDIDA (su función está puesta en el equipo) lleva el rótulo en ámbar: se
+        enlaza en Tag con Pilotos[Mando].Encendido, que nunca es nulo.
+    -->
+
+    <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+
+    <!-- «Según manual, sin probar con radio»: sale mientras el modelo no se ha validado. -->
+    <Style x:Key="SinProbar" TargetType="TextBlock">
+        <Setter Property="Text" Value="según manual, sin probar con radio" />
+        <Setter Property="Foreground" Value="#FFD9AE4E" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="FontStyle" Value="Italic" />
+        <Setter Property="Visibility" Value="{Binding SinProbarConRadio, Converter={StaticResource BooleanoAVisible}}" />
+        <Setter Property="ToolTip" Value="Este modelo está programado según su manual y no se ha probado con la radio real." />
+    </Style>
+
+    <SolidColorBrush x:Key="Serigrafia" Color="#FFC4CBD3" />
+    <SolidColorBrush x:Key="TeclaTexto" Color="#FFE8ECF0" />
+    <SolidColorBrush x:Key="TeclaApagada" Color="#FF8A929B" />
+    <SolidColorBrush x:Key="PilotoApagado" Color="#FF25292E" />
+    <SolidColorBrush x:Key="RojoTx" Color="#FFE2352B" />
+    <SolidColorBrush x:Key="Dorado" Color="#FFD9AE4E" />
+
+    <LinearGradientBrush x:Key="Cuerpo" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#FF26292D" />
+        <GradientStop Offset="0.08" Color="#FF1B1D20" />
+        <GradientStop Offset="0.9" Color="#FF121416" />
+        <GradientStop Offset="1" Color="#FF0B0C0E" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="CuerpoBorde" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#FF4E555D" />
+        <GradientStop Offset="1" Color="#FF0A0B0D" />
+    </LinearGradientBrush>
+
+    <!-- ICOM: chapa gris antracita, algo más clara y más plana que la de Yaesu. -->
+    <LinearGradientBrush x:Key="CuerpoIcom" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#FF3A3E43" />
+        <GradientStop Offset="0.06" Color="#FF2A2D31" />
+        <GradientStop Offset="0.94" Color="#FF1E2023" />
+        <GradientStop Offset="1" Color="#FF121315" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="Tecla" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#FF3E434A" />
+        <GradientStop Offset="0.45" Color="#FF2A2E33" />
+        <GradientStop Offset="1" Color="#FF16181B" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="TeclaPulsada" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#FF16181B" />
+        <GradientStop Offset="1" Color="#FF383D43" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="TeclaBorde" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#FF626A73" />
+        <GradientStop Offset="1" Color="#FF08090B" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="Hueco" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#FF050607" />
+        <GradientStop Offset="1" Color="#FF1E2227" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="CantoMetalico" StartPoint="0.15,0" EndPoint="0.85,1">
+        <GradientStop Offset="0" Color="#FFB5BDC6" />
+        <GradientStop Offset="0.35" Color="#FF59616A" />
+        <GradientStop Offset="0.7" Color="#FF1C1F23" />
+        <GradientStop Offset="1" Color="#FF6C747E" />
+    </LinearGradientBrush>
+
+    <Style x:Key="TeclaDelFrontal" TargetType="Button">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="Foreground" Value="{StaticResource TeclaTexto}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border Background="#88000000" CornerRadius="4" Margin="0.5,2,-0.5,-2" />
+                        <Border x:Name="cuerpo"
+                                Background="{StaticResource Tecla}"
+                                BorderBrush="{StaticResource TeclaBorde}"
+                                BorderThickness="1"
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <Border x:Name="brillo"
+                                BorderBrush="#38FFFFFF"
+                                BorderThickness="0,1,0,0"
+                                CornerRadius="4,4,0,0"
+                                Margin="3,1,3,0"
+                                VerticalAlignment="Top"
+                                Height="4" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="cuerpo" Property="Background" Value="#FF464C54" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="cuerpo" Property="Background" Value="{StaticResource TeclaPulsada}" />
+                            <Setter TargetName="brillo" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource TeclaApagada}" />
+                            <Setter TargetName="brillo" Property="Opacity" Value="0.35" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="True">
+                <Setter Property="Foreground" Value="#FFFFB23F" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--
+        La tecla de ICOM: goma gris más clara, casi plana, con el rótulo blanco en la propia
+        tecla y un piloto (una raya) que se enciende en naranja con la función puesta.
+    -->
+    <Style x:Key="TeclaIcom" TargetType="Button" BasedOn="{StaticResource TeclaDelFrontal}">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Border Background="#77000000" CornerRadius="3" Margin="0,1.5,0,-1.5" />
+                        <Border x:Name="cuerpo" CornerRadius="3" BorderThickness="1" BorderBrush="#FF15171A">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Offset="0" Color="#FF5A5F66" />
+                                    <GradientStop Offset="1" Color="#FF3A3E44" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="cuerpo" Property="Background" Value="#FF686E76" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="cuerpo" Property="Background" Value="#FF2E3136" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource TeclaApagada}" />
+                            <Setter TargetName="cuerpo" Property="Opacity" Value="0.7" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Serigrafiado" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource Serigrafia}" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="TextTrimming" Value="None" />
+    </Style>
+
+    <!-- El nombre de la marca y del modelo, escritos: nada de logotipos. -->
+    <Style x:Key="Marca" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="#FFB9C0C8" />
+        <Setter Property="FontFamily" Value="Arial" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="TextTrimming" Value="None" />
+    </Style>
+
+    <!-- Piloto TX/RX: rojo en transmisión. Va sobre un Border enlazado al equipo. -->
+    <Style x:Key="PilotoTx" TargetType="Border">
+        <Setter Property="Background" Value="#FF3A3F46" />
+        <Setter Property="CornerRadius" Value="2" />
+        <Setter Property="ToolTip" Value="TX — Rojo mientras el equipo transmite" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Transmitiendo}" Value="True">
+                <Setter Property="Background" Value="{StaticResource RojoTx}" />
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect Color="#FFE2352B" BlurRadius="12" ShadowDepth="0" Opacity="1" />
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Piloto de encendido: verde (ICOM) o azul (Yaesu) con el equipo conectado. -->
+    <Style x:Key="PilotoEncendido" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource PilotoApagado}" />
+        <Setter Property="CornerRadius" Value="2" />
+        <Setter Property="ToolTip" Value="Encendido: se ilumina con el equipo conectado" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Conectado}" Value="True">
+                <Setter Property="Background" Value="#FF3F9BFF" />
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect Color="#FF2E8BFF" BlurRadius="10" ShadowDepth="0" Opacity="1" />
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>

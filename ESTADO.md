@@ -1,0 +1,96 @@
+# Cuaderno NODISLA
+
+Clon en español de Log4OM NextGen 2.40.0.0, para uso particular de EA8DLF.
+
+## Estado — 25-09-2026
+
+**Fases 1 a 4 hechas.** La aplicación guarda el cuaderno de verdad: **1.795 contactos de EA8DLF**
+importados de Log4OM y viviendo en `%AppData%\CuadernoNodisla\cuaderno.sqlite`.
+
+| Capa | Pruebas |
+|---|---:|
+| Dominio y DXCC | 567 |
+| Aplicación | 177 |
+| Integraciones (cluster, bandplan, FLDigi, WSJT-X/JTDX, N1MM) | 169 |
+| Servicios de QSL | 98 |
+| Propagación | 95 |
+| Módem propio de FT8 y FT4 | 94 |
+| ADIF | 91 |
+| Radio (FT-710 y vigilante de PTT) | 90 |
+| Diplomas | 80 |
+| Audio | 60 |
+| Datos | 59 |
+| **Total** | **1.680** |
+
+Compilación de la solución: **0 avisos, 0 errores**.
+
+### Lo que hace hoy
+
+- **Cuaderno**: entrada por teclado, rejilla paginada, trabajado antes, ADIF de ida y vuelta sin
+  pérdida, fusión de duplicados.
+- **Cabina**: frontal del FT-710 dibujado con sus 24 mandos, dos VFO, franja solar con datos
+  reales, matriz de novedad y matriz de banda por modo.
+- **Cluster** por Telnet con bandmap, **mapa** con paso gris y trayectos, **diplomas** con las
+  553.064 referencias, **ajustes** con credenciales cifradas.
+- **Módem propio de FT8/FT4**: modula, sincroniza y decodifica. Recupera el 100 % hasta −15 dB y
+  el 91,7 % a −18 dB, **con cero decodificaciones falsas en todas las franjas**.
+
+### Nada se conecta solo
+
+El equipo y el cluster arrancan **sin conexión**; conectar es siempre una acción del operador.
+El audio y el módem se registran sin abrir ningún dispositivo.
+
+## Pendiente de decisión del operador
+
+1. **Tabla del LDPC(174,91) real** (`ft8_lib`, licencia MIT). Sin ella el módem se queda donde
+   está; con ella debería alcanzar la sensibilidad de FT8 de verdad.
+2. **Motor de propagación real** (ITURHFProp o el paquete VOACAP) o seguir con la aproximación,
+   que está honestamente etiquetada como tal.
+3. **Dos escrituras en el FT-710** para resolver las tablas de ancho de filtro y retardo de VOX.
+   Hoy se muestran como índice en vez de en hercios y milisegundos.
+
+## Siguiente
+
+**Fase 5**: concursos, satélites, manipulador y entrenador de CW, macros, net control, etiquetas
+e impresión de QSL, y la ayuda en español con capturas.
+
+## Decisiones tomadas (2026-09-21)
+
+- **Stack**: C# .NET 8 + WPF, escritorio Windows.
+- **Alcance**: paridad completa con Log4OM, por fases.
+- **Servicios**: LoTW, QRZ.com, ClubLog, eQSL, cluster DX, WSJT-X y JTDX.
+- **Modos digitales**: módem propio integrado (FT8/FT4 dentro de la app), después del núcleo.
+- **Base de datos**: SQLite, un solo fichero. MySQL/MariaDB del original no se replica.
+- **Idioma**: código en español; campos ADIF en inglés por normativos; todo lo visible, en español.
+- **Duplicados al importar**: fundir, nunca descartar.
+
+## Entorno
+
+- .NET SDK 8.0.422 · Visual Studio 18 · Windows 10 x64 (10.0.18362)
+- Original instalado en `D:\Log4OM NextGen\`; sus datos en `%AppData%\Log4OM2\`
+- Hamlib 4.6.2 con `rigctld.exe` viene con Log4OM · OmniRig 1.20 instalado
+
+## Cómo se prueba
+
+```
+dotnet build
+dotnet test
+dotnet run --project src\Nodisla.Cuaderno.Ui
+dotnet run --project herramientas\Nodisla.Cuaderno.Herramientas.Importar -- <fichero.adi>
+```
+
+## Siguiente
+
+**Fase 2 — operar**: control del equipo (CAT y PTT), cluster DX por Telnet, UDP de WSJT-X y
+JTDX, XML-RPC de FLDigi, mapa y bandplan.
+
+Antes de la primera transmisión real hay que tener el vigilante que suelta PTT ante excepción
+o cuelgue. Es el único riesgo del proyecto con daño material.
+
+## Documentos
+
+- `docs/00-plan-maestro.md` — fases, riesgos y decisiones
+- `docs/01-inventario-funcional.md` — los 27 módulos del original
+- `docs/02-modelo-datos.md` — esquema del original y modelo propuesto
+- `docs/03-arquitectura.md` — stack, integraciones y convenciones
+- `docs/capturas/` — capturas de la ventana principal

@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nodisla.Cuaderno.Aplicacion\Nodisla.Cuaderno.Aplicacion.csproj" />
+    <!-- Se referencia Radio para reutilizar AudioDelFt710: es quien sabe cual de los mas de
+         veinte dispositivos de sonido de esta maquina es la radio, emparejando por el
+         identificador de contenedor del USB. Duplicar ese codigo aqui seria peor. -->
+    <ProjectReference Include="..\Nodisla.Cuaderno.Radio\Nodisla.Cuaderno.Radio.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="NAudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Nodisla.Cuaderno.Audio.Pruebas" />
+  </ItemGroup>
+
+</Project>

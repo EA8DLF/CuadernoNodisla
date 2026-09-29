@@ -1,0 +1,70 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+.vs/
+.vscode/
+.idea/
+TestResults/
+*.trx
+*.coverage
+coverage*.xml
+
+# Publicación e instalador (binarios generados, no fuente)
+publish/
+artefactos/
+instalador/publicar/
+instalador/salida/
+
+# Biblioteca de FTDI: su licencia prohíbe redistribuirla (ver lib/ftdi/LEEME.md)
+lib/ftdi/*
+!lib/ftdi/LEEME.md
+
+# Motor ITURHFProp de la UIT: no se redistribuye (ver herramientas/ITURHFProp/LEEME.md)
+herramientas/ITURHFProp/programa/
+herramientas/ITURHFProp/datos/
+herramientas/ITURHFProp/ejemplos/
+herramientas/ITURHFProp/fuente/
+
+# Catálogo de diplomas: lo genera cada usuario desde su Log4OM (ver recursos/diplomas/LEEME.md)
+recursos/diplomas/referencias/
+recursos/diplomas/diplomas-nodisla.tsv
+src/Nodisla.Cuaderno.Diplomas/Recursos/
+
+# Manuales de terceros con derechos de autor
+docs/manuales/
+
+# Banco de QSOs reales de las pruebas de DXCC: es un cuaderno personal
+tests/Nodisla.Cuaderno.Dominio.Pruebas/Datos/
+
+# Datos locales, secretos y registros
+*.sqlite
+*.SQLite
+*.sqlite-shm
+*.sqlite-wal
+*.db
+*.log
+*.bak
+*.adi
+*.adif
+*.adx
+ajustes.json
+paneles.json
+correo.json
+config.local.*
+*.pfx
+*.p12
+*.key
+*.pem
+*.snk
+*.cer
+*.eml
+
+# Temporales
+*.tmp
+*~
+*.rotos.txt
+Thumbs.db
+Desktop.ini

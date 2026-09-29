@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nodisla.Cuaderno.Aplicacion\Nodisla.Cuaderno.Aplicacion.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <!-- Las constantes del protocolo que no se pueden deducir: la matriz de paridad del LDPC y la
+       mezcla de FT4. Van junto al programa, no empotradas, para que se puedan mirar y comparar
+       sin recompilar. Ver Tablas/LEEME.md para la procedencia y la licencia. -->
+  <ItemGroup>
+    <None Update="Tablas\tablas-ft8.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>tablas-ft8.txt</Link>
+    </None>
+    <None Update="Tablas\tablas-msk144.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>tablas-msk144.txt</Link>
+    </None>
+    <None Update="Tablas\tablas-msk40.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>tablas-msk40.txt</Link>
+    </None>
+    <None Update="Tablas\tablas-fst4.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>tablas-fst4.txt</Link>
+    </None>
+    <None Update="Tablas\tablas-fst4w.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>tablas-fst4w.txt</Link>
+    </None>
+    <None Update="Tablas\tablas-q65.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>tablas-q65.txt</Link>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="AwesomeAssertions" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Nodisla.Cuaderno.Satelites\Nodisla.Cuaderno.Satelites.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <!-- Los vectores oficiales de verificacion de SGP4 viajan con las pruebas. Sin ellos
+       «predice bien» seria una opinion. -->
+  <ItemGroup>
+    <None Include="Datos\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

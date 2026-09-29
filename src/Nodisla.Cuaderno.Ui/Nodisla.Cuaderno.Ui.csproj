@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Recursos\CuadernoNodisla.ico</ApplicationIcon>
+    <SatelliteResourceLanguages>es;en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nodisla.Cuaderno.Aplicacion\Nodisla.Cuaderno.Aplicacion.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Datos\Nodisla.Cuaderno.Datos.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Adif\Nodisla.Cuaderno.Adif.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Infraestructura\Nodisla.Cuaderno.Infraestructura.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Radio\Nodisla.Cuaderno.Radio.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Integraciones\Nodisla.Cuaderno.Integraciones.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Ui.Mapa\Nodisla.Cuaderno.Ui.Mapa.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Servicios\Nodisla.Cuaderno.Servicios.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Propagacion\Nodisla.Cuaderno.Propagacion.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Diplomas\Nodisla.Cuaderno.Diplomas.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Audio\Nodisla.Cuaderno.Audio.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Modos\Nodisla.Cuaderno.Modos.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Satelites\Nodisla.Cuaderno.Satelites.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Impresion\Nodisla.Cuaderno.Impresion.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    
+  </ItemGroup>
+
+</Project>
