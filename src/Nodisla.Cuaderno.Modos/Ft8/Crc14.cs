@@ -58,16 +58,25 @@ public static class Crc14
         if (bitsDelMensaje.Length != BitsDelMensaje)
             throw new ArgumentException($"El mensaje debe tener {BitsDelMensaje} bits y tiene {bitsDelMensaje.Length}.", nameof(bitsDelMensaje));
 
-        // Division larga en modulo dos: se va metiendo bit a bit y, cada vez que el resto se
-        // desborda por arriba, se le resta el polinomio. En modulo dos restar es un o-exclusivo.
+        // Division larga en modulo dos, en la forma DIRECTA: cada bit del mensaje entra por
+        // ARRIBA del registro (se suma al bit que va a salir) y, si ese bit sale a uno, se resta
+        // el polinomio. Asi se calcula M(x)·x^14 mod P(x), que es el CRC del protocolo.
+        //
+        // OJO, fallo real del 27-09-2026: antes los bits entraban por ABAJO del registro sin
+        // anadir despues los 14 ceros. Eso calcula M(x) mod P(x), otro numero. Nuestro emisor y
+        // nuestro receptor usaban el mismo calculo y se entendian entre ellos —todas las pruebas
+        // pasaban—, pero con el aire de verdad el LDPC sacaba palabras validas y el CRC las tiraba
+        // todas: cero decodificaciones con la cascada llena de senales. La prueba que lo fija
+        // compara contra mensajes de FT8 reales con su CRC conocido.
         const int BitDeArriba = 1 << (BitsDelCrc - 1);
         var resto = 0;
         for (var i = 0; i < BitsProtegidos; i++)
         {
             // Los bits del 77 al 81 son los cinco ceros de relleno.
             var bit = i < bitsDelMensaje.Length ? bitsDelMensaje[i] : (byte)0;
+            resto ^= bit << (BitsDelCrc - 1);
             var desborda = (resto & BitDeArriba) != 0;
-            resto = ((resto << 1) | bit) & 0x3FFF;
+            resto = (resto << 1) & 0x3FFF;
             if (desborda) resto ^= Polinomio;
         }
         return (ushort)(resto & 0x3FFF);

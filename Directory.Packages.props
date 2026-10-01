@@ -17,7 +17,8 @@
     <PackageVersion Include="Dapper" Version="2.1.66" />
     <!-- Los modulos de infraestructura trazan contra la abstraccion, no contra Serilog:
          asi no arrastran una implementacion concreta ni se atan a ella. -->
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+    <!-- 8.0.3 y no 8.0.2: PDFsharp exige al menos esa version. Sigue en la rama 8.0.x. -->
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.3" />
     <PackageVersion Include="Serilog" Version="4.4.0" />
     <PackageVersion Include="Serilog.Extensions.Hosting" Version="8.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
@@ -30,6 +31,9 @@
     <PackageVersion Include="NAudio" Version="2.2.1" />
     <!-- Mapas. Mapsui y no GMap.NET: el paquete WPF de GMap no se publica desde junio de 2022. -->
     <PackageVersion Include="Mapsui.Wpf" Version="5.1.0" />
+    <!-- Etiquetas y tarjetas de QSL. MIT, gestionado, sin dependencias nativas; ver
+         src\Nodisla.Cuaderno.Impresion\Nodisla.Cuaderno.Impresion.csproj. -->
+    <PackageVersion Include="PDFsharp" Version="6.2.4" />
   </ItemGroup>
   <!-- Pruebas -->
   <ItemGroup>

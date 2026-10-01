@@ -41,8 +41,24 @@ public sealed record ResultadoDeRegistro
 /// Registra un contacto nuevo: aplica el perfil de estacion, rellena lo que falte con los
 /// valores por omision, valida y comprueba que no sea un duplicado.
 /// </summary>
-public sealed class RegistrarQso(IRepositorioQso repositorioQso, IRepositorioEstacion repositorioEstacion)
+/// <remarks>
+/// Si hay <see cref="CompletadorDeQso"/>, antes de guardar se piden a QRZ.com los datos que
+/// falten (nombre, QTH, localizador…). Se espera un momento; si la consulta tarda mas, el
+/// contacto se guarda sin ellos y se completa en cuanto llegue la respuesta. Todo contacto
+/// guardado se anuncia por <see cref="AvisosDeQsos"/>, que es donde escucha la cola de subidas.
+/// </remarks>
+public sealed class RegistrarQso(
+    IRepositorioQso repositorioQso,
+    IRepositorioEstacion repositorioEstacion,
+    CompletadorDeQso? completador = null,
+    AvisosDeQsos? avisos = null)
 {
+    /// <summary>
+    /// Ultima tarea de completado en segundo plano. Solo para las pruebas: la interfaz no
+    /// espera nunca por ella.
+    /// </summary>
+    public Task CompletadoPendiente { get; private set; } = Task.CompletedTask;
+
     /// <summary>Margen que se tolera al comprobar que la hora del contacto no es futura.</summary>
     private static readonly TimeSpan MargenDeFuturo = TimeSpan.FromMinutes(2);
 
@@ -68,13 +84,57 @@ public sealed class RegistrarQso(IRepositorioQso repositorioQso, IRepositorioEst
             if (duplicado is not null) return new ResultadoDeRegistro { Duplicado = duplicado };
         }
 
+        // La consulta a QRZ se lanza sin el testigo de la peticion: si tarda, sigue despues
+        // de guardar y completa el contacto ya guardado.
+        Task<FichaIndicativo?>? consulta = null;
+        if (completador is { EstaDisponible: true })
+        {
+            consulta = completador.ConsultarAsync(qso.Call);
+            if (await completador.EsperarAsync(consulta, ct).ConfigureAwait(false))
+            {
+                CompletadorDeQso.Completar(qso, await consulta.ConfigureAwait(false));
+                consulta = null;
+            }
+        }
+
         var ahora = DateTimeOffset.UtcNow;
         qso.CreadoUtc = ahora;
         qso.ModificadoUtc = ahora;
 
         var idNuevo = await repositorioQso.AnadirAsync(qso, ct).ConfigureAwait(false);
         qso.Id = idNuevo;
+
+        if (consulta is null) avisos?.Avisar(qso, TipoDeGuardado.Nuevo);
+        else CompletadoPendiente = CompletarDespuesAsync(qso, consulta);
+
         return new ResultadoDeRegistro { Id = idNuevo, Registrado = qso };
+    }
+
+    /// <summary>
+    /// Completa el contacto ya guardado cuando llega la ficha, y solo entonces lo anuncia: asi
+    /// la cola de subidas manda el contacto ya con el nombre y el localizador.
+    /// </summary>
+    private async Task CompletarDespuesAsync(Qso qso, Task<FichaIndicativo?> consulta)
+    {
+        try
+        {
+            var ficha = await consulta.ConfigureAwait(false);
+            if (CompletadorDeQso.Completar(qso, ficha))
+            {
+                qso.ModificadoUtc = DateTimeOffset.UtcNow;
+                await repositorioQso.ActualizarAsync(qso).ConfigureAwait(false);
+                avisos?.Avisar(qso, TipoDeGuardado.Completado);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Trace.TraceWarning(
+                $"No se ha podido completar el contacto con {qso.Call.Valor}: {ex.Message}");
+        }
+        finally
+        {
+            avisos?.Avisar(qso, TipoDeGuardado.Nuevo);
+        }
     }
 
     /// <summary>

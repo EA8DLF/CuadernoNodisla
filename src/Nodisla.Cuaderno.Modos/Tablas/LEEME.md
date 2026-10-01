@@ -7,6 +7,8 @@ deducir**:
 
 - La **matriz de paridad del código corrector LDPC(174,91)**: 83 ecuaciones que dicen qué bits de
   la palabra emitida tienen que sumar cero.
+- La **matriz generadora** del mismo código: las mismas 83 filas vistas por el otro lado, que
+  dicen directamente cómo se calcula cada bit de paridad.
 - La **secuencia de mezcla de FT4**: diez bytes con los que FT4 revuelve el mensaje antes de
   codificarlo, para que una señal de FT4 no pueda decodificarse como si fuera de FT8.
 
@@ -15,7 +17,7 @@ deducir**:
 | | |
 |---|---|
 | Proyecto | [`ft8_lib`](https://github.com/kgoba/ft8_lib), de Karlis Goba (YL3JG) |
-| Licencia | MIT |
+| Licencia | MIT — **Copyright (c) 2018 Kārlis Goba** |
 | Fichero | `ft8/constants.c` |
 | Versión | `cbc656c3757f1c19b5887e6d6008494b53654117`, del 14-12-2021 |
 | Traído el | 25-09-2026, con autorización expresa de EA8DLF |
@@ -41,12 +43,26 @@ las genere. O se tienen las mismas que todo el mundo o no se decodifica a nadie.
 del estándar de facto, del mismo tipo que el polinomio de un CRC o la tabla de sustitución de un
 cifrado.
 
-## Lo que **no** hace falta que esté
+## Para qué está la generadora si no se usa para codificar
 
-**La matriz generadora**, que es la otra tabla que suelen traer las implementaciones. Se despeja
-de estas mismas ecuaciones por eliminación gaussiana en módulo dos al cargar el código, de una
-vez y para siempre. La ventaja no es ahorrar espacio: es que **sólo hay una tabla que verificar**,
-y por tanto no puede haber dos que discrepen entre sí sin que nadie se entere.
+Codificar se sigue haciendo **despejando las ecuaciones de paridad** por eliminación gaussiana en
+módulo dos, una sola vez al cargar el código. La generadora no interviene en eso.
+
+Está para lo contrario: para **vigilar a la otra tabla**. Al cargar el fichero se codifican los 91
+mensajes que llevan un solo bit puesto por los dos caminos —despejando y con la generadora— y se
+comprueba que salen los mismos 174 bits. Basta con esos 91: el código es lineal, así que si las
+dos maneras coinciden en una base coinciden en todas las palabras.
+
+El razonamiento de por qué merece la pena es este. Una tabla de 522 números traída a mano es justo
+el sitio donde se cuela una errata, y una errata aquí **no da un error visible**: da un módem que
+decodifica basura de vez en cuando con el CRC cuadrando, que es exactamente lo que este cuaderno
+no se puede permitir. Tener las dos representaciones y cruzarlas convierte «me fío de que está
+bien copiada» en una comprobación que se hace sola en cada arranque. Si discrepan en un solo bit,
+el fichero **se rechaza entero**: no se sabe cuál de las dos está mal, así que no se puede confiar
+en ninguna.
+
+Está comprobado que funciona: cambiar un bit de la generadora en una copia del fichero hace que el
+módem lo rechace y se quede con el código de pruebas, avisando por el registro.
 
 ## Qué se comprobó antes de fiarse
 
@@ -55,6 +71,8 @@ Todo esto está en `TablasDelProtocoloPruebas` y se vuelve a comprobar en cada c
 | Comprobación | Resultado |
 |---|---|
 | Dimensiones | 174 bits por palabra, 91 de mensaje, 83 ecuaciones |
+| Las dos tablas dicen lo mismo | sí, comprobado en los 91 mensajes de la base al cargar |
+| Una errata de un bit se detecta | sí: el fichero se rechaza entero |
 | Peso de las filas | 24 ecuaciones de 7 bits y 59 de 6 |
 | Peso de las columnas | los 174 bits aparecen en exactamente 3 ecuaciones |
 | Unos en total | 522, por los dos caminos (24·7 + 59·6 = 174·3) |

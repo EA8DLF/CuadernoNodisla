@@ -150,7 +150,7 @@ public sealed partial class VistaModeloCuadernoVacio : ObservableObject
         if (parte.Choques.Count > 0)
         {
             texto.Append(CultureInfo.CurrentCulture,
-                $" Hay {parte.Choques.Count:N0} dato(s) que no cuadraban entre dos copias; se pueden revisar en Ajustes.");
+                $" Hay {parte.Choques.Count:N0} dato(s) que no cuadraban entre dos copias; se pueden revisar en Configuración › Libro (ADIF).");
         }
 
         if (parte.Avisos.Count > 0)

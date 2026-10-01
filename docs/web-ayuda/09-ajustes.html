@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Configuraci&#243;n · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html" class="actual" aria-current="page">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="configuraci&#243;n">Configuraci&#243;n</h1>
+<p>Todo lo que se configura una vez y se olvida, y lo que hace falta para diagnosticar cuando algo no va. Lo que se mira mientras se opera —el estado de las conexiones— se queda en <strong>Operar</strong>; aqu&#237; est&#225; el resto.</p>
+<p>Se abre con la entrada <strong>Configuraci&#243;n</strong>, a la derecha del todo de la barra (o con <code>Ctrl</code> <code>6</code>). Va por apartados, con la lista a la izquierda:</p>
+<div class="tabla"><table>
+<thead><tr><th>Apartado</th><th>Qu&#233; hay</th></tr></thead>
+<tbody>
+<tr><td><strong>Cuentas y servicios</strong></td><td>Una tarjeta por servicio: QRZ.com, LoTW, eQSL.cc, Club Log, HamQTH, el cluster y el correo (SMTP)</td></tr>
+<tr><td><strong>Subidas y QRZ</strong></td><td>Completar con la ficha de QRZ.com y la subida autom&#225;tica, con su cola</td></tr>
+<tr><td><strong>Equipo (CAT)</strong></td><td>Por d&#243;nde habla el cuaderno con la radio y el PTT</td></tr>
+<tr><td><strong>Audio y digitales</strong></td><td>Entrada y salida de sonido del equipo y c&#243;mo transmite y apunta el m&#243;dem</td></tr>
+<tr><td><strong>Fon&#237;a</strong></td><td>Altavoces, micr&#243;fono y PTT de fon&#237;a por el PC</td></tr>
+<tr><td><strong>Cluster</strong></td><td>El nodo, el guion de arranque y la consola cruda</td></tr>
+<tr><td><strong>Correo de las QSL</strong></td><td>La cuenta con la que se mandan las tarjetas</td></tr>
+<tr><td><strong>Libro (ADIF)</strong></td><td>Importar y exportar el cuaderno</td></tr>
+<tr><td><strong>Actualizaciones</strong></td><td>Versi&#243;n instalada, buscar versiones nuevas al arrancar o a mano</td></tr>
+</tbody></table></div>
+<figure><a href="capturas/primer-uso-cuentas.png"><img src="capturas/primer-uso-cuentas.png" alt="Configuraci&#243;n: cuentas y servicios en tarjetas" loading="lazy"></a><figcaption>Configuraci&#243;n: cuentas y servicios en tarjetas</figcaption></figure>
+<h2 id="cuentas-y-servicios">Cuentas y servicios</h2>
+<p>Cada servicio es una <strong>tarjeta</strong> con todo lo suyo junto: el usuario y los dem&#225;s datos de la cuenta, sus contrase&#241;as o claves, y una pastilla arriba a la derecha con su estado —verde <strong>Configurada</strong>, &#225;mbar <strong>Incompleta</strong> (o &#171;Falta TQSL&#187;, &#171;Falta la contrase&#241;a&#187;), gris <strong>Sin configurar</strong>—.</p>
+<ul>
+<li><strong>QRZ.com</strong> — usuario, contrase&#241;a (para la ficha del corresponsal) y la <em>Clave del cuaderno de QRZ</em> (para subir contactos; la da QRZ en <em>Logbook → Settings → API</em>).</li>
+<li><strong>LoTW</strong> — usuario, <strong>ubicaci&#243;n de estaci&#243;n de TQSL</strong> (el nombre que le puso en TQSL, no su indicativo), ruta de <code>tqsl.exe</code> si no est&#225; en su sitio, contrase&#241;a de LoTW y frase de paso del certificado. La tarjeta dice con toda claridad <strong>por qu&#233;</strong> no se puede subir cuando falta algo —el certificado, la frase de paso o <code>tqsl.exe</code>— y tiene <strong>Volver a comprobar</strong>. Antes de escribir la frase de paso, lea el aviso &#225;mbar de la propia tarjeta.</li>
+<li><strong>eQSL.cc</strong> — usuario, apodo del QTH (si tiene varios) y contrase&#241;a.</li>
+<li><strong>Club Log</strong> — correo de la cuenta, indicativo del cuaderno, contrase&#241;a y clave de API.</li>
+<li><strong>HamQTH</strong> — usuario y contrase&#241;a; hace de reserva cuando QRZ.com no contesta.</li>
+<li><strong>Cluster de DX</strong> — su estado (nodo e indicativo de entrada); <strong>Configurar…</strong> lleva al apartado Cluster.</li>
+<li><strong>Correo (SMTP)</strong> — su estado, <strong>Probar la conexi&#243;n</strong> (se identifica sin mandar nada) y <strong>Configurar…</strong>, que lleva al apartado Correo de las QSL.</li>
+</ul>
+<p>Un usuario vac&#237;o es el indicativo del perfil de estaci&#243;n, que es lo normal. Los datos de la cuenta se guardan con <strong>Guardar la cuenta</strong>; cada contrase&#241;a, con su propio <strong>Guardar</strong>.</p>
+<p>Las contrase&#241;as se guardan <strong>cifradas con la protecci&#243;n de datos de la cuenta de Windows (DPAPI)</strong>. Una vez guardadas, el campo no se vuelve a rellenar: solo dice si hay algo guardado o no. Un secreto que se repinta en pantalla es un secreto que alguien puede leer por encima del hombro.</p>
+<h2 id="subidas-y-qrz">Subidas y QRZ</h2>
+<figure><a href="capturas/configuracion-subidas.png"><img src="capturas/configuracion-subidas.png" alt="Configuraci&#243;n › Subidas y QRZ: completar con QRZ.com y la subida autom&#225;tica con su cola" loading="lazy"></a><figcaption>Configuraci&#243;n › Subidas y QRZ: completar con QRZ.com y la subida autom&#225;tica con su cola</figcaption></figure>
+<h3 id="completar-con-qrzcom">Completar con QRZ.com</h3>
+<p>La casilla <strong>Rellenar nombre, QTH, localizador… con la ficha de QRZ.com</strong> est&#225; marcada de f&#225;brica. Hace falta la contrase&#241;a de QRZ.com (tarjeta QRZ.com); con la de <strong>HamQTH</strong> guardada, HamQTH hace de reserva. Solo se rellena lo vac&#237;o; nunca se pisa lo que usted escriba.</p>
+<h3 id="subida-autom&#225;tica">Subida autom&#225;tica</h3>
+<p>Una casilla por servicio: <strong>LoTW</strong>, <strong>eQSL</strong>, <strong>Club Log</strong> y <strong>QRZ</strong> (el cuaderno de QRZ.com, con la <em>Clave del cuaderno de QRZ</em>). De f&#225;brica se marcan solas las que tienen credenciales guardadas; si toca una casilla, se queda como usted la deje.</p>
+<p>Todo contacto que se guarda (formulario, Digital o ronda) entra en la <strong>cola de subidas</strong>. La cola se guarda en disco: sin red, o si el servicio falla, se reintenta sola con espera creciente (1, 2, 4… minutos, hasta una hora) y otra vez al arrancar el programa. Despu&#233;s de 8 intentos fallidos el contacto queda marcado como fallido y la pastilla se pone roja; <strong>Subir ahora</strong> lo reintenta todo en el momento.</p>
+<p>Debajo de cada servicio se lee su estado con palabras y si admite correcciones: Club Log y QRZ reciben de nuevo un contacto modificado con F2; <strong>LoTW y eQSL no admiten modificar</strong> lo ya subido. LoTW necesita <strong>TQSL instalado</strong> con su certificado y la ubicaci&#243;n de estaci&#243;n: si falta, la pastilla lo dice y no se reintenta en bucle; en cuanto se arregla, sale todo solo.</p>
+<p>La importaci&#243;n de un ADIF <strong>no</strong> sube nada: solo se suben los contactos que se registran o se modifican en el programa.</p>
+<p><strong>La primera vez:</strong></p>
+<ol>
+<li>En <strong>Cuentas y servicios</strong>, tarjeta QRZ.com: guarde la contrase&#241;a y, si quiere subir al cuaderno de QRZ, la <em>Clave del cuaderno de QRZ</em>.</li>
+<li>Tarjeta LoTW: instale TQSL con su certificado, guarde la contrase&#241;a de LoTW, escriba la ubicaci&#243;n de estaci&#243;n de TQSL y pulse <strong>Guardar la cuenta</strong>.</li>
+<li>Tarjetas eQSL.cc y Club Log: contrase&#241;as, clave de API de Club Log y el correo de la cuenta.</li>
+<li>Mire que las pastillas de las tarjetas, y las de la barra de estado, se pongan verdes.</li>
+</ol>
+<h2 id="equipo-cat">Equipo (CAT)</h2>
+<p>Aqu&#237; se elige <strong>por d&#243;nde</strong> habla el cuaderno con la radio. Si esto se queda en &#171;Ninguna&#187;, el bot&#243;n &#171;Conectar&#187; del panel del equipo no abre nada.</p>
+<figure><a href="capturas/primer-uso-equipo-cat.png"><img src="capturas/primer-uso-equipo-cat.png" alt="Configuraci&#243;n › Equipo (CAT) con el FT-710" loading="lazy"></a><figcaption>Configuraci&#243;n › Equipo (CAT) con el FT-710</figcaption></figure>
+<ul>
+<li><strong>V&#237;a de control</strong>: <strong>CAT nativo (Yaesu e ICOM)</strong> por puerto serie, <code>rigctld</code> de Hamlib por TCP, u OmniRig.</li>
+<li><strong>Fabricante</strong> y <strong>Modelo</strong> (CAT nativo): el FT-710 y los dem&#225;s Yaesu e ICOM de <a href="15-equipos.html">Equipos</a>, o la detecci&#243;n autom&#225;tica. Los que no son el FT-710 salen marcados &#171;seg&#250;n manual, sin probar con radio&#187;. En ICOM, la <strong>direcci&#243;n CI-V</strong> si se cambi&#243; en la radio.</li>
+<li><strong>Puerto y velocidad</strong> (CAT nativo) — con detecci&#243;n autom&#225;tica si no se sabe el puerto: prueba primero por donde estaba y, si no contesta, recorre todos los puertos preguntando identificaci&#243;n. <strong>La detecci&#243;n es por lo que contesta el equipo, nunca por el n&#250;mero de puerto</strong>, porque puede haber otro aparato hablando tambi&#233;n por serie en la misma m&#225;quina. La velocidad la manda el equipo, no el cable — en el FT-710, MENU › OPERATION SETTING › GENERAL › <code>CAT-1 RATE</code>; use el puerto <strong>Enhanced</strong> a <strong>115.200</strong>.</li>
+<li><strong>M&#225;quina y puerto TCP</strong> (rigctld) — normalmente <code>127.0.0.1</code> y el <code>4532</code> de siempre, con <code>rigctld</code> ya arrancado de antemano.</li>
+<li><strong>N&#250;mero de equipo</strong> (OmniRig) — OmniRig maneja dos radios, la 1 y la 2; aqu&#237; se dice cu&#225;l sigue el cuaderno.</li>
+<li><strong>PTT</strong>: por d&#243;nde se sube — CAT, un puerto serie aparte con RTS/DTR, o VOX —, el <strong>tiempo m&#225;ximo en antena</strong> (de f&#225;brica 180 s, tope duro 600 s) y el <strong>tiempo sin latido</strong> tras el que se suelta solo. El vigilante de PTT baja el PTT pase lo que pase: al agotarse el tiempo, si quien transmite deja de dar se&#241;ales de vida, si salta un fallo, o al cerrar el programa. <strong>Un PTT pegado quema la etapa final</strong>, y esta es la &#250;nica pieza del programa pensada expl&#237;citamente para que eso nunca pueda pasar.</li>
+</ul>
+<p>El bot&#243;n <strong>&#171;Probar&#187;</strong> abre la conexi&#243;n, lee identificaci&#243;n, frecuencia y modo, y cierra — <strong>nunca transmite</strong>. &#171;Aplicar&#187; guarda y cambia la v&#237;a sin cerrar el programa; &#171;Descartar&#187; vuelve a lo guardado.</p>
+<h2 id="audio-y-digitales">Audio y digitales</h2>
+<figure><a href="capturas/primer-uso-audio.png"><img src="capturas/primer-uso-audio.png" alt="Configuraci&#243;n › Audio y digitales" loading="lazy"></a><figcaption>Configuraci&#243;n › Audio y digitales</figcaption></figure>
+<p>Por d&#243;nde entra y sale el sonido del equipo. Todos los modos digitales los hace el <strong>m&#243;dem propio</strong> del programa (ver <a href="03-digital.html">Digital</a>); no hace falta ning&#250;n otro programa. Los dispositivos de <strong>entrada</strong> y <strong>salida</strong> de audio se eligen de la lista de dispositivos de Windows; el que corresponde al codec USB del equipo sale marcado <strong>&#171;EL EQUIPO&#187;</strong> y el primero de la lista, emparejado por el identificador de contenedor USB, no por el nombre — as&#237; no hay que adivinar cu&#225;l es entre veinte dispositivos con nombres parecidos. <strong>Probar el nivel</strong> es la &#250;nica acci&#243;n de esta pantalla que abre de verdad la tarjeta de sonido; se cierra sola al parar la prueba o al salir.</p>
+<h2 id="fon&#237;a">Fon&#237;a</h2>
+<p>Altavoces, micr&#243;fono y el PTT de fon&#237;a por el PC. Ver <a href="12-fonia.html">Fon&#237;a por el PC</a>.</p>
+<h2 id="cluster">Cluster</h2>
+<p>El nodo al que se conecta, el indicativo con el que se entra (con sufijo si hace falta tener dos sesiones abiertas), la contrase&#241;a — cifrada igual que las dem&#225;s credenciales — y el <strong>guion de arranque</strong>: las &#243;rdenes que se mandan nada m&#225;s conectar, una por l&#237;nea, con <code>&lt;CALLSIGN&gt;</code> y <code>&lt;PASSWORD&gt;</code> como comodines. Los tiempos de reconexi&#243;n y de silencio m&#225;ximo antes de dar la conexi&#243;n por muerta tambi&#233;n se ajustan aqu&#237;. La <strong>consola cruda</strong> del nodo — todo lo que manda y no es un anuncio — vive en este mismo apartado, no en Operar: mientras se opera se leen los anuncios, no los <code>set/</code> del nodo; la consola es para configurar y para diagnosticar.</p>
+<h2 id="correo-de-las-qsl">Correo de las QSL</h2>
+<figure><a href="capturas/configuracion-correo.png"><img src="capturas/configuracion-correo.png" alt="Configuraci&#243;n › Correo de las QSL" loading="lazy"></a><figcaption>Configuraci&#243;n › Correo de las QSL</figcaption></figure>
+<p>La cuenta con la que se mandan las tarjetas QSL por correo: servidor SMTP, puerto, cifrado (<em>StartTls</em> en el 587, <em>SslDirecto</em> en el 465), usuario, contrase&#241;a (cifrada, con &#171;Guardar&#187;), remitente, asunto y texto con variables, y si la tarjeta va en JPG o PNG. <strong>Probar la conexi&#243;n</strong> se identifica en el servidor sin mandar nada. Detalles en <a href="13-tarjeta-qsl.html#lo-que-hay-que-configurar-una-vez">Tarjeta QSL propia</a>.</p>
+<h2 id="libro-adif">Libro (ADIF)</h2>
+<p>Cu&#225;ntos contactos hay, y los botones <strong>&#171;Importar ADIF…&#187;</strong> y <strong>&#171;Exportar ADIF…&#187;</strong> para traer o sacar el cuaderno completo. Cada importaci&#243;n deja su parte a la vista, con las confirmaciones rescatadas al fundir duplicados destacadas aparte — la misma pantalla que aparece la primera vez con el cuaderno vac&#237;o, disponible aqu&#237; en cualquier momento.</p>
+<h2 id="actualizaciones">Actualizaciones</h2>
+<p>La <strong>versi&#243;n instalada</strong>, la casilla <strong>Buscar versiones nuevas al arrancar</strong> (como mucho una vez al d&#237;a) y el bot&#243;n <strong>Buscar actualizaciones</strong>. Es el mismo aviso que la barra de arriba y que <strong>Ayuda › Buscar actualizaciones</strong>. Ver <a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y fallos</a>.</p>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

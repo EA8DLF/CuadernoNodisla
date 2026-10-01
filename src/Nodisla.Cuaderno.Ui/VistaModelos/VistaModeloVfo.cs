@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
@@ -94,8 +94,19 @@ public sealed partial class VistaModeloVfo : ObservableObject
     [ObservableProperty]
     private bool _fueraDeBanda;
 
+    /// <summary>
+    /// Dónde cae la frecuencia dentro de su banda, de 0 (borde bajo) a 1 (borde alto), para la
+    /// marca de la miniatura de banda del visor. Negativo: sin frecuencia o fuera de banda.
+    /// </summary>
     [ObservableProperty]
+    private double _posicionEnBanda = -1;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(AvisoCortoDelBandplan))]
     private string _avisoDelBandplan = string.Empty;
+
+    /// <summary>Uso del tramo del plan en que cae el dial, para el aviso corto.</summary>
+    private UsoDelTramo? _usoDelTramo;
 
     [ObservableProperty]
     private string _tramoDelBandplan = string.Empty;
@@ -115,6 +126,25 @@ public sealed partial class VistaModeloVfo : ObservableObject
         { Recibe: true } => "RX",
         _ => string.Empty,
     };
+
+    /// <summary>
+    /// El aviso del plan de bandas en dos o tres palabras, para la pantalla del equipo: «Fuera de
+    /// banda», «Tramo de CW», «Tramo de fonía»… La explicacion entera va en la ayuda emergente
+    /// (<see cref="AvisoDelBandplan"/> y <see cref="TramoDelBandplan"/>).
+    /// </summary>
+    public string AvisoCortoDelBandplan => AvisoDelBandplan.Length == 0
+        ? string.Empty
+        : FueraDeBanda || _usoDelTramo is null
+            ? "Fuera de banda"
+            : _usoDelTramo switch
+            {
+                UsoDelTramo.Cw => "Tramo de CW",
+                UsoDelTramo.DigitalEstrecho or UsoDelTramo.DigitalAncho => "Tramo digital",
+                UsoDelTramo.Fonia or UsoDelTramo.FoniaEImagen => "Tramo de fonía",
+                UsoDelTramo.Baliza => "Tramo de balizas",
+                UsoDelTramo.Reservado => "Tramo reservado",
+                _ => "Fuera del plan",
+            };
 
     /// <summary>El cluster esta anunciando a alguien en esta frecuencia.</summary>
     public bool HayAnuncio => Anunciado.Length > 0;
@@ -136,6 +166,7 @@ public sealed partial class VistaModeloVfo : ObservableObject
             Banda = "—";
             AnchoDeFiltro = string.Empty;
             FueraDeBanda = false;
+            PosicionEnBanda = -1;
             AvisoDelBandplan = string.Empty;
             TramoDelBandplan = string.Empty;
             Anunciado = string.Empty;
@@ -148,12 +179,21 @@ public sealed partial class VistaModeloVfo : ObservableObject
 
         FueraDeBanda = estado.Banda.EsVacia;
         Banda = FueraDeBanda ? "fuera de banda" : estado.Banda.Nombre;
+        PosicionEnBanda = FueraDeBanda ? -1 : PosicionDentroDe(estado.Banda, estado.Frecuencia);
 
         AnchoDeFiltro = estado.AnchoDeFiltroHz is { } hz and > 0
             ? $"{hz.ToString("N0", CultureInfo.CurrentCulture)} Hz"
             : string.Empty;
 
         ConsultarElBandplan(estado);
+    }
+
+    private static double PosicionDentroDe(Banda banda, Frecuencia frecuencia)
+    {
+        var (inferior, superior) = banda.Limite;
+        return superior <= inferior
+            ? 0.5
+            : Math.Clamp((double)((frecuencia.Megahercios - inferior) / (superior - inferior)), 0, 1);
     }
 
     /// <summary>
@@ -208,6 +248,7 @@ public sealed partial class VistaModeloVfo : ObservableObject
     {
         if (_bandplan is null)
         {
+            _usoDelTramo = null;
             AvisoDelBandplan = FueraDeBanda
                 ? "Esta frecuencia no cae en ninguna banda de aficionado."
                 : string.Empty;
@@ -218,6 +259,8 @@ public sealed partial class VistaModeloVfo : ObservableObject
         try
         {
             var consulta = _bandplan.Consultar(estado.Frecuencia, estado.Modo);
+            _usoDelTramo = consulta.DentroDeBanda ? consulta.Tramo?.Uso : null;
+            OnPropertyChanged(nameof(AvisoCortoDelBandplan));
             AvisoDelBandplan = consulta.Aviso ?? string.Empty;
             TramoDelBandplan = consulta.Tramo?.Descripcion ?? string.Empty;
         }

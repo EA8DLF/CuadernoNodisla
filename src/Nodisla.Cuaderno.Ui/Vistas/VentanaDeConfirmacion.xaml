@@ -1,4 +1,5 @@
-<Window x:Class="Nodisla.Cuaderno.Ui.Vistas.VentanaDeConfirmacion"
+﻿<Window x:Class="Nodisla.Cuaderno.Ui.Vistas.VentanaDeConfirmacion"
+        Icon="/Nodisla.Cuaderno.Ui;component/Recursos/CuadernoNodisla.ico"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Cuaderno NODISLA"
@@ -25,6 +26,12 @@
                        TextTrimming="None"
                        VerticalAlignment="Top"
                        Margin="0,0,0,18" />
+
+            <CheckBox x:Name="CasillaNoVolverAPreguntar"
+                      Content="No volver a preguntar"
+                      Visibility="Collapsed"
+                      Margin="0,0,0,14"
+                      ToolTip="Se puede volver a activar en Configuración › Audio y digitales." />
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button x:Name="BotonCancelar"

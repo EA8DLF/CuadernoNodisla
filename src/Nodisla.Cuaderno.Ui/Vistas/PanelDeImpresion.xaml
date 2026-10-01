@@ -1,0 +1,201 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PanelDeImpresion"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        LA PANTALLA DE IMPRESIÓN DE ETIQUETAS DE QSL.
+
+        Izquierda: el filtro y la lista de etiquetas que ha dejado, con su casilla para marcar
+        o desmarcar cada una. Derecha: la plantilla de papel y las opciones de la tirada.
+
+        LA VISTA PREVIA ES EL PDF DE VERDAD. El botón compone el documento con
+        IGeneradorDeImpresos —los mismos bytes que se imprimirían— lo guarda una vez y lo abre
+        con el visor de PDF que tenga instalado el sistema. No hay un dibujo aparte.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+        <conversores:NoEsVacio x:Key="NoEsVacio" />
+        <conversores:Negacion x:Key="Negacion" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.4*" MinWidth="360" />
+            <ColumnDefinition Width="1*" MinWidth="260" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ══ Filtro y etiquetas resultantes ══ -->
+        <Border Grid.Column="0" Style="{StaticResource Tarjeta}" Margin="0,0,5,0" Padding="8,6">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0">
+                    <TextBlock Text="Filtro de contactos" Style="{StaticResource TituloDeSeccion}" />
+
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Style="{StaticResource BloqueDeCampo}">
+                            <TextBlock Text="Desde" Style="{StaticResource EtiquetaDeCampo}" />
+                            <DatePicker SelectedDate="{Binding Desde}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Style="{StaticResource BloqueDeCampo}">
+                            <TextBlock Text="Hasta" Style="{StaticResource EtiquetaDeCampo}" />
+                            <DatePicker SelectedDate="{Binding Hasta}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Style="{StaticResource BloqueDeCampo}">
+                            <TextBlock Text="Bandas (separadas por coma)" Style="{StaticResource EtiquetaDeCampo}" />
+                            <TextBox Text="{Binding Bandas, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="Vacío: todas las bandas" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Style="{StaticResource BloqueDeCampo}">
+                            <TextBlock Text="Indicativos (separados por coma)" Style="{StaticResource EtiquetaDeCampo}" />
+                            <TextBox Text="{Binding Indicativos, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="Vacío: cualquier indicativo" />
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock Text="Vía (sin marcar ninguna, todas)" Style="{StaticResource EtiquetaDeCampo}" Margin="0,2,0,2" />
+                    <WrapPanel Margin="0,0,0,6">
+                        <CheckBox Content="Buró" IsChecked="{Binding ViaBuro}" Margin="0,0,12,4" />
+                        <CheckBox Content="Directa" IsChecked="{Binding ViaDirecto}" Margin="0,0,12,4" />
+                        <CheckBox Content="Gestor" IsChecked="{Binding ViaGestor}" Margin="0,0,12,4" />
+                        <CheckBox Content="Electrónica" IsChecked="{Binding ViaElectronico}" Margin="0,0,12,4" />
+                    </WrapPanel>
+
+                    <CheckBox Content="Solo pendientes de enviar en papel"
+                              IsChecked="{Binding SoloPendientesDeEnviar}"
+                              Margin="0,0,0,4" />
+                    <CheckBox Content="Excluir los ya confirmados en papel"
+                              IsChecked="{Binding ExcluirYaConfirmados}"
+                              Margin="0,0,0,8" />
+
+                    <DockPanel Margin="0,0,0,8">
+                        <Button DockPanel.Dock="Left"
+                                Content="Buscar"
+                                Command="{Binding BuscarCommand}"
+                                Padding="14,4"
+                                AutomationProperties.Name="Buscar los contactos que cumplen el filtro" />
+                        <Button DockPanel.Dock="Left"
+                                Content="Marcar todas"
+                                Command="{Binding MarcarTodasCommand}"
+                                Margin="8,0,0,0"
+                                AutomationProperties.Name="Marcar todas las etiquetas encontradas" />
+                        <Button DockPanel.Dock="Left"
+                                Content="Ninguna"
+                                Command="{Binding DesmarcarTodasCommand}"
+                                Margin="8,0,0,0"
+                                AutomationProperties.Name="Desmarcar todas las etiquetas encontradas" />
+                        <TextBlock Text="{Binding ResumenTexto}"
+                                   Style="{StaticResource TextoTenueEstilo}"
+                                   VerticalAlignment="Center"
+                                   Margin="12,0,0,0"
+                                   TextWrapping="Wrap" />
+                    </DockPanel>
+
+                    <TextBlock Text="{Binding Aviso}"
+                               Foreground="{DynamicResource ErrorTexto}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,6"
+                               Visibility="{Binding Aviso, Converter={StaticResource NoEsVacio}}" />
+                </StackPanel>
+
+                <!-- ══ La lista de etiquetas, con su casilla ══ -->
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Etiquetas}"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="0,0,0,4"
+                                    Padding="6,4"
+                                    CornerRadius="4"
+                                    Background="{DynamicResource FondoAlterno}"
+                                    BorderBrush="{DynamicResource BordeSuave}"
+                                    BorderThickness="1">
+                                <DockPanel>
+                                    <CheckBox DockPanel.Dock="Left"
+                                              IsChecked="{Binding Elegida}"
+                                              VerticalAlignment="Center"
+                                              Margin="0,0,8,0"
+                                              AutomationProperties.Name="{Binding Encabezado}" />
+                                    <TextBlock DockPanel.Dock="Right"
+                                               Text="{Binding ContactosTexto}"
+                                               Style="{StaticResource TextoTenueEstilo}"
+                                               VerticalAlignment="Center" />
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Encabezado}" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding ViaTexto}" Style="{StaticResource TextoTenueEstilo}" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+
+        <!-- ══ Plantilla y opciones de la tirada ══ -->
+        <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6">
+            <StackPanel>
+                <TextBlock Text="Plantilla de etiquetas" Style="{StaticResource TituloDeSeccion}" />
+
+                <ComboBox ItemsSource="{Binding Plantillas}"
+                          SelectedItem="{Binding PlantillaElegida}"
+                          Margin="0,0,0,8"
+                          ToolTip="Papel de etiquetas sobre el que se imprime">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Nombre}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <StackPanel Style="{StaticResource BloqueDeCampo}" Margin="0,0,0,8">
+                    <TextBlock Text="Empezar en la etiqueta número" Style="{StaticResource EtiquetaDeCampo}" />
+                    <TextBox Text="{Binding EmpezarEnLaEtiqueta, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Para aprovechar una hoja ya empezada; 1 es la primera casilla" />
+                </StackPanel>
+
+                <CheckBox Content="Dibujar el contorno (prueba en papel normal)"
+                          IsChecked="{Binding Contorno}"
+                          Margin="0,0,0,8" />
+
+                <StackPanel Style="{StaticResource BloqueDeCampo}" Margin="0,0,0,10">
+                    <TextBlock Text="Frase al pie de las etiquetas" Style="{StaticResource EtiquetaDeCampo}" />
+                    <TextBox Text="{Binding Mensaje, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Opcional: gracias por el contacto, petición de tarjeta…" />
+                </StackPanel>
+
+                <Button Content="Vista previa / Imprimir…"
+                        Command="{Binding VistaPreviaCommand}"
+                        Padding="10,6"
+                        HorizontalAlignment="Left"
+                        AutomationProperties.Name="Componer el PDF y abrirlo con el visor del sistema" />
+
+                <TextBlock Text="Se abre con el visor de PDF del sistema. Desde ahí se imprime igual que cualquier documento."
+                           Style="{StaticResource TextoTenueEstilo}"
+                           TextWrapping="Wrap"
+                           Margin="0,8,0,0" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

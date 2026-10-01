@@ -1,0 +1,112 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.AjustesDeCorreo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        EL CORREO CON EL QUE SE MANDAN LAS QSL.
+
+        Servidor, puerto, cifrado, usuario y remitente se guardan al momento en
+        qsl\correo.json. La contraseña va al almacén cifrado con «Guardar» y no se vuelve a
+        enseñar. «Probar» conecta y se identifica, pero NO manda ningún correo.
+    -->
+
+    <UserControl.Resources>
+        <Style x:Key="Rotulo" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,4,0,1" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style x:Key="Campo" TargetType="TextBox">
+            <Setter Property="Padding" Value="6,3" />
+            <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
+            <Setter Property="Foreground" Value="{DynamicResource Texto}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <TextBlock Text="Correo de las QSL" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,4" />
+        <TextBlock Text="La cuenta con la que se mandan las tarjetas QSL por correo. Gmail: smtp.gmail.com, 587, STARTTLS y una contraseña de aplicación. Outlook: smtp-mail.outlook.com, 587, STARTTLS."
+                   Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,0,0,4" />
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                <TextBlock Text="Servidor de salida (SMTP)" Style="{StaticResource Rotulo}" />
+                <TextBox Text="{Binding Servidor, UpdateSourceTrigger=LostFocus}" Style="{StaticResource Campo}"
+                         AutomationProperties.Name="Servidor de correo saliente" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="Puerto" Style="{StaticResource Rotulo}" />
+                <TextBox Text="{Binding Puerto, UpdateSourceTrigger=LostFocus}" Style="{StaticResource Campo}"
+                         AutomationProperties.Name="Puerto del servidor de correo" />
+            </StackPanel>
+        </Grid>
+
+        <TextBlock Text="Cifrado" Style="{StaticResource Rotulo}" />
+        <ComboBox ItemsSource="{Binding Seguridades}" SelectedItem="{Binding Seguridad}"
+                  AutomationProperties.Name="Cifrado de la conexión con el servidor de correo" />
+        <TextBlock Text="StartTls: puerto 587 (lo normal). SslDirecto: puerto 465. Ninguna: solo para un servidor de la red de casa."
+                   Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
+
+        <TextBlock Text="Usuario (vacío si el servidor no pide identificarse)" Style="{StaticResource Rotulo}" />
+        <TextBox Text="{Binding Usuario, UpdateSourceTrigger=LostFocus}" Style="{StaticResource Campo}"
+                 AutomationProperties.Name="Usuario del correo" />
+
+        <TextBlock Text="Contraseña" Style="{StaticResource Rotulo}" />
+        <DockPanel>
+            <TextBlock DockPanel.Dock="Right" Text="{Binding EstadoDeLaContrasena}" VerticalAlignment="Center" Margin="8,0,0,0"
+                       Style="{StaticResource TextoTenueEstilo}" />
+            <Button DockPanel.Dock="Right" Content="Borrar" Command="{Binding BorrarLaContrasenaCommand}" Margin="5,0,0,0" Padding="8,2"
+                    AutomationProperties.Name="Borrar la contraseña guardada del correo" />
+            <Button DockPanel.Dock="Right" Content="Guardar" Command="{Binding GuardarLaContrasenaCommand}" Margin="5,0,0,0" Padding="8,2"
+                    AutomationProperties.Name="Guardar cifrada la contraseña del correo" />
+            <PasswordBox x:Name="CasillaDeLaContrasena"
+                         PasswordChanged="AlEscribirLaContrasena"
+                         Padding="6,3"
+                         Background="{DynamicResource FondoCampo}"
+                         Foreground="{DynamicResource Texto}"
+                         BorderBrush="{DynamicResource Borde}"
+                         BorderThickness="1"
+                         AutomationProperties.Name="Contraseña del correo" />
+        </DockPanel>
+        <TextBlock Text="Se cifra con la protección de datos de su cuenta de Windows y no se vuelve a enseñar."
+                   Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
+
+        <TextBlock Text="Remitente (su dirección)" Style="{StaticResource Rotulo}" />
+        <TextBox Text="{Binding Remitente, UpdateSourceTrigger=LostFocus}" Style="{StaticResource Campo}"
+                 AutomationProperties.Name="Dirección del remitente" />
+        <TextBlock Text="Nombre del remitente (p. ej. EA8DLF José)" Style="{StaticResource Rotulo}" />
+        <TextBox Text="{Binding NombreDelRemitente, UpdateSourceTrigger=LostFocus}" Style="{StaticResource Campo}"
+                 AutomationProperties.Name="Nombre del remitente" />
+
+        <TextBlock Text="Asunto" Style="{StaticResource Rotulo}" />
+        <TextBox Text="{Binding Asunto, UpdateSourceTrigger=LostFocus}" Style="{StaticResource Campo}"
+                 AutomationProperties.Name="Asunto del correo de la QSL" />
+        <TextBlock Text="Texto" Style="{StaticResource Rotulo}" />
+        <TextBox Text="{Binding Texto, UpdateSourceTrigger=LostFocus}" Style="{StaticResource Campo}"
+                 AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top" MinLines="4" MaxLines="10" VerticalScrollBarVisibility="Auto"
+                 AutomationProperties.Name="Texto del correo de la QSL" />
+        <TextBlock Text="Variables: {indicativo} {nombre} {fecha} {hora} {banda} {frecuencia} {modo} {rst} {miindicativo} {minombre} {contactos}…"
+                   Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
+
+        <DockPanel Margin="0,6,0,0">
+            <TextBlock Text="Tarjeta adjunta en" VerticalAlignment="Center" Margin="0,0,8,0" />
+            <ComboBox ItemsSource="{Binding Formatos}" SelectedItem="{Binding Formato}" Width="80" HorizontalAlignment="Left"
+                      AutomationProperties.Name="Formato de la tarjeta adjunta" />
+        </DockPanel>
+
+        <WrapPanel Margin="0,8,0,0">
+            <Button Content="Probar la conexión" Command="{Binding ProbarCommand}" Padding="8,3" Margin="0,0,6,0"
+                    AutomationProperties.Name="Probar la conexión con el servidor de correo sin mandar nada" />
+            <Button Content="Texto de omisión" Command="{Binding TextoPorOmisionCommand}" Padding="8,3"
+                    AutomationProperties.Name="Volver al asunto y texto de omisión" />
+        </WrapPanel>
+        <TextBlock Text="{Binding Aviso}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,4,0,0" />
+    </StackPanel>
+</UserControl>

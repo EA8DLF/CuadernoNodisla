@@ -1,8 +1,10 @@
+using System.Diagnostics;
 using System.IO.Ports;
 using System.Runtime.Versioning;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Radio.Ptt;
 
 namespace Nodisla.Cuaderno.Radio.Control.Ft710;
 
@@ -10,9 +12,10 @@ namespace Nodisla.Cuaderno.Radio.Control.Ft710;
 /// Canal CAT por puerto serie.
 /// </summary>
 /// <remarks>
-/// El FT-710 se presenta con un CP2105 doble: el puerto <i>Enhanced</i> a 115200 es el bueno y
-/// el <i>Standard</i> a 4800 tambien contesta. Ninguno responde a otras velocidades, asi que la
-/// velocidad no se negocia: se prueba. <c>DTR</c> y <c>RTS</c> van en cierto.
+/// El FT-710 se presenta con un CP2105 doble: el <i>Enhanced</i> es el que se usa y el
+/// <i>Standard</i> tambien habla. <b>La velocidad la manda el menu del equipo</b> (CAT RATE),
+/// no el cable: el de Jose esta a 38400. Por eso la velocidad no se negocia, se prueba.
+/// <c>DTR</c> y <c>RTS</c> van en cierto salvo que el PTT vaya por una de esas lineas.
 /// </remarks>
 [SupportedOSPlatform("windows")]
 public sealed class CanalSerieCat : ICanalCat
@@ -20,6 +23,7 @@ public sealed class CanalSerieCat : ICanalCat
     private readonly string _puerto;
     private readonly int _baudios;
     private readonly TimeSpan _espera;
+    private readonly ViaDePtt _viaDePtt;
     private readonly ILogger _registro;
     private readonly SemaphoreSlim _puerta = new(1, 1);
 
@@ -30,15 +34,22 @@ public sealed class CanalSerieCat : ICanalCat
     /// <param name="baudios">Velocidad; en el FT-710, 115200 o 4800.</param>
     /// <param name="espera">Lo que se espera por cada respuesta.</param>
     /// <param name="registro">Donde anotar el ir y venir.</param>
+    /// <param name="viaDePtt">
+    /// Por donde se sube el PTT. Con <see cref="ViaDePtt.Cat"/> —lo de partida— las dos lineas
+    /// van en cierto, como pide el cable del equipo. Con <c>RTS</c> o <c>DTR</c>, la linea que
+    /// hace de PTT <b>abre en falso</b>: abrir el puerto no puede poner la radio en antena.
+    /// </param>
     public CanalSerieCat(
         string puerto,
         int baudios = 115200,
         TimeSpan? espera = null,
-        ILogger? registro = null)
+        ILogger? registro = null,
+        ViaDePtt viaDePtt = ViaDePtt.Cat)
     {
         _puerto = puerto;
         _baudios = baudios;
         _espera = espera ?? TimeSpan.FromMilliseconds(350);
+        _viaDePtt = viaDePtt;
         _registro = registro ?? NullLogger.Instance;
     }
 
@@ -58,8 +69,10 @@ public sealed class CanalSerieCat : ICanalCat
 
             var serie = new SerialPort(_puerto, _baudios, Parity.None, 8, StopBits.One)
             {
-                DtrEnable = true,
-                RtsEnable = true,
+                // Si el PTT va por una linea, esa linea abre en falso. Un puerto que se abre
+                // con el PTT levantado pone la radio en antena al arrancar el programa.
+                DtrEnable = _viaDePtt != ViaDePtt.Dtr,
+                RtsEnable = _viaDePtt != ViaDePtt.Rts,
                 Handshake = Handshake.None,
                 ReadTimeout = (int)_espera.TotalMilliseconds,
                 WriteTimeout = (int)_espera.TotalMilliseconds,
@@ -148,6 +161,41 @@ public sealed class CanalSerieCat : ICanalCat
     }
 
     /// <inheritdoc />
+    public bool PuedeAccionarLineas => _viaDePtt != ViaDePtt.Cat;
+
+    /// <inheritdoc />
+    public Task PonerLineaDePttAsync(bool transmitir, CancellationToken ct = default)
+    {
+        ct.ThrowIfCancellationRequested();
+        PonerLineaDePttSincrono(transmitir);
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    public void PonerLineaDePttSincrono(bool transmitir)
+    {
+        if (_viaDePtt == ViaDePtt.Cat)
+        {
+            throw new NotSupportedException(
+                $"El canal {Descripcion} tiene el PTT por CAT: no hay línea que accionar.");
+        }
+
+        // Como en MandarSincrono, aqui no se pide el semaforo: esto es lo que baja el PTT
+        // cuando lo demas ha fallado, y esperar a un candado tomado por una orden colgada es lo
+        // ultimo que hace falta.
+        var serie = _serie ?? throw new InvalidOperationException($"El canal {Descripcion} no está abierto.");
+
+        if (_viaDePtt == ViaDePtt.Rts)
+        {
+            serie.RtsEnable = transmitir;
+        }
+        else
+        {
+            serie.DtrEnable = transmitir;
+        }
+    }
+
+    /// <inheritdoc />
     public void Cerrar()
     {
         if (!_puerta.Wait(TimeSpan.FromMilliseconds(250)))
@@ -174,18 +222,50 @@ public sealed class CanalSerieCat : ICanalCat
         return ValueTask.CompletedTask;
     }
 
+    /// <summary>
+    /// Lee la respuesta del equipo, con un tope de tiempo que <b>se cumple de verdad</b>.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <b>Aqui hubo un cuelgue de los buenos y conviene que quede escrito.</b> Esto usaba
+    /// <c>BaseStream.ReadAsync</c> con un testigo de cancelacion, y una lectura asincrona sobre
+    /// un puerto serie de Windows <b>no se puede abortar una vez lanzada</b>: ni el testigo ni
+    /// <c>ReadTimeout</c> la cortan. Medido en la maquina de Jose con el CP2105 del FT-710: si
+    /// el equipo no contesta, esa lectura se queda pendiente <b>para siempre</b>, el puerto
+    /// queda cogido, la busqueda de equipos no termina nunca y la pantalla que la lanzo se
+    /// queda esperando en silencio. Eso era lo que hacia que el boton Aplicar de los ajustes no
+    /// hiciera nada visible.
+    /// </para>
+    /// <para>
+    /// Asi que <b>no se lanza ninguna lectura que no se pueda terminar</b>: se mira si hay
+    /// bytes esperando y solo entonces se lee, que es una lectura que devuelve en el acto.
+    /// Mientras no los haya, se duerme un instante. El tope se cumple al milisegundo, el
+    /// testigo de cancelacion funciona, y el puerto queda <b>sano</b> para la siguiente prueba
+    /// —que es lo que permite barrer las cinco velocidades del equipo sin dejarlo inservible—.
+    /// </para>
+    /// </remarks>
     private async Task<string?> LeerRespuestaAsync(SerialPort serie, CancellationToken ct)
     {
+        // Lo que se duerme entre vistazos al buzon del puerto.
+        var siesta = TimeSpan.FromMilliseconds(5);
+
         var recibido = new StringBuilder();
         var buzon = new byte[256];
-        using var espera = CancellationTokenSource.CreateLinkedTokenSource(ct);
-        espera.CancelAfter(_espera);
+        var reloj = Stopwatch.StartNew();
 
         try
         {
-            while (true)
+            while (reloj.Elapsed < _espera)
             {
-                var leidos = await serie.BaseStream.ReadAsync(buzon.AsMemory(), espera.Token).ConfigureAwait(false);
+                var esperando = serie.BytesToRead;
+                if (esperando <= 0)
+                {
+                    await Task.Delay(siesta, ct).ConfigureAwait(false);
+                    continue;
+                }
+
+                // Hay bytes: esta lectura devuelve en el acto y no deja nada pendiente.
+                var leidos = serie.Read(buzon, 0, Math.Min(buzon.Length, esperando));
                 if (leidos <= 0)
                 {
                     continue;
@@ -206,13 +286,17 @@ public sealed class CanalSerieCat : ICanalCat
                     return null;
                 }
             }
+
+            // Se acabo el tiempo sin respuesta completa. No es un fallo: hay ordenes que no
+            // contestan, y un puerto que no es la radio tampoco.
+            _registro.LogDebug("{Canal} no ha contestado en {Espera}.", Descripcion, _espera);
+            return null;
         }
         catch (OperationCanceledException) when (!ct.IsCancellationRequested)
         {
-            // Sin respuesta a tiempo: puede ser una orden de accion, que no contesta.
             return null;
         }
-        catch (Exception ex) when (ex is TimeoutException or IOException)
+        catch (Exception ex) when (ex is TimeoutException or IOException or InvalidOperationException)
         {
             return null;
         }
@@ -228,6 +312,12 @@ public sealed class CanalSerieCat : ICanalCat
         {
             if (_serie is { IsOpen: true })
             {
+                // Se baja la linea de PTT ANTES de cerrar. Cerrar el puerto suele dejar las
+                // lineas caidas, pero «suele» no vale para lo unico que puede quemar la etapa
+                // final: se baja a mano y luego se cierra.
+                if (_viaDePtt == ViaDePtt.Rts) _serie.RtsEnable = false;
+                if (_viaDePtt == ViaDePtt.Dtr) _serie.DtrEnable = false;
+
                 _serie.Close();
             }
 

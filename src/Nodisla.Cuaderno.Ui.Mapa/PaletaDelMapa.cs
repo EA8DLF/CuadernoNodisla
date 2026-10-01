@@ -23,7 +23,8 @@ internal sealed record PaletaDelMapa(
     Color LineaDelPasoGris,
     Color Texto,
     Color Halo,
-    Color BordeDeMarca)
+    Color BordeDeMarca,
+    Color Satelite)
 {
     /// <summary>Paleta del tema claro.</summary>
     public static PaletaDelMapa Clara { get; } = new(
@@ -39,7 +40,8 @@ internal sealed record PaletaDelMapa(
         LineaDelPasoGris: Color.FromArgb(130, 40, 60, 100),
         Texto: Color.FromArgb(255, 22, 32, 46),
         Halo: Color.FromArgb(210, 255, 255, 255),
-        BordeDeMarca: Color.FromArgb(220, 255, 255, 255));
+        BordeDeMarca: Color.FromArgb(220, 255, 255, 255),
+        Satelite: Color.FromArgb(255, 120, 60, 200));
 
     /// <summary>Paleta del tema oscuro.</summary>
     public static PaletaDelMapa Oscura { get; } = new(
@@ -55,7 +57,8 @@ internal sealed record PaletaDelMapa(
         LineaDelPasoGris: Color.FromArgb(140, 170, 195, 235),
         Texto: Color.FromArgb(255, 232, 238, 246),
         Halo: Color.FromArgb(215, 12, 16, 24),
-        BordeDeMarca: Color.FromArgb(200, 20, 26, 36));
+        BordeDeMarca: Color.FromArgb(200, 20, 26, 36),
+        Satelite: Color.FromArgb(255, 180, 140, 235));
 
     /// <summary>Devuelve la paleta que toca.</summary>
     /// <param name="oscuro">Cierto para el tema oscuro.</param>

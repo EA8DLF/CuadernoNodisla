@@ -1,5 +1,6 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows.Controls;
+using System.Windows;
 using System.Windows.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Ui.VistaModelos;
@@ -23,10 +24,32 @@ public partial class PanelDelCuaderno : UserControl
     public event EventHandler<Exception>? Fallo;
 
     /// <summary>Trae el foco al campo de busqueda.</summary>
+    /// <remarks>
+    /// Si la pestaña aun no se ha dibujado —la primera vez que se pulsa F3 desde otra—, el
+    /// campo todavia no es visible y <c>Focus</c> no hace nada: el foco se quedaba en la
+    /// pestaña. Entonces se espera a que el campo se vea.
+    /// </remarks>
     public void EnfocarBusqueda()
     {
-        CampoBusqueda.Focus();
-        CampoBusqueda.SelectAll();
+        if (CampoBusqueda.IsVisible)
+        {
+            CampoBusqueda.Focus();
+            CampoBusqueda.SelectAll();
+            return;
+        }
+
+        void AlVerse(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!CampoBusqueda.IsVisible) return;
+            CampoBusqueda.IsVisibleChanged -= AlVerse;
+            Dispatcher.BeginInvoke(() =>
+            {
+                CampoBusqueda.Focus();
+                CampoBusqueda.SelectAll();
+            }, System.Windows.Threading.DispatcherPriority.Loaded);
+        }
+
+        CampoBusqueda.IsVisibleChanged += AlVerse;
     }
 
     /// <summary>Pone la flecha de orden en la columna por la que se esta ordenando.</summary>
@@ -39,11 +62,14 @@ public partial class PanelDelCuaderno : UserControl
             ? ListSortDirection.Descending
             : ListSortDirection.Ascending;
 
+        // Fecha y hora ordenan por el mismo campo: la flecha va solo en la primera, no en
+        // las dos, que parecia un orden doble.
+        var marcada = false;
         foreach (var columna in RejillaDelCuaderno.Columns)
         {
-            columna.SortDirection = string.Equals(columna.SortMemberPath, campo, StringComparison.Ordinal)
-                ? sentido
-                : null;
+            var esta = !marcada && string.Equals(columna.SortMemberPath, campo, StringComparison.Ordinal);
+            columna.SortDirection = esta ? sentido : null;
+            marcada |= esta;
         }
     }
 
@@ -72,6 +98,42 @@ public partial class PanelDelCuaderno : UserControl
             Log.Error(ex, "Fallo al ordenar el cuaderno.");
             Fallo?.Invoke(this, ex);
         }
+    }
+
+    /// <summary>
+    /// «Ver/enviar QSL…»: abre la ventana de la tarjeta con las filas elegidas (o la activa).
+    /// </summary>
+    private void AlVerEnviarQsl(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (DataContext is not VistaModeloPrincipal modelo) return;
+            if (modelo.Impresion.Qsl is not { } qsl)
+            {
+                MessageBox.Show(Window.GetWindow(this), "El editor de QSL no está disponible.", "Cuaderno NODISLA");
+                return;
+            }
+
+            var ids = RejillaDelCuaderno.SelectedItems.OfType<FilaDeQso>().Select(f => f.Id).ToList();
+            if (ids.Count == 0 && modelo.Cuaderno.FilaSeleccionada is { } fila) ids.Add(fila.Id);
+            if (ids.Count == 0)
+            {
+                MessageBox.Show(Window.GetWindow(this), "Elija antes uno o varios contactos del cuaderno.", "Cuaderno NODISLA");
+                return;
+            }
+
+            VentanaDeEnvioDeQsl.Mostrar(Window.GetWindow(this), qsl, ids);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Fallo al abrir la ventana de QSL desde el cuaderno.");
+            Fallo?.Invoke(this, ex);
+        }
+    }
+
+    private void AlModificarDesdeElMenu(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is VistaModeloPrincipal modelo) modelo.Cuaderno.EditarSeleccionado();
     }
 
     private void AlPulsarDosVeces(object sender, MouseButtonEventArgs e)

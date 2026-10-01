@@ -72,9 +72,23 @@ public static class CuadernoDeDemostracion
 
             instante = instante.AddSeconds(-azar.Next(120, 2400));
 
+            // La entidad se resuelve UNA vez y se guarda en el contacto. Antes solo se usaba
+            // para colocar el punto en el mapa y luego se tiraba, asi que el cuaderno de
+            // demostracion tenia veinte mil contactos con la entidad a cero: todo salia
+            // «entidad nueva» —en el cluster y en el retrato del indicativo— y no habia forma
+            // de ver funcionando lo que distingue lo nuevo de lo trabajado. Un cuaderno de
+            // mentira que miente en el campo que se esta probando no sirve de nada.
+            var indicativo = Indicativo.Crudo(call);
+            var entidad = Resolutor
+                .Resolver(indicativo, DateOnly.FromDateTime(instante.UtcDateTime))
+                .Entidad;
+
             var qso = new Qso
             {
-                Call = Indicativo.Crudo(call),
+                Call = indicativo,
+                Dxcc = entidad?.Numero ?? 0,
+                Country = entidad?.NombreParaMostrar,
+                Cont = entidad?.Continente,
                 Band = Banda.Parse(banda),
                 Mode = m,
                 Freq = Frecuencia.DesdeMegahercios(mhz),
@@ -84,7 +98,7 @@ public static class CuadernoDeDemostracion
                 RstRcvd = InformeDe(m, azar),
                 Name = Nombres[azar.Next(Nombres.Length)],
                 Qth = Localidades[azar.Next(Localidades.Length)],
-                Gridsquare = DondeCae(Indicativo.Crudo(call), instante, azar),
+                Gridsquare = DondeCae(entidad, azar),
                 StationCallsign = Indicativo.Parse("EA8DLF"),
                 Operator = "EA8DLF",
                 MyGridsquare = Locator.Parse("IL18SN"),
@@ -94,20 +108,37 @@ public static class CuadernoDeDemostracion
                 Comentario = azar.Next(5) == 0 ? "Buena señal, QSB suave." : null,
             };
 
-            if (azar.Next(3) == 0)
-            {
-                qso.Confirmaciones.Add(new QsoConfirmacion
-                {
-                    Medio = MedioDeConfirmacion.Lotw,
-                    Recibido = EstadoDeConfirmacion.Confirmado,
-                    RecibidoUtc = instante.AddDays(azar.Next(1, 60)),
-                });
-            }
+            // Las confirmaciones se reparten por las cuatro vias que ensena la columna QSL del
+            // cuaderno, y no solo por LoTW: con una sola via, la columna salia toda igual y no
+            // se veia si las pastillas de color distinguen de verdad una via de otra.
+            AnadirConfirmacion(qso, MedioDeConfirmacion.Lotw, 3, azar, instante);
+            AnadirConfirmacion(qso, MedioDeConfirmacion.Eqsl, 4, azar, instante);
+            AnadirConfirmacion(qso, MedioDeConfirmacion.Papel, 7, azar, instante);
+            AnadirConfirmacion(qso, MedioDeConfirmacion.QrzCom, 5, azar, instante);
 
             lista.Add(qso);
         }
 
         return lista;
+    }
+
+    /// <summary>
+    /// Anade una confirmacion por una via, una de cada <paramref name="unaDeCada"/> veces.
+    /// Una de cada tres sale ademas verificada por el servicio, que es un estado distinto.
+    /// </summary>
+    private static void AnadirConfirmacion(
+        Qso qso, MedioDeConfirmacion medio, int unaDeCada, Random azar, DateTimeOffset instante)
+    {
+        if (azar.Next(unaDeCada) != 0) return;
+
+        qso.Confirmaciones.Add(new QsoConfirmacion
+        {
+            Medio = medio,
+            Recibido = azar.Next(3) == 0
+                ? EstadoDeConfirmacion.Verificado
+                : EstadoDeConfirmacion.Confirmado,
+            RecibidoUtc = instante.AddDays(azar.Next(1, 60)),
+        });
     }
 
     /// <summary>
@@ -120,12 +151,8 @@ public static class CuadernoDeDemostracion
     /// cuaderno que se parece al de verdad: apelotonado en Europa, disperso en el Pacifico.
     /// Es tambien lo que pone a prueba la agrupacion del mapa, que es para lo que existe.
     /// </remarks>
-    private static Locator DondeCae(Indicativo indicativo, DateTimeOffset cuando, Random azar)
+    private static Locator DondeCae(EntidadDxcc? entidad, Random azar)
     {
-        var entidad = Resolutor
-            .Resolver(indicativo, DateOnly.FromDateTime(cuando.UtcDateTime))
-            .Entidad;
-
         if (entidad is null) return Locator.Vacio;
 
         // Dos grados largos de dispersion alrededor del centro del pais: lo justo para que

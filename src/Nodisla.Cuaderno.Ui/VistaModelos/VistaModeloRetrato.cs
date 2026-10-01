@@ -12,18 +12,34 @@ namespace Nodisla.Cuaderno.Ui.VistaModelos;
 /// <param name="Medio">Columna.</param>
 /// <param name="Trabajado">Ya esta en el cuaderno.</param>
 /// <param name="Confirmado">Ademas esta confirmado por esa via.</param>
-public sealed record CasillaVista(EjeDeNovedad Eje, MedioDeConfirmacion Medio, bool Trabajado, bool Confirmado)
+/// <param name="Aplica">Se ha podido calcular. Falso = no se sabe, que no es lo mismo que nuevo.</param>
+public sealed record CasillaVista(
+    EjeDeNovedad Eje,
+    MedioDeConfirmacion Medio,
+    bool Trabajado,
+    bool Confirmado,
+    bool Aplica = true)
 {
-    /// <summary>Lo que dice la casilla: nueva, pendiente o confirmada.</summary>
-    public string Texto => (Trabajado, Confirmado) switch
-    {
-        (false, _) => "NUEVO",
-        (true, false) => "sin QSL",
-        _ => "OK",
-    };
+    /// <summary>
+    /// Lo que dice la casilla: nueva, pendiente, confirmada o sin dato.
+    /// </summary>
+    /// <remarks>
+    /// Cada estado lleva su <b>palabra</b>, no solo su color: un operador que no distingue el
+    /// verde del ambar tiene que poder leer la rejilla igual de rapido.
+    /// </remarks>
+    public string Texto => !Aplica
+        ? "—"
+        : (Trabajado, Confirmado) switch
+        {
+            (false, _) => "NUEVO",
+            (true, false) => "sin QSL",
+            _ => "✓ OK",
+        };
 
     /// <summary>Nombre para el lector de pantalla, que no ve los colores.</summary>
-    public string NombreAccesible => $"{NombreDelEje} por {NombreDelMedio}: {Texto}";
+    public string NombreAccesible => Aplica
+        ? $"{NombreDelEje} por {NombreDelMedio}: {Texto}"
+        : $"{NombreDelEje} por {NombreDelMedio}: sin dato para calcularlo";
 
     /// <summary>Nombre del eje en espanol.</summary>
     public string NombreDelEje => Eje switch
@@ -57,18 +73,31 @@ public sealed record CasillaDeRejilla(string Banda, FamiliaDeModo Familia, int C
     /// <summary>Hay alguno confirmado.</summary>
     public bool Confirmado => Confirmados > 0;
 
-    /// <summary>Lo que se escribe dentro: el numero, o nada.</summary>
-    public string Texto => Contactos switch
+    /// <summary>
+    /// Lo que se escribe dentro: nada, el numero de contactos, o el visto de confirmado.
+    /// </summary>
+    /// <remarks>
+    /// Los tres estados se distinguen <b>sin mirar el color</b>: casilla vacia es sin trabajar,
+    /// un numero es trabajado sin confirmar, y el visto es confirmado. Un daltonico no separa
+    /// el verde del ambar, y esto es informacion de operacion, no adorno. Cuantos contactos hay
+    /// detras del visto lo dice el rotulo emergente.
+    /// </remarks>
+    public string Texto => (Contactos, Confirmados) switch
     {
-        0 => string.Empty,
-        < 10 => Contactos.ToString(System.Globalization.CultureInfo.CurrentCulture),
+        (0, _) => string.Empty,
+        (_, > 0) => "✓",
+        (< 10, _) => Contactos.ToString(System.Globalization.CultureInfo.CurrentCulture),
         _ => "9+",
     };
 
     /// <summary>Lo que se dice al pasar el raton y al lector de pantalla.</summary>
-    public string Detalle => Contactos == 0
-        ? $"{Banda} en {NombreDeLaFamilia}: sin contactos"
-        : $"{Banda} en {NombreDeLaFamilia}: {Contactos} contacto(s), {Confirmados} confirmado(s)";
+    public string Detalle => Contactos switch
+    {
+        0 => $"{Banda} en {NombreDeLaFamilia}: sin trabajar",
+        _ when Confirmados > 0 =>
+            $"{Banda} en {NombreDeLaFamilia}: {Contactos} contacto(s), {Confirmados} confirmado(s)",
+        _ => $"{Banda} en {NombreDeLaFamilia}: {Contactos} contacto(s), ninguno confirmado",
+    };
 
     /// <summary>Nombre de la familia de modo en espanol.</summary>
     public string NombreDeLaFamilia => Familia switch
@@ -253,7 +282,8 @@ public sealed partial class VistaModeloRetrato : ObservableObject, IDisposable
         Novedad.Clear();
         foreach (var casilla in retrato.Novedad)
         {
-            Novedad.Add(new CasillaVista(casilla.Eje, casilla.Medio, casilla.Trabajado, casilla.Confirmado));
+            Novedad.Add(new CasillaVista(
+                casilla.Eje, casilla.Medio, casilla.Trabajado, casilla.Confirmado, casilla.Aplica));
         }
 
         var porClave = retrato.BandaYModo.ToDictionary(c => (c.Banda, c.Familia));
@@ -272,10 +302,16 @@ public sealed partial class VistaModeloRetrato : ObservableObject, IDisposable
         }
 
         HayDatos = true;
-        AportaAlgo = retrato.Novedad.Any(c => !c.Trabajado);
 
-        Resumen = retrato.ContactosConElIndicativo == 0
-            ? "Nunca trabajado."
-            : $"Trabajado {retrato.ContactosConElIndicativo} vez/veces.";
+        // Aporta si hay alguna casilla CALCULADA que salga nueva. Las que no se han podido
+        // calcular no cuentan: no saber no es lo mismo que ser nuevo.
+        AportaAlgo = retrato.Novedad.Any(c => c.Aplica && !c.Trabajado);
+
+        Resumen = retrato.ContactosConElIndicativo switch
+        {
+            0 => "Nunca trabajado.",
+            1 => "Trabajado 1 vez.",
+            var cuantos => $"Trabajado {cuantos} veces.",
+        };
     }
 }

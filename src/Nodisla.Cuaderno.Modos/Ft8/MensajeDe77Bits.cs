@@ -91,13 +91,14 @@ public static class MensajeDe77Bits
     /// Desde donde se cuentan los informes dentro del campo de 15 bits.
     /// </summary>
     /// <remarks>
-    /// Despues de los 32400 localizadores vienen cuatro valores con nombre —vacio, RRR, RR73 y
-    /// 73— y a continuacion los informes de senal. <b>Este desplazamiento esta reconstruido de
-    /// la descripcion del protocolo y es lo primero que hay que contrastar contra una grabacion
-    /// de verdad</b>: si estuviera desplazado, los informes saldrian todos corridos el mismo
-    /// numero de decibelios sin que nada mas fallara.
+    /// Los valores 0 a 32399 son los localizadores. El 32400 no se usa; despues vienen los
+    /// valores con nombre —32401 vacio, 32402 RRR, 32403 RR73, 32404 73— y a partir de ahi los
+    /// informes: <c>32400 + 35 + dB</c>, de modo que −30 dB es 32405. <b>Contrastado bit a bit
+    /// con los vectores de ft8_lib</b>: antes estaba corrido uno (vacio en 32400, informes desde
+    /// 32434) y los demas programas leian RRR donde se mandaba RR73, RR73 donde se mandaba 73 y
+    /// un decibelio menos en cada informe; y al reves en lo que se recibia.
     /// </remarks>
-    private const int BaseDelInforme = 32434;
+    private const int BaseDelInforme = CuadrosDeLocalizador + 35;
 
     /// <summary>Informe mas bajo que cabe en el campo.</summary>
     public const int InformeMinimo = -30;
@@ -152,34 +153,89 @@ public static class MensajeDe77Bits
         }
 
         var limpio = NormalizarTexto(texto);
-        if (TryEmpaquetarNormal(limpio, out bits)) return true;
+        // El orden es el del protocolo: primero el mensaje corriente (con los indicativos entre
+        // angulos resumidos en 22 bits), luego el de indicativo raro en claro (tipo 4), y solo
+        // si nada de eso vale, el mensaje corriente resumiendo por su cuenta el indicativo raro
+        // que venga sin angulos. El texto libre, al final.
+        if (TryEmpaquetarNormal(limpio, resumirRaros: false, out bits)) return true;
         if (TryEmpaquetarNoEstandar(limpio, out bits)) return true;
+        if (TryEmpaquetarNormal(limpio, resumirRaros: true, out bits)) return true;
         if (TryEmpaquetarTextoLibre(limpio, out bits)) return true;
 
-        motivo = $"«{limpio}» no cabe en ningún formato de {CaracteresDeTextoLibre} caracteres ni es un mensaje reconocible.";
+        motivo = ExplicarElRechazo(limpio);
         return false;
+    }
+
+    /// <summary>
+    /// Los indicativos que lleva un mensaje que se va a emitir, sin angulos.
+    /// </summary>
+    /// <remarks>
+    /// Sirve para que el receptor aprenda lo que el propio operador manda: si se emite
+    /// <c>&lt;HB10GBT&gt; EA8DLF IL27</c>, luego hay que poder resolver el resumen de HB10GBT y el
+    /// de EA8DLF en lo que contesten. Solo cuenta si el mensaje sale como mensaje de indicativos
+    /// (tipos 1 y 4); del texto libre no se saca nada.
+    /// </remarks>
+    public static IReadOnlyList<string> IndicativosQueViajan(string? texto)
+    {
+        if (!TryEmpaquetar(texto, out var bits, out _)) return [];
+        var i3 = EmpaquetadoDeBits.Leer(bits, PosicionDeI3, 3);
+        if (i3 is not (1 or 4)) return [];
+
+        var lista = new List<string>(2);
+        foreach (var palabra in NormalizarTexto(texto!).Split(' '))
+        {
+            var v = TryQuitarAngulos(palabra, out var dentro) ? dentro : palabra;
+            if (v is "CQ" or "DE" or "QRZ" or "RR73" || EsLocalizadorDeCuatro(v)) continue;
+            if (EsIndicativoResumible(v) && !lista.Contains(v)) lista.Add(v);
+        }
+        return lista;
+    }
+
+    /// <summary>Dice en palabras llanas por que un mensaje no se puede emitir.</summary>
+    private static string ExplicarElRechazo(string limpio)
+    {
+        var palabras = limpio.Split(' ');
+        if (palabras.Any(p => p.StartsWith('<') && p.EndsWith('>') && !EsIndicativoResumible(p[1..^1])))
+        {
+            return $"«{limpio}» lleva entre ángulos algo que no es un indicativo (o un indicativo sin resolver, «<...>»): "
+                   + "no se puede emitir porque no se sabe qué indicativo es.";
+        }
+
+        var largo = palabras.FirstOrDefault(p => p.Length > CaracteresDeIndicativoLargo
+                                                 && p.Any(char.IsAsciiDigit) && p.Any(char.IsAsciiLetter));
+        if (largo is not null)
+        {
+            return $"El indicativo «{largo}» tiene {largo.Length} caracteres y el protocolo admite como mucho "
+                   + $"{CaracteresDeIndicativoLargo}: no se puede emitir.";
+        }
+
+        var raros = limpio.Where(c => c != ' ' && !AlfabetoLibre.Contains(c, StringComparison.Ordinal)).Distinct().ToArray();
+        var queLleva = raros.Length > 0
+            ? $" y además lleva caracteres que no se pueden emitir ({string.Join(' ', raros)})"
+            : $" y este tiene {limpio.Length}";
+        return $"«{limpio}» no es un mensaje estándar (indicativos más localizador, informe, RRR, RR73 o 73) "
+               + $"y como texto libre no cabe: el texto libre admite {CaracteresDeTextoLibre} caracteres "
+               + $"(letras, cifras, espacio y + - . / ?){queLleva}.";
     }
 
     private static string NormalizarTexto(string texto)
     {
-        // Los corchetes angulares son como se ensena un indicativo que viaja resumido; al
-        // empaquetar sobran, porque lo que se manda es el resumen y no el texto.
-        var limpio = texto.Replace("<", string.Empty, StringComparison.Ordinal)
-                          .Replace(">", string.Empty, StringComparison.Ordinal);
-        var partes = limpio.Trim().ToUpperInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        // Los angulos se conservan: son como se pide que un indicativo viaje resumido, y eso
+        // cambia los bits que se emiten.
+        var partes = texto.Trim().ToUpperInvariant().Split(' ', StringSplitOptions.RemoveEmptyEntries);
         return string.Join(' ', partes);
     }
 
-    private static bool TryEmpaquetarNormal(string texto, out byte[] bits)
+    private static bool TryEmpaquetarNormal(string texto, bool resumirRaros, out byte[] bits)
     {
         bits = [];
         var campos = texto.Split(' ');
         if (campos.Length < 2) return false;
 
         var indice = 0;
-        if (!TryLeerCampoDeEstacion(campos, ref indice, out var n28Destino, out var roverDestino)) return false;
+        if (!TryLeerCampoDeEstacion(campos, ref indice, resumirRaros, out var n28Destino, out var roverDestino)) return false;
         if (indice >= campos.Length) return false;
-        if (!TryIndicativoCorrienteA28(campos[indice], out var n28Origen, out var roverOrigen)) return false;
+        if (!TryEstacionA28(campos[indice], resumirRaros, out var n28Origen, out var roverOrigen)) return false;
         indice++;
 
         var acuse = false;
@@ -216,7 +272,7 @@ public static class MensajeDe77Bits
     /// Se distinguen porque la cola de una llamada general es de una a cuatro letras sin
     /// numeros, o tres cifras, y un indicativo corriente siempre lleva un numero en medio.
     /// </remarks>
-    private static bool TryLeerCampoDeEstacion(string[] campos, ref int indice, out long n28, out bool rover)
+    private static bool TryLeerCampoDeEstacion(string[] campos, ref int indice, bool resumirRaros, out long n28, out bool rover)
     {
         rover = false;
         n28 = 0;
@@ -245,11 +301,84 @@ public static class MensajeDe77Bits
                 }
                 return true;
             default:
-                if (!TryIndicativoCorrienteA28(primero, out n28, out rover)) return false;
+                if (!TryEstacionA28(primero, resumirRaros, out n28, out rover)) return false;
                 indice++;
                 return true;
         }
     }
+
+    /// <summary>
+    /// Pasa una estacion al campo de 28 bits: en claro si es de forma corriente, o resumida en
+    /// 22 bits si va entre angulos (o si es rara y se ha pedido resumirla).
+    /// </summary>
+    /// <remarks>
+    /// El campo de 28 bits reserva, justo despues de las senales (<c>DE</c>, <c>QRZ</c>,
+    /// <c>CQ</c>…), 2^22 valores para indicativos resumidos: el valor es
+    /// <c>NumeroDeSenales + resumen de 22 bits</c>. Asi es como <c>&lt;HB10GBT&gt; EA8DLF IL27</c>
+    /// cabe en un mensaje corriente aunque HB10GBT no quepa en la plantilla de seis huecos.
+    /// </remarks>
+    private static bool TryEstacionA28(string campo, bool resumirRaros, out long n28, out bool rover)
+    {
+        rover = false;
+        n28 = 0;
+        if (TryQuitarAngulos(campo, out var resumido))
+        {
+            if (!EsIndicativoResumible(resumido)) return false;
+            n28 = NumeroDeSenales + CatalogoDeIndicativos.Resumir(resumido, 22);
+            return true;
+        }
+
+        if (TryIndicativoCorrienteA28(campo, out n28, out rover)) return true;
+
+        if (resumirRaros && EsIndicativoNoEstandar(campo))
+        {
+            n28 = NumeroDeSenales + CatalogoDeIndicativos.Resumir(campo, 22);
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>Si la palabra va entre angulos, devuelve lo de dentro.</summary>
+    private static bool TryQuitarAngulos(string campo, out string dentro)
+    {
+        dentro = string.Empty;
+        if (campo.Length < 3 || campo[0] != '<' || campo[^1] != '>') return false;
+        dentro = campo[1..^1];
+        return true;
+    }
+
+    /// <summary>
+    /// Dice si algo puede viajar como indicativo: resumido, o en claro en el campo de 58 bits.
+    /// </summary>
+    /// <remarks>
+    /// Tres a once caracteres del alfabeto de 38, con al menos una letra y una cifra y sin barra
+    /// en los extremos. La cifra obligatoria es lo que impide que un hueco sin rellenar de la
+    /// gramatica —<c>&lt;DX&gt;</c>, <c>&lt;YO&gt;</c>— o el <c>&lt;...&gt;</c> de un resumen sin
+    /// resolver acaben emitiendose como si fueran una estacion.
+    /// </remarks>
+    private static bool EsIndicativoResumible(string v)
+    {
+        if (v.Length is < 3 or > CaracteresDeIndicativoLargo) return false;
+        if (!v.All(c => c != ' ' && AlfabetoDeIndicativoLargo.Contains(c, StringComparison.Ordinal))) return false;
+        if (v[0] == '/' || v[^1] == '/') return false;
+        return v.Any(char.IsAsciiDigit) && v.Any(char.IsAsciiLetter);
+    }
+
+    /// <summary>
+    /// Dice si un indicativo cabe en el formato corriente de 28 bits, que es el que no necesita
+    /// resumirse para ir con localizador o informe.
+    /// </summary>
+    /// <remarks>
+    /// Hasta dos caracteres de prefijo, una cifra y hasta tres letras, con <c>/R</c> opcional.
+    /// <c>HB10GBT</c> o <c>EA8/G5LSI</c> no caben y se tienen que mandar resumidos entre angulos,
+    /// o en claro con el formato de indicativo raro.
+    /// </remarks>
+    public static bool EsIndicativoEstandar(string? indicativo) =>
+        !string.IsNullOrWhiteSpace(indicativo) && TryIndicativoCorrienteA28(indicativo.Trim().ToUpperInvariant(), out _, out _);
+
+    /// <summary>Dice si un indicativo se puede emitir de alguna manera (corriente, resumido o en claro).</summary>
+    public static bool EsIndicativoEmitible(string? indicativo) =>
+        !string.IsNullOrWhiteSpace(indicativo) && EsIndicativoResumible(indicativo.Trim().ToUpperInvariant());
 
     private static bool EsColaDeLlamadaGeneral(string cola, out long n28)
     {
@@ -354,14 +483,14 @@ public static class MensajeDe77Bits
 
     private static bool TryCampoDeQuinceA(string campo, out long g15)
     {
-        g15 = CuadrosDeLocalizador;
+        g15 = CuadrosDeLocalizador + 1;
         if (string.IsNullOrEmpty(campo)) return true;
 
         switch (campo)
         {
-            case "RRR": g15 = CuadrosDeLocalizador + 1; return true;
-            case "RR73": g15 = CuadrosDeLocalizador + 2; return true;
-            case "73": g15 = CuadrosDeLocalizador + 3; return true;
+            case "RRR": g15 = CuadrosDeLocalizador + 2; return true;
+            case "RR73": g15 = CuadrosDeLocalizador + 3; return true;
+            case "73": g15 = CuadrosDeLocalizador + 4; return true;
         }
 
         if (campo.Length == 4
@@ -384,13 +513,20 @@ public static class MensajeDe77Bits
     }
 
     /// <summary>
-    /// Empaqueta un mensaje en el que uno de los dos indicativos no cabe en el formato corriente.
+    /// Empaqueta un mensaje de tipo 4: un indicativo en claro de hasta once caracteres y el
+    /// otro resumido en 12 bits.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// Solo uno de los dos puede ser raro: el otro tiene que ser un indicativo corriente —o una
-    /// llamada general— porque viaja resumido en doce bits y hace falta que el receptor lo pueda
-    /// resolver.
+    /// Campos, de izquierda a derecha: resumen de 12 bits, indicativo en claro de 58, un bit
+    /// que dice cual de los dos va primero, dos bits para <c>RRR</c>/<c>RR73</c>/<c>73</c>, un
+    /// bit de llamada general y el <c>i3 = 4</c>. No hay sitio para localizador ni informe.
+    /// </para>
+    /// <para>
+    /// Se aceptan dos escrituras. La explicita, con el resumido entre angulos:
+    /// <c>HB10GBT &lt;EA8DLF&gt;</c>, <c>&lt;EA8DLF&gt; HB10GBT RRR</c>. Y la antigua sin
+    /// angulos, cuando uno es raro y el otro corriente (<c>EA8DLF EA1ABC/P 73</c>), en la que se
+    /// resume el corriente.
     /// </para>
     /// <para>
     /// La comprobacion es deliberadamente estricta. Si no lo fuera, un texto cualquiera de dos
@@ -403,9 +539,11 @@ public static class MensajeDe77Bits
     {
         bits = [];
         var campos = texto.Split(' ');
-        if (campos.Length is < 2 or > 3) return false;
+        if (campos.Length < 2) return false;
 
-        var esCq = campos[0] == "CQ";
+        if (campos[0] == "CQ") return TryEmpaquetarCqNoEstandar(campos, out bits);
+        if (campos.Length > 3) return false;
+
         var cola = campos.Length == 3 ? campos[2] : string.Empty;
         var r2 = cola switch
         {
@@ -417,44 +555,94 @@ public static class MensajeDe77Bits
         };
         if (r2 < 0) return false;
 
-        string raro, corriente;
-        bool elRaroVaPrimero;
+        string enClaro, resumido;
+        bool elEnClaroVaPrimero;
 
-        if (esCq)
+        var primeroResumido = TryQuitarAngulos(campos[0], out var dentroPrimero);
+        var segundoResumido = TryQuitarAngulos(campos[1], out var dentroSegundo);
+
+        if (primeroResumido && !segundoResumido)
         {
-            if (!EsIndicativoNoEstandar(campos[1])) return false;
-            raro = campos[1];
-            corriente = string.Empty;
-            elRaroVaPrimero = false;
+            resumido = dentroPrimero;
+            enClaro = campos[1];
+            elEnClaroVaPrimero = false;
+        }
+        else if (segundoResumido && !primeroResumido)
+        {
+            resumido = dentroSegundo;
+            enClaro = campos[0];
+            elEnClaroVaPrimero = true;
+        }
+        else if (primeroResumido || segundoResumido)
+        {
+            return false;
         }
         else if (EsIndicativoNoEstandar(campos[0]) && EsIndicativoCorriente(campos[1]))
         {
-            raro = campos[0];
-            corriente = campos[1];
-            elRaroVaPrimero = true;
+            enClaro = campos[0];
+            resumido = campos[1];
+            elEnClaroVaPrimero = true;
         }
         else if (EsIndicativoNoEstandar(campos[1]) && EsIndicativoCorriente(campos[0]))
         {
-            raro = campos[1];
-            corriente = campos[0];
-            elRaroVaPrimero = false;
+            enClaro = campos[1];
+            resumido = campos[0];
+            elEnClaroVaPrimero = false;
         }
         else
         {
             return false;
         }
 
-        if (!TryIndicativoLargoA58(raro, out var c58)) return false;
-        var h12 = corriente.Length == 0 ? 0 : CatalogoDeIndicativos.Resumir(corriente, 12);
+        if (!EsIndicativoResumible(resumido) || !EsIndicativoResumible(enClaro)) return false;
+        if (!TryIndicativoLargoA58(enClaro, out var c58)) return false;
+        var h12 = CatalogoDeIndicativos.Resumir(resumido, 12);
 
-        bits = new byte[Bits];
+        bits = EscribirTipoCuatro(h12, c58, elEnClaroVaPrimero, r2, esCq: false);
+        return true;
+    }
+
+    /// <summary>
+    /// <c>CQ HB10GBT</c>: la llamada general de un indicativo raro, en claro.
+    /// </summary>
+    /// <remarks>
+    /// El formato no tiene sitio para localizador ni para la cola del CQ (<c>DX</c>,
+    /// <c>POTA</c>…). Si vienen, se quitan, como hacen los demas programas: lo que importa es que
+    /// el indicativo llegue entero para que los demas lo aprendan. Solo se hace si el
+    /// indicativo es de verdad raro; uno corriente va por el mensaje normal, con localizador.
+    /// </remarks>
+    private static bool TryEmpaquetarCqNoEstandar(string[] campos, out byte[] bits)
+    {
+        bits = [];
+        var i = 1;
+        if (campos.Length >= 3 && !EsIndicativoNoEstandar(campos[1]) && EsColaDeLlamadaGeneral(campos[1], out _)) i = 2;
+        if (i >= campos.Length) return false;
+
+        var raro = campos[i];
+        if (!EsIndicativoNoEstandar(raro)) return false;
+        var sobra = campos.Length - i - 1;
+        if (sobra > 1) return false;
+        if (sobra == 1 && !EsLocalizadorDeCuatro(campos[i + 1])) return false;
+
+        if (!TryIndicativoLargoA58(raro, out var c58)) return false;
+        bits = EscribirTipoCuatro(0, c58, elEnClaroVaPrimero: false, r2: 0, esCq: true);
+        return true;
+    }
+
+    private static bool EsLocalizadorDeCuatro(string campo) =>
+        campo.Length == 4 && campo[0] is >= 'A' and <= 'R' && campo[1] is >= 'A' and <= 'R'
+        && char.IsAsciiDigit(campo[2]) && char.IsAsciiDigit(campo[3]);
+
+    private static byte[] EscribirTipoCuatro(long h12, long c58, bool elEnClaroVaPrimero, long r2, bool esCq)
+    {
+        var bits = new byte[Bits];
         EmpaquetadoDeBits.Escribir(bits, 0, 12, h12);
         EmpaquetadoDeBits.Escribir(bits, 12, 58, c58);
-        EmpaquetadoDeBits.Escribir(bits, 70, 1, elRaroVaPrimero ? 1 : 0);
+        EmpaquetadoDeBits.Escribir(bits, 70, 1, elEnClaroVaPrimero ? 1 : 0);
         EmpaquetadoDeBits.Escribir(bits, 71, 2, r2);
         EmpaquetadoDeBits.Escribir(bits, 73, 1, esCq ? 1 : 0);
         EmpaquetadoDeBits.Escribir(bits, PosicionDeI3, 3, 4);
-        return true;
+        return bits;
     }
 
     /// <summary>Dice si algo tiene pinta de indicativo pero no cabe en el formato corriente.</summary>
@@ -463,15 +651,8 @@ public static class MensajeDe77Bits
     /// <c>EA1ABC/P</c> o <c>VP2E/K1ABC</c> de una palabra suelta. Sin ese filtro, cualquier par
     /// de palabras acabaria emitiendose como si fueran estaciones.
     /// </remarks>
-    private static bool EsIndicativoNoEstandar(string v)
-    {
-        if (v.Length is < 3 or > CaracteresDeIndicativoLargo) return false;
-        if (!v.All(c => AlfabetoDeIndicativoLargo.Contains(c, StringComparison.Ordinal))) return false;
-        if (v[0] == '/' || v[^1] == '/') return false;
-        if (!v.Any(char.IsAsciiDigit)) return false;
-        if (!v.Any(char.IsAsciiLetter)) return false;
-        return !TryPlantillaDeSeis(v, out _);
-    }
+    private static bool EsIndicativoNoEstandar(string v) =>
+        EsIndicativoResumible(v) && !TryIndicativoCorrienteA28(v, out _, out _);
 
     /// <summary>Dice si algo es un indicativo del formato corriente.</summary>
     private static bool EsIndicativoCorriente(string v) => TryIndicativoCorrienteA28(v, out _, out _);
@@ -480,16 +661,23 @@ public static class MensajeDe77Bits
     /// Numera un indicativo raro en base 38 para que quepa en 58 bits.
     /// </summary>
     /// <remarks>
-    /// Once caracteres de un alfabeto de 38 —letras, cifras, barra y hueco— dan un numero de
+    /// <para>
+    /// Once caracteres de un alfabeto de 38 —hueco, cifras, letras y barra— dan un numero de
     /// 57,7 bits, que cabe justo en los 58 que reserva el formato. Ese es el motivo de que un
     /// indicativo de mas de once caracteres no se pueda emitir de ninguna manera.
+    /// </para>
+    /// <para>
+    /// <b>Alineado a la derecha</b>: los huecos sobrantes van delante y valen cero, asi que el
+    /// numero es el de los caracteres del indicativo sin mas. Es como lo emiten los demas
+    /// programas (contrastado con los vectores de ft8_lib); alineado a la izquierda se
+    /// decodificaria igual, pero los bits no serian los mismos.
+    /// </para>
     /// </remarks>
     private static bool TryIndicativoLargoA58(string indicativo, out long c58)
     {
         c58 = 0;
         if (indicativo.Length > CaracteresDeIndicativoLargo) return false;
-        // Se alinea a la izquierda: asi el mismo indicativo da siempre el mismo numero.
-        foreach (var c in indicativo.PadRight(CaracteresDeIndicativoLargo))
+        foreach (var c in indicativo)
         {
             var i = AlfabetoDeIndicativoLargo.IndexOf(c, StringComparison.Ordinal);
             if (i < 0) return false;
@@ -612,8 +800,8 @@ public static class MensajeDe77Bits
         var acuse = EmpaquetadoDeBits.Leer(bits, 58, 1) != 0;
         var g15 = (int)EmpaquetadoDeBits.Leer(bits, 59, 15);
 
-        if (!TryDe28ATexto(n28Destino, roverDestino, catalogo, out var destino, out var esCqDestino, out var destinoSinResolver)) return false;
-        if (!TryDe28ATexto(n28Origen, roverOrigen, catalogo, out var origen, out var esCqOrigen, out var origenSinResolver)) return false;
+        if (!TryDe28ATexto(n28Destino, roverDestino, catalogo, out var destino, out var destinoEnClaro, out var esCqDestino, out var destinoSinResolver)) return false;
+        if (!TryDe28ATexto(n28Origen, roverOrigen, catalogo, out var origen, out var origenEnClaro, out var esCqOrigen, out var origenSinResolver)) return false;
         // La segunda estacion es siempre quien emite; si ahi sale una llamada general, los bits
         // no son un mensaje de este tipo por mucho que el CRC cuadrara.
         if (esCqOrigen) return false;
@@ -633,13 +821,17 @@ public static class MensajeDe77Bits
             if (cola.Length > 0) partes.Append(' ').Append(cola);
         }
 
-        Indicativo.TryParse(origen, out var llamante);
+        // El indicativo que sale es el de verdad, sin angulos: <HB10GBT> y HB10GBT son la misma
+        // estacion para el secuenciador y para el cuaderno.
+        var llamante = Indicativo.Vacio;
+        if (origenEnClaro.Length > 0) Indicativo.TryParse(origenEnClaro, out llamante);
         var llamado = Indicativo.Vacio;
-        if (!esCqDestino) Indicativo.TryParse(destino, out llamado);
+        if (!esCqDestino && destinoEnClaro.Length > 0) Indicativo.TryParse(destinoEnClaro, out llamado);
 
-        // Solo se apunta en el catalogo lo que se ha visto entero.
-        if (!origenSinResolver) catalogo.Recordar(origen);
-        if (!esCqDestino && !destinoSinResolver) catalogo.Recordar(destino);
+        // Solo se apunta en el catalogo lo que se ha visto entero, y en claro: un resumen
+        // resuelto ya esta en el catalogo, y uno sin resolver no dice nada.
+        if (!origenSinResolver && !origen.StartsWith('<')) catalogo.Recordar(origen);
+        if (!esCqDestino && !destinoSinResolver && !destino.StartsWith('<')) catalogo.Recordar(destino);
 
         mensaje = new MensajeDescifrado(partes.ToString(), TipoDeMensaje.Normal)
         {
@@ -651,6 +843,13 @@ public static class MensajeDe77Bits
             TieneIndicativoSinResolver = destinoSinResolver || origenSinResolver,
         };
         return true;
+    }
+
+    private static bool TryDe28ATexto(long n28, bool rover, CatalogoDeIndicativos catalogo, out string texto, out string enClaro, out bool esLlamadaGeneral, out bool sinResolver)
+    {
+        var ok = TryDe28ATexto(n28, rover, catalogo, out texto, out esLlamadaGeneral, out sinResolver);
+        enClaro = !ok || esLlamadaGeneral || sinResolver ? string.Empty : texto.Trim('<', '>');
+        return ok;
     }
 
     private static bool TryDe28ATexto(long n28, bool rover, CatalogoDeIndicativos catalogo, out string texto, out bool esLlamadaGeneral, out bool sinResolver)
@@ -740,10 +939,12 @@ public static class MensajeDe77Bits
 
         switch (g15 - CuadrosDeLocalizador)
         {
-            case 0: cola = string.Empty; return true;
-            case 1: cola = "RRR"; return true;
-            case 2: cola = "RR73"; return true;
-            case 3: cola = "73"; return true;
+            // El 32400 no lo emite nadie: no es ni localizador ni valor con nombre.
+            case 0: return false;
+            case 1: cola = string.Empty; return true;
+            case 2: cola = "RRR"; return true;
+            case 3: cola = "RR73"; return true;
+            case 4: cola = "73"; return true;
         }
 
         var valor = g15 - BaseDelInforme;

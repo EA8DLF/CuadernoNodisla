@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equipos: el FT-710, otros Yaesu e ICOM · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html" class="actual" aria-current="page">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="equipos-el-ft-710-otros-yaesu-e-icom">Equipos: el FT-710, otros Yaesu e ICOM</h1>
+<p>El cuaderno habla con la radio por <strong>CAT nativo</strong>: el juego de &#243;rdenes del propio fabricante, por el puerto serie del equipo. Es lo que permite dibujar el frontal, mover sus mandos y leer sus medidores. Se configura en <strong>Configuraci&#243;n › Equipo (CAT)</strong> (ver <a href="01-primer-uso.html#paso-4--configuraci&#243;n--equipo-cat-con-el-ft-710">Primer uso</a>).</p>
+<h2 id="qu&#233;-equipos-hay">Qu&#233; equipos hay</h2>
+<div class="tabla"><table>
+<thead><tr><th>Fabricante</th><th>Modelos</th><th>C&#243;mo habla</th></tr></thead>
+<tbody>
+<tr><td><strong>Yaesu</strong> (CAT nuevo)</td><td><strong>FT-710</strong>, FTDX10, FTDX101D, FTDX101MP, FT-991, FT-991A, FT-891, FTDX3000, FTDX5000, FTDX1200</td><td>&#211;rdenes de texto acabadas en <code>;</code></td></tr>
+<tr><td><strong>Yaesu</strong> (CAT antiguo)</td><td>FT-817, FT-818, FT-857, FT-897</td><td>&#211;rdenes de 5 bytes; no se autodetectan</td></tr>
+<tr><td><strong>ICOM</strong></td><td>IC-7300, IC-7610, IC-705, IC-7100, IC-9700, IC-7851</td><td>CI-V, con la direcci&#243;n de cada modelo</td></tr>
+</tbody></table></div>
+<p>El <strong>FT-710 est&#225; probado con la radio de verdad</strong>. Los dem&#225;s est&#225;n programados <strong>seg&#250;n el manual, sin probar con radio</strong>: el desplegable de modelo y el panel del equipo lo dicen con letras. Si tiene uno de ellos y algo no cuadra, rep&#243;rtelo desde <strong>Ayuda › Reportar un fallo</strong>: el informe ya lleva el modelo y la v&#237;a.</p>
+<p>En ICOM, la <strong>direcci&#243;n CI-V</strong> de f&#225;brica de cada modelo ya est&#225; puesta; si la cambi&#243; en la radio, escr&#237;bala en el apartado. Para cualquier otro equipo quedan <strong>rigctld</strong> (Hamlib, por TCP) y <strong>OmniRig</strong>, con lo b&#225;sico: frecuencia, modo y PTT.</p>
+<p>Si no sabe qu&#233; radio es o en qu&#233; puerto est&#225;, elija <strong>Detectar autom&#225;ticamente</strong>: se prueba el puerto guardado y despu&#233;s todos, preguntando identificaci&#243;n. <strong>Solo se pregunta; nunca se transmite.</strong></p>
+<h2 id="el-frontal">El frontal</h2>
+<p>Con el equipo conectado, <strong>Operar › Cabina</strong> dibuja su frontal: el del FT-710 con sus 24 mandos, y frontales propios para el FTDX10, el FTDX101, el FT-991A, el FT-891, el IC-7300, el IC-7610 y el IC-705. Los dem&#225;s salen con un <strong>frontal gen&#233;rico</strong> con lo que el equipo declara.</p>
+<figure><a href="capturas/frontal-ic7300.png"><img src="capturas/frontal-ic7300.png" alt="El frontal del IC-7300 (equipo simulado), con la botonera HAM y los canales CB a los lados" loading="lazy"></a><figcaption>El frontal del IC-7300 (equipo simulado), con la botonera HAM y los canales CB a los lados</figcaption></figure>
+<figure><a href="capturas/frontal-generico.png"><img src="capturas/frontal-generico.png" alt="Un equipo sin frontal propio sale con el frontal gen&#233;rico" loading="lazy"></a><figcaption>Un equipo sin frontal propio sale con el frontal gen&#233;rico</figcaption></figure>
+<p>Los mandos se tocan igual que en la radio: rueda del rat&#243;n o flechas del teclado. En los mandos dobles, la rueda sobre el centro (o <code>May&#250;s</code> + flechas) mueve el mando de dentro. Un mando que el equipo no admite <strong>no sale</strong>: no hay botones muertos.</p>
+<ul>
+<li><strong>Todos los mandos</strong> despliega la lista completa de lo que declara el equipo, con su valor y su recorrido. Mover uno en la lista lo mueve en el dibujo, y al rev&#233;s.</li>
+<li><strong>Ocultar equipo</strong> pliega el frontal para dejar sitio; se recuerda de una vez a otra.</li>
+<li><strong>SOLTAR PTT</strong>, en rojo y siempre a la vista, baja el PTT sin preguntar.</li>
+</ul>
+<figure><a href="capturas/operar-mandos.png"><img src="capturas/operar-mandos.png" alt="La lista de todos los mandos desplegada bajo el frontal" loading="lazy"></a><figcaption>La lista de todos los mandos desplegada bajo el frontal</figcaption></figure>
+<h2 id="el-analizador-de-espectro-del-ft-710">El analizador de espectro del FT-710</h2>
+<p>La pantalla del frontal del FT-710 ense&#241;a <strong>el espectro de la propia radio</strong>, el mismo que se ve en su pantalla: traza, cascada y la marca roja del VFO. No lo calcula el PC: lo manda la radio por el USB, a trav&#233;s del puente FTDI FT4222 que lleva dentro.</p>
+<p>Hace falta:</p>
+<ol>
+<li>En la radio, <strong>MENU › OPERATION SETTING › GENERAL › SCU-LAN10 = ON</strong> (no hace falta tener la SCU-LAN10).</li>
+<li>En el PC, el controlador <strong>D2XX</strong> de FTDI.</li>
+</ol>
+<p>Las teclas de debajo de la pantalla hacen lo mismo que en la radio: <strong>CENTER</strong> / <strong>FIX</strong>, <strong>3DSS</strong> (vista en perspectiva), <strong>EXPAND</strong> (m&#225;s alto para el analizador), <strong>SPAN</strong> − / + y <strong>SPEED</strong> − / +. Al pulsarlas se manda la orden a la radio, y lo que se cambie en la radio se ve aqu&#237;.</p>
+<p>Si no llega el espectro, el analizador dice por qu&#233;: falta la biblioteca de FTDI, no aparece el dispositivo (radio apagada o sin controlador) o no llegan tramas (mire <strong>SCU-LAN10</strong>). Se reintenta solo cada pocos segundos.</p>
+<h3 id="multi-osciloscopio-y-af-fft">MULTI: osciloscopio y AF-FFT</h3>
+<p>La tecla <strong>MULTI</strong> hace lo que la pantalla MULTI del FT-710: el analizador en peque&#241;o arriba y, debajo, el <strong>osciloscopio</strong> y el <strong>AF-FFT</strong> del audio de recepci&#243;n. Es una vista del programa, no manda nada a la radio. Usa la entrada de audio del c&#243;dec del equipo (la misma del m&#243;dem); si el audio no est&#225; abierto, el aviso de MULTI ofrece abrirlo.</p>
+<figure><a href="capturas/analizador-multi.png"><img src="capturas/analizador-multi.png" alt="MULTI: el analizador arriba y el osciloscopio y el AF-FFT del audio de recepci&#243;n debajo" loading="lazy"></a><figcaption>MULTI: el analizador arriba y el osciloscopio y el AF-FFT del audio de recepci&#243;n debajo</figcaption></figure>
+<h2 id="la-botonera-bandas-modos-memorias-y-canales-cb">La botonera: bandas, modos, memorias y canales CB</h2>
+<p>A los lados del frontal (en <strong>Cabina</strong> y en <strong>Digital</strong>):</p>
+<ul>
+<li><strong>HAM</strong>, a la izquierda: <strong>Banda</strong> (vuelve a la &#250;ltima frecuencia y modo de esa banda, como la tecla BAND), <strong>Modo</strong> (LSB &#183; USB &#183; CW &#183; AM &#183; FM &#183; DATA; DATA es DATA-L por debajo de 10 MHz y DATA-U por encima) y <strong>Memoria</strong> (M1 … M6).</li>
+<li><strong>Canales CB</strong>, a la derecha: los 40 canales de 27 MHz con su <strong>plan</strong> (11m &#183; UK &#183; CEPT &#183; PL &#183; USA, se recuerda).</li>
+</ul>
+<p>La tecla de la banda, el modo o el canal en que est&#225; el dial se ve en azul. <strong>Nada de la botonera transmite.</strong> Sin equipo conectado, las teclas se apagan y dicen por qu&#233;.</p>
+<h2 id="lo-que-el-programa-no-hace-nunca-con-la-radio">Lo que el programa no hace nunca con la radio</h2>
+<ul>
+<li>Conectarse solo al abrir.</li>
+<li>Transmitir sin una acci&#243;n del operador (y, en el m&#243;dem, sin abrir antes el pestillo).</li>
+<li>Cambiar men&#250;s de la radio. Solo <strong>lee</strong> los que necesita para avisar (por ejemplo, la fuente de modulaci&#243;n para la fon&#237;a).</li>
+<li>Dejar un PTT subido: el <strong>vigilante de PTT</strong> lo baja al agotarse el tiempo m&#225;ximo, si se pierde la comunicaci&#243;n, si salta un fallo o al cerrar el programa.</li>
+</ul>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

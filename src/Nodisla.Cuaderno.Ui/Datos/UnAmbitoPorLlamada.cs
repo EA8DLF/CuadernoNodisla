@@ -46,6 +46,8 @@ public static class UnAmbitoPorLlamada
         servicios.AddScoped<Cuaderno.Datos.Repositorios.RepositorioQso>();
         servicios.AddScoped<Cuaderno.Datos.Repositorios.RepositorioEstacion>();
         servicios.AddScoped<Cuaderno.Datos.Informes.ConsultasDeInforme>();
+        servicios.AddScoped<Cuaderno.Datos.Repositorios.RepositorioRondas>();
+        servicios.AddScoped<Cuaderno.Datos.Repositorios.RepositorioDiplomasEmitidos>();
 
         servicios.AddSingleton<IRepositorioQso>(
             p => new RepositorioQsoConAmbito(p.GetRequiredService<IServiceScopeFactory>()));
@@ -53,6 +55,10 @@ public static class UnAmbitoPorLlamada
             p => new RepositorioEstacionConAmbito(p.GetRequiredService<IServiceScopeFactory>()));
         servicios.AddSingleton<IConsultasDeInforme>(
             p => new ConsultasDeInformeConAmbito(p.GetRequiredService<IServiceScopeFactory>()));
+        servicios.AddSingleton<IRepositorioRondas>(
+            p => new RepositorioRondasConAmbito(p.GetRequiredService<IServiceScopeFactory>()));
+        servicios.AddSingleton<IRepositorioDiplomasEmitidos>(
+            p => new RepositorioDiplomasEmitidosConAmbito(p.GetRequiredService<IServiceScopeFactory>()));
 
         return servicios;
     }
@@ -196,5 +202,77 @@ public static class UnAmbitoPorLlamada
         /// <inheritdoc />
         public Task<TotalesDelCuaderno> TotalesAsync(CancellationToken ct = default) =>
             EnUnAmbitoAsync<Cuaderno.Datos.Informes.ConsultasDeInforme, TotalesDelCuaderno>(fabrica, c => c.TotalesAsync(ct));
+    }
+
+    private sealed class RepositorioRondasConAmbito(IServiceScopeFactory fabrica) : IRepositorioRondas
+    {
+        /// <inheritdoc />
+        public Task<long> AbrirAsync(RondaDeControl ronda, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioRondas, long>(fabrica, r => r.AbrirAsync(ronda, ct));
+
+        /// <inheritdoc />
+        public Task<RondaDeControl?> ObtenerAbiertaAsync(CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioRondas, RondaDeControl?>(
+                fabrica,
+                r => r.ObtenerAbiertaAsync(ct));
+
+        /// <inheritdoc />
+        public Task<RondaDeControl?> ObtenerAsync(long id, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioRondas, RondaDeControl?>(
+                fabrica,
+                r => r.ObtenerAsync(id, ct));
+
+        /// <inheritdoc />
+        public Task<IReadOnlyList<RondaDeControl>> ListarAsync(CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioRondas, IReadOnlyList<RondaDeControl>>(
+                fabrica,
+                r => r.ListarAsync(ct));
+
+        /// <inheritdoc />
+        public Task CerrarAsync(long rondaId, DateTimeOffset finUtc, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioRondas>(
+                fabrica,
+                r => r.CerrarAsync(rondaId, finUtc, ct));
+
+        /// <inheritdoc />
+        public Task<long> AnadirParticipanteAsync(ParticipanteDeRonda participante, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioRondas, long>(
+                fabrica,
+                r => r.AnadirParticipanteAsync(participante, ct));
+
+        /// <inheritdoc />
+        public Task ActualizarParticipanteAsync(ParticipanteDeRonda participante, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioRondas>(
+                fabrica,
+                r => r.ActualizarParticipanteAsync(participante, ct));
+
+        /// <inheritdoc />
+        public Task EliminarParticipanteAsync(long participanteId, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioRondas>(
+                fabrica,
+                r => r.EliminarParticipanteAsync(participanteId, ct));
+    }
+
+    private sealed class RepositorioDiplomasEmitidosConAmbito(IServiceScopeFactory fabrica) : IRepositorioDiplomasEmitidos
+    {
+        /// <inheritdoc />
+        public Task<int> SiguienteNumeroAsync(string serie, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioDiplomasEmitidos, int>(fabrica, r => r.SiguienteNumeroAsync(serie, ct));
+
+        /// <inheritdoc />
+        public Task<DiplomaEmitido> EmitirAsync(DiplomaEmitido diploma, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioDiplomasEmitidos, DiplomaEmitido>(fabrica, r => r.EmitirAsync(diploma, ct));
+
+        /// <inheritdoc />
+        public Task<IReadOnlyList<DiplomaEmitido>> ListarAsync(int limite = 500, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioDiplomasEmitidos, IReadOnlyList<DiplomaEmitido>>(fabrica, r => r.ListarAsync(limite, ct));
+
+        /// <inheritdoc />
+        public Task<DiplomaEmitido?> ObtenerAsync(long id, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioDiplomasEmitidos, DiplomaEmitido?>(fabrica, r => r.ObtenerAsync(id, ct));
+
+        /// <inheritdoc />
+        public Task MarcarEnviadoAsync(long id, string correo, DateTimeOffset cuando, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioDiplomasEmitidos>(fabrica, r => r.MarcarEnviadoAsync(id, correo, cuando, ct));
     }
 }

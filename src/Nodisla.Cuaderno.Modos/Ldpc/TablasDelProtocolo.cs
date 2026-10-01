@@ -16,9 +16,17 @@ namespace Nodisla.Cuaderno.Modos.Ldpc;
 /// </para>
 /// <list type="number">
 /// <item>
-/// La <b>matriz de paridad del codigo LDPC(174,91)</b>. Son 83 ecuaciones de siete bits cada una
-/// elegidas a mano por quien diseno el protocolo. No hay formula que las genere; o se tienen las
-/// mismas que todo el mundo o no se decodifica a nadie.
+/// La <b>matriz de paridad del codigo LDPC(174,91)</b>. Son 83 ecuaciones de seis o siete bits
+/// cada una, elegidas a mano por quien diseno el protocolo. No hay formula que las genere; o se
+/// tienen las mismas que todo el mundo o no se decodifica a nadie.
+/// </item>
+/// <item>
+/// La <b>matriz generadora</b> del mismo codigo, que describe lo mismo por el otro camino. No se
+/// usa para codificar —eso se despeja de las ecuaciones de arriba— sino para <b>vigilarlas</b>:
+/// al cargar el fichero se comprueba que las dos maneras dan la misma palabra, y si discreparan
+/// en un solo bit se rechaza el fichero entero. Una tabla de 522 numeros copiada a mano es justo
+/// donde se cuela una errata, y una errata aqui no da un error visible: da un modem que
+/// decodifica basura de vez en cuando con el CRC cuadrando.
 /// </item>
 /// <item>
 /// La <b>secuencia de mezcla de FT4</b>, diez bytes con los que se revuelve el mensaje antes de
@@ -111,12 +119,16 @@ public sealed class TablasDelProtocolo
     /// para que un error de transcripcion se vea. Las lineas que empiezan por almohadilla son
     /// comentarios. La primera linea util dice las dimensiones; luego viene una linea por
     /// ecuacion de paridad con los numeros de los bits que toca, contando desde cero. Una linea
-    /// que empiece por <c>MEZCLA-FT4</c> lleva los diez bytes en hexadecimal.
+    /// que empiece por <c>MEZCLA-FT4</c> lleva los diez bytes en hexadecimal, y cada linea que
+    /// empiece por <c>GENERADORA</c> lleva una fila de la matriz generadora, tambien en
+    /// hexadecimal. La generadora es opcional; si esta, se cruza con las ecuaciones y el fichero
+    /// no se acepta si no cuadran.
     /// </remarks>
     private static (CodigoLdpc Ldpc, byte[] MezclaDeFt4) Leer(string[] lineas)
     {
         var mezcla = new byte[10];
         var ecuaciones = new List<int[]>();
+        var generadora = new List<byte[]>();
         var longitud = 0;
         var bitsDeMensaje = 0;
 
@@ -124,6 +136,17 @@ public sealed class TablasDelProtocolo
         {
             var linea = cruda.Trim();
             if (linea.Length == 0 || linea[0] == '#') continue;
+
+            if (linea.StartsWith("GENERADORA", StringComparison.OrdinalIgnoreCase))
+            {
+                var hex = linea["GENERADORA".Length..].Trim().Replace(" ", string.Empty, StringComparison.Ordinal);
+                if (hex.Length % 2 != 0) throw new FormatException("Una fila de la generadora trae un número impar de dígitos hexadecimales.");
+                var fila = new byte[hex.Length / 2];
+                for (var i = 0; i < fila.Length; i++)
+                    fila[i] = byte.Parse(hex.AsSpan(i * 2, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                generadora.Add(fila);
+                continue;
+            }
 
             if (linea.StartsWith("MEZCLA-FT4", StringComparison.OrdinalIgnoreCase))
             {
@@ -162,6 +185,59 @@ public sealed class TablasDelProtocolo
             h[e] = new bool[longitud];
             foreach (var v in ecuaciones[e]) h[e][v] = true;
         }
-        return (CodigoLdpc.DesdeMatrizDeParidad(h, bitsDeMensaje), mezcla);
+
+        var ldpc = CodigoLdpc.DesdeMatrizDeParidad(h, bitsDeMensaje);
+        if (generadora.Count > 0) CruzarConLaGeneradora(ldpc, generadora);
+        return (ldpc, mezcla);
+    }
+
+    /// <summary>
+    /// Comprueba que codificar despejando las ecuaciones da lo mismo que la tabla generadora.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Las dos tablas describen el mismo codigo por caminos distintos: una dice que bits tienen
+    /// que sumar cero y la otra dice directamente como se calcula cada bit de paridad. Si las
+    /// dos estan bien copiadas <b>tienen que coincidir en los 174 bits de los 91 mensajes que
+    /// llevan un solo uno</b>, y de ahi en todos los demas, porque cualquier mensaje es una suma
+    /// de esos.
+    /// </para>
+    /// <para>
+    /// Basta con esos 91 casos: el codigo es lineal, asi que si las dos maneras coinciden en una
+    /// base coinciden en todo. Son 91 codificaciones y se hacen una sola vez al arrancar.
+    /// </para>
+    /// <para>
+    /// Si discrepan, hay una errata en una de las dos y no se sabe en cual. Se rechaza el
+    /// fichero entero: el modem prefiere avisar de que no tiene tablas antes que trabajar con
+    /// unas en las que no se puede confiar.
+    /// </para>
+    /// </remarks>
+    private static void CruzarConLaGeneradora(CodigoLdpc ldpc, List<byte[]> generadora)
+    {
+        var paridad = ldpc.Longitud - ldpc.BitsDeMensaje;
+        if (generadora.Count != paridad)
+            throw new FormatException($"La generadora debe traer {paridad} filas y trae {generadora.Count}.");
+
+        var bytesPorFila = (ldpc.BitsDeMensaje + 7) / 8;
+        foreach (var fila in generadora)
+            if (fila.Length != bytesPorFila)
+                throw new FormatException($"Cada fila de la generadora debe traer {bytesPorFila} bytes y hay una con {fila.Length}.");
+
+        var unidad = new byte[ldpc.BitsDeMensaje];
+        for (var i = 0; i < ldpc.BitsDeMensaje; i++)
+        {
+            Array.Clear(unidad);
+            unidad[i] = 1;
+            var palabra = ldpc.Codificar(unidad);
+            for (var e = 0; e < paridad; e++)
+            {
+                var segunLaGeneradora = (byte)((generadora[e][i / 8] >> (7 - (i % 8))) & 1);
+                if (palabra[ldpc.BitsDeMensaje + e] != segunLaGeneradora)
+                    throw new FormatException(
+                        $"Las dos tablas del código no dicen lo mismo: para el mensaje con un uno en el bit {i}, " +
+                        $"el bit de paridad {e} sale {palabra[ldpc.BitsDeMensaje + e]} despejando las ecuaciones y " +
+                        $"{segunLaGeneradora} según la generadora. Hay una errata en una de las dos.");
+            }
+        }
     }
 }

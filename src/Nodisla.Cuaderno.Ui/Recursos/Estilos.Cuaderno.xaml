@@ -1,0 +1,402 @@
+﻿<!--
+    Estilos del LIBRO DE CONTACTOS.
+
+    Existen aparte porque la rejilla del cuaderno no es una tabla mas: es la unica pantalla
+    del programa que se lee renglon a renglon, durante horas, y muchas veces de noche. Lo que
+    la hace descansada no es el color, es que las cifras caigan a plomo y que quepan muchas
+    filas a la vista sin tener que barrer la pantalla con los ojos.
+
+    Las cuatro reglas que siguen estos estilos:
+
+      1. DENSIDAD. Relleno corto y fila baja. Donde antes cabian dieciocho contactos ahora
+         caben cerca de treinta, y se ve una sesion entera de una vez.
+      2. CIFRAS DE ANCHO FIJO. Fecha, hora, frecuencia, informes y distancia van en tipografia
+         de ancho fijo y alineadas a la derecha las numericas. Un «1» y un «8» ocupan lo mismo,
+         asi que las columnas quedan a plomo y el ojo baja en linea recta.
+      3. SEPARACION CASI IMPERCEPTIBLE. Alternancia de tres puntos de luminosidad y lineas
+         verticales apenas visibles. Nada de cebra ni de reja.
+      4. COLOR SOLO DONDE SIGNIFICA ALGO. Las confirmaciones, como pastillas pequenas de
+         color. El resto, tinta neutra.
+
+    Nada de esto se aplica al resto del programa: los estilos van con clave y solo los usa la
+    rejilla del cuaderno.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores">
+
+    <conversores:AnchoEnLetras x:Key="LetraDeLaRejilla" />
+
+    <!--
+        La tipografia de las cifras. Consolas esta en todos los Windows desde Vista; las otras
+        dos son el plan B. Se usa SOLO en las columnas de numeros y en el indicativo: mezclarla
+        con el texto corrido haria que el cuaderno pareciera un volcado de consola.
+    -->
+    <FontFamily x:Key="Cifras">Consolas, Cascadia Mono, Courier New</FontFamily>
+
+    <Thickness x:Key="RellenoDeCelda">8,2,8,2</Thickness>
+
+    <!-- ── Contenido de las celdas ───────────────────────────────────────── -->
+
+    <!--
+        Peso NORMAL siempre, fijado aqui y no heredado: el cuaderno llego a salir entero en
+        negrita porque la heredaba de la pestaña elegida.
+    -->
+    <Style x:Key="CeldaDeTexto" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+
+    <!--
+        Cifras que no se suman —fecha, hora, informes—: ancho fijo, pero alineadas a la
+        izquierda, porque todas ocupan lo mismo y a la derecha se despegarian de su cabecera.
+    -->
+    <Style x:Key="CeldaDeCifras" TargetType="TextBlock" BasedOn="{StaticResource CeldaDeTexto}">
+        <Setter Property="FontFamily" Value="{StaticResource Cifras}" />
+    </Style>
+
+    <!-- Cifras que se comparan de un vistazo —frecuencia, distancia—: a la derecha. -->
+    <Style x:Key="CeldaNumerica" TargetType="TextBlock" BasedOn="{StaticResource CeldaDeCifras}">
+        <Setter Property="TextAlignment" Value="Right" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+
+    <!--
+        El indicativo es lo primero que se busca: letra proporcional y SemiBold, que lo
+        destaca sin volver a la pared de negrita.
+    -->
+    <Style x:Key="CeldaDeIndicativo" TargetType="TextBlock" BasedOn="{StaticResource CeldaDeTexto}">
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <!-- ── Cabeceras ─────────────────────────────────────────────────────── -->
+
+    <Style x:Key="AsaDeColumnaDelCuaderno" TargetType="Thumb">
+        <Setter Property="Width" Value="8" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Cursor" Value="SizeWE" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border Background="Transparent" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        Cabecera gris medio, en letra pequena y con la fila entera clavada arriba: al desplazar
+        veinte mil contactos hay que poder mirar en cualquier momento de que columna es lo que
+        se esta leyendo.
+    -->
+    <Style x:Key="CabeceraDelCuaderno" TargetType="DataGridColumnHeader">
+        <Setter Property="Background" Value="{DynamicResource RejillaCabecera}" />
+        <Setter Property="Foreground" Value="{DynamicResource RejillaCabeceraTexto}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize"
+                Value="{Binding DataContext.TamanoDeLetra,
+                                RelativeSource={RelativeSource AncestorType=Window},
+                                Converter={StaticResource LetraDeLaRejilla},
+                                ConverterParameter=0.86}" />
+        <Setter Property="Padding" Value="8,4,8,4" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridColumnHeader">
+                    <Grid>
+                        <Border x:Name="borde"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{DynamicResource RejillaLinea}"
+                                BorderThickness="0,0,1,0"
+                                Padding="{TemplateBinding Padding}">
+                            <DockPanel>
+                                <TextBlock x:Name="flecha"
+                                           DockPanel.Dock="Right"
+                                           Margin="6,0,0,0"
+                                           Visibility="Collapsed"
+                                           Foreground="{DynamicResource FilaElegidaBarra}"
+                                           Text="&#x25B2;" />
+                                <ContentPresenter VerticalAlignment="Center"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                            </DockPanel>
+                        </Border>
+                        <Thumb x:Name="PART_LeftHeaderGripper" HorizontalAlignment="Left"
+                               Style="{StaticResource AsaDeColumnaDelCuaderno}" />
+                        <Thumb x:Name="PART_RightHeaderGripper" HorizontalAlignment="Right"
+                               Style="{StaticResource AsaDeColumnaDelCuaderno}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="SortDirection" Value="Ascending">
+                            <Setter TargetName="flecha" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="flecha" Property="Text" Value="&#x25B2;" />
+                        </Trigger>
+                        <Trigger Property="SortDirection" Value="Descending">
+                            <Setter TargetName="flecha" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="flecha" Property="Text" Value="&#x25BC;" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="borde" Property="Background" Value="{DynamicResource RejillaCabeceraResalte}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- La cabecera de una columna de numeros se alinea con sus numeros: a la derecha. -->
+    <Style x:Key="CabeceraNumerica" TargetType="DataGridColumnHeader" BasedOn="{StaticResource CabeceraDelCuaderno}">
+        <Setter Property="HorizontalContentAlignment" Value="Right" />
+    </Style>
+
+    <!-- ── Celdas y filas ────────────────────────────────────────────────── -->
+
+    <!--
+        La celda no pinta fondo NUNCA, ni siquiera elegida: el fondo lo pone la fila entera.
+        Asi la seleccion es un renglon continuo y no una tira de recuadros con costuras.
+        Tampoco fija color de letra, para que herede el de la fila y la elegida pueda aclararlo.
+    -->
+    <Style x:Key="CeldaDelCuaderno" TargetType="DataGridCell">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="{StaticResource RellenoDeCelda}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridCell">
+                    <Border Background="Transparent"
+                            BorderBrush="{DynamicResource RejillaLinea}"
+                            BorderThickness="0,0,1,0"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        El alto de la fila se fija, y se fija EN LETRAS, no en puntos de pantalla.
+
+        Dejarlo al aire no vale: un DataGrid le da a cada fila el alto que le pida su celda mas
+        alta, y con eso volvian los renglones de treinta puntos aunque el relleno fuera corto.
+        Fijarlo en pixeles tampoco: a escala 200 % el texto se saldria de su fila. Asi que se
+        mide en letras —una coma seis veces el tamano de letra— y sube y baja con la escala,
+        como todo lo demas del programa.
+    -->
+    <Style x:Key="FilaDelCuaderno" TargetType="DataGridRow">
+        <Setter Property="Foreground" Value="{DynamicResource RejillaTexto}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Height"
+                Value="{Binding DataContext.TamanoDeLetra,
+                                RelativeSource={RelativeSource AncestorType=Window},
+                                Converter={StaticResource LetraDeLaRejilla},
+                                ConverterParameter=1.62}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridRow">
+                    <Border x:Name="fondo" Background="{TemplateBinding Background}">
+                        <Grid>
+                            <DataGridCellsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" />
+                            <!--
+                                La barra de la izquierda va ENCIMA de las celdas, no en una
+                                columna propia: si ocupara sitio, las celdas irian tres puntos
+                                mas a la derecha que sus cabeceras y se perderia el plomo de
+                                las columnas, que es justo lo que se venia a arreglar.
+                            -->
+                            <Border x:Name="barra"
+                                    Width="3"
+                                    HorizontalAlignment="Left"
+                                    Background="Transparent"
+                                    IsHitTestVisible="False" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="fondo" Property="Background" Value="{DynamicResource FilaBajoElRaton}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="fondo" Property="Background" Value="{DynamicResource FilaElegida}" />
+                            <Setter TargetName="barra" Property="Background" Value="{DynamicResource FilaElegidaBarra}" />
+                            <Setter Property="Foreground" Value="{DynamicResource FilaElegidaTexto}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── La rejilla ────────────────────────────────────────────────────── -->
+
+    <Style x:Key="RejillaDeContactos" TargetType="DataGrid">
+        <Setter Property="Background" Value="{DynamicResource RejillaFondo}" />
+        <Setter Property="Foreground" Value="{DynamicResource RejillaTexto}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource RejillaLinea}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="RowBackground" Value="{DynamicResource RejillaFondo}" />
+        <Setter Property="AlternatingRowBackground" Value="{DynamicResource RejillaAlterna}" />
+        <Setter Property="RowHeaderWidth" Value="0" />
+        <Setter Property="AutoGenerateColumns" Value="False" />
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="SelectionMode" Value="Single" />
+        <Setter Property="SelectionUnit" Value="FullRow" />
+        <!-- Las lineas horizontales las hace ya la alternancia; dibujarlas ademas es la reja. -->
+        <Setter Property="GridLinesVisibility" Value="None" />
+        <Setter Property="HeadersVisibility" Value="Column" />
+        <!--
+            Aqui NO van ColumnHeaderStyle, CellStyle ni RowStyle.
+
+            Se pusieron, y no se aplicaron: un estilo implicito declarado en los recursos de la
+            aplicacion —los que hay en Estilos.xaml para que TODAS las tablas del programa se
+            parezcan— le gana a esas tres propiedades del DataGrid. El resultado fue una rejilla
+            a medio vestir: las columnas que llevaban estilo propio salian con la cabecera
+            oscura y las demas seguian con la clara.
+
+            La manera que si funciona es declarar los estilos implicitos DENTRO de la rejilla
+            (ver PanelDelCuaderno.xaml): mandan sobre los de la aplicacion por estar mas cerca,
+            y no se escapan a ninguna otra tabla.
+        -->
+        <Setter Property="EnableRowVirtualization" Value="True" />
+        <Setter Property="EnableColumnVirtualization" Value="True" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
+        <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
+        <Setter Property="VirtualizingPanel.ScrollUnit" Value="Item" />
+    </Style>
+
+    <!-- ── Pastillas de confirmacion ─────────────────────────────────────── -->
+
+    <!--
+        Una pastilla por via: L de LoTW, E de eQSL, P de tarjeta en papel y Q de QRZ.
+
+        Letra gris sin contorno cuando se ENVIO y no ha vuelto nada, contorno de color cuando
+        la confirmacion consta, y RELLENA cuando el servicio ademas la ha verificado, que es lo unico que aceptan los diplomas exigentes. La diferencia se ve sin
+        leer nada, que es de lo que se trata: el operador mira la columna y sabe por donde le
+        tienen confirmado ese contacto.
+
+        Cada estilo lleva sus dos disparadores: si de esa via no consta nada, la pastilla no
+        ocupa ni un punto.
+    -->
+    <Style x:Key="PastillaDeQsl" TargetType="Border">
+        <Setter Property="CornerRadius" Value="3" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="4,0,4,1" />
+        <Setter Property="Margin" Value="0,0,3,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="LetraDePastilla" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TextTrimming" Value="None" />
+        <Setter Property="FontSize"
+                Value="{Binding DataContext.TamanoDeLetra,
+                                RelativeSource={RelativeSource AncestorType=Window},
+                                Converter={StaticResource LetraDeLaRejilla},
+                                ConverterParameter=0.86}" />
+    </Style>
+
+
+    <Style x:Key="PastillaLotw" TargetType="Border" BasedOn="{StaticResource PastillaDeQsl}">
+        <Setter Property="BorderBrush" Value="{DynamicResource QslLotwTinta}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Lotw}" Value="Nada">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Lotw}" Value="Enviada">
+                <Setter Property="BorderBrush" Value="{DynamicResource RejillaLinea}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Lotw}" Value="Verificada">
+                <Setter Property="Background" Value="{DynamicResource QslLotwFondo}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="LetraLotw" TargetType="TextBlock" BasedOn="{StaticResource LetraDePastilla}">
+        <Setter Property="Foreground" Value="{DynamicResource QslLotwTinta}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Lotw}" Value="Enviada">
+                <Setter Property="Foreground" Value="{DynamicResource RejillaTextoTenue}" />
+                <Setter Property="FontWeight" Value="Normal" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="PastillaEqsl" TargetType="Border" BasedOn="{StaticResource PastillaDeQsl}">
+        <Setter Property="BorderBrush" Value="{DynamicResource QslEqslTinta}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Eqsl}" Value="Nada">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Eqsl}" Value="Enviada">
+                <Setter Property="BorderBrush" Value="{DynamicResource RejillaLinea}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Eqsl}" Value="Verificada">
+                <Setter Property="Background" Value="{DynamicResource QslEqslFondo}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="LetraEqsl" TargetType="TextBlock" BasedOn="{StaticResource LetraDePastilla}">
+        <Setter Property="Foreground" Value="{DynamicResource QslEqslTinta}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Eqsl}" Value="Enviada">
+                <Setter Property="Foreground" Value="{DynamicResource RejillaTextoTenue}" />
+                <Setter Property="FontWeight" Value="Normal" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="PastillaPapel" TargetType="Border" BasedOn="{StaticResource PastillaDeQsl}">
+        <Setter Property="BorderBrush" Value="{DynamicResource QslPapelTinta}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Papel}" Value="Nada">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Papel}" Value="Enviada">
+                <Setter Property="BorderBrush" Value="{DynamicResource RejillaLinea}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Papel}" Value="Verificada">
+                <Setter Property="Background" Value="{DynamicResource QslPapelFondo}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="LetraPapel" TargetType="TextBlock" BasedOn="{StaticResource LetraDePastilla}">
+        <Setter Property="Foreground" Value="{DynamicResource QslPapelTinta}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Papel}" Value="Enviada">
+                <Setter Property="Foreground" Value="{DynamicResource RejillaTextoTenue}" />
+                <Setter Property="FontWeight" Value="Normal" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="PastillaQrz" TargetType="Border" BasedOn="{StaticResource PastillaDeQsl}">
+        <Setter Property="BorderBrush" Value="{DynamicResource QslQrzTinta}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Qrz}" Value="Nada">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Qrz}" Value="Enviada">
+                <Setter Property="BorderBrush" Value="{DynamicResource RejillaLinea}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Qrz}" Value="Verificada">
+                <Setter Property="Background" Value="{DynamicResource QslQrzFondo}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="LetraQrz" TargetType="TextBlock" BasedOn="{StaticResource LetraDePastilla}">
+        <Setter Property="Foreground" Value="{DynamicResource QslQrzTinta}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Qrz}" Value="Enviada">
+                <Setter Property="Foreground" Value="{DynamicResource RejillaTextoTenue}" />
+                <Setter Property="FontWeight" Value="Normal" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>

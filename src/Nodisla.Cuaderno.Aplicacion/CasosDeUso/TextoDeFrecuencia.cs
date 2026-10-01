@@ -45,6 +45,30 @@ public static class TextoDeFrecuencia
         megahercios.ToString(Formato, CultureInfo.InvariantCulture);
 
     /// <summary>
+    /// Formato de columna: SIEMPRE cinco decimales, con los ceros puestos.
+    /// </summary>
+    /// <remarks>
+    /// Cinco decimales son diez hercios, que es mas resolucion de la que da ningun anuncio de
+    /// cluster y la justa para el dial de un equipo de aficionado.
+    /// </remarks>
+    private const string FormatoDeColumna = "0.00000";
+
+    /// <summary>
+    /// Escribe la frecuencia para una columna de una lista, con los ceros de relleno puestos.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="Escribir"/> quita los ceros del final, que es lo que se quiere en un campo que
+    /// el operador teclea. En una LISTA hace justo lo contrario de lo que hace falta: deja
+    /// <c>14.27</c> encima de <c>14.3011</c> encima de <c>7.203</c>, la coma baila de renglon en
+    /// renglon y la cifra parece cortada. En una columna la frecuencia va siempre con los mismos
+    /// decimales, para que los numeros queden a plomo y se lean de un vistazo.
+    /// </remarks>
+    public static string EscribirEnColumna(Frecuencia frecuencia) =>
+        frecuencia.EsCero
+            ? string.Empty
+            : frecuencia.Megahercios.ToString(FormatoDeColumna, CultureInfo.InvariantCulture);
+
+    /// <summary>
     /// Quita los espacios y unifica la coma con el punto. Si vienen las dos, o mas de un
     /// separador, se rechaza: es mas seguro que adivinar lo que quiso decir el operador.
     /// </summary>

@@ -1,0 +1,48 @@
+# Tablas de constantes de los mensajes cortos de MSK144 (MSK40): codigo corrector LDPC(32,16)
+#
+# PROCEDENCIA
+#   Proyecto : WSJT-X --- https://sourceforge.net/projects/wsjt/  (GPLv3; AQUI SOLO HAY DATOS, ver tablas-msk144.txt)
+#   Ficheros : lib/bpdecode40.f90 (ecuaciones y orden de columnas) y lib/encode_msk40.f90 (generadora)
+#   Version  : rama master del repositorio de SourceForge, leida el 26-09-2026
+#   Descrito : QEX jul/ago 2017, apartado "Optional Short-Message Format": codigo (32,16), 3 unos por
+#              columna y 5, 6 o 7 por fila.
+#
+# QUE ES ESTO
+#   En este codigo el mensaje NO va en los 16 primeros bits de la palabra: la linea MENSAJE-EN dice
+#   en que posicion de la palabra emitida viaja cada uno de los 16 bits del mensaje (hash de 12 bits
+#   seguido del informe de 4). Los otros 16 bits son la paridad. La generadora da cada bit de paridad
+#   (en el orden en que aparecen sus posiciones, de menor a mayor) como suma de bits del mensaje.
+32 16
+MENSAJE-EN 16 12 18 19 7 21 22 11 24 5 26 14 9 29 30 31
+0 6 11 17 20 26 30
+1 7 12 17 23 27
+1 8 13 18 22 28
+2 7 11 19 22 29
+3 7 14 18 21 30
+0 5 12 18 24 29
+4 8 15 20 24 25
+2 9 10 17 25 31
+5 8 14 19 26 31
+4 9 12 21 26
+3 6 13 19 25 27
+3 9 11 16 24 28
+0 10 15 21 27 28
+1 10 14 16 20 29
+2 5 13 15 23 30
+4 6 16 22 23 31
+GENERADORA 60c4
+GENERADORA 5a6b
+GENERADORA 1b04
+GENERADORA 2c12
+GENERADORA 4428
+GENERADORA be6a
+GENERADORA 1071
+GENERADORA 36dd
+GENERADORA c580
+GENERADORA a685
+GENERADORA 332e
+GENERADORA eca2
+GENERADORA 7843
+GENERADORA 1efe
+GENERADORA 5906
+GENERADORA ad9a

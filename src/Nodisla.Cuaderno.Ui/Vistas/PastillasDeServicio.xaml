@@ -133,20 +133,69 @@
         </Border>
 
         <!--
-            LoTW todavía no tiene puerto conectado en la interfaz: la pastilla se dibuja
-            apagada y lo dice. Enseñarla apagada es información —se sabe que existe y que no
-            está— mientras que no enseñarla haría creer que el cuaderno no sube a ninguna
-            parte.
+            Los servicios en línea: LoTW, eQSL, Club Log y QRZ (subida automática) y la
+            «Ficha» (completar con QRZ.com). Verde al día, ámbar con contactos esperando o
+            reintentando, rojo cuando no se puede subir (falta TQSL, credenciales) o algo
+            falló, apagada si está desactivada. El número es lo que queda por subir, y la
+            ayuda emergente lo dice todo con palabras.
         -->
-        <Border Style="{StaticResource Pastilla}"
-                Opacity="0.55"
-                ToolTip="La subida a LoTW llega en la Fase 3. Todavía no hay conexión que vigilar."
-                AutomationProperties.Name="LoTW: sin conexión, llega en la Fase 3">
-            <StackPanel Orientation="Horizontal">
-                <Ellipse Width="7" Height="7" Margin="0,0,5,0" VerticalAlignment="Center"
-                         Fill="{DynamicResource TextoTenue}" />
-                <TextBlock Text="LoTW" FontSize="11" TextTrimming="None" VerticalAlignment="Center" />
-            </StackPanel>
-        </Border>
+        <ItemsControl ItemsSource="{Binding Subidas.Pastillas}" Focusable="False">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border AutomationProperties.Name="{Binding Texto}">
+                        <Border.ToolTip>
+                            <TextBlock Text="{Binding Texto}" TextWrapping="Wrap" MaxWidth="420" />
+                        </Border.ToolTip>
+                        <Border.Style>
+                            <Style TargetType="Border" BasedOn="{StaticResource Pastilla}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Semaforo}" Value="Apagado">
+                                        <Setter Property="Opacity" Value="0.55" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Semaforo}" Value="Verde">
+                                        <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Semaforo}" Value="Ambar">
+                                        <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Semaforo}" Value="Rojo">
+                                        <Setter Property="Background" Value="{DynamicResource ErrorFondo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorde}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="7" Height="7" Margin="0,0,5,0" VerticalAlignment="Center">
+                                <Ellipse.Style>
+                                    <Style TargetType="Ellipse">
+                                        <Setter Property="Fill" Value="{DynamicResource TextoTenue}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Semaforo}" Value="Verde">
+                                                <Setter Property="Fill" Value="{DynamicResource CorrectoTexto}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Semaforo}" Value="Ambar">
+                                                <Setter Property="Fill" Value="{DynamicResource AvisoTexto}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Semaforo}" Value="Rojo">
+                                                <Setter Property="Fill" Value="{DynamicResource ErrorTexto}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Ellipse.Style>
+                            </Ellipse>
+                            <TextBlock Text="{Binding Etiqueta}" FontSize="11" TextTrimming="None" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </StackPanel>
 </UserControl>

@@ -70,9 +70,16 @@
                               IsEnabled="{Binding Disponible}"
                               Visibility="{Binding EsDePosiciones, Converter={StaticResource BooleanoAVisible}}" />
 
-                    <Slider Value="{Binding Valor}"
-                            Minimum="{Binding Minimo}"
-                            Maximum="{Binding Maximo}"
+                    <!--
+                        Minimum y Maximum van ANTES que Value, a proposito. Con Value primero, WPF
+                        lo recortaba al maximo por omision (10) antes de conocer el de verdad y
+                        devolvia ese 10 al modelo: abrir la lista mandaba al equipo volumen 10,
+                        potencia 10 W... Y con Delay no se manda una orden CAT por cada pixel.
+                    -->
+                    <Slider Minimum="{Binding Minimo, Mode=OneWay}"
+                            Maximum="{Binding Maximo, Mode=OneWay}"
+                            Value="{Binding Valor, Delay=150}"
+                            IsSnapToTickEnabled="True"
                             TickFrequency="{Binding Paso}"
                             SmallChange="{Binding Paso}"
                             LargeChange="{Binding Paso}"

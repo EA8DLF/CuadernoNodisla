@@ -1,0 +1,101 @@
+# Tablas de constantes del protocolo MSK144: codigo corrector LDPC(128,90)
+#
+# PROCEDENCIA
+#   Proyecto : WSJT-X (Joe Taylor K1JT, Steve Franke K9AN y otros) --- https://sourceforge.net/projects/wsjt/
+#   Licencia : GPLv3. AQUI SOLO HAY DATOS: las constantes numericas del protocolo (que bits suman
+#              cero en cada ecuacion, y la matriz generadora del mismo codigo). No se ha copiado,
+#              traducido ni compilado ni una linea de codigo de ese proyecto; el codificador, el
+#              decodificador y todo lo demas de Cuaderno NODISLA son propios.
+#   Ficheros : lib/ldpc_128_90_reordered_parity.f90 (ecuaciones) y lib/ldpc_128_90_generator.f90 (generadora)
+#   Version  : rama master del repositorio de SourceForge, leida el 26-09-2026
+#   Traido el: 26-09-2026 por el especialista de procesado de senal de Cuaderno NODISLA
+#   Descrito : S. Franke y J. Taylor, "The MSK144 Protocol for Meteor-Scatter Communication", QEX jul/ago 2017
+#              (el articulo describe la version de 72 bits; la de 77 bits con CRC-13 y LDPC(128,90) es la
+#              que usa el protocolo desde 2018, y son estas tablas).
+#
+# QUE ES ESTO
+#   38 ecuaciones de paridad de 10 u 11 bits sobre palabras de 128 bits; cada bit entra en 3.
+#   Los 90 primeros bits de la palabra son el mensaje (77 bits + CRC de 13) y los 38 ultimos la
+#   paridad. La generadora se cruza con las ecuaciones al cargar: si discrepan, se rechaza todo.
+#
+# FORMATO
+#   Primera linea util: bits por palabra y bits de mensaje. Una linea por ecuacion con los bits
+#   que toca (desde cero). GENERADORA: una fila por bit de paridad, 90 bits en hexadecimal, el
+#   mas significativo primero.
+128 90
+1 14 26 39 52 64 76 90 93 114
+2 5 27 40 53 65 77 91 93 119
+3 15 28 41 54 66 76 89 92 105 117
+4 16 29 42 51 63 78 91 101 118
+5 17 30 43 55 67 79 88 94 107 124
+6 13 31 44 56 67 78 89 95 115 120
+3 18 32 42 57 68 80 96 106 120
+1 19 29 38 53 69 79 97 106 127
+2 20 33 45 58 66 78 98 106 122
+7 14 28 46 55 70 81 99 110 127
+8 21 33 43 51 71 82 100 102 125
+9 16 25 47 59 72 83 90 109 120
+6 22 34 37 54 72 81 100 108 119
+10 18 35 48 52 69 84 101 103 125
+9 19 36 45 57 70 84 104 108 121
+4 22 36 46 56 73 85 92 109 124
+11 12 26 40 60 67 86 96 108 112
+10 15 37 44 57 71 77 98 107 114
+3 21 30 40 59 73 81 104 111 114
+11 23 31 38 61 62 87 98 101 117
+0 18 24 44 61 74 76 99 111 118
+5 24 32 49 58 70 82 97 116 117
+9 15 38 50 52 65 82 94 110 123
+8 23 34 41 58 75 88 93 113 121
+6 16 36 49 53 74 87 110 113 122
+10 24 34 47 60 64 87 104 115 124
+8 20 31 48 54 68 83 85 94 112 118
+1 17 27 46 62 72 86 95 105 125
+11 25 30 48 63 71 80 99 105 119
+12 14 27 47 50 75 84 92 102 122
+7 19 35 43 56 74 77 90 112 116
+4 20 28 39 50 69 80 95 116 121
+7 25 33 39 61 73 79 91 115 126
+0 12 13 35 41 63 65 83 100 107
+13 21 26 49 62 68 88 103 109 127
+0 17 29 45 59 64 89 96 113 126
+2 22 32 51 55 75 86 103 111 123
+23 37 42 60 66 85 97 102 123 126
+GENERADORA a08ea80879050a5e94da9940
+GENERADORA 59f3b48040ca089c81ee8800
+GENERADORA e4070262802e31b7b17d3dc0
+GENERADORA 95cbcbaf032dc3d960bacc80
+GENERADORA c4d79b5dcc21161a254ffbc0
+GENERADORA 93fde9cdbf2622a708684240
+GENERADORA e73b888bb1b01167379ba280
+GENERADORA 45a0d0a0f39a7ad2439949c0
+GENERADORA 759acef19444bcad79c49640
+GENERADORA 71eb4dddf4f5ed9e2ea17e00
+GENERADORA 80f0ad76fb247d6b4ca8d380
+GENERADORA 184fff3aa1b82dc666401040
+GENERADORA ca4e320bb382ed14cbb10940
+GENERADORA 52514447b90e25b9e459e280
+GENERADORA dd10c1666e071956bd0df380
+GENERADORA 99c332a0b792a2da8ef1ba80
+GENERADORA 7bd9f688e7ed402e231aaac0
+GENERADORA 00fcad76eb647d6a0ca8c380
+GENERADORA 6ac8d0499c43b02eed78d700
+GENERADORA 2c2c764baf795b4788db0100
+GENERADORA 0e907bf9e280d2624823dd00
+GENERADORA b857a6e315afd8c1c925e640
+GENERADORA 8deb58e22d73a141cae37780
+GENERADORA 22d3cb80d92d6ac132dfe080
+GENERADORA 754763877b28c187746855c0
+GENERADORA 1d1bb7cf6953732e04ebca40
+GENERADORA 2c65e0ea4466ab9f5e1deec0
+GENERADORA 6dc530ca37fc916d1f848700
+GENERADORA 49bccbbee152355be7ac9840
+GENERADORA e8387f3f4367cf45a1504480
+GENERADORA 8ce25e03d67d51091c818840
+GENERADORA b798012ffa40a93852752c80
+GENERADORA 2e43307933adfca37adc3c80
+GENERADORA ca06e0a42ca1ec782d6c06c0
+GENERADORA c02b762927556a7039e638c0
+GENERADORA 4a3e9b7d08b6807f8619fac0
+GENERADORA 45e8030f68997bb685444240
+GENERADORA 7e79362c16773efc6482e300

@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
@@ -24,6 +24,7 @@ public sealed partial class VistaModeloMapa : ObservableObject
 
     private IReadOnlyList<MarcaDelMapa> _contactos = [];
     private IReadOnlyList<MarcaDelMapa> _spots = [];
+    private MarcaDelMapa? _satelite;
 
     /// <summary>Monta el mapa sobre el cuaderno.</summary>
     /// <param name="puntos">Caso de uso que saca del cuaderno los contactos situables.</param>
@@ -44,6 +45,7 @@ public sealed partial class VistaModeloMapa : ObservableObject
     private IReadOnlyList<MarcaDelMapa> _marcas = [];
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(QuitarTrayectoCommand))]
     private IReadOnlyList<TrayectoDelMapa> _trayectos = [];
 
     [ObservableProperty]
@@ -204,8 +206,25 @@ public sealed partial class VistaModeloMapa : ObservableObject
     }
 
     /// <summary>Quita el trayecto dibujado.</summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HayTrayecto))]
     public void QuitarTrayecto() => Trayectos = [];
+
+    private bool HayTrayecto() => Trayectos.Count > 0;
+
+    /// <summary>
+    /// Pone o quita el subpunto de un satelite sobre el mapa.
+    /// </summary>
+    /// <remarks>
+    /// Lo llama el panel de satelites mientras hay uno elegido, una vez por segundo. No hay
+    /// pestana nueva que dibuje su propio mapa: este es el mismo mapa de siempre, y el subpunto
+    /// es una marca mas dentro de <see cref="Marcas"/>.
+    /// </remarks>
+    /// <param name="marca">El subpunto, o <c>null</c> para quitarlo.</param>
+    public void PonerSatelite(MarcaDelMapa? marca)
+    {
+        _satelite = marca;
+        Rehacer();
+    }
 
     /// <summary>Pone el paso gris en la hora actual.</summary>
     /// <param name="ahora">Hora UTC.</param>
@@ -239,13 +258,17 @@ public sealed partial class VistaModeloMapa : ObservableObject
     private void Rehacer()
     {
         var total = new List<MarcaDelMapa>(
-            (MostrarContactos ? _contactos.Count : 0) + (MostrarSpots ? _spots.Count : 0));
+            (MostrarContactos ? _contactos.Count : 0) + (MostrarSpots ? _spots.Count : 0) + 1);
 
         if (MostrarContactos) total.AddRange(_contactos);
 
         // Los spots van despues para que, cuando caigan sobre el mismo sitio que un contacto,
         // sea el spot el que se vea: es lo que esta pasando ahora mismo en la banda.
         if (MostrarSpots) total.AddRange(_spots);
+
+        // El satelite va el ultimo y con el peso mas alto de todos (ver Peso en CapasDelMapa):
+        // es lo unico que se mueve de verdad mientras se mira el mapa.
+        if (_satelite is { } satelite) total.Add(satelite);
 
         Marcas = total;
         OnPropertyChanged(nameof(Resumen));

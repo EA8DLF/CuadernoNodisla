@@ -130,6 +130,11 @@ public sealed class ServicioQrzCuaderno : IServicioQsl
                     new Dictionary<string, string>
                     {
                         ["ACTION"] = "INSERT",
+
+                        // REPLACE: si el contacto ya estaba (reenvio tras modificarlo con F2, o
+                        // un reintento cuya respuesta se perdio) se sustituye en vez de dar
+                        // «duplicate». Si no estaba, se inserta igual.
+                        ["OPTION"] = "REPLACE",
                         ["ADIF"] = adif,
                     },
                     $"subir el contacto con {qso.Call.Valor} a QRZ.com", ct).ConfigureAwait(false);
@@ -150,8 +155,10 @@ public sealed class ServicioQrzCuaderno : IServicioQsl
         var rechazados = qsos.Count - enviados;
         if (rechazados > 0)
         {
+            // El motivo que da QRZ (REASON), para poder saber por que; nunca la clave.
             _log.LogWarning(
-                "QRZ.com rechazó {Rechazados} de {Total} contactos.", rechazados, qsos.Count);
+                "QRZ.com rechazó {Rechazados} de {Total} contactos: {Motivos}",
+                rechazados, qsos.Count, string.Join(" | ", motivos.Values.Distinct()));
         }
         return new ResultadoDeSubida(enviados, rechazados, motivos, reloj.Elapsed);
     }

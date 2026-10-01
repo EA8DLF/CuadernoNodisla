@@ -24,6 +24,17 @@ public sealed record FichaIndicativo
     public string? Iota { get; init; }
     public Uri? Imagen { get; init; }
 
+    /// <summary>La estacion declara que confirma por LoTW. Nulo si el servicio no lo dice.</summary>
+    public bool? UsaLotw { get; init; }
+
+    /// <summary>La estacion declara que confirma por eQSL. Nulo si el servicio no lo dice.</summary>
+    public bool? UsaEqsl { get; init; }
+
+    /// <summary>
+    /// Aviso del servicio sobre la ficha, por ejemplo que sin suscripcion solo da una parte.
+    /// </summary>
+    public string? Aviso { get; init; }
+
     /// <summary>Servicio que aporto la ficha, para saber de donde salio cada dato.</summary>
     public required string Fuente { get; init; }
 

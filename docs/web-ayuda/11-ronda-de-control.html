@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ronda de control · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html" class="actual" aria-current="page">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="ronda-de-control">Ronda de control</h1>
+<p><strong>Operar › Ronda de control</strong> (<code>Ctrl</code> <code>9</code>) es para las rondas de control (<em>net control</em>): una red de radioaficionados con un director, una lista de participantes que van entrando, y un contacto real del cuaderno por cada uno que se confirma.</p>
+<figure><a href="capturas/ronda.png"><img src="capturas/ronda.png" alt="Ronda de control: abrir una ronda nueva, con el historial de rondas anteriores debajo" loading="lazy"></a><figcaption>Ronda de control: abrir una ronda nueva, con el historial de rondas anteriores debajo</figcaption></figure>
+<h2 id="abrir-una-ronda">Abrir una ronda</h2>
+<p>Mientras no hay ninguna ronda abierta, la p&#225;gina ense&#241;a el formulario de arriba: <strong>nombre de la ronda</strong>, <strong>club o evento</strong> (opcional), <strong>banda</strong>, <strong>modo</strong>, <strong>frecuencia</strong> y el <strong>perfil de estaci&#243;n</strong> con el que se va a dirigir. Con &#171;Abrir ronda&#187; empieza la sesi&#243;n y el formulario se sustituye por la cabecera de la ronda en curso, con su resumen y el bot&#243;n &#171;Cerrar ronda&#187;.</p>
+<p><strong>Solo puede haber una ronda abierta a la vez.</strong></p>
+<h2 id="los-participantes">Los participantes</h2>
+<p>Con la ronda abierta aparece un campo para teclear el <strong>indicativo</strong> y el bot&#243;n &#171;A&#241;adir a la ronda&#187; (o <code>Intro</code> en el propio campo), que lo suma a la lista con su hora de entrada. Cada fila de la rejilla se puede editar sobre la marcha:</p>
+<ul>
+<li><strong>RST TX</strong> y <strong>RST RX</strong> — los informes intercambiados con ese participante.</li>
+<li><strong>Comentario</strong> — cualquier nota suelta.</li>
+<li><strong>&#171;Guardar RST/comentario&#187;</strong> — guarda esos cambios sobre la fila sin cerrarla todav&#237;a.</li>
+<li><strong>&#171;Confirmar trabajado&#187;</strong> — convierte al participante en un <strong>contacto real del cuaderno</strong>, con la banda, el modo y la frecuencia de la ronda y la hora de entrada de ese participante. La columna <strong>TRABAJADO</strong> se marca en cuanto esto ocurre. Si el mismo contacto —mismo indicativo, hora, banda y modo— ya estuviera en el cuaderno, el programa lo dice en vez de duplicarlo.</li>
+<li><strong>&#171;Quitar&#187;</strong> — elimina de la lista al participante seleccionado sin tocar el cuaderno.</li>
+</ul>
+<h2 id="cerrar-la-ronda-y-el-historial">Cerrar la ronda y el historial</h2>
+<p><strong>&#171;Cerrar ronda&#187;</strong> termina la sesi&#243;n y la manda al <strong>historial</strong>, que es lo que se ve en esta misma p&#225;gina mientras no hay ninguna ronda abierta: nombre, club o evento, banda, modo, inicio y fin en UTC, cu&#225;ntos participantes hubo y cu&#225;ntos se llegaron a confirmar como trabajados.</p>
+<h2 id="reapertura-autom&#225;tica">Reapertura autom&#225;tica</h2>
+<p>Si el programa se cierra —o se cae— con una ronda todav&#237;a abierta, <strong>la vuelve a abrir sola al arrancar</strong>, exactamente donde se qued&#243;, con toda su lista de participantes. La pantalla no distingue si la ronda acaba de abrirse o si ven&#237;a de antes: es la misma ronda, y no hace falta recordar cerrarla a mano para no perderla.</p>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

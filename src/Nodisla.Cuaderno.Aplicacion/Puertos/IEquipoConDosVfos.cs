@@ -1,4 +1,4 @@
-using Nodisla.Cuaderno.Dominio.Valores;
+﻿using Nodisla.Cuaderno.Dominio.Valores;
 
 namespace Nodisla.Cuaderno.Aplicacion.Puertos;
 
@@ -72,6 +72,9 @@ public sealed record EstadoDeLosVfos(
         DesplazamientoRitHz: 0,
         Xit: false,
         DesplazamientoXitHz: 0);
+
+    /// <summary>El equipo esta en memorias (o sintonizando una), no en VFO.</summary>
+    public bool EnMemoria { get; init; }
 
     /// <summary>Los dos VFO, en orden.</summary>
     public IReadOnlyList<EstadoDeUnVfo> Ambos => [A, B];

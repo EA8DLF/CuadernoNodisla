@@ -146,6 +146,7 @@
                         <ContentPresenter IsHitTestVisible="False"
                                           Content="{TemplateBinding SelectionBoxItem}"
                                           ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
                                           ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
                                           Margin="10,6,30,6"
                                           VerticalAlignment="Center"
@@ -221,6 +222,19 @@
         <Setter Property="Foreground" Value="{DynamicResource TextoSobreAcento}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Acento}" />
         <Setter Property="FontWeight" Value="Bold" />
+        <Style.Triggers>
+            <!--
+                Un boton de acento apagado tiene que VERSE apagado. Con la sola opacidad que
+                pone la plantilla, un azul al 45 % sigue pareciendo un boton vivo, y eso costo
+                un diagnostico: el operador veia Aplicar normal, pulsaba y no pasaba nada,
+                porque en realidad estaba deshabilitado trabajando.
+            -->
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{DynamicResource FondoCabecera}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextoTenue}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <!-- ── Casillas ──────────────────────────────────────────────────────── -->

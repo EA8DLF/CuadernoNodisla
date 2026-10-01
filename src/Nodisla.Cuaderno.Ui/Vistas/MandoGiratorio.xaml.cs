@@ -8,17 +8,19 @@ using Nodisla.Cuaderno.Ui.VistaModelos;
 namespace Nodisla.Cuaderno.Ui.Vistas;
 
 /// <summary>
-/// Un mando giratorio del frontal dibujado.
+/// Un mando giratorio del frontal dibujado, doble y concentrico como los de la radio.
 /// </summary>
 /// <remarks>
 /// <para>
-/// Lleva el rotulo real del equipo y acciona exactamente el mismo <see cref="VistaModeloMando"/>
-/// que la lista de «Todos los mandos»: el dibujo y la lista son dos maneras de ver lo mismo, no
-/// dos caminos distintos. Girar el mando aqui mueve el deslizador de alla, y al reves.
+/// El anillo acciona <see cref="Mando"/> y el centro <see cref="MandoInterior"/>: exactamente los
+/// mismos <see cref="VistaModeloMando"/> que la lista de «Todos los mandos». Si el centro no tiene
+/// mando propio, la rueda en cualquier sitio mueve el anillo.
 /// </para>
 /// <para>
-/// Un mando que el equipo tiene pero no ofrece por CAT se dibuja igual, apagado: que este y no
-/// se pueda tocar es informacion; que no estuviera seria un frontal incompleto.
+/// Hay mandos que no mueven un valor sino el equipo (STEP/MCH salta de canal): para esos,
+/// <see cref="GiroLibre"/> activo y el evento <see cref="Girado"/> dice cuantas muescas.
+/// Pulsar el mando (clic) y mantenerlo (clic derecho) ejecutan <see cref="AlPulsar"/> y
+/// <see cref="AlPulsarDerecho"/>, como el FUNC del equipo, que al pulsarlo cambia de funcion.
 /// </para>
 /// </remarks>
 public partial class MandoGiratorio : UserControl
@@ -26,42 +28,58 @@ public partial class MandoGiratorio : UserControl
     /// <summary>Arco util de un potenciometro de verdad: de las siete a las cinco.</summary>
     private const double ArcoEnGrados = 270.0;
 
-    /// <summary>Mando que se acciona. Nulo si el equipo no lo ofrece por CAT.</summary>
+    /// <summary>Radio del mando de encima, sobre el radio total (29 de 50 en el dibujo).</summary>
+    private const double RadioDelCentro = 0.58;
+
+    /// <summary>Mando del anillo. Nulo si el equipo no lo ofrece por CAT.</summary>
     public static readonly DependencyProperty MandoProperty = DependencyProperty.Register(
-        nameof(Mando),
-        typeof(VistaModeloMando),
-        typeof(MandoGiratorio),
-        new PropertyMetadata(null, AlCambiarDeMando));
+        nameof(Mando), typeof(VistaModeloMando), typeof(MandoGiratorio), new PropertyMetadata(null, AlCambiarDeMando));
+
+    /// <summary>Mando del centro. Nulo si el centro no tiene mando propio.</summary>
+    public static readonly DependencyProperty MandoInteriorProperty = DependencyProperty.Register(
+        nameof(MandoInterior), typeof(VistaModeloMando), typeof(MandoGiratorio), new PropertyMetadata(null, AlCambiarDeMando));
 
     /// <summary>Rotulo tal y como esta serigrafiado en el equipo.</summary>
     public static readonly DependencyProperty RotuloProperty = DependencyProperty.Register(
-        nameof(Rotulo),
-        typeof(string),
-        typeof(MandoGiratorio),
-        new PropertyMetadata(string.Empty, AlCambiarDeMando));
+        nameof(Rotulo), typeof(string), typeof(MandoGiratorio), new PropertyMetadata(string.Empty, AlCambiarDeMando));
 
     /// <summary>Que hace el mando, en espanol, para la ayuda y el lector de pantalla.</summary>
     public static readonly DependencyProperty ExplicacionProperty = DependencyProperty.Register(
-        nameof(Explicacion),
-        typeof(string),
-        typeof(MandoGiratorio),
-        new PropertyMetadata(string.Empty, AlCambiarDeMando));
+        nameof(Explicacion), typeof(string), typeof(MandoGiratorio), new PropertyMetadata(string.Empty, AlCambiarDeMando));
+
+    /// <summary>El anillo mueve el equipo (evento <see cref="Girado"/>) cuando no hay <see cref="Mando"/>.</summary>
+    public static readonly DependencyProperty GiroLibreProperty = DependencyProperty.Register(
+        nameof(GiroLibre), typeof(bool), typeof(MandoGiratorio), new PropertyMetadata(false, AlCambiarDeMando));
+
+    /// <summary>Orden al pulsar el mando (clic).</summary>
+    public static readonly DependencyProperty AlPulsarProperty = DependencyProperty.Register(
+        nameof(AlPulsar), typeof(ICommand), typeof(MandoGiratorio), new PropertyMetadata(null, AlCambiarDeMando));
+
+    /// <summary>Parametro de <see cref="AlPulsar"/>.</summary>
+    public static readonly DependencyProperty ParametroAlPulsarProperty = DependencyProperty.Register(
+        nameof(ParametroAlPulsar), typeof(object), typeof(MandoGiratorio), new PropertyMetadata(null));
+
+    /// <summary>Orden al mantener el mando (clic derecho).</summary>
+    public static readonly DependencyProperty AlPulsarDerechoProperty = DependencyProperty.Register(
+        nameof(AlPulsarDerecho), typeof(ICommand), typeof(MandoGiratorio), new PropertyMetadata(null));
+
+    /// <summary>Parametro de <see cref="AlPulsarDerecho"/>.</summary>
+    public static readonly DependencyProperty ParametroAlPulsarDerechoProperty = DependencyProperty.Register(
+        nameof(ParametroAlPulsarDerecho), typeof(object), typeof(MandoGiratorio), new PropertyMetadata(null));
 
     /// <summary>Giro de la marca, en grados.</summary>
     public static readonly DependencyProperty GiroProperty = DependencyProperty.Register(
-        nameof(Giro),
-        typeof(double),
-        typeof(MandoGiratorio),
-        new PropertyMetadata(-135.0));
+        nameof(Giro), typeof(double), typeof(MandoGiratorio), new PropertyMetadata(-135.0));
 
-    /// <summary>Valor escrito bajo el mando.</summary>
+    /// <summary>Valor del anillo, escrito en la tapa.</summary>
     public static readonly DependencyProperty ValorTextoProperty = DependencyProperty.Register(
-        nameof(ValorTexto),
-        typeof(string),
-        typeof(MandoGiratorio),
-        new PropertyMetadata("—"));
+        nameof(ValorTexto), typeof(string), typeof(MandoGiratorio), new PropertyMetadata("—"));
 
-    private VistaModeloMando? _escuchado;
+    /// <summary>Valor del centro, escrito pequeno debajo.</summary>
+    public static readonly DependencyProperty ValorInteriorTextoProperty = DependencyProperty.Register(
+        nameof(ValorInteriorTexto), typeof(string), typeof(MandoGiratorio), new PropertyMetadata(string.Empty));
+
+    private readonly List<VistaModeloMando> _escuchados = [];
 
     /// <summary>Monta el mando.</summary>
     public MandoGiratorio()
@@ -69,14 +87,26 @@ public partial class MandoGiratorio : UserControl
         InitializeComponent();
         MouseWheel += AlGirarLaRueda;
         PreviewKeyDown += AlTeclear;
+        MouseLeftButtonUp += (_, e) => Pulsar(AlPulsar, ParametroAlPulsar, e);
+        MouseRightButtonUp += (_, e) => Pulsar(AlPulsarDerecho, ParametroAlPulsarDerecho, e);
         Unloaded += (_, _) => DejarDeEscuchar();
     }
 
-    /// <summary>Mando que se acciona. Nulo si el equipo no lo ofrece por CAT.</summary>
+    /// <summary>El anillo ha girado sin mando detras (<see cref="GiroLibre"/>): muescas, con signo.</summary>
+    public event EventHandler<int>? Girado;
+
+    /// <summary>Mando del anillo.</summary>
     public VistaModeloMando? Mando
     {
         get => (VistaModeloMando?)GetValue(MandoProperty);
         set => SetValue(MandoProperty, value);
+    }
+
+    /// <summary>Mando del centro.</summary>
+    public VistaModeloMando? MandoInterior
+    {
+        get => (VistaModeloMando?)GetValue(MandoInteriorProperty);
+        set => SetValue(MandoInteriorProperty, value);
     }
 
     /// <summary>Rotulo tal y como esta serigrafiado en el equipo.</summary>
@@ -93,6 +123,41 @@ public partial class MandoGiratorio : UserControl
         set => SetValue(ExplicacionProperty, value);
     }
 
+    /// <summary>El anillo mueve el equipo en vez de un valor.</summary>
+    public bool GiroLibre
+    {
+        get => (bool)GetValue(GiroLibreProperty);
+        set => SetValue(GiroLibreProperty, value);
+    }
+
+    /// <summary>Orden al pulsar.</summary>
+    public ICommand? AlPulsar
+    {
+        get => (ICommand?)GetValue(AlPulsarProperty);
+        set => SetValue(AlPulsarProperty, value);
+    }
+
+    /// <summary>Parametro de la orden al pulsar.</summary>
+    public object? ParametroAlPulsar
+    {
+        get => GetValue(ParametroAlPulsarProperty);
+        set => SetValue(ParametroAlPulsarProperty, value);
+    }
+
+    /// <summary>Orden al mantener (clic derecho).</summary>
+    public ICommand? AlPulsarDerecho
+    {
+        get => (ICommand?)GetValue(AlPulsarDerechoProperty);
+        set => SetValue(AlPulsarDerechoProperty, value);
+    }
+
+    /// <summary>Parametro de la orden al mantener.</summary>
+    public object? ParametroAlPulsarDerecho
+    {
+        get => GetValue(ParametroAlPulsarDerechoProperty);
+        set => SetValue(ParametroAlPulsarDerechoProperty, value);
+    }
+
     /// <summary>Giro de la marca, en grados.</summary>
     public double Giro
     {
@@ -100,11 +165,18 @@ public partial class MandoGiratorio : UserControl
         set => SetValue(GiroProperty, value);
     }
 
-    /// <summary>Valor escrito bajo el mando.</summary>
+    /// <summary>Valor del anillo.</summary>
     public string ValorTexto
     {
         get => (string)GetValue(ValorTextoProperty);
         set => SetValue(ValorTextoProperty, value);
+    }
+
+    /// <summary>Valor del centro.</summary>
+    public string ValorInteriorTexto
+    {
+        get => (string)GetValue(ValorInteriorTextoProperty);
+        set => SetValue(ValorInteriorTextoProperty, value);
     }
 
     private static void AlCambiarDeMando(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -112,9 +184,10 @@ public partial class MandoGiratorio : UserControl
         var control = (MandoGiratorio)d;
         control.DejarDeEscuchar();
 
-        if (control.Mando is { } mando)
+        foreach (var mando in new[] { control.Mando, control.MandoInterior })
         {
-            control._escuchado = mando;
+            if (mando is null) continue;
+            control._escuchados.Add(mando);
             mando.PropertyChanged += control.AlCambiarElValor;
         }
 
@@ -134,25 +207,18 @@ public partial class MandoGiratorio : UserControl
 
     private void DejarDeEscuchar()
     {
-        if (_escuchado is null) return;
-        _escuchado.PropertyChanged -= AlCambiarElValor;
-        _escuchado = null;
+        foreach (var mando in _escuchados) mando.PropertyChanged -= AlCambiarElValor;
+        _escuchados.Clear();
     }
 
-    /// <summary>
-    /// Pone el nombre accesible del mando.
-    /// </summary>
-    /// <remarks>
-    /// Un dibujo sin nombres no lo lee un lector de pantalla. El nombre va en espanol aunque el
-    /// rotulo dibujado sea el del equipo, que esta en ingles porque asi esta serigrafiado.
-    /// </remarks>
+    /// <summary>Pone el nombre accesible y el rotulo de ayuda.</summary>
     private void PonerElNombreAccesible()
     {
         var nombre = Explicacion.Length > 0 ? Explicacion : Rotulo;
+        AutomationProperties.SetName(this, $"{nombre} ({Rotulo})");
 
-        if (Mando is null)
+        if (Mando is null && MandoInterior is null && !GiroLibre && AlPulsar is null)
         {
-            AutomationProperties.SetName(this, $"{nombre} ({Rotulo})");
             AutomationProperties.SetHelpText(this, "Este equipo no ofrece este mando por CAT.");
             ToolTip = $"{Rotulo} — {nombre}. Este equipo no lo ofrece por CAT.";
             IsEnabled = false;
@@ -160,23 +226,32 @@ public partial class MandoGiratorio : UserControl
         }
 
         IsEnabled = true;
-        AutomationProperties.SetName(this, $"{nombre} ({Rotulo})");
-        AutomationProperties.SetHelpText(
-            this,
-            Mando.EsDePosiciones
-                ? $"Posiciones: {string.Join(", ", Mando.Posiciones)}."
-                : $"Entre {Mando.Minimo} y {Mando.Maximo}{(Mando.Unidad.Length > 0 ? " " + Mando.Unidad : string.Empty)}.");
+        var partes = new List<string>();
+        if (Mando is { } anillo) partes.Add($"Anillo: {anillo.Nombre} ({Rango(anillo)}).");
+        else if (GiroLibre) partes.Add("Anillo: mueve el equipo.");
+        if (MandoInterior is { } centro) partes.Add($"Centro: {centro.Nombre} ({Rango(centro)}).");
+        if (AlPulsar is not null) partes.Add("Clic: pulsar el mando.");
+        if (AlPulsarDerecho is not null) partes.Add("Clic derecho: mantenerlo pulsado.");
+        var ayuda = string.Join(" ", partes);
 
-        ToolTip = $"{Rotulo} — {nombre}. Gire con la rueda del ratón o con las flechas.";
+        AutomationProperties.SetHelpText(this, ayuda);
+        ToolTip = $"{Rotulo} — {nombre}. {ayuda} Gire con la rueda del ratón o con las flechas.";
     }
 
-    /// <summary>Lleva la marca y el valor a lo que dice el mando.</summary>
+    private static string Rango(VistaModeloMando mando) =>
+        mando.EsDePosiciones
+            ? string.Join(", ", mando.Posiciones)
+            : $"{mando.Minimo} a {mando.Maximo}{(mando.Unidad.Length > 0 ? " " + mando.Unidad : string.Empty)}";
+
+    /// <summary>Lleva la marca y los valores a lo que dicen los mandos.</summary>
     private void Recoger()
     {
+        ValorInteriorTexto = MandoInterior is { Disponible: true } centro ? centro.ValorTexto : string.Empty;
+
         if (Mando is not { } mando)
         {
             Giro = -ArcoEnGrados / 2;
-            ValorTexto = "—";
+            ValorTexto = GiroLibre ? string.Empty : "—";
             return;
         }
 
@@ -189,16 +264,17 @@ public partial class MandoGiratorio : UserControl
 
     private void AlGirarLaRueda(object sender, MouseWheelEventArgs e)
     {
-        if (Mando is not { Disponible: true } mando) return;
+        var sentido = e.Delta > 0 ? 1 : -1;
+        var p = e.GetPosition(this);
+        var radio = Math.Min(ActualWidth, ActualHeight) / 2;
+        var enElCentro = radio > 0
+                         && Math.Sqrt(Math.Pow(p.X - (ActualWidth / 2), 2) + Math.Pow(p.Y - (ActualHeight / 2), 2)) < radio * RadioDelCentro;
 
-        e.Handled = true;
-        Mover(mando, e.Delta > 0 ? 1 : -1);
+        e.Handled = Mover(sentido, enElCentro);
     }
 
     private void AlTeclear(object sender, KeyEventArgs e)
     {
-        if (Mando is not { Disponible: true } mando) return;
-
         var pasos = e.Key switch
         {
             Key.Up or Key.Right => 1,
@@ -208,13 +284,43 @@ public partial class MandoGiratorio : UserControl
 
         if (pasos == 0) return;
 
-        e.Handled = true;
-        Mover(mando, pasos);
+        // Con mayusculas se mueve el centro, como quien gira el mando de encima.
+        e.Handled = Mover(pasos, Keyboard.Modifiers.HasFlag(ModifierKeys.Shift));
+    }
+
+    private bool Mover(int pasos, bool elCentro)
+    {
+        if (elCentro && MandoInterior is { Disponible: true } centro)
+        {
+            Mover(centro, pasos);
+            return true;
+        }
+
+        if (Mando is { Disponible: true } anillo)
+        {
+            Mover(anillo, pasos);
+            return true;
+        }
+
+        if (GiroLibre)
+        {
+            Girado?.Invoke(this, pasos);
+            return true;
+        }
+
+        return false;
     }
 
     private static void Mover(VistaModeloMando mando, int pasos)
     {
         var salto = mando.Paso > 0 ? mando.Paso : 1;
         mando.Valor = Math.Clamp(mando.Valor + (salto * pasos), mando.Minimo, mando.Maximo);
+    }
+
+    private static void Pulsar(ICommand? orden, object? parametro, MouseButtonEventArgs e)
+    {
+        if (orden is null || !orden.CanExecute(parametro)) return;
+        orden.Execute(parametro);
+        e.Handled = true;
     }
 }

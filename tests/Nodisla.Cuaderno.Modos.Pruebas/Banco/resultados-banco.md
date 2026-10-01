@@ -1,6 +1,6 @@
 # Banco de medida del módem propio
 
-Generado por `BancoDeMedidaPruebas` el 2026-09-25 (UTC). **No editar a mano.**
+Generado por `BancoDeMedidaPruebas` el 2026-09-29 (UTC). **No editar a mano.**
 
 Señal sintética con ruido blanco gaussiano, relación señal-ruido referida a 2500 Hz,
 igual que los informes de FT8. Cada ventana lleva un mensaje al azar entre ocho, en una
@@ -9,10 +9,23 @@ fija, así que la medida se repite igual en cualquier máquina.
 
 Las cifras son con el **código corrector LDPC(174,91) de verdad**, el mismo que usa todo
 el mundo en FT8 y FT4; su tabla está en `src/Nodisla.Cuaderno.Modos/Tablas/` con su
-procedencia y su licencia. Lo que se mide aquí es, por tanto, la sensibilidad real del
-módem contra ruido blanco. **El escalón que queda con señal muy débil es el hueco de la
-recuperación profunda**, que todavía no está puesta: es lo que el programa de referencia
-usa por debajo de −20 dB y lo que le permite seguir sacando mensajes ahí.
+procedencia y su licencia, y el fichero trae además la matriz generadora, que no se usa
+para codificar sino para cruzarla con la de paridad en cada arranque. Lo que se mide
+aquí es, por tanto, la sensibilidad real del módem contra ruido blanco.
+
+La **recuperación profunda** está puesta y marcada aparte. Es la que hace casi todo el
+trabajo en el filo: entre −21 y −19 dB, la mitad larga de lo que sale viene de ella.
+Viene con dos frenos, los dos con su número sacado de medir y no de opinar: sólo se
+intenta en candidatas con sincronismo de verdad, y la palabra reconstruida tiene que
+parecerse a lo que oyó el demodulador. Sin esos frenos salían **doce mensajes inventados
+por cada mil ventanas**; con ellos puestos, ninguno.
+
+Hay una columna que merece más atención de la que parece: **Rechazos del CRC**. Son las
+palabras que llegaron al sello y no cuadraron. No son un fallo —el sistema funcionando—
+pero sí son la medida del **riesgo latente**: cada una es una tirada de una entre 16.384
+de colarse. Mirar sólo la columna de falsos engaña, porque puede salir cero por suerte;
+ésta dice cuántas veces se ha tentado a la suerte. Si un cambio la dispara, el cambio es
+peligroso aunque esa tarde no haya salido ningún falso.
 
 La columna que manda es **Falsos**: tiene que ser cero en todas las franjas. Un mensaje
 falso mete en el cuaderno un contacto que nunca existió y contamina los diplomas para
@@ -29,28 +42,28 @@ que aquí se está usando en torno al 3 % del hueco disponible.
 
 | S/R (dB) | Ventanas | Recuperados | % | Falsos | Rechazos del CRC | Error del informe (dB) | ms de CPU/ventana |
 |---:|---:|---:|---:|---:|---:|---:|---:|
-| 0 | 12 | 12 | 100,0 | 0 | 1 | -6,7 | 379 |
-| -3 | 12 | 12 | 100,0 | 0 | 0 | -4,1 | 353 |
-| -6 | 12 | 12 | 100,0 | 0 | 0 | -3,0 | 342 |
-| -9 | 12 | 12 | 100,0 | 0 | 0 | -1,7 | 342 |
-| -12 | 12 | 12 | 100,0 | 0 | 0 | -1,6 | 346 |
-| -15 | 12 | 12 | 100,0 | 0 | 0 | -0,6 | 331 |
-| -18 | 12 | 12 | 100,0 | 0 | 0 | -0,8 | 350 |
-| -21 | 12 | 0 | 0,0 | 0 | 0 | 00 | 323 |
-| -24 | 12 | 0 | 0,0 | 0 | 0 | 00 | 353 |
+| 0 | 12 | 12 | 100,0 | 0 | 18 | -6,7 | 240 |
+| -3 | 12 | 12 | 100,0 | 0 | 7 | -4,1 | 236 |
+| -6 | 12 | 12 | 100,0 | 0 | 6 | -3,2 | 243 |
+| -9 | 12 | 12 | 100,0 | 0 | 9 | -1,8 | 243 |
+| -12 | 12 | 12 | 100,0 | 0 | 5 | -1,6 | 229 |
+| -15 | 12 | 12 | 100,0 | 0 | 0 | -0,6 | 234 |
+| -18 | 12 | 11 | 91,7 | 0 | 1 | -0,6 | 230 |
+| -21 | 12 | 2 | 16,7 | 0 | 2 | +1,0 | 230 |
+| -24 | 12 | 0 | 0,0 | 0 | 0 | 00 | 234 |
 
 ### FT4
 
 | S/R (dB) | Ventanas | Recuperados | % | Falsos | Rechazos del CRC | Error del informe (dB) | ms de CPU/ventana |
 |---:|---:|---:|---:|---:|---:|---:|---:|
-| 0 | 12 | 12 | 100,0 | 0 | 0 | -3,4 | 309 |
-| -3 | 12 | 12 | 100,0 | 0 | 0 | -1,8 | 315 |
-| -6 | 12 | 12 | 100,0 | 0 | 1 | -1,3 | 326 |
-| -9 | 12 | 12 | 100,0 | 0 | 0 | -0,6 | 292 |
-| -12 | 12 | 12 | 100,0 | 0 | 1 | -0,6 | 279 |
-| -15 | 12 | 7 | 58,3 | 0 | 0 | -0,4 | 294 |
-| -18 | 12 | 0 | 0,0 | 0 | 0 | 00 | 293 |
-| -21 | 12 | 0 | 0,0 | 0 | 0 | 00 | 299 |
+| 0 | 12 | 12 | 100,0 | 0 | 9 | -3,4 | 210 |
+| -3 | 12 | 12 | 100,0 | 0 | 4 | -1,8 | 211 |
+| -6 | 12 | 12 | 100,0 | 0 | 5 | -1,3 | 210 |
+| -9 | 12 | 12 | 100,0 | 0 | 0 | -0,7 | 210 |
+| -12 | 12 | 12 | 100,0 | 0 | 0 | -0,4 | 214 |
+| -15 | 12 | 6 | 50,0 | 0 | 3 | -0,8 | 204 |
+| -18 | 12 | 0 | 0,0 | 0 | 0 | 00 | 207 |
+| -21 | 12 | 0 | 0,0 | 0 | 1 | 00 | 208 |
 
 ### FT8 en el filo, de decibelio en decibelio
 
@@ -61,12 +74,12 @@ donde un cambio se nota y donde el azar engaña más.
 
 | S/R (dB) | Ventanas | Recuperados | % | Falsos | Rechazos del CRC | Error del informe (dB) | ms de CPU/ventana |
 |---:|---:|---:|---:|---:|---:|---:|---:|
-| -16 | 24 | 24 | 100,0 | 0 | 2 | -0,5 | 339 |
-| -17 | 24 | 24 | 100,0 | 0 | 2 | -0,5 | 331 |
-| -18 | 24 | 23 | 95,8 | 0 | 0 | -0,8 | 338 |
-| -19 | 24 | 13 | 54,2 | 0 | 1 | -0,2 | 343 |
-| -20 | 24 | 6 | 25,0 | 0 | 0 | 00 | 352 |
-| -21 | 24 | 1 | 4,2 | 0 | 0 | +1,0 | 339 |
-| -22 | 24 | 0 | 0,0 | 0 | 1 | 00 | 349 |
-| -23 | 24 | 0 | 0,0 | 0 | 0 | 00 | 338 |
+| -16 | 24 | 24 | 100,0 | 0 | 5 | -0,5 | 229 |
+| -17 | 24 | 24 | 100,0 | 0 | 3 | -0,5 | 234 |
+| -18 | 24 | 22 | 91,7 | 0 | 3 | -0,8 | 234 |
+| -19 | 24 | 19 | 79,2 | 0 | 0 | -0,3 | 236 |
+| -20 | 24 | 6 | 25,0 | 0 | 3 | -0,3 | 241 |
+| -21 | 24 | 3 | 12,5 | 0 | 2 | +0,7 | 234 |
+| -22 | 24 | 0 | 0,0 | 0 | 3 | 00 | 230 |
+| -23 | 24 | 0 | 0,0 | 0 | 0 | 00 | 236 |
 

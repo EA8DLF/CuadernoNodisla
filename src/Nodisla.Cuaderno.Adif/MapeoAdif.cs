@@ -1,4 +1,4 @@
-using Nodisla.Cuaderno.Aplicacion.Puertos;
+﻿using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
 
@@ -86,11 +86,56 @@ public static class MapeoAdif
 
         AplicarModo(qso, valores);
         AplicarFechas(qso, valores, numeroDeRegistro, avisos);
+        CorregirUnidadesDeFrecuencia(qso, numeroDeRegistro, avisos);
         AplicarSig(qso, valores);
         AplicarJson(qso, valores, numeroDeRegistro, avisos);
         ConservarLoQueNoSeRegenera(qso, orden, nombresExtra);
 
         return qso;
+    }
+
+    /// <summary>
+    /// Arregla la frecuencia escrita en otra unidad cuando la banda dice otra cosa.
+    /// </summary>
+    /// <remarks>
+    /// Pasa en ficheros reales: Log4OM exporto contactos de 70 cm con <c>FREQ:0.433</c>, que
+    /// son 433 MHz tecleados en el campo de kilohercios. La banda si venia bien. Si la
+    /// frecuencia no cae en su banda pero multiplicada o dividida por mil si cae, se corrige y
+    /// se avisa; si ni asi, se deja como venia (el aviso de siempre lo dira).
+    /// </remarks>
+    private static void CorregirUnidadesDeFrecuencia(Qso qso, int numero, List<AvisoAdif> avisos)
+    {
+        if (Corregida(qso.Band, qso.Freq) is { } buena)
+        {
+            avisos.Add(new AvisoAdif(numero, "FREQ",
+                $"La frecuencia {qso.Freq.AAdif()} MHz no cae en la banda {qso.Band}; parece escrita en "
+                + $"otra unidad y se ha corregido a {buena.AAdif()} MHz.",
+                NivelDeAviso.Advertencia));
+            qso.Freq = buena;
+        }
+
+        if (qso.FreqRx is { } rx && Corregida(qso.BandRx, rx) is { } buenaRx)
+        {
+            avisos.Add(new AvisoAdif(numero, "FREQ_RX",
+                $"La frecuencia de recepción {rx.AAdif()} MHz no cae en la banda {qso.BandRx}; se ha "
+                + $"corregido a {buenaRx.AAdif()} MHz.",
+                NivelDeAviso.Advertencia));
+            qso.FreqRx = buenaRx;
+        }
+    }
+
+    private static Frecuencia? Corregida(Banda banda, Frecuencia frecuencia)
+    {
+        if (banda.EsVacia || frecuencia.EsCero || !Banda.TryParse(banda.Nombre, out _)) return null;
+        if (banda.Contiene(frecuencia)) return null;
+
+        foreach (var factor in new[] { 1000m, 0.001m })
+        {
+            var otra = Frecuencia.DesdeMegahercios(frecuencia.Megahercios * factor);
+            if (banda.Contiene(otra)) return otra;
+        }
+
+        return null;
     }
 
     private static void AplicarModo(Qso qso, Dictionary<string, string> valores)

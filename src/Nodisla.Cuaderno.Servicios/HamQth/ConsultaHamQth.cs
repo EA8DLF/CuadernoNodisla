@@ -147,6 +147,8 @@ public sealed class ConsultaHamQth : IConsultaIndicativo
             GestorQsl = LecturaXml.Texto(ficha, "qsl_via"),
             Iota = LecturaXml.Texto(ficha, "iota"),
             Imagen = LecturaXml.Direccion(ficha, "picture"),
+            UsaLotw = LecturaXml.Texto(ficha, "lotw") is { } lotw ? lotw.StartsWith('Y') : null,
+            UsaEqsl = LecturaXml.Texto(ficha, "eqsl") is { } eqsl ? eqsl.StartsWith('Y') : null,
             Fuente = "HamQTH",
         };
     }
@@ -185,7 +187,7 @@ public sealed class ConsultaHamQth : IConsultaIndicativo
 
             var contrasena = _credenciales.Leer(ClavesDeCredencial.HamQthContrasena)
                 ?? throw new InvalidOperationException(
-                    "No hay contraseña de HamQTH guardada. Configúrela en los ajustes del programa.");
+                    "No hay contraseña de HamQTH guardada. Configúrela en Configuración › Cuentas y servicios.");
 
             var consulta =
                 $"u={Uri.EscapeDataString(_opciones.Usuario)}"

@@ -114,9 +114,11 @@ public sealed class CabrilloPruebas
             Contacto("EA1PRONTO", hora: 8),
             Contacto("EA1MEDIO", hora: 14));
 
+        // El indicativo del corresponsal es el campo 7 de la linea, contando desde el primero
+        // de despues de «QSO:»; si no se quita la etiqueta, el 7 es el intercambio enviado.
         var indicativos = texto.Split("\r\n")
             .Where(l => l.StartsWith("QSO:", StringComparison.Ordinal))
-            .Select(l => l.Split(' ', StringSplitOptions.RemoveEmptyEntries)[7])
+            .Select(l => l["QSO:".Length..].Split(' ', StringSplitOptions.RemoveEmptyEntries)[7])
             .ToList();
 
         indicativos.Should().Equal("EA1PRONTO", "EA1MEDIO", "EA1TARDE");
@@ -198,7 +200,10 @@ public sealed class CabrilloPruebas
     public void UnIndicativoConCaracteresQueCabrilloNoAdmiteSeLimpiaYSeAvisa()
     {
         var sucio = Contacto("EA1ABC");
-        sucio.Call = Indicativo.Crudo("EA1-ABC");
+        // El punto vale de ejemplo porque sobrevive a Indicativo.Normalizar (que lo admite) y
+        // llega sucio al exportador. El guion NO sirve: el dominio lo convierte en barra, y la
+        // barra si la admite Cabrillo, asi que con «EA1-ABC» no habria nada que limpiar.
+        sucio.Call = Indicativo.Crudo("EA1.ABC");
 
         var (texto, resultado) = Escritor.Generar(Cabecera, [sucio]);
 

@@ -88,6 +88,25 @@
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
             <TextBlock Text="{Binding Equipo.NombreDelEquipo}" FontWeight="Bold" />
+            <!--
+                El aviso del plan de bandas («Fuera de banda», «Solo CW»…): la radio no lo tiene
+                en su pantalla, así que va aquí y no en el visor dibujado. Avisa, no impide.
+            -->
+            <TextBlock Text="{Binding Equipo.Principal.AvisoCortoDelBandplan}"
+                       Foreground="{DynamicResource AvisoTexto}"
+                       FontWeight="Bold"
+                       Margin="10,0,0,0"
+                       TextTrimming="None"
+                       AutomationProperties.Name="Aviso del plan de bandas"
+                       Visibility="{Binding Equipo.Principal.AvisoCortoDelBandplan, Converter={StaticResource NoEsVacio}}">
+                <TextBlock.ToolTip>
+                    <TextBlock MaxWidth="360" TextWrapping="Wrap">
+                        <Run Text="{Binding Equipo.Principal.AvisoDelBandplan, Mode=OneWay}" />
+                        <LineBreak />
+                        <Run Text="{Binding Equipo.Principal.TramoDelBandplan, Mode=OneWay}" />
+                    </TextBlock>
+                </TextBlock.ToolTip>
+            </TextBlock>
             <TextBlock Text="{Binding Equipo.Aviso}"
                        Style="{StaticResource TextoTenueEstilo}"
                        Foreground="{DynamicResource AvisoTexto}"

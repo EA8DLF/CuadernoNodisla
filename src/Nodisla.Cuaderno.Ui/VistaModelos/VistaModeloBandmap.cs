@@ -192,8 +192,10 @@ public sealed partial class VistaModeloBandmap : ObservableObject
             var parte = (decimal)i / (RayasDeLaRegla - 1);
             var frecuencia = inferior + (recorrido * parte);
 
+            // Punto decimal SIEMPRE, nunca la coma de la cultura espanola: 14.200 son catorce
+            // megahercios y pico. Ver la regla en TextoDeFrecuencia.
             Rayas.Add(new RayaDelBandmap(
-                frecuencia.ToString("0.000", CultureInfo.CurrentCulture),
+                frecuencia.ToString("0.000", CultureInfo.InvariantCulture),
                 (double)parte * AltoDeLaEscala));
         }
 

@@ -87,6 +87,32 @@ public sealed class Decodificador
     /// </remarks>
     public bool UsarRecuperacionProfunda { get; set; } = true;
 
+    /// <summary>
+    /// Sincronismo minimo que tiene que tener una candidata para intentar la recuperacion profunda.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// La puntuacion del sincronizador vale uno cuando en ese sitio solo hay ruido y sube cuanto
+    /// mas se parece lo que suena al patron de Costas. Las doscientas candidatas de una ventana
+    /// son casi todas ruido que pasa de uno por casualidad; las que llevan senal de verdad pasan
+    /// holgadamente de dos.
+    /// </para>
+    /// <para>
+    /// <b>Por que hace falta esta puerta.</b> La propagacion de creencias se rinde sola con
+    /// ruido y por eso se le pueden dar las doscientas candidatas sin peligro. La recuperacion
+    /// profunda no se rinde nunca: siempre reconstruye <i>algo</i>. Dandole las doscientas, el
+    /// CRC se tira doscientas veces por ventana en lugar de una cada veinte ventanas, y por
+    /// mucho que cada tirada sea de uno entre dieciseis mil, doscientas por ventana acaban
+    /// sacando un indicativo inventado cada pocos minutos. Medido: 12 por cada mil ventanas.
+    /// </para>
+    /// <para>
+    /// Con el corte en dos, las candidatas que llegan a la recuperacion profunda pasan de 200 a
+    /// menos de dos por ventana, y no se pierde ninguna decodificacion buena de las medidas en
+    /// el banco: las senales que la recuperacion profunda rescata puntuan todas muy por encima.
+    /// </para>
+    /// </remarks>
+    public double SincronismoMinimoParaLaProfunda { get; set; } = 2.0;
+
     /// <summary>Crea el decodificador.</summary>
     /// <param name="tablas">Tablas del protocolo.</param>
     /// <param name="registro">Para dejar constancia; por omision no se traza nada.</param>
@@ -102,6 +128,19 @@ public sealed class Decodificador
 
     /// <summary>Tablas con las que trabaja.</summary>
     public TablasDelProtocolo Tablas => _tablas;
+
+    /// <summary>
+    /// El corrector de errores, para poder ajustarlo desde el banco de medida.
+    /// </summary>
+    /// <remarks>
+    /// Sus dos mandos —la atenuacion y el tope de confianza— no se tocan a ojo: se barren en el
+    /// banco y se deja lo que salga medido. Esta expuesto para poder hacer ese barrido sin
+    /// recompilar el modem entero con cada combinacion.
+    /// </remarks>
+    public DecodificadorDeCreencia Corrector => _corrector;
+
+    /// <summary>La recuperacion profunda, con sus frenos, para poder medirla aparte.</summary>
+    public RecuperacionProfunda Profunda => _recuperacionProfunda;
 
     /// <summary>
     /// Decodifica una ventana de audio.
@@ -151,47 +190,61 @@ public sealed class Decodificador
         {
             var medida = demodulador.Medir(candidata, segundosDelPrimerMuestreo);
 
-            // Primero la pasada normal. Si no cuaja, se reconstruye a partir de los bits mas
-            // fiables. La recuperacion profunda devuelve <b>un solo</b> candidato, asi que el
-            // CRC se comprueba una vez por candidata pase lo que pase y el riesgo de inventar
-            // un mensaje no sube por usarla.
+            // Primero la pasada normal. Si no cuaja, y solo si en ese sitio hay sincronismo de
+            // verdad, se reconstruye a partir de los bits mas fiables. Las dos condiciones de mas
+            // abajo —el corte de sincronismo y el de errores duros dentro de la recuperacion— son
+            // lo que impide que esta vuelta de tuerca llene el cuaderno de contactos inventados;
+            // estan explicadas y medidas en sus propias paginas.
             var profunda = false;
+            var cuantosMirar = 1;
+
             if (!_corrector.TryDecodificar(demodulador.Confianzas, palabra, VueltasDelCorrector))
             {
                 if (!UsarRecuperacionProfunda) continue;
+                if (candidata.Puntuacion < SincronismoMinimoParaLaProfunda) continue;
                 if (!_recuperacionProfunda.TryRecuperar(demodulador.Confianzas, palabra)) continue;
                 profunda = true;
+                cuantosMirar = _recuperacionProfunda.CandidatosEncontrados;
             }
-            palabrasValidas++;
 
-            var conCrc = palabra.AsSpan(0, Crc14.BitsConCrc);
-            if (!Crc14.EsValido(conCrc)) { rechazadasPorElCrc++; continue; }
-
-            conCrc[..MensajeDe77Bits.Bits].CopyTo(bits77);
-            if (modo == ModoDelModem.Ft4) _codificador.AplicarMezclaDeFt4(bits77);
-
-            if (!MensajeDe77Bits.TryDesempaquetar(bits77, catalogo, out var mensaje)) continue;
-            if (mensaje.Texto.Length == 0) continue;
-
-            var tonoHz = medida.TonoBaseHz;
-            if (YaEstaba(vistas, mensaje.Texto, tonoHz)) continue;
-            vistas.Add((mensaje.Texto, tonoHz));
-
-            if (profunda) porRecuperacionProfunda++;
-            salida.Add(new DecodificacionPropia(
-                mensaje.Texto,
-                Informe(medida, p),
-                Math.Round(medida.ComienzoEnSegundos - p.ComienzoNominalSegundos, 2),
-                (int)Math.Round(tonoHz),
-                modo,
-                ventanaUtc)
+            // De la recuperacion profunda pueden salir varias reconstrucciones, ordenadas de la
+            // mas creible a la menos. Se le da a cada una su oportunidad ante el CRC y se para en
+            // cuanto una lo pasa: la buena suele ser la primera, pero no siempre.
+            for (var c = 0; c < cuantosMirar; c++)
             {
-                Llamante = mensaje.Llamante,
-                Llamado = mensaje.Llamado,
-                Locator = mensaje.Locator,
-                EsCq = mensaje.EsCq,
-                EsRecuperacionProfunda = profunda,
-            });
+                if (profunda && c > 0) _recuperacionProfunda.CopiarCandidato(c, palabra);
+                palabrasValidas++;
+
+                var conCrc = palabra.AsSpan(0, Crc14.BitsConCrc);
+                if (!Crc14.EsValido(conCrc)) { rechazadasPorElCrc++; continue; }
+
+                conCrc[..MensajeDe77Bits.Bits].CopyTo(bits77);
+                if (modo == ModoDelModem.Ft4) _codificador.AplicarMezclaDeFt4(bits77);
+
+                if (!MensajeDe77Bits.TryDesempaquetar(bits77, catalogo, out var mensaje)) continue;
+                if (mensaje.Texto.Length == 0) continue;
+
+                var tonoHz = medida.TonoBaseHz;
+                if (YaEstaba(vistas, mensaje.Texto, tonoHz)) break;
+                vistas.Add((mensaje.Texto, tonoHz));
+
+                if (profunda) porRecuperacionProfunda++;
+                salida.Add(new DecodificacionPropia(
+                    mensaje.Texto,
+                    Informe(medida, p),
+                    Math.Round(medida.ComienzoEnSegundos - p.ComienzoNominalSegundos, 2),
+                    (int)Math.Round(tonoHz),
+                    modo,
+                    ventanaUtc)
+                {
+                    Llamante = mensaje.Llamante,
+                    Llamado = mensaje.Llamado,
+                    Locator = mensaje.Locator,
+                    EsCq = mensaje.EsCq,
+                    EsRecuperacionProfunda = profunda,
+                });
+                break;
+            }
         }
 
         salida.Sort(static (x, y) => x.TonoHz.CompareTo(y.TonoHz));

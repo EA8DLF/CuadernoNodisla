@@ -154,6 +154,47 @@ public sealed class RetratoDelIndicativoPruebas
 
         retrato.Novedad.Should().HaveCount(12);
         retrato.Novedad.Should().OnlyContain(c => !c.Trabajado && !c.Confirmado);
+
+        // Y sobre todo: NO aportan. Una casilla sin calcular pintada de «nuevo» manda a llamar
+        // por un dato que nadie ha mirado, que es peor que no enseñar nada.
+        retrato.Novedad.Should().OnlyContain(c => !c.Aplica);
+        retrato.Novedad.Should().OnlyContain(c => !c.Aporta);
+    }
+
+    [Fact]
+    public async Task Sin_banda_escrita_la_fila_de_la_banda_no_dice_nada()
+    {
+        // Pasa de verdad: el dial en 27.555 MHz no cae en ninguna banda de aficionado y la
+        // banda llega vacía. El país sigue calculándose; la banda, no.
+        var caso = new RetratoDelIndicativo(new CuadernoDePrueba([Contacto("K1ABC", 291, Veinte, Ssb)]));
+
+        var retrato = await caso.ArmarAsync(Indicativo.Parse("K1ABC"), 291, Banda.Vacia, Ssb);
+
+        retrato.Novedad.Where(c => c.Eje == EjeDeNovedad.Banda).Should().OnlyContain(c => !c.Aplica);
+        retrato.Novedad.Where(c => c.Eje == EjeDeNovedad.Pais).Should().OnlyContain(c => c.Aplica);
+        retrato.Novedad.Where(c => c.Eje == EjeDeNovedad.Modo).Should().OnlyContain(c => c.Aplica);
+    }
+
+    [Fact]
+    public async Task Sin_modo_escrito_la_fila_del_modo_no_dice_nada()
+    {
+        var caso = new RetratoDelIndicativo(new CuadernoDePrueba([Contacto("K1ABC", 291, Veinte, Ssb)]));
+
+        var retrato = await caso.ArmarAsync(Indicativo.Parse("K1ABC"), 291, Veinte, Modo.Vacio);
+
+        retrato.Novedad.Where(c => c.Eje == EjeDeNovedad.Modo).Should().OnlyContain(c => !c.Aplica);
+        retrato.Novedad.Where(c => c.Eje == EjeDeNovedad.Pais).Should().OnlyContain(c => c.Aplica);
+    }
+
+    [Fact]
+    public async Task La_rejilla_de_bandas_sigue_valiendo_sin_entidad_resuelta()
+    {
+        // La rejilla de banda por modo es del INDICATIVO, no de la entidad: que el resolutor
+        // no sepa de dónde es no quita que el cuaderno tenga contactos con él.
+        var retrato = await Armar([Contacto("XX0XXX", 0, Veinte, Ssb)], 0, "XX0XXX");
+
+        retrato.ContactosConElIndicativo.Should().Be(1);
+        Casilla(retrato, "20m", FamiliaDeModo.Fonia).Contactos.Should().Be(1);
     }
 
     [Theory]

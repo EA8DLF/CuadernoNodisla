@@ -1,0 +1,116 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.AjustesDeSubidas"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        SUBIDA AUTOMÁTICA Y FICHA DE QRZ.
+
+        Una casilla por servicio y la cola con lo que falta por subir. Las cuentas de cada
+        servicio (usuario y contraseña) están en su tarjeta, en «Cuentas y servicios».
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+
+        <Style x:Key="Rotulo" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,4,0,1" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style x:Key="Campo" TargetType="TextBox">
+            <Setter Property="Padding" Value="6,3" />
+            <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
+            <Setter Property="Foreground" Value="{DynamicResource Texto}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <!-- ── Ficha de QRZ ── -->
+        <TextBlock Text="Completar con QRZ.com" Style="{StaticResource TituloDeSeccion}" Margin="0,0,0,4" />
+        <CheckBox IsChecked="{Binding CompletarConQrz}"
+                  Content="Rellenar nombre, QTH, localizador, país, zonas… con la ficha de QRZ.com (o HamQTH)"
+                  AutomationProperties.Name="Completar los contactos con QRZ.com" />
+        <TextBlock Text="Solo se rellena lo que esté vacío: nunca se pisa lo que usted escriba. Sin red o sin cuenta el contacto se guarda igual. Sin suscripción XML de pago, QRZ.com solo da una parte de la ficha."
+                   Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,2,0,4" />
+
+        <!--
+            Los usuarios de cada servicio ya no van aquí: están en su tarjeta, en «Cuentas y
+            servicios», junto a su contraseña. Antes había que ir y venir entre dos listas.
+        -->
+        <TextBlock Text="Los usuarios y contraseñas de QRZ.com, HamQTH, LoTW, eQSL y Club Log se ponen en «Cuentas y servicios»."
+                   Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,0,0,4" />
+
+        <!-- ── Subida automática ── -->
+        <TextBlock Text="Subida automática" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,4" />
+        <TextBlock Text="Cada contacto que se guarda (formulario, Digital o ronda) se sube solo a los servicios marcados. Sin red se queda en la cola y se reintenta con espera creciente y al arrancar. Por omisión se marcan los que tienen credenciales."
+                   Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,0,0,4" />
+
+        <ItemsControl ItemsSource="{Binding Servicios}" Focusable="False">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="0,0,0,6" Padding="8,6" CornerRadius="4" BorderThickness="1">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{DynamicResource FondoAlterno}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource BordeSuave}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Semaforo}" Value="Verde">
+                                        <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Semaforo}" Value="Ambar">
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Semaforo}" Value="Rojo">
+                                        <Setter Property="Background" Value="{DynamicResource ErrorFondo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorde}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel>
+                            <CheckBox IsChecked="{Binding Activado}" FontWeight="Bold"
+                                      AutomationProperties.Name="{Binding Nombre}">
+                                <TextBlock>
+                                    <Run Text="Subir a" />
+                                    <Run Text="{Binding Nombre, Mode=OneWay}" />
+                                </TextBlock>
+                            </CheckBox>
+                            <TextBlock Text="{Binding Estado}" TextWrapping="Wrap" Margin="0,2,0,0" />
+                            <TextBlock Text="{Binding Nota}" Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <DockPanel Margin="0,2,0,4">
+            <Button DockPanel.Dock="Left"
+                    Content="Subir ahora"
+                    Command="{Binding SubirAhoraCommand}"
+                    AutomationProperties.Name="Subir ahora todo lo pendiente" />
+            <TextBlock Text="{Binding Parte}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap" />
+        </DockPanel>
+
+        <TextBlock Text="Cola de subidas" Style="{StaticResource Rotulo}" />
+        <TextBlock Text="No hay nada pendiente de subir."
+                   Style="{StaticResource TextoTenueEstilo}"
+                   Visibility="{Binding ColaVacia, Converter={StaticResource BooleanoAVisible}}" />
+        <ItemsControl ItemsSource="{Binding Cola}" Focusable="False">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" Margin="0,1">
+                        <Run Text="{Binding Servicio, Mode=OneWay}" FontWeight="Bold" />
+                        <Run Text="·" />
+                        <Run Text="{Binding Indicativo, Mode=OneWay}" />
+                        <Run Text="{Binding Cuando, Mode=OneWay}" />
+                        <Run Text="·" />
+                        <Run Text="{Binding Estado, Mode=OneWay}" />
+                    </TextBlock>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

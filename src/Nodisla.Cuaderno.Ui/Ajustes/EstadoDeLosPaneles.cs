@@ -96,6 +96,18 @@ public sealed class EstadoDeLosPaneles
     /// <summary>La consola cruda del cluster esta desplegada.</summary>
     public bool ConsolaDelCluster { get; set; } = true;
 
+    /// <summary>
+    /// Columnas del cuaderno que el operador dejo a la vista (los nombres de las casillas
+    /// «Ver…»). Nulo si nunca las toco: entonces mandan las de fabrica.
+    /// </summary>
+    public List<string>? ColumnasDelCuaderno { get; set; }
+
+    /// <summary>Contactos por pagina del cuaderno.</summary>
+    public int ContactosPorPagina { get; set; } = 200;
+
+    /// <summary>Plan de canales de 27 MHz de la botonera CB (11m, UK, CEPT, PL, USA).</summary>
+    public string PlanDeCanalesCb { get; set; } = "Cept";
+
     /// <summary>Lee el estado guardado, o devuelve el de fabrica si no hay ninguno.</summary>
     /// <param name="carpeta">Carpeta de datos del programa.</param>
     /// <returns>El estado leido, nunca nulo.</returns>

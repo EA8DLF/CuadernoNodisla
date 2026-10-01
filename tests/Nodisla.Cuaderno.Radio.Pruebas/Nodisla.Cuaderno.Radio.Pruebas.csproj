@@ -17,4 +17,10 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
+  <!-- Respuestas reales del FT-710 de EA8DLF, para el canal CAT de mentira. -->
+  <ItemGroup>
+    <None Include="Capturas\*.tsv" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Capturas\espectro-ft710-*.bin" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Capturas\analizador-ft710-*.bin" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

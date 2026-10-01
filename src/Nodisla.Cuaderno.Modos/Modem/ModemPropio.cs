@@ -5,12 +5,17 @@ using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
 using Nodisla.Cuaderno.Modos.Ft8;
 using Nodisla.Cuaderno.Modos.Ldpc;
+using Nodisla.Cuaderno.Modos.Fst4;
+using Nodisla.Cuaderno.Modos.Marco;
+using Nodisla.Cuaderno.Modos.Msk144;
+using Nodisla.Cuaderno.Modos.Q65;
 using Nodisla.Cuaderno.Modos.Senal;
+using Nodisla.Cuaderno.Modos.Wspr;
 
 namespace Nodisla.Cuaderno.Modos.Modem;
 
 /// <summary>
-/// El modem propio de FT8 y FT4: escucha, decodifica, pinta la cascada y emite.
+/// El modem propio de modos digitales: escucha, decodifica, pinta la cascada y emite.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -57,9 +62,7 @@ public sealed class ModemPropio : IModemPropio
     private readonly ISalidaDeAudio? _salida;
     private readonly IVigilantePtt? _vigilante;
     private readonly IRelojDelModem _reloj;
-    private readonly Decodificador _decodificador;
-    private readonly Codificador _codificador;
-    private readonly CatalogoDeIndicativos _catalogo = new();
+    private readonly RegistroDeModos _modos;
     private readonly ILogger _registro;
     private readonly SemaphoreSlim _cerrojoDeEmision = new(1, 1);
 
@@ -81,13 +84,15 @@ public sealed class ModemPropio : IModemPropio
     /// </param>
     /// <param name="vigilante">Vigilante de PTT; sin el tampoco se puede emitir.</param>
     /// <param name="registro">Para dejar constancia.</param>
+    /// <param name="modos">Modos que sabe hacer. Si no se da, los de serie (<see cref="ModosDeSerie"/>).</param>
     public ModemPropio(
         TablasDelProtocolo tablas,
         IRelojDelModem reloj,
         IEntradaDeAudio? entrada = null,
         ISalidaDeAudio? salida = null,
         IVigilantePtt? vigilante = null,
-        ILogger<ModemPropio>? registro = null)
+        ILogger<ModemPropio>? registro = null,
+        RegistroDeModos? modos = null)
     {
         ArgumentNullException.ThrowIfNull(tablas);
         ArgumentNullException.ThrowIfNull(reloj);
@@ -96,8 +101,7 @@ public sealed class ModemPropio : IModemPropio
         _entrada = entrada;
         _salida = salida;
         _vigilante = vigilante;
-        _decodificador = new Decodificador(tablas, _registro);
-        _codificador = new Codificador(tablas);
+        _modos = modos ?? ModosDeSerie(tablas, _registro);
         Tablas = tablas;
 
         if (!tablas.EsElCodigoReal)
@@ -108,8 +112,57 @@ public sealed class ModemPropio : IModemPropio
     /// <summary>Tablas del protocolo con las que trabaja.</summary>
     public TablasDelProtocolo Tablas { get; }
 
-    /// <summary>Catalogo de indicativos que va aprendiendo mientras escucha.</summary>
-    public CatalogoDeIndicativos Catalogo => _catalogo;
+    /// <inheritdoc/>
+    public EstadoDeLasTablas EstadoDeLasTablas => new(Tablas.EsElCodigoReal, Tablas.Procedencia);
+
+    /// <summary>
+    /// Los modos de serie, los nueve: FT8, FT4, WSPR, JT65 (A), JT9, Q65 (60A), MSK144, FST4 (60 s) y FST4W (120 s).
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// FT8 y FT4 comparten catalogo de indicativos. Q65 carga sus propias tablas; si faltan,
+    /// trabaja con un codigo de pruebas y lo dice por el registro, igual que FT8.
+    /// </para>
+    /// <para>
+    /// <b>Un modo nuevo</b> se da de alta aqui con una linea, cuando su banco este en verde. Lo que
+    /// no se registre no aparece en el desplegable.
+    /// </para>
+    /// </remarks>
+    /// <param name="tablas">Tablas del LDPC de FT8 y FT4.</param>
+    /// <param name="registro">Registro.</param>
+    public static RegistroDeModos ModosDeSerie(TablasDelProtocolo tablas, ILogger? registro = null)
+    {
+        ArgumentNullException.ThrowIfNull(tablas);
+        var catalogo = new CatalogoDeIndicativos();
+        var modos = new RegistroDeModos()
+            .Anadir(new ModoFt8(ModoDelModem.Ft8, tablas, catalogo, registro))
+            .Anadir(new ModoFt8(ModoDelModem.Ft4, tablas, catalogo, registro))
+            .Anadir(new ModoWspr(registro))
+            .Anadir(new Jt65.ModoJt65(registro: registro))
+            .Anadir(new Jt9.ModoJt9(registro))
+            .Anadir(new ModoQ65(ParametrosDeQ65.De(60, SubmodoDeQ65.A), TablasDeQ65.Cargar(registro: registro), registro))
+            // MSK144 decodifica aqui por ventana completa. Los pings en tiempo real
+            // (ModoMsk144.DecodificarTrozo) aun no estan enganchados al modem: pendiente.
+            .Anadir(new ModoMsk144(
+                TablaLdpc.Cargar(ParametrosMsk144.FicheroDeTablas, 128, 90),
+                TablaLdpc.Cargar(ParametrosMsk144.FicheroDeTablasCortas, 32, 16),
+                registro))
+            // FST4 a 60 s y FST4W a 120 s. El selector de periodo (ModoFst4.CambiarPeriodo)
+            // aun no llega a la pantalla: pendiente.
+            .Anadir(new ModoFst4(TablaLdpc.Cargar(ParametrosFst4.FicheroDeTablas, 240, 101), esFst4w: false, periodoSegundos: 60, registro))
+            .Anadir(new ModoFst4(TablaLdpc.Cargar(ParametrosFst4.FicheroDeTablasFst4w, 240, 74), esFst4w: true, periodoSegundos: 120, registro));
+        return modos;
+    }
+
+    /// <summary>Modos que sabe hacer este modem, tal y como estan en su registro.</summary>
+    public RegistroDeModos Modos => _modos;
+
+    /// <inheritdoc/>
+    public IReadOnlyList<ModoDelModem> ModosDisponibles => _modos.Disponibles;
+
+    /// <summary>Catalogo de indicativos que va aprendiendo FT8 y FT4 mientras escucha.</summary>
+    public CatalogoDeIndicativos Catalogo =>
+        _modos.TryObtener(ModoDelModem.Ft8, out var ft8) && ft8 is ModoFt8 m ? m.Catalogo : new CatalogoDeIndicativos();
 
     /// <inheritdoc/>
     public ModoDelModem Modo { get; private set; } = ModoDelModem.Ft8;
@@ -134,15 +187,16 @@ public sealed class ModemPropio : IModemPropio
     {
         if (_entrada is null)
             throw new InvalidOperationException("Este módem no tiene entrada de audio: solo puede decodificar ficheros.");
+        var implementacion = ModoRegistrado(modo);
         await PararAsync(ct).ConfigureAwait(false);
 
         Modo = modo;
-        _catalogo.Olvidar();
+        implementacion.Reiniciar();
         _acumuladoDeCascada.Clear();
         _cola = Channel.CreateUnbounded<BloqueDeAudio>(new UnboundedChannelOptions { SingleReader = true });
         _paradaDeEscucha = CancellationTokenSource.CreateLinkedTokenSource(ct);
         _entrada.BloqueCapturado += AlLlegarUnBloque;
-        _tarea = Task.Run(() => MolerAsync(modo, _paradaDeEscucha.Token), CancellationToken.None);
+        _tarea = Task.Run(() => MolerAsync(implementacion, _paradaDeEscucha.Token), CancellationToken.None);
 
         _registro.LogInformation("Módem propio escuchando en {Modo}.", modo);
     }
@@ -177,10 +231,9 @@ public sealed class ModemPropio : IModemPropio
     /// captura puede reutilizar sus vectores en cuanto suelta el evento, y leer de ahi mas tarde
     /// daria audio revuelto sin que nada avisara.
     /// </remarks>
-    private async Task MolerAsync(ModoDelModem modo, CancellationToken ct)
+    private async Task MolerAsync(IModoDigital modo, CancellationToken ct)
     {
-        var p = ParametrosDelModo.De(modo);
-        var periodo = TimeSpan.FromSeconds(p.PeriodoSegundos);
+        var periodo = modo.Periodo;
         var lector = _cola!.Reader;
 
         var audio = new List<float>();
@@ -201,12 +254,12 @@ public sealed class ModemPropio : IModemPropio
                 audio.AddRange(bloque.Muestras.Span);
                 PintarCascada(bloque);
 
-                var ventana = VentanaDe(bloque.InstanteUtc, periodo);
+                var ventana = IModoDigital.ComienzoDeVentana(bloque.InstanteUtc, periodo, modo.ArranqueDentroDelPeriodo);
                 ventanaEnCurso ??= ventana;
                 if (ventana == ventanaEnCurso) continue;
 
                 // Cambio de ventana: lo acumulado ya contiene la anterior entera.
-                await DecodificarLoAcumuladoAsync(modo, p, audio, frecuencia, instanteDelPrimero.Value, ventanaEnCurso.Value, ct)
+                await DecodificarLoAcumuladoAsync(modo, audio, frecuencia, instanteDelPrimero.Value, ventanaEnCurso.Value, ct)
                     .ConfigureAwait(false);
 
                 // Se conserva el preludio de la ventana nueva y se tira lo demas.
@@ -231,40 +284,42 @@ public sealed class ModemPropio : IModemPropio
     }
 
     private async Task DecodificarLoAcumuladoAsync(
-        ModoDelModem modo, ParametrosDelModo p, List<float> audio, int frecuencia,
+        IModoDigital modo, List<float> audio, int frecuencia,
         DateTimeOffset instanteDelPrimero, DateTimeOffset ventana, CancellationToken ct)
     {
         var muestras = audio.ToArray();
         var desfase = (instanteDelPrimero - ventana).TotalSeconds;
 
-        var resultado = await Task.Run(
-            () => _decodificador.Decodificar(muestras, frecuencia, modo, ventana, _catalogo, desfase), ct)
-            .ConfigureAwait(false);
+        var (decodificaciones, duracion) = await Task.Run(() =>
+        {
+            var reloj = System.Diagnostics.Stopwatch.StartNew();
+            var lista = modo.DecodificarVentana(muestras, frecuencia, ventana, desfase, ct);
+            return (lista, reloj.Elapsed);
+        }, ct).ConfigureAwait(false);
 
         // Si la ventana costo mas que el propio periodo, la siguiente ya empezo tarde y se han
         // perdido decodificaciones. El operador tiene que verlo, no es una estadistica interna.
-        var llegoTarde = resultado.Duracion.TotalSeconds > p.PeriodoSegundos;
+        var llegoTarde = duracion > modo.Periodo;
         if (llegoTarde)
             _registro.LogWarning(
                 "La ventana {Ventana} tardó {Segundos:0.0} s, más que el propio periodo: el ordenador no da abasto.",
-                ventana, resultado.Duracion.TotalSeconds);
+                ventana, duracion.TotalSeconds);
 
         VentanaLista?.Invoke(this, new VentanaDecodificada(
-            ventana, resultado.Decodificaciones, resultado.Duracion, EnDecibelios(resultado))
+            ventana, decodificaciones, duracion, EnDecibelios(decodificaciones))
         {
             LlegoTarde = llegoTarde,
         });
     }
 
-    private static double EnDecibelios(ResultadoDeVentana resultado) =>
-        resultado.Decodificaciones.Count == 0 ? -120 : resultado.Decodificaciones.Min(d => d.Decibelios) - 10;
+    private static double EnDecibelios(IReadOnlyList<DecodificacionPropia> decodificaciones) =>
+        decodificaciones.Count == 0 ? -120 : decodificaciones.Min(d => d.Decibelios) - 10;
 
-    /// <summary>Comienzo de la ventana a la que pertenece un instante.</summary>
-    private static DateTimeOffset VentanaDe(DateTimeOffset instante, TimeSpan periodo)
-    {
-        var desdeLaEpoca = instante.ToUniversalTime().UtcTicks;
-        return new DateTimeOffset(desdeLaEpoca - (desdeLaEpoca % periodo.Ticks), TimeSpan.Zero);
-    }
+    /// <summary>El modo pedido, o un error claro si no esta registrado.</summary>
+    private IModoDigital ModoRegistrado(ModoDelModem modo) =>
+        _modos.TryObtener(modo, out var implementacion)
+            ? implementacion
+            : throw new ArgumentOutOfRangeException(nameof(modo), modo, $"El módem propio no sabe hacer {modo}: no está registrado.");
 
     /// <summary>Calcula y saca las columnas de cascada que quepan con lo que hay acumulado.</summary>
     private void PintarCascada(BloqueDeAudio bloque)
@@ -301,12 +356,28 @@ public sealed class ModemPropio : IModemPropio
         if (_salida is null || _vigilante is null)
             throw new InvalidOperationException(
                 "Este módem no puede emitir: no se le ha dado salida de audio ni vigilante de PTT.");
-        if (!_codificador.TryCodificar(texto, Modo, out var tonos, out var motivo))
-            throw new ArgumentException(motivo, nameof(texto));
+        var modo = ModoRegistrado(Modo);
+        const int FrecuenciaDeSalida = 48000;
+        float[] mensaje;
+        try
+        {
+            mensaje = modo.Generar(texto, tonoHz, FrecuenciaDeSalida);
+        }
+        catch (FormatException ex)
+        {
+            throw new ArgumentException(ex.Message, nameof(texto), ex);
+        }
 
-        var p = ParametrosDelModo.De(Modo);
-        var frecuenciaDeSalida = 48000;
-        var senal = Modulador.Sintetizar(p, tonos, tonoHz, frecuenciaDeSalida, amplitud: 0.5);
+        // La senal empieza por convenio un rato despues del comienzo de la ventana: medio
+        // segundo en FT8 y FT4, uno en WSPR y en Q65 largo. Si se llama al principio de la
+        // ventana, que es lo que hace la pantalla, se antepone ese silencio para que la primera
+        // muestra salga donde el otro lado la espera. Si se llama tarde, no se inventa nada: sale
+        // en cuanto se puede.
+        var ventana = IModoDigital.ComienzoDeVentana(_reloj.Ahora, modo.Periodo, modo.ArranqueDentroDelPeriodo);
+        var espera = ventana + modo.ComienzoDeLaSenal - _reloj.Ahora;
+        var silencio = espera > TimeSpan.Zero ? (int)Math.Round(espera.TotalSeconds * FrecuenciaDeSalida) : 0;
+        var senal = new float[silencio + mensaje.Length];
+        mensaje.CopyTo(senal, silencio);
 
         await _cerrojoDeEmision.WaitAsync(ct).ConfigureAwait(false);
         try
@@ -359,13 +430,19 @@ public sealed class ModemPropio : IModemPropio
     /// </remarks>
     public void GuardarEmisionEnFichero(string ruta, string texto, int tonoHz, ModoDelModem modo, int frecuenciaDeMuestreo = 48000)
     {
-        if (!_codificador.TryCodificar(texto, modo, out var tonos, out var motivo))
-            throw new ArgumentException(motivo, nameof(texto));
-        var p = ParametrosDelModo.De(modo);
+        var implementacion = ModoRegistrado(modo);
+        float[] senal;
+        try
+        {
+            senal = implementacion.Generar(texto, tonoHz, frecuenciaDeMuestreo);
+        }
+        catch (FormatException ex)
+        {
+            throw new ArgumentException(ex.Message, nameof(texto), ex);
+        }
 
-        var ventana = new float[(int)Math.Round(p.PeriodoSegundos * frecuenciaDeMuestreo)];
-        var senal = Modulador.Sintetizar(p, tonos, tonoHz, frecuenciaDeMuestreo, amplitud: 0.5);
-        var comienzo = (int)Math.Round(p.ComienzoNominalSegundos * frecuenciaDeMuestreo);
+        var ventana = new float[(int)Math.Round(implementacion.Periodo.TotalSeconds * frecuenciaDeMuestreo)];
+        var comienzo = (int)Math.Round(implementacion.ComienzoDeLaSenal.TotalSeconds * frecuenciaDeMuestreo);
         for (var i = 0; i < senal.Length && comienzo + i < ventana.Length; i++) ventana[comienzo + i] = senal[i];
 
         LectorWav.Escribir(ruta, ventana, frecuenciaDeMuestreo);
@@ -376,10 +453,10 @@ public sealed class ModemPropio : IModemPropio
         string rutaWav, ModoDelModem modo, CancellationToken ct = default)
         => Task.Run<IReadOnlyList<DecodificacionPropia>>(() =>
         {
+            var implementacion = ModoRegistrado(modo);
             var audio = LectorWav.Leer(rutaWav);
-            var p = ParametrosDelModo.De(modo);
-            var muestrasPorVentana = (int)Math.Round(p.PeriodoSegundos * audio.FrecuenciaDeMuestreo);
-            var catalogo = new CatalogoDeIndicativos();
+            var periodo = implementacion.Periodo.TotalSeconds;
+            var muestrasPorVentana = (int)Math.Round(periodo * audio.FrecuenciaDeMuestreo);
             var salida = new List<DecodificacionPropia>();
 
             // Se da por hecho que el fichero empieza en el comienzo de una ventana, que es como
@@ -390,12 +467,11 @@ public sealed class ModemPropio : IModemPropio
                 ct.ThrowIfCancellationRequested();
                 var desde = v * muestrasPorVentana;
                 var cuantas = Math.Min(muestrasPorVentana, audio.Muestras.Length - desde);
-                if (cuantas < p.MuestrasDeLaSenal / 4) break;
+                if (cuantas < muestrasPorVentana / 4) break;
 
-                var resultado = _decodificador.Decodificar(
-                    audio.Muestras.AsSpan(desde, cuantas), audio.FrecuenciaDeMuestreo, modo,
-                    DateTimeOffset.UnixEpoch.AddSeconds(v * p.PeriodoSegundos), catalogo);
-                salida.AddRange(resultado.Decodificaciones);
+                salida.AddRange(implementacion.DecodificarVentana(
+                    audio.Muestras.AsSpan(desde, cuantas), audio.FrecuenciaDeMuestreo,
+                    DateTimeOffset.UnixEpoch.AddSeconds(v * periodo), 0, ct));
             }
             return salida;
         }, ct);

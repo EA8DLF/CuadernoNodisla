@@ -37,6 +37,30 @@ public static class OrdenesFt710
     public static IReadOnlyList<string> Prohibidas { get; } = ["PS0", "MW", "KY"];
 
     /// <summary>
+    /// Ambito en el que se deja pasar <c>PS0;</c>. Solo lo abre <see cref="ConApagadoAutorizadoAsync"/>,
+    /// y es <c>internal</c>: nada fuera de este ensamblado puede activarlo.
+    /// </summary>
+    private static readonly AsyncLocal<bool> ApagadoAutorizado = new();
+
+    /// <summary>
+    /// Ejecuta el apagado dejando pasar <c>PS0;</c> solo mientras dura, y solo en esa rama de la
+    /// ejecucion (AsyncLocal: el sondeo que corre a la vez en otro hilo no lo hereda).
+    /// </summary>
+    internal static async Task ConApagadoAutorizadoAsync(Func<Task> apagar)
+    {
+        ArgumentNullException.ThrowIfNull(apagar);
+        ApagadoAutorizado.Value = true;
+        try
+        {
+            await apagar().ConfigureAwait(false);
+        }
+        finally
+        {
+            ApagadoAutorizado.Value = false;
+        }
+    }
+
+    /// <summary>
     /// Ordenes de sondeo, escritas a mano a partir de la captura del equipo de EA8DLF.
     /// </summary>
     /// <remarks>
@@ -74,6 +98,12 @@ public static class OrdenesFt710
 
         foreach (var prohibida in Prohibidas)
         {
+            // La UNICA excepcion: PS0; exacta, dentro del ambito que abre ControlFt710.ApagarAsync
+            // tras la pulsacion larga de LOCK y la confirmacion del operador. Autorizado por Jose
+            // expresamente el 29-09-2026 («Encender y apagar con LOCK: … adelante»). Fuera de ese
+            // ambito PS0 sigue prohibida: ni sondeo, ni ordenes en crudo, ni nada.
+            if (prohibida == "PS0" && limpia == "PS0;" && ApagadoAutorizado.Value) continue;
+
             if (limpia.StartsWith(prohibida, StringComparison.Ordinal))
             {
                 throw new OrdenPeligrosaException(

@@ -1,5 +1,4 @@
-using System.Globalization;
-using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
+﻿using System.Globalization;
 using Nodisla.Cuaderno.Dominio.Entidades;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
@@ -22,8 +21,17 @@ public sealed class FilaDeQso
         Indicativo = qso.Call.Valor;
         Banda = qso.Band.Nombre;
         Modo = qso.Mode.NombreUsual;
-        // La frecuencia va siempre con punto decimal, no con el de la cultura espanola.
-        Frecuencia = TextoDeFrecuencia.Escribir(qso.Freq);
+
+        // La frecuencia va siempre con punto decimal, no con el de la cultura espanola, y
+        // SIEMPRE con cinco decimales aunque sobren ceros. En el cuaderno no se lee una
+        // frecuencia suelta: se leen doscientas, una encima de otra. Con los decimales que
+        // pidiera cada numero —«3.618», «7.01289», «145.14413»— la coma bailaba de renglon en
+        // renglon y no habia manera de ver de un vistazo cuales eran de la misma parte de la
+        // banda. Con cinco decimales fijos y la columna alineada a la derecha, la coma cae a
+        // plomo y los digitos se comparan sin leerlos.
+        Frecuencia = qso.Freq.EsCero
+            ? string.Empty
+            : qso.Freq.Megahercios.ToString("0.00000", CultureInfo.InvariantCulture);
         InformeEnviado = qso.RstSent.Texto;
         InformeRecibido = qso.RstRcvd.Texto;
         Nombre = qso.Name ?? string.Empty;
@@ -40,6 +48,12 @@ public sealed class FilaDeQso
         Confirmado = qso.Confirmaciones.Any(c => c.EstaVerificada) ? "Verificado"
             : qso.Confirmaciones.Any(c => c.EstaConfirmada) ? "Sí"
             : string.Empty;
+
+        Lotw = ComoEsta(qso, MedioDeConfirmacion.Lotw);
+        Eqsl = ComoEsta(qso, MedioDeConfirmacion.Eqsl);
+        Papel = ComoEsta(qso, MedioDeConfirmacion.Papel);
+        Qrz = ComoEsta(qso, MedioDeConfirmacion.QrzCom);
+        ResumenQsl = Resumir(("LoTW", Lotw), ("eQSL", Eqsl), ("Papel", Papel), ("QRZ.com", Qrz));
 
         Antena = FormatoDeAntena(qso);
         Propagacion = FormatoDePropagacion(qso);
@@ -102,6 +116,33 @@ public sealed class FilaDeQso
     /// <summary>Marca si el contacto esta confirmado o verificado por alguna via.</summary>
     public string Confirmado { get; }
 
+    /// <summary>Como esta la confirmacion por LoTW.</summary>
+    /// <remarks>
+    /// <para>
+    /// Cuatro estados y no dos a proposito. «Confirmado» y «verificado» no valen lo mismo: hay
+    /// diplomas que solo aceptan lo verificado, asi que meterlos en el mismo saco le haria
+    /// creer al operador que tiene un pais que en realidad no puede presentar.
+    /// </para>
+    /// <para>
+    /// Y «enviada» tambien se ensena: antes la columna solo pintaba lo recibido, y en un
+    /// cuaderno recien importado —donde lo reciente esta enviado y aun sin respuesta— salia
+    /// vacia en todas las filas de la primera pagina, como si el cuaderno no trajera nada.
+    /// </para>
+    /// </remarks>
+    public EstadoDePastilla Lotw { get; }
+
+    /// <summary>Como esta la confirmacion por eQSL. Ver <see cref="Lotw"/>.</summary>
+    public EstadoDePastilla Eqsl { get; }
+
+    /// <summary>Como esta la tarjeta QSL en papel. Ver <see cref="Lotw"/>.</summary>
+    public EstadoDePastilla Papel { get; }
+
+    /// <summary>Como esta la confirmacion por QRZ.com. Ver <see cref="Lotw"/>.</summary>
+    public EstadoDePastilla Qrz { get; }
+
+    /// <summary>Las cuatro vias dichas en palabras, para la ayuda emergente de la columna.</summary>
+    public string ResumenQsl { get; }
+
     /// <summary>Azimut y elevacion de la antena, cuando se anotaron.</summary>
     public string Antena { get; }
 
@@ -125,6 +166,32 @@ public sealed class FilaDeQso
 
     /// <summary>Referencia de isla IOTA del corresponsal.</summary>
     public string Iota { get; }
+
+    /// <summary>Estado de una via de confirmacion, tal y como lo pinta la pastilla.</summary>
+    private static EstadoDePastilla ComoEsta(Qso qso, MedioDeConfirmacion medio)
+    {
+        var confirmacion = qso.Confirmaciones.FirstOrDefault(c => c.Medio == medio);
+        if (confirmacion is null) return EstadoDePastilla.Nada;
+        if (confirmacion.EstaVerificada) return EstadoDePastilla.Verificada;
+        if (confirmacion.EstaConfirmada) return EstadoDePastilla.Confirmada;
+        return confirmacion.Enviado is EstadoDeConfirmacion.Confirmado or EstadoDeConfirmacion.Verificado
+            ? EstadoDePastilla.Enviada
+            : EstadoDePastilla.Nada;
+    }
+
+    private static string Resumir(params (string Via, EstadoDePastilla Estado)[] vias)
+    {
+        var partes = vias
+            .Where(v => v.Estado != EstadoDePastilla.Nada)
+            .Select(v => v.Estado switch
+            {
+                EstadoDePastilla.Enviada => $"{v.Via}: enviada, sin confirmar",
+                EstadoDePastilla.Confirmada => $"{v.Via}: confirmada",
+                _ => $"{v.Via}: verificada",
+            })
+            .ToList();
+        return partes.Count == 0 ? "Sin QSL enviada ni recibida" : string.Join("\n", partes);
+    }
 
     private static string FormatoDeAntena(Qso qso)
     {
@@ -156,4 +223,20 @@ public sealed class FilaDeQso
         null or "" => string.Empty,
         _ => codigo!,
     };
+}
+
+/// <summary>Lo que ensena una pastilla de confirmacion en la rejilla del cuaderno.</summary>
+public enum EstadoDePastilla
+{
+    /// <summary>De esa via no consta nada: la pastilla no ocupa sitio.</summary>
+    Nada,
+
+    /// <summary>Enviada y sin respuesta: letra tenue, sin contorno.</summary>
+    Enviada,
+
+    /// <summary>Confirmada: contorno de color.</summary>
+    Confirmada,
+
+    /// <summary>Confirmada y verificada por el servicio: rellena.</summary>
+    Verificada,
 }

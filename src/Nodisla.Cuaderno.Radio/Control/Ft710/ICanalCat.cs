@@ -46,6 +46,33 @@ public interface ICanalCat : IAsyncDisposable
 
     /// <summary>Cierra el canal.</summary>
     void Cerrar();
+
+    /// <summary>
+    /// El canal puede accionar las lineas de control del puerto serie (<c>RTS</c>, <c>DTR</c>).
+    /// </summary>
+    /// <remarks>
+    /// Solo lo puede un canal por puerto serie de verdad. Un canal por TCP —el que usan las
+    /// pruebas y el que habla con un equipo en red— no tiene lineas que levantar, y decirlo
+    /// aqui evita que el control ofrezca un PTT por linea que no existe.
+    /// </remarks>
+    bool PuedeAccionarLineas => false;
+
+    /// <summary>
+    /// Sube o baja la linea de control que hace de PTT.
+    /// </summary>
+    /// <param name="transmitir">Verdadero para levantar la linea.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>La tarea de la orden.</returns>
+    Task PonerLineaDePttAsync(bool transmitir, CancellationToken ct = default) =>
+        Task.FromException(new NotSupportedException(
+            $"El canal {Descripcion} no tiene líneas de control que accionar."));
+
+    /// <summary>
+    /// Baja la linea de PTT bloqueando, para el cierre del proceso.
+    /// </summary>
+    /// <param name="transmitir">Verdadero para levantar la linea.</param>
+    void PonerLineaDePttSincrono(bool transmitir) =>
+        throw new NotSupportedException($"El canal {Descripcion} no tiene líneas de control que accionar.");
 }
 
 /// <summary>Constantes del protocolo CAT de Yaesu.</summary>

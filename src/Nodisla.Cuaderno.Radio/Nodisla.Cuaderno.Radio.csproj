@@ -26,5 +26,21 @@
     <EmbeddedResource Include="Recursos\menu-ft710.json" />
   </ItemGroup>
 
+  <!-- Biblioteca oficial de FTDI para el puente FT4222 del FT-710 (analizador de espectro).
+       Se descarga de ftdichip.com y se guarda en lib/ftdi con su licencia; viaja junto al
+       ejecutable y entra en el instalador. Si no esta, el analizador lo dice en pantalla. -->
+  <ItemGroup>
+    <Content Include="..\..\lib\ftdi\LibFT4222-64.dll" Condition="Exists('..\..\lib\ftdi\LibFT4222-64.dll')">
+      <Link>LibFT4222-64.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="..\..\lib\ftdi\LICENCIA-FTDI.txt" Condition="Exists('..\..\lib\ftdi\LICENCIA-FTDI.txt')">
+      <Link>licencias\LICENCIA-FTDI.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
 

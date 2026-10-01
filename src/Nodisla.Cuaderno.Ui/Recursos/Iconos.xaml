@@ -162,6 +162,102 @@
     </DrawingImage>
 
     <!--
+        ══ SATÉLITES: un satélite con sus dos paneles y la antena ══
+    -->
+    <DrawingImage x:Key="IconoSatelites">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <!-- Los dos paneles solares -->
+                <DrawingGroup Opacity="0.35"><GeometryDrawing Brush="{StaticResource IconoVioleta}"
+                                 Geometry="M 2,9 L 8,9 L 8,15 L 2,15 Z" /></DrawingGroup>
+                <DrawingGroup Opacity="0.35"><GeometryDrawing Brush="{StaticResource IconoVioleta}"
+                                 Geometry="M 16,9 L 22,9 L 22,15 L 16,15 Z" /></DrawingGroup>
+                <GeometryDrawing Geometry="M 2,9 L 8,9 L 8,15 L 2,15 Z M 16,9 L 22,9 L 22,15 L 16,15 Z M 4.5,9 L 4.5,15 M 6.5,9 L 6.5,15 M 17.5,9 L 17.5,15 M 19.5,9 L 19.5,15">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource IconoVioleta}" Thickness="1" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <!-- El cuerpo central -->
+                <GeometryDrawing Brush="{StaticResource IconoVioleta}" Geometry="M 9.5,10 L 14.5,10 L 14.5,14 L 9.5,14 Z" />
+                <!-- La antena, apuntando arriba a la derecha -->
+                <GeometryDrawing Geometry="M 14,10 L 19,5">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource IconoVioleta}" Thickness="1.3" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="{StaticResource IconoVioleta}" Geometry="M 19,5 m -1.1,0 a 1.1,1.1 0 1 0 2.2,0 a 1.1,1.1 0 1 0 -2.2,0" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!--
+        ══ IMPRIMIR: una impresora con la hoja saliendo ══
+    -->
+    <DrawingImage x:Key="IconoImprimir">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup Opacity="0.28"><GeometryDrawing Brush="{StaticResource IconoNaranja}"
+                                 Geometry="M 4,8.5 L 20,8.5 L 20,17 L 4,17 Z" /></DrawingGroup>
+                <GeometryDrawing Geometry="M 4,8.5 L 20,8.5 L 20,17 L 4,17 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource IconoNaranja}" Thickness="1.4" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <!-- El papel entrando por arriba -->
+                <GeometryDrawing Brush="{StaticResource IconoNaranja}" Geometry="M 6.5,3.5 L 17.5,3.5 L 17.5,8.5 L 6.5,8.5 Z" />
+                <!-- El papel saliendo por abajo -->
+                <GeometryDrawing Geometry="M 7.5,17 L 16.5,17 L 16.5,21 L 7.5,21 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource IconoNaranja}" Thickness="1.2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <!-- El testigo -->
+                <GeometryDrawing Brush="{StaticResource IconoVerde}" Geometry="M 17,11 m -1,0 a 1,1 0 1 0 2,0 a 1,1 0 1 0 -2,0" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!--
+        ══ QSL: la tarjeta asomando del sobre ══
+        Sustituye a la impresora: lo que se hace ahí es la QSL (tarjeta, correo y etiquetas
+        del buró), no «imprimir».
+    -->
+    <DrawingImage x:Key="IconoQsl">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <!-- La tarjeta -->
+                <GeometryDrawing Brush="{StaticResource IconoNaranja}" Geometry="M 6,3 L 18,3 L 18,11 L 6,11 Z" />
+                <!-- El sobre -->
+                <DrawingGroup Opacity="0.28"><GeometryDrawing Brush="{StaticResource IconoNaranja}"
+                                 Geometry="M 2.5,9 L 21.5,9 L 21.5,20.5 L 2.5,20.5 Z" /></DrawingGroup>
+                <GeometryDrawing Geometry="M 2.5,9 L 21.5,9 L 21.5,20.5 L 2.5,20.5 Z M 2.5,9 L 12,15.5 L 21.5,9">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource IconoNaranja}" Thickness="1.4" LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!--
+        ══ AYUDA: el interrogante en su círculo ══
+    -->
+    <DrawingImage x:Key="IconoAyuda">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup Opacity="0.25"><GeometryDrawing Brush="{StaticResource IconoGris}"
+                                 Geometry="M 12,12 m -9.5,0 a 9.5,9.5 0 1 0 19,0 a 9.5,9.5 0 1 0 -19,0" /></DrawingGroup>
+                <GeometryDrawing Geometry="M 12,12 m -9.5,0 a 9.5,9.5 0 1 0 19,0 a 9.5,9.5 0 1 0 -19,0 M 9,9.2 C 9,6 15,6 15,9.2 C 15,11.5 12,11.5 12,14">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource IconoGris}" Thickness="1.6" StartLineCap="Round" EndLineCap="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="{StaticResource IconoGris}" Geometry="M 12,17.2 m -1.2,0 a 1.2,1.2 0 1 0 2.4,0 a 1.2,1.2 0 1 0 -2.4,0" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!--
         ══ BANDMAP: la escala de frecuencia con sus anuncios ══
         Una regla vertical con sus marcas y tres puntos a distinta altura.
     -->
@@ -176,6 +272,26 @@
                 <GeometryDrawing Brush="{StaticResource IconoVerde}" Geometry="M 14,4.2 m -2,0 a 2,2 0 1 0 4,0 a 2,2 0 1 0 -4,0" />
                 <GeometryDrawing Brush="{StaticResource IconoNaranja}" Geometry="M 17,11 m -2,0 a 2,2 0 1 0 4,0 a 2,2 0 1 0 -4,0" />
                 <DrawingGroup Opacity="0.6"><GeometryDrawing Brush="{StaticResource IconoVerde}" Geometry="M 13,18 m -2,0 a 2,2 0 1 0 4,0 a 2,2 0 1 0 -4,0" /></DrawingGroup>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!--
+        ══ RONDA: la red de control, un director y sus participantes ══
+        Un punto central (el director) unido por tres radios a otros tres puntos (la ronda).
+    -->
+    <DrawingImage x:Key="IconoRonda">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Geometry="M 12,12 L 4,6 M 12,12 L 20,6 M 12,12 L 12,21">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource IconoDorado}" Thickness="1.4" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="{StaticResource IconoDorado}" Geometry="M 12,12 m -2.6,0 a 2.6,2.6 0 1 0 5.2,0 a 2.6,2.6 0 1 0 -5.2,0" />
+                <DrawingGroup Opacity="0.75"><GeometryDrawing Brush="{StaticResource IconoDorado}" Geometry="M 4,6 m -1.9,0 a 1.9,1.9 0 1 0 3.8,0 a 1.9,1.9 0 1 0 -3.8,0" /></DrawingGroup>
+                <DrawingGroup Opacity="0.75"><GeometryDrawing Brush="{StaticResource IconoDorado}" Geometry="M 20,6 m -1.9,0 a 1.9,1.9 0 1 0 3.8,0 a 1.9,1.9 0 1 0 -3.8,0" /></DrawingGroup>
+                <DrawingGroup Opacity="0.75"><GeometryDrawing Brush="{StaticResource IconoDorado}" Geometry="M 12,21 m -1.9,0 a 1.9,1.9 0 1 0 3.8,0 a 1.9,1.9 0 1 0 -3.8,0" /></DrawingGroup>
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>

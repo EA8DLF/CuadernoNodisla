@@ -27,7 +27,7 @@ namespace Nodisla.Cuaderno.Ui.Desarrollo;
 /// Cuando llegue el control de verdad, esta clase se queda para las pruebas y en
 /// <c>ConfiguracionDeServicios</c> solo cambia la linea que dice quien cubre el puerto.
 /// </remarks>
-public sealed class EquipoSimulado : IEquipoAvanzado, IEquipoConDosVfos, IAsyncDisposable
+public sealed class EquipoSimulado : IEquipoAvanzado, IEquipoConDosVfos, IEquipoConBotonera, Radio.Modelos.IEquipoDeModelo, IAsyncDisposable
 {
     /// <summary>Frecuencia sin banda de aficionado, la del dia de la captura del FT-710.</summary>
     public const decimal FrecuenciaSinBanda = 27.555m;
@@ -92,6 +92,14 @@ public sealed class EquipoSimulado : IEquipoAvanzado, IEquipoConDosVfos, IAsyncD
             [MandoDeEquipo.DesplazamientoRit] = new(MandoDeEquipo.DesplazamientoRit, -9990, 9990, 10, "Hz"),
             [MandoDeEquipo.Xit] = new(MandoDeEquipo.Xit, 0, 1, 1),
             [MandoDeEquipo.DesplazamientoXit] = new(MandoDeEquipo.DesplazamientoXit, -9990, 9990, 10, "Hz"),
+
+            // ── Analizador (teclas de la pantalla; lo pinta AnalizadorSimulado) ──
+            [MandoDeEquipo.EspectroVelocidad] = new(
+                MandoDeEquipo.EspectroVelocidad, 0, 5, 1, null, ["SLOW1", "SLOW2", "FAST1", "FAST2", "FAST3", "STOP"]),
+            [MandoDeEquipo.EspectroAncho] = new(
+                MandoDeEquipo.EspectroAncho, 0, 9, 1, null, ["1 kHz", "2 kHz", "5 kHz", "10 kHz", "20 kHz", "50 kHz", "100 kHz", "200 kHz", "500 kHz", "1 MHz"]),
+            [MandoDeEquipo.EspectroModo] = new(
+                MandoDeEquipo.EspectroModo, 0, 8, 1, null, Radio.Control.Ft710.ModosDelAnalizadorFt710.Etiquetas()),
         };
 
     /// <summary>Valores de partida, los que devolvio el equipo de Jose en la captura.</summary>
@@ -134,6 +142,9 @@ public sealed class EquipoSimulado : IEquipoAvanzado, IEquipoConDosVfos, IAsyncD
             [MandoDeEquipo.DesplazamientoRit] = 0,
             [MandoDeEquipo.Xit] = 0,
             [MandoDeEquipo.DesplazamientoXit] = 0,
+            [MandoDeEquipo.EspectroVelocidad] = 2,
+            [MandoDeEquipo.EspectroAncho] = 7,
+            [MandoDeEquipo.EspectroModo] = 4,
         };
 
     private readonly Temporizador _reloj = new(400) { AutoReset = true };
@@ -154,7 +165,32 @@ public sealed class EquipoSimulado : IEquipoAvanzado, IEquipoConDosVfos, IAsyncD
     private bool _liberado;
 
     /// <summary>Monta el equipo simulado, todavia sin conectar.</summary>
-    public EquipoSimulado() => _reloj.Elapsed += AlPasarElTiempo;
+    public EquipoSimulado()
+        : this(ModeloSimulado.DelEntorno())
+    {
+    }
+
+    /// <summary>Monta el equipo simulado presentándose como otro modelo (docs/18-frontales.md).</summary>
+    /// <param name="modelo">Modelo con el que se presenta.</param>
+    public EquipoSimulado(Radio.Modelos.ModeloDeEquipo modelo)
+    {
+        ArgumentNullException.ThrowIfNull(modelo);
+        Modelo = modelo;
+
+        // Lo que el modelo no tiene no se declara, para que su tecla salga apagada.
+        var mandos = Catalogo.Keys.ToHashSet();
+        if (!modelo.Capacidades.Sintonizador) mandos.Remove(MandoDeEquipo.Sintonizador);
+        if (!modelo.Capacidades.Analizador)
+        {
+            mandos.ExceptWith([MandoDeEquipo.EspectroAncho, MandoDeEquipo.EspectroModo, MandoDeEquipo.EspectroVelocidad]);
+        }
+
+        Mandos = mandos;
+        _reloj.Elapsed += AlPasarElTiempo;
+    }
+
+    /// <summary>El modelo con el que se presenta: el FT-710, o el de <c>CUADERNO_MODELO</c>.</summary>
+    public Radio.Modelos.ModeloDeEquipo Modelo { get; }
 
     /// <inheritdoc />
     public event EventHandler<EstadoDelEquipo>? EstadoCambiado;
@@ -163,16 +199,16 @@ public sealed class EquipoSimulado : IEquipoAvanzado, IEquipoConDosVfos, IAsyncD
     public ViaDeControl Via => ViaDeControl.Rigctld;
 
     /// <inheritdoc />
-    public string NombreDelEquipo => "Yaesu FT-710 (simulado)";
+    public string NombreDelEquipo => $"{Modelo.NombreCompleto} (simulado)";
 
     /// <inheritdoc />
-    public IReadOnlySet<MandoDeEquipo> Mandos { get; } = Catalogo.Keys.ToHashSet();
+    public IReadOnlySet<MandoDeEquipo> Mandos { get; }
 
     /// <inheritdoc />
     public EstadoDelEquipo Estado { get; private set; } = EstadoDelEquipo.Desconectado;
 
     /// <inheritdoc />
-    public RangoDeMando? Rango(MandoDeEquipo mando) => Catalogo.GetValueOrDefault(mando);
+    public RangoDeMando? Rango(MandoDeEquipo mando) => Mandos.Contains(mando) ? Catalogo.GetValueOrDefault(mando) : null;
 
     /// <inheritdoc />
     public EstadoDeLosVfos Vfos { get; private set; } = EstadoDeLosVfos.SinDatos;
@@ -302,6 +338,29 @@ public sealed class EquipoSimulado : IEquipoAvanzado, IEquipoConDosVfos, IAsyncD
         Publicar(Estado.Conectado, Estado.Transmitiendo);
         return Task.CompletedTask;
     }
+
+    /// <inheritdoc />
+    public IReadOnlyList<TeclaDeBanda> TeclasDeBanda => Radio.Control.Ft710.ControlFt710.BandasFt710;
+
+    /// <inheritdoc />
+    /// <remarks>Sin pila de banda: se va a un sitio fijo de cada banda.</remarks>
+    public Task IrABandaAsync(TeclaDeBanda tecla, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(tecla);
+        double[] sitios = [1.840, 3.700, 5.360, 7.100, 10.136, 14.200, 18.100, 21.200, 24.940, 28.500, 50.150, 27.555];
+        return PonerFrecuenciaAsync(Frecuencia.DesdeMegahercios((decimal)sitios[Math.Clamp(tecla.Codigo, 0, sitios.Length - 1)]), ct);
+    }
+
+    /// <inheritdoc />
+    public Task PonerModoDeTeclaAsync(TeclaDeModo modo, CancellationToken ct = default) =>
+        PonerModoAsync(Modo.Parse(modo switch
+        {
+            TeclaDeModo.Lsb or TeclaDeModo.Usb => "SSB",
+            TeclaDeModo.Cw => "CW",
+            TeclaDeModo.Am => "AM",
+            TeclaDeModo.Fm => "FM",
+            _ => "FT8",
+        }), ct);
 
     /// <inheritdoc />
     public Task PonerPttAsync(bool transmitir, CancellationToken ct = default)

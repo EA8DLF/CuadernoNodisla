@@ -1,0 +1,47 @@
+# Tablas de constantes del protocolo Q65
+#
+# PROCEDENCIA
+#   Proyecto : WSJT-X, de Joe Taylor (K1JT) y colaboradores  ---  https://sourceforge.net/p/wsjt/wsjtx/
+#   Autor de las tablas del codigo: Nico Palermo (IV3NWV), paquete qracodes, (c) 2020
+#   Licencia : GPL v3. AQUI SOLO HAY CONSTANTES DEL PROTOCOLO, NI UNA LINEA DE CODIGO:
+#              las constantes de un protocolo publico (posiciones de sincronismo, permutacion y
+#              pesos del codigo, polinomio del CRC) no son codigo. Ver Tablas/LEEME-q65.md.
+#   Ficheros : lib/qra/q65/qra15_65_64_irr_e23.c  (permutacion, pesos y repeticiones del codigo)
+#              lib/qra/q65/genq65.f90              (posiciones de sincronismo)
+#              lib/qra/q65/q65.c                   (polinomio del CRC de 12 bits)
+#              lib/q65_decode.f90 y lib/q65params.f90 (duracion de simbolo y arranque nominal;
+#              esos numeros van en ParametrosDeQ65.cs, no aqui)
+#   Version  : rama master de SourceForge, leida el 26-09-2026
+#   Traido el: 26-09-2026, con autorizacion expresa del propietario del cuaderno
+#
+# QUE ES ESTO Y POR QUE NO SE PUEDE DEDUCIR
+#   Q65 protege el mensaje con un codigo QRA(65,15) sobre GF(64): 15 simbolos de seis bits
+#   (13 del mensaje y 2 del CRC) se repiten, se barajan, se pesan con elementos del cuerpo y se
+#   acumulan para sacar 50 simbolos de paridad. La baraja y los pesos los eligio quien diseno
+#   el codigo; no hay formula que los genere. O se tienen los mismos que todo el mundo o no se
+#   decodifica a nadie. Lo mismo vale para las 22 posiciones de sincronismo y para el CRC.
+#
+# FORMATO
+#   SIMBOLOS        : simbolos de informacion, longitud de la palabra y tamano del cuerpo.
+#   SINCRONISMO     : las 22 posiciones (contando desde uno, como en el protocolo) de los 85
+#                     simbolos emitidos que llevan el tono de sincronismo.
+#   ENTRADAS        : que simbolo de informacion (0..14) entra en el acumulador en cada paso.
+#                     Son 51 pasos: 50 sacan un simbolo de paridad y el ultimo cierra el
+#                     acumulador a cero (propiedad del diseno, que se comprueba al cargar).
+#   PESOS           : logaritmo (base alfa, con alfa raiz de x^6+x+1) del peso de cada paso.
+#   REPETICIONES    : cuantas veces entra cada simbolo de informacion. Es la misma informacion
+#                     vista de otro modo: se cruza con ENTRADAS al cargar y si discrepan se
+#                     rechaza el fichero entero.
+#   CRC12           : polinomio del CRC de 12 bits, reflejado, tal y como lo usa el protocolo.
+
+SIMBOLOS 15 65 64
+
+SINCRONISMO 1 9 12 13 15 22 23 26 27 33 35 38 46 50 55 60 62 66 69 74 76 85
+
+ENTRADAS 13 1 3 4 8 12 9 14 10 5 0 7 1 11 8 9 12 6 3 10 7 5 2 13 12 4 8 0 1 11 2 9 14 5 6 13 7 12 11 2 9 0 10 4 7 14 8 11 3 6 10
+
+PESOS 0 14 0 0 13 37 0 27 56 62 29 0 52 34 62 4 3 22 25 0 22 0 20 10 0 43 53 60 0 0 0 62 0 5 0 61 36 31 61 59 10 0 29 39 25 18 0 14 11 50 17
+
+REPETICIONES 3 3 3 3 3 3 3 4 4 4 4 4 4 3 3
+
+CRC12 F01

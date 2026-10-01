@@ -34,14 +34,29 @@ public sealed class CodigoLdpc
     private readonly int[][] _ecuacionesDeCadaBit;
     private readonly ulong[] _filasDeParidad;
     private readonly int _palabrasPorFila;
+    private readonly int[] _posicionesDeMensaje;
+    private readonly int[] _posicionesDeParidad;
+    private readonly bool _mensajeAlPrincipio;
 
-    private CodigoLdpc(int longitud, int bitsDeMensaje, int[][] variablesDeCadaEcuacion, ulong[] filasDeParidad, int palabrasPorFila)
+    private CodigoLdpc(
+        int longitud,
+        int[] posicionesDeMensaje,
+        int[] posicionesDeParidad,
+        int[][] variablesDeCadaEcuacion,
+        ulong[] filasDeParidad,
+        int palabrasPorFila)
     {
         Longitud = longitud;
-        BitsDeMensaje = bitsDeMensaje;
+        BitsDeMensaje = posicionesDeMensaje.Length;
+        _posicionesDeMensaje = posicionesDeMensaje;
+        _posicionesDeParidad = posicionesDeParidad;
         _variablesDeCadaEcuacion = variablesDeCadaEcuacion;
         _filasDeParidad = filasDeParidad;
         _palabrasPorFila = palabrasPorFila;
+
+        _mensajeAlPrincipio = true;
+        for (var i = 0; i < posicionesDeMensaje.Length; i++)
+            if (posicionesDeMensaje[i] != i) { _mensajeAlPrincipio = false; break; }
 
         var porBit = new List<int>[longitud];
         for (var i = 0; i < longitud; i++) porBit[i] = [];
@@ -68,6 +83,35 @@ public sealed class CodigoLdpc
     public IReadOnlyList<int[]> EcuacionesDeCadaBit => _ecuacionesDeCadaBit;
 
     /// <summary>
+    /// En que posicion de la palabra emitida viaja cada bit del mensaje.
+    /// </summary>
+    /// <remarks>
+    /// En FT8, FST4 y MSK144 es simplemente 0, 1, 2... hasta <see cref="BitsDeMensaje"/> menos
+    /// uno: el mensaje va delante y la paridad detras. El codigo corto de MSK144 (32,16) no: sus
+    /// bits de mensaje estan repartidos por la palabra en un orden fijado por el protocolo. Esta
+    /// lista es lo que permite que el mismo codificador y el mismo decodificador sirvan para los
+    /// dos casos sin tener que reordenar nada fuera.
+    /// </remarks>
+    public IReadOnlyList<int> PosicionesDeMensaje => _posicionesDeMensaje;
+
+    /// <summary>En que posicion de la palabra emitida va cada bit de paridad, de menor a mayor.</summary>
+    public IReadOnlyList<int> PosicionesDeParidad => _posicionesDeParidad;
+
+    /// <summary>
+    /// Saca los bits del mensaje de una palabra de codigo, esten donde esten.
+    /// </summary>
+    /// <param name="palabra">Los <see cref="Longitud"/> bits de la palabra.</param>
+    /// <param name="mensaje">Destino de los <see cref="BitsDeMensaje"/> bits.</param>
+    public void ExtraerMensaje(ReadOnlySpan<byte> palabra, Span<byte> mensaje)
+    {
+        if (palabra.Length != Longitud)
+            throw new ArgumentException($"La palabra debe tener {Longitud} bits y tiene {palabra.Length}.", nameof(palabra));
+        if (mensaje.Length != BitsDeMensaje)
+            throw new ArgumentException($"El mensaje debe tener {BitsDeMensaje} bits y tiene {mensaje.Length}.", nameof(mensaje));
+        for (var i = 0; i < BitsDeMensaje; i++) mensaje[i] = palabra[_posicionesDeMensaje[i]];
+    }
+
+    /// <summary>
     /// Construye el codigo a partir de la matriz de paridad.
     /// </summary>
     /// <param name="matrizDeParidad">
@@ -80,18 +124,65 @@ public sealed class CodigoLdpc
     {
         ArgumentNullException.ThrowIfNull(matrizDeParidad);
         if (matrizDeParidad.Length == 0) throw new ArgumentException("La matriz de paridad esta vacía.", nameof(matrizDeParidad));
+        var longitud = matrizDeParidad[0].Length;
+        if (bitsDeMensaje <= 0 || bitsDeMensaje >= longitud)
+            throw new ArgumentOutOfRangeException(nameof(bitsDeMensaje));
+        var posiciones = new int[bitsDeMensaje];
+        for (var i = 0; i < bitsDeMensaje; i++) posiciones[i] = i;
+        return DesdeMatrizDeParidad(matrizDeParidad, posiciones);
+    }
+
+    /// <summary>
+    /// Construye el codigo a partir de la matriz de paridad, con el mensaje en las posiciones
+    /// que diga el protocolo.
+    /// </summary>
+    /// <param name="matrizDeParidad">
+    /// Una fila por ecuacion y una columna por bit emitido. El valor de una casilla dice si ese
+    /// bit entra en esa ecuacion.
+    /// </param>
+    /// <param name="posicionesDeMensaje">
+    /// En que columna de la palabra viaja cada bit del mensaje, en orden. Las columnas que no
+    /// esten aqui son las de paridad, y se despejan de las ecuaciones.
+    /// </param>
+    /// <remarks>
+    /// Es la forma general: con las posiciones 0, 1, 2... se obtiene exactamente el mismo codigo
+    /// que con <see cref="DesdeMatrizDeParidad(bool[][], int)"/>, bit por bit. Existe para el
+    /// codigo corto de MSK144, cuyo mensaje va repartido por la palabra, y para cualquier otro
+    /// codigo que venga asi.
+    /// </remarks>
+    /// <exception cref="ArgumentException">Si la matriz no es coherente o no se puede despejar.</exception>
+    public static CodigoLdpc DesdeMatrizDeParidad(bool[][] matrizDeParidad, int[] posicionesDeMensaje)
+    {
+        ArgumentNullException.ThrowIfNull(matrizDeParidad);
+        ArgumentNullException.ThrowIfNull(posicionesDeMensaje);
+        if (matrizDeParidad.Length == 0) throw new ArgumentException("La matriz de paridad esta vacía.", nameof(matrizDeParidad));
 
         var ecuaciones = matrizDeParidad.Length;
         var longitud = matrizDeParidad[0].Length;
         foreach (var fila in matrizDeParidad)
             if (fila.Length != longitud)
                 throw new ArgumentException("Todas las filas de la matriz deben medir lo mismo.", nameof(matrizDeParidad));
+
+        var bitsDeMensaje = posicionesDeMensaje.Length;
         if (bitsDeMensaje <= 0 || bitsDeMensaje >= longitud)
-            throw new ArgumentOutOfRangeException(nameof(bitsDeMensaje));
+            throw new ArgumentOutOfRangeException(nameof(posicionesDeMensaje), "El mensaje tiene que ser mas corto que la palabra y no estar vacío.");
         if (longitud - bitsDeMensaje != ecuaciones)
             throw new ArgumentException(
                 $"Un codigo sistematico necesita tantas ecuaciones como bits de paridad: hay {ecuaciones} y harían falta {longitud - bitsDeMensaje}.",
                 nameof(matrizDeParidad));
+
+        var esDeMensaje = new bool[longitud];
+        foreach (var p in posicionesDeMensaje)
+        {
+            if (p < 0 || p >= longitud)
+                throw new ArgumentOutOfRangeException(nameof(posicionesDeMensaje), $"La posición {p} se sale de la palabra de {longitud} bits.");
+            if (esDeMensaje[p])
+                throw new ArgumentException($"La posición {p} aparece dos veces entre las del mensaje.", nameof(posicionesDeMensaje));
+            esDeMensaje[p] = true;
+        }
+        var posicionesDeParidad = new int[ecuaciones];
+        for (int v = 0, j = 0; v < longitud; v++)
+            if (!esDeMensaje[v]) posicionesDeParidad[j++] = v;
 
         var variables = new int[ecuaciones][];
         for (var e = 0; e < ecuaciones; e++)
@@ -104,8 +195,8 @@ public sealed class CodigoLdpc
             variables[e] = [.. lista];
         }
 
-        var (filas, palabras) = DespejarLosBitsDeParidad(matrizDeParidad, bitsDeMensaje, ecuaciones, longitud);
-        return new CodigoLdpc(longitud, bitsDeMensaje, variables, filas, palabras);
+        var (filas, palabras) = DespejarLosBitsDeParidad(matrizDeParidad, posicionesDeMensaje, posicionesDeParidad);
+        return new CodigoLdpc(longitud, [.. posicionesDeMensaje], posicionesDeParidad, variables, filas, palabras);
     }
 
     /// <summary>
@@ -119,10 +210,14 @@ public sealed class CodigoLdpc
     /// que hay que sumar. Esa lista se guarda como mapa de bits para poder sumarla despues a
     /// golpe de o-exclusivo sobre palabras de 64 bits.
     /// </remarks>
-    private static (ulong[] Filas, int PalabrasPorFila) DespejarLosBitsDeParidad(bool[][] h, int k, int m, int n)
+    private static (ulong[] Filas, int PalabrasPorFila) DespejarLosBitsDeParidad(bool[][] h, int[] posicionesDeMensaje, int[] posicionesDeParidad)
     {
         // Se trabaja sobre [B | A | I]: a la izquierda la parte de paridad, en medio la del
-        // mensaje y a la derecha la identidad, que va recogiendo las operaciones hechas.
+        // mensaje y a la derecha la identidad, que va recogiendo las operaciones hechas. Las
+        // columnas se toman de donde diga cada lista de posiciones; con el mensaje delante y la
+        // paridad detras esto es exactamente la cuenta de siempre.
+        var k = posicionesDeMensaje.Length;
+        var m = posicionesDeParidad.Length;
         var anchoIzquierda = m;
         var ancho = anchoIzquierda + k;
         var palabras = (ancho + 63) / 64;
@@ -132,9 +227,9 @@ public sealed class CodigoLdpc
         {
             var baseFila = e * palabras;
             for (var j = 0; j < m; j++)
-                if (h[e][k + j]) tabla[baseFila + (j / 64)] |= 1UL << (j % 64);
+                if (h[e][posicionesDeParidad[j]]) tabla[baseFila + (j / 64)] |= 1UL << (j % 64);
             for (var j = 0; j < k; j++)
-                if (h[e][j])
+                if (h[e][posicionesDeMensaje[j]])
                 {
                     var col = anchoIzquierda + j;
                     tabla[baseFila + (col / 64)] |= 1UL << (col % 64);
@@ -191,14 +286,15 @@ public sealed class CodigoLdpc
             if (mensaje[i] != 0) empaquetado[i / 64] |= 1UL << (i % 64);
 
         var palabra = new byte[Longitud];
-        mensaje.CopyTo(palabra);
+        if (_mensajeAlPrincipio) mensaje.CopyTo(palabra);
+        else for (var i = 0; i < BitsDeMensaje; i++) palabra[_posicionesDeMensaje[i]] = mensaje[i];
         for (var e = 0; e < Ecuaciones; e++)
         {
             ulong acumulado = 0;
             for (var p = 0; p < _palabrasPorFila; p++)
                 acumulado ^= _filasDeParidad[(e * _palabrasPorFila) + p] & empaquetado[p];
             // La paridad del bit es la paridad del numero de unos que quedan.
-            palabra[BitsDeMensaje + e] = (byte)(System.Numerics.BitOperations.PopCount(acumulado) & 1);
+            palabra[_posicionesDeParidad[e]] = (byte)(System.Numerics.BitOperations.PopCount(acumulado) & 1);
         }
         return palabra;
     }

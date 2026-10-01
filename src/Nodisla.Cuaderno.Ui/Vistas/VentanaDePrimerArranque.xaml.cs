@@ -17,6 +17,17 @@ public partial class VentanaDePrimerArranque : Window
         InitializeComponent();
         DataContext = vistaModelo;
 
+        // Para las capturas de la ayuda: el perfil ficticio ya escrito, sin teclear en la ventana.
+        // CUADERNO_PERFIL_DE_PRUEBA=indicativo;localizador;operador;localidad
+        if (Environment.GetEnvironmentVariable("CUADERNO_PERFIL_DE_PRUEBA") is { Length: > 0 } perfil)
+        {
+            var partes = perfil.Split(';');
+            vistaModelo.Indicativo = partes[0];
+            if (partes.Length > 1) vistaModelo.Localizador = partes[1];
+            if (partes.Length > 2) vistaModelo.NombreOperador = partes[2];
+            if (partes.Length > 3) vistaModelo.Localidad = partes[3];
+        }
+
         vistaModelo.PerfilCreado += (_, _) =>
         {
             DialogResult = true;

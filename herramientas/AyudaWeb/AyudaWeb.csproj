@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Genera la ayuda web estÃ¡tica (docs/web-ayuda) a partir de docs/ayuda/*.md, con el MISMO
+    lector de Markdown que la ayuda del programa. No estÃ¡ en la soluciÃ³n: se ejecuta a mano.
+
+      dotnet run, proyecto herramientas\AyudaWeb
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Nodisla.Cuaderno.Herramientas.AyudaWeb</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\src\Nodisla.Cuaderno.Ui\Soporte\DocumentoMarkdown.cs" Link="DocumentoMarkdown.cs" />
+  </ItemGroup>
+
+</Project>

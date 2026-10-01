@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contactos · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html" class="actual" aria-current="page">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="contactos">Contactos</h1>
+<p><strong>Libro › Contactos</strong> (<code>Ctrl</code> <code>3</code>) es la rejilla de contactos del cuaderno, con la p&#225;gina entera para ella sola, que es lo que necesita una rejilla de veinte mil filas. La entrada <strong>Libro</strong> agrupa tambi&#233;n el <a href="06-mapa.html">Mapa</a> (<code>Ctrl</code> <code>4</code>).</p>
+<figure><a href="capturas/contactos.png"><img src="capturas/contactos.png" alt="Libro › Contactos: la rejilla con el buscador, los filtros y la columna de pastillas QSL (datos de prueba)" loading="lazy"></a><figcaption>Libro › Contactos: la rejilla con el buscador, los filtros y la columna de pastillas QSL (datos de prueba)</figcaption></figure>
+<h2 id="buscar-y-filtrar">Buscar y filtrar</h2>
+<ul>
+<li><strong>Buscar en el cuaderno (F3)</strong> — busca por indicativo, nombre, QTH, localizador, pa&#237;s o comentario a la vez, sin tener que elegir en cu&#225;l de esos campos.</li>
+<li><strong>Banda</strong> y <strong>Modo</strong> — filtran a un valor concreto.</li>
+<li><strong>Por p&#225;gina</strong> — cu&#225;ntas filas se cargan de golpe; la rejilla est&#225; paginada porque un cuaderno de miles de contactos no se carga entero en memoria cada vez.</li>
+</ul>
+<p>Si el filtro no deja pasar ninguna fila, el cuaderno lo dice en el centro de la rejilla: una rejilla en blanco no distingue por s&#237; sola entre &#171;no hay contactos&#187; y &#171;el filtro no deja pasar ninguno&#187;, y son dos cosas muy distintas.</p>
+<h2 id="las-columnas">Las columnas</h2>
+<p>El desplegable <strong>&#171;Columnas del cuaderno&#187;</strong> deja encender y apagar columnas: frecuencia, informes, nombre, QTH, localizador, distancia, comentario, mi indicativo, confirmaciones, antena, propagaci&#243;n, radioescucha, completado, casual, mensaje QSL, mi nombre, IOTA. Se puede ordenar por cualquier columna con clic en su cabecera, cambiar su ancho y reordenarlas arrastrando.</p>
+<p>La columna <strong>QSL</strong> no dice &#171;S&#237;&#187; o &#171;No&#187;: ense&#241;a cuatro pastillas — <strong>L</strong> de LoTW, <strong>E</strong> de eQSL, <strong>P</strong> de papel, <strong>Q</strong> de QRZ — rellenas cuando esa v&#237;a en concreto ha confirmado el contacto, as&#237; se ve de un vistazo por d&#243;nde est&#225; confirmado y por d&#243;nde no.</p>
+<h2 id="editar-y-borrar">Editar y borrar</h2>
+<ul>
+<li><strong>Modificar (F2)</strong> o doble clic en una fila abre el editor del contacto seleccionado.</li>
+<li><strong>Borrar (Supr)</strong> lo elimina, pidiendo confirmaci&#243;n antes.</li>
+<li><strong>Quitar filtro</strong> limpia la b&#250;squeda y los filtros de banda y modo de golpe.</li>
+<li><strong>Ver/enviar QSL…</strong> (bot&#243;n, o clic derecho en la rejilla) abre la tarjeta QSL de los contactos elegidos para verla, guardarla o mandarla por correo. Se pueden elegir varios con Ctrl/May&#250;s + clic. Ver <a href="13-tarjeta-qsl.html">Tarjeta QSL propia</a>.</li>
+</ul>
+<h2 id="fusi&#243;n-de-duplicados-al-importar">Fusi&#243;n de duplicados al importar</h2>
+<p>Cuando se importa un fichero ADIF — desde <strong>Configuraci&#243;n → Libro (ADIF) → Importar ADIF…</strong>, o desde la ventana de bienvenida la primera vez — los contactos que ya est&#225;n en el cuaderno <strong>no se duplican ni se descartan: se funden</strong>. Si dos copias del mismo contacto traen datos distintos —por ejemplo una con la QSL confirmada por LoTW y otra sin esa confirmaci&#243;n—, el resultado se queda con lo mejor de las dos.</p>
+<p>Al terminar la importaci&#243;n se ense&#241;a el parte completo, con las <strong>confirmaciones rescatadas</strong> destacadas aparte: es la cifra que demuestra por qu&#233; merece la pena fundir en vez de saltarse los duplicados sin m&#225;s — cada una es un diploma que no se pierde por el camino.</p>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

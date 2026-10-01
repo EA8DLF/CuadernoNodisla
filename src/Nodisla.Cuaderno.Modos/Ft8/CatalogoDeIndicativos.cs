@@ -31,8 +31,14 @@ public sealed class CatalogoDeIndicativos
     /// <summary>
     /// Multiplicador del resumen. Es una constante del protocolo: el resumen se calcula
     /// pasando el indicativo a un numero en base 38, multiplicandolo por esto y quedandose con
-    /// los bits de arriba del producto de 64 bits.
+    /// los bits de arriba del producto de 64 bits (que se desborda: la cuenta es modulo 2^64).
     /// </summary>
+    /// <remarks>
+    /// Procedencia: protocolo FT8/FT4 descrito en «The FT4 and FT8 Communication Protocols»
+    /// (Franke, Somerville y Taylor, QEX jul/ago 2020); el valor coincide con el de ft8_lib
+    /// (licencia MIT), con cuyos resumenes se ha contrastado. Los resumenes de 12 y 10 bits son
+    /// los 12 y 10 bits de arriba del de 22, no otra cuenta.
+    /// </remarks>
     private const ulong Multiplicador = 47055833459UL;
 
     /// <summary>Alfabeto en el que se numera el indicativo para calcular el resumen.</summary>
@@ -44,6 +50,7 @@ public sealed class CatalogoDeIndicativos
     private readonly Dictionary<int, string> _de10 = [];
     private readonly Dictionary<int, string> _de12 = [];
     private readonly Dictionary<int, string> _de22 = [];
+    private readonly List<string> _fijos = [];
     private readonly object _cerrojo = new();
 
     /// <summary>Cuantos indicativos distintos hay apuntados.</summary>
@@ -82,6 +89,8 @@ public sealed class CatalogoDeIndicativos
         if (string.IsNullOrWhiteSpace(indicativo)) return;
         var v = indicativo.Trim().ToUpperInvariant();
         if (v.Length is < 3 or > LongitudDelResumen) return;
+        // Solo indicativos en claro: un «<...>» o un «<EA8DLF>» darian un resumen que no es el suyo.
+        if (v.Any(c => Alfabeto.IndexOf(c, StringComparison.Ordinal) < 0 || c == ' ')) return;
 
         lock (_cerrojo)
         {
@@ -89,6 +98,31 @@ public sealed class CatalogoDeIndicativos
             _de12[Resumir(v, 12)] = v;
             _de22[Resumir(v, 22)] = v;
         }
+    }
+
+    /// <summary>
+    /// Apunta un indicativo que no se olvida al cambiar de banda: el propio y los que uno emite.
+    /// </summary>
+    /// <remarks>
+    /// Quien contesta a un indicativo raro manda resumido el del otro (<c>&lt;EA8DLF&gt; HB10GBT
+    /// RRR</c>). Si el receptor no tiene apuntado el propio indicativo, ese mensaje saldria como
+    /// <c>&lt;...&gt;</c> y el secuenciador no sabria que es para uno.
+    /// </remarks>
+    public void Fijar(string? indicativo)
+    {
+        if (string.IsNullOrWhiteSpace(indicativo)) return;
+        var v = indicativo.Trim().ToUpperInvariant();
+        if (v.Length is < 3 or > LongitudDelResumen) return;
+        lock (_cerrojo)
+        {
+            if (!_fijos.Contains(v))
+            {
+                // Los fijos no crecen sin limite: se queda con los ultimos.
+                if (_fijos.Count >= 64) _fijos.RemoveAt(0);
+                _fijos.Add(v);
+            }
+        }
+        Recordar(v);
     }
 
     /// <summary>
@@ -120,6 +154,12 @@ public sealed class CatalogoDeIndicativos
             _de10.Clear();
             _de12.Clear();
             _de22.Clear();
+            foreach (var v in _fijos)
+            {
+                _de10[Resumir(v, 10)] = v;
+                _de12[Resumir(v, 12)] = v;
+                _de22[Resumir(v, 22)] = v;
+            }
         }
     }
 }

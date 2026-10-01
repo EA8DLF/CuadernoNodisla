@@ -1,0 +1,34 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.AjustesDeActualizaciones"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        ACTUALIZACIONES (apartado de Ajustes). DataContext: VistaModeloActualizaciones, el MISMO
+        objeto que la barra del aviso, para que buscar a mano encienda también la barra.
+    -->
+
+    <StackPanel>
+        <TextBlock Text="Actualizaciones" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,4" />
+
+        <TextBlock Style="{StaticResource TextoTenueEstilo}" Margin="0,0,0,4">
+            <Run Text="Versión instalada:" />
+            <Run Text="{Binding VersionActual, Mode=OneWay}" FontWeight="SemiBold" />
+        </TextBlock>
+
+        <CheckBox IsChecked="{Binding ComprobarAlArrancar}"
+                  Content="Buscar versiones nuevas al arrancar (como mucho una vez al día)"
+                  AutomationProperties.Name="Buscar versiones nuevas al arrancar" />
+        <TextBlock Text="Se consulta la página pública de versiones en GitHub, sin cuenta ni datos suyos. Si hay una versión nueva aparece un aviso arriba; nada se descarga ni se instala sin que usted lo pida."
+                   Style="{StaticResource TextoTenueEstilo}" Margin="0,2,0,6" />
+
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Buscar actualizaciones"
+                    Command="{Binding BuscarActualizacionesCommand}"
+                    HorizontalAlignment="Left"
+                    AutomationProperties.Name="Buscar actualizaciones ahora" />
+            <TextBlock Text="{Binding Estado}" Style="{StaticResource TextoTenueEstilo}"
+                       VerticalAlignment="Center" Margin="10,0,0,0" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

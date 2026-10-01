@@ -19,6 +19,15 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
         <conversores:NoEsVacio x:Key="NoEsVacio" />
+        <conversores:AnchoDeColumnaEnLetras x:Key="AnchoDeColumna" />
+        <conversores:AnchoEnLetras x:Key="Multiplicar" />
+
+        <!--
+            Las columnas no están en el árbol visual y no ven la letra del panel: este puente
+            se la acerca. Se le pone el propio panel desde el código, al montarlo, y los anchos
+            de columna se miden en letras como en el cuaderno, así que suben con la escala.
+        -->
+        <conversores:Puente x:Key="PuenteDelPanel" />
     </UserControl.Resources>
 
     <Grid>
@@ -85,6 +94,11 @@
                           VerticalAlignment="Bottom"
                           Margin="0,0,12,10"
                           ToolTip="Deja únicamente las entidades nuevas y los huecos de banda y modo" />
+                <CheckBox Content="Solo con propagación"
+                          IsChecked="{Binding SoloConPropagacion}"
+                          VerticalAlignment="Bottom"
+                          Margin="0,0,12,10"
+                          ToolTip="Deja únicamente las estaciones hacia las que la banda debería estar abierta o dudosa ahora (20 % o más). Las que no tienen previsión se esconden." />
                 <CheckBox Content="Sin escucha automática"
                           IsChecked="{Binding SinEscuchaAutomatica}"
                           VerticalAlignment="Bottom"
@@ -102,88 +116,208 @@
             </WrapPanel>
         </Expander>
 
-        <!-- ══ Lista de anuncios ══ -->
-        <ListBox Grid.Row="2"
-                 x:Name="ListaDeSpots"
-                 ItemsSource="{Binding Spots}"
-                 SelectedItem="{Binding SpotSeleccionado}"
-                 MouseDoubleClick="AlPulsarDosVeces">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid ToolTip="{Binding Detalle}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
+        <!-- ══ Lista de anuncios: una fila por estación ══ -->
+        <!--
+            Una rejilla y no una lista de dos renglones: con una línea por estación caben el
+            doble de anuncios a la vista, y las cifras caen a plomo columna a columna. Viste
+            como el libro de contactos —contenido claro, texto oscuro de peso normal— porque
+            se lee igual, renglón a renglón y durante horas.
 
-                        <TextBlock Grid.Row="0" Grid.Column="0"
-                                   Text="{Binding Hora}"
-                                   Style="{StaticResource TextoTenueEstilo}"
-                                   FontFamily="Consolas, Cascadia Mono, Courier New"
-                                   Margin="0,0,10,0"
-                                   VerticalAlignment="Center" />
+            La misma estación en la misma banda y el mismo modo es UNA fila: el anuncio
+            repetido la actualiza y la columna «OYEN» dice cuántas estaciones distintas la
+            están oyendo.
 
-                        <WrapPanel Grid.Row="0" Grid.Column="1">
-                            <TextBlock Text="{Binding Indicativo}"
-                                       FontFamily="Consolas, Cascadia Mono, Courier New"
-                                       Margin="0,0,10,0">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                                        <Setter Property="FontWeight" Value="Bold" />
+            Todas las columnas tienen ancho fijo, medido en letras. Con una columna elástica,
+            en una pantalla estrecha la rejilla encogía las demás hasta cortar las cabeceras
+            («HO…», «BA…»); así, si no cabe, sale la barra de desplazamiento horizontal.
+        -->
+        <DataGrid Grid.Row="2"
+                  x:Name="ListaDeSpots"
+                  Style="{StaticResource RejillaDeContactos}"
+                  ItemsSource="{Binding Spots}"
+                  SelectedItem="{Binding SpotSeleccionado}"
+                  CanUserSortColumns="True"
+                  CanUserReorderColumns="True"
+                  CanUserResizeColumns="True"
+                  MouseDoubleClick="AlPulsarDosVeces">
+
+            <!-- Los estilos implícitos van dentro, como en el cuaderno: fuera no mandan. -->
+            <DataGrid.Resources>
+                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource CabeceraDelCuaderno}" />
+                <Style TargetType="DataGridCell" BasedOn="{StaticResource CeldaDelCuaderno}" />
+                <Style TargetType="DataGridRow" BasedOn="{StaticResource FilaDelCuaderno}">
+                    <Setter Property="ToolTip" Value="{Binding Detalle}" />
+                </Style>
+            </DataGrid.Resources>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="HORA" Binding="{Binding Hora}" SortMemberPath="Spot.RecibidoUtc"
+                                    ElementStyle="{StaticResource CeldaDeCifras}"
+                                    Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=4.1}" />
+
+                <DataGridTextColumn Header="INDICATIVO" Binding="{Binding Indicativo}" SortMemberPath="Indicativo"
+                                    Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource CeldaDeIndicativo}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding EsEntidadNueva}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource QslLotwTinta}" />
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="FRECUENCIA" Binding="{Binding Frecuencia}" SortMemberPath="Spot.Frecuencia.Megahercios"
+                                    ElementStyle="{StaticResource CeldaNumerica}"
+                                    HeaderStyle="{StaticResource CabeceraNumerica}"
+                                    Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=6.6}" />
+
+                <DataGridTextColumn Header="BANDA" Binding="{Binding Banda}" SortMemberPath="Spot.Frecuencia.Megahercios"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
+                                    Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=4.3}" />
+
+                <DataGridTextColumn Header="MODO" Binding="{Binding Modo}"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
+                                    Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=4.3}" />
+
+                <DataGridTextColumn Header="PAÍS" Binding="{Binding Pais}"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
+                                    Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
+
+                <DataGridTextColumn Header="CONT." Binding="{Binding Continente}"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
+                                    Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=3.9}" />
+
+                <!--
+                    Mi propagación hacia esa estación, ahora y en esa frecuencia: una barrita y
+                    la cifra. Verde del 50 % arriba, ámbar del 20 % al 50 %, gris por debajo.
+                    Sin localizador propio, sin posición de la otra estación o sin índices
+                    solares, la celda va VACÍA: un número inventado se leería como bueno.
+                -->
+                <DataGridTemplateColumn Header="PROP." SortMemberPath="FiabilidadParaOrdenar"
+                                        HeaderStyle="{StaticResource CabeceraNumerica}"
+                                        Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=6.4}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid Background="Transparent" ToolTip="{Binding PropagacionDetalle}"
+                                  ToolTipService.ShowDuration="30000">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding EsEntidadNueva}" Value="True">
-                                                <Setter Property="Foreground" Value="{DynamicResource CorrectoTexto}" />
+                                            <DataTrigger Binding="{Binding NivelDePropagacion}" Value="SinDato">
+                                                <Setter Property="Visibility" Value="Hidden" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
+                                </Grid.Style>
 
-                            <TextBlock Text="{Binding Frecuencia}"
-                                       FontFamily="Consolas, Cascadia Mono, Courier New"
-                                       Margin="0,0,10,0" />
-                            <TextBlock Text="{Binding Banda}" Style="{StaticResource TextoTenueEstilo}" Margin="0,0,8,0" />
-                            <TextBlock Text="{Binding Modo}" Style="{StaticResource TextoTenueEstilo}" Margin="0,0,8,0" />
+                                <!-- La barrita: el carril gris y, encima, lo que llena la fiabilidad. -->
+                                <Border Grid.Column="0" Width="30" Height="5" VerticalAlignment="Center" Margin="0,0,6,0"
+                                        CornerRadius="2" Background="{DynamicResource RejillaLinea}">
+                                    <Border HorizontalAlignment="Left" CornerRadius="2"
+                                            Width="{Binding PorcentajeDePropagacion, Converter={StaticResource Multiplicar}, ConverterParameter=0.3}">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="{DynamicResource RejillaTextoTenue}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding NivelDePropagacion}" Value="Abierta">
+                                                        <Setter Property="Background" Value="{DynamicResource QslLotwTinta}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding NivelDePropagacion}" Value="Dudosa">
+                                                        <Setter Property="Background" Value="{DynamicResource QslPapelTinta}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                    </Border>
+                                </Border>
 
-                            <Border Style="{StaticResource MarcaDeNovedad}"
-                                    Visibility="{Binding Novedad, Converter={StaticResource NoEsVacio}}">
-                                <TextBlock Text="{Binding Novedad}"
-                                           Foreground="{DynamicResource CorrectoTexto}"
-                                           FontWeight="Bold"
-                                           TextTrimming="None" />
+                                <TextBlock Grid.Column="1" Text="{Binding Propagacion}" MinWidth="30">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource CeldaNumerica}">
+                                            <Setter Property="Foreground" Value="{DynamicResource RejillaTextoTenue}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding NivelDePropagacion}" Value="Abierta">
+                                                    <Setter Property="Foreground" Value="{DynamicResource QslLotwTinta}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding NivelDePropagacion}" Value="Dudosa">
+                                                    <Setter Property="Foreground" Value="{DynamicResource QslPapelTinta}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!--
+                    La novedad, como pastilla: rellena si sería entidad nueva, solo con
+                    contorno si llena un hueco de banda y modo. Sin novedad, nada.
+                -->
+                <DataGridTemplateColumn Header="NOVEDAD" SortMemberPath="Novedad"
+                                        Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7.6}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Border ToolTip="{Binding Novedad}" HorizontalAlignment="Left">
+                                <Border.Style>
+                                    <Style TargetType="Border" BasedOn="{StaticResource PastillaDeQsl}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource QslLotwTinta}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding EsHuecoNuevo}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding EsEntidadNueva}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Setter Property="Background" Value="{DynamicResource QslLotwFondo}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock>
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource LetraDePastilla}">
+                                            <Setter Property="Foreground" Value="{DynamicResource QslLotwTinta}" />
+                                            <Setter Property="FontWeight" Value="Normal" />
+                                            <Setter Property="Text" Value="Banda/modo" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding EsEntidadNueva}" Value="True">
+                                                    <Setter Property="Text" Value="Entidad nueva" />
+                                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                             </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
-                            <!--
-                                Cuántas estaciones la están oyendo. Que la oigan diez desde
-                                tres continentes es la señal de que está entrando bien, y por
-                                eso se junta el anuncio repetido en vez de tirarlo.
-                            -->
-                            <TextBlock Style="{StaticResource TextoTenueEstilo}"
-                                       Visibility="{Binding QuienesLoOyen, Converter={StaticResource NoEsVacio}}"
-                                       ToolTip="Estaciones distintas que la están anunciando ahora mismo">
-                                <Run Text="·" />
-                                <Run Text="{Binding QuienesLoOyen, Mode=OneWay}" />
-                                <Run Text="{Binding DesdeDonde, Mode=OneWay}" FontWeight="Bold" />
-                            </TextBlock>
-                        </WrapPanel>
+                <!-- Cuántas estaciones distintas la están oyendo: diez son señal de que entra bien. -->
+                <DataGridTextColumn Header="OYEN" Binding="{Binding Oyen}" SortMemberPath="Anuncio.Veces"
+                                    ElementStyle="{StaticResource CeldaNumerica}"
+                                    HeaderStyle="{StaticResource CabeceraNumerica}"
+                                    Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=3.6}" />
 
-                        <WrapPanel Grid.Row="1" Grid.Column="1">
-                            <TextBlock Text="{Binding Pais}" Style="{StaticResource TextoTenueEstilo}" Margin="0,0,8,0" />
-                            <TextBlock Text="{Binding Continente}" Style="{StaticResource TextoTenueEstilo}" Margin="0,0,8,0" />
-                            <TextBlock Text="{Binding Referencias}"
-                                       Style="{StaticResource TextoTenueEstilo}"
-                                       Foreground="{DynamicResource Acento}"
-                                       Margin="0,0,8,0" />
-                            <TextBlock Text="{Binding Comentario}" Style="{StaticResource TextoTenueEstilo}" />
-                        </WrapPanel>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                <DataGridTextColumn Header="COMENTARIO" Binding="{Binding Comentario}"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
+                                    Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=12}" />
+
+                <DataGridTextColumn Header="ANUNCIA" Binding="{Binding Anunciante}"
+                                    ElementStyle="{StaticResource CeldaDeCifras}"
+                                    Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=6.4}" />
+            </DataGrid.Columns>
+        </DataGrid>
 
         <StackPanel Grid.Row="3" Margin="0,8,0,0">
             <WrapPanel>

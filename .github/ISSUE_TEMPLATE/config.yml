@@ -1,0 +1,9 @@
+# blank_issues_enabled tiene que seguir en true: el programa abre
+# issues/new?title=...&body=... con el informe ya relleno, y con las incidencias
+# en blanco desactivadas GitHub redirige al selector de plantillas y se pierde
+# todo lo prellenado.
+blank_issues_enabled: true
+contact_links:
+  - name: Ayuda de Cuaderno NODISLA
+    url: https://github.com/EA8DLF/CuadernoNodisla/tree/main/docs/ayuda
+    about: Antes de abrir una incidencia, mire si la ayuda ya lo explica.

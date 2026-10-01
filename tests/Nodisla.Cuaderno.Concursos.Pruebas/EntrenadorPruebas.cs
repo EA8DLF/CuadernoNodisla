@@ -40,7 +40,13 @@ public sealed class EntrenadorPruebas
         var tanda = Con(EjercicioDeTelegrafia.Indicativos).Siguiente();
 
         tanda.Grupos.Should().OnlyContain(g => g.Any(char.IsAsciiDigit));
-        tanda.Grupos.Should().OnlyContain(g => char.IsAsciiLetter(g[0]));
+        tanda.Grupos.Should().OnlyContain(g => g.Any(char.IsAsciiLetter));
+        // Un indicativo NO tiene por que empezar por letra: 9A3C (Croacia), 4X4ABC (Israel) o
+        // 3DA0RU son indicativos de verdad, y el entrenador tiene que mandarlos igual que los
+        // demas. Lo que sí se comprueba es que sea alfanumerico y de longitud creible.
+        tanda.Grupos.Should().OnlyContain(g => char.IsAsciiLetterOrDigit(g[0]));
+        tanda.Grupos.Should().OnlyContain(g => g.All(char.IsAsciiLetterOrDigit));
+        tanda.Grupos.Should().OnlyContain(g => g.Length >= 3 && g.Length <= 8);
     }
 
     [Fact]

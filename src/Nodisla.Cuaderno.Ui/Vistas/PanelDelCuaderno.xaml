@@ -5,14 +5,10 @@
              Foreground="{DynamicResource Texto}">
 
     <!--
-        El cuaderno.
+        El cuaderno: filtros arriba, la rejilla de contactos y la paginación abajo.
 
-        Es exactamente la rejilla de la Fase 1 —los mismos filtros, las mismas columnas, la
-        misma paginación—, mudada a su propia pestaña. Estaba bien; sólo estaba en el sitio
-        equivocado: ocupaba la pantalla principal porque en la Fase 1 no había nada más, y
-        ahora la principal es la cabina de operación.
-
-        Aquí tiene la ventana entera, que es lo que necesita una rejilla de veinte mil filas.
+        La rejilla va en CONTENIDO CLARO en los dos temas, como en Log4OM (ver
+        docs/06-aspecto-log4om.md): el marco puede ser oscuro; lo que se lee, no.
     -->
 
     <UserControl.Resources>
@@ -61,6 +57,9 @@
             <StackPanel Style="{StaticResource BloqueDeCampo}" Orientation="Horizontal" VerticalAlignment="Bottom">
                 <Button Content="Quitar filtro" Command="{Binding Cuaderno.QuitarFiltroCommand}" Margin="0,0,8,0" />
                 <Button Content="Modificar (F2)" Command="{Binding Cuaderno.EditarSeleccionadoCommand}" Margin="0,0,8,0" />
+                <Button Content="Ver/enviar QSL…" Click="AlVerEnviarQsl" Margin="0,0,8,0"
+                        ToolTip="La tarjeta QSL de los contactos elegidos, para verla o mandarla por correo"
+                        AutomationProperties.Name="Ver y enviar la tarjeta QSL de los contactos elegidos" />
                 <Button Content="Borrar (Supr)" Command="{Binding Cuaderno.EliminarSeleccionadoCommand}" />
             </StackPanel>
         </WrapPanel>
@@ -76,7 +75,7 @@
                 <CheckBox Content="Distancia" IsChecked="{Binding Cuaderno.VerDistancia}" Margin="0,0,18,0" />
                 <CheckBox Content="Comentario" IsChecked="{Binding Cuaderno.VerComentario}" Margin="0,0,18,0" />
                 <CheckBox Content="Mi indicativo" IsChecked="{Binding Cuaderno.VerEstacion}" Margin="0,0,18,0" />
-                <CheckBox Content="Confirmado" IsChecked="{Binding Cuaderno.VerConfirmado}" Margin="0,0,18,0" />
+                <CheckBox Content="Confirmaciones" IsChecked="{Binding Cuaderno.VerConfirmado}" Margin="0,0,18,0" />
                 <CheckBox Content="Antena" IsChecked="{Binding Cuaderno.VerAntena}" Margin="0,0,18,0" />
                 <CheckBox Content="Propagación" IsChecked="{Binding Cuaderno.VerPropagacion}" Margin="0,0,18,0" />
                 <CheckBox Content="Radioescucha" IsChecked="{Binding Cuaderno.VerSwl}" Margin="0,0,18,0" />
@@ -95,6 +94,7 @@
         <TextBlock Grid.Row="2"
                    Text="{Binding Cuaderno.PorQueNoHayFilas}"
                    Style="{StaticResource TextoTenueEstilo}"
+                   Foreground="{DynamicResource RejillaTextoTenue}"
                    TextWrapping="Wrap"
                    TextAlignment="Center"
                    MaxWidth="460"
@@ -105,6 +105,7 @@
 
         <DataGrid Grid.Row="2"
                   x:Name="RejillaDelCuaderno"
+                  Style="{StaticResource RejillaDeContactos}"
                   ItemsSource="{Binding Cuaderno.Filas}"
                   SelectedItem="{Binding Cuaderno.FilaSeleccionada}"
                   CanUserSortColumns="True"
@@ -112,73 +113,160 @@
                   CanUserResizeColumns="True"
                   Sorting="AlOrdenar"
                   MouseDoubleClick="AlPulsarDosVeces"
-                  PreviewKeyDown="AlTeclearEnLaRejilla">
+                  PreviewKeyDown="AlTeclearEnLaRejilla"
+                  SelectionMode="Extended">
+
+            <!--
+                Varias filas a la vez (Ctrl/Mayús + clic) para mandar las QSL en lote. La
+                selección «de trabajo» (F2, Supr) sigue siendo la fila activa.
+            -->
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Ver/enviar QSL…" Click="AlVerEnviarQsl"
+                              AutomationProperties.Name="Ver y enviar la tarjeta QSL de los contactos elegidos" />
+                    <Separator />
+                    <MenuItem Header="Modificar (F2)" Click="AlModificarDesdeElMenu" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+
+            <!--
+                Los estilos de la cabecera, la celda y la fila van AQUÍ DENTRO y no como
+                propiedades de la rejilla: un estilo implícito de la aplicación le gana a
+                DataGrid.CellStyle y compañía. Declarados aquí mandan estos, y sólo aquí.
+            -->
+            <DataGrid.Resources>
+                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource CabeceraDelCuaderno}" />
+                <Style TargetType="DataGridCell" BasedOn="{StaticResource CeldaDelCuaderno}" />
+                <Style TargetType="DataGridRow" BasedOn="{StaticResource FilaDelCuaderno}" />
+            </DataGrid.Resources>
+
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Fecha UTC" Binding="{Binding Fecha}" SortMemberPath="Fecha"
-                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7.2}" />
-                <DataGridTextColumn Header="Hora" Binding="{Binding Hora}" SortMemberPath="Fecha"
-                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=6}" />
-                <DataGridTextColumn Header="Indicativo" Binding="{Binding Indicativo}" SortMemberPath="Indicativo"
-                                    FontWeight="Bold"
-                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                <DataGridTextColumn Header="Banda" Binding="{Binding Banda}" SortMemberPath="Banda"
-                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=5.5}" />
-                <DataGridTextColumn Header="Modo" Binding="{Binding Modo}" SortMemberPath="Modo"
-                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=5.5}" />
-                <DataGridTextColumn Header="Frecuencia" Binding="{Binding Frecuencia}" SortMemberPath="Frecuencia"
-                                    Visibility="{Binding Datos.Cuaderno.VerFrecuencia, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7}" />
-                <DataGridTextColumn Header="Env." Binding="{Binding InformeEnviado}"
-                                    Visibility="{Binding Datos.Cuaderno.VerInformes, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=4.5}" />
-                <DataGridTextColumn Header="Rec." Binding="{Binding InformeRecibido}"
-                                    Visibility="{Binding Datos.Cuaderno.VerInformes, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=4.5}" />
-                <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" SortMemberPath="Nombre"
-                                    Visibility="{Binding Datos.Cuaderno.VerNombre, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                <DataGridTextColumn Header="QTH" Binding="{Binding Qth}" SortMemberPath="Qth"
-                                    Visibility="{Binding Datos.Cuaderno.VerQth, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
+                <DataGridTextColumn Header="FECHA UTC" Binding="{Binding Fecha}" SortMemberPath="Fecha"
+                                    ElementStyle="{StaticResource CeldaDeCifras}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=9}" />
-                <DataGridTextColumn Header="Localizador" Binding="{Binding Localizador}"
+                <DataGridTextColumn Header="HORA" Binding="{Binding Hora}" SortMemberPath="Fecha"
+                                    ElementStyle="{StaticResource CeldaDeCifras}"
+                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=6.5}" />
+                <DataGridTextColumn Header="INDICATIVO" Binding="{Binding Indicativo}" SortMemberPath="Indicativo"
+                                    ElementStyle="{StaticResource CeldaDeIndicativo}"
+                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7.5}" />
+                <DataGridTextColumn Header="BANDA" Binding="{Binding Banda}" SortMemberPath="Banda"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
+                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=5}" />
+                <DataGridTextColumn Header="MODO" Binding="{Binding Modo}" SortMemberPath="Modo"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
+                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=5}" />
+                <DataGridTextColumn Header="FRECUENCIA" Binding="{Binding Frecuencia}" SortMemberPath="Frecuencia"
+                                    ElementStyle="{StaticResource CeldaNumerica}"
+                                    HeaderStyle="{StaticResource CabeceraNumerica}"
+                                    Visibility="{Binding Datos.Cuaderno.VerFrecuencia, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
+                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8.4}" />
+                <DataGridTextColumn Header="ENV." Binding="{Binding InformeEnviado}"
+                                    ElementStyle="{StaticResource CeldaNumerica}"
+                                    HeaderStyle="{StaticResource CabeceraNumerica}"
+                                    Visibility="{Binding Datos.Cuaderno.VerInformes, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
+                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=4}" />
+                <DataGridTextColumn Header="REC." Binding="{Binding InformeRecibido}"
+                                    ElementStyle="{StaticResource CeldaNumerica}"
+                                    HeaderStyle="{StaticResource CabeceraNumerica}"
+                                    Visibility="{Binding Datos.Cuaderno.VerInformes, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
+                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=4}" />
+
+                <!--
+                    Las confirmaciones, como pastillas: L de LoTW, E de eQSL, P de papel y Q de
+                    QRZ. Letra gris si solo se envio, contorno de color si esta confirmada y
+                    rellena si el servicio la ha verificado. La ayuda emergente lo dice en
+                    palabras.
+                -->
+                <DataGridTemplateColumn Header="QSL"
+                                        Visibility="{Binding Datos.Cuaderno.VerConfirmado, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
+                                        Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Background="Transparent"
+                                        ToolTip="{Binding ResumenQsl}">
+                                <Border Style="{StaticResource PastillaLotw}">
+                                    <TextBlock Text="L" Style="{StaticResource LetraLotw}" />
+                                </Border>
+                                <Border Style="{StaticResource PastillaEqsl}">
+                                    <TextBlock Text="E" Style="{StaticResource LetraEqsl}" />
+                                </Border>
+                                <Border Style="{StaticResource PastillaPapel}">
+                                    <TextBlock Text="P" Style="{StaticResource LetraPapel}" />
+                                </Border>
+                                <Border Style="{StaticResource PastillaQrz}">
+                                    <TextBlock Text="Q" Style="{StaticResource LetraQrz}" />
+                                </Border>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!--
+                    Nombre, QTH y comentario se reparten lo que sobra (anchos en estrella con
+                    minimo en letras): antes solo crecia el comentario, y nombre y QTH salian
+                    cortados con puntos suspensivos teniendo media pantalla libre a la derecha.
+                -->
+                <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" SortMemberPath="Nombre"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
+                                    Visibility="{Binding Datos.Cuaderno.VerNombre, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
+                                    Width="1.2*"
+                                    MinWidth="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoEnLetras}, ConverterParameter=8}" />
+                <DataGridTextColumn Header="QTH" Binding="{Binding Qth}" SortMemberPath="Qth"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
+                                    Visibility="{Binding Datos.Cuaderno.VerQth, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
+                                    Width="1.4*"
+                                    MinWidth="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoEnLetras}, ConverterParameter=9}" />
+                <DataGridTextColumn Header="LOCALIZADOR" Binding="{Binding Localizador}"
+                                    ElementStyle="{StaticResource CeldaDeCifras}"
                                     Visibility="{Binding Datos.Cuaderno.VerLocalizador, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7}" />
-                <DataGridTextColumn Header="Distancia" Binding="{Binding Distancia}"
+                <DataGridTextColumn Header="DISTANCIA" Binding="{Binding Distancia}"
+                                    ElementStyle="{StaticResource CeldaNumerica}"
+                                    HeaderStyle="{StaticResource CabeceraNumerica}"
                                     Visibility="{Binding Datos.Cuaderno.VerDistancia, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7}" />
-                <DataGridTextColumn Header="Antena" Binding="{Binding Antena}"
+                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7.5}" />
+                <DataGridTextColumn Header="ANTENA" Binding="{Binding Antena}"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerAntena, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                <DataGridTextColumn Header="Propagación" Binding="{Binding Propagacion}"
+                <DataGridTextColumn Header="PROPAGACIÓN" Binding="{Binding Propagacion}"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerPropagacion, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=11}" />
-                <DataGridTextColumn Header="Radioescucha" Binding="{Binding Swl}"
+                <DataGridTextColumn Header="RADIOESCUCHA" Binding="{Binding Swl}"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerSwl, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                <DataGridTextColumn Header="Completado" Binding="{Binding Completado}"
+                <DataGridTextColumn Header="COMPLETADO" Binding="{Binding Completado}"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerCompletado, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                <DataGridTextColumn Header="Casual" Binding="{Binding Casual}"
+                <DataGridTextColumn Header="CASUAL" Binding="{Binding Casual}"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerCasual, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=6}" />
-                <DataGridTextColumn Header="Mensaje QSL" Binding="{Binding MensajeQsl}"
+                <DataGridTextColumn Header="MENSAJE QSL" Binding="{Binding MensajeQsl}"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerMensajeQsl, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=14}" />
-                <DataGridTextColumn Header="Mi nombre" Binding="{Binding MiNombre}"
+                <DataGridTextColumn Header="MI NOMBRE" Binding="{Binding MiNombre}"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerMiNombre, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
                 <DataGridTextColumn Header="IOTA" Binding="{Binding Iota}"
+                                    ElementStyle="{StaticResource CeldaDeCifras}"
                                     Visibility="{Binding Datos.Cuaderno.VerIota, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=6}" />
-                <DataGridTextColumn Header="Mi indicativo" Binding="{Binding Estacion}"
+                <DataGridTextColumn Header="MI INDICATIVO" Binding="{Binding Estacion}"
+                                    ElementStyle="{StaticResource CeldaDeIndicativo}"
                                     Visibility="{Binding Datos.Cuaderno.VerEstacion, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                <DataGridTextColumn Header="Confirmado" Binding="{Binding Confirmado}"
-                                    Visibility="{Binding Datos.Cuaderno.VerConfirmado, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                <DataGridTextColumn Header="Comentario" Binding="{Binding Comentario}"
+                <DataGridTextColumn Header="COMENTARIO" Binding="{Binding Comentario}"
+                                    ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerComentario, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
-                                    Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=16}" />
+                                    Width="1.6*"
+                                    MinWidth="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoEnLetras}, ConverterParameter=10}" />
             </DataGrid.Columns>
         </DataGrid>
 

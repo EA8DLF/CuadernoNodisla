@@ -24,11 +24,16 @@ public enum EjeDeNovedad
 /// <param name="Medio">Via de confirmacion.</param>
 /// <param name="Trabajado">Ya hay contactos de ese eje en el cuaderno.</param>
 /// <param name="Confirmado">Ademas, hay alguno confirmado por esa via.</param>
+/// <param name="Aplica">
+/// Se ha podido calcular. Falso cuando falta el dato de partida: la entidad sin resolver, o
+/// la banda o el modo sin escribir.
+/// </param>
 public sealed record CasillaDeNovedad(
     EjeDeNovedad Eje,
     MedioDeConfirmacion Medio,
     bool Trabajado,
-    bool Confirmado)
+    bool Confirmado,
+    bool Aplica = true)
 {
     /// <summary>
     /// Vale la pena llamar por esta via: o no esta trabajado, o esta sin confirmar.
@@ -37,8 +42,11 @@ public sealed record CasillaDeNovedad(
     /// Confirmado por una via y no por otra es el caso mas comun del diploma a medias: la
     /// entidad esta en el cuaderno y en LoTW, pero falta la tarjeta. Por eso la casilla
     /// distingue tres estados y no dos.
+    ///
+    /// Una casilla que no se ha podido calcular <b>no aporta</b>: no se sabe, y no saber no es
+    /// lo mismo que ser nuevo.
     /// </remarks>
-    public bool Aporta => !Confirmado;
+    public bool Aporta => Aplica && !Confirmado;
 }
 
 /// <summary>Una casilla de la matriz de banda por familia de modo para un indicativo.</summary>
@@ -136,9 +144,7 @@ public sealed class RetratoDelIndicativo
         long? estacionId = null,
         CancellationToken ct = default)
     {
-        var novedad = dxcc > 0
-            ? await NovedadAsync(dxcc, banda, modo, estacionId, ct).ConfigureAwait(false)
-            : SinDatos();
+        var novedad = await NovedadAsync(dxcc, banda, modo, estacionId, ct).ConfigureAwait(false);
 
         var (bandaYModo, cuantos) = await BandaYModoAsync(indicativo, estacionId, ct).ConfigureAwait(false);
 
@@ -157,6 +163,20 @@ public sealed class RetratoDelIndicativo
 
         foreach (var eje in Ejes)
         {
+            // Sin entidad resuelta no se puede decir si el pais es nuevo; sin banda o sin modo
+            // escritos tampoco se puede decir si lo es EN esa banda o EN ese modo. Contar cero
+            // contactos y pintar «nuevo» seria mentir justo en la casilla que se mira, asi que
+            // la casilla se devuelve apagada y la pantalla la ensena como «no se sabe».
+            if (!SePuedeCalcular(eje, dxcc, banda, modo))
+            {
+                foreach (var via in Vias)
+                {
+                    casillas.Add(new CasillaDeNovedad(eje, via, false, false, Aplica: false));
+                }
+
+                continue;
+            }
+
             var criterio = CriterioDe(eje, dxcc, banda, modo, estacionId);
 
             var trabajados = await CuantosAsync(criterio, ct).ConfigureAwait(false);
@@ -173,6 +193,14 @@ public sealed class RetratoDelIndicativo
 
         return casillas;
     }
+
+    /// <summary>Hay dato de partida para esa fila de la rejilla.</summary>
+    private static bool SePuedeCalcular(EjeDeNovedad eje, int dxcc, Banda banda, Modo modo) => eje switch
+    {
+        EjeDeNovedad.Banda => dxcc > 0 && !banda.EsVacia,
+        EjeDeNovedad.Modo => dxcc > 0 && !modo.EsVacio,
+        _ => dxcc > 0,
+    };
 
     private static CriterioQso CriterioDe(
         EjeDeNovedad eje,
@@ -240,7 +268,4 @@ public sealed class RetratoDelIndicativo
         "CW" => FamiliaDeModo.Telegrafia,
         _ => FamiliaDeModo.Digital,
     };
-
-    private static IReadOnlyList<CasillaDeNovedad> SinDatos() =>
-        [.. from eje in Ejes from via in Vias select new CasillaDeNovedad(eje, via, false, false)];
 }

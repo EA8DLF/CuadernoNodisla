@@ -61,36 +61,21 @@ public sealed class MotorAproximacionNodisla(OpcionesPropagacion? opciones = nul
         var resultado = new List<PrediccionDeBanda>(BandasDeTrabajo.Bandas.Count);
         foreach (var (banda, frecuencia) in BandasDeTrabajo.Bandas)
         {
-            var absorcion = ModeloMufLuf.AbsorcionDb(
-                solicitud.Origen,
-                solicitud.Destino,
-                solicitud.MomentoUtc,
-                frecuencia,
+            var calculo = CalcularEnFrecuencia(
+                solicitud,
+                geometria,
                 condiciones,
-                geometria);
-
-            var perdida = ModeloMufLuf.PerdidaDb(frecuencia, geometria, absorcion);
-            var senal = potenciaDbw + (2.0 * ajustes.GananciaAntenaDbi) - perdida;
-            var ruido = ModeloMufLuf.RuidoDbw(frecuencia, ajustes.AnchoDeBandaHz, ajustes.AmbienteDeRuido);
-            var relacion = senal - ruido;
-
-            var porMuf = ModeloMufLuf.ProbabilidadDeMuf(geometria.MufMhz, frecuencia);
-            var porSenal = ModeloMufLuf.ProbabilidadDeSenal(relacion, ajustes.RelacionSenalRuidoRequeridaDb);
-            var fiabilidad = Math.Clamp(porMuf * porSenal, 0.0, 1.0);
-
-            // Hay dos formas de que la cifra de senal no quiera decir nada, y las dos acaban en
-            // nulo: que la absorcion se haya comido el circuito, y que la frecuencia este por
-            // encima de la MUF, donde la onda no vuelve y el presupuesto de perdidas sigue dando
-            // un numero grande de una senal que no llega.
-            var hayAlgoQueDecir = relacion > ModeloMufLuf.RelacionSinSentidoDb
-                                  && porMuf >= ModeloMufLuf.ProbabilidadMinimaDeModo;
+                potenciaDbw,
+                frecuencia,
+                ajustes.AnchoDeBandaHz,
+                ajustes.RelacionSenalRuidoRequeridaDb);
 
             resultado.Add(new PrediccionDeBanda(
                 banda,
                 solicitud.MomentoUtc,
-                fiabilidad,
-                hayAlgoQueDecir ? Math.Round(senal, 1) : null,
-                hayAlgoQueDecir ? Math.Round(relacion, 1) : null,
+                calculo.Fiabilidad,
+                calculo.SenalDbw,
+                calculo.RelacionSenalRuido,
                 geometria.Saltos)
             {
                 // Sin indices se ha calculado con un Sol supuesto: no vale lo mismo y se dice.
@@ -104,6 +89,94 @@ public sealed class MotorAproximacionNodisla(OpcionesPropagacion? opciones = nul
         }
 
         return resultado;
+    }
+
+    /// <summary>
+    /// Predice el circuito en una frecuencia concreta, no en la de trabajo de la banda.
+    /// </summary>
+    /// <remarks>
+    /// Es lo que usa el cluster para decir, fila a fila, si la estacion anunciada deberia
+    /// oirse desde aqui en la frecuencia en la que la anuncian. El ancho de banda y la relacion
+    /// senal-ruido exigida van aparte porque dependen del modo: un FT8 se decodifica veinte
+    /// decibelios por debajo de donde una fonia ya no se entiende.
+    /// </remarks>
+    /// <param name="solicitud">Datos del trayecto y del momento.</param>
+    /// <param name="frecuenciaMhz">Frecuencia anunciada.</param>
+    /// <param name="anchoDeBandaHz">Ancho de banda del receptor; nulo para el de los ajustes.</param>
+    /// <param name="relacionRequeridaDb">Relacion senal-ruido suficiente; nula para la de los ajustes.</param>
+    public PrevisionEnFrecuencia PredecirEnFrecuencia(
+        SolicitudDePrediccion solicitud,
+        double frecuenciaMhz,
+        double? anchoDeBandaHz = null,
+        double? relacionRequeridaDb = null)
+    {
+        ArgumentNullException.ThrowIfNull(solicitud);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(frecuenciaMhz);
+
+        var condiciones = CondicionesDesde(solicitud.Indices);
+        var geometria = ModeloMufLuf.Calcular(
+            solicitud.Origen,
+            solicitud.Destino,
+            solicitud.MomentoUtc,
+            condiciones);
+        var potenciaDbw = 10.0 * Math.Log10(Math.Max(1e-3, solicitud.PotenciaVatios));
+
+        var calculo = CalcularEnFrecuencia(
+            solicitud,
+            geometria,
+            condiciones,
+            potenciaDbw,
+            frecuenciaMhz,
+            anchoDeBandaHz ?? ajustes.AnchoDeBandaHz,
+            relacionRequeridaDb ?? ajustes.RelacionSenalRuidoRequeridaDb);
+
+        return new PrevisionEnFrecuencia(
+            frecuenciaMhz,
+            calculo.Fiabilidad,
+            calculo.RelacionSenalRuido,
+            Math.Round(geometria.MufMhz, 1),
+            geometria.Saltos,
+            solicitud.Indices is null);
+    }
+
+    /// <summary>El presupuesto del enlace en una frecuencia, con la geometria ya hecha.</summary>
+    private (double Fiabilidad, double? SenalDbw, double? RelacionSenalRuido) CalcularEnFrecuencia(
+        SolicitudDePrediccion solicitud,
+        GeometriaIonosferica geometria,
+        CondicionesIonosfericas condiciones,
+        double potenciaDbw,
+        double frecuencia,
+        double anchoDeBandaHz,
+        double requeridaDb)
+    {
+        var absorcion = ModeloMufLuf.AbsorcionDb(
+            solicitud.Origen,
+            solicitud.Destino,
+            solicitud.MomentoUtc,
+            frecuencia,
+            condiciones,
+            geometria);
+
+        var perdida = ModeloMufLuf.PerdidaDb(frecuencia, geometria, absorcion);
+        var senal = potenciaDbw + (2.0 * ajustes.GananciaAntenaDbi) - perdida;
+        var ruido = ModeloMufLuf.RuidoDbw(frecuencia, anchoDeBandaHz, ajustes.AmbienteDeRuido);
+        var relacion = senal - ruido;
+
+        var porMuf = ModeloMufLuf.ProbabilidadDeMuf(geometria.MufMhz, frecuencia);
+        var porSenal = ModeloMufLuf.ProbabilidadDeSenal(relacion, requeridaDb);
+        var fiabilidad = Math.Clamp(porMuf * porSenal, 0.0, 1.0);
+
+        // Hay dos formas de que la cifra de senal no quiera decir nada, y las dos acaban en
+        // nulo: que la absorcion se haya comido el circuito, y que la frecuencia este por
+        // encima de la MUF, donde la onda no vuelve y el presupuesto de perdidas sigue dando
+        // un numero grande de una senal que no llega.
+        var hayAlgoQueDecir = relacion > ModeloMufLuf.RelacionSinSentidoDb
+                              && porMuf >= ModeloMufLuf.ProbabilidadMinimaDeModo;
+
+        return (
+            fiabilidad,
+            hayAlgoQueDecir ? Math.Round(senal, 1) : null,
+            hayAlgoQueDecir ? Math.Round(relacion, 1) : null);
     }
 
     /// <summary>
@@ -133,3 +206,18 @@ public sealed class MotorAproximacionNodisla(OpcionesPropagacion? opciones = nul
         return new CondicionesIonosfericas(manchas, k, indices.Tormenta);
     }
 }
+
+/// <summary>Prevision del circuito en una frecuencia concreta.</summary>
+/// <param name="FrecuenciaMhz">Frecuencia para la que se ha calculado.</param>
+/// <param name="Fiabilidad">Probabilidad de que el circuito funcione, de 0 a 1.</param>
+/// <param name="RelacionSenalRuido">Relacion senal-ruido prevista, o nula si no significa nada.</param>
+/// <param name="MufMhz">MUF mediana del trayecto.</param>
+/// <param name="Saltos">Saltos por la capa F2.</param>
+/// <param name="SinDatosSolares">Se calculo con condiciones supuestas, sin indices.</param>
+public sealed record PrevisionEnFrecuencia(
+    double FrecuenciaMhz,
+    double Fiabilidad,
+    double? RelacionSenalRuido,
+    double MufMhz,
+    int Saltos,
+    bool SinDatosSolares);

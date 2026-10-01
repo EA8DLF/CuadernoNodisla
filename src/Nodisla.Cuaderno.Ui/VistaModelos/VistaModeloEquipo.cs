@@ -16,7 +16,7 @@ namespace Nodisla.Cuaderno.Ui.VistaModelos;
 /// <summary>Lo que el equipo acaba de poner en el dial.</summary>
 /// <param name="Frecuencia">Frecuencia del VFO activo.</param>
 /// <param name="Modo">Modo que tiene puesto el equipo.</param>
-public sealed record DialDelEquipo(Frecuencia Frecuencia, Modo Modo);
+public sealed record DialDelEquipo(Frecuencia Frecuencia, Modo Modo, Frecuencia? FrecuenciaRx = null);
 
 /// <summary>
 /// Panel del equipo: que frecuencia y que modo tiene puestos, si esta en antena y el boton
@@ -57,6 +57,15 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         _equipo.EstadoCambiado += AlCambiarElEstado;
         _vigilante.PttSoltado += AlSoltarElPtt;
 
+        // Si detras hay un intermediario, el control de verdad puede cambiar mientras el
+        // programa esta abierto —el operador pasa de «Ninguna» a «FT-710» en los ajustes— y
+        // este panel tiene que enterarse: los mandos, las memorias y hasta si el equipo es
+        // avanzado dejan de valer.
+        if (_equipo is IControlEquipoConmutable conmutable)
+        {
+            conmutable.ControlCambiado += AlCambiarElControl;
+        }
+
         // Los medidores se leen dos veces por segundo: mas a menudo no se aprecia y solo
         // carga el puerto serie, que es un recurso lento y compartido.
         _medicion = new DispatcherTimer(DispatcherPriority.Background)
@@ -66,8 +75,19 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         _medicion.Tick += async (_, _) => await MedirAsync().ConfigureAwait(true);
 
         ConstruirLosMandos();
+        RehacerLaBotonera();
         Recoger(_equipo.Estado);
     }
+
+    /// <summary>
+    /// Control de equipo de verdad, saltandose el intermediario si lo hay.
+    /// </summary>
+    /// <remarks>
+    /// Hay que preguntarle a este y no a <c>_equipo</c> si el equipo es avanzado o si tiene dos
+    /// VFO: el intermediario delega esas cosas, pero no las <b>es</b>, y un <c>is</c> contra el
+    /// diria que no siempre. Se lee cada vez, nunca se guarda: justo por eso existe.
+    /// </remarks>
+    private IControlEquipo Real => _equipo is IControlEquipoConmutable conmutable ? conmutable.Actual : _equipo;
 
     /// <summary>
     /// Mandos que este equipo declara, ya listos para pintarlos.
@@ -91,8 +111,30 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     /// <summary>VFO B.</summary>
     public VistaModeloVfo B { get; }
 
+    /// <summary>
+    /// El VFO que manda en el equipo (el que se ve en grande en el visor), como en la radio: con
+    /// el B elegido, el B arriba y el A abajo.
+    /// </summary>
+    public VistaModeloVfo Principal => B.EsElActivo && !A.EsElActivo ? B : A;
+
+    /// <summary>El otro VFO, el que se ve en pequeño.</summary>
+    public VistaModeloVfo Secundario => ReferenceEquals(Principal, B) ? A : B;
+
+    private VistaModeloVfo? _principalAvisado;
+
+    /// <summary>Frecuencia de recepcion del ultimo aviso del dial (con split).</summary>
+    private Dominio.Valores.Frecuencia? _rxAnterior;
+
+    private void AvisarDelVfoActivo()
+    {
+        if (ReferenceEquals(_principalAvisado, Principal)) return;
+        _principalAvisado = Principal;
+        OnPropertyChanged(nameof(Principal));
+        OnPropertyChanged(nameof(Secundario));
+    }
+
     /// <summary>El equipo sabe informar de sus dos VFO a la vez.</summary>
-    public bool TieneDosVfos => _equipo is IEquipoConDosVfos;
+    public bool TieneDosVfos => Real is IEquipoConDosVfos;
 
     /// <summary>
     /// Un mando concreto, para poder ponerlo donde toca en el frontal dibujado.
@@ -120,12 +162,29 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     public VistaModeloMando? MandoDeAnchoDeFiltro => MandoDe(MandoDeEquipo.AnchoDeFiltro);
 
     /// <summary>El equipo admite mandos, medidores y memorias.</summary>
-    public bool EsAvanzado => _equipo is IEquipoAvanzado;
+    public bool EsAvanzado => Real is IEquipoAvanzado;
 
     /// <summary>Nombre comercial del equipo.</summary>
-    public string NombreDelEquipo => _equipo is IEquipoAvanzado avanzado
+    public string NombreDelEquipo => Real is IEquipoAvanzado avanzado
         ? avanzado.NombreDelEquipo
         : "Equipo genérico";
+
+    /// <summary>Modelo del catalogo que se maneja, o nulo (rigctld, OmniRig, sin equipo).</summary>
+    public Radio.Modelos.ModeloDeEquipo? Modelo => (Real as Radio.Modelos.IEquipoDeModelo)?.Modelo;
+
+    /// <summary>
+    /// Clase del frontal dibujado que corresponde al equipo (<c>FrontalFt710</c>,
+    /// <c>FrontalIc7300</c>...), o <c>FrontalGenerico</c> si el modelo no tiene dibujo propio.
+    /// </summary>
+    public string NombreDelFrontal => Modelo?.Frontal ?? "FrontalGenerico";
+
+    /// <summary>El modelo esta programado segun su manual y no se ha probado con la radio.</summary>
+    public bool SinProbarConRadio => Modelo is { ProbadoConRadio: false };
+
+    /// <summary>El equipo tiene esa tecla (para deshabilitar la del dibujo si no).</summary>
+    /// <param name="tecla">Tecla.</param>
+    /// <returns>Verdadero si el control la admite.</returns>
+    public bool TieneTecla(TeclaDelEquipo tecla) => Real is IEquipoConTeclas t && t.Teclas.Contains(tecla);
 
     /// <summary>Salta cada vez que el equipo mueve el dial o cambia de modo.</summary>
     public event EventHandler<DialDelEquipo>? DialCambiado;
@@ -144,6 +203,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(SiguienteBandaCommand))]
     [NotifyCanExecuteChangedFor(nameof(IrALaMemoriaCommand))]
     [NotifyCanExecuteChangedFor(nameof(EnviarOrdenEnCrudoCommand))]
+    [NotifyPropertyChangedFor(nameof(LockDisponible))]
     private bool _conectado;
 
     [ObservableProperty]
@@ -310,6 +370,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     /// <summary>Via por la que se habla con el equipo, para la pantalla.</summary>
     public string ViaTexto => _equipo.Via switch
     {
+        ViaDeControl.CatNativo => "FT-710 (CAT nativo)",
         ViaDeControl.Rigctld => "Hamlib (rigctld)",
         ViaDeControl.OmniRig => "OmniRig",
         _ => "Sin control del equipo",
@@ -338,6 +399,25 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     /// <summary>Texto del boton que conecta o desconecta.</summary>
     public string TextoDelBotonDeConexion => Conectado ? "Desconectar" : "Conectar";
 
+    /// <summary>
+    /// Lo que hace falta tras conectar, se conecte como se conecte (botón Conectar o encender
+    /// con LOCK): mandos, memorias y medidores.
+    /// </summary>
+    /// <remarks>
+    /// El FT-710 no sabe que mandos tiene hasta que se conecta y los pregunta uno a uno. Los
+    /// mandos se construian al montar el panel, con el equipo aun sin conectar, y la lista se
+    /// quedaba VACIA (27-09-2026). Y encender con LOCK conectaba sin pasar por aqui: ATT, IPO,
+    /// DNF, AGC y el S-meter salian en guiones (29-09-2026).
+    /// </remarks>
+    internal async Task PrepararTrasConectarAsync()
+    {
+        RehacerLosMandos();
+        await RecogerLosMandosAsync().ConfigureAwait(true);
+        RefrescarLosBotonesDeMando();
+        await CargarLasMemoriasAsync().ConfigureAwait(true);
+        _medicion.Start();
+    }
+
     /// <summary>Conecta con el equipo.</summary>
     [RelayCommand(CanExecute = nameof(SePuedeConectar))]
     public async Task ConectarAsync()
@@ -347,10 +427,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
             Conectando = true;
             Aviso = string.Empty;
             await _equipo.ConectarAsync().ConfigureAwait(true);
-
-            await RecogerLosMandosAsync().ConfigureAwait(true);
-            await CargarLasMemoriasAsync().ConfigureAwait(true);
-            _medicion.Start();
+            await PrepararTrasConectarAsync().ConfigureAwait(true);
         }
         catch (Exception ex)
         {
@@ -411,7 +488,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     [RelayCommand(CanExecute = nameof(SePuedeIrALaMemoria))]
     public async Task IrALaMemoriaAsync()
     {
-        if (_equipo is not IEquipoAvanzado avanzado || MemoriaElegida is not { Ocupada: true } memoria) return;
+        if (Real is not IEquipoAvanzado avanzado || MemoriaElegida is not { Ocupada: true } memoria) return;
 
         try
         {
@@ -435,7 +512,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     [RelayCommand(CanExecute = nameof(SePuedeEnviarOrden))]
     public async Task EnviarOrdenEnCrudoAsync()
     {
-        if (_equipo is not IEquipoAvanzado avanzado) return;
+        if (Real is not IEquipoAvanzado avanzado) return;
 
         var orden = OrdenEnCrudo.Trim();
         if (orden.Length == 0) return;
@@ -458,6 +535,11 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         _medicion.Stop();
         _equipo.EstadoCambiado -= AlCambiarElEstado;
         _vigilante.PttSoltado -= AlSoltarElPtt;
+
+        if (_equipo is IControlEquipoConmutable conmutable)
+        {
+            conmutable.ControlCambiado -= AlCambiarElControl;
+        }
     }
 
     /// <summary>
@@ -483,23 +565,70 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         Agc = TextoDelIndicador(MandoDeEquipo.Agc);
     }
 
-    /// <summary>Como se escribe un indicador del visor, o un guion si el equipo no lo tiene.</summary>
+    /// <summary>
+    /// Como se escribe un indicador del visor: corto, como en la pantalla de la radio («OFF»,
+    /// «IPO», «AMP1», «AUTO», «SLOW»…), o un guion si el equipo no lo tiene. La frase entera va
+    /// en la ayuda emergente.
+    /// </summary>
     private string TextoDelIndicador(MandoDeEquipo mando)
     {
         if (MandoDe(mando) is not { Disponible: true } vista) return "—";
+        if (vista.EsInterruptor) return vista.Encendido ? "ON" : "OFF";
 
-        return vista.EsInterruptor
-            ? (vista.Encendido ? "ON" : "OFF")
-            : vista.ValorTexto;
+        return TextoCorto(mando, (int)Math.Round(vista.Valor), vista.ValorTexto);
     }
 
-    private void RecogerLosVfos()
+    /// <summary>El valor de ATT, IPO o AGC como lo escribe la radio en su pantalla.</summary>
+    /// <param name="mando">Mando.</param>
+    /// <param name="posicion">Posicion del mando.</param>
+    /// <param name="largo">Nombre largo de la posicion.</param>
+    /// <returns>El texto corto.</returns>
+    public static string TextoCorto(MandoDeEquipo mando, int posicion, string largo)
     {
-        if (_equipo is not IEquipoConDosVfos conDos) return;
+        largo ??= string.Empty;
+        return mando switch
+        {
+            MandoDeEquipo.Preamplificador => posicion switch { 0 => "IPO", 1 => "AMP1", 2 => "AMP2", _ => largo },
+            MandoDeEquipo.Atenuador => posicion == 0 || largo.StartsWith("Apag", StringComparison.OrdinalIgnoreCase)
+                ? "OFF"
+                : largo.Replace(" ", string.Empty, StringComparison.Ordinal),
+            MandoDeEquipo.Agc => largo switch
+            {
+                _ when largo.StartsWith("Auto", StringComparison.OrdinalIgnoreCase) => "AUTO",
+                _ when largo.StartsWith("Rápid", StringComparison.OrdinalIgnoreCase) => "FAST",
+                _ when largo.StartsWith("Medio", StringComparison.OrdinalIgnoreCase) => "MID",
+                _ when largo.StartsWith("Lent", StringComparison.OrdinalIgnoreCase) => "SLOW",
+                _ => "OFF",
+            },
+            _ => largo,
+        };
+    }
+
+    private void RecogerLosVfos(EstadoDelEquipo estado)
+    {
+        if (Real is not IEquipoConDosVfos conDos)
+        {
+            // Un equipo que solo informa del VFO activo: ese se pinta con lo que se sabe, y el
+            // otro se queda en blanco. Antes se quedaban LOS DOS con guiones.
+            var enB = string.Equals(estado.Vfo, "VFO B", StringComparison.OrdinalIgnoreCase);
+            var activo = new EstadoDeUnVfo(
+                enB ? NombreDeVfo.B : NombreDeVfo.A,
+                estado.Frecuencia,
+                estado.Modo,
+                EsElActivo: true,
+                Transmite: true,
+                Recibe: true,
+                AnchoDeFiltroHz: null);
+            A.Recoger(enB ? EstadoDeUnVfo.SinDatos(NombreDeVfo.A) : activo);
+            B.Recoger(enB ? activo : EstadoDeUnVfo.SinDatos(NombreDeVfo.B));
+            AvisarDelVfoActivo();
+            return;
+        }
 
         var vfos = conDos.Vfos;
         A.Recoger(vfos.A);
         B.Recoger(vfos.B);
+        AvisarDelVfoActivo();
 
         Split = vfos.Split;
         Rit = vfos.Rit;
@@ -534,7 +663,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     /// <param name="lista">Spots que pasan el filtro del panel de cluster.</param>
     private void RecogerLaBanda(IReadOnlyList<FilaDeSpot> lista)
     {
-        var banda = A.Banda;
+        var banda = Principal.Banda;
 
         var enLaBanda = lista
             .Where(f => string.Equals(f.Banda, banda, StringComparison.OrdinalIgnoreCase))
@@ -567,7 +696,8 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     [RelayCommand(CanExecute = nameof(SePuedeTocarLosVfos))]
     public async Task IntercambiarVfosAsync()
     {
-        if (_equipo is not IEquipoConDosVfos conDos) return;
+        if (Real is not IEquipoConDosVfos conDos) return;
+        if (!Confirmar("Intercambiar el contenido de los VFO A y B en el equipo (A/B).")) return;
 
         try
         {
@@ -584,7 +714,8 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     [RelayCommand(CanExecute = nameof(SePuedeTocarLosVfos))]
     public async Task IgualarVfosAsync()
     {
-        if (_equipo is not IEquipoConDosVfos conDos) return;
+        if (Real is not IEquipoConDosVfos conDos) return;
+        if (!Confirmar("Copiar el VFO activo sobre el otro (A=B). El otro VFO se pierde.")) return;
 
         try
         {
@@ -602,7 +733,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     [RelayCommand(CanExecute = nameof(SePuedeTocarLosVfos))]
     public async Task ActivarVfoAsync(VistaModeloVfo? vfo)
     {
-        if (vfo is null || _equipo is not IEquipoConDosVfos conDos) return;
+        if (vfo is null || Real is not IEquipoConDosVfos conDos) return;
 
         try
         {
@@ -623,14 +754,16 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     /// Acciona el mismo objeto que la lista de mandos.
     /// </remarks>
     /// <param name="mando">Mando que se alterna.</param>
-    [RelayCommand(CanExecute = nameof(SePuedeAccionar))]
+    [RelayCommand(CanExecute = nameof(SePuedeAlternar))]
     public async Task AlternarMandoAsync(MandoDeEquipo mando)
     {
-        if (MandoDe(mando) is not { Disponible: true } vista) return;
+        if (MandoDe(mando) is not { Disponible: true, SoloLectura: false } vista) return;
 
         // Un mando que pone el equipo en antena nunca se acciona a pelo: pasa por el
-        // vigilante, que lo suelta pase lo que pase.
-        if (vista.TransmiteAlAccionar)
+        // vigilante, que lo suelta pase lo que pase. Pero encender o apagar el acoplador
+        // (AC001/AC000) NO emite: solo la ultima posicion, «Sintonizar», lo hace. Antes la
+        // tecla TUNE subia el PTT para mandar AC001, es decir, emitia portadora para nada.
+        if (vista.TransmiteAlAccionar && vista.TransmiteCon(vista.Encendido ? 0 : 1))
         {
             await AccionarTransmitiendoAsync(vista).ConfigureAwait(true);
             return;
@@ -732,6 +865,35 @@ public sealed partial class VistaModeloEquipo : ObservableObject
 
     private bool SePuedeAccionar() => Conectado;
 
+    /// <summary>
+    /// Una tecla del frontal se puede pulsar si el equipo esta conectado Y tiene ese mando.
+    /// </summary>
+    /// <remarks>
+    /// Antes bastaba con estar conectado: CLAR, por ejemplo, salia encendida con un FT-710 que
+    /// no admite RT por CAT, y pulsarla no hacia nada. Un boton que no hace nada tiene que
+    /// verse apagado.
+    /// </remarks>
+    private bool SePuedeAlternar(MandoDeEquipo mando) =>
+        Conectado && MandoDe(mando) is { Disponible: true, SoloLectura: false };
+
+    /// <summary>
+    /// Pregunta al operador antes de una accion que cambia el equipo sin vuelta atras facil.
+    /// </summary>
+    /// <remarks>
+    /// Si nadie ha puesto quien pregunte, <b>no se hace</b>: intercambiar o pisar un VFO sin
+    /// que el operador lo haya confirmado ya nos paso una vez.
+    /// </remarks>
+    private bool Confirmar(string que)
+    {
+        if (ConfirmarAccion is { } preguntar && preguntar(que)) return true;
+
+        Aviso = ConfirmarAccion is null ? $"No se ha hecho: {que} necesita confirmación." : string.Empty;
+        return false;
+    }
+
+    /// <summary>Lo rellena la ventana: pregunta al operador antes de SV, AB o BA.</summary>
+    public Func<string, bool>? ConfirmarAccion { get; set; }
+
     private bool SePuedeTocarLosVfos() => Conectado && TieneDosVfos;
 
     private bool SePuedeIrALaMemoria() => Conectado && MemoriaElegida is { Ocupada: true };
@@ -747,7 +909,9 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     /// </remarks>
     private void ConstruirLosMandos()
     {
-        if (_equipo is not IEquipoAvanzado avanzado) return;
+        Mandos.Clear();
+
+        if (Real is not IEquipoAvanzado avanzado) return;
 
         foreach (var mando in avanzado.Mandos)
         {
@@ -755,9 +919,49 @@ public sealed partial class VistaModeloEquipo : ObservableObject
             Mandos.Add(new VistaModeloMando(avanzado, rango));
         }
 
+        // La vista por omision de la coleccion es SIEMPRE la misma: si se anade la agrupacion
+        // cada vez que se rehacen los mandos, la lista sale agrupada dos y tres veces.
         var vista = CollectionViewSource.GetDefaultView(Mandos);
+        vista.GroupDescriptions.Clear();
         vista.GroupDescriptions.Add(new PropertyGroupDescription(nameof(VistaModeloMando.Grupo)));
         MandosPorGrupo = vista;
+        EscucharLosMandosDelFrontal();
+    }
+
+    /// <summary>Vuelve a construir los mandos y avisa a todo lo que los pinta.</summary>
+    private void RehacerLosMandos()
+    {
+        ConstruirLosMandos();
+
+        OnPropertyChanged(nameof(MandosPorGrupo));
+        OnPropertyChanged(nameof(EsAvanzado));
+        OnPropertyChanged(nameof(PuedeEncenderOApagar));
+        OnPropertyChanged(nameof(LockDisponible));
+        OnPropertyChanged(nameof(TieneDosVfos));
+        OnPropertyChanged(nameof(NombreDelEquipo));
+        OnPropertyChanged(nameof(Modelo));
+        OnPropertyChanged(nameof(NombreDelFrontal));
+        OnPropertyChanged(nameof(SinProbarConRadio));
+        OnPropertyChanged(nameof(MandoDeVolumen));
+        OnPropertyChanged(nameof(MandoDeGananciaRf));
+        OnPropertyChanged(nameof(MandoDePotencia));
+        OnPropertyChanged(nameof(MandoDeAnchoDeFiltro));
+    }
+
+    /// <summary>
+    /// Las teclas del frontal vuelven a preguntarse si pueden pulsarse, y el visor recoge los
+    /// indicadores con los valores recien leidos.
+    /// </summary>
+    private void RefrescarLosBotonesDeMando()
+    {
+        AlternarMandoCommand.NotifyCanExecuteChanged();
+        IntercambiarVfosCommand.NotifyCanExecuteChanged();
+        IgualarVfosCommand.NotifyCanExecuteChanged();
+        ActivarVfoCommand.NotifyCanExecuteChanged();
+        EnviarOrdenEnCrudoCommand.NotifyCanExecuteChanged();
+        RecogerLosIndicadores();
+        RecogerLosVfos(_equipo.Estado);
+        AvisarDelFrontal();
     }
 
     private async Task RecogerLosMandosAsync()
@@ -770,7 +974,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
 
     private async Task CargarLasMemoriasAsync()
     {
-        if (_equipo is not IEquipoAvanzado avanzado) return;
+        if (Real is not IEquipoAvanzado avanzado) return;
 
         try
         {
@@ -784,6 +988,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
             // parece un fallo, y el operador no sabe si es que no hay memorias o que no se
             // han leido.
             MemoriaElegida ??= Memorias.FirstOrDefault(m => m.Ocupada);
+            RecogerLaBotonera();
         }
         catch (Exception ex)
         {
@@ -800,10 +1005,14 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     /// </remarks>
     private async Task MedirAsync()
     {
-        if (_equipo is not IEquipoAvanzado avanzado || !Conectado) return;
+        if (Real is not IEquipoAvanzado avanzado || !Conectado) return;
+
+        LatirElMox();
 
         try
         {
+            // Lo que se toca en la propia radio tiene que verse en el frontal dibujado.
+            await RefrescarElFrontalAsync().ConfigureAwait(true);
             var lectura = await avanzado.LeerMedidoresAsync().ConfigureAwait(true);
 
             MedidorS = lectura.UnidadesS is { } s ? $"S{s.ToString("N1", CultureInfo.CurrentCulture)}" : "—";
@@ -844,14 +1053,60 @@ public sealed partial class VistaModeloEquipo : ObservableObject
 
     private bool SePuedeConectar() => !Conectado;
 
+    partial void OnConectadoChanged(bool value)
+    {
+        AvisarDelFrontal();
+        AvisarDeLaBotonera();
+    }
+
     private bool SePuedeDesconectar() => Conectado;
 
     private void AlCambiarElEstado(object? origen, EstadoDelEquipo estado) =>
         Hilo.EnLaVentana(() => Recoger(estado));
 
+    /// <summary>
+    /// Rehace el panel cuando el operador cambia la via de control en los ajustes.
+    /// </summary>
+    /// <remarks>
+    /// No basta con volver a leer el estado: con el equipo nuevo cambian los mandos que hay,
+    /// si es avanzado, si tiene dos VFO y hasta como se llama. Todo eso estaba calculado una
+    /// sola vez al montar el panel, y aqui se vuelve a calcular y se avisa a la interfaz.
+    /// </remarks>
+    private void AlCambiarElControl(object? origen, IControlEquipo nuevo) => Hilo.EnLaVentana(() =>
+    {
+        _medicion.Stop();
+        Memorias.Clear();
+        MemoriaElegida = null;
+        BorrarLosMedidores();
+
+        RehacerLosMandos();
+        RehacerLaBotonera();
+        OnPropertyChanged(nameof(ViaTexto));
+        OnPropertyChanged(nameof(EstadoDelEspectro));
+        AlternarMandoCommand.NotifyCanExecuteChanged();
+
+        // Los botones que dependen de lo que sepa hacer el equipo —los VFO, la orden en
+        // crudo— tienen que volver a preguntarse si pueden pulsarse.
+        IntercambiarVfosCommand.NotifyCanExecuteChanged();
+        IgualarVfosCommand.NotifyCanExecuteChanged();
+        ActivarVfoCommand.NotifyCanExecuteChanged();
+        EnviarOrdenEnCrudoCommand.NotifyCanExecuteChanged();
+        IrALaMemoriaCommand.NotifyCanExecuteChanged();
+
+        Aviso = $"Cambiada la vía de control del equipo: {ViaTexto}.";
+        Recoger(nuevo.Estado);
+    });
+
     private void AlSoltarElPtt(object? origen, MotivoDeSuelta motivo) => Hilo.EnLaVentana(() =>
     {
         Transmitiendo = false;
+
+        // Si el vigilante ha soltado un MOX (tope, panico), el MOX ya no esta puesto.
+        if (_mox is not null)
+        {
+            _mox = null;
+            OnPropertyChanged(nameof(EnMox));
+        }
 
         // Una suelta normal no se cuenta; las demas si, porque explican por que se corto.
         Aviso = motivo switch
@@ -869,8 +1124,19 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     {
         var frecuenciaAnterior = Frecuencia;
         var modoAnterior = Modo;
+        var estabaConectado = Conectado;
 
         Conectado = estado.Conectado;
+
+        // Se conecte como se conecte —boton Conectar, encender con LOCK, o la radio que vuelve
+        // sola tras encenderla con su tecla—, al pasar de caida a viva se rehacen mandos,
+        // memorias y medidores. Si no, los botones del frontal se quedaban sin mando detras
+        // (deshabilitados) y ATT/IPO/DNF/AGC y el S-meter en guiones (29-09-2026). Si ya lo hizo
+        // el boton Conectar, no se repite.
+        if (estado.Conectado && !estabaConectado && !Conectando)
+        {
+            _ = PrepararTrasConectarAsync();
+        }
         Transmitiendo = estado.Transmitiendo;
 
         if (!estado.Conectado)
@@ -887,6 +1153,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
             Split = false;
             Rit = false;
             Xit = false;
+            RecogerLaBotonera();
             return;
         }
 
@@ -910,14 +1177,17 @@ public sealed partial class VistaModeloEquipo : ObservableObject
 
         UltimaLectura = estado.LeidoUtc.UtcDateTime.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
 
-        RecogerLosVfos();
+        RecogerLosVfos(estado);
         RecogerLosIndicadores();
+        RecogerLaBotonera();
         OnPropertyChanged(nameof(EstadoDelEspectro));
 
         if (!string.Equals(Frecuencia, frecuenciaAnterior, StringComparison.Ordinal)
-            || !string.Equals(Modo, modoAnterior, StringComparison.Ordinal))
+            || !string.Equals(Modo, modoAnterior, StringComparison.Ordinal)
+            || estado.FrecuenciaRx != _rxAnterior)
         {
-            DialCambiado?.Invoke(this, new DialDelEquipo(estado.Frecuencia, estado.Modo));
+            _rxAnterior = estado.FrecuenciaRx;
+            DialCambiado?.Invoke(this, new DialDelEquipo(estado.Frecuencia, estado.Modo, estado.FrecuenciaRx));
         }
     }
 }

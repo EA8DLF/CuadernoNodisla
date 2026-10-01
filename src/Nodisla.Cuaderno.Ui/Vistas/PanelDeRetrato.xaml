@@ -11,7 +11,8 @@
         · Arriba, la NOVEDAD. Tres filas —país, banda, modo— por cuatro vías de confirmación
           —papel, eQSL, LoTW, QRZ—. Cada casilla dice si eso ya está en el cuaderno y si está
           confirmado por esa vía. Verde es «nuevo, merece la pena»; ámbar es «lo tienes pero
-          sin confirmar por ahí»; apagado es «ya está cerrado».
+          sin confirmar por ahí»; apagado es «ya está cerrado». Y una raya es «no se sabe»:
+          pasa cuando la entidad no se ha resuelto, o cuando aún no hay banda ni modo escritos.
 
         · Debajo, el TRABAJADO ANTES condensado: las bandas en columnas y las tres familias de
           modo en filas, con ese indicativo. Catorce por tres casillas dicen lo que antes
@@ -20,9 +21,10 @@
         Ninguno de los dos datos es nuevo: el cuaderno ya los tenía. Lo que faltaba era
         enseñarlos.
 
-        El color nunca va solo: cada casilla lleva su texto y su nombre accesible, porque uno de
-        cada doce hombres no distingue el rojo del verde y un cuaderno de guardia no puede
-        depender de eso.
+        EL COLOR NUNCA VA SOLO. Cada casilla de novedad lleva su palabra —NUEVO, sin QSL,
+        ✓ OK— y cada casilla de banda lleva su marca —vacía, un número, un visto—, porque uno
+        de cada doce hombres no distingue el rojo del verde y un cuaderno de guardia no puede
+        depender de eso. Además todas llevan su nombre accesible para el lector de pantalla.
     -->
 
     <UserControl.Resources>
@@ -52,6 +54,15 @@
                     <Setter Property="Background" Value="{DynamicResource FondoPanel}" />
                     <Setter Property="BorderBrush" Value="{DynamicResource BordeSuave}" />
                 </DataTrigger>
+                <!--
+                    Sin dato de partida. Va el último a propósito: manda sobre los demás,
+                    porque pintar de «nuevo» lo que no se ha calculado sería mentir justo en
+                    la casilla que el operador mira antes de llamar.
+                -->
+                <DataTrigger Binding="{Binding Aplica}" Value="False">
+                    <Setter Property="Background" Value="{DynamicResource FondoAlterno}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource BordeSuave}" />
+                </DataTrigger>
             </Style.Triggers>
         </Style>
 
@@ -68,6 +79,10 @@
                 <DataTrigger Binding="{Binding Confirmado}" Value="True">
                     <Setter Property="Foreground" Value="{DynamicResource TextoTenue}" />
                 </DataTrigger>
+                <DataTrigger Binding="{Binding Aplica}" Value="False">
+                    <Setter Property="Foreground" Value="{DynamicResource TextoTenue}" />
+                    <Setter Property="FontWeight" Value="Normal" />
+                </DataTrigger>
             </Style.Triggers>
         </Style>
 
@@ -76,6 +91,29 @@
             <Setter Property="Foreground" Value="{DynamicResource TextoTenue}" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="TextTrimming" Value="None" />
+        </Style>
+
+        <!--
+            Rótulo de la cabecera de bandas. Va más pequeño porque son catorce columnas en el
+            ancho de un tercio de ventana: la cifra tiene que caber sin partir la rejilla.
+        -->
+        <Style x:Key="RotuloDeBanda" TargetType="TextBlock" BasedOn="{StaticResource RotuloDeRejilla}">
+            <Setter Property="FontSize" Value="8" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+
+        <!-- Rótulo de la fila: fonía, telegrafía, digitales. -->
+        <Style x:Key="RotuloDeFila" TargetType="TextBlock" BasedOn="{StaticResource RotuloDeRejilla}">
+            <Setter Property="FontSize" Value="8" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+
+        <!-- Rótulo de la esquina: dice qué cruza cada rejilla. -->
+        <Style x:Key="RotuloDeEsquina" TargetType="TextBlock" BasedOn="{StaticResource RotuloDeRejilla}">
+            <Setter Property="FontSize" Value="8" />
+            <Setter Property="FontStyle" Value="Italic" />
+            <Setter Property="Margin" Value="0,0,5,0" />
         </Style>
     </UserControl.Resources>
 
@@ -86,6 +124,28 @@
                        Text="{Binding Resumen}"
                        Style="{StaticResource RotuloDeRejilla}"
                        Margin="6,0,0,0" />
+
+            <!--
+                La pastilla de «aporta» es el resumen de la rejilla en una palabra: si algo
+                sale nuevo por alguna vía, se enciende. El operador que no mira la rejilla la
+                ve de todos modos.
+            -->
+            <Border DockPanel.Dock="Right"
+                    Visibility="{Binding AportaAlgo, Converter={StaticResource BooleanoAVisible}}"
+                    Background="{DynamicResource CorrectoFondo}"
+                    BorderBrush="{DynamicResource CorrectoBorde}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Padding="4,0"
+                    Margin="6,0,0,0"
+                    VerticalAlignment="Center">
+                <TextBlock Text="APORTA"
+                           FontSize="8"
+                           FontWeight="Bold"
+                           TextTrimming="None"
+                           Foreground="{DynamicResource CorrectoTexto}" />
+            </Border>
+
             <TextBlock TextTrimming="CharacterEllipsis">
                 <Run Text="{Binding Indicativo, Mode=OneWay}" FontWeight="Bold" />
                 <Run Text="·" Foreground="{DynamicResource TextoTenue}" />
@@ -120,6 +180,11 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
+                <!-- La esquina dice qué cruza la rejilla; si no, son doce casillas sueltas. -->
+                <TextBlock Grid.Row="0" Grid.Column="0"
+                           Text="¿Nuevo?"
+                           Style="{StaticResource RotuloDeEsquina}" />
+
                 <!-- Cabecera: las cuatro vías de confirmación. -->
                 <UniformGrid Grid.Row="0" Grid.Column="1" Columns="4">
                     <TextBlock Text="Papel" Style="{StaticResource RotuloDeRejilla}" TextAlignment="Center" />
@@ -153,49 +218,102 @@
                 </ItemsControl>
             </Grid>
 
-            <!-- ══ Rejilla de banda por familia de modo ══ -->
-            <ItemsControl ItemsSource="{Binding Rejilla}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="14" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border CornerRadius="2"
-                                BorderThickness="1"
-                                Margin="0.5"
-                                MinHeight="13"
-                                ToolTip="{Binding Detalle}"
-                                AutomationProperties.Name="{Binding Detalle}">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
-                                    <Setter Property="BorderBrush" Value="{DynamicResource BordeSuave}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Trabajado}" Value="True">
-                                            <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
-                                            <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Confirmado}" Value="True">
-                                            <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
-                                            <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <TextBlock Text="{Binding Texto}"
-                                       FontSize="8"
-                                       FontWeight="Bold"
-                                       HorizontalAlignment="Center"
-                                       Foreground="{DynamicResource Texto}"
-                                       TextTrimming="None" />
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <!-- ══ Rejilla de banda por familia de modo: el «trabajado antes» condensado ══ -->
+            <Grid Margin="0,4,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <TextBlock Text="160 · 80 · 60 · 40 · 30 · 20 · 17 · 15 · 12 · 10 · 6 · 4 · 2 · 70. Filas: fonía · telegrafía · digitales."
+                <TextBlock Grid.Row="0" Grid.Column="0"
+                           Text="Con él"
+                           Style="{StaticResource RotuloDeEsquina}" />
+
+                <!--
+                    Las bandas, en el orden de siempre. Las dos últimas son 2 m y 70 cm: la
+                    cifra sola basta y ahorra el ancho que hace falta para las catorce.
+                -->
+                <UniformGrid Grid.Row="0" Grid.Column="1" Columns="14">
+                    <TextBlock Text="160" Style="{StaticResource RotuloDeBanda}" />
+                    <TextBlock Text="80" Style="{StaticResource RotuloDeBanda}" />
+                    <TextBlock Text="60" Style="{StaticResource RotuloDeBanda}" />
+                    <TextBlock Text="40" Style="{StaticResource RotuloDeBanda}" />
+                    <TextBlock Text="30" Style="{StaticResource RotuloDeBanda}" />
+                    <TextBlock Text="20" Style="{StaticResource RotuloDeBanda}" />
+                    <TextBlock Text="17" Style="{StaticResource RotuloDeBanda}" />
+                    <TextBlock Text="15" Style="{StaticResource RotuloDeBanda}" />
+                    <TextBlock Text="12" Style="{StaticResource RotuloDeBanda}" />
+                    <TextBlock Text="10" Style="{StaticResource RotuloDeBanda}" />
+                    <TextBlock Text="6" Style="{StaticResource RotuloDeBanda}" />
+                    <TextBlock Text="4" Style="{StaticResource RotuloDeBanda}" />
+                    <TextBlock Text="2" Style="{StaticResource RotuloDeBanda}" />
+                    <TextBlock Text="70" Style="{StaticResource RotuloDeBanda}" />
+                </UniformGrid>
+
+                <!-- Las tres familias con las que se opera de verdad. -->
+                <UniformGrid Grid.Row="1" Grid.Column="0" Rows="3" Margin="0,0,5,0">
+                    <TextBlock Text="FONÍA" Style="{StaticResource RotuloDeFila}" />
+                    <TextBlock Text="CW" Style="{StaticResource RotuloDeFila}" />
+                    <TextBlock Text="DIGI" Style="{StaticResource RotuloDeFila}" />
+                </UniformGrid>
+
+                <ItemsControl Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Rejilla}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="14" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border CornerRadius="2"
+                                    Margin="0.5"
+                                    MinHeight="15"
+                                    ToolTip="{Binding Detalle}"
+                                    AutomationProperties.Name="{Binding Detalle}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource BordeSuave}" />
+                                        <Setter Property="BorderThickness" Value="1" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Trabajado}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                                            </DataTrigger>
+                                            <!--
+                                                Confirmado lleva además el borde más grueso: el
+                                                contorno se ve aunque el color no se distinga.
+                                            -->
+                                            <DataTrigger Binding="{Binding Confirmado}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                                                <Setter Property="BorderThickness" Value="1.5" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="{Binding Texto}"
+                                           FontSize="8"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource Texto}"
+                                           TextTrimming="None" />
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+
+            <!--
+                La leyenda de los tres estados. No sobra: es lo que permite leer la rejilla sin
+                depender del color, y ocupa una línea.
+            -->
+            <TextBlock Text="Vacía: sin trabajar · número: trabajado · ✓: confirmado."
                        Style="{StaticResource RotuloDeRejilla}"
                        TextWrapping="Wrap"
                        Margin="0,2,0,0" />

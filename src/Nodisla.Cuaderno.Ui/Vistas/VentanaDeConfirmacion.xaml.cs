@@ -39,6 +39,20 @@ public partial class VentanaDeConfirmacion : Window
         set => BotonCancelar.Visibility = value ? Visibility.Collapsed : Visibility.Visible;
     }
 
+    /// <summary>Ensena la casilla «No volver a preguntar».</summary>
+    public bool OfrecerNoVolverAPreguntar
+    {
+        get => CasillaNoVolverAPreguntar.Visibility == Visibility.Visible;
+        set => CasillaNoVolverAPreguntar.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    /// <summary>El operador ha marcado «No volver a preguntar».</summary>
+    public bool NoVolverAPreguntar
+    {
+        get => CasillaNoVolverAPreguntar.IsChecked == true;
+        set => CasillaNoVolverAPreguntar.IsChecked = value;
+    }
+
     private void AlAceptar(object sender, RoutedEventArgs e)
     {
         DialogResult = true;

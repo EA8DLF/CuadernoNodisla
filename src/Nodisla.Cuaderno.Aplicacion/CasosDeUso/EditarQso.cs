@@ -30,7 +30,10 @@ public sealed record ResultadoDeEdicion
 }
 
 /// <summary>Modifica un contacto existente conservando lo que no se toca desde la interfaz.</summary>
-public sealed class EditarQso(IRepositorioQso repositorioQso, IRepositorioEstacion repositorioEstacion)
+public sealed class EditarQso(
+    IRepositorioQso repositorioQso,
+    IRepositorioEstacion repositorioEstacion,
+    AvisosDeQsos? avisos = null)
 {
     /// <summary>Guarda los cambios del contacto de la peticion.</summary>
     public async Task<ResultadoDeEdicion> EjecutarAsync(PeticionDeEdicion peticion, CancellationToken ct = default)
@@ -64,6 +67,7 @@ public sealed class EditarQso(IRepositorioQso repositorioQso, IRepositorioEstaci
 
         qso.ModificadoUtc = DateTimeOffset.UtcNow;
         await repositorioQso.ActualizarAsync(qso, ct).ConfigureAwait(false);
+        avisos?.Avisar(qso, TipoDeGuardado.Modificado);
         return new ResultadoDeEdicion { Guardado = qso };
     }
 }

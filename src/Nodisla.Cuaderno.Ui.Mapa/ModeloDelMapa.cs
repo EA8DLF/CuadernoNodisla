@@ -13,6 +13,9 @@ public enum ClaseDeMarca
 
     /// <summary>La estacion propia.</summary>
     EstacionPropia,
+
+    /// <summary>El subpunto de un satelite: el lugar de la superficie sobre el que vuela.</summary>
+    Satelite,
 }
 
 /// <summary>Un punto del mapa, ya listo para pintarlo.</summary>

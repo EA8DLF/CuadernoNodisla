@@ -93,6 +93,97 @@ public enum MandoDeEquipo
     Xit,
     /// <summary>Desplazamiento de transmision, en hercios.</summary>
     DesplazamientoXit,
+
+    // ── Añadidos el 28-09-2026 para las teclas del frontal (van al final: no se renumera nada) ──
+    /// <summary>Filtro estrecho (NAR).</summary>
+    FiltroEstrecho,
+    /// <summary>Bloqueo del dial (LOCK).</summary>
+    Bloqueo,
+    /// <summary>Sintonia normal, fina o rapida (FINE/FAST).</summary>
+    SintoniaFinaRapida,
+    /// <summary>Tono de referencia de telegrafia (SPOT).</summary>
+    TonoDeReferenciaCw,
+    /// <summary>Filtro de pico de audio (APF).</summary>
+    Apf,
+    /// <summary>Frecuencia del filtro de pico de audio, en hercios respecto al tono.</summary>
+    FrecuenciaApf,
+    /// <summary>Nivel de salida del control automatico del microfono (AMC).</summary>
+    NivelAmc,
+    /// <summary>Nivel antivox.</summary>
+    AntiVox,
+    /// <summary>Contraste de la pantalla del equipo.</summary>
+    ContrastePantalla,
+    /// <summary>Brillo de la pantalla del equipo.</summary>
+    BrilloPantalla,
+    /// <summary>Velocidad del analizador de espectro del equipo (SPEED).</summary>
+    EspectroVelocidad,
+    /// <summary>Ancho del analizador de espectro del equipo (SPAN).</summary>
+    EspectroAncho,
+    /// <summary>Modo del analizador: CENTER/CURSOR/FIX, 3DSS o cascada, ampliado o no.</summary>
+    EspectroModo,
+    /// <summary>Nivel de referencia del analizador, en decibelios.</summary>
+    EspectroNivel,
+    /// <summary>Retencion de picos del analizador.</summary>
+    EspectroPicos,
+    /// <summary>Colores del analizador.</summary>
+    EspectroColor,
+    /// <summary>Funcion que tiene asignada el mando FUNC.</summary>
+    FuncionDelMandoFunc,
+    /// <summary>Funcion que tiene asignada el mando DSP.</summary>
+    FuncionDelMandoDsp,
+}
+
+/// <summary>Una tecla del frontal que hace algo en el equipo sin tener un valor propio.</summary>
+public enum TeclaDelEquipo
+{
+    /// <summary>Pasar la memoria al VFO (M▶V).</summary>
+    MemoriaAVfo,
+    /// <summary>Alternar entre VFO y memorias (V/M).</summary>
+    VfoOMemoria,
+    /// <summary>Recuperar la memoria rapida (QMB).</summary>
+    RecuperarMemoriaRapida,
+    /// <summary>Guardar en la memoria rapida (QMB mantenida). Pisa la pila de memorias rapidas.</summary>
+    GuardarMemoriaRapida,
+    /// <summary>Banda siguiente (BAND).</summary>
+    BandaArriba,
+    /// <summary>Banda anterior.</summary>
+    BandaAbajo,
+    /// <summary>Ajuste a cero en telegrafia (ZIN).</summary>
+    AjusteACero,
+    /// <summary>Devolver los filtros de interferencia a su sitio (DSP RESET).</summary>
+    RestablecerDsp,
+    /// <summary>Alternar el VFO con el que se opera (A/B).</summary>
+    AlternarVfo,
+    /// <summary>Borrar el desplazamiento del clarificador.</summary>
+    BorrarClarificador,
+}
+
+/// <summary>
+/// Equipo con teclas y diales que se pueden pulsar y girar desde el ordenador, como en su frontal.
+/// </summary>
+/// <remarks>
+/// Aparte de <see cref="IEquipoAvanzado"/> porque son acciones sin valor que leer: pulsar M▶V no
+/// deja un numero que ensenar. Lo que cambian se ve en el siguiente sondeo del equipo.
+/// </remarks>
+public interface IEquipoConTeclas
+{
+    /// <summary>Teclas que este equipo admite.</summary>
+    IReadOnlySet<TeclaDelEquipo> Teclas { get; }
+
+    /// <summary>Pulsa una tecla.</summary>
+    /// <param name="tecla">Tecla pulsada.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    Task PulsarAsync(TeclaDelEquipo tecla, CancellationToken ct = default);
+
+    /// <summary>Gira el dial principal. El paso lo marca el equipo (y FINE/FAST).</summary>
+    /// <param name="muescas">Muescas de giro: positivas suben, negativas bajan.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    Task GirarDialAsync(int muescas, CancellationToken ct = default);
+
+    /// <summary>Gira el mando de pasos (STEP/MCH): canal de memoria o saltos de canal.</summary>
+    /// <param name="muescas">Muescas de giro: positivas suben, negativas bajan.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    Task GirarPasosAsync(int muescas, CancellationToken ct = default);
 }
 
 /// <summary>Como se acciona un mando y entre que valores se mueve.</summary>

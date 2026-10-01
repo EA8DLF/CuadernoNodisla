@@ -82,6 +82,7 @@ public sealed class OpcionesDeSatelites
 public sealed class SeguidorDeSatelites
 {
     private readonly Dictionary<string, Sgp4> _propagadores = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, Sgp4> _principales = new(StringComparer.OrdinalIgnoreCase);
     private readonly OpcionesDeSatelites _opciones;
     private readonly ILogger _registro;
 
@@ -94,15 +95,29 @@ public sealed class SeguidorDeSatelites
         _registro = registro ?? (ILogger)NullLogger<SeguidorDeSatelites>.Instance;
     }
 
-    /// <summary>Los satelites cargados, por nombre.</summary>
-    public IReadOnlyCollection<string> Cargados => _propagadores.Keys;
+    /// <summary>Los satelites cargados, con el nombre que traia el fichero de elementos.</summary>
+    /// <remarks>
+    /// No se listan las abreviaturas del catalogo con las que tambien se puede preguntar: son
+    /// otro nombre del mismo satelite, y ensenarlas haria que la lista pareciera el doble de
+    /// larga de lo que es.
+    /// </remarks>
+    public IReadOnlyCollection<string> Cargados => _principales.Keys;
 
     /// <summary>Carga o sustituye los elementos de un satelite.</summary>
     /// <param name="elementos">Elementos orbitales.</param>
     /// <returns><c>true</c> si se ha podido preparar el propagador.</returns>
     /// <remarks>
+    /// <para>
     /// Devuelve <c>false</c> en vez de reventar cuando el satelite es de espacio profundo: un
     /// fichero de Celestrak trae de todo y no puede tumbar la carga entera.
+    /// </para>
+    /// <para>
+    /// <b>Se registra ademas con la abreviatura del catalogo.</b> El fichero de elementos llama
+    /// al satelite <c>SAUDISAT 1C (SO-50)</c>, pero el operador, el catalogo de transpondedores
+    /// y el campo <c>SAT_NAME</c> de ADIF lo llaman <c>SO-50</c>. Se enlazan por el numero
+    /// NORAD, que es el unico identificador que comparten los dos mundos, y asi pedir el
+    /// satelite por cualquiera de los dos nombres funciona.
+    /// </para>
     /// </remarks>
     public bool Cargar(ElementosOrbitales elementos)
     {
@@ -110,7 +125,16 @@ public sealed class SeguidorDeSatelites
 
         try
         {
-            _propagadores[elementos.Nombre] = new Sgp4(elementos);
+            var propagador = new Sgp4(elementos);
+            _propagadores[elementos.Nombre] = propagador;
+            _principales[elementos.Nombre] = propagador;
+
+            var delCatalogo = CatalogoDeSatelites.Instancia.PorNumeroDeCatalogo(elementos.NumeroCatalogo);
+            if (delCatalogo is not null)
+            {
+                _propagadores[delCatalogo.Abreviatura] = propagador;
+            }
+
             return true;
         }
         catch (NotSupportedException ex)
@@ -153,7 +177,18 @@ public sealed class SeguidorDeSatelites
     {
         if (!_propagadores.TryGetValue(satelite, out var propagador))
         {
-            return null;
+            // Un geoestacionario no tiene propagador ni le hace falta: esta quieto sobre un
+            // punto del ecuador. Sin esto, QO-100 —el mas usado desde Canarias— seria el unico
+            // satelite del catalogo que el programa no sabria situar.
+            return Geoestacionario.LongitudDe(satelite) is { } longitud
+                ? new EstadoDeSeguimiento(
+                    satelite,
+                    instanteUtc,
+                    Geoestacionario.Mirar(longitud, _opciones.Observador),
+                    new Coordenada(0.0, longitud),
+                    Geoestacionario.RadioOrbitaKm - Sgp4.RadioTerrestreKm,
+                    instanteUtc)
+                : null;
         }
 
         if (!propagador.TryPropagar(instanteUtc, out var estado, out var fallo))
@@ -193,7 +228,10 @@ public sealed class SeguidorDeSatelites
     public IReadOnlyList<PasoDeSatelite> PasosDeTodos(DateTimeOffset desdeUtc, TimeSpan duracion)
     {
         var predictor = new PredictorDePasos(_opciones.Prediccion);
-        return _propagadores.Values
+        // Se recorren los principales y no todas las claves: un satelite esta registrado dos
+        // veces —nombre del fichero y abreviatura del catalogo— y recorrer las claves duplicaria
+        // cada paso en la lista.
+        return _principales.Values
             .SelectMany(p => predictor.Buscar(p, _opciones.Observador, desdeUtc, desdeUtc + duracion))
             .OrderBy(p => p.Salida.Instante)
             .ToList();

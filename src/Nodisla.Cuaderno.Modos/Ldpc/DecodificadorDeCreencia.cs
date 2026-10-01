@@ -37,12 +37,45 @@ public sealed class DecodificadorDeCreencia
     /// Tope de la confianza que se maneja, en unidades de logaritmo de razon de probabilidades.
     /// </summary>
     /// <remarks>
-    /// Veinte significa «una probabilidad contra casi quinientos millones». Pasado ese punto la
-    /// tangente hiperbolica ya vale uno para el ordenador y dejar que la confianza siga creciendo
-    /// solo sirve para que una tanda de ruido convenza al decodificador de algo falso sin
-    /// posibilidad de rectificar.
+    /// <para>
+    /// Pasado este punto, dejar que la confianza siga creciendo solo sirve para que una tanda de
+    /// ruido convenza al decodificador de algo falso sin posibilidad de rectificar.
+    /// </para>
+    /// <para>
+    /// <b>El valor sale de barrerlo en el banco</b>, no de la costumbre. Se eligio veinte cuando
+    /// las confianzas venian normalizadas a una media fija; al pasar a medirlas en veces el
+    /// ruido de fondo, la escala cambio y hubo que volver a barrerlo.
+    /// </para>
+    /// <para>
+    /// <b>Y el barrido salio plano</b>, que es un resultado tan util como cualquier otro:
+    /// probando topes de 20 y 60, atenuaciones de 0,60 a 1,00 y de 60 a 120 vueltas —24
+    /// combinaciones, 180 ventanas cada una entre −21 y −19 dB— todas dieron entre 58 y 62
+    /// decodificaciones. La diferencia entre la mejor y la peor cabe en el azar, y la «mejor»
+    /// costaba un 47 % mas de procesador. Conclusion: <b>aqui no hay nada que rascar</b>. Lo que
+    /// limita la sensibilidad no es como esten afinados estos dos mandos, sino que con treinta y
+    /// tantos bits mal de 174 la propagacion de creencias no converge, se afine como se afine.
+    /// De ahi que el trabajo fino este en la recuperacion profunda y no aqui.
+    /// </para>
     /// </remarks>
-    private const float TopeDeConfianza = 20f;
+    public float TopeDeConfianza { get; set; } = TopePorOmision;
+
+    /// <summary>Tope de confianza medido en el banco.</summary>
+    public const float TopePorOmision = 20f;
+
+    /// <summary>
+    /// Factor de correccion del metodo del minimo.
+    /// </summary>
+    /// <remarks>
+    /// El metodo del minimo es optimista: da por buena una confianza mayor de la que le
+    /// corresponde, y sin corregirlo el decodificador se convence demasiado pronto y se queda
+    /// atascado en una palabra que no es. Multiplicar por algo menor que uno lo compensa.
+    /// <b>Cuanto, se midio</b>: ver la nota de <see cref="TopeDeConfianza"/>, donde esta el
+    /// barrido entero. Sale plano entre 0,60 y 1,00, asi que este numero no es el que manda.
+    /// </remarks>
+    public float Atenuacion { get; set; } = AtenuacionPorOmision;
+
+    /// <summary>Atenuacion medida en el banco.</summary>
+    public const float AtenuacionPorOmision = 0.75f;
 
     /// <summary>Prepara el decodificador para un codigo concreto y reserva su memoria.</summary>
     /// <param name="codigo">Codigo con el que se va a trabajar.</param>
@@ -98,7 +131,7 @@ public sealed class DecodificadorDeCreencia
         UltimasVueltas = 0;
 
         // De salida, la opinion de cada bit es solo lo que dijo el demodulador.
-        for (var v = 0; v < _codigo.Longitud; v++) _opinionTotal[v] = Recortar(confianzas[v]);
+        for (var v = 0; v < _codigo.Longitud; v++) _opinionTotal[v] = Recortar(confianzas[v], TopeDeConfianza);
 
         for (var vuelta = 1; vuelta <= vueltasMaximas; vuelta++)
         {
@@ -146,8 +179,8 @@ public sealed class DecodificadorDeCreencia
     /// </remarks>
     private void UnaPasadaPorLasEcuaciones()
     {
-        // Factor de correccion del metodo del minimo.
-        const float Atenuacion = 0.75f;
+        var atenuacion = Atenuacion;
+        var tope = TopeDeConfianza;
 
         for (var e = 0; e < _codigo.Ecuaciones; e++)
         {
@@ -164,7 +197,7 @@ public sealed class DecodificadorDeCreencia
 
             for (var a = desde; a < hasta; a++)
             {
-                var m = Recortar(_opinionTotal[_variableDeCadaArista[a]] - _mensajeDeEcuacionABit[a]);
+                var m = Recortar(_opinionTotal[_variableDeCadaArista[a]] - _mensajeDeEcuacionABit[a], tope);
                 _mensajeDeBitAEcuacion[a] = m;
                 if (m < 0) signo = -signo;
                 var magnitud = MathF.Abs(m);
@@ -185,8 +218,8 @@ public sealed class DecodificadorDeCreencia
                 var m = _mensajeDeBitAEcuacion[a];
                 var signoSinEste = m < 0 ? -signo : signo;
                 var magnitud = a == aristaDelMenor ? siguienteMenor : menor;
-                if (magnitud > TopeDeConfianza) magnitud = TopeDeConfianza;
-                var nuevo = signoSinEste * magnitud * Atenuacion;
+                if (magnitud > tope) magnitud = tope;
+                var nuevo = signoSinEste * magnitud * atenuacion;
 
                 // La opinion del bit se actualiza aqui mismo, no al final de la vuelta.
                 _opinionTotal[_variableDeCadaArista[a]] += nuevo - _mensajeDeEcuacionABit[a];
@@ -195,6 +228,6 @@ public sealed class DecodificadorDeCreencia
         }
     }
 
-    private static float Recortar(float valor) =>
-        valor > TopeDeConfianza ? TopeDeConfianza : valor < -TopeDeConfianza ? -TopeDeConfianza : valor;
+    private static float Recortar(float valor, float tope) =>
+        valor > tope ? tope : valor < -tope ? -tope : valor;
 }

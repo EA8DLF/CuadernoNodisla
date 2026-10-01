@@ -1,0 +1,249 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PanelDeQsl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:qsl="clr-namespace:Nodisla.Cuaderno.Ui.Qsl"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
+             xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
+             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             Foreground="{DynamicResource Texto}"
+             Loaded="AlCargar">
+
+    <!--
+        EL EDITOR DE LA TARJETA QSL.
+
+        Izquierda: la plantilla (nombre, orientación, fondo) y la lista de campos.
+        Centro: la tarjeta tal cual saldrá, con los campos que se arrastran encima.
+        Derecha: letra, tamaño, color y texto del campo elegido.
+
+        LA TARJETA DEL CENTRO ES LA IMAGEN DE VERDAD: la misma rutina la dibuja para el correo
+        (200 ppp) y para el PDF (300 ppp). Las asas de los campos son rectángulos transparentes
+        encima; la tarjeta va dentro de un Viewbox con la rejilla medida en milímetros, así que
+        arrastrar un asa mueve el campo en milímetros sin conversiones.
+    -->
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!-- Estilos y plantilla del campo de texto, compartidos con el diseñador de diplomas. -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Qsl/EditorDeElementos.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+            <conversores:VisibleSiEsFalso x:Key="VisibleSiEsFalso" />
+
+            <Style x:Key="Boton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                <Setter Property="Margin" Value="0,0,6,6" />
+                <Setter Property="Padding" Value="8,3" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" MinWidth="230" MaxWidth="330" />
+            <ColumnDefinition Width="3*" MinWidth="360" />
+            <ColumnDefinition Width="1*" MinWidth="240" MaxWidth="340" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ══ Plantilla y campos ══ -->
+        <Border Grid.Column="0" Style="{StaticResource Tarjeta}" Margin="0,0,5,0" Padding="8,6">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <TextBlock Text="Plantilla" Style="{StaticResource TituloDeSeccion}" />
+                    <ComboBox ItemsSource="{Binding Disenos}" SelectedItem="{Binding Diseno}"
+                              AutomationProperties.Name="Plantilla de tarjeta">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Nombre}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <WrapPanel Margin="0,6,0,0">
+                        <Button Content="Guardar" Command="{Binding GuardarCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Guardar la plantilla" />
+                        <Button Content="Deshacer" Command="{Binding DescartarCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Deshacer los cambios sin guardar" />
+                        <Button Content="Nueva" Command="{Binding NuevaPlantillaCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Plantilla nueva" />
+                        <Button Content="Duplicar" Command="{Binding DuplicarPlantillaCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Duplicar la plantilla" />
+                        <Button Content="Borrar" Command="{Binding BorrarPlantillaCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Borrar la plantilla" />
+                        <Button Content="Usar por omisión" Command="{Binding PonerPorOmisionCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Usar esta plantilla por omisión" />
+                    </WrapPanel>
+                    <TextBlock Text="✓ Es la plantilla por omisión." Style="{StaticResource TextoTenueEstilo}"
+                               Visibility="{Binding EsLaDeOmision, Converter={StaticResource BooleanoAVisible}}" />
+                    <TextBlock Text="● Cambios sin guardar." Foreground="{DynamicResource AvisoTexto}" FontWeight="SemiBold"
+                               Visibility="{Binding HayCambios, Converter={StaticResource BooleanoAVisible}}" />
+
+                    <TextBlock Text="Nombre" Style="{StaticResource Rotulo}" />
+                    <TextBox Text="{Binding NombreDelDiseno, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Nombre de la plantilla" />
+
+                    <CheckBox Content="Vertical (90 × 140 mm)" IsChecked="{Binding Vertical}" Margin="0,8,0,0"
+                              AutomationProperties.Name="Tarjeta vertical" />
+                    <TextBlock Text="Tamaño internacional de QSL: 140 × 90 mm." Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
+
+                    <TextBlock Text="Fondo" Style="{StaticResource Rotulo}" />
+                    <WrapPanel>
+                        <Button Content="Elegir imagen…" Command="{Binding ElegirFondoCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Elegir la imagen de fondo" />
+                        <Button Content="Quitar" Command="{Binding QuitarFondoCommand}" Style="{StaticResource Boton}"
+                                Visibility="{Binding TieneFondo, Converter={StaticResource BooleanoAVisible}}"
+                                AutomationProperties.Name="Quitar la imagen de fondo" />
+                    </WrapPanel>
+                    <DockPanel>
+                        <TextBlock Text="Ajuste" VerticalAlignment="Center" Width="64" />
+                        <ComboBox ItemsSource="{Binding AjustesDeFondo}" SelectedItem="{Binding Ajuste}"
+                                  AutomationProperties.Name="Cómo se ajusta la imagen de fondo" />
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="Color" VerticalAlignment="Center" Width="64" />
+                        <Border DockPanel.Dock="Right" Style="{StaticResource Muestra}"
+                                Background="{Binding ColorDeFondo, Converter={StaticResource PincelDeColor}}" />
+                        <TextBox Text="{Binding ColorDeFondo, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="#RRGGBB, o un nombre en inglés: White, Navy…"
+                                 AutomationProperties.Name="Color de fondo de la tarjeta" />
+                    </DockPanel>
+
+                    <TextBlock Text="Campos" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,4" />
+                    <ListBox ItemsSource="{Binding Campos}" SelectedItem="{Binding CampoElegido}" MaxHeight="260"
+                             AutomationProperties.Name="Campos de la tarjeta">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding Visible}" Margin="0,0,6,0" ToolTip="Se ve en la tarjeta"
+                                              AutomationProperties.Name="{Binding Nombre}" />
+                                    <TextBlock Text="{Binding Nombre}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <WrapPanel Margin="0,6,0,0">
+                        <Button Content="Añadir texto" Command="{Binding AnadirCampoCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Añadir un campo de texto" />
+                        <Button Content="Duplicar" Command="{Binding DuplicarCampoCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Duplicar el campo" />
+                        <Button Content="Quitar" Command="{Binding QuitarCampoCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Quitar el campo" />
+                    </WrapPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- ══ La tarjeta ══ -->
+        <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0,0,5,0" Padding="8,6">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0" Margin="0,0,0,6">
+                    <TextBlock Text="Vista previa con" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold" />
+                    <Button DockPanel.Dock="Right" Content="↻" Command="{Binding RefrescarCommand}" Padding="8,2" Margin="6,0,0,0"
+                            ToolTip="Volver a leer los contactos del cuaderno"
+                            AutomationProperties.Name="Volver a leer los contactos" />
+                    <ComboBox ItemsSource="{Binding Contactos}" SelectedItem="{Binding Contacto}"
+                              AutomationProperties.Name="Contacto de la vista previa">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Texto}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </DockPanel>
+
+                <Border Grid.Row="1" Background="{DynamicResource FondoCampo}" Padding="10">
+                    <Viewbox Stretch="Uniform">
+                        <Grid x:Name="Lienzo" Width="{Binding AnchoMm}" Height="{Binding AltoMm}">
+                            <Image Source="{Binding VistaPrevia}" Stretch="Fill" />
+                            <ItemsControl ItemsSource="{Binding Campos}" Focusable="False">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Canvas />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="Canvas.Left" Value="{Binding CajaX}" />
+                                        <Setter Property="Canvas.Top" Value="{Binding CajaY}" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Thumb Width="{Binding CajaAncho}" Height="{Binding CajaAlto}"
+                                               Cursor="SizeAll"
+                                               ToolTip="{Binding Nombre}"
+                                               DragStarted="AlEmpezarAArrastrar"
+                                               DragDelta="AlArrastrar"
+                                               AutomationProperties.Name="{Binding Nombre}">
+                                            <Thumb.Template>
+                                                <ControlTemplate TargetType="Thumb">
+                                                    <Grid Background="#01FFFFFF">
+                                                        <Rectangle x:Name="Marco" Stroke="#9900A0FF" StrokeThickness="0.25"
+                                                                   StrokeDashArray="3 2" Opacity="0.0" />
+                                                    </Grid>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Marco" Property="Opacity" Value="1" />
+                                                        </Trigger>
+                                                        <DataTrigger Binding="{Binding Elegido}" Value="True">
+                                                            <Setter TargetName="Marco" Property="Opacity" Value="1" />
+                                                            <Setter TargetName="Marco" Property="Stroke" Value="#FFFF8C00" />
+                                                            <Setter TargetName="Marco" Property="StrokeThickness" Value="0.4" />
+                                                        </DataTrigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </Viewbox>
+                </Border>
+
+                <StackPanel Grid.Row="2" Margin="0,8,0,0">
+                    <WrapPanel>
+                        <Button Content="Enviar por correo…" Command="{Binding EnviarMuestraCommand}" Style="{StaticResource BotonPrincipal}"
+                                Margin="0,0,6,6" Padding="10,4"
+                                AutomationProperties.Name="Enviar esta tarjeta por correo al corresponsal" />
+                        <Button Content="Guardar imagen…" Command="{Binding ExportarImagenCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Guardar la tarjeta como imagen" />
+                        <Button Content="PDF…" Command="{Binding ExportarPdfCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Guardar la tarjeta en PDF para imprimir" />
+                        <Button Content="Diseño para eQSL…" Command="{Binding ExportarParaEqslCommand}" Style="{StaticResource Boton}"
+                                ToolTip="La tarjeta sin los datos del contacto, para subirla a su cuenta de eQSL"
+                                AutomationProperties.Name="Guardar el diseño para subirlo a eQSL" />
+                        <Button Content="Abrir eQSL" Command="{Binding AbrirEqslCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Abrir la web de eQSL" />
+                    </WrapPanel>
+                    <TextBlock Text="Arrastre los campos sobre la tarjeta. Para mandar varias a la vez: en el Cuaderno, elija los contactos, clic derecho → «Ver/enviar QSL…»."
+                               Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding Aviso}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,4,0,0" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ══ El campo elegido ══ -->
+        <Border Grid.Column="2" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <TextBlock Text="Campo" Style="{StaticResource TituloDeSeccion}" />
+                    <TextBlock Text="Elija un campo en la lista o pinche en él sobre la tarjeta."
+                               Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap"
+                               Visibility="{Binding HayCampoElegido, Converter={StaticResource VisibleSiEsFalso}}" />
+
+                    <ContentControl Content="{Binding CampoElegido}" Focusable="False" />
+
+                    <Expander Header="Variables que se pueden escribir" Margin="0,12,0,0">
+                        <TextBlock Text="{Binding AyudaDeVariables}" TextWrapping="Wrap" Margin="0,4,0,0"
+                                   FontFamily="Consolas, Cascadia Mono, Courier New" FontSize="11" />
+                    </Expander>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

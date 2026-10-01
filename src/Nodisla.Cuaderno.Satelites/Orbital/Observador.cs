@@ -82,6 +82,25 @@ public static class Topocentrico
         var posicionFija = Tiempos.TemeAFijo(estado.Posicion, sidereo);
         var velocidadFija = Tiempos.VelocidadTemeAFija(estado.Velocidad, posicionFija, sidereo);
 
+        return MirarFijo(posicionFija, velocidadFija, observador);
+    }
+
+    /// <summary>
+    /// Calcula lo que ve la estacion a partir de una posicion ya en coordenadas fijas.
+    /// </summary>
+    /// <param name="posicionFija">Posicion del satelite en el sistema fijo a la Tierra, en km.</param>
+    /// <param name="velocidadFija">Velocidad en ese mismo sistema, en km/s.</param>
+    /// <param name="observador">La estacion.</param>
+    /// <returns>Azimut, elevacion, distancia y velocidad radial.</returns>
+    /// <remarks>
+    /// Se separa de <see cref="Mirar"/> para que la puedan usar tambien los satelites
+    /// geoestacionarios, cuya posicion no sale de SGP4 sino de su longitud sobre el ecuador.
+    /// </remarks>
+    public static VistaDesdeTierra MirarFijo(
+        Vector3 posicionFija,
+        Vector3 velocidadFija,
+        Observador observador)
+    {
         var sitio = observador.PosicionFija();
         var rho = posicionFija - sitio;
 
@@ -98,7 +117,13 @@ public static class Topocentrico
         var cenit = (cosLat * cosLon * rho.X) + (cosLat * sinLon * rho.Y) + (sinLat * rho.Z);
 
         var distancia = rho.Modulo;
-        var elevacion = distancia > 0 ? Math.Asin(cenit / distancia) * Tiempos.RadianesAGrados : 0.0;
+
+        // El cociente se acota antes del arcoseno. En la vertical exacta y en el punto
+        // diametralmente opuesto, el redondeo de coma flotante lo saca un pelo de [-1, 1] y
+        // Math.Asin devuelve NaN: una elevacion que no es un numero se propaga a todo lo demas
+        // y el fallo aparece lejos de aqui.
+        var seno = distancia > 0 ? Math.Clamp(cenit / distancia, -1.0, 1.0) : 0.0;
+        var elevacion = Math.Asin(seno) * Tiempos.RadianesAGrados;
         var azimut = Tiempos.NormalizarGrados(Math.Atan2(este, -sur) * Tiempos.RadianesAGrados);
 
         // La estacion no se mueve en el sistema fijo, asi que la derivada de la distancia es

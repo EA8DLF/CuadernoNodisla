@@ -284,6 +284,7 @@ internal static class CapasDelMapa
 
     private static int Peso(MarcaDelMapa marca) => marca switch
     {
+        { Clase: ClaseDeMarca.Satelite } => 5,
         { Destacada: true } => 4,
         { Clase: ClaseDeMarca.EstacionPropia } => 3,
         { Clase: ClaseDeMarca.Spot } => 2,
@@ -308,6 +309,7 @@ internal static class CapasDelMapa
     {
         var color = marca switch
         {
+            { Clase: ClaseDeMarca.Satelite } => paleta.Satelite,
             { Clase: ClaseDeMarca.EstacionPropia } => paleta.EstacionPropia,
             { Clase: ClaseDeMarca.Spot, Destacada: true } => paleta.SpotNuevo,
             { Clase: ClaseDeMarca.Spot } => paleta.Spot,

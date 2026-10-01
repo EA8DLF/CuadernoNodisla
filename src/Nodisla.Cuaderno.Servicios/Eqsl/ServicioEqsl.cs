@@ -340,7 +340,7 @@ public sealed partial class ServicioEqsl : IServicioQsl
     private string LeerContrasena() =>
         _credenciales.Leer(ClavesDeCredencial.EqslContrasena)
         ?? throw new InvalidOperationException(
-            "No hay contraseña de eQSL guardada. Configúrela en los ajustes del programa.");
+            "No hay contraseña de eQSL guardada. Configúrela en Configuración › Cuentas y servicios.");
 
     private static IReadOnlyDictionary<string, string> SinMotivos() =>
         new Dictionary<string, string>(StringComparer.Ordinal);

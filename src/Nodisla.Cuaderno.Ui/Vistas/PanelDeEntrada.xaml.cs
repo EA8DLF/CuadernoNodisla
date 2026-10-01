@@ -1,4 +1,7 @@
+using System.Windows;
 using System.Windows.Controls;
+using Nodisla.Cuaderno.Ui.VistaModelos;
+using Serilog;
 
 namespace Nodisla.Cuaderno.Ui.Vistas;
 
@@ -20,5 +23,20 @@ public partial class PanelDeEntrada : UserControl
     {
         CampoIndicativo.Focus();
         CampoIndicativo.SelectAll();
+    }
+
+    /// <summary>La QSL del contacto que se esta modificando.</summary>
+    private void AlVerEnviarQsl(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (DataContext is not VistaModeloPrincipal { Impresion.Qsl: { } qsl } modelo) return;
+            if (modelo.Entrada.IdDelContactoEnEdicion is not { } id) return;
+            VentanaDeEnvioDeQsl.Mostrar(Window.GetWindow(this), qsl, [id]);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Fallo al abrir la QSL desde la ficha del contacto.");
+        }
     }
 }

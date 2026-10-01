@@ -20,9 +20,17 @@ public partial class App : Application
     private IHost? _anfitrion;
 
     /// <summary>Carpeta de datos del programa dentro del perfil del usuario.</summary>
-    public static string CarpetaDeDatos => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "CuadernoNodisla");
+    /// <remarks>
+    /// Con <c>CUADERNO_CARPETA</c> puesta se usa esa otra carpeta. Es para verificar: una
+    /// instancia de pruebas, al cerrarse, guarda el estado de los paneles y los ajustes, y no
+    /// puede pisar los del operador.
+    /// </remarks>
+    public static string CarpetaDeDatos =>
+        Environment.GetEnvironmentVariable("CUADERNO_CARPETA") is { Length: > 0 } otra
+            ? otra
+            : Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "CuadernoNodisla");
 
     /// <summary>
     /// Deja el cuaderno listo antes de abrir la ventana: crea la base si no esta y aplica
@@ -90,6 +98,13 @@ public partial class App : Application
         _anfitrion = Host.CreateDefaultBuilder()
             .UseSerilog((_, configuracion) => configuracion
                 .MinimumLevel.Information()
+                // El registro de peticiones HTTP escribe la URL entera, y la API XML de QRZ.com
+                // lleva usuario y contrasena en la URL: con esto a Information, la contrasena de
+                // Jose quedaba en claro en el fichero de registro (28-09-2026). A Warning solo
+                // quedan los fallos, sin URL. Entity Framework, igual: escribia cada consulta
+                // SQL y el registro crecia 15 MB al dia.
+                .MinimumLevel.Override("System.Net.Http.HttpClient", Serilog.Events.LogEventLevel.Warning)
+                .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Warning)
                 .WriteTo.Console()
                 .WriteTo.File(
                     Path.Combine(carpetaDeRegistros, "cuaderno-.log"),
@@ -119,6 +134,20 @@ public partial class App : Application
 
         base.OnStartup(e);
 
+        // CUADERNO_RASTREO_ENLACES=fichero: cada enlace roto de WPF es un control o un dato
+        // muerto, y sin depurador no se ven. Se apuntan todos en ese fichero. Tiene que ir ANTES
+        // de crear la ventana: los enlaces rotos se quejan una sola vez, al enlazarse, y si el
+        // rastreo se enciende despues no queda ninguno apuntado.
+        if (Environment.GetEnvironmentVariable("CUADERNO_RASTREO_ENLACES") is { Length: > 0 } rastreo)
+        {
+            System.Diagnostics.Trace.AutoFlush = true;
+            System.Diagnostics.PresentationTraceSources.Refresh();
+            System.Diagnostics.PresentationTraceSources.DataBindingSource.Listeners.Add(
+                new System.Diagnostics.TextWriterTraceListener(rastreo));
+            System.Diagnostics.PresentationTraceSources.DataBindingSource.Switch.Level =
+                System.Diagnostics.SourceLevels.Warning;
+        }
+
         var ventana = _anfitrion.Services.GetRequiredService<VentanaPrincipal>();
         MainWindow = ventana;
 
@@ -138,6 +167,17 @@ public partial class App : Application
             ventana.ShowInTaskbar = false;
             ventana.Left = -6000;
             ventana.Top = 0;
+
+            // CUADERNO_TAMANO=1366x768: para comprobar la disposicion en pantallas pequeñas.
+            if (Environment.GetEnvironmentVariable("CUADERNO_TAMANO") is { Length: > 0 } tamano
+                && tamano.Split('x') is [var an, var al]
+                && double.TryParse(an, NumberStyles.Float, CultureInfo.InvariantCulture, out var ancho)
+                && double.TryParse(al, NumberStyles.Float, CultureInfo.InvariantCulture, out var alto))
+            {
+                ventana.Width = ancho;
+                ventana.Height = alto;
+            }
+
         }
 
         ventana.Show();

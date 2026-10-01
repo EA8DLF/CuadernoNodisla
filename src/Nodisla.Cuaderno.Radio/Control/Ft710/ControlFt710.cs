@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -44,6 +44,16 @@ public sealed class OpcionesFt710
     public TraductorDeModos Traductor { get; set; } = TraductorDeModos.PorOmision;
 
     /// <summary>
+    /// Por donde se sube el PTT: por CAT, o levantando <c>RTS</c> o <c>DTR</c> del puerto serie.
+    /// </summary>
+    /// <remarks>
+    /// De partida, por CAT, que es lo que hace el FT-710 sin nada mas conectado. Las lineas del
+    /// puerto hacen falta para los montajes con interfaz de audio y optoacoplador. Un canal que
+    /// no tenga lineas —por TCP, por ejemplo— se queda con el CAT aunque aqui se pida otra cosa.
+    /// </remarks>
+    public ViaDePtt ViaDePtt { get; set; } = ViaDePtt.Cat;
+
+    /// <summary>
     /// Usar el codec de audio USB del equipo para saber si esta encendido antes de reintentar
     /// la conexion. Solo se aplica cuando se habla por su puerto serie.
     /// </summary>
@@ -54,6 +64,12 @@ public sealed class OpcionesFt710
     /// de 0 a 255; el reparto de esa escala en unidades S es aproximado y por eso se deja aqui.
     /// </summary>
     public int LecturaDeS9 { get; set; } = 128;
+
+    /// <summary>
+    /// Como se espera entre dos miradas mientras el acoplador sintoniza. Las pruebas lo cambian
+    /// por una espera nula para no depender del reloj.
+    /// </summary>
+    public Func<TimeSpan, CancellationToken, Task> Esperar { get; set; } = Task.Delay;
 }
 
 /// <summary>
@@ -76,8 +92,85 @@ public sealed class OpcionesFt710
 /// la valvula de escape <see cref="OrdenEnCrudoAsync"/> rechaza cualquier <c>TX</c>.
 /// </para>
 /// </remarks>
-public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmergenciaPtt, IAvisaDePerdidaDeComunicacion
+public sealed class ControlFt710
+    : IEquipoAvanzado, IEquipoConDosVfos, IEquipoConTeclas, IEquipoConBotonera, IEquipoConEncendido, IPttDirecto, ISueltaDeEmergenciaPtt, IAvisaDePerdidaDeComunicacion,
+      Modelos.IEquipoDeModelo, IEquipoConSintonia
 {
+    /// <summary>
+    /// Diferencias del modelo respecto del FT-710 (ver <see cref="Yaesu.PerfilYaesu"/>). Con el
+    /// perfil del FT-710 este control se porta exactamente como antes de haber mas modelos.
+    /// </summary>
+    public Yaesu.PerfilYaesu Perfil => _perfil;
+
+    /// <inheritdoc />
+    public Modelos.ModeloDeEquipo Modelo => _perfil.Modelo;
+
+    private readonly Yaesu.PerfilYaesu _perfil;
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// El unico sitio del programa por el que sale <c>PS0;</c> (ver
+    /// <see cref="OrdenesFt710.ConApagadoAutorizadoAsync"/>). Primero se baja el PTT, luego se
+    /// apaga, y al final se cierra la comunicacion como en una desconexion normal.
+    /// </remarks>
+    public async Task ApagarAsync(CancellationToken ct = default)
+    {
+        ObjectDisposedException.ThrowIf(_desechado, this);
+        if (!_canal.Abierto)
+        {
+            throw new InvalidOperationException("La radio no está conectada: no se puede apagar desde el programa.");
+        }
+
+        await BajarElPttComoSeaAsync(ct).ConfigureAwait(false);
+        await OrdenesFt710.ConApagadoAutorizadoAsync(
+            () => _canal.MandarAsync("PS0;", ct)).ConfigureAwait(false);
+        _registro.LogInformation("FT-710 apagado desde el programa (LOCK, confirmado por el operador).");
+
+        await DesconectarAsync(ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Procedimiento del manual CAT: una orden de despertar, y entre uno y dos segundos
+    /// despues, <c>PS1;</c>. Luego la radio tarda unos segundos en arrancar; se reintenta
+    /// conectar hasta que conteste.
+    /// </remarks>
+    public async Task<string?> EncenderAsync(CancellationToken ct = default)
+    {
+        ObjectDisposedException.ThrowIf(_desechado, this);
+        try
+        {
+            if (!_canal.Abierto) await _canal.AbrirAsync(ct).ConfigureAwait(false);
+        }
+        catch (CanalNoDisponibleException)
+        {
+            return $"No se puede encender desde el programa: con la radio apagada el puerto {_canal.Descripcion} "
+                   + "no está disponible. Enciéndela con su tecla.";
+        }
+
+        await _canal.MandarAsync("PS1;", ct).ConfigureAwait(false);
+        await Task.Delay(TimeSpan.FromMilliseconds(1300), ct).ConfigureAwait(false);
+        await _canal.MandarAsync("PS1;", ct).ConfigureAwait(false);
+        _registro.LogInformation("FT-710: orden de encendido enviada.");
+
+        // La radio tarda en arrancar. Se prueba a conectar durante unos 20 s.
+        for (var intento = 0; intento < 10; intento++)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2), ct).ConfigureAwait(false);
+            try
+            {
+                await ConectarAsync(ct).ConfigureAwait(false);
+                return null;
+            }
+            catch (EquipoNoContestaException)
+            {
+                // Todavia arrancando.
+            }
+        }
+
+        return "Se ha mandado la orden de encendido pero la radio no ha contestado en 20 segundos.";
+    }
+
     /// <summary>Lo que contesta el FT-710 a <c>ID;</c>.</summary>
     public const string IdentificadorFt710 = "0800";
 
@@ -91,23 +184,42 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     private CancellationTokenSource? _ctsSondeo;
     private Task? _sondeo;
     private EstadoDelEquipo _estado = EstadoDelEquipo.Desconectado;
+    private EstadoDeLosVfos _vfos = EstadoDeLosVfos.SinDatos;
     private bool _pttPedido;
     private bool _desechado;
+    private bool _canalAbiertoAlgunaVez;
     private string? _modoDelEquipo;
+    private int _sintoniaPedida;
+    private bool _sintonizando;
+    private bool _enMemoria;
 
     /// <summary>Crea el control sobre un canal CAT ya construido.</summary>
     /// <param name="canal">Canal por el que se habla con el equipo.</param>
     /// <param name="opciones">Ajustes.</param>
     /// <param name="registro">Donde anotar lo que pasa.</param>
-    public ControlFt710(ICanalCat canal, OpcionesFt710? opciones = null, ILogger? registro = null)
+    /// <param name="perfil">Modelo Yaesu de CAT nuevo; nulo = FT-710.</param>
+    public ControlFt710(ICanalCat canal, OpcionesFt710? opciones = null, ILogger? registro = null, Yaesu.PerfilYaesu? perfil = null)
     {
         ArgumentNullException.ThrowIfNull(canal);
 
+        _perfil = perfil ?? Yaesu.PerfilesYaesu.Ft710;
+        NombreDelEquipo = _perfil.Modelo.NombreCompleto;
         _canal = canal;
         _opciones = opciones ?? new OpcionesFt710();
         _registro = registro ?? NullLogger.Instance;
 
-        ViasDeSuelta =
+        // Si el PTT va por una linea del puerto, bajar esa linea es LO PRIMERO que hay que
+        // probar: mandar TX0; por CAT no baja un PTT que subio por RTS.
+        List<ViaDeSuelta> vias = [];
+        if (_opciones.ViaDePtt != ViaDePtt.Cat && _canal.PuedeAccionarLineas)
+        {
+            vias.Add(new ViaDeSuelta(
+                $"FT-710: bajar la línea {_opciones.ViaDePtt} del puerto",
+                async ct => await _canal.PonerLineaDePttAsync(false, ct).ConfigureAwait(false),
+                () => _canal.PonerLineaDePttSincrono(false)));
+        }
+
+        vias.AddRange(
         [
             new ViaDeSuelta(
                 "FT-710: TX0 por el canal abierto",
@@ -120,7 +232,9 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
                     await _canal.AbrirAsync(ct).ConfigureAwait(false);
                     await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false);
                 }),
-        ];
+        ]);
+
+        ViasDeSuelta = vias;
     }
 
     /// <inheritdoc />
@@ -137,6 +251,24 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
             lock (_candado)
             {
                 return _estado;
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Se rellena en cada pasada del sondeo con <c>FA;</c>, <c>FB;</c>, <c>MD0;</c>, <c>MD1;</c>,
+    /// <c>VS;</c>, <c>ST;</c> y <c>FT;</c>: todas son consultas, ninguna cambia nada. Sin esto el
+    /// visor del frontal no tenia de donde sacar el VFO B —ni el A— y ensenaba guiones con el
+    /// equipo contestando (27-09-2026).
+    /// </remarks>
+    public EstadoDeLosVfos Vfos
+    {
+        get
+        {
+            lock (_candado)
+            {
+                return _vfos;
             }
         }
     }
@@ -185,6 +317,8 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
             await _canal.AbrirAsync(ct).ConfigureAwait(false);
         }
 
+        Volatile.Write(ref _canalAbiertoAlgunaVez, true);
+
         var identificador = await PreguntarAsync("ID;", ct).ConfigureAwait(false);
         if (identificador is null)
         {
@@ -200,13 +334,14 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
         }
 
         var codigo = identificador[2..].Trim();
-        if (codigo != IdentificadorFt710)
+        if (codigo != _perfil.Modelo.IdentificadorYaesu && Yaesu.PerfilesYaesu.PorIdentificador(codigo) != _perfil)
         {
             _registro.LogWarning(
-                "El equipo de {Canal} contesta ID{Codigo}, que no es un FT-710 (ID{Esperado}).",
+                "El equipo de {Canal} contesta ID{Codigo}, que no es un {Modelo} (ID{Esperado}).",
                 _canal.Descripcion,
                 codigo,
-                IdentificadorFt710);
+                _perfil.Nombre,
+                _perfil.Modelo.IdentificadorYaesu);
             NombreDelEquipo = $"Yaesu (ID{codigo})";
         }
 
@@ -261,40 +396,582 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
         await BajarElPttComoSeaAsync(ct).ConfigureAwait(false);
 
         _canal.Cerrar();
+        lock (_candado)
+        {
+            _vfos = EstadoDeLosVfos.SinDatos;
+        }
+
         Actualizar(estado => estado with { Conectado = false, Transmitiendo = false });
     }
 
     /// <inheritdoc />
-    public async Task PonerFrecuenciaAsync(Frecuencia frecuencia, CancellationToken ct = default)
+    /// <remarks>
+    /// Va al VFO <b>activo</b>, preguntado a la radio en ese momento (<c>VS;</c>) y no al que se
+    /// recordaba del ultimo sondeo: si el operador acaba de pulsar A/B en el equipo, el spot iria
+    /// al otro. Con split tambien va al activo, que es el de recepcion.
+    /// </remarks>
+    public Task PonerFrecuenciaAsync(Frecuencia frecuencia, CancellationToken ct = default)
     {
         var hercios = frecuencia.Hercios;
-        if (hercios is < 0 or > 999_999_999)
+        ComprobarFrecuencia(hercios, frecuencia);
+
+        return EnExclusivaAsync(
+            async () =>
+            {
+                var enB = await ElActivoEsBAsync(ct).ConfigureAwait(false);
+                await MandarAsync($"{(enB ? "FB" : "FA")}{_perfil.Cifras(hercios)};", ct).ConfigureAwait(false);
+                await LeerEstadoAsync(ct).ConfigureAwait(false);
+            },
+            ct);
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// <c>MD0</c> es el modo de la banda <b>principal</b>, que en el FT-710 es el VFO elegido con
+    /// <c>VS</c>, no siempre el A (manual CAT: «MD P1 0: MAIN Band»; comprobado en la radio). Asi
+    /// que el modo del VFO activo es siempre <c>MD0</c>.
+    /// </remarks>
+    public Task PonerModoAsync(Modo modo, CancellationToken ct = default) =>
+        EnExclusivaAsync(
+            async () =>
+            {
+                var enB = await ElActivoEsBAsync(ct).ConfigureAwait(false);
+                var frecuencia = enB ? Vfos.B.Frecuencia : Vfos.A.Frecuencia;
+                var nombre = _opciones.Traductor.AlEquipo(modo, frecuencia.EsCero ? Estado.Frecuencia : frecuencia)
+                    ?? throw new ArgumentException($"No sé cómo pedirle al FT-710 el modo {modo}.", nameof(modo));
+
+                var codigo = ModosFt710.AlEquipo(nombre)
+                    ?? throw new ArgumentException($"El FT-710 no tiene el modo {nombre}.", nameof(modo));
+
+                await MandarAsync($"{OrdenDeModoDelActivo(enB)}{codigo};", ct).ConfigureAwait(false);
+                await LeerEstadoAsync(ct).ConfigureAwait(false);
+            },
+            ct);
+
+    /// <summary>
+    /// <c>MD0</c> o <c>MD1</c> para el VFO activo: en el FT-710 y casi toda la familia es siempre
+    /// <c>MD0</c>; en los de doble receptor (FTDX101, FTDX5000) <c>MD0</c> es el A y <c>MD1</c> el B.
+    /// </summary>
+    private string OrdenDeModoDelActivo(bool enB) =>
+        !_perfil.ModoPrincipalEsElActivo && enB ? "MD1" : "MD0";
+
+    private void ComprobarFrecuencia(long hercios, Frecuencia frecuencia)
+    {
+        if (hercios < 0 || hercios > _perfil.HerciosMaximo)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(frecuencia),
                 frecuencia,
-                "El FT-710 solo admite frecuencias de nueve cifras en hercios.");
+                _perfil.CifrasDeFrecuencia == 9 && _perfil == Yaesu.PerfilesYaesu.Ft710
+                    ? "El FT-710 solo admite frecuencias de nueve cifras en hercios."
+                    : $"El {_perfil.Nombre} no admite esa frecuencia (hasta {_perfil.HerciosMaximo} Hz, {_perfil.CifrasDeFrecuencia} cifras).");
+        }
+    }
+
+    /// <summary>Pregunta a la radio que VFO manda ahora (VS0 = A, VS1 = B).</summary>
+    private async Task<bool> ElActivoEsBAsync(CancellationToken ct)
+    {
+        var vs = await PreguntarAsync("VS;", ct).ConfigureAwait(false);
+        return vs is { Length: >= 3 } && vs.StartsWith("VS", StringComparison.OrdinalIgnoreCase)
+            ? vs[2] == '1'
+            : Estado.Vfo == "VFO B";
+    }
+
+    /// <summary>
+    /// Cada lectura del estado y cada «escribir y releer» van de una en una. Sin esto el sondeo,
+    /// que corre en otro hilo, podia haber leido FA/FB justo ANTES de que se escribiera el spot y
+    /// publicar su lectura vieja justo DESPUES: el formulario volvia a la frecuencia anterior o
+    /// se quedaba con la del otro VFO.
+    /// </summary>
+    private readonly SemaphoreSlim _exclusiva = new(1, 1);
+
+    private static readonly AsyncLocal<bool> DentroDeLaExclusiva = new();
+
+    private async Task EnExclusivaAsync(Func<Task> accion, CancellationToken ct)
+    {
+        if (DentroDeLaExclusiva.Value)
+        {
+            await accion().ConfigureAwait(false);
+            return;
         }
 
-        var vfoDeTrabajo = Estado.Vfo == "VFO B" ? "FB" : "FA";
-        await MandarAsync(
-            string.Create(CultureInfo.InvariantCulture, $"{vfoDeTrabajo}{hercios:D9};"),
-            ct).ConfigureAwait(false);
+        await _exclusiva.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            DentroDeLaExclusiva.Value = true;
+            await accion().ConfigureAwait(false);
+        }
+        finally
+        {
+            DentroDeLaExclusiva.Value = false;
+            _exclusiva.Release();
+        }
+    }
+
+    private async Task<T> EnExclusivaAsync<T>(Func<Task<T>> accion, CancellationToken ct)
+    {
+        T resultado = default!;
+        // Con cuerpo de bloque: la lambda devuelve Task y no Task<T>, asi no se llama a si misma.
+        await EnExclusivaAsync(async () => { resultado = await accion().ConfigureAwait(false); }, ct).ConfigureAwait(false);
+        return resultado;
+    }
+
+    /// <inheritdoc />
+    public async Task<EstadoDeLosVfos> LeerVfosAsync(CancellationToken ct = default)
+    {
+        await LeerEstadoAsync(ct).ConfigureAwait(false);
+        return Vfos;
+    }
+
+    /// <inheritdoc />
+    /// <remarks><c>VS0;</c> o <c>VS1;</c>: lo mismo que la tecla del equipo que elige el VFO.</remarks>
+    public Task PonerVfoActivoAsync(NombreDeVfo vfo, CancellationToken ct = default)
+        => EnExclusivaAsync(async () =>
+    {
+        await MandarAsync(vfo == NombreDeVfo.B ? "VS1;" : "VS0;", ct).ConfigureAwait(false);
+        await LeerEstadoAsync(ct).ConfigureAwait(false);
+    }, ct);
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// <c>SV;</c> <b>no es una consulta</b>: intercambia de verdad el contenido de los dos VFO.
+    /// Solo se manda cuando el operador pulsa A/B y lo confirma; nada lo manda solo.
+    /// </remarks>
+    public Task IntercambiarVfosAsync(CancellationToken ct = default)
+        => EnExclusivaAsync(async () =>
+    {
+        // En el FT-710 SV NO intercambia el contenido: comprobado en la radio el 28-09-2026,
+        // SV deja FA y FB como estaban y solo cambia el VFO con el que se opera (VS0 <-> VS1),
+        // que es lo que hace la tecla A/B del equipo. Intercambiar de verdad es escribir cada
+        // uno en el otro.
+        if (!_perfil.TieneModoDelSegundoVfo)
+        {
+            // Sin MD1 no se puede copiar el modo del otro a mano: SV es la tecla A/B de la radio
+            // (manual CAT: «SWAP VFO»). Sin probar con la radio.
+            await MandarAsync("SV;", ct).ConfigureAwait(false);
+            await LeerEstadoAsync(ct).ConfigureAwait(false);
+            return;
+        }
+
+        var largo = 2 + _perfil.CifrasDeFrecuencia;
+        var fa = await PreguntarAsync("FA;", ct).ConfigureAwait(false);
+        var fb = await PreguntarAsync("FB;", ct).ConfigureAwait(false);
+        var ma = await PreguntarAsync("MD0;", ct).ConfigureAwait(false);
+        var mb = await PreguntarAsync("MD1;", ct).ConfigureAwait(false);
+        if (fa?.Length != largo || fb?.Length != largo || ma is not { Length: 4 } || mb is not { Length: 4 })
+        {
+            throw new InvalidOperationException(
+                $"No se pueden intercambiar los VFO: el equipo no ha dado los dos ({fa}, {fb}, {ma}, {mb}).");
+        }
+
+        // Primero el modo y luego la frecuencia: al cambiar de LSB a USB el FT-710 corre el
+        // dial (visto en la radio: 14.155.000 pasa a 14.153.600), asi que la frecuencia va la
+        // ultima para que quede la que toca.
+        await MandarAsync($"MD0{mb[3]};", ct).ConfigureAwait(false);
+        await MandarAsync($"MD1{ma[3]};", ct).ConfigureAwait(false);
+        await MandarAsync($"FA{fb[2..]};", ct).ConfigureAwait(false);
+        await MandarAsync($"FB{fa[2..]};", ct).ConfigureAwait(false);
+        await LeerEstadoAsync(ct).ConfigureAwait(false);
+    }, ct);
+
+    /// <inheritdoc />
+    public IReadOnlySet<TeclaDelEquipo> Teclas => _perfil.Teclas;
+
+    /// <summary>Las ordenes de una tecla en este modelo.</summary>
+    /// <param name="tecla">Tecla.</param>
+    /// <returns>Las ordenes.</returns>
+    /// <exception cref="NotSupportedException">Si el modelo no tiene esa tecla por CAT.</exception>
+    public IReadOnlyList<string> OrdenesDeLaTeclaEnEsteModelo(TeclaDelEquipo tecla)
+    {
+        if (!_perfil.Teclas.Contains(tecla))
+        {
+            throw new NotSupportedException($"El {_perfil.Nombre} no tiene la tecla {tecla} por CAT.");
+        }
+
+        return tecla == TeclaDelEquipo.BorrarClarificador
+            ? [_perfil.OrdenDeBorrarClarificador]
+            : OrdenesDeLaTecla(tecla);
+    }
+
+    /// <summary>La orden CAT que manda cada tecla. Ninguna transmite.</summary>
+    /// <param name="tecla">Tecla pulsada.</param>
+    /// <returns>Las ordenes, en orden.</returns>
+    public static IReadOnlyList<string> OrdenesDeLaTecla(TeclaDelEquipo tecla) => tecla switch
+    {
+        TeclaDelEquipo.MemoriaAVfo => ["MA;"],
+        TeclaDelEquipo.VfoOMemoria => ["VM;"],
+        TeclaDelEquipo.RecuperarMemoriaRapida => ["QR;"],
+        TeclaDelEquipo.GuardarMemoriaRapida => ["QI;"],
+        TeclaDelEquipo.BandaArriba => ["BU0;"],
+        TeclaDelEquipo.BandaAbajo => ["BD0;"],
+        TeclaDelEquipo.AjusteACero => ["ZI0;"],
+        TeclaDelEquipo.AlternarVfo => ["SV;"],
+        TeclaDelEquipo.BorrarClarificador => ["CF001+0000;"],
+
+        // DSP RESET no tiene orden CAT. Se hace lo que hace la tecla, a mano: desplazamiento de
+        // FI a cero, ancho al de omision del modo, muesca, contorno y APF apagados.
+        TeclaDelEquipo.RestablecerDsp => ["IS00+0000;", "SH0000;", "BP00000;", "CO000000;", "CO020000;"],
+        _ => throw new ArgumentOutOfRangeException(nameof(tecla), tecla, "Tecla desconocida."),
+    };
+
+    /// <inheritdoc />
+    public Task PulsarAsync(TeclaDelEquipo tecla, CancellationToken ct = default)
+        => EnExclusivaAsync(async () =>
+    {
+        foreach (var orden in OrdenesDeLaTeclaEnEsteModelo(tecla))
+        {
+            await MandarAsync(orden, ct).ConfigureAwait(false);
+        }
+
+        await LeerEstadoAsync(ct).ConfigureAwait(false);
+    }, ct);
+
+    /// <summary>
+    /// Las teclas de banda del FT-710, con el numero que lleva cada una en <c>BS</c> (manual CAT
+    /// 2306-C: 00 = 1,8 MHz … 10 = 50 MHz, 11 = «70 MHz/GEN»). El FT-710 no tiene 70 MHz, asi que
+    /// la 11 es la cobertura general.
+    /// </summary>
+    public static IReadOnlyList<TeclaDeBanda> BandasFt710 { get; } =
+    [
+        Tecla(0, "1.8", "160m", "160 m (1,8 MHz)"),
+        Tecla(1, "3.5", "80m", "80 m (3,5 MHz)"),
+        Tecla(2, "5", "60m", "60 m (5 MHz)"),
+        Tecla(3, "7", "40m", "40 m (7 MHz)"),
+        Tecla(4, "10", "30m", "30 m (10 MHz)"),
+        Tecla(5, "14", "20m", "20 m (14 MHz)"),
+        Tecla(6, "18", "17m", "17 m (18 MHz)"),
+        Tecla(7, "21", "15m", "15 m (21 MHz)"),
+        Tecla(8, "24", "12m", "12 m (24,9 MHz)"),
+        Tecla(9, "28", "10m", "10 m (28 MHz)"),
+        Tecla(10, "50", "6m", "6 m (50 MHz)"),
+        new TeclaDeBanda(11, "GEN", Banda.Vacia, "Cobertura general (recepción fuera de las bandas)"),
+    ];
+
+    private static TeclaDeBanda Tecla(int codigo, string rotulo, string banda, string descripcion) =>
+        new(codigo, rotulo, Banda.TryParse(banda, out var b) ? b : Banda.Vacia, descripcion);
+
+    /// <inheritdoc />
+    public IReadOnlyList<TeclaDeBanda> TeclasDeBanda => _perfil.Bandas;
+
+    /// <summary>La orden de la tecla de banda: <c>BS</c> y el numero de dos cifras.</summary>
+    /// <param name="tecla">Tecla pulsada.</param>
+    /// <returns>La orden, por ejemplo <c>BS03;</c> para 40 m.</returns>
+    public static string OrdenDeBanda(TeclaDeBanda tecla)
+    {
+        ArgumentNullException.ThrowIfNull(tecla);
+        if (tecla.Codigo is < 0 or > 11)
+        {
+            throw new ArgumentOutOfRangeException(nameof(tecla), tecla.Codigo, "El FT-710 tiene las bandas 00 a 11.");
+        }
+
+        return string.Create(CultureInfo.InvariantCulture, $"BS{tecla.Codigo:D2};");
+    }
+
+    /// <summary>
+    /// La orden de una tecla de modo. <c>MD0</c> es el VFO activo en el FT-710 (ver
+    /// <see cref="PonerModoAsync"/>). CW va a CW-U (3), que es lo que pone la tecla MODE de la
+    /// radio; DATA va a DATA-L (8) por debajo de 10 MHz y a DATA-U (C) por encima, como la radio.
+    /// </summary>
+    /// <param name="modo">Tecla pulsada.</param>
+    /// <param name="frecuencia">Frecuencia del VFO activo, para elegir la banda lateral de datos.</param>
+    /// <returns>La orden, por ejemplo <c>MD02;</c>.</returns>
+    public static string OrdenDeModo(TeclaDeModo modo, Frecuencia frecuencia)
+    {
+        var codigo = modo switch
+        {
+            TeclaDeModo.Lsb => '1',
+            TeclaDeModo.Usb => '2',
+            TeclaDeModo.Cw => '3',
+            TeclaDeModo.Fm => '4',
+            TeclaDeModo.Am => '5',
+            TeclaDeModo.Datos => frecuencia.Hercios < 10_000_000 ? '8' : 'C',
+            _ => throw new ArgumentOutOfRangeException(nameof(modo), modo, "Tecla de modo desconocida."),
+        };
+        return $"MD0{codigo};";
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// <c>BS</c> hace lo mismo que la tecla BAND de la radio: el VFO activo pasa a la ultima
+    /// frecuencia y modo usados en esa banda. No lleva VFO: va siempre al activo.
+    /// </remarks>
+    public Task IrABandaAsync(TeclaDeBanda tecla, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(tecla);
+        string orden;
+        if (_perfil == Yaesu.PerfilesYaesu.Ft710)
+        {
+            orden = OrdenDeBanda(tecla);
+        }
+        else
+        {
+            if (!_perfil.Bandas.Any(b => b.Codigo == tecla.Codigo))
+            {
+                throw new ArgumentOutOfRangeException(nameof(tecla), tecla.Codigo, $"El {_perfil.Nombre} no tiene esa tecla de banda.");
+            }
+
+            orden = string.Create(CultureInfo.InvariantCulture, $"BS{tecla.Codigo:D2};");
+        }
+
+        return EnExclusivaAsync(async () =>
+        {
+            await MandarAsync(orden, ct).ConfigureAwait(false);
+            await LeerEstadoAsync(ct).ConfigureAwait(false);
+        }, ct);
+    }
+
+    /// <inheritdoc />
+    public Task PonerModoDeTeclaAsync(TeclaDeModo modo, CancellationToken ct = default)
+        => EnExclusivaAsync(async () =>
+    {
+        // La frecuencia del VFO activo, preguntada ahora (VS;), para DATA-L/DATA-U.
+        var enB = await ElActivoEsBAsync(ct).ConfigureAwait(false);
+        var frecuencia = enB ? Vfos.B.Frecuencia : Vfos.A.Frecuencia;
+        if (frecuencia.EsCero) frecuencia = Estado.Frecuencia;
+
+        var orden = OrdenDeModo(modo, frecuencia);
+        if (!_perfil.ModoPrincipalEsElActivo && enB)
+        {
+            orden = "MD1" + orden[3..];
+        }
+
+        await MandarAsync(orden, ct).ConfigureAwait(false);
+        await LeerEstadoAsync(ct).ConfigureAwait(false);
+    }, ct);
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// El paso sale del menu del propio equipo (03-05-01 en banda lateral y telegrafia, 03-05-02
+    /// en datos; 5, 10 o 20 Hz). Una muesca de rueda son diez pasos —la rueda da unas 24 muescas
+    /// por vuelta y el dial 200 pasos—; con FINE un paso y con FAST cien. Con LOCK puesto no se
+    /// mueve, como el dial de verdad. Se parte de la frecuencia sin clarificador (IF/OI), que es
+    /// la que se escribe con FA/FB.
+    /// </remarks>
+    public Task GirarDialAsync(int muescas, CancellationToken ct = default)
+        => EnExclusivaAsync(async () =>
+    {
+        if (muescas == 0 || await EstaBloqueadoAsync(ct).ConfigureAwait(false))
+        {
+            return;
+        }
+
+        var modo = Volatile.Read(ref _modoDelEquipo) ?? "USB";
+        var menu = modo is "RTTY" or "PSK" or "PKTLSB" or "PKTUSB" ? "030502" : "030501";
+        var paso = modo is "AM" or "FM" or "PKTFM"
+            ? 100
+            : !_perfil.PasosDelMenuFt710
+                ? 10
+            : await LeerDelMenuAsync(menu, ct).ConfigureAwait(false) is { Valor: var v } && int.TryParse(v, out var i)
+                ? i switch { 0 => 5, 1 => 10, _ => 20 }
+                : 10;
+
+        var fina = await PreguntarAsync("FN;", ct).ConfigureAwait(false);
+        var factor = fina switch { "FN1" => 1, "FN2" => 100, _ => 10 };
+        await MoverAsync((long)muescas * paso * factor, ajustarA: 0, ct).ConfigureAwait(false);
+    }, ct);
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// En memorias, cambia de canal (CH0 sube, CH1 baja). En VFO, salta de canal en canal con el
+    /// paso del menu 03-05-03 (1, 2,5, 5 o 10 kHz; 03-05-04 en AM y 03-05-05 en FM), cayendo en la
+    /// rejilla como el mando del equipo.
+    /// </remarks>
+    public Task GirarPasosAsync(int muescas, CancellationToken ct = default)
+        => EnExclusivaAsync(async () =>
+    {
+        if (muescas == 0)
+        {
+            return;
+        }
+
+        await LeerEstadoAsync(ct).ConfigureAwait(false);
+        if (Volatile.Read(ref _enMemoria))
+        {
+            for (var i = 0; i < Math.Abs(muescas); i++)
+            {
+                await MandarAsync(muescas > 0 ? "CH0;" : "CH1;", ct).ConfigureAwait(false);
+            }
+
+            await LeerEstadoAsync(ct).ConfigureAwait(false);
+            return;
+        }
+
+        if (await EstaBloqueadoAsync(ct).ConfigureAwait(false))
+        {
+            return;
+        }
+
+        var modo = Volatile.Read(ref _modoDelEquipo) ?? "USB";
+        var (menu, pasos) = modo switch
+        {
+            "AM" => ("030504", new[] { 2500, 5000, 9000, 10000, 12500, 25000 }),
+            "FM" or "PKTFM" => ("030505", new[] { 5000, 6250, 10000, 12500, 20000, 25000 }),
+            _ => ("030503", new[] { 1000, 2500, 5000, 10000 }),
+        };
+        // Fuera del FT-710 el menu tiene otra numeracion: se usa el primer paso de la tabla.
+        var leido = _perfil.PasosDelMenuFt710 ? await LeerDelMenuAsync(menu, ct).ConfigureAwait(false) : null;
+        var indice = leido is { Valor: var v } && int.TryParse(v, out var n) && n >= 0 && n < pasos.Length ? n : 0;
+        var paso = pasos[indice];
+        await MoverAsync((long)muescas * paso, ajustarA: paso, ct).ConfigureAwait(false);
+    }, ct);
+
+    /// <summary>
+    /// Prepara la siguiente transmision vigilada para que sea una sintonia del acoplador.
+    /// </summary>
+    /// <remarks>
+    /// Se llama justo antes de pedir antena al vigilante: en vez de <c>TX1;</c> se manda
+    /// <c>AC003;</c> (el TUNE mantenido del equipo) y al soltar se manda <c>TX0;</c> y, si el
+    /// acoplador sigue sintonizando, se para.
+    /// </remarks>
+    public void PrepararSintonia() => Volatile.Write(ref _sintoniaPedida, 1);
+
+    /// <summary>
+    /// Lo que se deja sintonizando un modelo que no dice por CAT cuando acaba (todos menos el
+    /// FT-710): el acoplador interno de estos equipos tarda unos segundos como mucho.
+    /// </summary>
+    public static TimeSpan SintoniaSinIndicador { get; } = TimeSpan.FromSeconds(5);
+
+    /// <summary>El modelo dice por CAT cuando termina de sintonizar el acoplador.</summary>
+    public bool VeElFinDeLaSintonia => _perfil.PosicionDeSintoniaEnRi is not null;
+
+    /// <summary>
+    /// Espera a que el acoplador termine de sintonizar, latiendo al vigilante mientras tanto.
+    /// </summary>
+    /// <param name="latir">Latido al vigilante.</param>
+    /// <param name="tope">Lo mas que se espera.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>Verdadero si se le vio empezar y terminar dentro del tope.</returns>
+    public async Task<bool> EsperarFinDeSintoniaAsync(Action latir, TimeSpan tope, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(latir);
+        var intervalo = TimeSpan.FromMilliseconds(250);
+        var vueltas = Math.Max(1, (int)(tope / intervalo));
+        var empezo = false;
+
+        if (_perfil.PosicionDeSintoniaEnRi is not { } posicion)
+        {
+            // Este modelo no dice por CAT cuando sintoniza: se deja el tiempo fijo de
+            // SintoniaSinIndicador (o el tope, si es menor), latiendo, y se suelta.
+            var fijas = Math.Max(1, (int)(TimeSpan.FromTicks(Math.Min(tope.Ticks, SintoniaSinIndicador.Ticks)) / intervalo));
+            for (var i = 0; i < fijas; i++)
+            {
+                latir();
+                await _opciones.Esperar(intervalo, ct).ConfigureAwait(false);
+            }
+
+            return false;
+        }
+        for (var i = 0; i < vueltas; i++)
+        {
+            // La primera mirada, en el acto: con el acoplador ya ajustado para esa frecuencia la
+            // sintonia dura menos de medio segundo.
+            if (i > 0)
+            {
+                await _opciones.Esperar(intervalo, ct).ConfigureAwait(false);
+            }
+
+            latir();
+
+            // RI P1…P8 van de la posicion 2 a la 9: P6 (posicion 7) es 1 mientras el acoplador
+            // sintoniza. Visto en la radio: «RI01010100» (Hi-SWR, TX, sintonizando) y luego ceros.
+            var indicadores = await _canal.PreguntarAsync("RI0;", ct).ConfigureAwait(false);
+            _registro.LogDebug("CAT RI0; -> {Respuesta} (sintonia)", indicadores ?? "(sin respuesta)");
+            if (indicadores is null || indicadores.Length < posicion + 2 || !indicadores.StartsWith("RI", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (indicadores[posicion] == '1')
+            {
+                empezo = true;
+            }
+            else if (empezo)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private async Task<bool> EstaBloqueadoAsync(CancellationToken ct) =>
+        await PreguntarAsync("LK;", ct).ConfigureAwait(false) == "LK1";
+
+    private async Task MoverAsync(long hercios, int ajustarA, CancellationToken ct)
+    {
+        // IF da el VFO A y OI el B, los dos sin el clarificador sumado (FA si lo lleva).
+        var enB = Estado.Vfo == "VFO B";
+        var informe = await PreguntarAsync(enB ? "OI;" : "IF;", ct).ConfigureAwait(false);
+        var n = _perfil.CifrasDeFrecuencia;
+        if (informe is null || informe.Length < 5 + n || !long.TryParse(informe.AsSpan(5, n), NumberStyles.None, CultureInfo.InvariantCulture, out var ahora))
+        {
+            throw new InvalidOperationException($"No se sabe en que frecuencia esta el equipo ({informe}).");
+        }
+
+        var nueva = ahora + hercios;
+        if (ajustarA > 0)
+        {
+            // Como el mando de canales: se cae en la rejilla del paso.
+            nueva = hercios > 0
+                ? ((ahora / ajustarA) + (hercios / ajustarA)) * ajustarA
+                : (((ahora + ajustarA - 1) / ajustarA) + (hercios / ajustarA)) * ajustarA;
+        }
+
+        nueva = Math.Clamp(nueva, 30_000, _perfil.TopeDelDial);
+        await MandarAsync($"{(enB ? "FB" : "FA")}{_perfil.Cifras(nueva)};", ct).ConfigureAwait(false);
         await LeerEstadoAsync(ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task PonerModoAsync(Modo modo, CancellationToken ct = default)
+    /// <remarks>
+    /// <c>AB;</c> copia el A sobre el B y <c>BA;</c> el B sobre el A. Pisa el otro VFO, asi que
+    /// tambien es solo cosa del operador.
+    /// </remarks>
+    public Task IgualarVfosAsync(CancellationToken ct = default)
+        => EnExclusivaAsync(async () =>
     {
-        var nombre = _opciones.Traductor.AlEquipo(modo, Estado.Frecuencia)
+        await MandarAsync(Estado.Vfo == "VFO B" ? "BA;" : "AB;", ct).ConfigureAwait(false);
+        await LeerEstadoAsync(ct).ConfigureAwait(false);
+    }, ct);
+
+    /// <inheritdoc />
+    public Task PonerFrecuenciaDeAsync(NombreDeVfo vfo, Frecuencia frecuencia, CancellationToken ct = default)
+        => EnExclusivaAsync(async () =>
+    {
+        var hercios = frecuencia.Hercios;
+        ComprobarFrecuencia(hercios, frecuencia);
+
+        var orden = vfo == NombreDeVfo.B ? "FB" : "FA";
+        await MandarAsync($"{orden}{_perfil.Cifras(hercios)};", ct).ConfigureAwait(false);
+        await LeerEstadoAsync(ct).ConfigureAwait(false);
+    }, ct);
+
+    /// <inheritdoc />
+    public Task PonerModoDeAsync(NombreDeVfo vfo, Modo modo, CancellationToken ct = default)
+        => EnExclusivaAsync(async () =>
+    {
+        var frecuencia = vfo == NombreDeVfo.B ? Vfos.B.Frecuencia : Vfos.A.Frecuencia;
+        var nombre = _opciones.Traductor.AlEquipo(modo, frecuencia)
             ?? throw new ArgumentException($"No sé cómo pedirle al FT-710 el modo {modo}.", nameof(modo));
 
         var codigo = ModosFt710.AlEquipo(nombre)
             ?? throw new ArgumentException($"El FT-710 no tiene el modo {nombre}.", nameof(modo));
 
-        await MandarAsync($"MD0{codigo};", ct).ConfigureAwait(false);
+        // MD0 es el VFO activo y MD1 el otro, sea A o B (FT-710). En los de doble receptor MD0
+        // es siempre el A y MD1 el B.
+        var esElActivo = (vfo == NombreDeVfo.B) == await ElActivoEsBAsync(ct).ConfigureAwait(false);
+        if (!esElActivo && !_perfil.TieneModoDelSegundoVfo)
+        {
+            throw new NotSupportedException(
+                $"El {_perfil.Nombre} no deja cambiar por CAT el modo del VFO que no está en uso (no tiene MD1).");
+        }
+
+        var orden = _perfil.ModoPrincipalEsElActivo
+            ? (esElActivo ? "MD0" : "MD1")
+            : (vfo == NombreDeVfo.B ? "MD1" : "MD0");
+        await MandarAsync($"{orden}{codigo};", ct).ConfigureAwait(false);
         await LeerEstadoAsync(ct).ConfigureAwait(false);
-    }
+    }, ct);
 
     /// <summary>
     /// Subir el PTT por aqui se salta el vigilante, asi que se rechaza; bajarlo se permite siempre.
@@ -309,7 +986,51 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     /// <inheritdoc />
     async Task IPttDirecto.PonerPttDirectoAsync(bool transmitir, CancellationToken ct)
     {
-        await _canal.MandarAsync(transmitir ? "TX1;" : "TX0;", ct).ConfigureAwait(false);
+        if (transmitir && Interlocked.Exchange(ref _sintoniaPedida, 0) == 1)
+        {
+            // La transmision vigilada de TUNE: el que emite es el propio acoplador («Tuning
+            // Start», AC003), no el CAT. El vigilante la trata como cualquier otra: tope de
+            // tiempo, latido y suelta por todas sus vias.
+            Volatile.Write(ref _sintonizando, true);
+            Volatile.Write(ref _pttPedido, true);
+            await _canal.MandarAsync(_perfil.OrdenDeSintonia, ct).ConfigureAwait(false);
+            Actualizar(estado => estado with { Transmitiendo = true });
+            return;
+        }
+
+        if (!transmitir && Volatile.Read(ref _sintonizando))
+        {
+            // Bajar una sintonia: TX0 siempre y, si el acoplador sigue en ello, pararlo
+            // («Tuner OFF (Tuning Stop)», AC000) y volverlo a dejar en linea (AC001).
+            Volatile.Write(ref _sintonizando, false);
+            await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false);
+            if (_perfil.PosicionDeSintoniaEnRi is { } posicion)
+            {
+                var indicadores = await _canal.PreguntarAsync("RI0;", ct).ConfigureAwait(false);
+                if (indicadores is null || !indicadores.StartsWith("RI", StringComparison.Ordinal)
+                    || indicadores.Length < posicion + 2 || indicadores[posicion] != '0')
+                {
+                    await _canal.MandarAsync("AC000;", ct).ConfigureAwait(false);
+                }
+            }
+
+            // Como la tecla del equipo: tras sintonizar, el acoplador queda en linea.
+            await _canal.MandarAsync("AC001;", ct).ConfigureAwait(false);
+
+            Volatile.Write(ref _pttPedido, false);
+            Actualizar(estado => estado with { Transmitiendo = false });
+            return;
+        }
+
+        if (_opciones.ViaDePtt != ViaDePtt.Cat && _canal.PuedeAccionarLineas)
+        {
+            await _canal.PonerLineaDePttAsync(transmitir, ct).ConfigureAwait(false);
+        }
+        else
+        {
+            await _canal.MandarAsync(transmitir ? "TX1;" : "TX0;", ct).ConfigureAwait(false);
+        }
+
         Volatile.Write(ref _pttPedido, transmitir);
         Actualizar(estado => estado with { Transmitiendo = transmitir });
     }
@@ -349,16 +1070,21 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
             }
         }
 
-        var descripcion = MandosFt710.Buscar(mando);
+        var descripcion = BuscarMando(mando);
         if (descripcion is null)
         {
             return null;
         }
 
-        return mando == MandoDeEquipo.AnchoDeFiltro
+        // La tabla de anchos en hercios es la del FT-710: en los demas se deja el indice.
+        return mando == MandoDeEquipo.AnchoDeFiltro && _perfil == Yaesu.PerfilesYaesu.Ft710
             ? RangoDelAnchoDeFiltro(descripcion.Rango)
             : descripcion.Rango;
     }
+
+    /// <summary>La descripcion de un mando en la tabla de este modelo.</summary>
+    private MandoFt710? BuscarMando(MandoDeEquipo mando) =>
+        _perfil.Mandos.FirstOrDefault(descripcion => descripcion.Mando == mando);
 
     /// <summary>
     /// Arma el rango del ancho de filtro con el modo que tenga puesto el equipo.
@@ -397,7 +1123,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     public async Task<int?> LeerAnchoDeFiltroEnHerciosAsync(CancellationToken ct = default)
     {
         var indice = await LeerMandoAsync(MandoDeEquipo.AnchoDeFiltro, ct).ConfigureAwait(false);
-        return indice is null
+        return indice is null || _perfil != Yaesu.PerfilesYaesu.Ft710
             ? null
             : AnchosDeFiltroFt710.Hercios((int)indice.Value, Volatile.Read(ref _modoDelEquipo));
     }
@@ -416,7 +1142,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
         VfoDelEquipo vfo,
         CancellationToken ct = default)
     {
-        var descripcion = MandosFt710.Buscar(mando);
+        var descripcion = BuscarMando(mando);
         if (descripcion is null || Rango(mando, vfo) is null || descripcion.ConsultaDe(vfo) is not { } consulta)
         {
             return null;
@@ -456,7 +1182,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
         VfoDelEquipo vfo,
         CancellationToken ct = default)
     {
-        var descripcion = MandosFt710.Buscar(mando);
+        var descripcion = BuscarMando(mando);
         var rango = Rango(mando, vfo);
         if (descripcion is null || rango is null)
         {
@@ -468,7 +1194,11 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
             throw new NotSupportedException($"El mando {mando} se puede leer pero no accionar.");
         }
 
-        if (rango.TransmiteAlAccionar && !Volatile.Read(ref _pttPedido))
+        // En el acoplador solo emite la ultima posicion («Sintonizar», AC002); encenderlo o
+        // apagarlo (AC001/AC000) no pone nada en el aire y no necesita PTT.
+        var emite = rango.TransmiteAlAccionar
+                    && (!rango.EsDePosiciones || rango.Ajustar(valor) >= rango.Maximo);
+        if (emite && !Volatile.Read(ref _pttPedido))
         {
             // Sintonizar el acoplador emite portadora. Si no hay una transmision pedida al
             // vigilante, no hay nadie que suelte el PTT si esto se atasca: no se acciona.
@@ -477,7 +1207,19 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
                 + "IVigilantePtt y accionarlo dentro de ella.");
         }
 
-        await MandarAsync(descripcion.OrdenDeEscritura(valor, vfo), ct).ConfigureAwait(false);
+        string? loQueHay = null;
+        if (descripcion.NecesitaLoQueHay)
+        {
+            loQueHay = await PreguntarAsync(descripcion.OrdenDeLectura, ct).ConfigureAwait(false);
+            if (OrdenesFt710.DiceQueNoLoAdmite(loQueHay)
+                || !loQueHay!.StartsWith(descripcion.Consulta, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(
+                    $"Para accionar {mando} hay que saber antes lo que tiene el equipo, y contesta «{loQueHay}».");
+            }
+        }
+
+        await MandarAsync(descripcion.OrdenDeEscritura(valor, vfo, loQueHay), ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -517,7 +1259,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     public async Task<IReadOnlyDictionary<string, int>> LeerMedidoresCrudosAsync(CancellationToken ct = default)
     {
         var medidores = new Dictionary<string, int>(StringComparer.Ordinal);
-        foreach (var (orden, nombre) in MedidoresCrudos)
+        foreach (var (orden, nombre) in _perfil.Medidores)
         {
             var respuesta = await PreguntarAsync($"{orden};", ct).ConfigureAwait(false);
             if (OrdenesFt710.DiceQueNoLoAdmite(respuesta) || !respuesta!.StartsWith(orden, StringComparison.Ordinal))
@@ -525,7 +1267,15 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
                 continue;
             }
 
+            // La trama es RM + medidor + TRES cifras de valor + tres de relleno: «RM1008000» es
+            // el medidor S marcando 8. Leer las seis cifras de golpe daba 8000 con el equipo
+            // real (27-09-2026), fuera de la escala de 0 a 255.
             var cifras = respuesta[orden.Length..];
+            if (cifras.Length > 3)
+            {
+                cifras = cifras[..3];
+            }
+
             if (int.TryParse(cifras, NumberStyles.Integer, CultureInfo.InvariantCulture, out var valor))
             {
                 medidores[nombre] = valor;
@@ -557,7 +1307,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     {
         var memorias = new List<MemoriaDeEquipo>();
 
-        for (var canal = 1; canal <= MemoriasDelEquipo; canal++)
+        for (var canal = 1; canal <= _perfil.Memorias; canal++)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -576,7 +1326,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
                 continue;
             }
 
-            var etiqueta = await LeerRotuloDeMemoriaAsync(canal, ct).ConfigureAwait(false);
+            var etiqueta = _perfil.RotulosDeMemoria ? await LeerRotuloDeMemoriaAsync(canal, ct).ConfigureAwait(false) : null;
             memorias.Add(memoria! with { Etiqueta = etiqueta });
         }
 
@@ -597,20 +1347,22 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     private bool TryLeerMemoria(string respuesta, out MemoriaDeEquipo? memoria)
     {
         memoria = null;
-        if (!respuesta.StartsWith("MR", StringComparison.OrdinalIgnoreCase) || respuesta.Length < 22)
+        var n = _perfil.CifrasDeFrecuencia;
+        if (!respuesta.StartsWith("MR", StringComparison.OrdinalIgnoreCase) || respuesta.Length < 13 + n)
         {
             return false;
         }
 
         var cuerpo = respuesta[2..];
         if (!int.TryParse(cuerpo[..3], NumberStyles.Integer, CultureInfo.InvariantCulture, out var canal)
-            || !long.TryParse(cuerpo[3..12], NumberStyles.Integer, CultureInfo.InvariantCulture, out var hercios))
+            || !long.TryParse(cuerpo[3..(3 + n)], NumberStyles.Integer, CultureInfo.InvariantCulture, out var hercios))
         {
             return false;
         }
 
         var modo = Modo.Vacio;
-        if (cuerpo.Length > 19 && ModosFt710.DesdeElEquipo(cuerpo[19]) is { } nombre)
+        var posicionDelModo = 10 + n;
+        if (cuerpo.Length > posicionDelModo && ModosFt710.DesdeElEquipo(cuerpo[posicionDelModo]) is { } nombre)
         {
             modo = _opciones.Traductor.DesdeElEquipo(nombre);
         }
@@ -681,7 +1433,8 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     }
 
     /// <inheritdoc />
-    public async Task IrAMemoriaAsync(int numero, CancellationToken ct = default)
+    public Task IrAMemoriaAsync(int numero, CancellationToken ct = default)
+        => EnExclusivaAsync(async () =>
     {
         if (numero is < 1 or > 999)
         {
@@ -690,7 +1443,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
 
         await MandarAsync(string.Create(CultureInfo.InvariantCulture, $"MC{numero:D3};"), ct).ConfigureAwait(false);
         await LeerEstadoAsync(ct).ConfigureAwait(false);
-    }
+    }, ct);
 
     /// <inheritdoc />
     /// <exception cref="OrdenPeligrosaException">
@@ -839,7 +1592,10 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     /// <summary>Lee del equipo lo que hace falta para el cuaderno.</summary>
     /// <param name="ct">Testigo de cancelacion.</param>
     /// <returns>El estado recien leido.</returns>
-    public async Task<EstadoDelEquipo> LeerEstadoAsync(CancellationToken ct = default)
+    public Task<EstadoDelEquipo> LeerEstadoAsync(CancellationToken ct = default) =>
+        EnExclusivaAsync(() => LeerEstadoSinEsperarAsync(ct), ct);
+
+    private async Task<EstadoDelEquipo> LeerEstadoSinEsperarAsync(CancellationToken ct)
     {
         var anterior = Estado;
         var vfoActivo = await PreguntarAsync("VS;", ct).ConfigureAwait(false);
@@ -850,20 +1606,47 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
             throw new EquipoNoContestaException(_canal.Descripcion);
         }
 
-        var enB = vfoActivo is { Length: >= 3 } && vfoActivo[2] == '1';
+        // Si VS contesta «?;» o algo que no es VS, se sigue con el VFO que se tenia.
+        var enB = vfoActivo is { Length: >= 3 } && vfoActivo.StartsWith("VS", StringComparison.OrdinalIgnoreCase)
+            ? vfoActivo[2] == '1'
+            : anterior.Vfo == "VFO B";
 
-        var frecuenciaActiva = await LeerFrecuenciaAsync(enB ? "FB" : "FA", ct).ConfigureAwait(false)
-            ?? anterior.Frecuencia;
+        // Los dos VFO en cada pasada: el frontal los ensena a la vez, como la radio.
+        var anteriores = Vfos;
+        var frecuenciaA = await LeerFrecuenciaAsync("FA", ct).ConfigureAwait(false);
+        var frecuenciaB = await LeerFrecuenciaAsync("FB", ct).ConfigureAwait(false);
+        var frecuenciaActiva = (enB ? frecuenciaB : frecuenciaA) ?? anterior.Frecuencia;
 
         var split = await PreguntarAsync("ST;", ct).ConfigureAwait(false);
-        var haySplit = split is { Length: >= 3 } && split[2] != '0';
+        var stContesta = split is { Length: >= 3 } && split.StartsWith("ST", StringComparison.OrdinalIgnoreCase);
+        var haySplit = stContesta
+            ? split![2] != '0'
+            : Vfos.Split;
+
+        // Por donde se transmite. Si el equipo no contesta a FT;, se deduce: sin split se
+        // transmite por el activo, con split por el otro.
+        var respuestaFt = await PreguntarAsync("FT;", ct).ConfigureAwait(false);
+        var ftContesta = respuestaFt is { Length: >= 3 }
+                         && respuestaFt.StartsWith("FT", StringComparison.Ordinal)
+                         && respuestaFt[2] is '0' or '1';
+        var transmiteEnB = ftContesta
+            // FT0 = transmite la banda PRINCIPAL (el VFO elegido con VS), FT1 = la otra. En los
+            // modelos con FT absoluto (FT0 = VFO A, FT1 = VFO B) no se mira el activo.
+            ? _perfil.TransmisionRelativaAlActivo ? (respuestaFt![2] == '1') != enB : respuestaFt![2] == '1'
+            : enB != haySplit;
+
+        if (!stContesta && ftContesta)
+        {
+            // Sin ST (FT-991, FTDX1200/3000/5000): hay split si se transmite por el otro VFO.
+            haySplit = transmiteEnB != enB;
+        }
 
         Frecuencia? frecuenciaRx = null;
         var frecuenciaDeTrabajo = frecuenciaActiva;
         if (haySplit)
         {
             // Con dos frecuencias, el cuaderno apunta la de transmision y guarda la de escucha.
-            var otra = await LeerFrecuenciaAsync(enB ? "FA" : "FB", ct).ConfigureAwait(false);
+            var otra = enB ? frecuenciaA : frecuenciaB;
             if (otra is not null)
             {
                 frecuenciaRx = frecuenciaActiva;
@@ -871,18 +1654,73 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
             }
         }
 
-        var modo = anterior.Modo;
-        var respuestaModo = await PreguntarAsync(enB ? "MD1;" : "MD0;", ct).ConfigureAwait(false);
-        if (respuestaModo is { Length: >= 4 })
+        // IF: P3 desplazamiento del clarificador (+0120), P4 clarificador de recepcion, P5 de
+        // transmision y P7 si se esta en VFO (0), memoria (1), sintonia de memoria (2) o QMB (3).
+        // Con esto el visor ensena lo que se cambia desde las teclas del propio equipo.
+        var informe = await PreguntarAsync("IF;", ct).ConfigureAwait(false);
+        var anterioresVfos = Vfos;
+        var rit = anterioresVfos.Rit;
+        var xit = anterioresVfos.Xit;
+        var desplazamiento = anterioresVfos.DesplazamientoRitHz;
+        // IF + memoria (3) + frecuencia (9, u 8 en los antiguos) + clarificador (5) + P4 P5 P6 P7.
+        var baseIf = 5 + _perfil.CifrasDeFrecuencia;
+        if (informe is not null && informe.Length >= baseIf + 9 && informe.StartsWith("IF", StringComparison.Ordinal)
+            && int.TryParse(informe.AsSpan(baseIf, 5), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var hz))
         {
-            var nombre = ModosFt710.DesdeElEquipo(respuestaModo[3]);
-            if (nombre is not null)
-            {
-                modo = _opciones.Traductor.DesdeElEquipo(nombre);
+            desplazamiento = hz;
+            rit = informe[baseIf + 5] == '1';
+            xit = informe[baseIf + 6] == '1';
+            Volatile.Write(ref _enMemoria, informe[baseIf + 8] is '1' or '2');
+        }
 
-                // El ancho de filtro solo se puede dar en hercios sabiendo el modo.
-                Volatile.Write(ref _modoDelEquipo, nombre);
-            }
+        // MD0 es la banda principal (el VFO activo) y MD1 la otra: con VS1, MD0 es el B. En los
+        // de doble receptor MD0 es siempre el A. Sin MD1, el modo del otro no se sabe.
+        var modoPrincipal = await LeerModoAsync("MD0", ct).ConfigureAwait(false);
+        var modoOtro = _perfil.TieneModoDelSegundoVfo ? await LeerModoAsync("MD1", ct).ConfigureAwait(false) : null;
+        var modoA = _perfil.ModoPrincipalEsElActivo ? (enB ? modoOtro : modoPrincipal) : modoPrincipal;
+        var modoB = _perfil.ModoPrincipalEsElActivo ? (enB ? modoPrincipal : modoOtro) : modoOtro;
+        var nombreActivo = enB ? modoB : modoA;
+
+        var modo = anterior.Modo;
+        if (nombreActivo is not null)
+        {
+            modo = _opciones.Traductor.DesdeElEquipo(nombreActivo);
+
+            // El ancho de filtro solo se puede dar en hercios sabiendo el modo.
+            Volatile.Write(ref _modoDelEquipo, nombreActivo);
+        }
+
+        var vfos = new EstadoDeLosVfos(
+            new EstadoDeUnVfo(
+                NombreDeVfo.A,
+                frecuenciaA ?? anteriores.A.Frecuencia,
+                modoA is null ? anteriores.A.Modo : _opciones.Traductor.DesdeElEquipo(modoA),
+                EsElActivo: !enB,
+                Transmite: !transmiteEnB,
+                Recibe: !enB,
+                AnchoDeFiltroHz: null),
+            new EstadoDeUnVfo(
+                NombreDeVfo.B,
+                frecuenciaB ?? anteriores.B.Frecuencia,
+                modoB is null ? anteriores.B.Modo : _opciones.Traductor.DesdeElEquipo(modoB),
+                EsElActivo: enB,
+                Transmite: transmiteEnB,
+                Recibe: enB,
+                AnchoDeFiltroHz: null),
+            Split: haySplit,
+            Rit: rit,
+            DesplazamientoRitHz: desplazamiento,
+            Xit: xit,
+            DesplazamientoXitHz: desplazamiento)
+        {
+            EnMemoria = Volatile.Read(ref _enMemoria),
+        };
+
+        var vfosCambiaron = false;
+        lock (_candado)
+        {
+            vfosCambiaron = _vfos != vfos;
+            _vfos = vfos;
         }
 
         double? potencia = anterior.PotenciaVatios;
@@ -908,18 +1746,10 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
             Vfo = enB ? "VFO B" : "VFO A",
             PotenciaVatios = potencia,
             SenalRecibida = senal,
-        });
+        }, forzarAviso: vfosCambiaron);
     }
 
-    private static readonly (string Orden, string Nombre)[] MedidoresCrudos =
-    [
-        ("RM1", "señal"),
-        ("RM3", "compresión"),
-        ("RM4", "control automático de nivel"),
-        ("RM5", "potencia"),
-        ("RM6", "relación de onda estacionaria"),
-        ("RM7", "corriente"),
-    ];
+
 
     /// <summary>
     /// Pregunta al equipo, mando a mando y VFO a VFO, que sabe hacer.
@@ -937,7 +1767,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
         var rechazados = new List<MandoDeEquipo>();
         var admitidosEnElSegundo = new List<MandoDeEquipo>();
 
-        foreach (var descripcion in MandosFt710.Todos)
+        foreach (var descripcion in _perfil.Mandos)
         {
             var respuesta = await PreguntarAsync(descripcion.OrdenDeLectura, ct).ConfigureAwait(false);
             if (OrdenesFt710.DiceQueNoLoAdmite(respuesta))
@@ -955,9 +1785,17 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
             }
 
             var respuestaDelSegundo = await PreguntarAsync(ordenDelSegundo, ct).ConfigureAwait(false);
-            if (!OrdenesFt710.DiceQueNoLoAdmite(respuestaDelSegundo))
+            if (EsDelSegundoVfo(respuestaDelSegundo, descripcion.ConsultaDelSegundoVfo!))
             {
                 admitidosEnElSegundo.Add(descripcion.Mando);
+            }
+            else if (!OrdenesFt710.DiceQueNoLoAdmite(respuestaDelSegundo))
+            {
+                _registro.LogDebug(
+                    "{Orden} contesta «{Respuesta}», que es el valor del VFO principal: {Mando} no existe aparte en el segundo.",
+                    ordenDelSegundo,
+                    respuestaDelSegundo,
+                    descripcion.Mando);
             }
         }
 
@@ -985,17 +1823,43 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
             rechazados.Count > 0 ? string.Join(", ", rechazados) : "ninguno");
     }
 
+    /// <summary>
+    /// La respuesta a la consulta del segundo VFO trae de verdad un valor de ese VFO.
+    /// </summary>
+    /// <remarks>
+    /// Con el equipo real (27-09-2026), <c>SQ1;</c>, <c>PA1;</c> e <c>IS1;</c> contestan
+    /// <c>SQ0000</c>, <c>PA00</c> e <c>IS00+0000</c>: con el indice del principal. El equipo no
+    /// dice «no lo admito», pero tampoco da un valor aparte; ofrecer ese mando en el VFO B seria
+    /// ensenar el del A con otra etiqueta. <c>AG1;</c> y <c>NB1;</c> si contestan con su indice.
+    /// </remarks>
+    private static bool EsDelSegundoVfo(string? respuesta, string consulta) =>
+        !OrdenesFt710.DiceQueNoLoAdmite(respuesta)
+        && respuesta!.Trim().StartsWith(consulta, StringComparison.OrdinalIgnoreCase);
+
     private async Task<Frecuencia?> LeerFrecuenciaAsync(string orden, CancellationToken ct)
     {
         var respuesta = await PreguntarAsync($"{orden};", ct).ConfigureAwait(false);
-        if (OrdenesFt710.DiceQueNoLoAdmite(respuesta) || respuesta!.Length < 3)
+        // Sin comprobar el prefijo, una respuesta atrasada de otra orden («SM0003») se leia
+        // como una frecuencia de 3 Hz.
+        if (OrdenesFt710.DiceQueNoLoAdmite(respuesta)
+            || respuesta!.Length != orden.Length + _perfil.CifrasDeFrecuencia
+            || !respuesta.StartsWith(orden, StringComparison.OrdinalIgnoreCase))
         {
             return null;
         }
 
-        var cifras = respuesta[2..];
+        var cifras = respuesta[orden.Length..];
         return long.TryParse(cifras, NumberStyles.Integer, CultureInfo.InvariantCulture, out var hercios)
             ? Frecuencia.DesdeHercios(hercios)
+            : null;
+    }
+
+    /// <summary>Lee el modo de un VFO (<c>MD0</c> o <c>MD1</c>) con el nombre que le da el equipo.</summary>
+    private async Task<string?> LeerModoAsync(string orden, CancellationToken ct)
+    {
+        var respuesta = await PreguntarAsync($"{orden};", ct).ConfigureAwait(false);
+        return respuesta is { Length: >= 4 } && respuesta.StartsWith(orden, StringComparison.Ordinal)
+            ? ModosFt710.DesdeElEquipo(respuesta[3])
             : null;
     }
 
@@ -1218,7 +2082,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     {
         // Nulo quiere decir «aquí el códec no dice nada»: con un puente por red o con el aviso
         // desactivado, hay que reintentar a la manera clásica.
-        if (!_opciones.ComprobarElCodecDeAudio || _canal is not CanalSerieCat)
+        if (!_opciones.ComprobarElCodecDeAudio || !_perfil.CodecDelFt710 || _canal is not CanalSerieCat)
         {
             return null;
         }
@@ -1265,6 +2129,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     private async Task ReconectarAsync(CancellationToken ct)
     {
         await _canal.AbrirAsync(ct).ConfigureAwait(false);
+        Volatile.Write(ref _canalAbiertoAlgunaVez, true);
         var identificador = await PreguntarAsync("ID;", ct).ConfigureAwait(false);
         if (identificador is null || !identificador.StartsWith("ID", StringComparison.OrdinalIgnoreCase))
         {
@@ -1281,9 +2146,25 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
     /// Si el canal se ha roto no basta con intentarlo por la via normal y anotar el fallo:
     /// cerrar con el equipo en antena es justo lo que no puede pasar. Se prueban las vias de
     /// emergencia, las mismas que usa el vigilante.
+    /// <para>
+    /// Pero si este control <b>nunca llego a abrir el canal</b> y no hay PTT pedido, no hay nada
+    /// que bajar: recorrer las vias abriria un puerto que nadie abrio —quiza de otro programa o
+    /// de otra radio— solo para mandarle <c>TX0;</c>. Pasaba al cerrar el programa sin haber
+    /// pulsado «Conectar» (27-09-2026). Con PTT pedido se recorren siempre, pase lo que pase.
+    /// </para>
     /// </remarks>
     private async Task BajarElPttComoSeaAsync(CancellationToken ct)
     {
+        if (!_canal.Abierto
+            && !Volatile.Read(ref _canalAbiertoAlgunaVez)
+            && !Volatile.Read(ref _pttPedido))
+        {
+            _registro.LogDebug(
+                "{Canal} no se llegó a abrir y no hay PTT pedido: no se toca el puerto al desconectar.",
+                _canal.Descripcion);
+            return;
+        }
+
         try
         {
             if (_canal.Abierto)
@@ -1324,6 +2205,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
         if (!_canal.Abierto)
         {
             await _canal.AbrirAsync(ct).ConfigureAwait(false);
+            Volatile.Write(ref _canalAbiertoAlgunaVez, true);
             _registro.LogDebug("Se ha vuelto a abrir {Canal} antes de preguntar.", _canal.Descripcion);
         }
 
@@ -1338,7 +2220,7 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
         _registro.LogDebug("CAT {Orden}", orden);
     }
 
-    private EstadoDelEquipo Actualizar(Func<EstadoDelEquipo, EstadoDelEquipo> cambio)
+    private EstadoDelEquipo Actualizar(Func<EstadoDelEquipo, EstadoDelEquipo> cambio, bool forzarAviso = false)
     {
         EstadoDelEquipo nuevo;
         bool avisar;
@@ -1347,7 +2229,9 @@ public sealed class ControlFt710 : IEquipoAvanzado, IPttDirecto, ISueltaDeEmerge
             var anterior = _estado;
             nuevo = cambio(anterior) with { LeidoUtc = DateTimeOffset.UtcNow };
             _estado = nuevo;
-            avisar = anterior with { LeidoUtc = default } != nuevo with { LeidoUtc = default };
+            // Tambien se avisa si solo ha cambiado el VFO que no se usa: el estado resumido no
+            // lo recoge, pero el visor lo pinta.
+            avisar = forzarAviso || anterior with { LeidoUtc = default } != nuevo with { LeidoUtc = default };
         }
 
         if (avisar)

@@ -109,6 +109,10 @@
                         Style="{StaticResource BotonPrincipal}"
                         Margin="0,0,8,0" />
                 <Button Content="Limpiar (Esc)" Command="{Binding Entrada.LimpiarCommand}" />
+                <!-- Al modificar un contacto del cuaderno (F2): su tarjeta QSL, para verla o mandarla. -->
+                <Button Content="Ver/enviar QSL…" Click="AlVerEnviarQsl" Margin="8,0,0,0"
+                        Visibility="{Binding Entrada.EnEdicion, Converter={StaticResource BooleanoAVisible}}"
+                        AutomationProperties.Name="Ver y enviar la tarjeta QSL de este contacto" />
             </StackPanel>
         </WrapPanel>
 
@@ -161,6 +165,14 @@
                 <TextBlock Text="Comentario" Style="{StaticResource EtiquetaDeCampo}" />
                 <TextBox Text="{Binding Entrada.Comentario, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
+
+            <!-- Lo que dice la ficha de QRZ.com del indicativo: discreto, sin robar sitio. -->
+            <TextBlock Text="{Binding Entrada.ResumenDeFicha}"
+                       ToolTip="Datos de la ficha del corresponsal. Nombre, QTH y localizador solo se rellenan si estaban vacíos."
+                       Style="{StaticResource TextoTenueEstilo}"
+                       VerticalAlignment="Bottom"
+                       Margin="0,0,0,4"
+                       AutomationProperties.Name="Resumen de la ficha de QRZ.com" />
         </WrapPanel>
 
         <!-- Aviso de «trabajado antes» -->

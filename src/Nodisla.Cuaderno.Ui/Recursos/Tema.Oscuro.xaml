@@ -47,4 +47,32 @@
     <SolidColorBrush x:Key="CorrectoBorde" Color="#FF4F9E6B" />
     <SolidColorBrush x:Key="CorrectoTexto" Color="#FFA9E5BE" />
 
+    <!--
+        ── El libro de contactos ──────────────────────────────────────────────
+        Igual en los DOS temas, como en Log4OM: el cromo puede ser oscuro, pero el contenido
+        que se lee renglon a renglon va CLARO —blanco roto con una alternancia de dos puntos—,
+        con texto oscuro de peso normal y cabecera gris medio. La rejilla oscura con letra
+        clara en negrita cansaba la vista: la pidio cambiar el operador (2026-09-27).
+    -->
+    <SolidColorBrush x:Key="RejillaFondo" Color="#FFFBFBF9" />
+    <SolidColorBrush x:Key="RejillaAlterna" Color="#FFF1F3F5" />
+    <SolidColorBrush x:Key="RejillaLinea" Color="#FFDDE1E6" />
+    <SolidColorBrush x:Key="RejillaCabecera" Color="#FFB9BFC7" />
+    <SolidColorBrush x:Key="RejillaCabeceraResalte" Color="#FFC9CED5" />
+    <SolidColorBrush x:Key="RejillaCabeceraTexto" Color="#FF1E252E" />
+    <SolidColorBrush x:Key="RejillaTexto" Color="#FF1E252E" />
+    <SolidColorBrush x:Key="RejillaTextoTenue" Color="#FF56616F" />
+    <SolidColorBrush x:Key="FilaElegida" Color="#FFCFE0F3" />
+    <SolidColorBrush x:Key="FilaElegidaTexto" Color="#FF0B2540" />
+    <SolidColorBrush x:Key="FilaElegidaBarra" Color="#FF0F5FA8" />
+    <SolidColorBrush x:Key="FilaBajoElRaton" Color="#FFE7EDF4" />
+    <!-- Color con significado: cada via de confirmacion tiene el suyo y nada mas lo lleva. -->
+    <SolidColorBrush x:Key="QslLotwTinta" Color="#FF1B6E3F" />
+    <SolidColorBrush x:Key="QslLotwFondo" Color="#402E9E60" />
+    <SolidColorBrush x:Key="QslEqslTinta" Color="#FF14618F" />
+    <SolidColorBrush x:Key="QslEqslFondo" Color="#402E8CC8" />
+    <SolidColorBrush x:Key="QslPapelTinta" Color="#FF8A5B0A" />
+    <SolidColorBrush x:Key="QslPapelFondo" Color="#40D9A441" />
+    <SolidColorBrush x:Key="QslQrzTinta" Color="#FF5B3899" />
+    <SolidColorBrush x:Key="QslQrzFondo" Color="#409B72D8" />
 </ResourceDictionary>

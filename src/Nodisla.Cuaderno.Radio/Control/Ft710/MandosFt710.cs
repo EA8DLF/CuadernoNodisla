@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 
 namespace Nodisla.Cuaderno.Radio.Control.Ft710;
@@ -54,6 +54,27 @@ public sealed record MandoFt710(
     /// </remarks>
     public int CifrasDeRelleno { get; init; }
 
+    /// <summary>
+    /// Lectura propia, para las ordenes cuyo valor no va al final en cifras decimales: el
+    /// analizador (<c>SS06</c> con un digito hexadecimal y relleno detras), el clarificador
+    /// (<c>CF000</c>, dos interruptores en una respuesta) o la pantalla (<c>DA</c>, tres valores).
+    /// Recibe la respuesta entera sin el punto y coma y devuelve el valor del operador.
+    /// </summary>
+    public Func<string, double?>? LecturaPropia { get; init; }
+
+    /// <summary>
+    /// Escritura propia: recibe el valor del operador ya ajustado al rango y, si
+    /// <see cref="NecesitaLoQueHay"/>, la respuesta actual del equipo a la consulta.
+    /// </summary>
+    public Func<double, string?, string>? EscrituraPropia { get; init; }
+
+    /// <summary>
+    /// Para escribir hay que saber lo que tiene ahora el equipo: <c>CF000</c> lleva a la vez el
+    /// clarificador de recepcion y el de transmision, y <c>DA</c> el contraste, el brillo y los
+    /// pilotos. Tocar uno sin leer los otros los pisaria.
+    /// </summary>
+    public bool NecesitaLoQueHay { get; init; }
+
     /// <summary>Orden de lectura, lista para mandar.</summary>
     public string OrdenDeLectura => Consulta + Cat.Fin;
 
@@ -72,10 +93,24 @@ public sealed record MandoFt710(
     /// <param name="vfo">VFO al que se le manda.</param>
     /// <returns>La orden lista para mandar.</returns>
     /// <exception cref="NotSupportedException">Si ese VFO no tiene este mando.</exception>
-    public string OrdenDeEscritura(double valor, VfoDelEquipo vfo = VfoDelEquipo.Principal)
+    public string OrdenDeEscritura(double valor, VfoDelEquipo vfo = VfoDelEquipo.Principal) =>
+        OrdenDeEscritura(valor, vfo, loQueHay: null);
+
+    /// <summary>Orden de escritura, con lo que contesta ahora el equipo si hace falta.</summary>
+    /// <param name="valor">Valor en las unidades del operador.</param>
+    /// <param name="vfo">VFO al que se le manda.</param>
+    /// <param name="loQueHay">Respuesta actual a la consulta, sin punto y coma.</param>
+    /// <returns>La orden lista para mandar.</returns>
+    /// <exception cref="NotSupportedException">Si ese VFO no tiene este mando.</exception>
+    public string OrdenDeEscritura(double valor, VfoDelEquipo vfo, string? loQueHay)
     {
         var consulta = ConsultaDe(vfo)
             ?? throw new NotSupportedException($"El mando {Mando} no existe en el VFO {vfo}.");
+
+        if (EscrituraPropia is { } propia)
+        {
+            return propia(Rango.Ajustar(valor), loQueHay);
+        }
 
         var interno = AlEquipo(Rango.Ajustar(valor));
         var relleno = new string('0', CifrasDeRelleno);
@@ -111,6 +146,11 @@ public sealed record MandoFt710(
         }
 
         var texto = respuesta!.Trim();
+        if (LecturaPropia is { } propia)
+        {
+            return texto.StartsWith(consulta, StringComparison.OrdinalIgnoreCase) ? propia(texto) : null;
+        }
+
         var letras = new string(consulta.TakeWhile(char.IsAsciiLetter).ToArray());
         var aSaltar = consulta.Length + CifrasDeRelleno;
         if (!texto.StartsWith(letras, StringComparison.OrdinalIgnoreCase) || texto.Length <= aSaltar)
@@ -146,8 +186,9 @@ public sealed record MandoFt710(
 /// <see cref="RetardosDeVozFt710"/>.
 /// </para>
 /// <para>
-/// Lo unico que sigue sin convertirse es lo que Yaesu llama «nivel» de la muesca
-/// (<c>BP01</c>), porque ni el manual ni ninguna captura dicen en que unidad viene.
+/// La frecuencia de la muesca (<c>BP01</c>) va en pasos de 10 Hz segun el manual CAT, y asi
+/// se ensena desde la validacion contra el equipo real del 27-09-2026
+/// (<c>docs/12-cat-ft710-validado.md</c>).
 /// </para>
 /// </remarks>
 public static class MandosFt710
@@ -165,6 +206,17 @@ public static class MandosFt710
     public const string DeDondeSalenLasTablas =
         "Manual de referencia CAT de Yaesu (FT-710_CAT_OM_ENG_2306-C.pdf), distinto del manual "
         + "de operación.";
+
+    /// <summary>Lo que puede ajustar el mando FUNC, en el orden del manual CAT (SF0 1…H).</summary>
+    public static readonly string[] FuncionesDelMandoFunc =
+    [
+        "SCOPE LEVEL", "PEAK", "COLOR", "CONTRAST", "DIMMER", "M-GROUP", "MIC GAIN", "PROC LEVEL",
+        "AMC LEVEL", "VOX GAIN", "VOX DELAY", "ANTI VOX", "RF POWER", "MONI LEVEL", "CW SPEED",
+        "CW PITCH", "BK-DELAY",
+    ];
+
+    /// <summary>Lo que puede ajustar el mando DSP (SF1 1…5).</summary>
+    public static readonly string[] FuncionesDelMandoDsp = ["SHIFT", "WIDTH", "NOTCH", "CONTOUR", "APF"];
 
     private static readonly Func<int, double> Igual = valor => valor;
     private static readonly Func<double, int> IgualInverso = valor => (int)Math.Round(valor, MidpointRounding.AwayFromZero);
@@ -219,7 +271,10 @@ public static class MandosFt710
                 null,
                 ["Apagado", "Rápido", "Medio", "Lento", "Automático rápido", "Automático medio", "Automático lento"]),
             Igual,
-            IgualInverso),
+            // El manual CAT: al LEER, 4/5/6 son automatico rapido/medio/lento (el equipo de Jose
+            // contesta GT06); al ESCRIBIR solo existe 4, «automatico», y el equipo elige la
+            // velocidad segun el modo. Mandar GT05 o GT06 es una orden que el manual no recoge.
+            valor => Math.Min(IgualInverso(valor), 4)),
         new(MandoDeEquipo.SupresorDeRuido, "NB0", 1, new RangoDeMando(MandoDeEquipo.SupresorDeRuido, 0, 1, 1), Igual, IgualInverso)
         {
             ConsultaDelSegundoVfo = "NB1",
@@ -230,17 +285,17 @@ public static class MandosFt710
         new(MandoDeEquipo.MuescaAutomatica, "BC0", 1, new RangoDeMando(MandoDeEquipo.MuescaAutomatica, 0, 1, 1), Igual, IgualInverso),
         new(MandoDeEquipo.MuescaManual, "BP00", 3, new RangoDeMando(MandoDeEquipo.MuescaManual, 0, 1, 1), Igual, IgualInverso),
 
-        // Yaesu llama a esto «nivel» de la muesca y el equipo contesta 150. Que cada paso sean
-        // diez hercios es lo que dice el manual de la familia, pero no se ha podido comprobar
-        // sin escribir en el equipo: se ensena el indice tal cual antes que dar hercios que no
-        // constan.
+        // Frecuencia de la muesca: el manual CAT la da en pasos de 10 Hz (001-320 = 10-3200 Hz).
+        // Las dos capturas del equipo real son coherentes con ello (sin escribir nada): el 22-09 contesto
+        // BP01150 con el contorno en CO011500 (1500 Hz los dos, el valor de fabrica), y el
+        // 27-09 BP01001 con CO010010 (10 Hz los dos, el minimo).
         new(
             MandoDeEquipo.FrecuenciaDeMuesca,
             "BP01",
             3,
-            new RangoDeMando(MandoDeEquipo.FrecuenciaDeMuesca, 0, 320, 1, "índice"),
-            Igual,
-            IgualInverso),
+            new RangoDeMando(MandoDeEquipo.FrecuenciaDeMuesca, 10, 3200, 10, "Hz"),
+            valor => valor * 10d,
+            valor => (int)Math.Round(valor / 10d, MidpointRounding.AwayFromZero)),
 
         new(MandoDeEquipo.Contorno, "CO00", 4, new RangoDeMando(MandoDeEquipo.Contorno, 0, 1, 1), Igual, IgualInverso),
         new(
@@ -257,13 +312,13 @@ public static class MandosFt710
         new(MandoDeEquipo.AnchoDeFiltro, "SH0", 3, new RangoDeMando(MandoDeEquipo.AnchoDeFiltro, 0, 23, 1, "índice"), Igual, IgualInverso),
 
         // Desplazamiento de la frecuencia intermedia. El equipo contesta con signo (IS00+0000).
-        // Se deja de solo lectura porque el recorrido no consta en ninguna captura, y accionarlo
-        // con un rango inventado seria mover el receptor a donde no toca.
+        // El manual CAT da el recorrido: de -1200 a +1200 Hz en pasos de 20. Comprobado en la
+        // radio el 28-09-2026: IS00+0100 e IS00-0240 se leen de vuelta tal cual.
         new(
             MandoDeEquipo.DesplazamientoFi,
             "IS0",
             4,
-            new RangoDeMando(MandoDeEquipo.DesplazamientoFi, -9999, 9999, 1, "Hz") { SoloLectura = true },
+            new RangoDeMando(MandoDeEquipo.DesplazamientoFi, -1200, 1200, 20, "Hz"),
             Igual,
             IgualInverso)
         {
@@ -305,7 +360,9 @@ public static class MandosFt710
             IgualInverso),
 
         // El acoplador: sintonizar emite portadora, asi que va marcado y solo se acciona dentro
-        // de una transmision pedida al vigilante del PTT.
+        // de una transmision pedida al vigilante del PTT. En el manual CAT, AC P1 P2 P3 con
+        // P3 = 0 apagado, 1 encendido y 3 «Tuning Start»; el 2 es un guion. Antes la posicion
+        // «Sintonizar» mandaba AC002, que no es nada.
         new(
             MandoDeEquipo.Sintonizador,
             "AC",
@@ -320,12 +377,192 @@ public static class MandosFt710
             {
                 TransmiteAlAccionar = true,
             },
+            valor => valor >= 2 ? 2 : valor,
+            valor => IgualInverso(valor) >= 2 ? 3 : IgualInverso(valor)),
+        new(MandoDeEquipo.AntiVox, "AV", 3, new RangoDeMando(MandoDeEquipo.AntiVox, 1, 100, 1), Igual, IgualInverso),
+        new(MandoDeEquipo.NivelAmc, "AO", 3, new RangoDeMando(MandoDeEquipo.NivelAmc, 1, 100, 1), Igual, IgualInverso),
+        new(MandoDeEquipo.Compresor, "PL", 3, new RangoDeMando(MandoDeEquipo.Compresor, 1, 100, 1), Igual, IgualInverso),
+        new(MandoDeEquipo.Monitor, "ML1", 3, new RangoDeMando(MandoDeEquipo.Monitor, 0, 100, 1), Igual, IgualInverso),
+        new(
+            MandoDeEquipo.RetardoBreakIn,
+            "SD",
+            2,
+            new RangoDeMando(
+                MandoDeEquipo.RetardoBreakIn,
+                0,
+                RetardosDeVozFt710.IndiceMaximo,
+                1,
+                "ms",
+                RetardosDeVozFt710.Etiquetas()),
             Igual,
             IgualInverso),
 
         // ── Frecuencia ──────────────────────────────────────────────────────
         new(MandoDeEquipo.Split, "ST", 1, new RangoDeMando(MandoDeEquipo.Split, 0, 1, 1), Igual, IgualInverso),
+
+        // El clarificador (CLAR). RT/XT/RC contestan «?;» en este firmware; la orden buena es CF:
+        // CF000 da los dos interruptores (P4 recepcion, P5 transmision) y CF001 el desplazamiento
+        // con signo. Comprobado en la radio el 28-09-2026: CF00010000 enciende el de recepcion y
+        // el dial (FA) pasa a leerse con el desplazamiento sumado.
+        new(MandoDeEquipo.Rit, "CF000", 1, new RangoDeMando(MandoDeEquipo.Rit, 0, 1, 1), Igual, IgualInverso)
+        {
+            LecturaPropia = texto => Cifra(texto, 5),
+            EscrituraPropia = (valor, hay) => $"CF000{(valor >= 0.5 ? '1' : '0')}{Caracter(hay, 6, '0')}000;",
+            NecesitaLoQueHay = true,
+        },
+        new(MandoDeEquipo.Xit, "CF000", 1, new RangoDeMando(MandoDeEquipo.Xit, 0, 1, 1), Igual, IgualInverso)
+        {
+            LecturaPropia = texto => Cifra(texto, 6),
+            EscrituraPropia = (valor, hay) => $"CF000{Caracter(hay, 5, '0')}{(valor >= 0.5 ? '1' : '0')}000;",
+            NecesitaLoQueHay = true,
+        },
+        new(
+            MandoDeEquipo.DesplazamientoRit,
+            "CF001",
+            4,
+            new RangoDeMando(MandoDeEquipo.DesplazamientoRit, -9990, 9990, 10, "Hz"),
+            Igual,
+            IgualInverso)
+        {
+            ConSigno = true,
+        },
+        new(MandoDeEquipo.FiltroEstrecho, "NA0", 1, new RangoDeMando(MandoDeEquipo.FiltroEstrecho, 0, 1, 1), Igual, IgualInverso),
+        new(MandoDeEquipo.Bloqueo, "LK", 1, new RangoDeMando(MandoDeEquipo.Bloqueo, 0, 1, 1), Igual, IgualInverso),
+        new(
+            MandoDeEquipo.SintoniaFinaRapida,
+            "FN",
+            1,
+            new RangoDeMando(MandoDeEquipo.SintoniaFinaRapida, 0, 2, 1, null, ["Normal", "Fina (FINE)", "Rápida (FAST)"]),
+            Igual,
+            IgualInverso),
+        new(MandoDeEquipo.TonoDeReferenciaCw, "CS", 1, new RangoDeMando(MandoDeEquipo.TonoDeReferenciaCw, 0, 1, 1), Igual, IgualInverso),
+
+        // Filtro de pico de audio (APF): CO02 encendido, CO03 de 0000 a 0050 = -250 a +250 Hz.
+        new(MandoDeEquipo.Apf, "CO02", 4, new RangoDeMando(MandoDeEquipo.Apf, 0, 1, 1), Igual, IgualInverso),
+        new(
+            MandoDeEquipo.FrecuenciaApf,
+            "CO03",
+            4,
+            new RangoDeMando(MandoDeEquipo.FrecuenciaApf, -250, 250, 10, "Hz"),
+            valor => (valor - 25) * 10d,
+            valor => (int)Math.Round(valor / 10d, MidpointRounding.AwayFromZero) + 25),
+
+        // ── Pantalla y analizador del equipo ────────────────────────────────
+        // DA00 cc bb ll: contraste, brillo de la pantalla y brillo de los pilotos, de 00 a 20.
+        new(MandoDeEquipo.ContrastePantalla, "DA", 2, new RangoDeMando(MandoDeEquipo.ContrastePantalla, 0, 20, 1), Igual, IgualInverso)
+        {
+            LecturaPropia = texto => DosCifras(texto, 4),
+            EscrituraPropia = (valor, hay) => PonerDosCifras(hay, 4, valor),
+            NecesitaLoQueHay = true,
+        },
+        new(MandoDeEquipo.BrilloPantalla, "DA", 2, new RangoDeMando(MandoDeEquipo.BrilloPantalla, 0, 20, 1), Igual, IgualInverso)
+        {
+            LecturaPropia = texto => DosCifras(texto, 6),
+            EscrituraPropia = (valor, hay) => PonerDosCifras(hay, 6, valor),
+            NecesitaLoQueHay = true,
+        },
+        Analizador(MandoDeEquipo.EspectroVelocidad, '0', ["SLOW1", "SLOW2", "FAST1", "FAST2", "FAST3", "STOP"]),
+        Analizador(MandoDeEquipo.EspectroPicos, '1', ["LV1", "LV2", "LV3", "LV4", "LV5"]),
+        Analizador(
+            MandoDeEquipo.EspectroColor,
+            '3',
+            ["COLOR-1", "COLOR-2", "COLOR-3", "COLOR-4", "COLOR-5", "COLOR-6", "COLOR-7", "COLOR-8", "COLOR-9", "COLOR-10", "COLOR-11"]),
+        Analizador(
+            MandoDeEquipo.EspectroAncho,
+            '5',
+            ["1 kHz", "2 kHz", "5 kHz", "10 kHz", "20 kHz", "50 kHz", "100 kHz", "200 kHz", "500 kHz", "1 MHz"]),
+        new(
+            MandoDeEquipo.EspectroModo,
+            "SS06",
+            1,
+            new RangoDeMando(MandoDeEquipo.EspectroModo, 0, ModosDelAnalizadorFt710.Todos.Count - 1, 1, null, ModosDelAnalizadorFt710.Etiquetas()),
+            Igual,
+            IgualInverso)
+        {
+            LecturaPropia = texto => texto.Length > 4 ? ModosDelAnalizadorFt710.DesdeLoLeido(texto[4]) : null,
+            EscrituraPropia = (valor, _) => $"SS06{ModosDelAnalizadorFt710.Todos[(int)valor].AlEscribir}0000;",
+        },
+
+        // Nivel de referencia: SS04 y cinco caracteres con signo y un decimal («-05.0»).
+        new(MandoDeEquipo.EspectroNivel, "SS04", 5, new RangoDeMando(MandoDeEquipo.EspectroNivel, -30, 30, 0.5, "dB"), Igual, IgualInverso)
+        {
+            LecturaPropia = texto => texto.Length >= 9
+                && double.TryParse(texto[4..9], NumberStyles.Float, CultureInfo.InvariantCulture, out var db)
+                    ? db
+                    : null,
+            EscrituraPropia = (valor, _) =>
+                "SS04" + (valor < 0 ? "-" : "+") + Math.Abs(valor).ToString("00.0", CultureInfo.InvariantCulture) + Cat.Fin,
+        },
+
+        // ── Los dos mandos de funcion del frontal ───────────────────────────
+        // SF0 dice que ajusta el mando FUNC y SF1 que ajusta el DSP. El valor es un caracter:
+        // de 1 a 9 y de A a H (SF0D = RF POWER, que es lo que tenia la radio de Jose).
+        new(
+            MandoDeEquipo.FuncionDelMandoFunc,
+            "SF0",
+            1,
+            new RangoDeMando(MandoDeEquipo.FuncionDelMandoFunc, 1, FuncionesDelMandoFunc.Length, 1, null, FuncionesDelMandoFunc),
+            Igual,
+            IgualInverso)
+        {
+            LecturaPropia = texto => texto.Length > 3 ? CaracterAFuncion(texto[3]) : null,
+            EscrituraPropia = (valor, _) => $"SF0{FuncionACaracter((int)valor)};",
+        },
+        new(
+            MandoDeEquipo.FuncionDelMandoDsp,
+            "SF1",
+            1,
+            new RangoDeMando(MandoDeEquipo.FuncionDelMandoDsp, 1, FuncionesDelMandoDsp.Length, 1, null, FuncionesDelMandoDsp),
+            Igual,
+            IgualInverso)
+        {
+            LecturaPropia = texto => texto.Length > 3 ? CaracterAFuncion(texto[3]) : null,
+            EscrituraPropia = (valor, _) => $"SF1{FuncionACaracter((int)valor)};",
+        },
     ];
+
+    private static MandoFt710 Analizador(MandoDeEquipo mando, char parametro, IReadOnlyList<string> etiquetas) =>
+        new(mando, $"SS0{parametro}", 1, new RangoDeMando(mando, 0, etiquetas.Count - 1, 1, null, etiquetas), Igual, IgualInverso)
+        {
+            // SS0 P2 P3 P4…P7: el valor es P3, un digito hexadecimal, y detras cuatro ceros.
+            LecturaPropia = texto => texto.Length > 4 && int.TryParse(texto[4..5], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var v)
+                ? v
+                : null,
+            EscrituraPropia = (valor, _) => $"SS0{parametro}{((int)valor).ToString("X", CultureInfo.InvariantCulture)}0000;",
+        };
+
+    private static double? Cifra(string texto, int posicion) =>
+        texto.Length > posicion && char.IsAsciiDigit(texto[posicion]) ? texto[posicion] - '0' : null;
+
+    private static char Caracter(string? texto, int posicion, char porOmision) =>
+        texto is not null && texto.Length > posicion ? texto[posicion] : porOmision;
+
+    private static double? DosCifras(string texto, int posicion) =>
+        texto.Length >= posicion + 2 && int.TryParse(texto.AsSpan(posicion, 2), NumberStyles.None, CultureInfo.InvariantCulture, out var v)
+            ? v
+            : null;
+
+    private static string PonerDosCifras(string? hay, int posicion, double valor)
+    {
+        if (hay is null || hay.Length < 10)
+        {
+            throw new InvalidOperationException("Para cambiar la pantalla hay que saber antes lo que tiene (DA;).");
+        }
+
+        var cifras = ((int)valor).ToString("D2", CultureInfo.InvariantCulture);
+        return string.Concat(hay.AsSpan(0, posicion), cifras, hay.AsSpan(posicion + 2, 10 - posicion - 2)) + Cat.Fin;
+    }
+
+    private static double? CaracterAFuncion(char c) => c switch
+    {
+        >= '1' and <= '9' => c - '0',
+        >= 'A' and <= 'H' => c - 'A' + 10,
+        >= 'a' and <= 'h' => c - 'a' + 10,
+        _ => null,
+    };
+
+    private static char FuncionACaracter(int funcion) =>
+        funcion <= 9 ? (char)('0' + funcion) : (char)('A' + funcion - 10);
 
     /// <summary>Busca la descripcion de un mando.</summary>
     /// <param name="mando">Mando buscado.</param>

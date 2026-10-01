@@ -65,6 +65,18 @@ public partial class VentanaPrincipal : Window
 
         _vistaModelo.Cuaderno.ConfirmarBorrado = PreguntarSiBorrar;
         _vistaModelo.Equipo.ConfirmarQueVaATransmitir = PreguntarSiTransmite;
+
+        // A/B (SV;) y A=B (AB;/BA;) cambian los VFO de verdad: siempre con el operador delante.
+        _vistaModelo.Equipo.ConfirmarAccion = PreguntarSiCambiaLosVfos;
+
+        // Pulsación larga de LOCK: apagar la radio siempre pregunta antes.
+        _vistaModelo.Equipo.ConfirmarApagado = PreguntarSiApaga;
+
+        // El módem propio también pregunta antes de salir al aire, y con su propio texto:
+        // un período de FT8 son TRECE SEGUNDOS con el equipo en antena, y eso no se parece a
+        // pulsar el acoplador.
+        _vistaModelo.Modem.ConfirmarQueVaATransmitir = PreguntarSiEmiteElModem;
+        _vistaModelo.Modem.ElegirFicheroWav = PedirUnWav;
         ContentRendered += AlTerminarElPrimerDibujado;
 
         // Lo que cambia el alto que piden los bloques obliga a repartir de nuevo.
@@ -128,6 +140,7 @@ public partial class VentanaPrincipal : Window
 
             var ventana = _cuadernoVacio();
             ventana.Owner = this;
+            Desarrollo.RetratoDeLaVentana.PrepararDialogo(ventana);
             ventana.ShowDialog();
         }
         catch (Exception ex)
@@ -145,6 +158,7 @@ public partial class VentanaPrincipal : Window
 
         var dialogo = _ventanaDePrimerArranque();
         dialogo.Owner = this;
+        Desarrollo.RetratoDeLaVentana.PrepararDialogo(dialogo);
 
         if (dialogo.ShowDialog() == true) return true;
 
@@ -195,7 +209,12 @@ public partial class VentanaPrincipal : Window
 
     private void AlCerrar(object sender, EventArgs e)
     {
-        _vistaModelo.GuardarEstadoDeLosPaneles(App.CarpetaDeDatos);
+        // La instancia apartada de verificacion no pisa lo que haya dejado el operador.
+        if (Environment.GetEnvironmentVariable("CUADERNO_APARTADA") is not { Length: > 0 })
+        {
+            _vistaModelo.GuardarEstadoDeLosPaneles(App.CarpetaDeDatos);
+        }
+
         _vistaModelo.Detener();
     }
 
@@ -270,13 +289,17 @@ public partial class VentanaPrincipal : Window
         {
             case Key.F3:
                 _vistaModelo.VerElCuaderno();
-                Dispatcher.BeginInvoke(Cuaderno.EnfocarBusqueda, DispatcherPriority.Input);
+                // Loaded y no Input: la primera vez la pestaña aun no esta dibujada cuando se
+                // atiende la tecla, y el foco no tenia donde caer. Loaded va justo despues de
+                // maquetarla (ContextIdle tambien valia, pero con el reloj y la cascada pintando
+                // sin parar llegaba a tardar mas de medio segundo).
+                Dispatcher.BeginInvoke(Cuaderno.EnfocarBusqueda, DispatcherPriority.Loaded);
                 e.Handled = true;
                 break;
 
             case Key.F4:
                 _vistaModelo.VerOperar();
-                Dispatcher.BeginInvoke(Operar.EnfocarIndicativo, DispatcherPriority.Input);
+                Dispatcher.BeginInvoke(Operar.EnfocarIndicativo, DispatcherPriority.Loaded);
                 e.Handled = true;
                 break;
         }
@@ -306,6 +329,32 @@ public partial class VentanaPrincipal : Window
     /// que saber que va a salir al aire <b>antes</b> de que salga, no enterarse por el
     /// medidor de potencia.
     /// </remarks>
+    private bool PreguntarSiApaga(string que)
+    {
+        var dialogo = new VentanaDeConfirmacion
+        {
+            Owner = this,
+            Titulo = que,
+            Detalle = "Se bajará el PTT y se apagará la radio. Para volver a encenderla, pulsación larga de LOCK (si el puerto USB sigue disponible con la radio apagada) o su tecla de encendido.",
+            TextoDeAceptar = "Sí, apagar",
+        };
+
+        return dialogo.ShowDialog() == true;
+    }
+
+    private bool PreguntarSiCambiaLosVfos(string que)
+    {
+        var dialogo = new VentanaDeConfirmacion
+        {
+            Owner = this,
+            Titulo = "Se van a cambiar los VFO del equipo",
+            Detalle = que + "\n\nNo se transmite nada, pero lo que tenía el otro VFO puede perderse.",
+            TextoDeAceptar = "Sí, hacerlo",
+        };
+
+        return dialogo.ShowDialog() == true;
+    }
+
     private bool PreguntarSiTransmite(string mando)
     {
         var dialogo = new VentanaDeConfirmacion
@@ -320,6 +369,52 @@ public partial class VentanaPrincipal : Window
         };
 
         return dialogo.ShowDialog() == true;
+    }
+
+    /// <summary>
+    /// Avisa antes de que el modem propio saque un periodo al aire.
+    /// </summary>
+    /// <remarks>
+    /// El texto es distinto del de los mandos del equipo a proposito: aqui lo que sale no es
+    /// un instante de portadora sino <b>trece segundos seguidos</b> de señal modulada, y
+    /// ademas alineados a una ventana que comparten todos los demas. Quien transmite con el
+    /// reloj mal, o sin antena, se entera tarde.
+    /// </remarks>
+    /// <summary>Pide al operador un WAV para pasarlo por el decodificador.</summary>
+    private string? PedirUnWav()
+    {
+        var dialogo = new Microsoft.Win32.OpenFileDialog
+        {
+            Title = "Decodificar un fichero de audio",
+            Filter = "Audio WAV (*.wav)|*.wav|Todos los ficheros (*.*)|*.*",
+            CheckFileExists = true,
+        };
+
+        return dialogo.ShowDialog(this) == true ? dialogo.FileName : null;
+    }
+
+    private bool PreguntarSiEmiteElModem(string mensaje)
+    {
+        var dialogo = new VentanaDeConfirmacion
+        {
+            Owner = this,
+            Titulo = "El módem va a transmitir",
+            Detalle = $"Se va a emitir «{mensaje}».\n\n" +
+                      "Un período de FT8 son TRECE SEGUNDOS con el equipo en antena, sin pausa.\n\n" +
+                      "Compruebe que hay una antena o una carga artificial conectada y que el reloj " +
+                      "está en hora: con el reloj desviado se transmite fuera de ventana y se molesta " +
+                      "a las demás estaciones sin enterarse.\n\n" +
+                      "La transmisión va vigilada: se suelta sola si algo va mal, y el botón " +
+                      "«SOLTAR PTT» la corta en cualquier momento.",
+            TextoDeAceptar = "Sí, transmitir",
+            OfrecerNoVolverAPreguntar = true,
+        };
+
+        var si = dialogo.ShowDialog() == true;
+
+        // «No volver a preguntar» solo cuenta si se ha dicho que sí: cancelar no apaga nada.
+        if (si && dialogo.NoVolverAPreguntar) _vistaModelo.Modem.NoVolverAPreguntarAlTransmitir();
+        return si;
     }
 
     private void MostrarFallo(Exception ex)

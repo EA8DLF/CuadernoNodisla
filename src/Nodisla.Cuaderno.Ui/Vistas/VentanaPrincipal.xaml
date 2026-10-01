@@ -3,7 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
         xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
+        xmlns:vqsl="clr-namespace:Nodisla.Cuaderno.Ui.Vistas.Qsl"
         Title="Cuaderno NODISLA"
+        Icon="/Nodisla.Cuaderno.Ui;component/Recursos/CuadernoNodisla.ico"
         Height="1000" Width="1460" MinHeight="560" MinWidth="820"
         WindowStartupLocation="CenterScreen"
         UseLayoutRounding="True"
@@ -41,6 +43,11 @@
         <KeyBinding Key="D4" Modifiers="Control" Command="{Binding VerElMapaCommand}" />
         <KeyBinding Key="D5" Modifiers="Control" Command="{Binding VerLosDiplomasCommand}" />
         <KeyBinding Key="D6" Modifiers="Control" Command="{Binding VerLosAjustesCommand}" />
+        <KeyBinding Key="D7" Modifiers="Control" Command="{Binding VerLosSatelitesCommand}" />
+        <KeyBinding Key="D8" Modifiers="Control" Command="{Binding VerLaQslCommand}" />
+        <KeyBinding Key="D9" Modifiers="Control" Command="{Binding VerLaRondaCommand}" />
+        <KeyBinding Key="D5" Modifiers="Control+Shift" Command="{Binding VerElDisenadorDeDiplomasCommand}" />
+        <KeyBinding Key="F1" Command="{Binding VerLaAyudaDeEstaPaginaCommand}" />
     </Window.InputBindings>
 
     <!--
@@ -56,6 +63,8 @@
     -->
     <Grid Margin="12,12,12,0">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -82,6 +91,13 @@
                 </Grid.ColumnDefinitions>
 
                 <WrapPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- La marca de la casa, la misma del icono del programa. -->
+                    <Image Source="{StaticResource MarcaDelCuaderno}"
+                           Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=2.6}"
+                           Height="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=2.6}"
+                           Margin="0,0,10,0"
+                           VerticalAlignment="Center"
+                           AutomationProperties.Name="Marca de Cuaderno NODISLA" />
                     <StackPanel Style="{StaticResource BloqueDeCampo}" VerticalAlignment="Center">
                         <TextBlock Text="Cuaderno NODISLA"
                                    FontWeight="Bold"
@@ -95,7 +111,7 @@
                         <TextBlock Text="Perfil de estación" Style="{StaticResource EtiquetaDeCampo}" />
                         <ComboBox ItemsSource="{Binding Estaciones}"
                                   SelectedItem="{Binding EstacionActiva}"
-                                  ToolTip="Perfil con el que se registran los contactos">
+                                  ToolTip="{Binding AvisoDelPerfil}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding NombrePerfil}" />
@@ -104,14 +120,11 @@
                         </ComboBox>
                     </StackPanel>
 
-                    <StackPanel Style="{StaticResource BloqueDeCampo}"
-                                Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=11}">
-                        <TextBlock Text="Escala de letra" Style="{StaticResource EtiquetaDeCampo}" />
-                        <ComboBox x:Name="SelectorDeEscala"
-                                  ItemsSource="{Binding EscalasDeLetra}"
-                                  SelectedItem="{Binding EscalaDeLetra}"
-                                  ToolTip="Tamaño de todos los textos de la ventana, en tanto por ciento" />
-                    </StackPanel>
+                    <!--
+                        La escala de letra ya no se repite aquí: su mando está en la barra de
+                        estado, que no se pliega nunca (y con Ctrl+ / Ctrl−). Dos mandos para lo
+                        mismo era parte del desorden.
+                    -->
 
                     <StackPanel Style="{StaticResource BloqueDeCampo}" VerticalAlignment="Bottom">
                         <CheckBox Content="Tema oscuro (F9)" IsChecked="{Binding TemaOscuro}" />
@@ -126,17 +139,31 @@
                         CornerRadius="5"
                         Padding="16,8"
                         VerticalAlignment="Center">
-                    <StackPanel>
-                        <TextBlock Text="{Binding HoraUtc}"
-                                   HorizontalAlignment="Center"
-                                   FontWeight="Bold"
-                                   FontFamily="Consolas, Cascadia Mono, Courier New"
-                                   FontSize="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=1.7}"
-                                   Foreground="{DynamicResource Acento}" />
-                        <TextBlock HorizontalAlignment="Center" Style="{StaticResource TextoTenueEstilo}">
-                            <Run Text="{Binding FechaUtc, Mode=OneWay}" />
-                            <Run Text="UTC" />
-                        </TextBlock>
+                    <!-- UTC y hora local lado a lado: UTC para el cuaderno, local para la vida. -->
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel>
+                            <TextBlock Text="{Binding HoraUtc}"
+                                       HorizontalAlignment="Center"
+                                       FontWeight="Bold"
+                                       FontFamily="Consolas, Cascadia Mono, Courier New"
+                                       FontSize="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=1.7}"
+                                       Foreground="{DynamicResource Acento}" />
+                            <TextBlock HorizontalAlignment="Center" Style="{StaticResource TextoTenueEstilo}">
+                                <Run Text="{Binding FechaUtc, Mode=OneWay}" />
+                                <Run Text="UTC" />
+                            </TextBlock>
+                        </StackPanel>
+                        <Border Width="1" Margin="14,2" Background="{DynamicResource BordeSuave}" />
+                        <StackPanel>
+                            <TextBlock Text="{Binding HoraLocal}"
+                                       HorizontalAlignment="Center"
+                                       FontWeight="Bold"
+                                       FontFamily="Consolas, Cascadia Mono, Courier New"
+                                       FontSize="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=1.7}"
+                                       Foreground="{DynamicResource Texto}" />
+                            <TextBlock HorizontalAlignment="Center" Style="{StaticResource TextoTenueEstilo}"
+                                       Text="{Binding FechaLocal}" />
+                        </StackPanel>
                     </StackPanel>
                 </Border>
 
@@ -145,76 +172,231 @@
             </Grid>
         </Border>
 
-        <!-- ══ Las seis pestañas ══ -->
-        <TabControl Grid.Row="1" SelectedIndex="{Binding IndiceDeLaPestana}" Margin="0,0,0,8">
-            <TabItem>
-                <TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{StaticResource IconoOperar}" Width="16" Height="16" Margin="0,0,7,0" />
-                        <TextBlock Text="Operar (Ctrl 1)" VerticalAlignment="Center" />
+        <!-- ══ La barra de navegación ══ -->
+        <!--
+            CUATRO ENTRADAS AGRUPADAS POR USO, Y LA CONFIGURACIÓN A LA DERECHA DEL TODO.
+
+            Antes eran nueve pestañas en fila —Operar, Digital, Cuaderno, Mapa, Diplomas,
+            Ajustes, Satélites, Imprimir y Ronda— con los ajustes metidos en medio. Ahora:
+
+              Operar     Cabina · Digital · Satélites · Ronda de control
+              Libro      Contactos · Mapa
+              QSL        Tarjeta QSL · Etiquetas
+              Diplomas
+                                                          Ayuda · Configuración
+
+            Las páginas del grupo elegido salen en la MISMA barra, a continuación y más
+            discretas: una segunda fila le quitaba alto a la cabina, que es donde falta.
+
+            Cada botón lleva en el Tag las páginas que le tocan; el estilo lo enciende cuando
+            la página que se ve está entre ellas. Los índices son los de siempre (se guardan al
+            cerrar y van detrás de Ctrl 1…Ctrl 9), así que nada de lo guardado se descoloca.
+        -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource FondoCabecera}"
+                BorderBrush="{DynamicResource Borde}"
+                BorderThickness="0,0,0,1"
+                Margin="0,0,0,8">
+            <DockPanel>
+                <!--
+                    A la derecha del todo, Configuración; justo antes, la Ayuda (F1 abre el
+                    capítulo de la página en la que se esté).
+                -->
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button x:Name="EntradaDeAyuda"
+                            Style="{StaticResource EntradaDeNavegacion}"
+                            Tag="11"
+                            Command="{Binding VerLaAyudaCommand}"
+                            ToolTip="Ayuda: capítulos, primer uso, reportar un fallo, buscar actualizaciones y acerca de (F1 abre la de la página en la que está)"
+                            AutomationProperties.Name="Ayuda">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{StaticResource IconoAyuda}" Width="16" Height="16" Margin="0,0,7,0" />
+                            <TextBlock Text="Ayuda" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource EntradaDeNavegacion}"
+                            Tag="5"
+                            Command="{Binding VerLosAjustesCommand}"
+                            ToolTip="Configuración: cuentas, equipo, audio, cluster, correo… (Ctrl 6)"
+                            AutomationProperties.Name="Configuración">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{StaticResource IconoAjustes}" Width="16" Height="16" Margin="0,0,7,0" />
+                            <TextBlock Text="Configuración" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <WrapPanel VerticalAlignment="Center">
+                    <Button Style="{StaticResource EntradaDeNavegacion}"
+                            Tag="0,1,6,8"
+                            Command="{Binding VerElGrupoCommand}"
+                            CommandParameter="Operar"
+                            ToolTip="Operar: cabina (Ctrl 1), digital (Ctrl 2), satélites (Ctrl 7) y ronda de control (Ctrl 9)"
+                            AutomationProperties.Name="Operar">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{StaticResource IconoOperar}" Width="16" Height="16" Margin="0,0,7,0" />
+                            <TextBlock Text="Operar" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource EntradaDeNavegacion}"
+                            Tag="2,3"
+                            Command="{Binding VerElGrupoCommand}"
+                            CommandParameter="Libro"
+                            ToolTip="Libro: los contactos (Ctrl 3) y su mapa (Ctrl 4)"
+                            AutomationProperties.Name="Libro">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{StaticResource IconoCuaderno}" Width="16" Height="16" Margin="0,0,7,0" />
+                            <TextBlock Text="Libro" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource EntradaDeNavegacion}"
+                            Tag="7,9,10"
+                            Command="{Binding VerElGrupoCommand}"
+                            CommandParameter="QSL"
+                            ToolTip="QSL: la tarjeta y su envío por correo (Ctrl 8), las etiquetas del buró y el diseñador de diplomas (Ctrl Mayús 5)"
+                            AutomationProperties.Name="QSL">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{StaticResource IconoQsl}" Width="16" Height="16" Margin="0,0,7,0" />
+                            <TextBlock Text="QSL" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource EntradaDeNavegacion}"
+                            Tag="4"
+                            Command="{Binding VerElGrupoCommand}"
+                            CommandParameter="Diplomas"
+                            ToolTip="Diplomas (Ctrl 5)"
+                            AutomationProperties.Name="Diplomas">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{StaticResource IconoDiplomas}" Width="16" Height="16" Margin="0,0,7,0" />
+                            <TextBlock Text="Diplomas" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- ── Las páginas del grupo elegido ── -->
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Margin="8,0,8,0"
+                                Visibility="{Binding EnElGrupoOperar, Converter={StaticResource BooleanoAVisible}}">
+                        <Border Width="1" Height="18" Margin="0,0,10,0" Background="{DynamicResource Borde}" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="0" Content="Cabina"
+                                Command="{Binding VerOperarCommand}" ToolTip="La cabina: equipo, entrada, cluster y bandmap (Ctrl 1)" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="1" Content="Digital"
+                                Command="{Binding VerLoDigitalCommand}" ToolTip="Modos digitales: FT8, FT4… (Ctrl 2)" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="6" Content="Satélites"
+                                Command="{Binding VerLosSatelitesCommand}" ToolTip="Pasos y Doppler de los satélites (Ctrl 7)" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="8" Content="Ronda de control"
+                                Command="{Binding VerLaRondaCommand}" ToolTip="Ronda de control de una red (Ctrl 9)" />
                     </StackPanel>
-                </TabItem.Header>
+
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Margin="8,0,8,0"
+                                Visibility="{Binding EnElGrupoLibro, Converter={StaticResource BooleanoAVisible}}">
+                        <Border Width="1" Height="18" Margin="0,0,10,0" Background="{DynamicResource Borde}" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="2" Content="Contactos"
+                                Command="{Binding VerElCuadernoCommand}" ToolTip="Los contactos del cuaderno (Ctrl 3, F3 para buscar)" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="3" Content="Mapa"
+                                Command="{Binding VerElMapaCommand}" ToolTip="El mapa de contactos, anuncios y línea gris (Ctrl 4)" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Margin="8,0,8,0"
+                                Visibility="{Binding EnElGrupoQsl, Converter={StaticResource BooleanoAVisible}}">
+                        <Border Width="1" Height="18" Margin="0,0,10,0" Background="{DynamicResource Borde}" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="7" Content="Tarjeta QSL"
+                                Command="{Binding VerLaQslCommand}" ToolTip="Diseñar la tarjeta y mandarla por correo (Ctrl 8)" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="9" Content="Etiquetas"
+                                Command="{Binding VerLasEtiquetasCommand}" ToolTip="Etiquetas de las QSL para el buró" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="10" Content="Diplomas"
+                                Command="{Binding VerElDisenadorDeDiplomasCommand}" ToolTip="Diseñar y emitir diplomas propios y certificados (Ctrl Mayús 5)" />
+                    </StackPanel>
+                </WrapPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ══ El aviso de versión nueva (solo se ve si la hay) ══ -->
+        <vistas:AvisoDeVersion Grid.Row="2" DataContext="{Binding Actualizaciones}" />
+
+        <!-- ══ Las páginas ══ -->
+        <!-- El orden de las TabItem es el índice de siempre: no reordenar (ver Pestanas). -->
+        <TabControl Grid.Row="3"
+                    Style="{StaticResource PaginasSinCabecera}"
+                    SelectedIndex="{Binding IndiceDeLaPestana}"
+                    Margin="0,0,0,8">
+            <!-- 0 · Operar → Cabina -->
+            <TabItem Header="Cabina">
                 <vistas:PanelOperar x:Name="Operar" />
             </TabItem>
 
-            <TabItem>
-                <TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{StaticResource IconoDigital}" Width="16" Height="16" Margin="0,0,7,0" />
-                        <TextBlock Text="Digital (Ctrl 2)" VerticalAlignment="Center" />
-                    </StackPanel>
-                </TabItem.Header>
+            <!-- 1 · Operar → Digital -->
+            <TabItem Header="Digital">
                 <vistas:PestanaDigital />
             </TabItem>
 
-            <TabItem>
-                <TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{StaticResource IconoCuaderno}" Width="16" Height="16" Margin="0,0,7,0" />
-                        <TextBlock Text="Cuaderno (Ctrl 3)" VerticalAlignment="Center" />
-                    </StackPanel>
-                </TabItem.Header>
+            <!-- 2 · Libro → Contactos -->
+            <TabItem Header="Contactos">
                 <Border Style="{StaticResource Tarjeta}" Margin="0">
                     <vistas:PanelDelCuaderno x:Name="Cuaderno" Fallo="AlFallarElCuaderno" />
                 </Border>
             </TabItem>
 
-            <TabItem>
-                <TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{StaticResource IconoMapa}" Width="16" Height="16" Margin="0,0,7,0" />
-                        <TextBlock Text="Mapa (Ctrl 4)" VerticalAlignment="Center" />
-                    </StackPanel>
-                </TabItem.Header>
+            <!-- 3 · Libro → Mapa -->
+            <TabItem Header="Mapa">
                 <Border Style="{StaticResource Tarjeta}" Margin="0">
                     <vistas:PanelDeMapa DataContext="{Binding Mapa}" />
                 </Border>
             </TabItem>
 
-            <TabItem>
-                <TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{StaticResource IconoDiplomas}" Width="16" Height="16" Margin="0,0,7,0" />
-                        <TextBlock Text="Diplomas (Ctrl 5)" VerticalAlignment="Center" />
-                    </StackPanel>
-                </TabItem.Header>
+            <!-- 4 · Diplomas -->
+            <TabItem Header="Diplomas">
                 <vistas:PanelDeDiplomas DataContext="{Binding Diplomas}" />
             </TabItem>
 
-            <TabItem>
-                <TabItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{StaticResource IconoAjustes}" Width="16" Height="16" Margin="0,0,7,0" />
-                        <TextBlock Text="Ajustes (Ctrl 6)" VerticalAlignment="Center" />
-                    </StackPanel>
-                </TabItem.Header>
+            <!-- 5 · Configuración -->
+            <TabItem Header="Configuración">
                 <vistas:PanelDeAjustes DataContext="{Binding Configuracion}" />
             </TabItem>
 
+            <!-- 6 · Operar → Satélites -->
+            <TabItem Header="Satélites">
+                <Border Style="{StaticResource Tarjeta}" Margin="0">
+                    <vistas:PanelDeSatelites DataContext="{Binding Satelites}" />
+                </Border>
+            </TabItem>
+
+            <!-- 7 · QSL → Tarjeta QSL (su diseño y el envío por correo) -->
+            <TabItem Header="Tarjeta QSL">
+                <vistas:PanelDeQsl DataContext="{Binding Impresion.Qsl}" />
+            </TabItem>
+
+            <!-- 8 · Operar → Ronda de control -->
+            <TabItem Header="Ronda de control">
+                <Border Style="{StaticResource Tarjeta}" Margin="0">
+                    <vistas:PestanaRonda DataContext="{Binding Ronda}" />
+                </Border>
+            </TabItem>
+
+            <!-- 9 · QSL → Etiquetas del buró -->
+            <TabItem Header="Etiquetas">
+                <Border Style="{StaticResource Tarjeta}" Margin="0">
+                    <vistas:PanelDeImpresion DataContext="{Binding Impresion}" />
+                </Border>
+            </TabItem>
+
+            <!-- 10 · QSL → Diplomas (el diseñador de diplomas propios y certificados) -->
+            <TabItem Header="Diseñador de diplomas">
+                <vqsl:DisenadorDeDiplomas DataContext="{Binding DisenadorDeDiplomas}" />
+            </TabItem>
+
+            <!-- 11 · Ayuda -->
+            <TabItem Header="Ayuda">
+                <vistas:PanelDeAyuda x:Name="PaginaDeAyuda" DataContext="{Binding Ayuda}" />
+            </TabItem>
         </TabControl>
 
         <!-- ══ Barra de estado ══ -->
-        <Border Grid.Row="2"
+        <Border Grid.Row="4"
                 Background="{DynamicResource FondoCromo}"
                 BorderBrush="{DynamicResource BordeCromo}"
                 BorderThickness="0,1,0,0"
@@ -326,7 +508,7 @@
                 <TextBlock Style="{StaticResource TextoTenueEstilo}"
                            Visibility="{Binding LeyendaVisible, Converter={StaticResource BooleanoAVisible}}"
                            ToolTip="Atajos de teclado"
-                           Text="Intro registra · Esc limpia · F2 modifica · F3 buscar · F4 indicativo · F5 refresca · F7 más datos · F8 hora · F9 tema · Ctrl1 operar · Ctrl2 digital · Ctrl3 cuaderno · Ctrl4 mapa · Ctrl+ y Ctrl− escala" />
+                           Text="F1 ayuda · Intro registra · Esc limpia · F2 modifica · F3 buscar · F4 indicativo · F5 refresca · F7 más datos · F8 hora · F9 tema · Supr borra · Ctrl1…Ctrl9 páginas (ver la barra) · Ctrl+ y Ctrl− escala" />
                 </WrapPanel>
             </DockPanel>
         </Border>

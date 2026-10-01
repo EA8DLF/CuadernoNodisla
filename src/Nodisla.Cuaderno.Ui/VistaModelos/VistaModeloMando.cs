@@ -72,6 +72,25 @@ public sealed partial class VistaModeloMando : ObservableObject
             [MandoDeEquipo.DesplazamientoRit] = ("Valor del desplazamiento de recepción", "Frecuencia"),
             [MandoDeEquipo.Xit] = ("Desplazamiento de transmisión", "Frecuencia"),
             [MandoDeEquipo.DesplazamientoXit] = ("Valor del desplazamiento de transmisión", "Frecuencia"),
+
+            [MandoDeEquipo.FiltroEstrecho] = ("Filtro estrecho (NAR)", "Recepción"),
+            [MandoDeEquipo.Apf] = ("Filtro de pico de audio (APF)", "Recepción"),
+            [MandoDeEquipo.FrecuenciaApf] = ("Frecuencia del APF", "Recepción"),
+            [MandoDeEquipo.Bloqueo] = ("Bloqueo del dial (LOCK)", "Frecuencia"),
+            [MandoDeEquipo.SintoniaFinaRapida] = ("Sintonía fina o rápida (FINE/FAST)", "Frecuencia"),
+            [MandoDeEquipo.TonoDeReferenciaCw] = ("Tono de referencia (SPOT)", "Telegrafía"),
+            [MandoDeEquipo.NivelAmc] = ("Nivel del AMC", "Transmisión"),
+            [MandoDeEquipo.AntiVox] = ("Antivox", "Transmisión"),
+            [MandoDeEquipo.ContrastePantalla] = ("Contraste de la pantalla", "Pantalla"),
+            [MandoDeEquipo.BrilloPantalla] = ("Brillo de la pantalla", "Pantalla"),
+            [MandoDeEquipo.EspectroVelocidad] = ("Velocidad del analizador (SPEED)", "Pantalla"),
+            [MandoDeEquipo.EspectroAncho] = ("Ancho del analizador (SPAN)", "Pantalla"),
+            [MandoDeEquipo.EspectroModo] = ("Modo del analizador (CENTER/3DSS/EXPAND)", "Pantalla"),
+            [MandoDeEquipo.EspectroNivel] = ("Nivel del analizador", "Pantalla"),
+            [MandoDeEquipo.EspectroPicos] = ("Picos del analizador", "Pantalla"),
+            [MandoDeEquipo.EspectroColor] = ("Color del analizador", "Pantalla"),
+            [MandoDeEquipo.FuncionDelMandoFunc] = ("Función del mando FUNC", "Frontal"),
+            [MandoDeEquipo.FuncionDelMandoDsp] = ("Función del mando DSP", "Frontal"),
         };
 
     private readonly IEquipoAvanzado _equipo;
@@ -102,8 +121,26 @@ public sealed partial class VistaModeloMando : ObservableObject
             _ => FormaDelMando.Escala,
         };
 
-        Posiciones = rango.Etiquetas ?? [];
+        // Un mando de posiciones que emite en la ultima (el acoplador: «Sintonizar») no la
+        // ofrece en la lista: elegirla ahi la mandaba sin pasar por el vigilante del PTT, el
+        // equipo la rechazaba y el mando se quedaba muerto. Se sintoniza desde el equipo.
+        var etiquetas = rango.Etiquetas ?? [];
+        Posiciones = rango.TransmiteAlAccionar && etiquetas.Count > 1
+            ? [.. etiquetas.Take(etiquetas.Count - 1)]
+            : etiquetas;
     }
+
+    /// <summary>
+    /// Poner este valor pone el equipo en antena.
+    /// </summary>
+    /// <remarks>
+    /// En un mando de posiciones solo emite la ultima (el acoplador: apagado, encendido,
+    /// sintonizar); en los demas, cualquier valor. Es la misma regla que aplica el control.
+    /// </remarks>
+    /// <param name="valor">Valor que se quiere poner.</param>
+    /// <returns>Verdadero si ponerlo transmite.</returns>
+    public bool TransmiteCon(double valor) =>
+        TransmiteAlAccionar && (!Rango.EsDePosiciones || valor >= Rango.Maximo);
 
     /// <summary>Rango declarado por el equipo.</summary>
     public RangoDeMando Rango { get; }
@@ -242,16 +279,53 @@ public sealed partial class VistaModeloMando : ObservableObject
         _ = EnviarAsync(value);
     }
 
+    /// <summary>Cuando se toco por ultima vez desde el programa (Environment.TickCount64).</summary>
+    private long _ultimoToque = long.MinValue / 2;
+
+    private int _enviando;
+
+    /// <summary>
+    /// Tras tocarlo en el programa, cuanto se espera antes de volver a leerlo del equipo. Sin
+    /// esto, el sondeo del frontal leeria el valor viejo entre dos muescas de la rueda y el
+    /// mando daria saltos atras.
+    /// </summary>
+    public static TimeSpan CalmaTrasTocarlo { get; set; } = TimeSpan.FromMilliseconds(1500);
+
+    /// <summary>
+    /// Lee del equipo el valor, salvo que el operador lo este moviendo ahora mismo desde el
+    /// programa. Es lo que usa el sondeo del frontal para reflejar lo que se toca en la radio.
+    /// </summary>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    public Task RecogerSiNoSeEstaMoviendoAsync(CancellationToken ct = default)
+    {
+        if (Volatile.Read(ref _enviando) > 0
+            || Environment.TickCount64 - Volatile.Read(ref _ultimoToque) < CalmaTrasTocarlo.TotalMilliseconds)
+        {
+            return Task.CompletedTask;
+        }
+
+        return RecogerAsync(ct);
+    }
+
     private async Task EnviarAsync(double valor)
     {
+        Volatile.Write(ref _ultimoToque, Environment.TickCount64);
+        Interlocked.Increment(ref _enviando);
         try
         {
             await _equipo.EscribirMandoAsync(Mando, valor).ConfigureAwait(true);
         }
         catch (Exception ex)
         {
+            // Antes se apagaba el mando PARA SIEMPRE al primer fallo —un byte perdido bastaba— y
+            // desde ahi la tecla del frontal no volvia a hacer nada. Ahora se vuelve a leer lo
+            // que tiene de verdad el equipo: si contesta, el mando sigue vivo y ensena su valor.
             Log.Warning(ex, "No se ha podido accionar el mando {Mando}.", Mando);
-            Disponible = false;
+            await RecogerAsync().ConfigureAwait(true);
+        }
+        finally
+        {
+            Interlocked.Decrement(ref _enviando);
         }
     }
 }

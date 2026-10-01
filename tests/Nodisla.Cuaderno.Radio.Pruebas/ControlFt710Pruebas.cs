@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
 using Nodisla.Cuaderno.Radio.Control;
@@ -84,7 +84,8 @@ public class ControlFt710Pruebas
             await control.EscribirMandoAsync(MandoDeEquipo.Sintonizador, 2);
         }
 
-        await equipo.EsperarOrdenAsync("AC002;", EsperaDeSenales.PlazoDeSeguridad);
+        // «Tuning Start» es AC003 segun el manual CAT; AC002 es un guion y no hacia nada.
+        await equipo.EsperarOrdenAsync("AC003;", EsperaDeSenales.PlazoDeSeguridad);
 
         // Y pase lo que pase con el acoplador, el PTT queda abajo.
         await equipo.EsperarAntenaAsync(enAntena: false, EsperaDeSenales.PlazoDeSeguridad);
@@ -101,11 +102,15 @@ public class ControlFt710Pruebas
         var principal = control.MandosDe(VfoDelEquipo.Principal);
         var segundo = control.MandosDe(VfoDelEquipo.Secundario);
 
-        // Estos sí están en los dos: el equipo contesta AG1, SQ1, NB1 y PA1.
+        // Estos sí están en los dos: el equipo contesta AG1 y NB1 con su propio índice.
         segundo.Should().Contain(MandoDeEquipo.Volumen);
-        segundo.Should().Contain(MandoDeEquipo.Silenciador);
         segundo.Should().Contain(MandoDeEquipo.SupresorDeRuido);
-        segundo.Should().Contain(MandoDeEquipo.Preamplificador);
+
+        // SQ1, PA1 e IS1 contestan con el índice del principal (SQ0000, PA00, IS00+0000): no
+        // son mandos aparte del segundo VFO, son el del primero con otra etiqueta.
+        segundo.Should().NotContain(MandoDeEquipo.Silenciador);
+        segundo.Should().NotContain(MandoDeEquipo.Preamplificador);
+        segundo.Should().NotContain(MandoDeEquipo.DesplazamientoFi);
 
         // Y estos solo en el principal: SH1, RG1, GT1 y RA1 contestan «?;».
         principal.Should().Contain(MandoDeEquipo.AnchoDeFiltro);
@@ -133,20 +138,22 @@ public class ControlFt710Pruebas
     }
 
     [Fact]
-    public async Task Se_entiende_al_equipo_aunque_conteste_con_otro_indice()
+    public async Task No_se_ofrece_en_el_segundo_vfo_lo_que_contesta_con_el_indice_del_primero()
     {
         var (equipo, control) = await MontarAsync();
         await using var _ = equipo;
         await using var __ = control;
 
         // Rareza capturada del firmware: a «SQ1;» contesta «SQ0000;», con el índice del primero.
+        // Eso es el silenciador del VFO A: enseñarlo como del B sería mentir.
         var silenciador = await control.LeerMandoAsync(MandoDeEquipo.Silenciador, VfoDelEquipo.Secundario);
 
-        silenciador.Should().Be(0d);
+        silenciador.Should().BeNull();
+        control.Rango(MandoDeEquipo.Silenciador, VfoDelEquipo.Secundario).Should().BeNull();
     }
 
     [Fact]
-    public async Task El_desplazamiento_de_fi_se_lee_con_signo_y_no_se_acciona()
+    public async Task El_desplazamiento_de_fi_se_lee_con_signo_y_se_acciona_como_manda_el_manual()
     {
         var (equipo, control) = await MontarAsync();
         await using var _ = equipo;
@@ -155,10 +162,15 @@ public class ControlFt710Pruebas
         // IS00+0000: el valor viene con signo delante.
         (await control.LeerMandoAsync(MandoDeEquipo.DesplazamientoFi)).Should().Be(0d);
 
-        // Y no se acciona: el recorrido no consta en ninguna captura, así que va de solo lectura.
-        control.Rango(MandoDeEquipo.DesplazamientoFi)!.SoloLectura.Should().BeTrue();
-        var escribir = () => control.EscribirMandoAsync(MandoDeEquipo.DesplazamientoFi, 100);
-        await escribir.Should().ThrowAsync<NotSupportedException>();
+        // El manual CAT da -1200…+1200 Hz en pasos de 20; en la radio (28-09-2026) IS00+0100 e
+        // IS00-0240 se leyeron de vuelta tal cual.
+        var rango = control.Rango(MandoDeEquipo.DesplazamientoFi)!;
+        rango.SoloLectura.Should().BeFalse();
+        rango.Minimo.Should().Be(-1200);
+        rango.Maximo.Should().Be(1200);
+        rango.Paso.Should().Be(20);
+        await control.EscribirMandoAsync(MandoDeEquipo.DesplazamientoFi, 100);
+        await equipo.EsperarOrdenAsync("IS00+0100;", EsperaDeSenales.PlazoDeSeguridad);
     }
 
     [Fact]
@@ -410,10 +422,9 @@ public class ControlFt710Pruebas
         (await control.LeerMandoAsync(MandoDeEquipo.FrecuenciaDeContorno)).Should().Be(1500d);
         control.Rango(MandoDeEquipo.FrecuenciaDeContorno)!.Unidad.Should().Be("Hz");
 
-        // BP01150 es lo que Yaesu llama «nivel» de la muesca. Que cada paso sean diez hercios
-        // no se ha podido comprobar sin escribir en el equipo, así que se enseña el índice.
-        (await control.LeerMandoAsync(MandoDeEquipo.FrecuenciaDeMuesca)).Should().Be(150d);
-        control.Rango(MandoDeEquipo.FrecuenciaDeMuesca)!.Unidad.Should().Be("índice");
+        // BP01150: la muesca va en pasos de 10 Hz según el manual CAT, 1500 Hz.
+        (await control.LeerMandoAsync(MandoDeEquipo.FrecuenciaDeMuesca)).Should().Be(1500d);
+        control.Rango(MandoDeEquipo.FrecuenciaDeMuesca)!.Unidad.Should().Be("Hz");
 
         // AG0089 va de 0 a 255 tal cual.
         (await control.LeerMandoAsync(MandoDeEquipo.Volumen)).Should().Be(89d);

@@ -1,57 +1,51 @@
-﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.FrontalFt710"
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.FrontalFt710"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
              xmlns:puertos="clr-namespace:Nodisla.Cuaderno.Aplicacion.Puertos;assembly=Nodisla.Cuaderno.Aplicacion">
 
     <!--
-        EL FRONTAL DEL EQUIPO, DIBUJADO DE CERO EN VECTOR.
+        EL FRONTAL DEL EQUIPO, DIBUJADO EN VECTOR A PARTIR DE LAS FOTOS DE LA RADIO DE JOSE
+        (docs\capturas\referencia-ft710-frontal.jpg y referencia-ft710-botonera.jpg).
 
-        Fuentes, todas verificadas:
-          · «Front Panel Controls & Switches» del manual oficial (páginas impresas 30 a 39): la
-            lista numerada de los 25 mandos y las láminas con sus llamadas. De ahí sale DÓNDE
-            va cada cosa.
-          · «Specifications», página 106: 239 × 80 × 247 mm. El frente es de casi 3:1, y por eso
-            este dibujo mide 1000 × 335.
-          · La ficha del fabricante: pantalla táctil TFT en color de 4,3 pulgadas —10,9 cm sobre
-            23,9 de ancho de equipo, o sea casi la mitad del frontal— y el dial MAIN grande,
-            con los indicadores de VFO a un lado y otro. Por eso aquí la pantalla y el dial
-            mandan, y los botones son pequeños: es lo que hace que se reconozca.
-          · `docs\05-frontal-ft710-referencia.md`, que describe la fotografía que envió Jose. De
-            ahí salen los colores y los materiales: cuerpo negro mate, botones gris muy oscuro
-            con rótulo blanco, mandos negros estriados con reflejo metálico y el anillo azul
-            iluminado del dial.
+        Cada pieza está en el sitio y al tamaño que tiene en la foto: se midió sobre ella y se
+        pasó a un lienzo de 1040 × 335 (el cuerpo; el altavoz de la derecha, 160 más, ya no se
+        dibuja). Por eso es un Canvas con coordenadas y no una rejilla:
+        una rejilla reparte el sitio a su manera y el dibujo deja de parecerse.
 
-        EL RELIEVE NO ES ADORNO. Un mando de verdad es un cilindro: tiene una cara iluminada
-        arriba a la izquierda y una sombra abajo a la derecha, y un canto estriado que brilla.
-        Un círculo plano con una rayita no se parece a nada. Lo mismo con las teclas: bisel
-        claro arriba, sombra abajo, y un poco de sombra proyectada sobre el cuerpo.
+          · Izquierda, en columna: LOCK con su piloto azul, TUNE, VOX/MOX, PHONES y MIC.
+          · La pantalla, con la marca arriba a la izquierda y el modelo en dorado a la derecha.
+          · Fila de arriba, en el canto: MODE · ZIN/SPOT · SPLIT · CLAR · NB.
+          · Segunda fila, en su canal: M▶V · V/M (W) · A/B · BAND · QMB.
+          · Tercera: DNR · piloto BUSY/TX · NAR.
+          · FUNC y STEP/MCH-DSP a la izquierda del dial, RF GAIN/SQL y AF GAIN a la derecha,
+            los cuatro dobles y concéntricos; el dial grande con los dos arcos azules; DSP RESET
+            y FINE/FAST abajo.
+          · Sin la rejilla del altavoz (29-09-2026): su sitio es para la botonera de bandas y
+            los canales CB (FrontalConBotonera).
 
-        NO se reproduce el logotipo ni la marca. Es una herramienta propia para uso particular,
-        no una imitación del producto.
+        Se dibuja, no se pega la foto. Es vectorial y va dentro de un Viewbox: se ENCOGE con la
+        ventana y respeta el tope de alto que le ponen PanelOperar y PestanaDigital.
 
-        EL BLOQUE DE REJILLA DE LA FOTO NO SE DIBUJA. Es el altavoz externo SP-40, un accesorio:
-        el manual lo enseña atornillándose al costado del equipo («The SP-40 can be mounted on
-        either the left or right side of the transceiver», página impresa 13).
-
-        Es vectorial y va dentro de un Viewbox: se ENCOGE con la ventana, nunca desaparece.
+        Cada tecla y cada mando conserva su orden (revisado en docs\09-revision-operar.md).
     -->
 
     <UserControl.Resources>
         <!-- ── Colores del equipo, fijos: la radio es negra con cualquier tema ── -->
-        <SolidColorBrush x:Key="Serigrafia" Color="#FFAAB3BD" />
+        <SolidColorBrush x:Key="Serigrafia" Color="#FFC4CBD3" />
         <SolidColorBrush x:Key="TeclaTexto" Color="#FFE8ECF0" />
-        <SolidColorBrush x:Key="TeclaApagada" Color="#FF676E77" />
-        <SolidColorBrush x:Key="AnilloAzul" Color="#FF1F7FE8" />
+        <SolidColorBrush x:Key="TeclaApagada" Color="#FF8A929B" />
+        <SolidColorBrush x:Key="AnilloAzul" Color="#FF2E8BFF" />
         <SolidColorBrush x:Key="PilotoApagado" Color="#FF25292E" />
         <SolidColorBrush x:Key="RojoTx" Color="#FFE2352B" />
+        <SolidColorBrush x:Key="Dorado" Color="#FFD9AE4E" />
 
         <!-- El cuerpo: chapa negra mate con la luz cayendo desde arriba. -->
         <LinearGradientBrush x:Key="Cuerpo" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Offset="0" Color="#FF2B2E32" />
-            <GradientStop Offset="0.12" Color="#FF202327" />
-            <GradientStop Offset="0.85" Color="#FF16181B" />
-            <GradientStop Offset="1" Color="#FF101214" />
+            <GradientStop Offset="0" Color="#FF26292D" />
+            <GradientStop Offset="0.08" Color="#FF1B1D20" />
+            <GradientStop Offset="0.9" Color="#FF121416" />
+            <GradientStop Offset="1" Color="#FF0B0C0E" />
         </LinearGradientBrush>
 
         <LinearGradientBrush x:Key="CuerpoBorde" StartPoint="0,0" EndPoint="0,1">
@@ -59,80 +53,77 @@
             <GradientStop Offset="1" Color="#FF0A0B0D" />
         </LinearGradientBrush>
 
-        <!-- Una tecla: bisel claro arriba, sombra abajo. -->
+        <!-- Una tecla: goma gris muy oscura, bisel claro arriba, sombra abajo. -->
         <LinearGradientBrush x:Key="Tecla" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Offset="0" Color="#FF43484F" />
-            <GradientStop Offset="0.5" Color="#FF303439" />
-            <GradientStop Offset="0.52" Color="#FF272B30" />
-            <GradientStop Offset="1" Color="#FF1B1E22" />
+            <GradientStop Offset="0" Color="#FF3E434A" />
+            <GradientStop Offset="0.45" Color="#FF2A2E33" />
+            <GradientStop Offset="1" Color="#FF16181B" />
         </LinearGradientBrush>
 
         <LinearGradientBrush x:Key="TeclaPulsada" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Offset="0" Color="#FF1B1E22" />
+            <GradientStop Offset="0" Color="#FF16181B" />
             <GradientStop Offset="1" Color="#FF383D43" />
         </LinearGradientBrush>
 
         <LinearGradientBrush x:Key="TeclaBorde" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Offset="0" Color="#FF5B636C" />
-            <GradientStop Offset="1" Color="#FF0C0E10" />
+            <GradientStop Offset="0" Color="#FF626A73" />
+            <GradientStop Offset="1" Color="#FF08090B" />
         </LinearGradientBrush>
-
-        <!-- El canto metálico de los mandos y del dial. -->
-        <LinearGradientBrush x:Key="CantoMetalico" StartPoint="0.15,0" EndPoint="0.85,1">
-            <GradientStop Offset="0" Color="#FF8B949E" />
-            <GradientStop Offset="0.35" Color="#FF4A515A" />
-            <GradientStop Offset="0.7" Color="#FF23272C" />
-            <GradientStop Offset="1" Color="#FF585F68" />
-        </LinearGradientBrush>
-
-        <!-- La cara del mando: cilindro negro iluminado desde arriba a la izquierda. -->
-        <RadialGradientBrush x:Key="CaraDeMando" GradientOrigin="0.34,0.26" Center="0.5,0.5"
-                             RadiusX="0.72" RadiusY="0.72">
-            <GradientStop Offset="0" Color="#FF4A5058" />
-            <GradientStop Offset="0.45" Color="#FF25292E" />
-            <GradientStop Offset="1" Color="#FF0D0F11" />
-        </RadialGradientBrush>
 
         <!-- Conectores y ranuras: huecos, así que la luz va al revés. -->
         <LinearGradientBrush x:Key="Hueco" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Offset="0" Color="#FF0A0B0D" />
-            <GradientStop Offset="1" Color="#FF20242A" />
+            <GradientStop Offset="0" Color="#FF050607" />
+            <GradientStop Offset="1" Color="#FF1E2227" />
         </LinearGradientBrush>
 
+        <LinearGradientBrush x:Key="CantoMetalico" StartPoint="0.15,0" EndPoint="0.85,1">
+            <GradientStop Offset="0" Color="#FFB5BDC6" />
+            <GradientStop Offset="0.35" Color="#FF59616A" />
+            <GradientStop Offset="0.7" Color="#FF1C1F23" />
+            <GradientStop Offset="1" Color="#FF6C747E" />
+        </LinearGradientBrush>
+
+        <RadialGradientBrush x:Key="CaraDelDial" GradientOrigin="0.32,0.24" Center="0.5,0.5" RadiusX="0.7" RadiusY="0.7">
+            <GradientStop Offset="0" Color="#FF4C535B" />
+            <GradientStop Offset="0.3" Color="#FF1A1D21" />
+            <GradientStop Offset="1" Color="#FF040506" />
+        </RadialGradientBrush>
+
         <Style x:Key="TeclaDelFrontal" TargetType="Button">
-            <Setter Property="FontSize" Value="9" />
+            <Setter Property="FontSize" Value="13" />
             <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontFamily" Value="Arial" />
             <Setter Property="Foreground" Value="{StaticResource TeclaTexto}" />
-            <Setter Property="Margin" Value="1.5" />
             <Setter Property="Cursor" Value="Hand" />
+            <!-- La tecla apagada dice POR QUE lo esta: sin esto el rotulo no salia nunca. -->
+            <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid>
                             <!-- La sombra que la tecla proyecta sobre el cuerpo. -->
-                            <Border Background="#66000000" CornerRadius="3" Margin="0.5,1.5,-0.5,-1.5" />
+                            <Border Background="#88000000" CornerRadius="4" Margin="0.5,2,-0.5,-2" />
 
                             <Border x:Name="cuerpo"
                                     Background="{StaticResource Tecla}"
                                     BorderBrush="{StaticResource TeclaBorde}"
                                     BorderThickness="1"
-                                    CornerRadius="3"
-                                    Padding="2,3">
+                                    CornerRadius="4">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
 
                             <!-- El brillo del bisel superior. -->
                             <Border x:Name="brillo"
-                                    BorderBrush="#40FFFFFF"
+                                    BorderBrush="#38FFFFFF"
                                     BorderThickness="0,1,0,0"
-                                    CornerRadius="3,3,0,0"
-                                    Margin="2,1,2,0"
+                                    CornerRadius="4,4,0,0"
+                                    Margin="3,1,3,0"
                                     VerticalAlignment="Top"
-                                    Height="3" />
+                                    Height="4" />
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="cuerpo" Property="Background" Value="#FF454B53" />
+                                <Setter TargetName="cuerpo" Property="Background" Value="#FF464C54" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="cuerpo" Property="Background" Value="{StaticResource TeclaPulsada}" />
@@ -146,345 +137,505 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>
-
-        <Style x:Key="PiezaDelFrontal" TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource Hueco}" />
-            <Setter Property="BorderBrush" Value="#FF0A0B0D" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Margin" Value="1.5" />
-        </Style>
-
-        <Style x:Key="SerigrafiaDePieza" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{StaticResource Serigrafia}" />
-            <Setter Property="FontSize" Value="7" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="TextTrimming" Value="None" />
-        </Style>
-
-        <!-- Las dos barras del indicador de VFO que flanquean el dial. -->
-        <Style x:Key="BarraDeVfo" TargetType="Border">
-            <Setter Property="Width" Value="6" />
-            <Setter Property="CornerRadius" Value="3" />
-            <Setter Property="Margin" Value="0,26" />
-            <Setter Property="Background" Value="{StaticResource PilotoApagado}" />
-            <Setter Property="BorderBrush" Value="#FF0A0B0D" />
-            <Setter Property="BorderThickness" Value="1" />
+            <!--
+                Tecla ENCENDIDA (su función está puesta en la radio): el rótulo en ámbar, como el
+                piloto de la tecla del equipo. Se enlaza en Tag; lo que se cambie en la propia radio
+                llega por el sondeo del frontal y se ve aquí.
+            -->
             <Style.Triggers>
-                <DataTrigger Binding="{Binding EsElActivo}" Value="True">
-                    <Setter Property="Background" Value="{StaticResource AnilloAzul}" />
-                    <Setter Property="Effect">
-                        <Setter.Value>
-                            <DropShadowEffect Color="#FF1F7FE8" BlurRadius="9" ShadowDepth="0" Opacity="0.85" />
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-                <!--
-                    Naranja es «por aquí se transmite», que no es lo mismo que «se está
-                    transmitiendo». El rojo se reserva para el piloto BUSY/TX.
-                -->
-                <DataTrigger Binding="{Binding Transmite}" Value="True">
-                    <Setter Property="Background" Value="#FFF29A2E" />
-                    <Setter Property="Effect">
-                        <Setter.Value>
-                            <DropShadowEffect Color="#FFF29A2E" BlurRadius="9" ShadowDepth="0" Opacity="0.85" />
-                        </Setter.Value>
-                    </Setter>
+                <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="True">
+                    <Setter Property="Foreground" Value="#FFFFB23F" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Rótulo serigrafiado en el cuerpo. -->
+        <Style x:Key="Serigrafiado" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource Serigrafia}" />
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="None" />
+        </Style>
+
+        <!--
+            Los dos arcos azules que flanquean el dial: son el indicador de VFO.
+            Azul vivo el VFO que manda y azul apagado el otro, como en la radio; naranja el VFO
+            por el que sale la emisión mientras se transmite (el rojo es solo del piloto BUSY/TX).
+        -->
+        <Style x:Key="ArcoDeVfo" TargetType="Path">
+            <Setter Property="StrokeThickness" Value="6" />
+            <Setter Property="StrokeStartLineCap" Value="Round" />
+            <Setter Property="StrokeEndLineCap" Value="Round" />
+            <Setter Property="Stroke" Value="#FF1C3D66" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding EsElActivo}" Value="True">
+                    <Setter Property="Stroke" Value="#FF4FA8FF" />
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="#FF2E8BFF" BlurRadius="14" ShadowDepth="0" Opacity="1" />
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Transmite}" Value="True" />
+                        <Condition Binding="{Binding DataContext.Transmitiendo, RelativeSource={RelativeSource AncestorType=vistas:FrontalFt710}}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Stroke" Value="#FFF29A2E" />
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect Color="#FFF29A2E" BlurRadius="14" ShadowDepth="0" Opacity="1" />
+                        </Setter.Value>
+                    </Setter>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
     </UserControl.Resources>
 
     <Viewbox Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Top">
-        <Border Width="1000"
-                Height="335"
-                Background="{StaticResource Cuerpo}"
-                BorderBrush="{StaticResource CuerpoBorde}"
-                BorderThickness="1.5"
-                CornerRadius="9"
-                Padding="9,7">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="62" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="346" />
-                </Grid.ColumnDefinitions>
+        <Canvas Width="1040" Height="335">
 
-                <!-- ══ ①②③④⑤⑥ Columna izquierda ══ -->
-                <StackPanel Grid.Column="0" Margin="0,0,7,0">
-                    <Button Style="{StaticResource TeclaDelFrontal}"
-                            Content="⏻ LOCK"
-                            IsEnabled="False"
-                            AutomationProperties.Name="Encendido y bloqueo del dial (LOCK)"
-                            ToolTip="LOCK — Encendido y bloqueo del dial. El equipo no lo ofrece por CAT." />
+            <!-- ══ El cuerpo ══ -->
+            <Border Canvas.Left="0" Canvas.Top="0" Width="1040" Height="335"
+                    Background="{StaticResource Cuerpo}"
+                    BorderBrush="{StaticResource CuerpoBorde}"
+                    BorderThickness="1.5"
+                    CornerRadius="12" />
 
-                    <Border Style="{StaticResource PiezaDelFrontal}" Height="11" CornerRadius="1"
-                            AutomationProperties.Name="Ranura de tarjeta SD"
-                            ToolTip="Ranura de tarjeta SD">
-                        <TextBlock Text="SD" Style="{StaticResource SerigrafiaDePieza}" FontSize="6" />
+            <!-- El bloque de mandos sobresale un poco del de la pantalla: su canto. -->
+            <Border Canvas.Left="566" Canvas.Top="4" Width="470" Height="327"
+                    CornerRadius="10"
+                    BorderThickness="1.2"
+                    BorderBrush="#FF3A4047"
+                    Background="#08FFFFFF" />
+
+            <!-- ══ ①–⑥ Columna izquierda ══ -->
+            <!--
+                ⏻LOCK como en la radio: pulsación corta = bloqueo del dial; pulsación larga (1 s) =
+                encender o apagar. Sin Command: el botón tiene que poder pulsarse con la radio
+                apagada para encenderla, y lo gobierna el código de detrás (AlPulsarLock…).
+            -->
+            <Button x:Name="TeclaLock" Canvas.Left="8" Canvas.Top="20" Width="74" Height="30"
+                    Style="{StaticResource TeclaDelFrontal}"
+                    IsEnabled="{Binding LockDisponible}"
+                    PreviewMouseLeftButtonDown="AlPulsarLock"
+                    PreviewMouseLeftButtonUp="AlSoltarLock"
+                    MouseLeave="AlSalirDeLock"
+                    Tag="{Binding Pilotos[Bloqueo].Encendido, FallbackValue=False, TargetNullValue=False}"
+                    AutomationProperties.Name="Bloqueo del dial (LOCK); pulsación larga, encender o apagar"
+                    ToolTip="LOCK — Pulsación corta: bloquea el dial. Pulsación larga (1 s): enciende o apaga la radio (apagar pide confirmación).">
+                <TextBlock><Run Text="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="12" FontWeight="Normal" /><Run Text="LOCK" /></TextBlock>
+            </Button>
+
+            <!-- El piloto azul de debajo de LOCK: el equipo está encendido y hablando. -->
+            <Border Canvas.Left="37" Canvas.Top="57" Width="16" Height="5" CornerRadius="2"
+                    AutomationProperties.Name="Piloto de encendido"
+                    ToolTip="Piloto de encendido: azul con el equipo conectado">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="{StaticResource PilotoApagado}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Conectado}" Value="True">
+                                <Setter Property="Background" Value="#FF3F9BFF" />
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#FF2E8BFF" BlurRadius="10" ShadowDepth="0" Opacity="1" />
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+
+            <Button Canvas.Left="8" Canvas.Top="72" Width="74" Height="30"
+                    Style="{StaticResource TeclaDelFrontal}"
+                    Content="TUNE"
+                    Command="{Binding AlternarMandoCommand}"
+                    CommandParameter="{x:Static puertos:MandoDeEquipo.Sintonizador}"
+                    Tag="{Binding Frontal[Sintonizador].Encendido, FallbackValue=False, TargetNullValue=False}"
+                    AutomationProperties.Name="Acoplador de antena (TUNE)"
+                    AutomationProperties.HelpText="Clic: acoplador en línea o fuera (AC001/AC000), no emite. Clic derecho: sintonizar (AC003), emite portadora dentro de una transmisión vigilada de 10 s como mucho."
+                    ToolTip="TUNE — Clic: pone el acoplador en línea o lo quita (no emite). Clic derecho = mantener TUNE: sintoniza (AC003), EMITE PORTADORA; pide confirmación y va por el vigilante del PTT, con corte a los 10 s.">
+                <Button.InputBindings>
+                    <MouseBinding Gesture="RightClick" Command="{Binding SintonizarAcopladorCommand}" />
+                </Button.InputBindings>
+            </Button>
+
+            <!-- El piloto del acoplador, debajo de TUNE: encendido con el acoplador en línea. -->
+            <Border Canvas.Left="40" Canvas.Top="108" Width="10" Height="4" CornerRadius="2">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="{StaticResource Hueco}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Frontal[Sintonizador].Encendido, FallbackValue=False, TargetNullValue=False}" Value="True">
+                                <Setter Property="Background" Value="#FFFFB23F" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+
+            <Button Canvas.Left="8" Canvas.Top="118" Width="74" Height="30"
+                    Style="{StaticResource TeclaDelFrontal}"
+                    Command="{Binding AlternarMandoCommand}"
+                    CommandParameter="{x:Static puertos:MandoDeEquipo.Vox}"
+                    Tag="{Binding Frontal[Vox].Encendido, FallbackValue=False, TargetNullValue=False}"
+                    AutomationProperties.Name="Paso a transmisión por voz (VOX/MOX)"
+                    AutomationProperties.HelpText="Clic: VOX (VX1/VX0). Clic derecho: MOX, pone el equipo en antena por el vigilante del PTT; otro clic derecho lo quita."
+                    ToolTip="VOX MOX — Clic: VOX encendido/apagado. Clic derecho = MOX: TRANSMITE (pide confirmación, va por el vigilante del PTT); otro clic derecho lo quita. El rótulo MOX se pone rojo mientras transmite.">
+                <Button.InputBindings>
+                    <MouseBinding Gesture="RightClick" Command="{Binding MoxCommand}" />
+                </Button.InputBindings>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="VOX" VerticalAlignment="Center" />
+                    <Border CornerRadius="1.5" Padding="1.5,0" Margin="1,0,0,0">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="#FF9AA3AD" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding EnMox}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource RojoTx}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="MOX" Foreground="#FF16181B" FontSize="12" />
                     </Border>
-
-                    <Button Style="{StaticResource TeclaDelFrontal}"
-                            Content="TUNE"
-                            Command="{Binding AlternarMandoCommand}"
-                            CommandParameter="{x:Static puertos:MandoDeEquipo.Sintonizador}"
-                            AutomationProperties.Name="Acoplador de antena (TUNE)"
-                            AutomationProperties.HelpText="Sintonizar emite portadora: se avisa antes y se acciona dentro de una transmisión vigilada."
-                            ToolTip="TUNE — Acoplador de antena. Sintonizar EMITE: se pide confirmación antes." />
-
-                    <Button Style="{StaticResource TeclaDelFrontal}"
-                            Content="VOX MOX"
-                            Command="{Binding AlternarMandoCommand}"
-                            CommandParameter="{x:Static puertos:MandoDeEquipo.Vox}"
-                            AutomationProperties.Name="Paso a transmisión por voz (VOX/MOX)"
-                            ToolTip="VOX MOX — Paso a transmisión por voz" />
-
-                    <Border Style="{StaticResource PiezaDelFrontal}" Height="19" CornerRadius="10"
-                            Margin="1.5,6,1.5,1.5"
-                            AutomationProperties.Name="Toma de auriculares (PHONES)"
-                            ToolTip="PHONES — Toma de auriculares">
-                        <Ellipse Width="9" Height="9" Fill="#FF050607"
-                                 Stroke="#FF585F68" StrokeThickness="1" />
-                    </Border>
-                    <TextBlock Text="PHONES" Style="{StaticResource SerigrafiaDePieza}" FontSize="6" />
-
-                    <Border Style="{StaticResource PiezaDelFrontal}" Height="19" CornerRadius="2"
-                            AutomationProperties.Name="Conector de micrófono (MIC)"
-                            ToolTip="MIC — Conector de micrófono">
-                        <Rectangle Width="17" Height="9" Fill="#FF050607"
-                                   Stroke="#FF585F68" StrokeThickness="1" RadiusX="1" RadiusY="1" />
-                    </Border>
-                    <TextBlock Text="MIC" Style="{StaticResource SerigrafiaDePieza}" FontSize="6" />
                 </StackPanel>
+            </Button>
 
-                <!-- ══ La pantalla, hundida en el cuerpo y con marco propio ══ -->
-                <Grid Grid.Column="1" Margin="0,0,7,0">
-                    <!-- El rebaje donde va encajada. -->
-                    <Border CornerRadius="4"
-                            Background="#FF0A0B0D"
-                            BorderBrush="#FF3A3F46"
-                            BorderThickness="1"
-                            Margin="-2" />
-                    <vistas:VisorDeVfos />
-                </Grid>
+            <TextBlock Canvas.Left="6" Canvas.Top="158" Width="80" Style="{StaticResource Serigrafiado}" FontSize="13">
+                <Run Text="&#xE7F6;" FontFamily="Segoe MDL2 Assets" FontWeight="Normal" /><Run Text="PHONES" />
+            </TextBlock>
 
-                <!-- ══ Bloque derecho ══ -->
-                <Grid Grid.Column="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <!-- ㉑㉒㉓㉔㉕ -->
-                    <UniformGrid Grid.Row="0" Columns="5">
-                        <Button Style="{StaticResource TeclaDelFrontal}" Content="MODE"
-                                Command="{Binding SiguienteModoCommand}"
-                                AutomationProperties.Name="Selección de modo (MODE)"
-                                ToolTip="MODE — Pasa al modo siguiente" />
-                        <Button Style="{StaticResource TeclaDelFrontal}" Content="ZIN/SPOT"
-                                IsEnabled="False"
-                                AutomationProperties.Name="Ajuste a cero y escucha lateral en telegrafía (ZIN/SPOT)"
-                                ToolTip="ZIN/SPOT — Ajuste a cero en telegrafía. El equipo no lo ofrece por CAT." />
-                        <Button Style="{StaticResource TeclaDelFrontal}" Content="SPLIT"
-                                Command="{Binding AlternarMandoCommand}"
-                                CommandParameter="{x:Static puertos:MandoDeEquipo.Split}"
-                                AutomationProperties.Name="Trabajo en dos frecuencias (SPLIT)"
-                                ToolTip="SPLIT — Trabajo en dos frecuencias" />
-                        <Button Style="{StaticResource TeclaDelFrontal}" Content="CLAR"
-                                Command="{Binding AlternarMandoCommand}"
-                                CommandParameter="{x:Static puertos:MandoDeEquipo.Rit}"
-                                AutomationProperties.Name="Clarificador: desplazamiento de recepción (CLAR)"
-                                ToolTip="CLAR — Clarificador: desplaza la recepción" />
-                        <Button Style="{StaticResource TeclaDelFrontal}" Content="NB"
-                                Command="{Binding AlternarMandoCommand}"
-                                CommandParameter="{x:Static puertos:MandoDeEquipo.SupresorDeRuido}"
-                                AutomationProperties.Name="Supresor de ruido de impulsos (NB)"
-                                ToolTip="NB — Supresor de ruido de impulsos" />
-                    </UniformGrid>
-
-                    <!-- ⑫⑬⑭ -->
-                    <UniformGrid Grid.Row="1" Columns="5" Margin="0,2,0,0">
-                        <Button Style="{StaticResource TeclaDelFrontal}" Content="M▸V"
-                                IsEnabled="False"
-                                AutomationProperties.Name="Pasar la memoria al VFO (M a V)"
-                                ToolTip="M▸V — Pasa la memoria al VFO. El equipo no lo ofrece por CAT." />
-                        <Button Style="{StaticResource TeclaDelFrontal}" Content="V/M"
-                                IsEnabled="False"
-                                AutomationProperties.Name="Alternar entre VFO y memorias (V/M)"
-                                ToolTip="V/M — Alterna entre el VFO y las memorias. El equipo no lo ofrece por CAT." />
-                        <Button Style="{StaticResource TeclaDelFrontal}" Content="A/B"
-                                Command="{Binding IntercambiarVfosCommand}"
-                                AutomationProperties.Name="Intercambiar VFO A y VFO B (A/B)"
-                                ToolTip="A/B — Intercambia el contenido de los dos VFO" />
-                        <Button Style="{StaticResource TeclaDelFrontal}" Content="BAND"
-                                Command="{Binding SiguienteBandaCommand}"
-                                AutomationProperties.Name="Cambio de banda (BAND)"
-                                ToolTip="BAND — Pasa a la banda siguiente" />
-                        <Button Style="{StaticResource TeclaDelFrontal}" Content="QMB"
-                                IsEnabled="False"
-                                AutomationProperties.Name="Memoria rápida (QMB)"
-                                ToolTip="QMB — Memoria rápida. El equipo no lo ofrece por CAT." />
-                    </UniformGrid>
-
-                    <!-- ⑦⑨⑪⑮⑯⑰⑲⑳ -->
-                    <Grid Grid.Row="2" Margin="0,3,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="62" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="62" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
-                        <!-- ⑪ DNR · ⑯ BUSY/TX · ⑰ NAR -->
-                        <UniformGrid Grid.Row="0" Grid.Column="1" Columns="3" Margin="2,0,2,1">
-                            <Button Style="{StaticResource TeclaDelFrontal}" Content="DNR"
-                                    Command="{Binding AlternarMandoCommand}"
-                                    CommandParameter="{x:Static puertos:MandoDeEquipo.ReductorDeRuido}"
-                                    AutomationProperties.Name="Reductor de ruido digital (DNR)"
-                                    ToolTip="DNR — Reductor de ruido digital" />
-
-                            <Border CornerRadius="3" Margin="3,2.5" BorderThickness="1"
-                                    BorderBrush="#FF0A0B0D"
-                                    AutomationProperties.Name="Indicador de ocupado y transmisión (BUSY/TX)"
-                                    ToolTip="BUSY/TX — Verde con el silenciador abierto, rojo en transmisión">
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Setter Property="Background" Value="{StaticResource PilotoApagado}" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Transmitiendo}" Value="True">
-                                                <Setter Property="Background" Value="{StaticResource RojoTx}" />
-                                                <Setter Property="Effect">
-                                                    <Setter.Value>
-                                                        <DropShadowEffect Color="#FFE2352B" BlurRadius="12"
-                                                                          ShadowDepth="0" Opacity="0.9" />
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
-                                <TextBlock Text="BUSY/TX" Style="{StaticResource SerigrafiaDePieza}" FontSize="6" />
-                            </Border>
-
-                            <Button Style="{StaticResource TeclaDelFrontal}" Content="NAR"
-                                    IsEnabled="False"
-                                    AutomationProperties.Name="Filtro estrecho (NAR)"
-                                    ToolTip="NAR — Pone el filtro en estrecho. El equipo no lo ofrece por CAT." />
-                        </UniformGrid>
-
-                        <!-- ⑦ El dial, con ⑮ las barras del indicador de VFO -->
-                        <Grid Grid.Row="1" Grid.Column="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <Border Grid.Column="0" DataContext="{Binding A}"
-                                    Style="{StaticResource BarraDeVfo}"
-                                    AutomationProperties.Name="Indicador del VFO A"
-                                    ToolTip="Indicador del VFO A" />
-
-                            <!--
-                                EL DIAL MANDA. En la radio es el mando más grande con diferencia
-                                y lo primero que se ve; si aquí sale mediano, el dibujo deja de
-                                parecerse por mucho que todo lo demás esté en su sitio.
-                            -->
-                            <Viewbox Grid.Column="1" Stretch="Uniform" Margin="2,0">
-                                <Grid Width="150" Height="150"
-                                      ToolTip="Dial principal. Lo gira el operador en el equipo."
-                                      AutomationProperties.Name="Dial principal">
-                                    <!-- El halo del anillo iluminado sobre el cuerpo. -->
-                                    <Ellipse Stroke="{StaticResource AnilloAzul}" StrokeThickness="5" Opacity="0.5">
-                                        <Ellipse.Effect>
-                                            <DropShadowEffect Color="#FF1F7FE8" BlurRadius="18"
-                                                              ShadowDepth="0" Opacity="0.9" />
-                                        </Ellipse.Effect>
-                                    </Ellipse>
-                                    <Ellipse Stroke="#FF3FA0FF" StrokeThickness="3.5" />
-
-                                    <!-- El aro metálico exterior. -->
-                                    <Ellipse Margin="6" Stroke="{StaticResource CantoMetalico}" StrokeThickness="4" />
-
-                                    <!-- El canto estriado del mando. -->
-                                    <Ellipse Margin="9" Fill="{StaticResource CaraDeMando}" />
-                                    <Ellipse Margin="11" Stroke="#FF6A727C" StrokeThickness="4"
-                                             StrokeDashArray="0.55 0.55" Opacity="0.55" />
-
-                                    <!-- La cara de goma, hundida respecto al canto. -->
-                                    <Ellipse Margin="24" Fill="{StaticResource CaraDeMando}"
-                                             Stroke="#FF0A0B0D" StrokeThickness="1.5" />
-                                    <Ellipse Margin="30" Stroke="#30FFFFFF" StrokeThickness="1" />
-
-                                    <!-- La hendidura para el dedo. -->
-                                    <Ellipse Width="21" Height="21"
-                                             HorizontalAlignment="Center" VerticalAlignment="Center"
-                                             Margin="0,0,0,62"
-                                             Stroke="#FF080A0C" StrokeThickness="1.5">
-                                        <Ellipse.Fill>
-                                            <RadialGradientBrush GradientOrigin="0.4,0.75" Center="0.5,0.5"
-                                                                 RadiusX="0.75" RadiusY="0.75">
-                                                <GradientStop Offset="0" Color="#FF3C424A" />
-                                                <GradientStop Offset="1" Color="#FF05060A" />
-                                            </RadialGradientBrush>
-                                        </Ellipse.Fill>
-                                    </Ellipse>
-                                </Grid>
-                            </Viewbox>
-
-                            <Border Grid.Column="2" DataContext="{Binding B}"
-                                    Style="{StaticResource BarraDeVfo}"
-                                    AutomationProperties.Name="Indicador del VFO B"
-                                    ToolTip="Indicador del VFO B" />
-                        </Grid>
-
-                        <!-- ⑨ FUNC · ⑲ RF GAIN/SQL -->
-                        <vistas:MandoGiratorio Grid.Row="0" Grid.Column="0"
-                                               Rotulo="FUNC"
-                                               Explicacion="Menú de ajustes del equipo" />
-                        <vistas:MandoGiratorio Grid.Row="0" Grid.Column="2"
-                                               Rotulo="RF GAIN/SQL"
-                                               Explicacion="Ganancia de radiofrecuencia y silenciador"
-                                               Mando="{Binding MandoDeGananciaRf}" />
-
-                        <!-- ⑨ STEP/MCH · DSP · ⑳ AF GAIN -->
-                        <vistas:MandoGiratorio Grid.Row="1" Grid.Column="0"
-                                               VerticalAlignment="Top"
-                                               Rotulo="STEP/MCH · DSP"
-                                               Explicacion="Paso de sintonía, canal de memoria y filtros de interferencia" />
-                        <vistas:MandoGiratorio Grid.Row="1" Grid.Column="2"
-                                               VerticalAlignment="Top"
-                                               Rotulo="AF GAIN"
-                                               Explicacion="Volumen de audio"
-                                               Mando="{Binding MandoDeVolumen}" />
-                    </Grid>
-
-                    <!-- ⑩ DSP RESET · ⑱ FINE/FAST -->
-                    <Grid Grid.Row="3" Margin="0,2,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="62" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="62" />
-                        </Grid.ColumnDefinitions>
-
-                        <Button Grid.Column="0" Style="{StaticResource TeclaDelFrontal}" Content="DSP RESET"
-                                IsEnabled="False"
-                                AutomationProperties.Name="Devolver los filtros de interferencia a su sitio (DSP RESET)"
-                                ToolTip="DSP RESET — Devuelve los filtros de interferencia a su posición. El equipo no lo ofrece por CAT." />
-
-                        <Button Grid.Column="2" Style="{StaticResource TeclaDelFrontal}" Content="FINE/FAST"
-                                IsEnabled="False"
-                                AutomationProperties.Name="Sintonía fina y rápida (FINE/FAST)"
-                                ToolTip="FINE/FAST — Sintonía de 1 Hz o por pasos de diez veces. El equipo no lo ofrece por CAT." />
-                    </Grid>
-                </Grid>
+            <!-- La toma de auriculares: tuerca y agujero. -->
+            <Grid Canvas.Left="22" Canvas.Top="176" Width="50" Height="50"
+                  AutomationProperties.Name="Toma de auriculares (PHONES)"
+                  ToolTip="PHONES — Toma de auriculares">
+                <Ellipse Fill="{StaticResource Hueco}" Stroke="#FF0A0B0D" StrokeThickness="1" />
+                <Ellipse Margin="6" Stroke="{StaticResource CantoMetalico}" StrokeThickness="4" Fill="#FF15171A" />
+                <Ellipse Margin="16" Fill="#FF020203" Stroke="#FF3A4047" StrokeThickness="1" />
             </Grid>
-        </Border>
+
+            <TextBlock Canvas.Left="10" Canvas.Top="232" Style="{StaticResource Serigrafiado}" FontSize="13">
+                <Run Text="◗" FontSize="11" /><Run Text=" MIC" />
+            </TextBlock>
+
+            <!-- El conector de micrófono. -->
+            <Grid Canvas.Left="16" Canvas.Top="250" Width="62" Height="62"
+                  AutomationProperties.Name="Conector de micrófono (MIC)"
+                  ToolTip="MIC — Conector de micrófono">
+                <Ellipse Fill="{StaticResource Hueco}" />
+                <Ellipse Margin="5" Stroke="{StaticResource CantoMetalico}" StrokeThickness="4" Fill="#FF0D0F11" />
+                <Ellipse Margin="14" Fill="#FF050607" Stroke="#FF2E3339" StrokeThickness="1" />
+                <UniformGrid Rows="2" Columns="4" Width="20" Height="10">
+                    <Ellipse Width="2.5" Height="2.5" Fill="#FF8C949D" />
+                    <Ellipse Width="2.5" Height="2.5" Fill="#FF8C949D" />
+                    <Ellipse Width="2.5" Height="2.5" Fill="#FF8C949D" />
+                    <Ellipse Width="2.5" Height="2.5" Fill="#FF8C949D" />
+                    <Ellipse Width="2.5" Height="2.5" Fill="#FF8C949D" />
+                    <Ellipse Width="2.5" Height="2.5" Fill="#FF8C949D" />
+                    <Ellipse Width="2.5" Height="2.5" Fill="#FF8C949D" />
+                    <Ellipse Width="2.5" Height="2.5" Fill="#FF8C949D" />
+                </UniformGrid>
+            </Grid>
+
+            <!-- ══ La pantalla, hundida en su marco ══ -->
+            <TextBlock Canvas.Left="120" Canvas.Top="3" Text="YAESU"
+                       Foreground="#FFB08A45" FontFamily="Arial Black, Arial" FontSize="17" FontStyle="Italic"
+                       FontWeight="Black" TextTrimming="None" />
+            <TextBlock Canvas.Left="326" Canvas.Top="9" Text="HF/50MHz TRANSCEIVER"
+                       Foreground="#FF7E868F" FontFamily="Arial" FontSize="10" FontWeight="Bold"
+                       FontStyle="Italic" TextTrimming="None" />
+            <TextBlock Canvas.Left="470" Canvas.Top="2" Text="FT-710"
+                       Foreground="{StaticResource Dorado}" FontFamily="Arial" FontSize="18" FontStyle="Italic"
+                       FontWeight="Bold" TextTrimming="None" />
+
+            <Border Canvas.Left="100" Canvas.Top="26" Width="458" Height="292"
+                    CornerRadius="6"
+                    Background="#FF08090A"
+                    BorderBrush="#FF3A3F46"
+                    BorderThickness="1.2" />
+
+            <vistas:VisorDeVfos x:Name="Visor" Canvas.Left="114" Canvas.Top="40" Width="430" Height="244"
+                                RotuloDelAnalizador="{Binding DataContext.Analizador.RotuloEnPantalla, RelativeSource={RelativeSource AncestorType=Window}}"
+                                AnchoDelAnalizadorHz="{Binding DataContext.Analizador.SpanHz, RelativeSource={RelativeSource AncestorType=Window}}"
+                                InicioFijoDelAnalizadorHz="{Binding DataContext.Analizador.InicioFijoHz, RelativeSource={RelativeSource AncestorType=Window}}"
+                                AnalizadorAmpliado="{Binding DataContext.Analizador.Ampliado, RelativeSource={RelativeSource AncestorType=Window}}">
+                <!-- El analizador de la propia radio (docs/14-espectro-ft710.md), no el del audio. -->
+                <vistas:VisorDeVfos.ContenidoDelAnalizador>
+                    <vistas:AnalizadorDelEquipo DataContext="{Binding DataContext.Analizador, RelativeSource={RelativeSource AncestorType=Window}}" />
+                </vistas:VisorDeVfos.ContenidoDelAnalizador>
+            </vistas:VisorDeVfos>
+
+            <!-- ══ ㉑–㉕ Fila de arriba, en el canto ══ -->
+            <Border Canvas.Left="596" Canvas.Top="0" Width="376" Height="24"
+                    CornerRadius="0,0,6,6" Background="#FF0C0D0F" />
+
+            <Button Canvas.Left="604" Canvas.Top="2" Width="66" Height="19"
+                    Style="{StaticResource TeclaDelFrontal}" Content="MODE" FontSize="12"
+                    Command="{Binding SiguienteModoCommand}"
+                    AutomationProperties.Name="Selección de modo (MODE)"
+                    ToolTip="MODE — Pasa al modo siguiente" />
+            <Button Canvas.Left="676" Canvas.Top="2" Width="66" Height="19"
+                    Style="{StaticResource TeclaDelFrontal}" FontSize="12"
+                    Command="{Binding PulsarTeclaCommand}"
+                    CommandParameter="{x:Static puertos:TeclaDelEquipo.AjusteACero}"
+                    Tag="{Binding Pilotos[TonoDeReferenciaCw].Encendido, FallbackValue=False, TargetNullValue=False}"
+                    AutomationProperties.Name="Ajuste a cero y tono de referencia en telegrafía (ZIN/SPOT)"
+                    ToolTip="ZIN/SPOT — Clic: ZIN, ajuste a cero sobre la señal (ZI0; solo hace algo en CW y con una señal en la banda de paso). Clic derecho: SPOT, tono de referencia (CS1/CS0).">
+                <Button.InputBindings>
+                    <MouseBinding Gesture="RightClick" Command="{Binding AlternarMandoCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.TonoDeReferenciaCw}" />
+                </Button.InputBindings>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="ZIN" VerticalAlignment="Center" />
+                    <Border Background="#FF7E8791" CornerRadius="1.5" Padding="1,0" Margin="1,0,0,0">
+                        <TextBlock Text="SPOT" Foreground="#FF16181B" FontSize="11" />
+                    </Border>
+                </StackPanel>
+            </Button>
+            <Button Canvas.Left="748" Canvas.Top="2" Width="66" Height="19"
+                    Style="{StaticResource TeclaDelFrontal}" Content="SPLIT" FontSize="12"
+                    Command="{Binding AlternarMandoCommand}"
+                    CommandParameter="{x:Static puertos:MandoDeEquipo.Split}"
+                    Tag="{Binding Frontal[Split].Encendido, FallbackValue=False, TargetNullValue=False}"
+                    AutomationProperties.Name="Trabajo en dos frecuencias (SPLIT)"
+                    ToolTip="SPLIT — Trabajo en dos frecuencias (ST1/ST0)" />
+            <Button x:Name="TeclaClar" Canvas.Left="820" Canvas.Top="2" Width="66" Height="19"
+                    Style="{StaticResource TeclaDelFrontal}" Content="CLAR" FontSize="12"
+                    Command="{Binding AlternarMandoCommand}"
+                    CommandParameter="{x:Static puertos:MandoDeEquipo.Rit}"
+                    Tag="{Binding Frontal[Rit].Encendido, FallbackValue=False, TargetNullValue=False}"
+                    MouseWheel="AlGirarSobreClar"
+                    AutomationProperties.Name="Clarificador: desplazamiento de recepción (CLAR)"
+                    ToolTip="CLAR — Clic: clarificador de recepción (CF000). Rueda encima: desplazamiento ±10 Hz por muesca (CF001). Clic derecho: desplazamiento a cero. RT/XT/RC no existen en el FT-710; la orden buena es CF.">
+                <Button.InputBindings>
+                    <MouseBinding Gesture="RightClick" Command="{Binding PulsarTeclaCommand}" CommandParameter="{x:Static puertos:TeclaDelEquipo.BorrarClarificador}" />
+                </Button.InputBindings>
+            </Button>
+            <Button Canvas.Left="892" Canvas.Top="2" Width="66" Height="19"
+                    Style="{StaticResource TeclaDelFrontal}" Content="NB" FontSize="12"
+                    Command="{Binding AlternarMandoCommand}"
+                    CommandParameter="{x:Static puertos:MandoDeEquipo.SupresorDeRuido}"
+                    Tag="{Binding Frontal[SupresorDeRuido].Encendido, FallbackValue=False, TargetNullValue=False}"
+                    AutomationProperties.Name="Supresor de ruido de impulsos (NB)"
+                    ToolTip="NB — Supresor de ruido de impulsos" />
+
+            <!-- ══ ⑫⑬⑭ Segunda fila, en su canal ══ -->
+            <Border Canvas.Left="588" Canvas.Top="26" Width="426" Height="38"
+                    CornerRadius="8" Background="#FF0A0B0D"
+                    BorderBrush="#FF30353B" BorderThickness="1" />
+
+            <Button Canvas.Left="596" Canvas.Top="30" Width="76" Height="29"
+                    Style="{StaticResource TeclaDelFrontal}" Content="M▶V"
+                    Command="{Binding PulsarTeclaCommand}"
+                    CommandParameter="{x:Static puertos:TeclaDelEquipo.MemoriaAVfo}"
+                    AutomationProperties.Name="Pasar la memoria al VFO (M a V)"
+                    ToolTip="M▶V — Copia la memoria elegida en el VFO A (MA;). Pisa lo que tenga el VFO A." />
+            <Button Canvas.Left="678" Canvas.Top="30" Width="76" Height="29"
+                    Style="{StaticResource TeclaDelFrontal}"
+                    Command="{Binding PulsarTeclaCommand}"
+                    CommandParameter="{x:Static puertos:TeclaDelEquipo.VfoOMemoria}"
+                    Tag="{Binding EnMemoria}"
+                    AutomationProperties.Name="Alternar entre VFO y memorias (V/M)"
+                    ToolTip="V/M — Alterna entre el VFO y las memorias (VM;). En ámbar mientras está en memorias; STEP/MCH cambia entonces de canal.">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="V/M" VerticalAlignment="Center" />
+                    <Border Background="#FF9AA3AD" CornerRadius="3" Width="10" Height="10" Margin="2,0,0,0">
+                        <TextBlock Text="W" Foreground="#FF16181B" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </StackPanel>
+            </Button>
+            <Button Canvas.Left="760" Canvas.Top="30" Width="76" Height="29"
+                    Style="{StaticResource TeclaDelFrontal}" Content="A/B"
+                    Command="{Binding PulsarTeclaCommand}"
+                    CommandParameter="{x:Static puertos:TeclaDelEquipo.AlternarVfo}"
+                    AutomationProperties.Name="Cambiar de VFO (A/B)"
+                    ToolTip="A/B — Cambia el VFO con el que se opera, como la tecla del equipo (SV;, que en el FT-710 alterna VS0/VS1 sin tocar las frecuencias). Clic derecho: A=B, copia el VFO activo sobre el otro (pide confirmación).">
+                <Button.InputBindings>
+                    <MouseBinding Gesture="RightClick" Command="{Binding IgualarVfosCommand}" />
+                </Button.InputBindings>
+            </Button>
+            <Button Canvas.Left="842" Canvas.Top="30" Width="76" Height="29"
+                    Style="{StaticResource TeclaDelFrontal}" Content="BAND"
+                    Command="{Binding PulsarTeclaCommand}"
+                    CommandParameter="{x:Static puertos:TeclaDelEquipo.BandaArriba}"
+                    AutomationProperties.Name="Cambio de banda (BAND)"
+                    ToolTip="BAND — Banda siguiente (BU0;), con la memoria de banda del equipo: vuelve a la frecuencia y el modo que tenía allí. Clic derecho: banda anterior (BD0;).">
+                <Button.InputBindings>
+                    <MouseBinding Gesture="RightClick" Command="{Binding PulsarTeclaCommand}" CommandParameter="{x:Static puertos:TeclaDelEquipo.BandaAbajo}" />
+                </Button.InputBindings>
+            </Button>
+            <Button Canvas.Left="924" Canvas.Top="30" Width="76" Height="29"
+                    Style="{StaticResource TeclaDelFrontal}" Content="QMB"
+                    Command="{Binding PulsarTeclaCommand}"
+                    CommandParameter="{x:Static puertos:TeclaDelEquipo.RecuperarMemoriaRapida}"
+                    AutomationProperties.Name="Memoria rápida (QMB)"
+                    ToolTip="QMB — Clic: recupera la memoria rápida (QR;). Clic derecho = mantener: guarda la frecuencia en la memoria rápida (QI;), pide confirmación porque empuja la pila QMB del equipo.">
+                <Button.InputBindings>
+                    <MouseBinding Gesture="RightClick" Command="{Binding PulsarTeclaCommand}" CommandParameter="{x:Static puertos:TeclaDelEquipo.GuardarMemoriaRapida}" />
+                </Button.InputBindings>
+            </Button>
+
+            <!-- ══ ⑪ DNR · ⑯ BUSY/TX · ⑰ NAR ══ -->
+            <Button Canvas.Left="652" Canvas.Top="68" Width="96" Height="30"
+                    Style="{StaticResource TeclaDelFrontal}" Content="DNR"
+                    Command="{Binding AlternarMandoCommand}"
+                    CommandParameter="{x:Static puertos:MandoDeEquipo.ReductorDeRuido}"
+                    Tag="{Binding Frontal[ReductorDeRuido].Encendido, FallbackValue=False, TargetNullValue=False}"
+                    AutomationProperties.Name="Reductor de ruido digital (DNR)"
+                    ToolTip="DNR — Reductor de ruido digital" />
+
+            <TextBlock Canvas.Left="769" Canvas.Top="68" Width="80" Text="BUSY/TX" Style="{StaticResource Serigrafiado}" FontSize="12" />
+            <Border Canvas.Left="804" Canvas.Top="82" Width="10" Height="9" CornerRadius="1.5"
+                    BorderBrush="#FF0A0B0D" BorderThickness="1"
+                    AutomationProperties.Name="Indicador de ocupado y transmisión (BUSY/TX)"
+                    ToolTip="BUSY/TX — Rojo en transmisión">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="#FF3A3F46" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Transmitiendo}" Value="True">
+                                <Setter Property="Background" Value="{StaticResource RojoTx}" />
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#FFE2352B" BlurRadius="12" ShadowDepth="0" Opacity="1" />
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+
+            <Button Canvas.Left="850" Canvas.Top="68" Width="96" Height="30"
+                    Style="{StaticResource TeclaDelFrontal}" Content="NAR"
+                    Command="{Binding AlternarMandoCommand}"
+                    CommandParameter="{x:Static puertos:MandoDeEquipo.FiltroEstrecho}"
+                    Tag="{Binding Pilotos[FiltroEstrecho].Encendido, FallbackValue=False, TargetNullValue=False}"
+                    AutomationProperties.Name="Filtro estrecho (NAR)"
+                    ToolTip="NAR — Filtro estrecho (NA01/NA00). El ancho estrecho es el del menú NAR WIDTH de cada modo." />
+
+            <!-- ══ ⑨ FUNC · STEP/MCH-DSP ══ -->
+            <TextBlock Canvas.Left="576" Canvas.Top="76" Width="72" Text="FUNC" Style="{StaticResource Serigrafiado}" />
+            <vistas:MandoGiratorio Canvas.Left="570" Canvas.Top="92" Width="84" Height="84"
+                                   Rotulo="FUNC"
+                                   Explicacion="Ajusta la función elegida (SF0): potencia, micrófono, VOX, telegrafía, analizador…"
+                                   Mando="{Binding MandoDelFunc}"
+                                   AlPulsar="{Binding CambiarFuncionCommand}" ParametroAlPulsar="FUNC+"
+                                   AlPulsarDerecho="{Binding CambiarFuncionCommand}" ParametroAlPulsarDerecho="FUNC-" />
+            <TextBlock Canvas.Left="562" Canvas.Top="178" Width="100" Text="{Binding RotuloDelFunc}"
+                       Style="{StaticResource Serigrafiado}" FontSize="11" Foreground="#FFFFB23F"
+                       ToolTip="Lo que ajusta ahora el FUNC. Clic en el mando: función siguiente; clic derecho: anterior." />
+
+            <TextBlock Canvas.Left="566" Canvas.Top="196" Width="84" Text="STEP/MCH" Style="{StaticResource Serigrafiado}" />
+            <Border Canvas.Left="590" Canvas.Top="211" Width="36" Height="13" CornerRadius="2"
+                    BorderBrush="{StaticResource Serigrafia}" BorderThickness="1">
+                <TextBlock Text="DSP" Style="{StaticResource Serigrafiado}" FontSize="11" VerticalAlignment="Center" />
+            </Border>
+            <vistas:MandoGiratorio x:Name="MandoDePasos" Canvas.Left="570" Canvas.Top="240" Width="84" Height="84"
+                                   Rotulo="STEP/MCH · DSP"
+                                   Explicacion="Anillo: saltos de canal en VFO o canal de memoria en memorias. Centro: el filtro DSP elegido (SF1)"
+                                   GiroLibre="True"
+                                   Girado="AlGirarLosPasos"
+                                   MandoInterior="{Binding MandoDelDsp}"
+                                   AlPulsar="{Binding CambiarFuncionCommand}" ParametroAlPulsar="DSP+"
+                                   AlPulsarDerecho="{Binding CambiarFuncionCommand}" ParametroAlPulsarDerecho="DSP-" />
+            <TextBlock Canvas.Left="562" Canvas.Top="323" Width="100" Text="{Binding RotuloDelDsp}"
+                       Style="{StaticResource Serigrafiado}" FontSize="11" Foreground="#FFFFB23F"
+                       ToolTip="Lo que ajusta ahora el centro del mando (DSP). Clic en el mando: siguiente; clic derecho: anterior." />
+
+            <!-- ══ ⑲ RF GAIN/SQL · ⑳ AF GAIN ══ -->
+            <TextBlock Canvas.Left="948" Canvas.Top="77" Width="84" Text="RF GAIN/SQL" Style="{StaticResource Serigrafiado}" FontSize="11" FontStyle="Italic" />
+            <vistas:MandoGiratorio Canvas.Left="946" Canvas.Top="92" Width="84" Height="84"
+                                   Rotulo="RF GAIN/SQL"
+                                   Explicacion="Ganancia de radiofrecuencia (anillo) y silenciador (centro)"
+                                   Mando="{Binding MandoDeGananciaRf}"
+                                   MandoInterior="{Binding Frontal[Silenciador]}" />
+
+            <TextBlock Canvas.Left="946" Canvas.Top="222" Width="84" Text="AF GAIN" Style="{StaticResource Serigrafiado}" />
+            <vistas:MandoGiratorio Canvas.Left="946" Canvas.Top="240" Width="84" Height="84"
+                                   Rotulo="AF GAIN"
+                                   Explicacion="Volumen de audio"
+                                   Mando="{Binding MandoDeVolumen}" />
+
+            <!-- ══ ⑮ Los dos arcos azules del indicador de VFO ══ -->
+            <Path DataContext="{Binding A}" Style="{StaticResource ArcoDeVfo}"
+                  Data="M 684,152 A 140,140 0 0 0 684,272"
+                  AutomationProperties.Name="Indicador del VFO A"
+                  ToolTip="Indicador del VFO A" />
+            <Path DataContext="{Binding B}" Style="{StaticResource ArcoDeVfo}"
+                  Data="M 934,152 A 140,140 0 0 1 934,272"
+                  AutomationProperties.Name="Indicador del VFO B"
+                  ToolTip="Indicador del VFO B" />
+
+            <!--
+                ⑦ EL DIAL MANDA. En la radio es el mando más grande con diferencia y lo primero
+                que se ve: aro metálico, canto estriado muy ancho y la cara negra de espejo con
+                la hendidura para el dedo.
+            -->
+            <Grid Canvas.Left="696" Canvas.Top="100" Width="222" Height="222"
+                  Background="Transparent" Focusable="True"
+                  MouseWheel="AlGirarElDial" PreviewKeyDown="AlTeclearElDial"
+                  ToolTip="Dial principal. Rueda del ratón (o flechas): cada muesca, diez pasos del dial del equipo (menú 03-05-01/02: 20 Hz en SSB/CW); con FINE un paso, con FAST cien. Con LOCK no se mueve."
+                  AutomationProperties.Name="Dial principal">
+                <Ellipse Fill="#90000000" Margin="3,6,-3,-6" />
+                <Ellipse Fill="#FF0B0C0E" />
+                <!-- El canto estriado, ancho, en diamante. -->
+                <Ellipse Margin="3" Stroke="{StaticResource CantoMetalico}" StrokeThickness="26" Opacity="0.8" />
+                <Ellipse Margin="3" Stroke="#FF08090A" StrokeThickness="26"
+                         StrokeDashArray="0.07 0.07" Opacity="0.75" />
+                <Ellipse Margin="10" Stroke="#FF08090A" StrokeThickness="12"
+                         StrokeDashArray="0.14 0.14" StrokeDashOffset="0.07" Opacity="0.6" />
+                <!-- El aro de metal pulido que separa el canto de la cara. -->
+                <Ellipse Margin="29" Stroke="{StaticResource CantoMetalico}" StrokeThickness="3.5" />
+                <!-- La cara, negra de espejo con el reflejo arriba a la izquierda. -->
+                <Ellipse Margin="32" Fill="{StaticResource CaraDelDial}" />
+                <Path Margin="40" Stretch="Fill" Opacity="0.35" Width="60" Height="80"
+                      HorizontalAlignment="Left" VerticalAlignment="Top"
+                      Data="M 30,0 C 10,10 0,40 8,80 C 12,40 20,20 60,5 Z">
+                    <Path.Fill>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Offset="0" Color="#90FFFFFF" />
+                            <GradientStop Offset="1" Color="#00FFFFFF" />
+                        </LinearGradientBrush>
+                    </Path.Fill>
+                </Path>
+                <!-- La hendidura para el dedo, abajo a la derecha como en la foto. -->
+                <Ellipse Width="52" Height="52" Margin="72,56,0,0"
+                         Stroke="#FF020304" StrokeThickness="1.5">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush GradientOrigin="0.62,0.75" Center="0.5,0.5" RadiusX="0.7" RadiusY="0.7">
+                            <GradientStop Offset="0" Color="#FF30353B" />
+                            <GradientStop Offset="1" Color="#FF030405" />
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+            </Grid>
+
+            <!-- ══ ⑩ DSP RESET · ⑱ FINE/FAST ══ -->
+            <Button Canvas.Left="660" Canvas.Top="298" Width="62" Height="30"
+                    Style="{StaticResource TeclaDelFrontal}" FontSize="12"
+                    Command="{Binding PulsarTeclaCommand}"
+                    CommandParameter="{x:Static puertos:TeclaDelEquipo.RestablecerDsp}"
+                    AutomationProperties.Name="Devolver los filtros de interferencia a su sitio (DSP RESET)"
+                    ToolTip="DSP RESET — No hay orden CAT para esta tecla: el programa hace lo mismo a mano (desplazamiento de FI a 0, ancho por omisión del modo, muesca, contorno y APF apagados).">
+                <TextBlock Text="DSP&#x0a;RESET" TextAlignment="Center" LineHeight="12" LineStackingStrategy="BlockLineHeight" />
+            </Button>
+            <Button Canvas.Left="880" Canvas.Top="298" Width="62" Height="30"
+                    Style="{StaticResource TeclaDelFrontal}" FontSize="12"
+                    Command="{Binding SiguientePosicionCommand}"
+                    CommandParameter="{x:Static puertos:MandoDeEquipo.SintoniaFinaRapida}"
+                    Tag="{Binding Pilotos[SintoniaFinaRapida].Encendido, FallbackValue=False, TargetNullValue=False}"
+                    AutomationProperties.Name="Sintonía fina y rápida (FINE/FAST)"
+                    ToolTip="FINE/FAST — Cada clic: normal → FINE → FAST → normal (FN0/FN1/FN2). En ámbar con FINE o FAST. Cambia el paso del dial dibujado igual que el del equipo.">
+                <TextBlock Text="FINE&#x0a;/FAST" TextAlignment="Center" LineHeight="12" LineStackingStrategy="BlockLineHeight" />
+            </Button>
+
+        </Canvas>
     </Viewbox>
 </UserControl>

@@ -1,0 +1,107 @@
+<!--
+    LA MARCA DEL CUADERNO, CON EL ESTILO DE LA CASA NODISLA.
+
+    Es la misma familia que los iconos de SDR Nodisla TETRA («T») y SDR Nodisla DIGITAL («D»):
+    cuadrado redondeado casi negro con el filo cian, dibujo de trazo cian, el punto verde de
+    «en el aire» y la chapa redonda abajo a la derecha con la inicial. Aquí la inicial es la
+    «C» de Cuaderno y el dibujo es un libro abierto con las ondas saliendo del lomo.
+
+    Todo se dibuja sobre una rejilla de 256 × 256. De AQUÍ sale también el fichero .ico del
+    programa (herramientas\Icono\GenerarIcono.ps1), así que el icono de la barra de tareas, el
+    del instalador y el de la cabecera de la ventana son el mismo dibujo.
+
+    Colores FIJOS, sin DynamicResource: una marca no cambia con el tema.
+
+    Hay dos versiones. La grande, para 32 puntos o más. La pequeña, para 16 y 24 puntos, se
+    queda solo con el filo, la «C» y el punto verde: a ese tamaño el libro y las ondas son una
+    mancha y la marca deja de reconocerse.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="MarcaFondo" Color="#FF0A0E1A" />
+    <SolidColorBrush x:Key="MarcaFilo" Color="#FF00B4D8" />
+    <SolidColorBrush x:Key="MarcaTrazo" Color="#FF35D0E8" />
+    <SolidColorBrush x:Key="MarcaVerde" Color="#FF22C55E" />
+    <SolidColorBrush x:Key="MarcaChapa" Color="#FF0B121F" />
+    <SolidColorBrush x:Key="MarcaLetra" Color="#FF79E8DC" />
+
+    <!-- ══ La marca grande: 32 puntos o más ══ -->
+    <DrawingImage x:Key="MarcaDelCuaderno">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <!-- El marco que fija la rejilla de 256 (transparente). -->
+                <GeometryDrawing Brush="Transparent" Geometry="M 0,0 L 256,0 L 256,256 L 0,256 Z" />
+
+                <!-- El cuadrado con su filo cian -->
+                <GeometryDrawing Brush="{StaticResource MarcaFondo}"
+                                 Geometry="M 48,6 L 208,6 A 42,42 0 0 1 250,48 L 250,208 A 42,42 0 0 1 208,250 L 48,250 A 42,42 0 0 1 6,208 L 6,48 A 42,42 0 0 1 48,6 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource MarcaFilo}" Thickness="8" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <!-- El libro abierto: dos hojas y el lomo -->
+                <GeometryDrawing Geometry="M 36,140 C 60,128 84,128 104,140 L 104,212 C 84,200 60,200 36,212 Z M 104,140 C 124,128 148,128 172,140 L 172,212 C 148,200 124,200 104,212 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource MarcaTrazo}" Thickness="9" LineJoin="Round" StartLineCap="Round" EndLineCap="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <!-- Los renglones de la hoja de la izquierda: el cuaderno de guardia -->
+                <GeometryDrawing Geometry="M 52,164 L 88,160 M 52,184 L 88,180">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource MarcaTrazo}" Thickness="7" StartLineCap="Round" EndLineCap="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <!-- Las ondas saliendo del lomo -->
+                <GeometryDrawing Geometry="M 111.8,79 A 30,30 0 0 1 133,100.2 M 117.5,57.8 A 52,52 0 0 1 154.2,94.5 M 123.2,36.5 A 74,74 0 0 1 175.5,88.8">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource MarcaTrazo}" Thickness="9" StartLineCap="Round" EndLineCap="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+
+                <!-- El punto verde: en el aire -->
+                <GeometryDrawing Brush="{StaticResource MarcaVerde}"
+                                 Geometry="M 98,108 m -13,0 a 13,13 0 1 0 26,0 a 13,13 0 1 0 -26,0" />
+
+                <!-- La chapa con la «C» -->
+                <GeometryDrawing Brush="{StaticResource MarcaChapa}"
+                                 Geometry="M 196,196 m -50,0 a 50,50 0 1 0 100,0 a 50,50 0 1 0 -100,0">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource MarcaFilo}" Thickness="8" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="M 213,179 A 24,24 0 1 0 213,213">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource MarcaLetra}" Thickness="13" StartLineCap="Round" EndLineCap="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!-- ══ La marca pequeña: 16 y 24 puntos ══ -->
+    <DrawingImage x:Key="MarcaDelCuadernoPequena">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <GeometryDrawing Brush="Transparent" Geometry="M 0,0 L 256,0 L 256,256 L 0,256 Z" />
+                <GeometryDrawing Brush="{StaticResource MarcaFondo}"
+                                 Geometry="M 56,10 L 200,10 A 46,46 0 0 1 246,56 L 246,200 A 46,46 0 0 1 200,246 L 56,246 A 46,46 0 0 1 10,200 L 10,56 A 46,46 0 0 1 56,10 Z">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource MarcaFilo}" Thickness="20" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="M 164,92 A 60,60 0 1 0 164,180">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource MarcaLetra}" Thickness="36" StartLineCap="Round" EndLineCap="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="{StaticResource MarcaVerde}"
+                                 Geometry="M 200,60 m -22,0 a 22,22 0 1 0 44,0 a 22,22 0 1 0 -44,0" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+</ResourceDictionary>

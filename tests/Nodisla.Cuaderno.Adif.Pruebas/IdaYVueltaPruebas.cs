@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using FluentAssertions;
 using Nodisla.Cuaderno.Adif;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
@@ -22,9 +22,13 @@ public class IdaYVueltaPruebas
         lectura.Qsos.Should().HaveCount(crudos.Count);
         lectura.Qsos.Should().HaveCountGreaterThan(1000, "el cuaderno de EA8DLF tiene casi dos mil contactos");
         lectura.Avisos.Should().NotContain(a => a.EsFatal);
+        // Salvo una cosa que SI trae mal: los contactos de 70 cm con FREQ:0.433 (433 MHz
+        // tecleados en kHz). Esos se corrigen y se avisa; todo lo demas es de tramite.
         lectura.Avisos.Should().OnlyContain(
-            a => a.Nivel == NivelDeAviso.Informativo,
+            a => a.Nivel == NivelDeAviso.Informativo || a.Campo == "FREQ",
             "un respaldo sano de Log4OM solo levanta avisos de tramite");
+        lectura.Qsos.Where(q => q.Band.Nombre == "70cm")
+            .Should().OnlyContain(q => q.Freq.EsCero || q.Freq.Megahercios >= 430m);
         lectura.ProgramaOrigen.Should().Be("LOG4OM2");
     }
 

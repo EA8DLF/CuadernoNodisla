@@ -264,6 +264,58 @@ public class TablasDelProtocoloPruebas
     }
 
     [Fact]
+    public void LasDosTablasDelCodigoDicenLoMismo()
+    {
+        // El fichero trae la matriz de paridad y la generadora, que describen el mismo código por
+        // caminos distintos. Cargar() las cruza; que la carga salga adelante ya significa que
+        // coinciden en los 91 mensajes de la base, y por linealidad en todos los demás.
+        var ruta = Path.Combine(AppContext.BaseDirectory, TablasDelProtocolo.NombreDelFichero);
+        File.Exists(ruta).Should().BeTrue("la tabla del protocolo tiene que ir junto al programa");
+
+        var lineas = File.ReadAllLines(ruta);
+        lineas.Count(l => l.TrimStart().StartsWith("GENERADORA", StringComparison.OrdinalIgnoreCase))
+              .Should().Be(83, "hace falta una fila de generadora por cada bit de paridad");
+
+        TablasDelProtocolo.Cargar(ruta).EsElCodigoReal.Should().BeTrue();
+    }
+
+    [Fact]
+    public void UnaErrataDeUnSoloBitEnLaGeneradoraTiraElFicheroEntero()
+    {
+        // Es la razón de ser de la segunda tabla. Una errata al traer 522 números no da un error
+        // visible: da un módem que decodifica basura de vez en cuando con el CRC cuadrando. Aquí
+        // se cambia un bit a propósito y se comprueba que el módem no se lo traga.
+        var original = File.ReadAllLines(Path.Combine(AppContext.BaseDirectory, TablasDelProtocolo.NombreDelFichero));
+        var estropeadas = original.ToArray();
+        var primera = Array.FindIndex(estropeadas, l => l.TrimStart().StartsWith("GENERADORA", StringComparison.OrdinalIgnoreCase));
+        primera.Should().BeGreaterThanOrEqualTo(0);
+
+        // Se le da la vuelta a un solo bit, el primero de la fila: el cambio más pequeño posible.
+        // Tiene que ser de los 91 que cuentan y no de los cinco de relleno del final, que no
+        // describen nada y por eso no se comprueban.
+        var fila = estropeadas[primera];
+        var digito = fila.IndexOf("GENERADORA", StringComparison.OrdinalIgnoreCase) + "GENERADORA".Length;
+        while (digito < fila.Length && fila[digito] == ' ') digito++;
+        var valor = Convert.ToInt32(fila[digito..(digito + 1)], 16);
+        estropeadas[primera] = string.Concat(
+            fila.AsSpan(0, digito),
+            (valor ^ 1).ToString("X", System.Globalization.CultureInfo.InvariantCulture),
+            fila.AsSpan(digito + 1));
+
+        var ruta = Path.Combine(Path.GetTempPath(), $"nodisla-errata-{Guid.NewGuid():N}.txt");
+        try
+        {
+            File.WriteAllLines(ruta, estropeadas);
+            TablasDelProtocolo.Cargar(ruta).EsElCodigoReal.Should().BeFalse(
+                "si las dos tablas no cuadran no se sabe cuál está mal, así que no vale ninguna");
+        }
+        finally
+        {
+            if (File.Exists(ruta)) File.Delete(ruta);
+        }
+    }
+
+    [Fact]
     public void UnaTablaAMediasSeDescartaEntera()
     {
         // Una tabla incompleta decodificaría basura con el sello cuadrando de vez en cuando.
@@ -277,5 +329,164 @@ public class TablasDelProtocoloPruebas
         {
             if (File.Exists(ruta)) File.Delete(ruta);
         }
+    }
+}
+
+/// <summary>
+/// Pruebas del freno de la recuperacion profunda.
+/// </summary>
+/// <remarks>
+/// <para>
+/// Esta clase no mide sensibilidad: mide <b>honradez</b>. La recuperacion profunda tiene una
+/// propiedad incomoda que no comparte con la propagacion de creencias: no se rinde nunca.
+/// Dandole ruido puro devuelve igualmente una palabra valida del codigo, porque 91 bits
+/// cualesquiera determinan una. Si esa palabra llegara al CRC, y el CRC se tirara doscientas
+/// veces por ventana, saldrian indicativos inventados cada pocos minutos.
+/// </para>
+/// <para>
+/// Lo que se comprueba aqui es que el freno esta puesto y funciona. Si alguien sube
+/// <see cref="RecuperacionProfunda.ErroresDurosMaximos"/> «para sacar unas pocas mas», estas
+/// pruebas se lo dicen antes de que llegue al aire.
+/// </para>
+/// </remarks>
+public class RecuperacionProfundaPruebas
+{
+    private static readonly TablasDelProtocolo Tablas = TablasDelProtocolo.Cargar();
+
+    [Fact]
+    public void ConRuidoPuroCasiNuncaDevuelveNada()
+    {
+        var con = new RecuperacionProfunda(Tablas.Ldpc);
+        var sin = new RecuperacionProfunda(Tablas.Ldpc) { ErroresDurosMaximos = int.MaxValue };
+        var palabra = new byte[Tablas.Ldpc.Longitud];
+        var confianzas = new float[Tablas.Ldpc.Longitud];
+
+        // Sesenta y no trescientos: con el orden que lleva puesto, cada reconstrucción explora
+        // un par de cientos de miles de combinaciones, y esta prueba la llama dos veces por
+        // intento. Sesenta bastan de sobra para distinguir «casi siempre» de «casi nunca», que
+        // es lo único que se está comprobando aquí.
+        const int Intentos = 60;
+        int conFreno = 0, sinFreno = 0;
+        var azar = new Random(31);
+        for (var i = 0; i < Intentos; i++)
+        {
+            for (var j = 0; j < confianzas.Length; j++)
+            {
+                // Ruido gaussiano por Box y Muller: ni un bit lleva información.
+                var u1 = 1.0 - azar.NextDouble();
+                var u2 = azar.NextDouble();
+                confianzas[j] = (float)(Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Cos(2.0 * Math.PI * u2));
+            }
+            if (sin.TryRecuperar(confianzas, palabra)) sinFreno++;
+            if (con.TryRecuperar(confianzas, palabra)) conFreno++;
+        }
+
+        // Sin freno reconstruye prácticamente siempre: esa es justo la propiedad peligrosa.
+        sinFreno.Should().BeGreaterThan((int)(Intentos * 0.9),
+            "sin freno esta clase siempre encuentra una palabra válida, también en el ruido");
+
+        // Con el freno puesto, el ruido no pasa.
+        conFreno.Should().BeLessThan((int)(Intentos * 0.05),
+            "si el ruido puro pasa el freno, el CRC es lo único que separa el cuaderno de un contacto inventado");
+    }
+
+    [Fact]
+    public void ConLaSenalCasiLimpiaSiRecupera()
+    {
+        // El freno no puede estar tan apretado que se cargue lo que sí es bueno.
+        var profunda = new RecuperacionProfunda(Tablas.Ldpc);
+        var palabra = new byte[Tablas.Ldpc.Longitud];
+        var recuperada = new byte[Tablas.Ldpc.Longitud];
+        var confianzas = new float[Tablas.Ldpc.Longitud];
+        var azar = new Random(55);
+        var aciertos = 0;
+
+        const int Intentos = 40;
+        for (var intento = 0; intento < Intentos; intento++)
+        {
+            var mensaje = new byte[Tablas.Ldpc.BitsDeMensaje];
+            for (var i = 0; i < mensaje.Length; i++) mensaje[i] = (byte)azar.Next(2);
+            var emitida = Tablas.Ldpc.Codificar(mensaje);
+
+            // Confianzas con magnitudes distintas, que es lo que hace falta: esta clase se apoya
+            // en poder ordenar los bits del más fiable al menos fiable, y si todos llegaran con
+            // la misma magnitud ese orden sería arbitrario.
+            for (var i = 0; i < confianzas.Length; i++)
+            {
+                var magnitud = 1f + ((float)azar.NextDouble() * 3f);
+                confianzas[i] = emitida[i] == 0 ? magnitud : -magnitud;
+            }
+
+            // Y diez bits en los que el demodulador se equivoca. Se les pone magnitud pequeña
+            // porque es lo que hace el ruido de verdad: un bit que sale mal suele salir dudoso,
+            // no seguro del revés.
+            var estropeados = new HashSet<int>();
+            while (estropeados.Count < 10) estropeados.Add(azar.Next(confianzas.Length));
+            foreach (var bit in estropeados)
+                confianzas[bit] = emitida[bit] == 0 ? -0.3f : 0.3f;
+
+            if (profunda.TryRecuperar(confianzas, recuperada) && recuperada.SequenceEqual(emitida)) aciertos++;
+            emitida.CopyTo(palabra, 0);
+        }
+
+        aciertos.Should().BeGreaterThan(Intentos / 2,
+            "con diez bits mal de ciento setenta y cuatro la reconstrucción tiene que salir la mayoría de las veces");
+    }
+
+    [Fact]
+    public void SubirElOrdenNuncaEmpeoraYNuncaSeSaltaElFreno()
+    {
+        // Lo que se comprueba aquí es el mecanismo, no cuánto rinde: que la búsqueda por órdenes
+        // es acumulativa —el orden cuatro prueba todo lo que prueba el uno, y más, así que no
+        // puede salir peor— y que nada de lo que devuelve se salta el freno.
+        //
+        // Cuánto rinde cada orden NO se comprueba aquí y es deliberado: depende del reparto de
+        // errores, y un caso sintético se puede amañar para que dé cualquier resultado. Esa
+        // cifra sale del banco, con señal y ruido de verdad, y está apuntada en la página de
+        // RecuperacionProfunda. Un intento anterior de medirlo aquí daba 40 de 40 con los dos
+        // órdenes, que no demostraba nada.
+        // La búsqueda va abierta a toda la base a propósito: de serie va estrechada a la cola,
+        // que es un freno más, y con ella estrechada los órdenes altos ni siquiera llegan a los
+        // bits que aquí se estropean. Lo que se comprueba es el mecanismo, no los valores de
+        // serie; las cifras de cuánto rinde cada orden están en el banco.
+        var bajo = new RecuperacionProfunda(Tablas.Ldpc) { Orden = 1, ProfundidadDeLaBusqueda = 91 };
+        var alto = new RecuperacionProfunda(Tablas.Ldpc) { Orden = 4, ProfundidadDeLaBusqueda = 91 };
+        var recuperada = new byte[Tablas.Ldpc.Longitud];
+        var confianzas = new float[Tablas.Ldpc.Longitud];
+        var azar = new Random(91);
+        int conBajo = 0, conAlto = 0;
+
+        const int Intentos = 40;
+        for (var intento = 0; intento < Intentos; intento++)
+        {
+            var mensaje = new byte[Tablas.Ldpc.BitsDeMensaje];
+            for (var i = 0; i < mensaje.Length; i++) mensaje[i] = (byte)azar.Next(2);
+            var emitida = Tablas.Ldpc.Codificar(mensaje);
+
+            // Casi todo llega con mucha confianza y bien.
+            for (var i = 0; i < confianzas.Length; i++)
+                confianzas[i] = emitida[i] == 0 ? 6f : -6f;
+
+            // Y hay dos bits dudosos que además salen del revés. Uno solo lo arregla el orden
+            // uno dándole la vuelta; dos a la vez, no: hay que probarlos en pareja, y para eso
+            // hace falta orden dos o más. Es el caso más limpio para ver la diferencia.
+            var estropeados = new HashSet<int>();
+            while (estropeados.Count < 2) estropeados.Add(azar.Next(confianzas.Length));
+            foreach (var bit in estropeados)
+                confianzas[bit] = emitida[bit] == 0 ? -0.2f : 0.2f;
+
+            if (bajo.TryRecuperar(confianzas, recuperada) && recuperada.SequenceEqual(emitida)) conBajo++;
+            if (alto.TryRecuperar(confianzas, recuperada))
+            {
+                alto.UltimosErroresDuros.Should().BeLessThanOrEqualTo(alto.ErroresDurosMaximos,
+                    "nada que pase el freno puede contradecir al demodulador más de la cuenta");
+                if (recuperada.SequenceEqual(emitida)) conAlto++;
+            }
+        }
+
+        conBajo.Should().BeGreaterThan(0, "el caso de prueba tiene que ser resoluble, o no mide nada");
+        conAlto.Should().BeGreaterThanOrEqualTo(conBajo,
+            "la búsqueda es acumulativa: el orden cuatro prueba todo lo del uno y más, " +
+            "así que no puede encontrar menos");
     }
 }

@@ -7,8 +7,14 @@ obj/
 # Publicación
 publish/
 artefactos/
+# Instalador (binarios generados, no fuente)
+instalador/publicar/
+instalador/salida/
 # Datos locales
 *.sqlite
 *.SQLite
 *.db
 config.local.*
+
+# Informes de enlaces rotos de las capturas
+*.rotos.txt

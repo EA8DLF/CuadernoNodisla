@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Nodisla.Cuaderno.Dominio\Nodisla.Cuaderno.Dominio.csproj" />
+    <!-- Se referencia Aplicacion y no solo Dominio porque el seguimiento Doppler escribe en el
+         puerto IEquipoConDosVfos, que vive alli. Aplicacion no conoce a Satelites, asi que no
+         hay ciclo. -->
+    <ProjectReference Include="..\Nodisla.Cuaderno.Aplicacion\Nodisla.Cuaderno.Aplicacion.csproj" />
   </ItemGroup>
 
   <ItemGroup>

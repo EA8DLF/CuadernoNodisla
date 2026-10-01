@@ -22,6 +22,26 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>tablas-ft8.txt</Link>
     </None>
+    <None Update="Tablas\tablas-msk144.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>tablas-msk144.txt</Link>
+    </None>
+    <None Update="Tablas\tablas-msk40.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>tablas-msk40.txt</Link>
+    </None>
+    <None Update="Tablas\tablas-fst4.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>tablas-fst4.txt</Link>
+    </None>
+    <None Update="Tablas\tablas-fst4w.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>tablas-fst4w.txt</Link>
+    </None>
+    <None Update="Tablas\tablas-q65.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>tablas-q65.txt</Link>
+    </None>
   </ItemGroup>
 
 </Project>

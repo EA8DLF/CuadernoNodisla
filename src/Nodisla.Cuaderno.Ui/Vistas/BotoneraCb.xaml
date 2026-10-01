@@ -1,0 +1,75 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.BotoneraCb"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas">
+
+    <!--
+        PANEL «CANALES CB», a la derecha del frontal: los 40 canales de 27 MHz en 8 columnas,
+        el plan (11m · UK · CEPT · PL · USA, se recuerda) y el modo. Un canal lleva el VFO activo
+        a su frecuencia; el canal en que está el dial se ve en azul. Nada transmite.
+        DataContext = VistaModeloEquipo.
+    -->
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="EstilosDeLaBotonera.xaml" />
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource PanelDeLaBotonera}" ToolTip="{Binding MotivoDeLaBotonera}" ToolTipService.ShowOnDisabled="True">
+        <StackPanel Width="264">
+            <DockPanel>
+                <Button x:Name="BotonCambiar" DockPanel.Dock="Right" Content="◂ HAM" Style="{StaticResource PestanaDeLaBotonera}"
+                        Visibility="Collapsed" Click="AlPedirCambio" VerticalAlignment="Center"
+                        ToolTip="Volver a bandas, modos y memorias"
+                        AutomationProperties.Name="Ver bandas, modos y memorias" />
+                <TextBlock Text="Canales CB" Style="{StaticResource TituloDeLaBotonera}" />
+            </DockPanel>
+
+            <ItemsControl ItemsSource="{Binding CanalesDeCb}" AutomationProperties.Name="Canales de 27 MHz">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="8" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Style="{StaticResource TeclaDeLaBotonera}" Height="22"
+                                Command="{Binding DataContext.IrAlCanalCommand, RelativeSource={RelativeSource AncestorType=vistas:BotoneraCb}}"
+                                CommandParameter="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="Plan" Style="{StaticResource SubtituloDeLaBotonera}" />
+            <ItemsControl ItemsSource="{Binding PlanesDeCb}" AutomationProperties.Name="Plan de canales">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="5" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Style="{StaticResource TeclaDeLaBotonera}" Height="22"
+                                Command="{Binding DataContext.ElegirPlanCbCommand, RelativeSource={RelativeSource AncestorType=vistas:BotoneraCb}}"
+                                CommandParameter="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="Modo" Style="{StaticResource SubtituloDeLaBotonera}" />
+            <ItemsControl ItemsSource="{Binding TeclasDeModo}" AutomationProperties.Name="Teclas de modo">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="6" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Style="{StaticResource TeclaDeLaBotonera}" Height="22"
+                                Command="{Binding DataContext.PonerModoDeTeclaCommand, RelativeSource={RelativeSource AncestorType=vistas:BotoneraCb}}"
+                                CommandParameter="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Border>
+</UserControl>

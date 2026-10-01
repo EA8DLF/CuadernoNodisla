@@ -122,7 +122,7 @@ public sealed class ServicioLotw : IServicioQsl
             {
                 return "No se puede subir a LoTW porque no está TQSL instalado en este equipo. "
                     + "LoTW exige firmar los contactos con el certificado de la ARRL: instale "
-                    + "Trusted QSL, o indique dónde está tqsl.exe en los ajustes de LoTW.";
+                    + "Trusted QSL, o indique dónde está tqsl.exe en la tarjeta de LoTW (Configuración › Cuentas y servicios).";
             }
             if (string.IsNullOrWhiteSpace(_opciones.UbicacionDeEstacion))
             {
@@ -322,7 +322,7 @@ public sealed class ServicioLotw : IServicioQsl
     {
         var contrasena = _credenciales.Leer(ClavesDeCredencial.LotwContrasena)
             ?? throw new InvalidOperationException(
-                "No hay contraseña de LoTW guardada. Configúrela en los ajustes del programa.");
+                "No hay contraseña de LoTW guardada. Configúrela en Configuración › Cuentas y servicios.");
 
         var consulta = new StringBuilder();
         consulta.Append("login=").Append(Uri.EscapeDataString(_opciones.Usuario));

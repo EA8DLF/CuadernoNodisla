@@ -44,6 +44,12 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
     /// <summary>Se dispara cuando el operador pide modificar un contacto.</summary>
     public event EventHandler<Qso>? SolicitaEditar;
 
+    /// <summary>
+    /// Se ha borrado un contacto desde la rejilla. La ventana lo usa para poner al dia lo que
+    /// depende del cuaderno entero: el contador de la barra de estado, el mapa y los diplomas.
+    /// </summary>
+    public event EventHandler? CuadernoCambiado;
+
     /// <summary>La ventana pone aqui la pregunta de confirmacion antes de borrar.</summary>
     public Func<FilaDeQso, bool>? ConfirmarBorrado { get; set; }
 
@@ -60,15 +66,20 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
     public IReadOnlyList<int> TamanosDePagina { get; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PorQueNoHayFilas))]
     private string _textoBuscado = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PorQueNoHayFilas))]
     private string _bandaFiltro = Cualquiera;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PorQueNoHayFilas))]
     private string _modoFiltro = CualquierModo;
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(EditarSeleccionadoCommand))]
+    [NotifyCanExecuteChangedFor(nameof(EliminarSeleccionadoCommand))]
     private FilaDeQso? _filaSeleccionada;
 
     [ObservableProperty]
@@ -78,14 +89,22 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TextoDePagina))]
+    [NotifyCanExecuteChangedFor(nameof(PrimeraPaginaCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PaginaAnteriorCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PaginaSiguienteCommand))]
+    [NotifyCanExecuteChangedFor(nameof(UltimaPaginaCommand))]
     private int _pagina = 1;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TextoDePagina))]
     [NotifyPropertyChangedFor(nameof(TotalDePaginas))]
+    [NotifyPropertyChangedFor(nameof(PorQueNoHayFilas))]
+    [NotifyCanExecuteChangedFor(nameof(PaginaSiguienteCommand))]
+    [NotifyCanExecuteChangedFor(nameof(UltimaPaginaCommand))]
     private int _totalFiltrado;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PorQueNoHayFilas))]
     private bool _cargando;
 
     [ObservableProperty]
@@ -106,14 +125,19 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
     [ObservableProperty]
     private bool _verQth = true;
 
+    // El localizador no se mira en el cuaderno: se mira en el mapa y en la ficha del
+    // contacto. Ocho columnas de «IM88PO» seguidas no dicen nada y se llevan el sitio del
+    // comentario, que si se lee. Sigue estando a un clic en «Columnas del cuaderno».
     [ObservableProperty]
-    private bool _verLocalizador = true;
+    private bool _verLocalizador;
 
     [ObservableProperty]
     private bool _verDistancia;
 
+    // El comentario si: es lo unico de la fila que cuenta que paso en el contacto, y es la
+    // columna que se lleva el ancho que sobra en vez de dejar una franja muerta a la derecha.
     [ObservableProperty]
-    private bool _verComentario;
+    private bool _verComentario = true;
 
     [ObservableProperty]
     private bool _verEstacion;
@@ -163,6 +187,48 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
             TotalFiltrado);
 
     /// <summary>Vuelve a pedir la pagina actual al cuaderno.</summary>
+    /// <summary>
+    /// Por que la rejilla sale vacia, dicho en claro; vacio si hay filas o se esta cargando.
+    /// </summary>
+    /// <remarks>
+    /// La vista ya lo enlazaba y la propiedad no existia: el aviso no salia nunca y una rejilla
+    /// en blanco no distinguia «cuaderno vacio» de «el filtro no deja pasar nada».
+    /// </remarks>
+    public string PorQueNoHayFilas =>
+        Cargando || TotalFiltrado > 0 ? string.Empty
+        : HayFiltro ? "Ningún contacto cumple el filtro. Pulse «Quitar filtro» para verlos todos."
+        : "El cuaderno está vacío. Registre un contacto en «Operar» o importe un ADIF.";
+
+    /// <summary>Hay algun filtro puesto.</summary>
+    public bool HayFiltro =>
+        !string.IsNullOrWhiteSpace(TextoBuscado)
+        || !string.Equals(BandaFiltro, Cualquiera, StringComparison.Ordinal)
+        || !string.Equals(ModoFiltro, CualquierModo, StringComparison.Ordinal);
+
+    /// <summary>Las casillas «Ver…» de columnas, por nombre, para guardarlas y recuperarlas.</summary>
+    private static readonly System.Reflection.PropertyInfo[] CasillasDeColumna =
+        typeof(VistaModeloCuaderno).GetProperties()
+            .Where(p => p.PropertyType == typeof(bool) && p.Name.StartsWith("Ver", StringComparison.Ordinal) && p.CanWrite)
+            .ToArray();
+
+    /// <summary>Nombres de las columnas a la vista. Antes no se guardaban y se perdian al cerrar.</summary>
+    public List<string> ColumnasVisibles() =>
+        CasillasDeColumna.Where(p => (bool)p.GetValue(this)!).Select(p => p.Name).ToList();
+
+    /// <summary>Deja a la vista exactamente esas columnas.</summary>
+    /// <param name="nombres">Nombres de las casillas «Ver…» que van marcadas.</param>
+    public void PonerColumnasVisibles(IEnumerable<string> nombres)
+    {
+        var marcadas = new HashSet<string>(nombres, StringComparer.Ordinal);
+        foreach (var p in CasillasDeColumna) p.SetValue(this, marcadas.Contains(p.Name));
+    }
+
+    private bool HayAnterior() => Pagina > 1;
+
+    private bool HaySiguiente() => Pagina < TotalDePaginas;
+
+    private bool HayElegida() => FilaSeleccionada is not null;
+
     [RelayCommand]
     public async Task RefrescarAsync()
     {
@@ -171,6 +237,10 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
         var cts = new CancellationTokenSource();
         _busquedaEnCurso = cts;
 
+        // El testigo se saca ANTES de esperar: si mientras tanto llega otro refresco, este cts
+        // se anula y se libera, y pedirle el testigo despues reventaba la interfaz.
+        var testigo = cts.Token;
+
         try
         {
             Cargando = true;
@@ -178,10 +248,10 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
             var desplazamiento = (Math.Max(1, Pagina) - 1) * TamanoDePagina;
 
             var pagina = await _buscar
-                .EjecutarAsync(criterio, desplazamiento, TamanoDePagina, cts.Token)
+                .EjecutarAsync(criterio, desplazamiento, TamanoDePagina, testigo)
                 .ConfigureAwait(true);
 
-            if (cts.Token.IsCancellationRequested) return;
+            if (testigo.IsCancellationRequested) return;
 
             // Si el filtro ha dejado la pagina actual fuera de rango, se vuelve a la ultima.
             if (pagina.Elementos.Count == 0 && pagina.TotalFiltrado > 0 && Pagina > 1)
@@ -227,7 +297,7 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
     }
 
     /// <summary>Va a la pagina siguiente.</summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HaySiguiente))]
     private async Task PaginaSiguienteAsync()
     {
         if (Pagina >= TotalDePaginas) return;
@@ -236,7 +306,7 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
     }
 
     /// <summary>Va a la pagina anterior.</summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HayAnterior))]
     private async Task PaginaAnteriorAsync()
     {
         if (Pagina <= 1) return;
@@ -245,7 +315,7 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
     }
 
     /// <summary>Va a la primera pagina.</summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HayAnterior))]
     private async Task PrimeraPaginaAsync()
     {
         if (Pagina == 1) return;
@@ -254,7 +324,7 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
     }
 
     /// <summary>Va a la ultima pagina.</summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HaySiguiente))]
     private async Task UltimaPaginaAsync()
     {
         if (Pagina == TotalDePaginas) return;
@@ -263,7 +333,7 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
     }
 
     /// <summary>Pasa el contacto seleccionado al formulario de entrada para modificarlo.</summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HayElegida))]
     public void EditarSeleccionado()
     {
         if (FilaSeleccionada is not { } fila) return;
@@ -271,7 +341,7 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
     }
 
     /// <summary>Borra el contacto seleccionado, siempre previa confirmacion del operador.</summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(HayElegida))]
     public async Task EliminarSeleccionadoAsync()
     {
         if (FilaSeleccionada is not { } fila) return;
@@ -280,6 +350,7 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
         await _eliminar.EjecutarAsync(fila.Id).ConfigureAwait(true);
         FilaSeleccionada = null;
         await RefrescarAsync().ConfigureAwait(true);
+        CuadernoCambiado?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>Ordena por el campo indicado; si ya se ordenaba por el, invierte el sentido.</summary>

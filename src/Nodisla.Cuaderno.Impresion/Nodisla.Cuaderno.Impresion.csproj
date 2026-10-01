@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nodisla.Cuaderno.Aplicacion\Nodisla.Cuaderno.Aplicacion.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <!-- PDFsharp 6.2.4, MIT. iText 7, que es lo que usa el original, es AGPL: enlazarlo
+         obligaria a publicar el programa entero bajo esa licencia. PDFsharp es gestionado, sin
+         dependencias nativas, y compila igual para net8.0. Aprobado por Jose el 26-09-2026. -->
+    <PackageReference Include="PDFsharp" />
+  </ItemGroup>
+
+</Project>

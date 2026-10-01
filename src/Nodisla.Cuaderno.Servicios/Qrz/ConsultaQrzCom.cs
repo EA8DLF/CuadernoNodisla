@@ -133,6 +133,11 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
             GestorQsl = LecturaXml.Texto(ficha, "qslmgr"),
             Iota = LecturaXml.Texto(ficha, "iota"),
             Imagen = LecturaXml.Direccion(ficha, "image"),
+            UsaLotw = Marca(LecturaXml.Texto(ficha, "lotw")),
+            UsaEqsl = Marca(LecturaXml.Texto(ficha, "eqsl")),
+
+            // Sin suscripcion XML de pago QRZ solo da una parte de la ficha y lo dice aqui.
+            Aviso = LecturaXml.Texto(sesion, "Message"),
             Fuente = "QRZ.com",
         };
     }
@@ -168,7 +173,7 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
 
             var contrasena = _credenciales.Leer(ClavesDeCredencial.QrzContrasena)
                 ?? throw new InvalidOperationException(
-                    "No hay contraseña de QRZ.com guardada. Configúrela en los ajustes del programa.");
+                    "No hay contraseña de QRZ.com guardada. Configúrela en Configuración › Cuentas y servicios.");
 
             var consulta =
                 $"username={Uri.EscapeDataString(_opciones.Usuario)}"
@@ -225,6 +230,14 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
             }
         }, ct).ConfigureAwait(false);
     }
+
+    /// <summary>QRZ marca con <c>1</c> o <c>0</c> si la estacion usa LoTW o eQSL.</summary>
+    private static bool? Marca(string? texto) => texto?.Trim() switch
+    {
+        "1" or "Y" or "y" => true,
+        "0" or "N" or "n" => false,
+        _ => null,
+    };
 
     private static string? Juntar(string? nombre, string? apellido)
     {

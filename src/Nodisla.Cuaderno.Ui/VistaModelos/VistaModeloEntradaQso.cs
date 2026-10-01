@@ -34,9 +34,26 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
     private readonly RegistrarQso _registrar;
     private readonly EditarQso _editar;
     private readonly ConsultarTrabajadoAntes _consultarTrabajadoAntes;
+    private readonly CompletadorDeQso? _completador;
+
+    /// <summary>
+    /// El contacto que se esta modificando, tal y como vino del cuaderno. Los cambios del
+    /// formulario se ponen ENCIMA de el: construir uno nuevo con solo los campos del formulario
+    /// borraba al guardar el pais, las zonas, las confirmaciones y el estado de envio.
+    /// </summary>
+    private Qso? _qsoEnEdicion;
+
+    /// <summary>Lo que se relleno solo con la ficha de QRZ, para quitarlo si cambia el indicativo.</summary>
+    private (string Nombre, string Qth, string Localizador) _rellenadoConFicha = (string.Empty, string.Empty, string.Empty);
 
     private CancellationTokenSource? _consultaEnCurso;
     private bool _silencio;
+
+    /// <summary>Ultima frecuencia de transmision que puso el dial.</summary>
+    private DominioFrecuencia? _txDelDial;
+
+    /// <summary>Frecuencia de recepcion que puso el dial con split; nula sin split.</summary>
+    private DominioFrecuencia? _rxDelDial;
     private bool _insistirConElDuplicado;
     private string _ultimoInformePorOmision = string.Empty;
 
@@ -44,11 +61,13 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
     public VistaModeloEntradaQso(
         RegistrarQso registrar,
         EditarQso editar,
-        ConsultarTrabajadoAntes consultarTrabajadoAntes)
+        ConsultarTrabajadoAntes consultarTrabajadoAntes,
+        CompletadorDeQso? completador = null)
     {
         _registrar = registrar;
         _editar = editar;
         _consultarTrabajadoAntes = consultarTrabajadoAntes;
+        _completador = completador;
 
         Bandas = DominioBanda.Todas.Select(b => b.Nombre).ToArray();
         Modos = ModosHabituales();
@@ -58,6 +77,22 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
 
     /// <summary>Se dispara cuando el cuaderno ha cambiado y la rejilla debe refrescarse.</summary>
     public event EventHandler? CuadernoCambiado;
+
+    /// <summary>
+    /// Como esperar el respiro antes de consultar. Sustituible en las pruebas, que no miran el
+    /// reloj de pared.
+    /// </summary>
+    public Func<TimeSpan, CancellationToken, Task> Esperar { get; set; } = Task.Delay;
+
+    /// <summary>
+    /// La ultima consulta lanzada (trabajado antes y ficha). Solo para las pruebas: la interfaz
+    /// no espera nunca por ella.
+    /// </summary>
+    public Task ConsultaEnCurso { get; private set; } = Task.CompletedTask;
+
+    /// <summary>Lo que dice la ficha de QRZ del indicativo tecleado, en una linea.</summary>
+    [ObservableProperty]
+    private string _resumenDeFicha = string.Empty;
 
     /// <summary>Bandas que se ofrecen en la lista desplegable.</summary>
     public IReadOnlyList<string> Bandas { get; }
@@ -204,10 +239,21 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
     /// </remarks>
     /// <param name="frecuencia">Frecuencia del VFO activo.</param>
     /// <param name="modo">Modo que tiene puesto el equipo.</param>
-    public void SeguirAlDial(DominioFrecuencia frecuencia, DominioModo modo)
+    public void SeguirAlDial(DominioFrecuencia frecuencia, DominioModo modo) => SeguirAlDial(frecuencia, modo, null);
+
+    /// <summary>
+    /// Sigue al dial con split: <paramref name="frecuencia"/> es la de transmision (FREQ) y
+    /// <paramref name="frecuenciaRx"/> la de recepcion (FREQ_RX), como las apunta Log4OM.
+    /// </summary>
+    /// <param name="frecuencia">Frecuencia de transmision.</param>
+    /// <param name="modo">Modo que tiene puesto el equipo.</param>
+    /// <param name="frecuenciaRx">Frecuencia de recepcion, o nulo sin split.</param>
+    public void SeguirAlDial(DominioFrecuencia frecuencia, DominioModo modo, DominioFrecuencia? frecuenciaRx)
     {
         if (EnEdicion || frecuencia.EsCero) return;
 
+        _txDelDial = frecuencia;
+        _rxDelDial = frecuenciaRx is { EsCero: false } rx && rx != frecuencia ? rx : null;
         _silencio = true;
         Frecuencia = TextoDeFrecuencia.Escribir(frecuencia);
 
@@ -221,12 +267,30 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         if (cambiaElModo) PonerInformesPorOmision(forzar: false);
     }
 
+    /// <summary>
+    /// Se han mandado las QSL de estos contactos por correo: si uno es el que se esta
+    /// modificando, se le pone la misma marca para que «Guardar cambios» no la borre.
+    /// </summary>
+    /// <param name="ids">Los contactos a los que se les ha mandado la tarjeta.</param>
+    public void AnotarQslEnviadas(IReadOnlyList<long> ids)
+    {
+        ArgumentNullException.ThrowIfNull(ids);
+        if (_qsoEnEdicion is { } qso && ids.Contains(qso.Id))
+        {
+            Impresion.Qsl.MarcaDeQslEnviada.Marcar(qso, DateTimeOffset.UtcNow);
+        }
+    }
+
+    /// <summary>Id del contacto que se esta modificando, o nulo.</summary>
+    public long? IdDelContactoEnEdicion => EnEdicion ? IdEnEdicion : null;
+
     /// <summary>Carga un contacto del cuaderno en el formulario para modificarlo.</summary>
     public void CargarParaEditar(Qso qso)
     {
         ArgumentNullException.ThrowIfNull(qso);
 
         _silencio = true;
+        _qsoEnEdicion = qso;
         IdEnEdicion = qso.Id;
         HoraAutomatica = false;
         Indicativo = qso.Call.Valor;
@@ -257,6 +321,15 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
 
         if (EnEdicion)
         {
+            var lotwYaSubido = false;
+            if (_qsoEnEdicion is { } original && original.Id == IdEnEdicion)
+            {
+                lotwYaSubido = original.Confirmaciones.Any(c => c.Medio == MedioDeConfirmacion.Lotw
+                    && c.Enviado is EstadoDeConfirmacion.Confirmado or EstadoDeConfirmacion.Verificado);
+                PonerEncima(qso, original);
+                qso = original;
+            }
+
             qso.Id = IdEnEdicion;
             var edicion = await _editar.EjecutarAsync(
                 new PeticionDeEdicion { Qso = qso, EstacionId = EstacionId }).ConfigureAwait(true);
@@ -274,7 +347,10 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
                 return;
             }
 
-            Mensaje = $"Cambios guardados en el contacto con {qso.Call.Valor}.";
+            Mensaje = $"Cambios guardados en el contacto con {qso.Call.Valor}."
+                + (lotwYaSubido
+                    ? " LoTW no admite modificar un contacto ya subido: allí queda como se subió. Club Log y QRZ reciben la corrección."
+                    : string.Empty);
             Tono = TonoDeMensaje.Correcto;
             Vaciar(conservarMensaje: true);
             CuadernoCambiado?.Invoke(this, EventArgs.Empty);
@@ -328,6 +404,9 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
     {
         _silencio = true;
         IdEnEdicion = 0;
+        _qsoEnEdicion = null;
+        _rellenadoConFicha = (string.Empty, string.Empty, string.Empty);
+        ResumenDeFicha = string.Empty;
         _insistirConElDuplicado = false;
         Indicativo = string.Empty;
         Nombre = string.Empty;
@@ -344,6 +423,22 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         if (conservarMensaje) return;
         Mensaje = string.Empty;
         Tono = TonoDeMensaje.Ninguno;
+    }
+
+    /// <summary>Pone lo del formulario encima del contacto que vino del cuaderno.</summary>
+    private static void PonerEncima(Qso delFormulario, Qso original)
+    {
+        original.Call = delFormulario.Call;
+        original.Band = delFormulario.Band;
+        original.Mode = delFormulario.Mode;
+        original.Freq = delFormulario.Freq;
+        original.InicioUtc = delFormulario.InicioUtc;
+        original.RstSent = delFormulario.RstSent;
+        original.RstRcvd = delFormulario.RstRcvd;
+        original.Name = delFormulario.Name;
+        original.Qth = delFormulario.Qth;
+        original.Gridsquare = delFormulario.Gridsquare;
+        original.Comentario = delFormulario.Comentario;
     }
 
     private Qso? ConstruirQso()
@@ -382,6 +477,10 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
             Band = banda,
             Mode = modo,
             Freq = frecuencia,
+
+            // Con split, la de recepcion; solo si la frecuencia sigue siendo la que puso el dial
+            // (si el operador la ha tecleado a mano, la de recepcion ya no casa con ella).
+            FreqRx = _rxDelDial is { } rx && _txDelDial == frecuencia ? rx : null,
             InicioUtc = inicio,
             RstSent = Informe.Parse(InformeEnviado),
             RstRcvd = Informe.Parse(InformeRecibido),
@@ -498,7 +597,7 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         var cts = new CancellationTokenSource();
         _consultaEnCurso = cts;
 
-        _ = ConsultarAsync(texto, cts.Token);
+        ConsultaEnCurso = ConsultarAsync(texto, cts.Token);
     }
 
     private async Task ConsultarAsync(string texto, CancellationToken ct)
@@ -506,10 +605,12 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         try
         {
             // Un respiro antes de preguntar: durante un pileup se teclea mas rapido que esto.
-            await Task.Delay(220, ct).ConfigureAwait(true);
+            await Esperar(TimeSpan.FromMilliseconds(220), ct).ConfigureAwait(true);
+            QuitarLoRellenadoConFicha();
             var resultado = await _consultarTrabajadoAntes.EjecutarAsync(texto, ct).ConfigureAwait(true);
             if (ct.IsCancellationRequested) return;
             AplicarTrabajadoAntes(resultado);
+            await RellenarConFichaAsync(texto, ct).ConfigureAwait(true);
         }
         catch (OperationCanceledException)
         {
@@ -556,6 +657,61 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         if (string.IsNullOrWhiteSpace(Qth) && !string.IsNullOrWhiteSpace(ultimo.Qth)) Qth = ultimo.Qth;
         if (string.IsNullOrWhiteSpace(Localizador) && !ultimo.Gridsquare.EsVacio) Localizador = ultimo.Gridsquare.Valor;
         _silencio = false;
+    }
+
+    /// <summary>
+    /// Pide la ficha a QRZ.com y rellena Nombre, QTH y Localizador <b>si estan vacios</b>. Lo
+    /// que haya escrito el operador no se toca. Sin red o sin credenciales no dice nada aqui:
+    /// el aviso discreto va en la pastilla «Ficha» de la barra de estado.
+    /// </summary>
+    private async Task RellenarConFichaAsync(string texto, CancellationToken ct)
+    {
+        if (_completador is not { EstaDisponible: true }) return;
+        if (!DominioIndicativo.TryParse(texto, out var indicativo)) return;
+
+        var ficha = await _completador.ConsultarAsync(indicativo, ct).ConfigureAwait(true);
+        if (ct.IsCancellationRequested || ficha is null) return;
+        if (!string.Equals(DominioIndicativo.Normalizar(Indicativo), indicativo.Valor, StringComparison.OrdinalIgnoreCase)) return;
+
+        _silencio = true;
+        if (string.IsNullOrWhiteSpace(Nombre) && !string.IsNullOrWhiteSpace(ficha.Nombre))
+        {
+            Nombre = ficha.Nombre.Trim();
+            _rellenadoConFicha.Nombre = Nombre;
+        }
+        if (string.IsNullOrWhiteSpace(Qth) && !string.IsNullOrWhiteSpace(ficha.Localidad))
+        {
+            Qth = ficha.Localidad.Trim();
+            _rellenadoConFicha.Qth = Qth;
+        }
+        if (string.IsNullOrWhiteSpace(Localizador) && !ficha.Localizador.EsVacio)
+        {
+            Localizador = ficha.Localizador.Valor;
+            _rellenadoConFicha.Localizador = Localizador;
+        }
+        _silencio = false;
+
+        var partes = new List<string> { ficha.Fuente };
+        if (ficha.Pais is { Length: > 0 } pais) partes.Add(pais);
+        if (ficha.GestorQsl is { Length: > 0 } via) partes.Add($"QSL vía {via}");
+        if (ficha.UsaLotw == true) partes.Add("usa LoTW");
+        if (ficha.UsaEqsl == true) partes.Add("usa eQSL");
+        ResumenDeFicha = string.Join(" · ", partes);
+    }
+
+    /// <summary>
+    /// Si cambia el indicativo, se quita lo que puso la ficha del anterior y el operador no ha
+    /// tocado. Lo tecleado a mano se queda.
+    /// </summary>
+    private void QuitarLoRellenadoConFicha()
+    {
+        _silencio = true;
+        if (_rellenadoConFicha.Nombre.Length > 0 && Nombre == _rellenadoConFicha.Nombre) Nombre = string.Empty;
+        if (_rellenadoConFicha.Qth.Length > 0 && Qth == _rellenadoConFicha.Qth) Qth = string.Empty;
+        if (_rellenadoConFicha.Localizador.Length > 0 && Localizador == _rellenadoConFicha.Localizador) Localizador = string.Empty;
+        _silencio = false;
+        _rellenadoConFicha = (string.Empty, string.Empty, string.Empty);
+        ResumenDeFicha = string.Empty;
     }
 
     private void LimpiarTrabajadoAntes()

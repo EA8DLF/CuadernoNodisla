@@ -53,7 +53,10 @@ public sealed record ExpansionDeMacro(
 /// lleve dentro algo que solo entienda el manipulador, deja de servir para los otros dos.
 /// </para>
 /// <para>
-/// Para escribir un angulo literal se ponen dos: <c>&lt;&lt;</c>.
+/// Para escribir un angulo literal se ponen dos, y vale para los dos angulos:
+/// <c>&lt;&lt;</c> escribe <c>&lt;</c> y <c>&gt;&gt;</c> escribe <c>&gt;</c>. Asi
+/// <c>&lt;&lt;AR&gt;&gt;</c> sale como <c>&lt;AR&gt;</c>, que es lo que el operador espera al
+/// escapar una etiqueta entera. Un angulo suelto es texto y se deja como esta.
 /// </para>
 /// </remarks>
 public sealed class MotorDeMacros
@@ -106,6 +109,9 @@ public sealed class MotorDeMacros
             var c = plantilla[i];
             if (c != '<')
             {
+                // El angulo de cierre tambien se escapa duplicandolo: si no, escapar una
+                // etiqueta entera («<<AR>>») dejaria el cierre doblado en pantalla.
+                if (c == '>' && i + 1 < plantilla.Length && plantilla[i + 1] == '>') i++;
                 salida.Append(c);
                 continue;
             }

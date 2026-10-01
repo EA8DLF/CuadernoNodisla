@@ -8,7 +8,10 @@
     con la letra.
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores">
+
+    <conversores:EstaEnLaLista x:Key="EstaEnLaListaConversor" />
 
     <!-- ── Pestañas de los paneles de operación ──────────────────────────── -->
 
@@ -37,6 +40,13 @@
         </Setter>
     </Style>
 
+    <!--
+        OJO: la negrita de la pestaña elegida NO se pone en la TabItem. El contenido de una
+        TabItem hereda sus propiedades de letra por el árbol lógico; con la negrita en la
+        TabItem, la pantalla entera de la pestaña elegida salía en negrita —la rejilla del
+        cuaderno, los rótulos, todo—, y eso es lo que cansaba la vista. La elegida se marca
+        con el color del rótulo (estilo TextoDePestana) y la raya de abajo.
+    -->
     <Style TargetType="TabItem">
         <Setter Property="Foreground" Value="{DynamicResource TextoTenue}" />
         <Setter Property="Padding" Value="8,8" />
@@ -57,14 +67,208 @@
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="borde" Property="BorderBrush" Value="{DynamicResource Acento}" />
                             <Setter TargetName="borde" Property="Background" Value="{DynamicResource FondoPanel}" />
-                            <Setter Property="Foreground" Value="{DynamicResource Acento}" />
-                            <Setter Property="FontWeight" Value="Bold" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="borde" Property="Background" Value="{DynamicResource FondoResalte}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        El rótulo de una cabecera de pestaña: en acento cuando es la elegida, con la raya de
+        abajo. Sin negrita: a 1366 puntos de ancho la negrita no cabía en su novena parte y
+        salía cortada («Diplomas (Ctrl 5»).
+    -->
+    <Style x:Key="TextoDePestana" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TabItem}}" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource Acento}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ── La barra de navegación de la ventana ─────────────────────────── -->
+
+    <!--
+        Las páginas de la ventana van en un TabControl SIN cabecera: la cabecera es la barra
+        de navegación de encima, que agrupa por uso. El TabControl solo pone la página.
+    -->
+    <Style x:Key="PaginasSinCabecera" TargetType="TabControl">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabControl">
+                    <ContentPresenter ContentSource="SelectedContent" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        Entrada de primer nivel (Operar, Libro, QSL, Diplomas, Configuración). Lleva en el Tag
+        las páginas que le tocan («0,1,6,8») y se marca con la raya de acento, igual que las
+        pestañas de antes: sin negrita y sin fondos de color, que cansan.
+    -->
+    <Style x:Key="EntradaDeNavegacion" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource TextoTenue}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Padding" Value="12,7" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="borde"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="0,0,0,3"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="borde" Property="Background" Value="{DynamicResource FondoResalte}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="borde" Property="Background" Value="{DynamicResource FondoResalte}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <DataTrigger Value="True">
+                <DataTrigger.Binding>
+                    <MultiBinding Converter="{StaticResource EstaEnLaListaConversor}">
+                        <Binding Path="IndiceDeLaPestana" />
+                        <Binding Path="Tag" RelativeSource="{RelativeSource Self}" />
+                    </MultiBinding>
+                </DataTrigger.Binding>
+                <Setter Property="Foreground" Value="{DynamicResource Acento}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Acento}" />
+                <Setter Property="Background" Value="{DynamicResource FondoPanel}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--
+        Entrada de segundo nivel: las páginas del grupo elegido, en la misma barra y más
+        discretas. La elegida, en acento y con fondo suave de pastilla.
+    -->
+    <Style x:Key="SubentradaDeNavegacion" TargetType="Button">
+        <Setter Property="Foreground" Value="{DynamicResource TextoTenue}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="10,3" />
+        <Setter Property="Margin" Value="0,0,2,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="borde"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="11"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="borde" Property="Background" Value="{DynamicResource FondoResalte}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="borde" Property="Background" Value="{DynamicResource FondoResalte}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <DataTrigger Value="True">
+                <DataTrigger.Binding>
+                    <MultiBinding Converter="{StaticResource EstaEnLaListaConversor}">
+                        <Binding Path="IndiceDeLaPestana" />
+                        <Binding Path="Tag" RelativeSource="{RelativeSource Self}" />
+                    </MultiBinding>
+                </DataTrigger.Binding>
+                <!-- Fondo de resalte y no de acento: con AcentoSuave el rótulo en acento no se leía. -->
+                <Setter Property="Foreground" Value="{DynamicResource Acento}" />
+                <Setter Property="Background" Value="{DynamicResource FondoResalte}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--
+        Navegación lateral de la configuración: un TabControl con las pestañas a la izquierda,
+        en columna, como una lista de apartados. La elegida lleva la raya de acento a la
+        izquierda. Sin tarjetas ni fondos: solo texto.
+    -->
+    <Style x:Key="ApartadosLaterales" TargetType="TabControl">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabControl">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0"
+                                Background="{DynamicResource FondoPanel}"
+                                BorderBrush="{DynamicResource Borde}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="0,6"
+                                Margin="0,0,8,0">
+                            <StackPanel IsItemsHost="True" />
+                        </Border>
+                        <ContentPresenter Grid.Column="1" ContentSource="SelectedContent" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="TabItem">
+                    <Setter Property="Foreground" Value="{DynamicResource Texto}" />
+                    <Setter Property="Padding" Value="14,7,18,7" />
+                    <Setter Property="Cursor" Value="Hand" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border x:Name="borde"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        BorderThickness="3,0,0,0"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter x:Name="cabecera" ContentSource="Header" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="borde" Property="Background" Value="{DynamicResource FondoResalte}" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="borde" Property="BorderBrush" Value="{DynamicResource Acento}" />
+                                        <Setter TargetName="borde" Property="Background" Value="{DynamicResource FondoResalte}" />
+                                        <Setter TargetName="cabecera" Property="TextElement.Foreground" Value="{DynamicResource Acento}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
             </Setter.Value>
         </Setter>
     </Style>

@@ -74,4 +74,18 @@ public static class ClavesDeCredencial
 
     /// <summary>Contrasena de HamQTH.</summary>
     public const string HamQthContrasena = "hamqth.contrasena";
+
+    /// <summary>
+    /// Contrasena del nodo de cluster, para los que la piden.
+    /// </summary>
+    /// <remarks>
+    /// La mayoria de los nodos no pide contrasena y basta con el indicativo, pero los que la
+    /// piden la mandan en claro por Telnet. Que viaje en claro por el aire no es motivo para
+    /// guardarla en claro en el disco: va aqui, cifrada, y en el fichero de ajustes no se
+    /// escribe nunca.
+    /// </remarks>
+    public const string ClusterContrasena = "cluster.contrasena";
+
+    /// <summary>Contraseña del servidor de correo saliente con el que se mandan las QSL.</summary>
+    public const string SmtpContrasena = "smtp.contrasena";
 }

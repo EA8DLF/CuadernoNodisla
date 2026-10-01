@@ -1,0 +1,21 @@
+name: Mejora
+description: Una idea o algo que echa en falta.
+title: "[Mejora] "
+labels: ["mejora"]
+body:
+  - type: textarea
+    id: que
+    attributes:
+      label: ¿Qué le gustaría?
+    validations:
+      required: true
+  - type: textarea
+    id: para-que
+    attributes:
+      label: ¿Para qué lo usaría?
+      description: El caso real ayuda a decidir cómo hacerlo.
+  - type: textarea
+    id: como-ahora
+    attributes:
+      label: ¿Cómo lo resuelve hoy?
+      description: Otro programa, a mano… (opcional)

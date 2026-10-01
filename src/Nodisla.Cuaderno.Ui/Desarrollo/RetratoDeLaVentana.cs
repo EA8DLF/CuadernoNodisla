@@ -1,5 +1,6 @@
-﻿using System.IO;
+using System.IO;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Serilog;
@@ -67,6 +68,8 @@ public static class RetratoDeLaVentana
 
             try
             {
+                try { ApuntarEnlacesRotos(ventana); }
+                catch (Exception ex) { Log.Error(ex, "No se han podido repasar los enlaces."); }
                 Guardar(ventana, ruta);
                 Log.Information("Retrato de la ventana guardado en {Ruta}.", ruta);
             }
@@ -81,7 +84,136 @@ public static class RetratoDeLaVentana
         };
 
         reloj.Start();
+        TeclasDePrueba.ProgramarSiSePide(ventana, TimeSpan.FromSeconds(Math.Max(1, espera.TotalSeconds / 3)));
+        TeclasDelAnalizadorDePrueba.ProgramarSiSePide(ventana, TimeSpan.FromSeconds(Math.Max(1, espera.TotalSeconds / 3)));
+        RegistroDePrueba.ProgramarSiSePide(ventana, TimeSpan.FromSeconds(Math.Max(1, espera.TotalSeconds / 4)));
         return true;
+    }
+
+    /// <summary>
+    /// Un dialogo modal en una sesion de verificacion: apartado como la ventana principal y,
+    /// con <c>CUADERNO_CAPTURA_DIALOGO</c> (ruta del PNG), retratado y cerrado solo.
+    /// </summary>
+    /// <remarks>
+    /// Sin esto, con <c>CUADERNO_APARTADA</c> el dialogo del primer arranque salia en medio de
+    /// la pantalla del operador y se quedaba con el teclado. Fuera de las verificaciones no hace
+    /// nada.
+    /// </remarks>
+    /// <param name="dialogo">El dialogo, antes de <c>ShowDialog</c>.</param>
+    public static void PrepararDialogo(Window dialogo)
+    {
+        ArgumentNullException.ThrowIfNull(dialogo);
+
+        if (Environment.GetEnvironmentVariable("CUADERNO_APARTADA") is { Length: > 0 })
+        {
+            dialogo.WindowStartupLocation = WindowStartupLocation.Manual;
+            dialogo.Left = -6000;
+            dialogo.Top = 0;
+            dialogo.ShowActivated = false;
+            dialogo.ShowInTaskbar = false;
+        }
+
+        if (Environment.GetEnvironmentVariable("CUADERNO_CAPTURA_DIALOGO") is not { Length: > 0 } ruta) return;
+
+        dialogo.Loaded += (_, _) =>
+        {
+            var reloj = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
+            reloj.Tick += (_, _) =>
+            {
+                reloj.Stop();
+                try
+                {
+                    try { ApuntarEnlacesRotos(dialogo); }
+                    catch (Exception ex) { Log.Error(ex, "No se han podido repasar los enlaces del dialogo."); }
+                    Guardar(dialogo, ruta);
+                    Log.Information("Retrato del dialogo guardado en {Ruta}.", ruta);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "No se ha podido guardar el retrato del dialogo.");
+                }
+                finally
+                {
+                    dialogo.Close();
+                    Application.Current?.Shutdown();
+                }
+            };
+            reloj.Start();
+        };
+    }
+
+    /// <summary>
+    /// Recorre lo que hay dibujado y apunta cada enlace que no ha podido resolverse.
+    /// </summary>
+    /// <remarks>
+    /// Va junto al fichero de <c>CUADERNO_RASTREO_ENLACES</c>, acabado en <c>.rotos.txt</c>. No se fía del rastreo de WPF, que
+    /// sin depurador no escribe nada: pregunta a cada enlace vivo cómo está. Un enlace con el
+    /// camino roto es un control o un dato muerto en pantalla.
+    /// </remarks>
+    /// <param name="ventana">Ventana que se recorre.</param>
+    public static void ApuntarEnlacesRotos(Window ventana)
+    {
+        if (Environment.GetEnvironmentVariable("CUADERNO_RASTREO_ENLACES") is not { Length: > 0 } fichero) return;
+
+        var rotos = new SortedSet<string>(StringComparer.Ordinal);
+        var vistos = new HashSet<DependencyObject>();
+        var pendientes = new Stack<DependencyObject>();
+        pendientes.Push(ventana);
+
+        while (pendientes.Count > 0)
+        {
+            var nodo = pendientes.Pop();
+            if (!vistos.Add(nodo)) continue;
+
+            MirarEnlaces(nodo, rotos);
+            if (nodo is System.Windows.Controls.DataGrid rejilla)
+            {
+                foreach (var columna in rejilla.Columns) MirarEnlaces(columna, rotos);
+            }
+
+            if (nodo is Visual or System.Windows.Media.Media3D.Visual3D)
+            {
+                for (var i = 0; i < VisualTreeHelper.GetChildrenCount(nodo); i++)
+                {
+                    pendientes.Push(VisualTreeHelper.GetChild(nodo, i));
+                }
+            }
+
+            foreach (var hijo in LogicalTreeHelper.GetChildren(nodo).OfType<DependencyObject>())
+            {
+                pendientes.Push(hijo);
+            }
+        }
+
+        // Fichero aparte: el del rastreo de WPF lo tiene abierto su propio escuchador.
+        File.WriteAllLines(fichero + ".rotos.txt", rotos);
+        Log.Information("Enlaces rotos en pantalla: {Cuantos}.", rotos.Count);
+    }
+
+    private static void MirarEnlaces(DependencyObject nodo, ISet<string> rotos)
+    {
+        var valores = nodo.GetLocalValueEnumerator();
+        while (valores.MoveNext())
+        {
+            if (BindingOperations.GetBindingExpressionBase(nodo, valores.Current.Property) is not { } expresion)
+            {
+                continue;
+            }
+
+            IEnumerable<BindingExpressionBase> partes = expresion is MultiBindingExpression multi
+                ? multi.BindingExpressions
+                : [expresion];
+            foreach (var e in partes)
+            {
+                if (e is BindingExpression { Status: BindingStatus.PathError or BindingStatus.UpdateTargetError } b)
+                {
+                    var nombre = nodo is FrameworkElement { Name.Length: > 0 } fe ? $"#{fe.Name}" : string.Empty;
+                    rotos.Add(
+                        $"{nodo.GetType().Name}{nombre}.{valores.Current.Property.Name} <- " +
+                        $"{b.ParentBinding.Path?.Path} (contexto {b.DataItem?.GetType().Name ?? "nulo"}, {b.Status})");
+                }
+            }
+        }
     }
 
     /// <summary>Pinta la ventana en un fichero PNG.</summary>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Digital · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html" class="actual" aria-current="page">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="digital">Digital</h1>
+<p><strong>Operar › Digital</strong> (<code>Ctrl</code> <code>2</code>) es la p&#225;gina de los modos digitales, con el mismo frontal del equipo arriba. Todos los modos los hace <strong>esta aplicaci&#243;n</strong>, con su propio m&#243;dem: no hay que abrir WSJT-X, JTDX ni ning&#250;n otro programa. El audio entra por el c&#243;dec USB del equipo, la cascada se calcula aqu&#237; y las decodificaciones salen tal cual se ven en pantalla.</p>
+<figure><a href="capturas/digital.png"><img src="capturas/digital.png" alt="Operar › Digital: el reloj arriba, la cascada, las decodificaciones y, a la derecha, el contacto y los mensajes (datos de prueba)" loading="lazy"></a><figcaption>Operar › Digital: el reloj arriba, la cascada, las decodificaciones y, a la derecha, el contacto y los mensajes (datos de prueba)</figcaption></figure>
+<h2 id="los-modos">Los modos</h2>
+<p>Se eligen en el desplegable <strong>Modo</strong>, arriba a la derecha, con su per&#237;odo al lado.</p>
+<div class="tabla"><table>
+<thead><tr><th>Modo</th><th>Para qu&#233;</th><th>Ventana</th><th>C&#243;mo se apunta en ADIF</th></tr></thead>
+<tbody>
+<tr><td><strong>FT8</strong></td><td>El de diario en HF y 6 m</td><td>15 s</td><td><code>FT8</code></td></tr>
+<tr><td><strong>FT4</strong></td><td>M&#225;s r&#225;pido, concursos</td><td>7,5 s</td><td><code>MFSK</code> / <code>FT4</code></td></tr>
+<tr><td><strong>WSPR</strong></td><td>Balizas de propagaci&#243;n (no hace contactos)</td><td>2 min</td><td><code>WSPR</code></td></tr>
+<tr><td><strong>JT65</strong></td><td>Lento, HF d&#233;bil y EME</td><td>1 min</td><td><code>JT65</code></td></tr>
+<tr><td><strong>JT9</strong></td><td>Lento y muy estrecho, bandas bajas</td><td>1 min</td><td><code>JT9</code></td></tr>
+<tr><td><strong>Q65</strong></td><td>VHF, EME y dispersi&#243;n (submodo A)</td><td>1 min</td><td><code>MFSK</code> / <code>Q65</code></td></tr>
+<tr><td><strong>MSK144</strong></td><td>Dispersi&#243;n mete&#243;rica</td><td>15 s</td><td><code>MSK144</code></td></tr>
+<tr><td><strong>FST4</strong></td><td>Lento, para 2200 y 630 m</td><td>1 min</td><td><code>MFSK</code> / <code>FST4</code></td></tr>
+<tr><td><strong>FST4W</strong></td><td>Baliza, como WSPR (no hace contactos)</td><td>2 min</td><td><code>MFSK</code> / <code>FST4W</code></td></tr>
+</tbody></table></div>
+<p>El modo ADIF va bien puesto para que los contactos cuenten en los diplomas por modo: FT8, JT65, JT9 y MSK144 son modos principales; FT4, Q65, FST4 y FST4W son submodos de MFSK.</p>
+<p><strong>Ir a la frecuencia del modo</strong> mueve el equipo por CAT a la frecuencia de ese modo en la banda del dial. La tabla de frecuencias de trabajo se puede retocar: <strong>A&#241;adir</strong> (el modo y el dial actuales), <strong>Quitar</strong>, <strong>Ir a la elegida</strong> y <strong>Las de WSJT-X</strong>, que vuelve a la tabla de f&#225;brica con las frecuencias habituales. En <strong>Operaci&#243;n</strong> se elige c&#243;mo se opera: <em>Normal</em>, <em>Hound</em> (llamar a una expedici&#243;n en modo fox/hound), <em>Fox</em> y los concursos <em>NA VHF</em>, <em>EU VHF</em>, <em>Field Day</em>, <em>RTTY Roundup</em> y <em>WW Digi</em>, con su <strong>Intercambio</strong>.</p>
+<h2 id="el-m&#243;dem-propio">El m&#243;dem propio</h2>
+<h3 id="el-reloj-antes-que-nada">El reloj, antes que nada</h3>
+<p>FT8 va en ventanas de quince segundos alineadas al reloj universal (FT4, de 7,5 segundos). Un ordenador con el reloj un segundo desviado decodifica mal; con dos segundos, ya no decodifica nada y adem&#225;s <strong>transmite fuera de ventana</strong> — que deja de ser un problema propio y pasa a ser un problema ajeno: ocupa el per&#237;odo de otra estaci&#243;n y le ensucia las decodificaciones sin que nadie se entere. Por eso el reloj va arriba del todo, con un sem&#225;foro de colores, y no escondido en Configuraci&#243;n.</p>
+<ul>
+<li><strong>Medir</strong> pregunta la hora a los servidores de hora y recalcula el desv&#237;o.</li>
+<li><strong>Poner el reloj en hora</strong> mide y escribe la hora del sistema — nunca se hace solo, siempre es un bot&#243;n que pulsa el operador.</li>
+<li><strong>Configurar el servicio de hora</strong> deja el servicio de Windows apuntando a un buen servidor, que arregla el problema para siempre y no solo por hoy.</li>
+</ul>
+<h3 id="la-cascada">La cascada</h3>
+<p>El espectro de audio en el tiempo, con la frecuencia en el eje horizontal. Pinchar en la cascada pone ah&#237; el <strong>tono de transmisi&#243;n</strong>. Debajo, el medidor de <strong>nivel de entrada</strong> avisa y no solo pinta: por encima de 0,90 el codec recorta y las se&#241;ales d&#233;biles se pierden — la barra se pone roja y lo dice con letras — y lo bueno est&#225; entre 0,20 y 0,60.</p>
+<h3 id="decodificaci&#243;n-normal-y-decodificaci&#243;n-rescatada">Decodificaci&#243;n normal y decodificaci&#243;n &#171;rescatada&#187;</h3>
+<p>Cada l&#237;nea de la lista de decodificaciones lleva la hora, la relaci&#243;n se&#241;al-ruido en decibelios, el desfase respecto a la ventana, el tono en hercios y el mensaje. Los indicativos nuevos salen en verde y en negrita; lo que va dirigido a la propia estaci&#243;n, en el color de acento.</p>
+<p>Una decodificaci&#243;n puede salir marcada <strong>&#171;RESCATADA&#187;</strong>: son se&#241;ales muy d&#233;biles que solo se han podido leer gracias al bloque de correcci&#243;n profunda del m&#243;dem, con algo m&#225;s de riesgo de ser falsas que una decodificaci&#243;n normal. La marca existe para que se puedan mirar con m&#225;s cuidado antes de apuntar un contacto con ellas — no para desconfiar de todas, solo de saber cu&#225;les son.</p>
+<h3 id="transmitir-cuesta-abrir-un-pestillo">Transmitir cuesta abrir un pestillo</h3>
+<p>Emitir un per&#237;odo de FT8 son <strong>trece segundos con el equipo en antena</strong>. Por eso hay un interruptor, &#171;Permitir transmitir en esta sesi&#243;n&#187;, que <strong>empieza cerrado en cada arranque y no se guarda de una sesi&#243;n a otra</strong>: hay que abrirlo cada vez, y solo con la antena o la carga artificial puestas. Con el pestillo cerrado, &#171;Emitir&#187; no hace nada. Con &#233;l abierto, &#171;Cortar y soltar PTT&#187; corta la emisi&#243;n y suelta el PTT sin preguntar.</p>
+<p>Si prefiere que el pestillo arranque abierto, marque <strong>&#171;Recordar &#171;Permitir transmitir&#187; entre sesiones&#187;</strong> en Configuraci&#243;n › Audio y digitales (viene apagado).</p>
+<p>Antes de cada emisi&#243;n sale adem&#225;s una pregunta de confirmaci&#243;n. Tiene una casilla <strong>&#171;No volver a preguntar&#187;</strong>: m&#225;rquela y pulse &#171;S&#237;, transmitir&#187;, y ya no se pregunta m&#225;s. Para que vuelva a preguntar, marque <strong>&#171;Preguntar antes de transmitir con el m&#243;dem&#187;</strong> en Configuraci&#243;n › Audio y digitales. Quitar la pregunta no quita la seguridad: el vigilante del PTT (tiempo m&#225;ximo en antena, suelta si se pierde el latido o se cierra el programa), la negativa a emitir con el reloj fuera de ventana y la negativa a emitir sin salida de audio siguen siempre.</p>
+<figure><a href="capturas/dialogo-transmitir.png"><img src="capturas/dialogo-transmitir.png" alt="El di&#225;logo de transmitir con la casilla &#171;No volver a preguntar&#187;" loading="lazy"></a><figcaption>El di&#225;logo de transmitir con la casilla &#171;No volver a preguntar&#187;</figcaption></figure>
+<p>El bloque &#171;Contacto y transmisi&#243;n&#187; tiene adem&#225;s los datos del corresponsal — indicativo, localizador, informes enviado y recibido — y el bot&#243;n &#171;Guardar en el cuaderno&#187;, que apunta el contacto con la frecuencia del dial m&#225;s el tono de audio, y el modo tal como lo pide ADIF: FT8 va como modo principal y FT4 como submodo de MFSK.</p>
+<h3 id="el-contacto-se-guarda-solo-al-completarse">El contacto se guarda solo al completarse</h3>
+<p>Con la secuencia autom&#225;tica, el contacto <strong>se apunta solo en el cuaderno</strong> en cuanto est&#225; hecho, sin pulsar &#171;Guardar en el cuaderno&#187;:</p>
+<ul>
+<li>cuando el corresponsal manda RR73, RRR o 73 despu&#233;s de intercambiar informes, o</li>
+<li>cuando sale su RR73 despu&#233;s de haber recibido su R+informe.</li>
+</ul>
+<p>Se guarda con indicativo, localizador, informes enviado y recibido, frecuencia (dial m&#225;s tono de transmisi&#243;n), modo ADIF, hora de inicio (la primera emisi&#243;n o recepci&#243;n del contacto) y hora de fin. En la pantalla aparece un aviso corto, por ejemplo &#171;Guardado: EA1ABC 20m FT8&#187;, y se refrescan el cuaderno, el mapa, los diplomas y las subidas autom&#225;ticas, igual que al guardar a mano. Si el corresponsal repite el 73 no se apunta dos veces, y un contacto que se queda a medias no se apunta. Si no se sabe la frecuencia del dial no hay banda que apuntar: sale el aviso y se guarda con el bot&#243;n. Se apaga en Configuraci&#243;n › Audio y digitales, con <strong>&#171;Guardar solo en el cuaderno el contacto completo&#187;</strong>.</p>
+<h3 id="la-secuencia-autom&#225;tica-y-los-mensajes">La secuencia autom&#225;tica y los mensajes</h3>
+<p>A la derecha, los seis mensajes <strong>Tx1 … Tx6</strong> se componen solos con su indicativo, su localizador y el del corresponsal (<strong>Generar</strong> los rehace). <strong>Doble clic</strong> en un mensaje lo env&#237;a; la marca redonda dice cu&#225;l es el siguiente. <strong>Llamar CQ</strong> empieza a llamar y <strong>Detener</strong> para. Con <strong>Secuencia autom&#225;tica</strong>, al contestar alguien se pasa solo al mensaje que toca:</p>
+<ul>
+<li><strong>Saltar Tx1</strong> — al contestar a un CQ se empieza por el informe (Tx2).</li>
+<li><strong>Llamar al primero</strong> — llamando CQ, se contesta solo al primero que llame.</li>
+<li><strong>Tx4 con RRR</strong> — en vez de RR73.</li>
+<li><strong>Parar tras</strong> <em>n</em> <strong>ciclos sin respuesta</strong> — deja de insistir.</li>
+</ul>
+<p>En la lista de decodificaciones, <strong>doble clic</strong> en una l&#237;nea prepara la respuesta a esa estaci&#243;n: pone su indicativo y su localizador en el contacto y compone los mensajes. <strong>Mantener Tx</strong> deja quieto el tono de transmisi&#243;n (solo se mueve con <code>May&#250;s</code> + clic o escribi&#233;ndolo en <strong>Tx</strong>). Los filtros <strong>S&#243;lo CQ</strong>, <strong>S&#243;lo a m&#237;</strong> y <strong>S&#243;lo nuevos</strong> aclaran la lista cuando la banda est&#225; llena, y <strong>Vaciar</strong> la limpia. <strong>WAV…</strong> decodifica una grabaci&#243;n.</p>
+<h3 id="m&#225;s-opciones">M&#225;s opciones</h3>
+<ul>
+<li><strong>Paleta</strong>, <strong>Ganancia</strong>, <strong>Cero</strong>, <strong>Promedio</strong> y <strong>Ancho</strong> ajustan c&#243;mo se pinta la cascada.</li>
+<li><strong>Mandar lo que se oye a PSK Reporter</strong> (apagado de f&#225;brica): env&#237;a cada 5 minutos lo decodificado, con su indicativo y su localizador.</li>
+<li><strong>Guardar un WAV de cada ventana</strong> y <strong>Apuntar todas las decodificaciones en decodificaciones.txt</strong>, para revisar despu&#233;s; van a la carpeta de datos del programa.</li>
+</ul>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

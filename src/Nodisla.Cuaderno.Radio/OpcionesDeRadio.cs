@@ -25,6 +25,28 @@ public sealed class OpcionesDeRadio
     /// </remarks>
     public OpcionesFt710 Ft710 { get; set; } = new();
 
+    /// <summary>
+    /// Modelo del CAT nativo: clave del catalogo (<c>yaesu-ft710</c>, <c>icom-ic7300</c>...) o
+    /// <c>auto</c> (y nulo, que es lo que traen los ajustes de antes de haber mas modelos) para
+    /// buscarlo: Yaesu por <c>ID;</c>, ICOM por la orden CI-V <c>19 00</c>.
+    /// </summary>
+    /// <remarks>
+    /// Los ajustes de la conexion (puerto, velocidad, espera, via del PTT) siguen en
+    /// <see cref="Ft710"/> por historia —se guardan asi desde el principio— y valen para
+    /// cualquier modelo: ver <see cref="Cat"/>.
+    /// </remarks>
+    public string? Modelo { get; set; }
+
+    /// <summary>
+    /// Direccion CI-V para los ICOM, si el operador la ha cambiado en el menu del equipo. Nula =
+    /// la de fabrica del modelo.
+    /// </summary>
+    public byte? DireccionCiv { get; set; }
+
+    /// <summary>Ajustes de la conexion CAT de cualquier modelo (el mismo objeto que <see cref="Ft710"/>).</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public OpcionesFt710 Cat => Ft710;
+
     /// <summary>Ajustes de la via preferida, <c>rigctld</c>.</summary>
     public OpcionesRigctld Rigctld { get; set; } = new();
 

@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Servicios.Actualizaciones;
 using Nodisla.Cuaderno.Servicios.ClubLog;
 using Nodisla.Cuaderno.Servicios.Credenciales;
 using Nodisla.Cuaderno.Servicios.Emparejamiento;
@@ -146,6 +147,50 @@ public static class ExtensionesDeServicio
             p.GetRequiredService<IAlmacenDeCredenciales>(),
             opciones,
             p.GetRequiredService<PoliticaDeReintentos>()));
+        return servicios;
+    }
+
+    /// <summary>Espera de la consulta a la API de GitHub: corta, no puede hacer esperar a nadie.</summary>
+    private static readonly TimeSpan EsperaDeGitHub = TimeSpan.FromSeconds(10);
+
+    /// <summary>Espera de la descarga del instalador (unos 70 MB); se puede cancelar antes.</summary>
+    private static readonly TimeSpan EsperaDelInstalador = TimeSpan.FromMinutes(10);
+
+    /// <summary>
+    /// Registra el aviso de versiones nuevas: el comprobador contra GitHub y el descargador del
+    /// instalador. Registrarlos no sale a la red.
+    /// </summary>
+    /// <param name="servicios">Coleccion de servicios.</param>
+    /// <param name="instalada">Version que esta corriendo.</param>
+    /// <param name="carpetaDeDescargas">Carpeta temporal del instalador; nula para la de siempre.</param>
+    public static IServiceCollection AnadirActualizaciones(
+        this IServiceCollection servicios, VersionSemantica instalada, string? carpetaDeDescargas = null)
+    {
+        ArgumentNullException.ThrowIfNull(servicios);
+        ArgumentNullException.ThrowIfNull(instalada);
+
+        // GitHub rechaza las peticiones sin User-Agent. Se manda el nombre y la version de verdad.
+        var agente = new ProductInfoHeaderValue("CuadernoNODISLA", instalada.ToString());
+        servicios.AddHttpClient(Red.NombresDeClienteHttp.GitHub, cliente =>
+        {
+            cliente.Timeout = EsperaDeGitHub;
+            cliente.DefaultRequestHeaders.UserAgent.Add(agente);
+        });
+        servicios.AddHttpClient(Red.NombresDeClienteHttp.GitHubDescargas, cliente =>
+        {
+            cliente.Timeout = EsperaDelInstalador;
+            cliente.DefaultRequestHeaders.UserAgent.Add(agente);
+        });
+
+        servicios.TryAddSingleton(p => new ComprobadorDeVersiones(
+            p.GetRequiredService<IHttpClientFactory>(),
+            instalada,
+            RepositorioPublico.CuadernoNodisla,
+            p.GetService<Microsoft.Extensions.Logging.ILogger<ComprobadorDeVersiones>>()));
+        servicios.TryAddSingleton(p => new DescargadorDeInstalador(
+            p.GetRequiredService<IHttpClientFactory>(),
+            carpetaDeDescargas,
+            p.GetService<Microsoft.Extensions.Logging.ILogger<DescargadorDeInstalador>>()));
         return servicios;
     }
 

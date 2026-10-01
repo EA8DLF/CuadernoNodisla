@@ -1,0 +1,111 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        LA BOTONERA DE LOS LADOS DEL FRONTAL (HAM a la izquierda, CB a la derecha).
+
+        Colores FIJOS, los de la propia radio (FrontalFt710.xaml): chapa negra, rótulo del panel
+        en ámbar como las teclas encendidas, y la tecla que está puesta en azul, como las teclas
+        táctiles de la pantalla. Letra de 13 puntos como mínimo en las teclas: esto se lee de
+        un vistazo y no escala con el dibujo.
+    -->
+
+    <SolidColorBrush x:Key="BotoneraFondo" Color="#FF15171A" />
+    <SolidColorBrush x:Key="BotoneraBorde" Color="#FF3A4047" />
+    <SolidColorBrush x:Key="BotoneraTitulo" Color="#FFFFB23F" />
+    <SolidColorBrush x:Key="BotoneraSubtitulo" Color="#FFC4CBD3" />
+    <SolidColorBrush x:Key="BotoneraTexto" Color="#FFE8ECF0" />
+    <SolidColorBrush x:Key="BotoneraActiva" Color="#FF1F6FD1" />
+
+    <Style x:Key="PanelDeLaBotonera" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource BotoneraFondo}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BotoneraBorde}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="7,5,7,6" />
+    </Style>
+
+    <Style x:Key="TituloDeLaBotonera" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource BotoneraTitulo}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Margin" Value="1,0,0,3" />
+    </Style>
+
+    <Style x:Key="SubtituloDeLaBotonera" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource BotoneraSubtitulo}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Margin" Value="1,3,0,1" />
+    </Style>
+
+    <!-- Una tecla de la botonera. DataContext = TeclaDeLaBotonera; Activa = en azul. -->
+    <Style x:Key="TeclaDeLaBotonera" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource BotoneraTexto}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Height" Value="24" />
+        <Setter Property="Margin" Value="1.5" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+        <Setter Property="Content" Value="{Binding Rotulo}" />
+        <Setter Property="ToolTip" Value="{Binding Ayuda}" />
+        <Setter Property="AutomationProperties.Name" Value="{Binding Rotulo}" />
+        <Setter Property="AutomationProperties.HelpText" Value="{Binding Ayuda}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="cuerpo" CornerRadius="4" BorderThickness="1" BorderBrush="#FF08090B">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Offset="0" Color="#FF3E434A" />
+                                <GradientStop Offset="1" Color="#FF1F2226" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="cuerpo" Property="Background" Value="#FF4A5058" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding Activa}" Value="True">
+                            <Setter TargetName="cuerpo" Property="Background" Value="{StaticResource BotoneraActiva}" />
+                            <Setter TargetName="cuerpo" Property="BorderBrush" Value="#FF8CC4FF" />
+                        </DataTrigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="cuerpo" Property="Background" Value="#FF16181B" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="#FF7A828B" />
+                            <Setter TargetName="cuerpo" Property="Opacity" Value="0.6" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- La pestaña HAM/CB del lado cuando no caben los dos paneles. -->
+    <Style x:Key="PestanaDeLaBotonera" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource BotoneraSubtitulo}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Padding" Value="7,1" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="cuerpo" CornerRadius="4" BorderThickness="1" BorderBrush="{StaticResource BotoneraBorde}"
+                            Background="#FF22262B" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="cuerpo" Property="Background" Value="#FF3A4047" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

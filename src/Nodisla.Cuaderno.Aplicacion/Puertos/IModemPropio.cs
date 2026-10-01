@@ -9,6 +9,26 @@ public enum ModoDelModem
     Ft8,
     /// <summary>FT4: ventanas de 7,5 segundos, mas rapido y menos sensible.</summary>
     Ft4,
+
+    // Los modos que siguen los pidio Jose el 26-09-2026 con la regla de la casa: todo propio,
+    // sin puentes con WSJT-X ni JTDX. Cada uno es un decodificador distinto y entra en el
+    // modem por el marco de Nodisla.Cuaderno.Modos.Marco; mientras no tenga decodificador,
+    // ParametrosDelModo.De lo rechaza y la pantalla no lo ofrece.
+
+    /// <summary>WSPR: balizas de propagacion, ventanas de 2 minutos, 4-FSK, mensaje de 50 bits.</summary>
+    Wspr,
+    /// <summary>JT65: modo lento de HF y EME, ventanas de 1 minuto, 65 tonos, Reed-Solomon.</summary>
+    Jt65,
+    /// <summary>JT9: modo lento de HF, ventanas de 1 minuto, 9-FSK, muy estrecho.</summary>
+    Jt9,
+    /// <summary>Q65: sucesor de QRA64 para VHF/EME y dispersion, con varios submodos (A-E).</summary>
+    Q65,
+    /// <summary>MSK144: dispersion meteorica, tramas de 72 ms en ventanas de 15 s.</summary>
+    Msk144,
+    /// <summary>FST4: modo lento para bandas bajas (2200/630 m), varios periodos.</summary>
+    Fst4,
+    /// <summary>FST4W: la variante baliza de FST4, comparable a WSPR.</summary>
+    Fst4w,
 }
 
 /// <summary>Una columna de la cascada: el espectro de un instante.</summary>
@@ -78,6 +98,27 @@ public sealed record VentanaDecodificada(
 }
 
 /// <summary>
+/// Si el modem trabaja con el codigo corrector real del protocolo o con uno de pruebas, y de
+/// donde salieron las tablas.
+/// </summary>
+/// <remarks>
+/// Se expone como estos dos datos sueltos, y no como el objeto de las tablas del modulo de los
+/// modos, para que quien consulte el puerto no tenga que conocer nada del LDPC ni enlazar con
+/// ese modulo: solo necesita saber si lo que se decodifica vale para hablar con el mundo.
+/// </remarks>
+/// <param name="EsElCodigoReal">
+/// Falso mientras se use el codigo de pruebas: el modem funciona entero -escucha, decodifica,
+/// mide- pero <b>solo se entiende consigo mismo</b>. Nada de lo que decodifique interoperara
+/// con otra estacion, y es justo el dato que la pantalla tiene que poder mostrar sin que nadie
+/// tenga que acordarse de leerlo de otro sitio.
+/// </param>
+/// <param name="Procedencia">
+/// De donde salieron las tablas: la ruta del fichero cargado, o el texto que explique por que
+/// no lo hay. Para mostrarlo al operador o dejarlo en un registro.
+/// </param>
+public readonly record struct EstadoDeLasTablas(bool EsElCodigoReal, string Procedencia);
+
+/// <summary>
 /// El modem propio de modos digitales.
 /// </summary>
 /// <remarks>
@@ -113,6 +154,37 @@ public interface IModemPropio : IAsyncDisposable
 
     /// <summary>Frecuencia del dial, para poder componer el contacto.</summary>
     Frecuencia FrecuenciaDelDial { get; set; }
+
+    /// <summary>
+    /// Como esta el codigo corrector con el que trabaja este modem.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Se expone aqui, en el puerto, y no solo en como se ensamblo el programa, porque es un
+    /// dato del modem que esta en marcha, no de configuracion: si el fichero de tablas se pierde
+    /// o se corrompe entre un arranque y otro, la pantalla tiene que poder reflejarlo leyendo
+    /// directamente al modem, sin depender de que alguien se acuerde de leer tambien el registro
+    /// de servicios.
+    /// </para>
+    /// <para>
+    /// Por omision vale codigo real y «no procede»: es lo que le corresponde a un modem que no
+    /// trabaja con tablas del protocolo -por ejemplo, uno simulado para pruebas de pantalla-, y
+    /// asi no hace falta que cada implementacion que no toque el LDPC se acuerde de declararlo.
+    /// El modem de verdad lo sobreescribe con lo que diga <c>TablasDelProtocolo</c>.
+    /// </para>
+    /// </remarks>
+    EstadoDeLasTablas EstadoDeLasTablas => new(EsElCodigoReal: true, Procedencia: "no procede");
+
+    /// <summary>
+    /// Modos que este modem sabe hacer de verdad, en el orden en que se ofrecen.
+    /// </summary>
+    /// <remarks>
+    /// Tiene implementacion por omision —FT8 y FT4— por la misma razon que
+    /// <see cref="EstadoDeLasTablas"/>: los modems que no hayan incorporado aun los
+    /// decodificadores nuevos no tienen que declararlo, y la pantalla rellena el selector con
+    /// lo que diga esto en vez de con dos botones fijos. Un modo que no este aqui no se ofrece.
+    /// </remarks>
+    IReadOnlyList<ModoDelModem> ModosDisponibles => [ModoDelModem.Ft8, ModoDelModem.Ft4];
 
     /// <summary>Salta con cada columna de cascada, varias veces por segundo.</summary>
     event EventHandler<ColumnaDeCascada>? CascadaActualizada;
