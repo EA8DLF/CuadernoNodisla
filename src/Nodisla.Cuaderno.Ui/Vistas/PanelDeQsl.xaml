@@ -22,102 +22,20 @@
     -->
 
     <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
-        <qsl:PincelDeColor x:Key="PincelDeColor" />
-        <conversores:VisibleSiEsFalso x:Key="VisibleSiEsFalso" />
+        <ResourceDictionary>
+            <!-- Estilos y plantilla del campo de texto, compartidos con el diseñador de diplomas. -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Qsl/EditorDeElementos.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-        <Style x:Key="Rotulo" TargetType="TextBlock">
-            <Setter Property="Margin" Value="0,6,0,2" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-        </Style>
+            <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+            <conversores:VisibleSiEsFalso x:Key="VisibleSiEsFalso" />
 
-        <Style x:Key="Boton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="Margin" Value="0,0,6,6" />
-            <Setter Property="Padding" Value="8,3" />
-        </Style>
-
-        <Style x:Key="Muestra" TargetType="Border">
-            <Setter Property="Width" Value="22" />
-            <Setter Property="Height" Value="22" />
-            <Setter Property="Margin" Value="6,0,0,0" />
-            <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
-            <Setter Property="BorderThickness" Value="1" />
-        </Style>
-
-        <!--
-            El campo elegido se pinta por el TIPO de su modelo: sin campo elegido no se monta
-            nada, y ningún enlace se queda colgando de un contexto nulo.
-        -->
-        <DataTemplate DataType="{x:Type vistamodelos:CampoEditable}">
-            <StackPanel>
-                            <TextBlock Text="Nombre" Style="{StaticResource Rotulo}" />
-                            <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Nombre del campo" />
-
-                            <TextBlock Text="Texto (con variables)" Style="{StaticResource Rotulo}" />
-                            <TextBox Text="{Binding Texto, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MinLines="2" MaxLines="5" VerticalContentAlignment="Top"
-                                     TextWrapping="Wrap" AutomationProperties.Name="Texto del campo" />
-
-                            <Grid Margin="0,6,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="X mm " VerticalAlignment="Center" />
-                                <TextBox Grid.Column="1" Text="{Binding XMm, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,0,8,0"
-                                         AutomationProperties.Name="Posición horizontal en milímetros" />
-                                <TextBlock Grid.Column="2" Text="Y mm " VerticalAlignment="Center" />
-                                <TextBox Grid.Column="3" Text="{Binding YMm, UpdateSourceTrigger=LostFocus, StringFormat=0.#}"
-                                         AutomationProperties.Name="Posición vertical en milímetros" />
-                            </Grid>
-
-                            <TextBlock Text="Letra" Style="{StaticResource Rotulo}" />
-                            <ComboBox ItemsSource="{Binding DataContext.Fuentes, RelativeSource={RelativeSource AncestorType=vistas:PanelDeQsl}}"
-                                      SelectedItem="{Binding Fuente}"
-                                      AutomationProperties.Name="Tipo de letra" />
-                            <Grid Margin="0,6,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="60" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="Tamaño (pt) " VerticalAlignment="Center" />
-                                <TextBox Grid.Column="1" Text="{Binding TamanoPt, UpdateSourceTrigger=LostFocus, StringFormat=0.#}"
-                                         AutomationProperties.Name="Tamaño de letra en puntos" />
-                                <WrapPanel Grid.Column="2" Margin="8,0,0,0" VerticalAlignment="Center">
-                                    <CheckBox Content="Negrita" IsChecked="{Binding Negrita}" Margin="0,0,8,0" />
-                                    <CheckBox Content="Cursiva" IsChecked="{Binding Cursiva}" />
-                                </WrapPanel>
-                            </Grid>
-
-                            <TextBlock Text="Alineación respecto a X" Style="{StaticResource Rotulo}" />
-                            <ComboBox ItemsSource="{Binding DataContext.Alineaciones, RelativeSource={RelativeSource AncestorType=vistas:PanelDeQsl}}"
-                                      SelectedItem="{Binding Alineacion}" AutomationProperties.Name="Alineación del campo" />
-
-                            <TextBlock Text="Color del texto" Style="{StaticResource Rotulo}" />
-                            <DockPanel>
-                                <Border DockPanel.Dock="Right" Style="{StaticResource Muestra}"
-                                        Background="{Binding Color, Converter={StaticResource PincelDeColor}}" />
-                                <TextBox Text="{Binding Color, UpdateSourceTrigger=PropertyChanged}"
-                                         ToolTip="#RRGGBB, #AARRGGBB (AA = opacidad) o un nombre en inglés: White, Navy…"
-                                         AutomationProperties.Name="Color del texto" />
-                            </DockPanel>
-
-                            <TextBlock Text="Recuadro detrás (vacío: sin recuadro)" Style="{StaticResource Rotulo}" />
-                            <DockPanel>
-                                <Border DockPanel.Dock="Right" Style="{StaticResource Muestra}"
-                                        Background="{Binding ColorDeRecuadro, Converter={StaticResource PincelDeColor}}" />
-                                <TextBox Text="{Binding ColorDeRecuadro, UpdateSourceTrigger=PropertyChanged}"
-                                         ToolTip="Por ejemplo #E6FFFFFF: blanco casi opaco, para leer el texto sobre una foto"
-                                         AutomationProperties.Name="Color del recuadro" />
-                            </DockPanel>
-
-                            <CheckBox Content="Dato del contacto" IsChecked="{Binding EsDelContacto}" Margin="0,8,0,0"
-                                      ToolTip="Los datos del contacto se quitan en el «Diseño para eQSL»: eQSL los pone por su cuenta."
-                                      AutomationProperties.Name="Es un dato del contacto" />
-            </StackPanel>
-        </DataTemplate>
+            <Style x:Key="Boton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                <Setter Property="Margin" Value="0,0,6,6" />
+                <Setter Property="Padding" Value="8,3" />
+            </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>

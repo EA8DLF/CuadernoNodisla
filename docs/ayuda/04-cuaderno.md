@@ -1,10 +1,10 @@
-# Cuaderno
+# Contactos
 
-Es la rejilla de contactos, con su propia pestaña — antes ocupaba toda la ventana, cuando no
-había nada más, y ahora tiene el sitio entero para ella sola, que es lo que necesita una rejilla
-de veinte mil filas.
+**Libro › Contactos** (`Ctrl` `3`) es la rejilla de contactos del cuaderno, con la página entera
+para ella sola, que es lo que necesita una rejilla de veinte mil filas. La entrada **Libro**
+agrupa también el [Mapa](06-mapa.md) (`Ctrl` `4`).
 
-![La rejilla del cuaderno, con filtros y columnas configurables](../capturas/ayuda/cuaderno.png)
+![Libro › Contactos: la rejilla con el buscador, los filtros y la columna de pastillas QSL (datos de prueba)](../capturas/ayuda/contactos.png)
 
 ## Buscar y filtrar
 
@@ -40,7 +40,7 @@ se ve de un vistazo por dónde está confirmado y por dónde no.
 
 ## Fusión de duplicados al importar
 
-Cuando se importa un fichero ADIF — desde **Ajustes → Cuaderno → Importar ADIF…**, o desde la
+Cuando se importa un fichero ADIF — desde **Configuración → Libro (ADIF) → Importar ADIF…**, o desde la
 ventana de bienvenida la primera vez — los contactos que ya están en el cuaderno **no se
 duplican ni se descartan: se funden**. Si dos copias del mismo contacto traen datos distintos
 —por ejemplo una con la QSL confirmada por LoTW y otra sin esa confirmación—, el resultado se

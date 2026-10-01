@@ -512,7 +512,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
     /// <summary>
     /// Se pregunta antes de emitir. Se apaga con «No volver a preguntar» y se vuelve a encender
-    /// en Ajustes › Audio y modos digitales. Lo demas —pestillo, reloj, salida, vigilante— se
+    /// en Configuración › Audio y digitales. Lo demas —pestillo, reloj, salida, vigilante— se
     /// exige igual.
     /// </summary>
     public bool PedirConfirmacionAlTransmitir
@@ -993,7 +993,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
                 var dispositivo = ElegirLaEntrada();
                 if (dispositivo is null)
                 {
-                    Aviso = "No hay ningún dispositivo de entrada que abrir. Elija uno en Ajustes › Audio y modos digitales.";
+                    Aviso = "No hay ningún dispositivo de entrada que abrir. Elija uno en Configuración › Audio y digitales.";
                     return;
                 }
 
@@ -1008,7 +1008,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
                 if (dispositivoDeSalida is null)
                 {
                     Aviso = "No hay ningún dispositivo de salida que abrir: no se podrá transmitir. " +
-                            "Elija uno en Ajustes › Audio y modos digitales.";
+                            "Elija uno en Configuración › Audio y digitales.";
                 }
                 else
                 {

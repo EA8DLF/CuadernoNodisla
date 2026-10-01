@@ -1,6 +1,10 @@
 # Diplomas
 
-La pantalla de diplomas tiene tres bloques: a la izquierda el catálogo para elegir los propios,
+La entrada **Diplomas** de la barra (`Ctrl` `5`) sigue los diplomas que se van consiguiendo.
+Para **diseñar e imprimir** diplomas propios o el certificado de uno conseguido está
+[QSL › Diplomas](14-disenador-de-diplomas.md).
+
+La pantalla tiene tres bloques: a la izquierda el catálogo para elegir los propios,
 en el centro cómo van los que se siguen, y a la derecha el detalle de uno — qué referencias
 tiene, cuáles confirmadas y cuáles faltan.
 
@@ -23,7 +27,7 @@ formas de que una entidad cuente:
 - **BAND** — la entidad ya está trabajada, pero no en esa banda concreta.
 - **MODE** — la entidad ya está trabajada, pero no en ese modo concreto.
 
-Es la misma idea que la matriz de novedad de la pantalla **Operar**: no basta con haber
+Es la misma idea que la matriz de novedad de **Operar › Cabina**: no basta con haber
 trabajado un país una vez, hace falta trabajarlo (y a veces confirmarlo) en cada banda y en cada
 modo para que cuente en según qué diploma.
 

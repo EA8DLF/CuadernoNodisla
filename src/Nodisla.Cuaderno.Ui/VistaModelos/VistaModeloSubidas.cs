@@ -323,12 +323,12 @@ public sealed partial class VistaModeloSubidas : ObservableObject
         if (!_ajustes.Servicios.CompletarConQrz)
         {
             _pastillaDeFicha.Semaforo = SemaforoDeSubida.Apagado;
-            _pastillaDeFicha.Texto = "Completar con QRZ.com: desactivado en Ajustes.";
+            _pastillaDeFicha.Texto = "Completar con QRZ.com: desactivado en Configuración › Subidas y QRZ.";
         }
         else if (!_completador.EstaDisponible)
         {
             _pastillaDeFicha.Semaforo = SemaforoDeSubida.Apagado;
-            _pastillaDeFicha.Texto = "Completar con QRZ.com: falta la contraseña de QRZ.com (o de HamQTH) en Ajustes. "
+            _pastillaDeFicha.Texto = "Completar con QRZ.com: falta la contraseña de QRZ.com (o de HamQTH) en Configuración › Cuentas y servicios. "
                 + "Los contactos se guardan igual, sin nombre ni QTH de la ficha.";
         }
         else if (_completador.Problema is { } problema)

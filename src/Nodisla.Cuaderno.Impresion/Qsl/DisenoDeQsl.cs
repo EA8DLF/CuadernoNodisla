@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Nodisla.Cuaderno.Impresion.Plantillas;
 
 namespace Nodisla.Cuaderno.Impresion.Qsl;
 
@@ -74,6 +75,13 @@ public sealed class CampoDeQsl
     /// <summary>Donde cae el punto de anclaje respecto al texto.</summary>
     public AlineacionDeCampo Alineacion { get; set; }
 
+    /// <summary>
+    /// Ancho maximo del texto, en milimetros: lo que no quepa pasa a la linea siguiente. Cero, sin
+    /// limite (una linea por cada salto que se escriba).
+    /// </summary>
+    /// <remarks>Para los parrafos de los diplomas («Por haber confirmado…»).</remarks>
+    public double AnchoMaximoMm { get; set; }
+
     /// <summary>Se pinta o no.</summary>
     public bool Visible { get; set; } = true;
 
@@ -100,7 +108,7 @@ public sealed class CampoDeQsl
 /// en puntos: la misma plantilla sale igual en la pantalla, en un PNG para el correo y en el PDF
 /// para la imprenta, sea cual sea la resolucion.
 /// </remarks>
-public sealed class DisenoDeQsl
+public sealed class DisenoDeQsl : IPlantillaConImagenes
 {
     /// <summary>Ancho de la tarjeta internacional, en milimetros.</summary>
     public const double AnchoInternacionalMm = 140.0;
@@ -139,6 +147,16 @@ public sealed class DisenoDeQsl
 
     /// <inheritdoc />
     public override string ToString() => Nombre;
+
+    /// <inheritdoc />
+    public IEnumerable<string> Imagenes() =>
+        string.IsNullOrWhiteSpace(ImagenDeFondo) ? [] : [ImagenDeFondo];
+
+    /// <inheritdoc />
+    public void RenombrarImagen(string viejo, string nuevo)
+    {
+        if (string.Equals(ImagenDeFondo, viejo, StringComparison.OrdinalIgnoreCase)) ImagenDeFondo = string.IsNullOrEmpty(nuevo) ? null : nuevo;
+    }
 
     /// <summary>Copia independiente, con los campos duplicados.</summary>
     /// <returns>La plantilla duplicada, con el mismo identificador.</returns>

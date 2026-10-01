@@ -17,6 +17,97 @@ namespace Nodisla.Cuaderno.Datos.Migraciones
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.31");
 
+            modelBuilder.Entity("Nodisla.Cuaderno.Dominio.Entidades.DiplomaEmitido", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Categoria")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("categoria");
+
+                    b.Property<string>("Correo")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("correo");
+
+                    b.Property<string>("Datos")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("datos");
+
+                    b.Property<string>("EmitidoUtc")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("emitido_utc");
+
+                    b.Property<string>("EnviadoUtc")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("enviado_utc");
+
+                    b.Property<string>("Indicativo")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("indicativo")
+                        .UseCollation("NOCASE");
+
+                    b.Property<string>("Nombre")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("nombre");
+
+                    b.Property<string>("NombreDelDiploma")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("nombre_del_diploma");
+
+                    b.Property<int>("Numero")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("numero");
+
+                    b.Property<string>("Origen")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("origen")
+                        .UseCollation("NOCASE");
+
+                    b.Property<string>("PlantillaId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("plantilla_id");
+
+                    b.Property<string>("PlantillaNombre")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("plantilla_nombre");
+
+                    b.Property<int>("Qsos")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("qsos");
+
+                    b.Property<int>("Referencias")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("referencias");
+
+                    b.Property<string>("Serie")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("serie")
+                        .UseCollation("NOCASE");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmitidoUtc")
+                        .IsDescending()
+                        .HasDatabaseName("ix_diploma_emitido");
+
+                    b.HasIndex("Indicativo")
+                        .HasDatabaseName("ix_diploma_indicativo");
+
+                    b.HasIndex("Serie", "Numero")
+                        .IsUnique()
+                        .HasDatabaseName("ux_diploma_serie_numero");
+
+                    b.ToTable("diploma_emitido", (string)null);
+                });
+
             modelBuilder.Entity("Nodisla.Cuaderno.Dominio.Entidades.Estacion", b =>
                 {
                     b.Property<long>("Id")
@@ -149,6 +240,66 @@ namespace Nodisla.Cuaderno.Datos.Migraciones
                         .HasDatabaseName("ux_estacion_nombre");
 
                     b.ToTable("estacion", (string)null);
+                });
+
+            modelBuilder.Entity("Nodisla.Cuaderno.Dominio.Entidades.ParticipanteDeRonda", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Call")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("call")
+                        .UseCollation("NOCASE");
+
+                    b.Property<string>("Comentario")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("comentario");
+
+                    b.Property<int?>("Dxcc")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("dxcc");
+
+                    b.Property<string>("EntradaUtc")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("entrada_utc");
+
+                    b.Property<string>("Pais")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("pais");
+
+                    b.Property<long?>("QsoId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("qso_id");
+
+                    b.Property<long>("RondaId")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("ronda_id");
+
+                    b.Property<string>("RstEnviado")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("rst_enviado");
+
+                    b.Property<string>("RstRecibido")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("rst_recibido");
+
+                    b.Property<bool>("Trabajado")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("trabajado");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RondaId", "EntradaUtc")
+                        .HasDatabaseName("ix_participante_ronda");
+
+                    b.ToTable("participante_de_ronda");
                 });
 
             modelBuilder.Entity("Nodisla.Cuaderno.Dominio.Entidades.Qso", b =>
@@ -805,86 +956,10 @@ namespace Nodisla.Cuaderno.Datos.Migraciones
                         .HasFilter("fin_utc IS NULL");
 
                     b.HasIndex("InicioUtc")
-                        .IsDescending(true)
+                        .IsDescending()
                         .HasDatabaseName("ix_ronda_inicio");
 
-                    b.ToTable("ronda_de_control", (string)null);
-                });
-
-            modelBuilder.Entity("Nodisla.Cuaderno.Dominio.Entidades.ParticipanteDeRonda", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Call")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("call")
-                        .UseCollation("NOCASE");
-
-                    b.Property<string>("Comentario")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("comentario");
-
-                    b.Property<int?>("Dxcc")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("dxcc");
-
-                    b.Property<string>("EntradaUtc")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("entrada_utc");
-
-                    b.Property<string>("Pais")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("pais");
-
-                    b.Property<long?>("QsoId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("qso_id");
-
-                    b.Property<long>("RondaId")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("ronda_id");
-
-                    b.Property<string>("RstEnviado")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("rst_enviado");
-
-                    b.Property<string>("RstRecibido")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("rst_recibido");
-
-                    b.Property<bool>("Trabajado")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("trabajado");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RondaId", "EntradaUtc")
-                        .HasDatabaseName("ix_participante_ronda");
-
-                    b.ToTable("participante_de_ronda", (string)null);
-                });
-
-            modelBuilder.Entity("Nodisla.Cuaderno.Dominio.Entidades.Qso", b =>
-                {
-                    b.HasOne("Nodisla.Cuaderno.Dominio.Entidades.Estacion", null)
-                        .WithMany()
-                        .HasForeignKey("EstacionId")
-                        .OnDelete(DeleteBehavior.SetNull);
-                });
-
-            modelBuilder.Entity("Nodisla.Cuaderno.Dominio.Entidades.RondaDeControl", b =>
-                {
-                    b.HasOne("Nodisla.Cuaderno.Dominio.Entidades.Estacion", null)
-                        .WithMany()
-                        .HasForeignKey("EstacionId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                    b.ToTable("ronda_de_control");
                 });
 
             modelBuilder.Entity("Nodisla.Cuaderno.Dominio.Entidades.ParticipanteDeRonda", b =>
@@ -894,6 +969,14 @@ namespace Nodisla.Cuaderno.Datos.Migraciones
                         .HasForeignKey("RondaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Nodisla.Cuaderno.Dominio.Entidades.Qso", b =>
+                {
+                    b.HasOne("Nodisla.Cuaderno.Dominio.Entidades.Estacion", null)
+                        .WithMany()
+                        .HasForeignKey("EstacionId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("Nodisla.Cuaderno.Dominio.Entidades.QsoCampoExtra", b =>
@@ -921,6 +1004,14 @@ namespace Nodisla.Cuaderno.Datos.Migraciones
                         .HasForeignKey("QsoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Nodisla.Cuaderno.Dominio.Entidades.RondaDeControl", b =>
+                {
+                    b.HasOne("Nodisla.Cuaderno.Dominio.Entidades.Estacion", null)
+                        .WithMany()
+                        .HasForeignKey("EstacionId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("Nodisla.Cuaderno.Dominio.Entidades.Qso", b =>

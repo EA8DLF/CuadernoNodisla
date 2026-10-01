@@ -277,6 +277,7 @@ public static class ConfiguracionDeServicios
         servicios.AddSingleton<IRepositorioEstacion>(
             _ => new RepositorioEstacionEnMemoria(conPerfilesDeEjemplo: !SinPerfilesDeEjemplo));
         servicios.AddSingleton<IRepositorioRondas, RepositorioRondasEnMemoria>();
+        servicios.AddSingleton<IRepositorioDiplomasEmitidos, RepositorioDiplomasEmitidosEnMemoria>();
 
         servicios.AddSingleton<IConsultasDeInforme>(
             proveedor => new ConsultasDeInformeEnMemoria(
@@ -462,6 +463,18 @@ public static class ConfiguracionDeServicios
 
         servicios.AddSingleton(proveedor => new VistaModeloQsl(proveedor.GetRequiredService<Qsl.ServicioDeQsl>()));
         servicios.AddSingleton(proveedor => new VistaModeloCorreoQsl(proveedor.GetRequiredService<Qsl.ServicioDeQsl>()));
+
+        // ── Diseñador de diplomas: mismo motor de plantillas y mismo correo que las QSL ──
+        // Subpestaña «Diplomas» de la pestaña QSL: Vistas.Qsl.DisenadorDeDiplomas con
+        // DataContext = VistaModeloDisenadorDeDiplomas. El historial y la numeración van en el
+        // cuaderno (tabla diploma_emitido); con CUADERNO_SIMULADO, en memoria.
+        servicios.AddSingleton(proveedor => new Qsl.ServicioDeDiplomas(
+            App.CarpetaDeDatos,
+            proveedor.GetRequiredService<Qsl.ServicioDeQsl>(),
+            proveedor.GetRequiredService<IRepositorioDiplomasEmitidos>(),
+            proveedor.GetService<IRepositorioQso>(),
+            proveedor.GetService<IDiplomas>()));
+        servicios.AddSingleton(proveedor => new VistaModeloDisenadorDeDiplomas(proveedor.GetRequiredService<Qsl.ServicioDeDiplomas>()));
     }
 
     private static Servicios.Subidas.ColaDeSubidas Arrancada(
@@ -554,6 +567,18 @@ public static class ConfiguracionDeServicios
     private static VistaModeloAjustesCat? AjustesDelEquipo(IServiceProvider proveedor)
     {
         var conmutable = proveedor.GetService<IControlEquipoConmutable>();
+
+        // Solo para las capturas de la ayuda (simulado + CUADERNO_CAPTURA: ventana apartada que
+        // se cierra sola y que nadie toca): el apartado se monta sobre el equipo simulado para
+        // poder retratarlo. En uso normal con los simulados sigue sin apartado CAT.
+        if (conmutable is null
+            && ConPuertosSimulados
+            && Environment.GetEnvironmentVariable("CUADERNO_CAPTURA") is { Length: > 0 }
+            && proveedor.GetService<EquipoSimulado>() is { } simulado)
+        {
+            conmutable = new Radio.Control.ControlEquipoConmutable(simulado);
+        }
+
         if (conmutable is null) return null;
 
         return new VistaModeloAjustesCat(
@@ -601,6 +626,81 @@ public static class ConfiguracionDeServicios
             () => proveedor.GetRequiredService<VistaModeloCluster>().AvisarDeCambioDeFuente());
     }
 
+    /// <summary>
+    /// El aviso de versiones nuevas y «Reportar un fallo».
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Registrar no sale a la red. La comprobacion del arranque la lanza la barra
+    /// <see cref="AvisoDeVersion"/> al cargarse, en segundo plano y como mucho una vez al dia;
+    /// con <c>CUADERNO_SIMULADO</c> no se lanza.
+    /// </para>
+    /// <para>
+    /// Un solo <see cref="VistaModeloActualizaciones"/> para la barra y para el apartado de
+    /// Ajustes: buscar a mano desde Ajustes enciende la barra.
+    /// </para>
+    /// </remarks>
+    private static void AnadirActualizacionesYFallos(IServiceCollection servicios)
+    {
+        servicios.AnadirActualizaciones(Soporte.VersionInstalada.Actual);
+        servicios.AddSingleton(_ => new Soporte.AccionesDelSistema());
+
+        servicios.AddSingleton(proveedor =>
+        {
+            var actualizaciones = new VistaModeloActualizaciones(
+                proveedor.GetRequiredService<Servicios.Actualizaciones.ComprobadorDeVersiones>(),
+                proveedor.GetRequiredService<Servicios.Actualizaciones.DescargadorDeInstalador>(),
+                Ajustes.AjustesDeActualizaciones.Leer(App.CarpetaDeDatos),
+                App.CarpetaDeDatos,
+                TimeProvider.System,
+                proveedor.GetRequiredService<Soporte.AccionesDelSistema>(),
+                proveedor.GetService<ILogger<VistaModeloActualizaciones>>())
+            {
+                SinComprobacionAlArrancar = ConPuertosSimulados,
+            };
+
+            // Solo para las capturas de la ayuda, con los simulados: la barra encendida con una
+            // version inventada (CUADERNO_VERSION_DE_PRUEBA=9.9.9), sin salir a GitHub.
+            if (ConPuertosSimulados
+                && Environment.GetEnvironmentVariable("CUADERNO_VERSION_DE_PRUEBA") is { Length: > 0 } inventada
+                && Servicios.Actualizaciones.VersionSemantica.TryAnalizar(inventada, out var version))
+            {
+                actualizaciones.Nueva = new Servicios.Actualizaciones.VersionPublicada(
+                    version!, "v" + inventada, inventada,
+                    "- Ayuda integrada con el capítulo de primer uso.\n- Diseñador de diplomas en QSL › Diplomas.",
+                    new Uri("https://github.com/EA8DLF/CuadernoNodisla/releases"), DateTimeOffset.UtcNow,
+                    new Servicios.Actualizaciones.FicheroPublicado("CuadernoNodisla-Instalador.exe", new Uri("https://github.com/EA8DLF/CuadernoNodisla/releases"), 1),
+                    new Servicios.Actualizaciones.FicheroPublicado("CuadernoNodisla-Instalador.exe.sha256", new Uri("https://github.com/EA8DLF/CuadernoNodisla/releases"), 1));
+                actualizaciones.AvisoVisible = true;
+            }
+
+            return actualizaciones;
+        });
+
+        // Transitorio: cada vez que se abre el apartado, un formulario en blanco con el entorno
+        // de ese momento (el operador puede haber cambiado de radio desde que arranco).
+        servicios.AddTransient(proveedor =>
+        {
+            var ajustes = proveedor.GetRequiredService<AjustesDelPrograma>();
+            return new VistaModeloReportarFallo(
+                () => Soporte.DatosDelEntorno.Describir(Soporte.VersionInstalada.Actual.ToString(), ajustes),
+                () => Soporte.DatosDelEntorno.UltimasLineasDelRegistro(Path.Combine(App.CarpetaDeDatos, "registros")),
+                proveedor.GetRequiredService<Soporte.AccionesDelSistema>(),
+                log: proveedor.GetService<ILogger<VistaModeloReportarFallo>>());
+        });
+        servicios.AddSingleton<Func<VistaModeloReportarFallo>>(
+            proveedor => proveedor.GetRequiredService<VistaModeloReportarFallo>);
+
+        // La ayuda: los capitulos de docs/ayuda incrustados en el ejecutable. Desde ella se
+        // reporta un fallo (formulario nuevo cada vez) y se buscan actualizaciones con el
+        // MISMO aviso de la barra.
+        servicios.AddSingleton(proveedor => new VistaModeloAyuda(
+            Soporte.LibroDeAyuda.DelEnsamblado(),
+            proveedor.GetRequiredService<VistaModeloActualizaciones>(),
+            proveedor.GetRequiredService<Func<VistaModeloReportarFallo>>(),
+            proveedor.GetRequiredService<Soporte.AccionesDelSistema>()));
+    }
+
     private static void AnadirInterfaz(IServiceCollection servicios)
     {
         servicios.AddSingleton(_ => EstadoDeLosPaneles.Leer(App.CarpetaDeDatos));
@@ -623,6 +723,7 @@ public static class ConfiguracionDeServicios
             Subidas = proveedor.GetService<VistaModeloSubidas>(),
             Fonia = proveedor.GetService<VistaModeloAjustesFonia>(),
             CorreoQsl = proveedor.GetService<VistaModeloCorreoQsl>(),
+            Actualizaciones = proveedor.GetService<VistaModeloActualizaciones>(),
         });
 
         servicios.AddSingleton<VistaModeloSolar>();
@@ -709,6 +810,8 @@ public static class ConfiguracionDeServicios
         // El analizador de la propia radio. Con los puertos simulados, AnalizadorSimulado.
         servicios.AddSingleton(proveedor => new VistaModeloAnalizador(
             proveedor.GetService<IAnalizadorDeEspectro>(), audio: proveedor.GetService<IEntradaDeAudio>()));
+        AnadirActualizacionesYFallos(servicios);
+
         servicios.AddSingleton<VistaModeloPrincipal>();
         servicios.AddSingleton<VentanaPrincipal>();
 

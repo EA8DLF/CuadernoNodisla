@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operar · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html" class="actual" aria-current="page">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="operar">Operar</h1>
+<p><strong>Operar › Cabina</strong> (<code>Ctrl</code> <code>1</code>) es la p&#225;gina principal, la que se ve al abrir el programa: la cabina donde se est&#225; mientras se opera. Arriba, el frontal del equipo a todo lo ancho, con la botonera HAM a la izquierda, los canales CB y el panel de fon&#237;a a la derecha; abajo, a la izquierda el contacto nuevo y a la derecha el cluster de DX.</p>
+<p>La entrada <strong>Operar</strong> de la barra agrupa adem&#225;s <strong>Digital</strong> (<code>Ctrl</code> <code>2</code>), <strong>Sat&#233;lites</strong> (<code>Ctrl</code> <code>7</code>) y <strong>Ronda de control</strong> (<code>Ctrl</code> <code>9</code>).</p>
+<figure><a href="capturas/operar.png"><img src="capturas/operar.png" alt="Operar › Cabina con el frontal del FT-710, el contacto nuevo y el cluster (datos de prueba)" loading="lazy"></a><figcaption>Operar › Cabina con el frontal del FT-710, el contacto nuevo y el cluster (datos de prueba)</figcaption></figure>
+<h2 id="el-frontal-del-equipo">El frontal del equipo</h2>
+<p>Es un dibujo del frontal de la radio conectada, con sus mandos donde van en el equipo real, los dos VFO, el S-metro y el dial. Se encoge con la ventana, pero nunca desaparece. Con el FT-710, la pantalla ense&#241;a adem&#225;s <strong>el espectro de la propia radio</strong> y la vista <strong>MULTI</strong>. Los modelos, el analizador y la botonera se explican en <a href="15-equipos.html">Equipos</a>.</p>
+<p>Mientras no hay equipo conectado por CAT no hay frontal que dibujar, y en su lugar sale un aviso con lo que hay que hacer: elegir la v&#237;a de control en <strong>Configuraci&#243;n › Equipo (CAT)</strong> y pulsar &#171;Conectar&#187;. <strong>Abrir el programa nunca toca la radio por s&#237; solo.</strong></p>
+<p>Con el equipo conectado:</p>
+<ul>
+<li><strong>VFO A</strong> y <strong>VFO B</strong>, con la frecuencia en grande y el modo al lado.</li>
+<li>El <strong>S-metro</strong>, el ROE, la tensi&#243;n y la corriente cuando el equipo los da.</li>
+<li>Los mandos de verdad — <code>MODE</code>, <code>SPLIT</code>, <code>CLAR</code>, <code>NB</code>, <code>DNR</code>, ganancias — que se tocan igual que en la radio.</li>
+<li>El bot&#243;n <strong>SOLTAR PTT</strong>, en rojo, siempre a mano: suelta el PTT ahora mismo, pase lo que pase, sin pedir confirmaci&#243;n. Es el bot&#243;n de p&#225;nico.</li>
+</ul>
+<p>La pantalla del frontal ense&#241;a pocas cosas y grandes, como la de la radio: el VFO activo en grande, el otro debajo, <code>ATT</code> / <code>IPO</code> / <code>DNF</code> / <code>AGC</code> en corto y, si el dial cae fuera del plan de bandas, un aviso corto en &#225;mbar (&#171;Fuera de banda&#187;, &#171;Tramo de CW&#187;…). La explicaci&#243;n entera sale al dejar el rat&#243;n encima.</p>
+<ul>
+<li><strong>Todos los mandos</strong> despliega la lista completa de lo que declara el equipo.</li>
+<li><strong>Ocultar equipo</strong> pliega el frontal para dar todo el alto al contacto y al cluster; el pliegue se recuerda de una sesi&#243;n a la siguiente.</li>
+<li>A la derecha del frontal va el panel de <strong>Fon&#237;a</strong>: escuchar la radio por el PC y hablar con su micr&#243;fono. Ver <a href="12-fonia.html">Fon&#237;a por el PC</a>.</li>
+</ul>
+<figure><a href="capturas/operar-plegado.png"><img src="capturas/operar-plegado.png" alt="Con &#171;Ocultar equipo&#187; el frontal se pliega a una barra y el cluster gana alto" loading="lazy"></a><figcaption>Con &#171;Ocultar equipo&#187; el frontal se pliega a una barra y el cluster gana alto</figcaption></figure>
+<h2 id="el-contacto-nuevo">El contacto nuevo</h2>
+<p>Es el formulario de entrada, pensado para teclear deprisa durante un pileup: <strong>Intro</strong> registra, <strong>Escape</strong> limpia y nunca hay que soltar el teclado para nada imprescindible.</p>
+<p>La fila de siempre — indicativo, banda, modo, frecuencia, informes — no se oculta jam&#225;s. Una segunda fila con fecha, hora, nombre, QTH, localizador y comentario se pliega y despliega con <strong>F7</strong>.</p>
+<p><strong>Cuando el equipo est&#225; conectado, la frecuencia, la banda y el modo los pone el dial</strong>, y se avisa con todas las letras (&#171;Siguiendo al equipo&#187;). Registrar veinte contactos en la frecuencia equivocada porque se cre&#237;a que el programa segu&#237;a al dial es el error m&#225;s caro de este cuaderno, as&#237; que el aviso no se esconde.</p>
+<p>Si el indicativo tecleado ya est&#225; en el cuaderno, aparece debajo un aviso de <strong>trabajado antes</strong> con los contactos previos — fecha, banda, modo e informes — para no repetir sin saberlo.</p>
+<h3 id="la-ficha-de-qrzcom">La ficha de QRZ.com</h3>
+<p>Al teclear el indicativo, un instante despu&#233;s se pide su ficha a <strong>QRZ.com</strong> (o a HamQTH si QRZ no contesta) y se rellenan <strong>Nombre</strong>, <strong>QTH</strong> y <strong>Localizador</strong> — <strong>solo si est&#225;n vac&#237;os</strong>. Lo que usted haya escrito no se toca nunca. Si cambia el indicativo, lo que puso la ficha del anterior se quita solo; lo que escribi&#243; a mano se queda. Al lado de los campos aparece una l&#237;nea discreta con lo que dice la ficha: pa&#237;s, v&#237;a de QSL y si la estaci&#243;n usa LoTW o eQSL.</p>
+<p><strong>Al guardar cualquier contacto</strong> — desde este formulario, el registro autom&#225;tico de Digital o la ronda de control — se completan adem&#225;s los dem&#225;s campos vac&#237;os: pa&#237;s, DXCC, zonas CQ e ITU, provincia o estado, correo y QSL v&#237;a. Si QRZ tarda, el contacto se guarda ya y se completa en cuanto llega la respuesta: el cuaderno nunca espera m&#225;s de segundo y medio.</p>
+<p>Las fichas se guardan 24 horas (en memoria y en disco), as&#237; que un indicativo no se pregunta dos veces el mismo d&#237;a. <strong>Sin red o sin cuenta de QRZ el contacto se guarda igual</strong>, sin mensajes que molesten: solo la pastilla <strong>Ficha</strong> de la barra de estado se pone &#225;mbar y dice por qu&#233;. Sin suscripci&#243;n XML de pago, QRZ.com solo da una parte de la ficha (nombre y QTH, normalmente); se aprovecha lo que haya.</p>
+<h3 id="la-subida-autom&#225;tica-a-lotw-eqsl-club-log-y-qrz">La subida autom&#225;tica a LoTW, eQSL, Club Log y QRZ</h3>
+<p>Cada contacto que se guarda se sube solo a los servicios marcados en <strong>Configuraci&#243;n → Subidas y QRZ → Subida autom&#225;tica</strong>. En la barra de estado hay una pastilla por servicio:</p>
+<ul>
+<li><strong>Verde</strong>: al d&#237;a.</li>
+<li><strong>&#193;mbar, con un n&#250;mero</strong>: contactos esperando turno o reintentando (sin red, servicio ca&#237;do).</li>
+<li><strong>Roja</strong>: no se puede subir — falta TQSL o la ubicaci&#243;n de estaci&#243;n de LoTW, faltan credenciales — o hay contactos que fallaron despu&#233;s de varios intentos.</li>
+<li><strong>Apagada</strong>: el servicio est&#225; desmarcado o sin cuenta.</li>
+</ul>
+<p>Pase el rat&#243;n por encima para leer el estado con palabras. En la columna QSL del cuaderno el contacto sale como <strong>enviado</strong> en cuanto el servicio lo acepta.</p>
+<p>Si modifica con <strong>F2</strong> un contacto ya subido, <strong>Club Log y QRZ reciben la correcci&#243;n</strong>. <strong>LoTW no admite modificar</strong> lo que ya se firm&#243; (eQSL tampoco): all&#237; queda como se subi&#243;, y el mensaje de &#171;cambios guardados&#187; lo recuerda.</p>
+<h3 id="el-retrato-del-indicativo-le-llamo-o-no">El retrato del indicativo: &#191;le llamo o no?</h3>
+<p>Debajo del formulario, dos rejillas que responden sin leer una frase:</p>
+<ul>
+<li><strong>La matriz de novedad</strong>: tres filas — pa&#237;s, banda, modo — por cuatro v&#237;as de confirmaci&#243;n — papel, eQSL, LoTW, QRZ. Verde es &#171;nuevo, merece la pena&#187;; &#225;mbar es &#171;lo tiene pero sin confirmar por ah&#237;&#187;; apagado es &#171;ya est&#225; cerrado&#187;. Una raya es &#171;no se sabe&#187; — pasa cuando todav&#237;a no hay banda ni modo escritos. Si algo aporta, aparece la pastilla <strong>&#171;APORTA&#187;</strong> junto al indicativo.</li>
+<li><strong>La matriz de banda por modo</strong>: el &#171;trabajado antes&#187; condensado en catorce bandas por tres familias — fon&#237;a, CW, digitales. Vac&#237;a es sin trabajar, un n&#250;mero es trabajado tantas veces, y un ✓ es confirmado.</li>
+</ul>
+<p>Ninguno de los dos datos es nuevo — el cuaderno ya los ten&#237;a — lo que faltaba era ense&#241;arlos. El color nunca va solo: cada casilla lleva tambi&#233;n su palabra o su marca, para quien no distinga bien los colores.</p>
+<h2 id="el-cluster-de-dx-y-el-bandmap">El cluster de DX y el bandmap</h2>
+<p>A la derecha, dos vistas del mismo cluster:</p>
+<ul>
+<li><strong>Cluster de DX</strong>, una rejilla con <strong>una fila por estaci&#243;n</strong>, la m&#225;s reciente arriba. Columnas: hora, indicativo, frecuencia, banda, modo, pa&#237;s, continente, <strong>PROP.</strong>, novedad, <strong>OYEN</strong>, comentario y qui&#233;n lo anuncia. Si la misma estaci&#243;n se anuncia varias veces en la misma banda y el mismo modo no se repite la fila: se actualiza con el &#250;ltimo anuncio y <strong>OYEN</strong> dice cu&#225;ntas estaciones distintas la est&#225;n oyendo (&#215;3, &#215;10…), que es la se&#241;al de que entra bien. Lo que aporta algo lleva la pastilla verde: rellena si ser&#237;a <strong>entidad nueva</strong>, solo con contorno si llena un hueco de <strong>banda/modo</strong>. Pinchar en una cabecera ordena por esa columna. Los filtros — banda, modo, continente, &#171;solo lo nuevo&#187;, &#171;solo con propagaci&#243;n&#187;, &#171;sin escucha autom&#225;tica&#187; — est&#225;n plegados en <strong>&#171;Filtros&#187;</strong>.</li>
+</ul>
+<h3 id="prop-mi-propagaci&#243;n-hacia-esa-estaci&#243;n">&#171;PROP.&#187;: mi propagaci&#243;n hacia esa estaci&#243;n</h3>
+<p>La columna <strong>PROP.</strong> dice, para cada fila, la probabilidad de que la banda est&#233; abierta <strong>ahora</strong> entre tu localizador y esa estaci&#243;n, en la frecuencia y el modo en que la anuncian (un FT8 se oye con mucha menos se&#241;al que una fon&#237;a). La barrita y la cifra van en <strong>verde</strong> del 50 % para arriba, en <strong>&#225;mbar</strong> del 20 % al 50 % y en <strong>gris</strong> por debajo. Al dejar el rat&#243;n encima sale el detalle: fiabilidad, relaci&#243;n se&#241;al/ruido prevista, MUF del trayecto, distancia, rumbo y de d&#243;nde se ha sacado la posici&#243;n de la estaci&#243;n.</p>
+<ul>
+<li><strong>Tu posici&#243;n</strong> es el localizador del perfil activo (si el perfil no lo tiene, se completa al arrancar con el de tu &#250;ltimo contacto).</li>
+<li><strong>La posici&#243;n de la otra estaci&#243;n</strong>, por orden: el localizador que manda el nodo, el que consta en el cuaderno de un contacto anterior, y si no hay ninguno, el prefijo o el centro de su entidad DXCC.</li>
+<li>Se calcula con los &#237;ndices solares del momento, para 100 W, y se rehace cada cuarto de hora y cada vez que llegan &#237;ndices nuevos. Es una estimaci&#243;n para decidir si merece la pena girar el dial, no una garant&#237;a.</li>
+<li><strong>Celda vac&#237;a</strong> quiere decir que no hay con qu&#233; calcularlo: sin &#237;ndices solares, sin tu localizador, sin posici&#243;n de la estaci&#243;n, o fuera de HF (VHF y superiores). No se inventa un n&#250;mero.</li>
+</ul>
+<p>El filtro <strong>&#171;Solo con propagaci&#243;n&#187;</strong> deja solo las filas en verde o en &#225;mbar.</p>
+<h3 id="el-bandmap">El bandmap</h3>
+<ul>
+<li><strong>Bandmap</strong>, el mismo cluster pero por frecuencia: una regla vertical con la banda entera y los anuncios colocados a la altura que les toca, con la l&#237;nea roja marcando d&#243;nde est&#225; el dial. Dice de un vistazo d&#243;nde est&#225; llena la banda y d&#243;nde hay hueco.</li>
+</ul>
+<figure><a href="capturas/bandmap.png"><img src="capturas/bandmap.png" alt="El bandmap de la banda del dial, con la l&#237;nea roja donde est&#225; el dial (aqu&#237;, sin nadie anunciado en 20 m)" loading="lazy"></a><figcaption>El bandmap de la banda del dial, con la l&#237;nea roja donde est&#225; el dial (aqu&#237;, sin nadie anunciado en 20 m)</figcaption></figure>
+<p>Un doble clic en cualquier anuncio — de la lista o del bandmap — lleva el equipo a esa frecuencia y pone el indicativo en el formulario, listo para trabajarlo. El bot&#243;n <strong>&#171;Ir a este spot&#187;</strong> hace lo mismo con el anuncio seleccionado.</p>
+<p>La conexi&#243;n al cluster se abre y se cierra con el bot&#243;n de la cabecera de este panel; los datos del nodo — servidor, puerto, indicativo, contrase&#241;a — se configuran en <strong>Configuraci&#243;n → Cluster</strong>.</p>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

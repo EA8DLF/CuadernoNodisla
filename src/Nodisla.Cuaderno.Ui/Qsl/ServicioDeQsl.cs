@@ -250,11 +250,7 @@ public sealed class ServicioDeQsl
         ArgumentNullException.ThrowIfNull(contactos);
         ArgumentNullException.ThrowIfNull(diseno);
         if (contactos.Count == 0) throw new ArgumentException("No hay contactos que mandar.", nameof(contactos));
-        if (!DireccionDeCorreo.EsValida(para)) throw new ErrorDeCorreo($"La dirección «{para}» no es válida.") { EsDelDestinatario = true };
-        if (!Ajustes.Smtp.EstaCompleta && Enviador is ClienteSmtp)
-        {
-            throw new ErrorDeCorreo("Falta configurar el correo saliente: Ajustes → Correo de las QSL (servidor, puerto y remitente).");
-        }
+        ComprobarEnvio(para);
 
         var variables = new Dictionary<string, string>(VariablesDeQsl.Para(contactos[0], yo), StringComparer.OrdinalIgnoreCase)
         {
@@ -268,8 +264,7 @@ public sealed class ServicioDeQsl
             VariablesDeQsl.Sustituir(texto, variables),
             adjuntos);
 
-        // La contraseña se lee aqui, justo al mandar, y no se guarda en ningun sitio mas.
-        await Enviador.EnviarAsync(mensaje, Ajustes.Smtp, _credenciales.Leer(ClavesDeCredencial.SmtpContrasena), ct).ConfigureAwait(true);
+        await EnviarCorreoAsync(mensaje, ct).ConfigureAwait(true);
 
         var ahora = DateTimeOffset.UtcNow;
         var apuntados = new List<long>();
@@ -297,6 +292,23 @@ public sealed class ServicioDeQsl
         if (apuntados.Count > 0) QslEnviadas?.Invoke(this, apuntados);
     }
 
+    /// <summary>
+    /// Manda un correo ya compuesto con el servidor configurado para las QSL. Lo usan las
+    /// tarjetas y los diplomas: un solo sitio que lee la contraseña y habla con el servidor.
+    /// </summary>
+    /// <param name="mensaje">El correo.</param>
+    /// <param name="ct">Cancelacion.</param>
+    /// <returns>Tarea que acaba con el correo aceptado por el servidor.</returns>
+    /// <exception cref="ErrorDeCorreo">Direccion mala, correo sin configurar o el servidor lo rechaza.</exception>
+    public async Task EnviarCorreoAsync(MensajeDeCorreo mensaje, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(mensaje);
+        ComprobarEnvio(mensaje.Para);
+
+        // La contraseña se lee aqui, justo al mandar, y no se guarda en ningun sitio mas.
+        await Enviador.EnviarAsync(mensaje, Ajustes.Smtp, _credenciales.Leer(ClavesDeCredencial.SmtpContrasena), ct).ConfigureAwait(true);
+    }
+
     /// <summary>Nombre de fichero de la tarjeta: <c>QSL_EA8DLF_EA1ABC_20260929_1432</c>.</summary>
     /// <param name="qso">El contacto.</param>
     /// <param name="yo">Mi estacion.</param>
@@ -309,6 +321,15 @@ public sealed class ServicioDeQsl
         static string Limpio(string s) => new(s.Select(c => char.IsAsciiLetterOrDigit(c) ? c : '-').ToArray());
         var mio = Limpio(v["miindicativo"]);
         return string.Create(CultureInfo.InvariantCulture, $"QSL_{(mio.Length == 0 ? "NODISLA" : mio)}_{Limpio(v["indicativo"])}_{utc:yyyyMMdd_HHmm}");
+    }
+
+    private void ComprobarEnvio(string para)
+    {
+        if (!DireccionDeCorreo.EsValida(para)) throw new ErrorDeCorreo($"La dirección «{para}» no es válida.") { EsDelDestinatario = true };
+        if (!Ajustes.Smtp.EstaCompleta && Enviador is ClienteSmtp)
+        {
+            throw new ErrorDeCorreo("Falta configurar el correo saliente: Configuración › Correo de las QSL (servidor, puerto y remitente).");
+        }
     }
 
     private static string ListaDeContactos(IReadOnlyList<Qso> contactos, DatosDeMiEstacion yo)

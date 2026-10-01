@@ -55,8 +55,14 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         Ajustes.ArranqueDeOperacion arranque,
         VistaModeloSubidas? subidas = null,
         VistaModeloFonia? fonia = null,
-        VistaModeloAnalizador? analizador = null)
+        VistaModeloAnalizador? analizador = null,
+        VistaModeloActualizaciones? actualizaciones = null,
+        VistaModeloDisenadorDeDiplomas? disenadorDeDiplomas = null,
+        VistaModeloAyuda? ayuda = null)
     {
+        Actualizaciones = actualizaciones;
+        DisenadorDeDiplomas = disenadorDeDiplomas;
+        Ayuda = ayuda;
         Subidas = subidas;
         Fonia = fonia;
         Analizador = analizador ?? new VistaModeloAnalizador(null);
@@ -299,6 +305,18 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     public VistaModeloRonda Ronda { get; }
 
     /// <summary>
+    /// El aviso de versiones nuevas: el MISMO objeto para la barra de arriba, el apartado
+    /// «Actualizaciones» de Configuración y el botón de la Ayuda. Nulo en pruebas.
+    /// </summary>
+    public VistaModeloActualizaciones? Actualizaciones { get; }
+
+    /// <summary>El diseñador de diplomas (QSL → Diplomas). Nulo en pruebas.</summary>
+    public VistaModeloDisenadorDeDiplomas? DisenadorDeDiplomas { get; }
+
+    /// <summary>La ayuda integrada. Nula en pruebas.</summary>
+    public VistaModeloAyuda? Ayuda { get; }
+
+    /// <summary>
     /// La aplicacion esta corriendo con los puertos simulados.
     /// </summary>
     /// <remarks>
@@ -309,9 +327,98 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// </remarks>
     public static bool ModoSimulado => ConfiguracionDeServicios.ConPuertosSimulados;
 
-    /// <summary>Pestanas de la ventana, en el orden en que salen.</summary>
+    /// <summary>Paginas de la ventana, por su indice.</summary>
+    /// <remarks>
+    /// <para>
+    /// El indice es el de siempre y no se reordena: es lo que se guarda al cerrar, lo que pide
+    /// <c>CUADERNO_PESTANA</c> y lo que va detras de Ctrl 1…Ctrl 9. Lo que ha cambiado es como
+    /// se ENSEÑAN: ya no son nueve pestañas en fila sino cuatro entradas agrupadas por uso
+    /// (Operar, Libro, QSL, Diplomas) y, a la derecha del todo, Ayuda y Configuración. Ver
+    /// <see cref="Grupos"/>.
+    /// </para>
+    /// <para>
+    /// «Etiquetas» va la ultima porque antes era una pestaña DENTRO de «Imprimir»; ahora es
+    /// una pagina del grupo QSL como las demas.
+    /// </para>
+    /// </remarks>
     public IReadOnlyList<string> Pestanas { get; } =
-        ["Operar", "Digital", "Cuaderno", "Mapa", "Diplomas", "Ajustes", "Satélites", "Imprimir", "Ronda"];
+        ["Operar", "Digital", "Cuaderno", "Mapa", "Diplomas", "Configuración", "Satélites", "Tarjeta QSL", "Ronda", "Etiquetas",
+            "Diseñador de diplomas", "Ayuda"];
+
+    /// <summary>
+    /// Las entradas de primer nivel de la barra y las paginas que agrupa cada una.
+    /// </summary>
+    /// <remarks>
+    /// Operar: la cabina, lo digital, los satelites y la ronda de control, que es todo lo que
+    /// se hace con el equipo en la mano. Libro: los contactos y su mapa. QSL: la tarjeta y las
+    /// etiquetas del buro. Diplomas. Y, aparte y a la derecha, Configuración.
+    /// </remarks>
+    public static IReadOnlyDictionary<string, int[]> Grupos { get; } = new Dictionary<string, int[]>
+    {
+        ["Operar"] = [PaginaOperar, PaginaDigital, PaginaSatelites, PaginaRonda],
+        ["Libro"] = [PaginaCuaderno, PaginaMapa],
+        ["QSL"] = [PaginaQsl, PaginaEtiquetas, PaginaDisenadorDeDiplomas],
+        ["Diplomas"] = [PaginaDiplomas],
+        ["Ayuda"] = [PaginaAyuda],
+        ["Configuración"] = [PaginaConfiguracion],
+    };
+
+    /// <summary>Indices de las paginas.</summary>
+    public const int PaginaOperar = 0, PaginaDigital = 1, PaginaCuaderno = 2, PaginaMapa = 3,
+        PaginaDiplomas = 4, PaginaConfiguracion = 5, PaginaSatelites = 6, PaginaQsl = 7,
+        PaginaRonda = 8, PaginaEtiquetas = 9, PaginaDisenadorDeDiplomas = 10, PaginaAyuda = 11;
+
+    /// <summary>
+    /// El capitulo de la ayuda que explica cada pagina: lo que abre F1 desde ella.
+    /// </summary>
+    public static IReadOnlyDictionary<int, string> CapituloDeCadaPagina { get; } = new Dictionary<int, string>
+    {
+        [PaginaOperar] = "02-operar",
+        [PaginaDigital] = "03-digital",
+        [PaginaCuaderno] = "04-cuaderno",
+        [PaginaMapa] = "06-mapa",
+        [PaginaDiplomas] = "05-diplomas",
+        [PaginaConfiguracion] = "09-ajustes",
+        [PaginaSatelites] = "07-satelites",
+        [PaginaQsl] = "13-tarjeta-qsl",
+        [PaginaRonda] = "11-ronda-de-control",
+        [PaginaEtiquetas] = "08-impresion-qsl",
+        [PaginaDisenadorDeDiplomas] = "14-disenador-de-diplomas",
+    };
+
+    /// <summary>La ultima pagina vista de cada grupo: al volver al grupo se vuelve a ella.</summary>
+    private readonly Dictionary<string, int> _ultimaDelGrupo = [];
+
+    /// <summary>Nombre del grupo al que pertenece una pagina.</summary>
+    /// <param name="pagina">Indice de la pagina.</param>
+    /// <returns>El grupo, o «Operar» si el indice no es de ninguno.</returns>
+    public static string GrupoDe(int pagina) =>
+        Grupos.FirstOrDefault(g => g.Value.Contains(pagina)).Key ?? "Operar";
+
+    /// <summary>Grupo de la pagina que se esta viendo.</summary>
+    public string GrupoActivo => GrupoDe(IndiceDeLaPestana);
+
+    /// <summary>Se ve una pagina del grupo Operar: salen sus subentradas.</summary>
+    public bool EnElGrupoOperar => GrupoActivo == "Operar";
+
+    /// <summary>Se ve una pagina del grupo Libro.</summary>
+    public bool EnElGrupoLibro => GrupoActivo == "Libro";
+
+    /// <summary>Se ve una pagina del grupo QSL.</summary>
+    public bool EnElGrupoQsl => GrupoActivo == "QSL";
+
+    /// <summary>
+    /// Va a un grupo de la barra: a la pagina de ese grupo que se vio la ultima vez, o a la
+    /// primera si no se ha visto ninguna.
+    /// </summary>
+    /// <param name="grupo">Nombre del grupo, tal y como sale en <see cref="Grupos"/>.</param>
+    [RelayCommand]
+    public void VerElGrupo(string? grupo)
+    {
+        if (grupo is null || !Grupos.TryGetValue(grupo, out var paginas)) return;
+
+        IndiceDeLaPestana = _ultimaDelGrupo.TryGetValue(grupo, out var ultima) ? ultima : paginas[0];
+    }
 
     /// <summary>Perfiles de estacion disponibles.</summary>
     public ObservableCollection<Estacion> Estaciones { get; } = [];
@@ -536,6 +643,12 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     partial void OnIndiceDeLaPestanaChanged(int value)
     {
         if (value == PestanaDeLosDigitales) Modem.Asomarse();
+
+        _ultimaDelGrupo[GrupoDe(value)] = value;
+        OnPropertyChanged(nameof(GrupoActivo));
+        OnPropertyChanged(nameof(EnElGrupoOperar));
+        OnPropertyChanged(nameof(EnElGrupoLibro));
+        OnPropertyChanged(nameof(EnElGrupoQsl));
     }
 
     /// <summary>
@@ -671,21 +784,50 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     [RelayCommand]
     public void VerLosDiplomas() => IndiceDeLaPestana = 4;
 
-    /// <summary>Pone a la vista los ajustes.</summary>
+    /// <summary>Pone a la vista la configuración.</summary>
     [RelayCommand]
-    public void VerLosAjustes() => IndiceDeLaPestana = 5;
+    public void VerLosAjustes() => IndiceDeLaPestana = PaginaConfiguracion;
 
     /// <summary>Pone a la vista los satelites.</summary>
     [RelayCommand]
-    public void VerLosSatelites() => IndiceDeLaPestana = 6;
+    public void VerLosSatelites() => IndiceDeLaPestana = PaginaSatelites;
 
-    /// <summary>Pone a la vista la impresion de etiquetas.</summary>
+    /// <summary>Pone a la vista la tarjeta QSL.</summary>
     [RelayCommand]
-    public void VerImpresion() => IndiceDeLaPestana = 7;
+    public void VerLaQsl() => IndiceDeLaPestana = PaginaQsl;
+
+    /// <summary>Pone a la vista las etiquetas del buro.</summary>
+    [RelayCommand]
+    public void VerLasEtiquetas() => IndiceDeLaPestana = PaginaEtiquetas;
 
     /// <summary>Pone a la vista la ronda de control.</summary>
     [RelayCommand]
-    public void VerLaRonda() => IndiceDeLaPestana = 8;
+    public void VerLaRonda() => IndiceDeLaPestana = PaginaRonda;
+
+    /// <summary>Pone a la vista el diseñador de diplomas (QSL → Diplomas).</summary>
+    [RelayCommand]
+    public void VerElDisenadorDeDiplomas() => IndiceDeLaPestana = PaginaDisenadorDeDiplomas;
+
+    /// <summary>Pone a la vista la ayuda, en el capitulo que tuviera abierto.</summary>
+    [RelayCommand]
+    public void VerLaAyuda() => IndiceDeLaPestana = PaginaAyuda;
+
+    /// <summary>
+    /// F1: abre la ayuda por el capitulo que explica la pagina en la que se esta. Desde la
+    /// propia ayuda no hace nada: ya se esta en ella.
+    /// </summary>
+    [RelayCommand]
+    public void VerLaAyudaDeEstaPagina()
+    {
+        if (IndiceDeLaPestana == PaginaAyuda) return;
+
+        if (Ayuda is not null && CapituloDeCadaPagina.TryGetValue(IndiceDeLaPestana, out var capitulo))
+        {
+            Ayuda.AbrirCapitulo(capitulo);
+        }
+
+        IndiceDeLaPestana = PaginaAyuda;
+    }
 
     /// <summary>Guarda como han quedado los paneles. Lo llama la ventana al cerrarse.</summary>
     /// <param name="carpeta">Carpeta de datos del programa.</param>

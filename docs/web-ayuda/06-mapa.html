@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html" class="actual" aria-current="page">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="mapa">Mapa</h1>
+<p><strong>Libro › Mapa</strong> (<code>Ctrl</code> <code>4</code>) ense&#241;a d&#243;nde est&#225;n los contactos del cuaderno y los anuncios del cluster, con la propia estaci&#243;n marcada con un tri&#225;ngulo verde.</p>
+<figure><a href="capturas/mapa.png"><img src="capturas/mapa.png" alt="El mapa con contactos, spots y las dos l&#237;neas del paso gris" loading="lazy"></a><figcaption>El mapa con contactos, spots y las dos l&#237;neas del paso gris</figcaption></figure>
+<h2 id="qu&#233;-se-ve">Qu&#233; se ve</h2>
+<p>Cuatro casillas arriba controlan qu&#233; se dibuja:</p>
+<ul>
+<li><strong>Contactos</strong> — los contactos del cuaderno, agrupados en globos cuando hay varios muy juntos; el n&#250;mero dentro del globo dice cu&#225;ntos.</li>
+<li><strong>Spots</strong> — los anuncios que llegan ahora mismo del cluster de DX.</li>
+<li><strong>Paso gris</strong> — la l&#237;nea de d&#237;a y noche, que se mueve sola con el reloj y ense&#241;a la hora a la que corresponde.</li>
+<li><strong>Mapa de fondo</strong> — los mosaicos de OpenStreetMap. Sin conexi&#243;n a internet el mapa se queda en un fondo liso y sigue funcionando igual de bien para ver posiciones y trayectos.</li>
+</ul>
+<h2 id="trayectos">Trayectos</h2>
+<p>Al elegir un spot o un contacto se traza el trayecto de c&#237;rculo m&#225;ximo entre la propia estaci&#243;n y esa estaci&#243;n. <strong>&#171;Quitar trayecto&#187;</strong> lo borra; <strong>&#171;Ver el mundo&#187;</strong> vuelve a encuadrar el mapa entero, para cuando el zoom se ha quedado metido en una zona.</p>
+<p>El resumen de abajo dice cu&#225;ntos contactos y cu&#225;ntos spots hay dibujados en ese momento, y avisa si el mapa est&#225; todav&#237;a cargando el cuaderno o si algo ha fallado al traer los mosaicos.</p>
+<h2 id="rendimiento-de-las-teselas">Rendimiento de las teselas</h2>
+<p>El control de mapa es su propio proyecto, separado de la ventana principal, precisamente porque los controles de mapa son la pieza que m&#225;s se rompe entre versiones de sus bibliotecas: si alg&#250;n d&#237;a hay que cambiarlo, no hace falta tocar el resto del programa. Las teselas se guardan en cach&#233; en disco, as&#237; que no hace falta descargarlas de nuevo cada vez que se abre el mapa.</p>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

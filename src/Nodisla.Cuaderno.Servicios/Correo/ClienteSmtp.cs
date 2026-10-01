@@ -83,7 +83,7 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
 
     private async Task<Sesion> AbrirAsync(ConfiguracionSmtp c, string? contrasena, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(c.Servidor)) throw new ErrorDeCorreo("Falta el servidor de correo saliente (Ajustes → Correo de las QSL).");
+        if (string.IsNullOrWhiteSpace(c.Servidor)) throw new ErrorDeCorreo("Falta el servidor de correo saliente (Configuración › Correo de las QSL).");
         if (c.Puerto is <= 0 or > 65535) throw new ErrorDeCorreo($"El puerto {c.Puerto} no es válido.");
 
         var espera = TimeSpan.FromSeconds(Math.Clamp(c.EsperaSegundos, 5, 300));
@@ -138,7 +138,7 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
 
                     if (string.IsNullOrEmpty(contrasena))
                     {
-                        throw new ErrorDeCorreo("Falta la contraseña del correo: guárdela en Ajustes → Correo de las QSL.");
+                        throw new ErrorDeCorreo("Falta la contraseña del correo: guárdela en Configuración › Correo de las QSL.");
                     }
 
                     await sesion.IdentificarseAsync(c.Usuario.Trim(), contrasena, capacidades, ct).ConfigureAwait(false);

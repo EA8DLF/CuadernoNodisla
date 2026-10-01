@@ -25,6 +25,12 @@ public static class NombresDeClienteHttp
     /// <summary>Cliente de HamQTH.</summary>
     public const string HamQth = "hamqth";
 
+    /// <summary>Cliente de la API de GitHub: aviso de versiones nuevas. Espera corta.</summary>
+    public const string GitHub = "github";
+
+    /// <summary>Cliente de descarga del instalador desde GitHub. Espera larga, pero cancelable.</summary>
+    public const string GitHubDescargas = "github-descargas";
+
     /// <summary>Identificacion del programa que se envia en la cabecera <c>User-Agent</c>.</summary>
     /// <remarks>
     /// QRZ.com exige un agente identificable y limita a los genericos; los demas lo agradecen

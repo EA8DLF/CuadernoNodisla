@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diplomas · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html" class="actual" aria-current="page">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="diplomas">Diplomas</h1>
+<p>La entrada <strong>Diplomas</strong> de la barra (<code>Ctrl</code> <code>5</code>) sigue los diplomas que se van consiguiendo. Para <strong>dise&#241;ar e imprimir</strong> diplomas propios o el certificado de uno conseguido est&#225; <a href="14-disenador-de-diplomas.html">QSL › Diplomas</a>.</p>
+<p>La pantalla tiene tres bloques: a la izquierda el cat&#225;logo para elegir los propios, en el centro c&#243;mo van los que se siguen, y a la derecha el detalle de uno — qu&#233; referencias tiene, cu&#225;les confirmadas y cu&#225;les faltan.</p>
+<figure><a href="capturas/diplomas.png"><img src="capturas/diplomas.png" alt="Diplomas: cat&#225;logo a la izquierda, progreso en el centro, detalle a la derecha" loading="lazy"></a><figcaption>Diplomas: cat&#225;logo a la izquierda, progreso en el centro, detalle a la derecha</figcaption></figure>
+<h2 id="elegir-qu&#233;-diplomas-seguir">Elegir qu&#233; diplomas seguir</h2>
+<p>El cat&#225;logo trae <strong>87 diplomas</strong> — DXCC, WAS, WAZ, WAC, WPX, IOTA, SOTA, POTA, WWFF y muchos m&#225;s — con <strong>medio mill&#243;n de referencias</strong> entre todos. Marcando la casilla de uno se empieza a seguir; <strong>solo se calculan los marcados</strong>, porque recalcular los ochenta y siete por si acaso ser&#237;a trabajo tirado sobre esa cantidad de referencias. Por eso, sin ninguno elegido, la pantalla invita a marcar en vez de fingir que est&#225; calculando algo.</p>
+<h2 id="qu&#233;-son-new-band-y-mode">Qu&#233; son NEW, BAND y MODE</h2>
+<p>Cuando se elige un diploma que se calcula por pa&#237;s — como el DXCC — el progreso distingue tres formas de que una entidad cuente:</p>
+<ul>
+<li><strong>NEW</strong> (nuevo) — la entidad no est&#225; en absoluto en el cuaderno con ese diploma.</li>
+<li><strong>BAND</strong> — la entidad ya est&#225; trabajada, pero no en esa banda concreta.</li>
+<li><strong>MODE</strong> — la entidad ya est&#225; trabajada, pero no en ese modo concreto.</li>
+</ul>
+<p>Es la misma idea que la matriz de novedad de <strong>Operar › Cabina</strong>: no basta con haber trabajado un pa&#237;s una vez, hace falta trabajarlo (y a veces confirmarlo) en cada banda y en cada modo para que cuente en seg&#250;n qu&#233; diploma.</p>
+<h2 id="las-v&#237;as-de-confirmaci&#243;n">Las v&#237;as de confirmaci&#243;n</h2>
+<p>Un contacto puede estar trabajado pero no confirmado, y un diploma solo se concede con confirmaciones de verdad. Las v&#237;as que sigue el cuaderno son las mismas cuatro que en el resto del programa: <strong>papel</strong>, <strong>eQSL</strong>, <strong>LoTW</strong> y <strong>QRZ</strong>. El bot&#243;n <strong>&#171;Ver detalle&#187;</strong> de cada diploma abre a la derecha la lista completa de sus referencias, con tres estados posibles por cada una: <strong>falta</strong> (sin trabajar), <strong>sin QSL</strong> (trabajada pero no confirmada) y <strong>confirmada</strong>. El estado va siempre escrito adem&#225;s de en color, para quien no distinga bien los colores.</p>
+<p>Los diplomas grandes — SOTA pasa de 182.000 referencias — se ense&#241;an paginados, con los botones ◀ y ▶ debajo de la lista.</p>
+<h2 id="cu&#225;ndo-una-cifra-no-es-firme">Cu&#225;ndo una cifra no es firme</h2>
+<p>Junto a algunos progresos aparece un aviso &#225;mbar: <strong>&#171;La cifra es un m&#237;nimo, no la definitiva&#187;</strong>. Pasa con los diplomas que su propio gestor valida contra una base externa, o que cuentan por campos que este cuaderno todav&#237;a no guarda: en esos casos la cifra que se ense&#241;a es una <strong>cota inferior</strong>, nunca una cifra de m&#225;s. El aviso va siempre junto al n&#250;mero, no escondido en una ayuda emergente — ense&#241;ar la cifra sin decirlo llevar&#237;a a pedir un diploma que en realidad no se tiene, o a no pedir uno que s&#237;.</p>
+<p>El bot&#243;n <strong>&#171;Recontar&#187;</strong> vuelve a calcular el progreso de los diplomas elegidos, por si se ha importado o editado el cuaderno desde la &#250;ltima vez.</p>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

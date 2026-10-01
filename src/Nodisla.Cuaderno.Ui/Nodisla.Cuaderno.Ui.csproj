@@ -29,6 +29,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- El icono tambien como recurso: lo llevan en la barra de titulo todas las ventanas. -->
+    <Resource Include="Recursos\CuadernoNodisla.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      La ayuda integrada: los capítulos de docs/ayuda y sus capturas de docs/capturas/ayuda,
+      incrustados al compilar. La ayuda del programa es siempre la de su misma versión.
+    -->
+    <EmbeddedResource Include="..\..\docs\ayuda\*.md"
+                      LogicalName="Ayuda.%(Filename)%(Extension)"
+                      Link="Ayuda\%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\..\docs\capturas\ayuda\*.png"
+                      LogicalName="Ayuda.capturas.%(Filename)%(Extension)"
+                      Link="Ayuda\capturas\%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />

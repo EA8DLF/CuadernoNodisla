@@ -1,10 +1,10 @@
 # Tarjeta QSL propia: diseñarla y enviarla por correo
 
-La pestaña **Imprimir (Ctrl 8) → Tarjeta QSL** es el editor de su tarjeta. Desde ahí, desde el
+La página **QSL › Tarjeta QSL** (`Ctrl` `8`) es el editor de su tarjeta. Desde ahí, desde el
 Cuaderno o desde la ficha de un contacto se genera la tarjeta de cualquier QSO como **imagen**
 (JPG/PNG) o **PDF** y se **manda por correo** al corresponsal sin salir del programa.
 
-![Editor de la tarjeta QSL: plantilla y campos a la izquierda, la tarjeta en el centro, el campo elegido a la derecha](../capturas/qsl-editor.png)
+![Editor de la tarjeta QSL: plantilla y campos a la izquierda, la tarjeta en el centro, el campo elegido a la derecha](../capturas/ayuda/tarjeta-qsl.png)
 
 ## El editor
 
@@ -32,9 +32,7 @@ Cuaderno o desde la ficha de un contacto se genera la tarjeta de cualquier QSO c
 La tarjeta del centro **es la imagen de verdad**: la misma rutina la dibuja para el correo
 (200 ppp) y para el PDF (300 ppp). Lo que se ve es lo que recibe el corresponsal.
 
-En una pantalla de 1366 × 768 cabe igual; las columnas laterales se desplazan:
-
-![La pestaña Tarjeta QSL a 1366 × 768, con un contacto de la demostración](../capturas/qsl-pestana-1366.png)
+En una pantalla pequeña (1366 × 768) cabe igual: las columnas laterales se desplazan.
 
 ### Variables
 
@@ -63,8 +61,6 @@ Una variable mal escrita se queda tal cual, con sus llaves, para que se vea en l
 
 ## Enviar por correo
 
-![Ver/enviar QSL: una fila por estación con su correo, la tarjeta y el texto del correo](../capturas/qsl-enviar.png)
-
 Se abre la ventana **Ver/enviar QSL** desde:
 
 - el **Cuaderno**: elija uno o varios contactos (Ctrl/Mayús + clic), **clic derecho → «Ver/enviar
@@ -81,7 +77,7 @@ correo con una tarjeta por contacto**. La dirección se busca sola:
 3. si no la publica, la fila queda desmarcada con el aviso «No publica correo»: **escriba la
    dirección** a mano en la columna *Correo* y márquela, o **se saltará**.
 
-El asunto y el texto se pueden retocar para este envío (los de siempre se cambian en Ajustes).
+El asunto y el texto se pueden retocar para este envío (los de siempre se cambian en Configuración › Correo de las QSL).
 **Enviar por correo** manda las marcadas una a una; la columna *Estado* dice cómo ha ido cada
 una. Si falla el **destinatario** (buzón inexistente), se apunta y se sigue con la siguiente; si
 falla el **servidor** (contraseña, red), se para en vez de repetir el mismo error con todas.
@@ -94,7 +90,7 @@ la ficha (F2), la ficha recibe la misma marca, así que «Guardar cambios» no l
 
 ## Lo que hay que configurar una vez
 
-**Ajustes → Correo de las QSL** (ver [Ajustes](09-ajustes.md)):
+**Configuración → Correo de las QSL** (ver [Configuración](09-ajustes.md)):
 
 - **Servidor**, **puerto** y **cifrado**: *StartTls* en el 587 (lo normal), *SslDirecto* en el
   465, o *Ninguna* solo para un servidor de su red de casa.
@@ -103,7 +99,7 @@ la ficha (F2), la ficha recibe la misma marca, así que «Guardar cambios» no l
   - Outlook/Hotmail: `smtp-mail.outlook.com`, 587, StartTls.
 - **Usuario** y **contraseña** (se guarda **cifrada** con «Guardar»; no se vuelve a enseñar ni se
   escribe en ningún fichero ni registro).
-- **Remitente** (su dirección) y **nombre del remitente** (p. ej. «EA8DLF Luis»).
+- **Remitente** (su dirección) y **nombre del remitente** (p. ej. «EA1ABC Ana»).
 - **Asunto** y **texto** con variables, y el formato de la tarjeta adjunta (JPG o PNG).
 - **Probar la conexión**: conecta y se identifica **sin mandar ningún correo**.
 
@@ -114,7 +110,7 @@ programa se niega a mandarla.
 
 eQSL **no admite una tarjeta distinta por contacto**: pinta sus tarjetas con **el diseño subido a
 la cuenta** y los datos de cada QSO encima. Subir los contactos a eQSL ya lo hace el programa
-(Ajustes → Subida automática).
+(Configuración → Subidas y QRZ).
 
 eQSL **no tiene API para subir el diseño**: solo se puede desde su web, con la sesión iniciada.
 Lo que ofrece el editor:
@@ -123,7 +119,3 @@ Lo que ofrece el editor:
   como *Dato del contacto*), que es lo que eQSL espera como fondo.
 - **Abrir eQSL** — abre la web; súbala desde su perfil, en el apartado del diseño de la tarjeta
   (eQSL puede pedir una aportación para usar un diseño propio; revise sus condiciones).
-
-## Tarjeta generada
-
-![Tarjeta generada con la plantilla NODISLA y una foto de fondo](../capturas/qsl-tarjeta-generada.jpg)

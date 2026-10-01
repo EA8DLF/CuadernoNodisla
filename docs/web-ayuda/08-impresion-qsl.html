@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QSL: etiquetas del bur&#243; · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html" class="actual" aria-current="page">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="qsl-etiquetas-del-bur&#243;">QSL: etiquetas del bur&#243;</h1>
+<p>La entrada <strong>QSL</strong> de la barra tiene tres p&#225;ginas: <strong>Tarjeta QSL</strong>, el editor de su propia tarjeta y su env&#237;o por correo (ver <a href="13-tarjeta-qsl.html">Tarjeta QSL propia</a>); <strong>Etiquetas</strong>, que se explica aqu&#237;; y <strong>Diplomas</strong>, el <a href="14-disenador-de-diplomas.html">dise&#241;ador de diplomas</a>.</p>
+<p><strong>Etiquetas</strong> compone etiquetas de QSL listas para pegar en el sobre. A la izquierda se filtran los contactos y se eligen las etiquetas de la tirada; a la derecha se elige el papel y se pide la vista previa.</p>
+<figure><a href="capturas/etiquetas.png"><img src="capturas/etiquetas.png" alt="QSL → Etiquetas: filtro y lista de etiquetas a la izquierda, plantilla y vista previa a la derecha" loading="lazy"></a><figcaption>QSL → Etiquetas: filtro y lista de etiquetas a la izquierda, plantilla y vista previa a la derecha</figcaption></figure>
+<h2 id="el-filtro-de-contactos">El filtro de contactos</h2>
+<ul>
+<li><strong>Desde / Hasta</strong> — un rango de fechas, opcional.</li>
+<li><strong>Bandas</strong> e <strong>Indicativos</strong> — listas separadas por coma; en blanco quiere decir &#171;todas&#187; o &#171;cualquiera&#187;.</li>
+<li><strong>V&#237;a</strong> — Bur&#243;, Directa, Gestor, Electr&#243;nica. Sin marcar ninguna cuentan todas.</li>
+<li><strong>Solo pendientes de enviar en papel</strong> — viene marcado de f&#225;brica, porque una tirada de etiquetas normalmente sale de la cola de tarjetas por mandar.</li>
+<li><strong>Excluir los ya confirmados en papel</strong> — apagado de f&#225;brica: confirmar tambi&#233;n lo que ya lleg&#243; es correcto y es lo que se espera, as&#237; que por omisi&#243;n no se excluye.</li>
+</ul>
+<p><strong>&#171;Buscar&#187;</strong> aplica el filtro y llena la lista de etiquetas, agrupadas por corresponsal, cada una con su casilla para entrar o no en la tirada y el n&#250;mero de contactos que re&#250;ne. <strong>&#171;Marcar todas&#187;</strong> y <strong>&#171;Ninguna&#187;</strong> cambian todas las casillas de golpe.</p>
+<h2 id="la-plantilla-y-la-tirada">La plantilla y la tirada</h2>
+<ul>
+<li><strong>Plantilla de etiquetas</strong> — el papel sobre el que se va a imprimir, por ejemplo &#171;Avery 21 por hoja (63,5 &#215; 38,1 mm)&#187;. Las medidas son las del fabricante y no se retocan: si algo sale corrido al imprimir, lo que est&#225; mal es el escalado de la impresora — hay que imprimir <strong>al 100 %</strong>, nunca &#171;ajustar a la p&#225;gina&#187;.</li>
+<li><strong>Empezar en la etiqueta n&#250;mero</strong> — para aprovechar una hoja de etiquetas ya empezada; <code>1</code> es la primera casilla de la hoja.</li>
+<li><strong>Dibujar el contorno</strong> — marca el borde de cada etiqueta, &#250;til para probar en papel normal antes de gastar una hoja de adhesivos de verdad.</li>
+<li><strong>Frase al pie de las etiquetas</strong> — un mensaje opcional, por ejemplo un agradecimiento o una petici&#243;n de tarjeta.</li>
+</ul>
+<h2 id="la-vista-previa-es-el-pdf-de-verdad">La vista previa es el PDF de verdad</h2>
+<p><strong>&#171;Vista previa / Imprimir…&#187;</strong> compone el documento y lo abre con el visor de PDF que tenga instalado el sistema. <strong>No hay un dibujo aparte para la pantalla y otro para el papel</strong>: lo que se ve en el visor son exactamente los mismos bytes que saldr&#237;an impresos. Desde ese visor se imprime igual que cualquier otro PDF, con sus propias opciones de impresora, escala y copias.</p>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

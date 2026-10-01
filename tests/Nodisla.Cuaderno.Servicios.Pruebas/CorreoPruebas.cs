@@ -30,7 +30,7 @@ public sealed class CorreoPruebas
         Seguridad = seguridad,
         Usuario = usuario,
         Remitente = "ea8dlf@ejemplo.es",
-        NombreDelRemitente = "EA8DLF Luis",
+        NombreDelRemitente = "EA1ABC Ana",
         EsperaSegundos = 10,
     };
 

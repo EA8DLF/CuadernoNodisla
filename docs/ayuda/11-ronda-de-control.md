@@ -1,14 +1,14 @@
 # Ronda de control
 
-La pestaña **Ronda (Ctrl 9)** es para las rondas de control (*net control*): una red de
+**Operar › Ronda de control** (`Ctrl` `9`) es para las rondas de control (*net control*): una red de
 radioaficionados con un director, una lista de participantes que van entrando, y un contacto
 real del cuaderno por cada uno que se confirma.
 
-![Ronda de control: abrir una ronda nueva, con el historial de rondas anteriores debajo](../capturas/ronda-de-control.png)
+![Ronda de control: abrir una ronda nueva, con el historial de rondas anteriores debajo](../capturas/ayuda/ronda.png)
 
 ## Abrir una ronda
 
-Mientras no hay ninguna ronda abierta, la pestaña enseña el formulario de arriba: **nombre de la
+Mientras no hay ninguna ronda abierta, la página enseña el formulario de arriba: **nombre de la
 ronda**, **club o evento** (opcional), **banda**, **modo**, **frecuencia** y el **perfil de
 estación** con el que se va a dirigir. Con «Abrir ronda» empieza la sesión y el formulario se
 sustituye por la cabecera de la ronda en curso, con su resumen y el botón «Cerrar ronda».
@@ -33,7 +33,7 @@ de la rejilla se puede editar sobre la marcha:
 ## Cerrar la ronda y el historial
 
 **«Cerrar ronda»** termina la sesión y la manda al **historial**, que es lo que se ve en esta
-misma pestaña mientras no hay ninguna ronda abierta: nombre, club o evento, banda, modo, inicio
+misma página mientras no hay ninguna ronda abierta: nombre, club o evento, banda, modo, inicio
 y fin en UTC, cuántos participantes hubo y cuántos se llegaron a confirmar como trabajados.
 
 ## Reapertura automática

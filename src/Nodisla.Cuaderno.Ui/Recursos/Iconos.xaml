@@ -218,6 +218,46 @@
     </DrawingImage>
 
     <!--
+        ══ QSL: la tarjeta asomando del sobre ══
+        Sustituye a la impresora: lo que se hace ahí es la QSL (tarjeta, correo y etiquetas
+        del buró), no «imprimir».
+    -->
+    <DrawingImage x:Key="IconoQsl">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <!-- La tarjeta -->
+                <GeometryDrawing Brush="{StaticResource IconoNaranja}" Geometry="M 6,3 L 18,3 L 18,11 L 6,11 Z" />
+                <!-- El sobre -->
+                <DrawingGroup Opacity="0.28"><GeometryDrawing Brush="{StaticResource IconoNaranja}"
+                                 Geometry="M 2.5,9 L 21.5,9 L 21.5,20.5 L 2.5,20.5 Z" /></DrawingGroup>
+                <GeometryDrawing Geometry="M 2.5,9 L 21.5,9 L 21.5,20.5 L 2.5,20.5 Z M 2.5,9 L 12,15.5 L 21.5,9">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource IconoNaranja}" Thickness="1.4" LineJoin="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!--
+        ══ AYUDA: el interrogante en su círculo ══
+    -->
+    <DrawingImage x:Key="IconoAyuda">
+        <DrawingImage.Drawing>
+            <DrawingGroup>
+                <DrawingGroup Opacity="0.25"><GeometryDrawing Brush="{StaticResource IconoGris}"
+                                 Geometry="M 12,12 m -9.5,0 a 9.5,9.5 0 1 0 19,0 a 9.5,9.5 0 1 0 -19,0" /></DrawingGroup>
+                <GeometryDrawing Geometry="M 12,12 m -9.5,0 a 9.5,9.5 0 1 0 19,0 a 9.5,9.5 0 1 0 -19,0 M 9,9.2 C 9,6 15,6 15,9.2 C 15,11.5 12,11.5 12,14">
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="{StaticResource IconoGris}" Thickness="1.6" StartLineCap="Round" EndLineCap="Round" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Brush="{StaticResource IconoGris}" Geometry="M 12,17.2 m -1.2,0 a 1.2,1.2 0 1 0 2.4,0 a 1.2,1.2 0 1 0 -2.4,0" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+
+    <!--
         ══ BANDMAP: la escala de frecuencia con sus anuncios ══
         Una regla vertical con sus marcas y tres puntos a distinta altura.
     -->

@@ -1,10 +1,10 @@
 # Satélites
 
-La pestaña **Satélites (Ctrl 7)** tiene dos columnas: a la izquierda el catálogo con el próximo
+**Operar › Satélites** (`Ctrl` `7`) tiene dos columnas: a la izquierda el catálogo con el próximo
 paso de cada satélite, a la derecha el satélite elegido con sus datos en vivo y el seguimiento
 Doppler.
 
-![La pestaña Satélites: catálogo a la izquierda, en vivo y Doppler a la derecha](../capturas/satelites.png)
+![Operar › Satélites: el catálogo a la izquierda y, a la derecha, el satélite elegido con su transpondedor, los datos en vivo y el Doppler (aquí aún sin elementos orbitales descargados)](../capturas/ayuda/satelites.png)
 
 ## El catálogo y el próximo paso
 
@@ -27,7 +27,7 @@ que ya hay descargado, sin salir a internet.
 
 Al elegir un satélite de la lista aparece, a la derecha, su **transpondedor** (repetidor de FM,
 lineal, digital o baliza, según lo que tenga) y tres datos que se actualizan solos mientras la
-pestaña está abierta: **azimut**, **elevación** y **distancia**. Si el satélite está por debajo
+página está abierta: **azimut**, **elevación** y **distancia**. Si el satélite está por debajo
 del horizonte en ese momento, lo dice con un aviso en vez de enseñar cifras que no significan
 nada.
 
@@ -46,7 +46,5 @@ El seguimiento **solo mueve frecuencia**: nunca toca el PTT ni el modo del equip
 ## El subpunto en el mapa
 
 Mientras hay un satélite elegido, su subpunto —el lugar de la superficie terrestre sobre el que
-vuela en ese instante— se dibuja como una marca más en la pestaña **Mapa**, junto a los
+vuela en ese instante— se dibuja como una marca más en **Libro › Mapa**, junto a los
 contactos y los spots del cluster.
-
-![El subpunto de un satélite geoestacionario (QO-100) como marca violeta en el mapa](../capturas/mapa-con-satelite.png)

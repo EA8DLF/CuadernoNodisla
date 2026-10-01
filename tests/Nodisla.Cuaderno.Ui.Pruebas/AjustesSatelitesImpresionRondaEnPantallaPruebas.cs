@@ -60,22 +60,38 @@ public sealed class AjustesSatelitesImpresionRondaEnPantallaPruebas : IDisposabl
             var errores = new StringBuilder();
             using var oyente = new OyenteDeEnlacesDeAjustes(errores);
 
-            var (ventana, panel) = Pintar(new PanelDeAjustes { DataContext = AjustesCompletos() }, ancho, alto, Ventana());
+            var modelo = AjustesCompletos();
+            var (ventana, panel) = Pintar(new PanelDeAjustes { DataContext = modelo }, ancho, alto, Ventana());
             try
             {
-                foreach (var e in Todos<Expander>(panel)) e.IsExpanded = true;
-                await Asentar();
-
-                errores.ToString().Should().BeEmpty("cada enlace roto es un control o un dato muerto");
-                EnlacesRotos(ventana).Should().BeEmpty("cada enlace roto es un control o un dato muerto");
-                SinBotonesMuertos(panel);
-                NadaCortadoDeLado(panel);
-
-                // Las credenciales se leen: la casilla tiene sitio para escribir y el título cabe.
-                foreach (var casilla in Todos<PasswordBox>(panel).Where(c => c.IsVisible))
+                // La configuración va por apartados: se recorren todos, uno a uno.
+                for (var apartado = 0; apartado < VistaModeloAjustes.Apartados.Count; apartado++)
                 {
-                    casilla.ActualWidth.Should().BeGreaterThan(200, "una casilla de contraseña estrecha no se usa");
+                    modelo.IndiceDelApartado = apartado;
+                    await Asentar();
+                    foreach (var e in Todos<Expander>(panel)) e.IsExpanded = true;
+                    await Asentar();
+
+                    var donde = $"en el apartado «{VistaModeloAjustes.Apartados[apartado]}»";
+                    errores.ToString().Should().BeEmpty($"cada enlace roto es un control o un dato muerto ({donde})");
+                    EnlacesRotos(ventana).Should().BeEmpty($"cada enlace roto es un control o un dato muerto ({donde})");
+                    SinBotonesMuertos(panel);
+                    NadaCortadoDeLado(panel);
+
+                    // Las credenciales se leen: la casilla tiene sitio para escribir y el título cabe.
+                    foreach (var casilla in Todos<PasswordBox>(panel).Where(c => c.IsVisible))
+                    {
+                        casilla.ActualWidth.Should().BeGreaterThan(200, $"una casilla de contraseña estrecha no se usa ({donde})");
+                    }
                 }
+
+                // Las cuentas van en tarjetas, una por servicio, y no en una lista hacia abajo.
+                modelo.IndiceDelApartado = VistaModeloAjustes.ApartadoCuentas;
+                await Asentar();
+                modelo.Tarjetas.Select(t => t.Nombre).Should().Contain(["QRZ.com", "LoTW", "eQSL.cc", "Club Log", "HamQTH", "Cluster de DX"]);
+                var cajas = Todos<PasswordBox>(panel).Where(c => c.IsVisible).ToList();
+                cajas.Select(c => c.TranslatePoint(new Point(0, 0), panel).X).Distinct().Count()
+                    .Should().BeGreaterThan(1, "las tarjetas se reparten en columnas");
             }
             finally
             {
@@ -243,11 +259,21 @@ public sealed class AjustesSatelitesImpresionRondaEnPantallaPruebas : IDisposabl
         try
         {
             await Asentar();
+            EnlacesRotos(ventana).Should().BeEmpty();
 
+            modelo.IndiceDelApartado = VistaModeloAjustes.ApartadoEquipo;
+            await Asentar();
             EnlacesRotos(ventana).Should().BeEmpty();
             Todos<AjustesDelEquipo>(panel).Should().BeEmpty();
-            Todos<ConexionDelCluster>(panel).Should().BeEmpty();
+
+            modelo.IndiceDelApartado = VistaModeloAjustes.ApartadoAudio;
+            await Asentar();
             Todos<AjustesDeAudio>(panel).Should().ContainSingle();
+
+            modelo.IndiceDelApartado = VistaModeloAjustes.ApartadoCluster;
+            await Asentar();
+            EnlacesRotos(ventana).Should().BeEmpty();
+            Todos<ConexionDelCluster>(panel).Should().BeEmpty();
             Todos<TextBlock>(panel).Should().Contain(t => t.IsVisible && t.Text.StartsWith("Con los puertos simulados el cluster", StringComparison.Ordinal));
         }
         finally
@@ -292,6 +318,8 @@ public sealed class AjustesSatelitesImpresionRondaEnPantallaPruebas : IDisposabl
         var (ventana, panel) = Pintar(new PanelDeAjustes { DataContext = modelo }, 1330, 490, Ventana());
         try
         {
+            modelo.IndiceDelApartado = VistaModeloAjustes.ApartadoCluster;
+            await Asentar();
             var apartado = Todos<ConexionDelCluster>(panel).Single();
             var casilla = Todos<PasswordBox>(apartado).Single();
 
@@ -319,15 +347,28 @@ public sealed class AjustesSatelitesImpresionRondaEnPantallaPruebas : IDisposabl
         var (ventana, panel) = Pintar(new PanelDeAjustes { DataContext = modelo }, 1896, 740, Ventana());
         try
         {
+            modelo.IndiceDelApartado = VistaModeloAjustes.ApartadoLibro;
+            await Asentar();
             Pulsar(panel, "Exportar ADIF…");
             await Esperar(() => !modelo.Ocupado && System.IO.File.Exists(ruta));
             modelo.ParteDeLaImportacion.Should().Contain("contactos exportados");
 
+            // «Volver a comprobar» va en la tarjeta de LoTW.
+            modelo.IndiceDelApartado = VistaModeloAjustes.ApartadoCuentas;
+            await Asentar();
             Pulsar(panel, "Volver a comprobar");
             await Asentar();
             modelo.MotivoDeNoPoderSubirALotw.Should().NotBeEmpty();
 
+            // «Configurar…» de la tarjeta del cluster lleva a su apartado.
+            Invocar(Todos<Button>(panel).First(b => b.IsVisible && Equals(b.Content, "Configurar…")
+                && b.DataContext is TarjetaDeServicio { Nombre: "Cluster de DX" }));
+            await Asentar();
+            modelo.IndiceDelApartado.Should().Be(VistaModeloAjustes.ApartadoCluster);
+
             // CAT: probar (con un montaje de mentira), aplicar y descartar.
+            modelo.IndiceDelApartado = VistaModeloAjustes.ApartadoEquipo;
+            await Asentar();
             Pulsar(panel, "Probar");
             await Esperar(() => modelo.Cat!.HayParte && modelo.Cat.Resultado != ResultadoDePrueba.Probando);
             modelo.Cat!.HayParte.Should().BeTrue();
@@ -337,12 +378,16 @@ public sealed class AjustesSatelitesImpresionRondaEnPantallaPruebas : IDisposabl
             // Cluster: aplicar sin servidor avisa en rojo.
             modelo.Cluster!.Servidor = string.Empty;
             modelo.Cluster.Indicativo = "EA8DLF";
+            modelo.IndiceDelApartado = VistaModeloAjustes.ApartadoCluster;
+            await Asentar();
             var apartado = Todos<ConexionDelCluster>(panel).Single();
             Pulsar(apartado, "Aplicar");
             await Esperar(() => modelo.Cluster.HayParte);
             modelo.Cluster.Fallo.Should().BeTrue();
 
             // Audio: probar el nivel y pararlo; guardar.
+            modelo.IndiceDelApartado = VistaModeloAjustes.ApartadoAudio;
+            await Asentar();
             Pulsar(panel, "Probar el nivel");
             await Esperar(() => modelo.Audio!.Probando);
             await Asentar();

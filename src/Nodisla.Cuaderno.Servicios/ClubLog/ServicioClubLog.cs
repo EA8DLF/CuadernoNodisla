@@ -256,11 +256,11 @@ public sealed class ServicioClubLog : IServicioQsl
     {
         var contrasena = _credenciales.Leer(ClavesDeCredencial.ClubLogContrasena)
             ?? throw new InvalidOperationException(
-                "No hay contraseña de Club Log guardada. Configúrela en los ajustes del programa.");
+                "No hay contraseña de Club Log guardada. Configúrela en Configuración › Cuentas y servicios.");
         var api = _credenciales.Leer(ClavesDeCredencial.ClubLogApi)
             ?? throw new InvalidOperationException(
                 "No hay clave de API de Club Log guardada. Se pide al soporte de Club Log y se "
-                + "guarda cifrada en los ajustes del programa.");
+                + "guarda cifrada en Configuración › Cuentas y servicios.");
         return (contrasena, api);
     }
 

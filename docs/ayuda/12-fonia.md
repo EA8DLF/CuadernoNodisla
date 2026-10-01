@@ -1,10 +1,10 @@
 # Fonía por el PC
 
-El panel **Fonía** de la pestaña **Operar** permite trabajar SSB, AM y FM con el ordenador:
+El panel **Fonía** de **Operar › Cabina** permite trabajar SSB, AM y FM con el ordenador:
 la radio se oye por los **altavoces del PC** y se habla por el **micrófono del PC**, con un
 botón de PTT en pantalla.
 
-![Operar con el panel de fonía a la derecha del frontal, en recepción](../capturas/fonia-operar-1366.png)
+![Operar › Cabina: el panel de fonía, en columna a la derecha del frontal](../capturas/ayuda/operar.png)
 
 ## Dónde está
 
@@ -13,7 +13,7 @@ botón de PTT en pantalla.
 - Con el frontal plegado («Ocultar equipo»), el panel pasa a una **franja** bajo la barra del
   equipo.
 
-![Frontal plegado: la fonía en una franja](../capturas/fonia-frontal-plegado-1366.png)
+![Frontal plegado: la fonía en una franja bajo la barra del equipo](../capturas/ayuda/fonia-plegado-dispositivos.png)
 
 ## Escuchar la radio por el PC
 
@@ -32,12 +32,12 @@ una décima de segundo).
 
 ## Hablar: el PTT de fonía
 
-![En el aire: el botón y el cartel en rojo, con el tiempo que se lleva y el máximo](../capturas/fonia-en-el-aire-1920.png)
+![En el aire: el botón y el cartel en rojo, con el tiempo que se lleva y el máximo](../capturas/ayuda/fonia-plegado-aire.png)
 
 - **Mantener pulsado** (por omisión): se transmite mientras el botón está pulsado y se vuelve a
   recepción al soltarlo.
-- **Conmutado** (en Ajustes): un clic empieza y otro clic acaba.
-- **Tecla del PTT** (en Ajustes, por omisión ninguna): F10, F11, F12, Pausa, Bloq Despl, Insert o
+- **Conmutado** (en Configuración › Fonía): un clic empieza y otro clic acaba.
+- **Tecla del PTT** (en Configuración › Fonía, por omisión ninguna): F10, F11, F12, Pausa, Bloq Despl, Insert o
   Ctrl derecho. Solo funciona con la ventana del programa activa y **nunca** con el cursor en un
   campo de texto, para que escribir un indicativo no le saque al aire.
 
@@ -51,9 +51,9 @@ El PTT de fonía va siempre por el mismo vigilante que el de los modos digitales
 
 - al soltar el botón o la tecla (o al segundo clic, en conmutado);
 - con **SOLTAR PTT** de la barra del equipo;
-- al llegar al **tiempo máximo** de la pasada (3 minutos por omisión; se cambia en Ajustes, de
+- al llegar al **tiempo máximo** de la pasada (3 minutos por omisión; se cambia en Configuración › Fonía, de
   10 a 600 segundos; manda el menor entre este y el del vigilante);
-- si el programa **pierde el foco** (otra ventana pasa delante) o se cambia de pestaña;
+- si el programa **pierde el foco** (otra ventana pasa delante) o se cambia de página;
 - si el audio del micrófono o del equipo se queda parado más de dos segundos;
 - si el equipo pasa a un modo de datos, se pierde la comunicación con él o el programa se
   cierra.
@@ -70,7 +70,7 @@ El botón se apaga, y dice por qué, cuando:
 
 ## Dispositivos
 
-«Dispositivos…» abre los cuatro selectores (también están en **Ajustes › Fonía por el PC**):
+«Dispositivos…» abre los cuatro selectores (también están en **Configuración › Fonía**):
 
 | Selector | Qué poner |
 |---|---|
@@ -82,7 +82,7 @@ El botón se apaga, y dice por qué, cuando:
 Los del equipo se reconocen solos. Si algo está cruzado —el micro es la entrada del equipo, o los
 altavoces son la salida al equipo— el panel avisa en naranja.
 
-![Ajustes de fonía](../capturas/fonia-ajustes-1920.png)
+![Configuración de la fonía](../capturas/ayuda/configuracion-fonia.png)
 
 ## En la radio: la fuente de modulación
 
@@ -94,7 +94,7 @@ micrófono de la radio en los modos de voz. Mírelo en el menú de la radio, en 
 El programa **lee** (sin escribir nada) el menú EX010113 al conectar en USB o LSB, o al pulsar
 «Comprobar la radio», y avisa si no vale «1». Ese índice sale del mapa leído del propio equipo y
 **está sin confirmar con el manual**: si el aviso no cuadra con lo que enseña la radio, corrija
-el índice o el valor en Ajustes, o desmarque la comprobación.
+el índice o el valor en Configuración › Fonía, o desmarque la comprobación.
 
 Ajuste también en la radio el nivel de entrada USB (USB MOD GAIN o equivalente) para que la ALC
 apenas se mueva con la ganancia del micro a 0 dB.

@@ -3,6 +3,20 @@ using PdfSharp.Pdf;
 
 namespace Nodisla.Cuaderno.Impresion.Qsl;
 
+/// <summary>Un texto que va en la capa oculta de una pagina: se puede buscar y copiar, no se ve.</summary>
+/// <param name="Texto">El texto ya relleno.</param>
+/// <param name="XMm">Izquierda, en milimetros.</param>
+/// <param name="YMm">Arriba, en milimetros.</param>
+/// <param name="TamanoPt">Cuerpo de letra aproximado, en puntos.</param>
+public sealed record TextoDePagina(string Texto, double XMm, double YMm, double TamanoPt);
+
+/// <summary>Una pagina hecha de una imagen ya dibujada y, si se quiere, su texto oculto.</summary>
+/// <param name="Imagen">La imagen, en PNG o JPG.</param>
+/// <param name="AnchoMm">Ancho de la pagina.</param>
+/// <param name="AltoMm">Alto de la pagina.</param>
+/// <param name="Textos">Los textos de la capa oculta; nulo, sin capa.</param>
+public sealed record PaginaDeImagen(byte[] Imagen, double AnchoMm, double AltoMm, IReadOnlyList<TextoDePagina>? Textos = null);
+
 /// <summary>
 /// Pone las tarjetas ya dibujadas (PNG o JPG) en un PDF para imprimirlas o mandarlas a imprenta.
 /// </summary>
@@ -26,6 +40,12 @@ public static class PdfDeTarjetasQsl
     private const double MargenMm = 10.0;
     private const double LargoDeMarcaMm = 5.0;
 
+    static PdfDeTarjetasQsl()
+    {
+        // La capa de texto oculta usa Arial del sistema, como el generador de etiquetas.
+        PdfSharp.Fonts.GlobalFontSettings.UseWindowsFontsUnderWindows = true;
+    }
+
     /// <summary>Cada tarjeta en su pagina, del tamaño exacto de la tarjeta.</summary>
     /// <param name="imagenes">Las tarjetas, en PNG o JPG.</param>
     /// <param name="anchoMm">Ancho de la tarjeta.</param>
@@ -35,18 +55,51 @@ public static class PdfDeTarjetasQsl
     public static Impreso UnaPorPagina(IReadOnlyList<byte[]> imagenes, double anchoMm, double altoMm, string nombre = "tarjetas-qsl.pdf")
     {
         Validar(imagenes, anchoMm, altoMm);
-        using var documento = NuevoDocumento();
-        foreach (var bytes in imagenes)
+        return Paginas(imagenes.Select(i => new PaginaDeImagen(i, anchoMm, altoMm)).ToList(), nombre, "Tarjetas QSL — Cuaderno NODISLA");
+    }
+
+    /// <summary>
+    /// Cada imagen en su pagina, del tamaño que diga cada una, con una capa de texto oculta que
+    /// hace el PDF buscable y copiable.
+    /// </summary>
+    /// <param name="paginas">Las paginas.</param>
+    /// <param name="nombre">Nombre de fichero sugerido.</param>
+    /// <param name="titulo">Titulo del documento (propiedades del PDF).</param>
+    /// <param name="asunto">Asunto del documento.</param>
+    /// <param name="palabrasClave">Palabras clave del documento.</param>
+    /// <returns>El PDF.</returns>
+    /// <remarks>
+    /// <para>
+    /// La imagen es la misma que se ve en pantalla (ver la nota de la clase). La capa oculta va
+    /// en letra transparente y codificacion WinAnsi: el visor la encuentra al buscar y al
+    /// seleccionar, la impresora no la pinta.
+    /// </para>
+    /// </remarks>
+    public static Impreso Paginas(IReadOnlyList<PaginaDeImagen> paginas, string nombre, string titulo, string? asunto = null, string? palabrasClave = null)
+    {
+        ArgumentNullException.ThrowIfNull(paginas);
+        if (paginas.Count == 0) throw new ArgumentException("No hay ninguna página que poner en el PDF.", nameof(paginas));
+        using var documento = NuevoDocumento(titulo);
+        if (!string.IsNullOrWhiteSpace(asunto)) documento.Info.Subject = asunto;
+        if (!string.IsNullOrWhiteSpace(palabrasClave)) documento.Info.Keywords = palabrasClave;
+
+        // Sin comprimir el contenido de las paginas: es solo la orden de pintar la imagen y la
+        // capa de texto, pesa unos pocos KB, y asi el texto se puede comprobar en los bytes.
+        documento.Options.CompressContentStreams = false;
+        foreach (var hoja in paginas)
         {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(hoja.AnchoMm);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(hoja.AltoMm);
             var pagina = documento.AddPage();
-            pagina.Width = XUnit.FromMillimeter(anchoMm);
-            pagina.Height = XUnit.FromMillimeter(altoMm);
+            pagina.Width = XUnit.FromMillimeter(hoja.AnchoMm);
+            pagina.Height = XUnit.FromMillimeter(hoja.AltoMm);
             using var gfx = XGraphics.FromPdfPage(pagina);
-            Pintar(gfx, bytes, 0, 0, anchoMm, altoMm);
+            Pintar(gfx, hoja.Imagen, 0, 0, hoja.AnchoMm, hoja.AltoMm);
+            if (hoja.Textos is { Count: > 0 } textos) CapaOculta(gfx, textos);
         }
 
-        var paginas = documento.PageCount;
-        return new Impreso(Bytes(documento), "application/pdf", paginas, nombre);
+        var cuantas = documento.PageCount;
+        return new Impreso(Bytes(documento), "application/pdf", cuantas, nombre);
     }
 
     /// <summary>Las tarjetas repartidas en hojas A4, con marcas de corte.</summary>
@@ -113,10 +166,27 @@ public static class PdfDeTarjetasQsl
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(altoMm);
     }
 
-    private static PdfDocument NuevoDocumento()
+    private static void CapaOculta(XGraphics gfx, IReadOnlyList<TextoDePagina> textos)
+    {
+        var invisible = new XSolidBrush(XColor.FromArgb(0, 0, 0, 0));
+        var opciones = new XPdfFontOptions(PdfFontEncoding.WinAnsi);
+        foreach (var t in textos)
+        {
+            if (string.IsNullOrWhiteSpace(t.Texto)) continue;
+            var fuente = new XFont("Arial", Math.Clamp(t.TamanoPt, 2, 200), XFontStyleEx.Regular, opciones);
+            var y = t.YMm * PuntosPorMm;
+            foreach (var linea in t.Texto.Replace("\r", string.Empty, StringComparison.Ordinal).Split('\n'))
+            {
+                gfx.DrawString(linea, fuente, invisible, t.XMm * PuntosPorMm, y, XStringFormats.TopLeft);
+                y += fuente.GetHeight();
+            }
+        }
+    }
+
+    private static PdfDocument NuevoDocumento(string titulo = "Tarjetas QSL — Cuaderno NODISLA")
     {
         var documento = new PdfDocument();
-        documento.Info.Title = "Tarjetas QSL — Cuaderno NODISLA";
+        documento.Info.Title = titulo;
         documento.Info.Creator = "Cuaderno NODISLA";
         return documento;
     }

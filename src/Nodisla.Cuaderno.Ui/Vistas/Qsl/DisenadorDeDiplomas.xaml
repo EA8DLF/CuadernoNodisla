@@ -1,0 +1,483 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.Qsl.DisenadorDeDiplomas"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:qsl="clr-namespace:Nodisla.Cuaderno.Ui.Qsl"
+             xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
+             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             Foreground="{DynamicResource Texto}"
+             Loaded="AlCargar">
+
+    <!--
+        EL DISEÑADOR DE DIPLOMAS. La misma filosofía que el editor de la tarjeta QSL:
+
+        Izquierda: la plantilla (papel, fondo, orla, numeración) y sus elementos.
+        Centro: el diploma tal cual saldrá, con los textos, imágenes y tabla que se arrastran.
+        Derecha: a quién va, el elemento elegido, el correo y el historial de emitidos.
+
+        El diploma del centro ES la imagen de verdad: la misma rutina lo dibuja para el PNG y para
+        el PDF. Las asas son rectángulos transparentes encima, dentro de un Viewbox medido en
+        milímetros: arrastrar mueve en milímetros sin conversiones.
+    -->
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="EditorDeElementos.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+            <conversores:VisibleSiEsFalso x:Key="VisibleSiEsFalso" />
+
+            <Style x:Key="Boton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                <Setter Property="Margin" Value="0,0,6,6" />
+                <Setter Property="Padding" Value="8,3" />
+            </Style>
+
+            <Style x:Key="Etiqueta" TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Width" Value="86" />
+            </Style>
+
+            <!-- El asa de un elemento sobre el diploma: invisible hasta pasar por encima o elegirlo. -->
+            <ControlTemplate x:Key="Asa" TargetType="Thumb">
+                <Grid Background="#01FFFFFF">
+                    <Rectangle x:Name="Marco" Stroke="#9900A0FF" StrokeThickness="0.4" StrokeDashArray="3 2" Opacity="0.0" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter TargetName="Marco" Property="Opacity" Value="1" />
+                    </Trigger>
+                    <DataTrigger Binding="{Binding Elegido}" Value="True">
+                        <Setter TargetName="Marco" Property="Opacity" Value="1" />
+                        <Setter TargetName="Marco" Property="Stroke" Value="#FFFF8C00" />
+                        <Setter TargetName="Marco" Property="StrokeThickness" Value="0.6" />
+                    </DataTrigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+
+            <!-- El asa de la tabla: su contexto es el diseñador, que no tiene «Elegido». -->
+            <ControlTemplate x:Key="AsaDeTabla" TargetType="Thumb">
+                <Grid Background="#01FFFFFF">
+                    <Rectangle x:Name="Marco" Stroke="#9900A0FF" StrokeThickness="0.4" StrokeDashArray="3 2" Opacity="0.0" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter TargetName="Marco" Property="Opacity" Value="1" />
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" MinWidth="240" MaxWidth="330" />
+            <ColumnDefinition Width="3*" MinWidth="360" />
+            <ColumnDefinition Width="1*" MinWidth="260" MaxWidth="370" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ══ Plantilla y elementos ══ -->
+        <Border Grid.Column="0" Style="{StaticResource Tarjeta}" Margin="0,0,5,0" Padding="8,6">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <TextBlock Text="Plantilla de diploma" Style="{StaticResource TituloDeSeccion}" />
+                    <ComboBox ItemsSource="{Binding Disenos}" SelectedItem="{Binding Diseno}" AutomationProperties.Name="Plantilla de diploma">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Nombre}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <WrapPanel Margin="0,6,0,0">
+                        <Button Content="Guardar" Command="{Binding GuardarCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Guardar la plantilla" />
+                        <Button Content="Deshacer" Command="{Binding DescartarCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Deshacer los cambios sin guardar" />
+                        <Button Content="Nueva" Command="{Binding NuevaPlantillaCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Plantilla nueva" />
+                        <Button Content="Duplicar" Command="{Binding DuplicarPlantillaCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Duplicar la plantilla" />
+                        <Button Content="Borrar" Command="{Binding BorrarPlantillaCommand}" Style="{StaticResource Boton}"
+                                ToolTip="Las de fábrica vuelven a como venían" AutomationProperties.Name="Borrar la plantilla" />
+                        <Button Content="Usar por omisión" Command="{Binding PonerPorOmisionCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Usar esta plantilla por omisión" />
+                        <Button Content="Exportar…" Command="{Binding ExportarPlantillaCommand}" Style="{StaticResource Boton}"
+                                ToolTip="Un solo fichero con la plantilla y sus imágenes, para llevarla a otro equipo" AutomationProperties.Name="Exportar la plantilla" />
+                        <Button Content="Importar…" Command="{Binding ImportarPlantillaCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Importar una plantilla" />
+                    </WrapPanel>
+                    <TextBlock Text="✓ Es la plantilla por omisión." Style="{StaticResource TextoTenueEstilo}"
+                               Visibility="{Binding EsLaDeOmision, Converter={StaticResource BooleanoAVisible}}" />
+                    <TextBlock Text="● Cambios sin guardar." Foreground="{DynamicResource AvisoTexto}" FontWeight="SemiBold"
+                               Visibility="{Binding HayCambios, Converter={StaticResource BooleanoAVisible}}" />
+
+                    <TextBlock Text="Nombre" Style="{StaticResource Rotulo}" />
+                    <TextBox Text="{Binding NombreDelDiseno, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Nombre de la plantilla" />
+
+                    <DockPanel Margin="0,8,0,0">
+                        <TextBlock Text="Papel" Style="{StaticResource Etiqueta}" />
+                        <CheckBox DockPanel.Dock="Right" Content="Vertical" IsChecked="{Binding Vertical}" VerticalAlignment="Center" Margin="8,0,0,0"
+                                  AutomationProperties.Name="Diploma en vertical" />
+                        <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.Papeles}" SelectedItem="{Binding Papel}" AutomationProperties.Name="Tamaño de papel" />
+                    </DockPanel>
+
+                    <TextBlock Text="Fondo" Style="{StaticResource Rotulo}" />
+                    <WrapPanel>
+                        <Button Content="Elegir imagen…" Command="{Binding ElegirFondoCommand}" Style="{StaticResource Boton}"
+                                ToolTip="Una foto, una textura de papel o una orla en imagen" AutomationProperties.Name="Elegir la imagen de fondo" />
+                        <Button Content="Quitar" Command="{Binding QuitarFondoCommand}" Style="{StaticResource Boton}"
+                                Visibility="{Binding TieneFondo, Converter={StaticResource BooleanoAVisible}}" AutomationProperties.Name="Quitar la imagen de fondo" />
+                    </WrapPanel>
+                    <DockPanel>
+                        <TextBlock Text="Ajuste" Style="{StaticResource Etiqueta}" />
+                        <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.AjustesDeFondo}" SelectedItem="{Binding Ajuste}" AutomationProperties.Name="Cómo se ajusta la imagen de fondo" />
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="Color" Style="{StaticResource Etiqueta}" />
+                        <Border DockPanel.Dock="Right" Style="{StaticResource Muestra}" Background="{Binding ColorDeFondo, Converter={StaticResource PincelDeColor}}" />
+                        <TextBox Text="{Binding ColorDeFondo, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Color del papel" />
+                    </DockPanel>
+
+                    <TextBlock Text="Orla" Style="{StaticResource Rotulo}" />
+                    <DockPanel>
+                        <TextBlock Text="Estilo" Style="{StaticResource Etiqueta}" />
+                        <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.EstilosDeMarco}" SelectedItem="{Binding EstiloDeMarco}" AutomationProperties.Name="Estilo de la orla" />
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="Color" Style="{StaticResource Etiqueta}" />
+                        <Border DockPanel.Dock="Right" Style="{StaticResource Muestra}" Background="{Binding ColorDelMarco, Converter={StaticResource PincelDeColor}}" />
+                        <TextBox Text="{Binding ColorDelMarco, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Color de la orla" />
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="Adorno" Style="{StaticResource Etiqueta}" />
+                        <Border DockPanel.Dock="Right" Style="{StaticResource Muestra}" Background="{Binding ColorSecundarioDelMarco, Converter={StaticResource PincelDeColor}}" />
+                        <TextBox Text="{Binding ColorSecundarioDelMarco, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Color secundario de la orla" />
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="Margen mm" Style="{StaticResource Etiqueta}" />
+                        <TextBox DockPanel.Dock="Right" Width="50" Text="{Binding GrosorDelMarco, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" AutomationProperties.Name="Grosor de la orla en milímetros" />
+                        <TextBlock DockPanel.Dock="Right" Text=" Grosor " VerticalAlignment="Center" />
+                        <TextBox Text="{Binding MargenDelMarco, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" AutomationProperties.Name="Margen de la orla en milímetros" />
+                    </DockPanel>
+
+                    <TextBlock Text="Numeración y firma" Style="{StaticResource Rotulo}" />
+                    <DockPanel>
+                        <TextBlock Text="Serie" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding Serie, UpdateSourceTrigger=LostFocus}"
+                                 ToolTip="Cada serie lleva su propia numeración correlativa; varias plantillas pueden compartirla."
+                                 AutomationProperties.Name="Serie de numeración" />
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="Prefijo" Style="{StaticResource Etiqueta}" />
+                        <TextBox DockPanel.Dock="Right" Width="40" Text="{Binding CifrasDelNumero, UpdateSourceTrigger=LostFocus}" AutomationProperties.Name="Cifras del número" />
+                        <TextBlock DockPanel.Dock="Right" Text=" Cifras " VerticalAlignment="Center" />
+                        <TextBox Text="{Binding PrefijoDeNumero, UpdateSourceTrigger=PropertyChanged}" ToolTip="Por ejemplo EA8- o 2026/" AutomationProperties.Name="Prefijo del número" />
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="Gestor" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding NombreDelGestor, UpdateSourceTrigger=PropertyChanged}" ToolTip="Variable {gestor}: quien firma el diploma" AutomationProperties.Name="Nombre del gestor" />
+                    </DockPanel>
+
+                    <TextBlock Text="Textos" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,4" />
+                    <ListBox ItemsSource="{Binding Campos}" SelectedItem="{Binding ElementoElegido}" MaxHeight="220" AutomationProperties.Name="Textos del diploma">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding Visible}" Margin="0,0,6,0" ToolTip="Se ve en el diploma" AutomationProperties.Name="{Binding Nombre}" />
+                                    <TextBlock Text="{Binding Nombre}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <WrapPanel Margin="0,6,0,0">
+                        <Button Content="Añadir texto" Command="{Binding AnadirTextoCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Añadir un texto" />
+                        <Button Content="Duplicar" Command="{Binding DuplicarElementoCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Duplicar el elemento elegido" />
+                        <Button Content="Quitar" Command="{Binding QuitarElementoCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Quitar el elemento elegido" />
+                    </WrapPanel>
+
+                    <TextBlock Text="Logo, firma e imágenes" Style="{StaticResource TituloDeSeccion}" Margin="0,8,0,4" />
+                    <ListBox ItemsSource="{Binding Imagenes}" SelectedItem="{Binding ElementoElegido}" MaxHeight="140" AutomationProperties.Name="Imágenes del diploma">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding Visible}" Margin="0,0,6,0" ToolTip="Se ve en el diploma" AutomationProperties.Name="{Binding Nombre}" />
+                                    <TextBlock Text="{Binding Nombre}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <WrapPanel Margin="0,6,0,0">
+                        <Button Content="Añadir imagen…" Command="{Binding AnadirImagenCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Añadir una imagen" />
+                        <Button Content="Elegir imagen…" Command="{Binding ElegirImagenDelElementoCommand}" Style="{StaticResource Boton}"
+                                ToolTip="Pone su logo o su firma escaneada en el hueco elegido" AutomationProperties.Name="Elegir la imagen del hueco elegido" />
+                    </WrapPanel>
+
+                    <Expander Header="Tabla de referencias o contactos" Margin="0,8,0,0" IsExpanded="False">
+                        <StackPanel Margin="0,4,0,0">
+                            <CheckBox Content="Poner la tabla" IsChecked="{Binding TablaVisible}" AutomationProperties.Name="Poner la tabla" />
+                            <CheckBox Content="Lo que no quepa, en hojas de anexo" IsChecked="{Binding AnexoDeLaTabla}" Margin="0,4,0,0" AutomationProperties.Name="Anexar lo que no quepa" />
+                            <TextBlock Text="Título" Style="{StaticResource Rotulo}" />
+                            <TextBox Text="{Binding TituloDeLaTabla, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Título de la tabla" />
+                            <Grid Margin="0,6,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="X mm " VerticalAlignment="Center" />
+                                <TextBox Grid.Column="1" Text="{Binding XDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,0,6,0" AutomationProperties.Name="Izquierda de la tabla" />
+                                <TextBlock Grid.Column="2" Text="Y mm " VerticalAlignment="Center" />
+                                <TextBox Grid.Column="3" Text="{Binding YDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" AutomationProperties.Name="Arriba de la tabla" />
+                                <TextBlock Grid.Row="1" Text="Ancho " VerticalAlignment="Center" Margin="0,4,0,0" />
+                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AnchoDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,4,6,0" AutomationProperties.Name="Ancho de la tabla" />
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="Alto " VerticalAlignment="Center" Margin="0,4,0,0" />
+                                <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding AltoDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,4,0,0" AutomationProperties.Name="Alto de la tabla" />
+                                <TextBlock Grid.Row="2" Text="Bloques " VerticalAlignment="Center" Margin="0,4,0,0" />
+                                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding BloquesDeLaTabla, UpdateSourceTrigger=LostFocus}" Margin="0,4,6,0"
+                                         ToolTip="Columnas de la tabla una al lado de otra (1 a 4)" AutomationProperties.Name="Bloques de la tabla" />
+                                <TextBlock Grid.Row="2" Grid.Column="2" Text="pt " VerticalAlignment="Center" Margin="0,4,0,0" />
+                                <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding TamanoDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,4,0,0" AutomationProperties.Name="Tamaño de letra de la tabla" />
+                            </Grid>
+                            <TextBlock Text="Letra" Style="{StaticResource Rotulo}" />
+                            <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.Fuentes}" SelectedItem="{Binding FuenteDeLaTabla}" AutomationProperties.Name="Letra de la tabla" />
+                            <TextBlock Text="Columnas (cabecera · contenido · ancho)" Style="{StaticResource Rotulo}" />
+                            <ItemsControl ItemsSource="{Binding Columnas}" Focusable="False">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,0,0,4">
+                                            <Button DockPanel.Dock="Right" Content="✕" Padding="5,0" Margin="4,0,0,0"
+                                                    Command="{Binding DataContext.QuitarColumnaCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}" ToolTip="Quitar la columna" AutomationProperties.Name="Quitar la columna" />
+                                            <TextBox DockPanel.Dock="Right" Width="34" Text="{Binding Ancho, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" AutomationProperties.Name="Ancho de la columna" />
+                                            <UniformGrid Columns="2">
+                                                <TextBox Text="{Binding Titulo, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,4,0" AutomationProperties.Name="Cabecera de la columna" />
+                                                <TextBox Text="{Binding Texto, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,4,0" AutomationProperties.Name="Contenido de la columna" />
+                                            </UniformGrid>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Button Content="Añadir columna" Command="{Binding AnadirColumnaCommand}" Style="{StaticResource Boton}" HorizontalAlignment="Left" AutomationProperties.Name="Añadir una columna" />
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- ══ El diploma ══ -->
+        <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0,0,5,0" Padding="8,6">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0" Margin="0,0,0,6">
+                    <Button DockPanel.Dock="Right" Content="↻" Command="{Binding RefrescarCommand}" Padding="8,2" Margin="6,0,0,0"
+                            ToolTip="Volver a leer mi estación, los diplomas conseguidos y el historial" AutomationProperties.Name="Volver a leer los datos" />
+                    <RadioButton Content="Emitir a otra estación" IsChecked="{Binding EsParaOtraEstacion}" GroupName="UsoDelDisenador" Foreground="{DynamicResource Texto}" Margin="0,0,14,0" VerticalAlignment="Center"
+                                 AutomationProperties.Name="Emitir un diploma a otra estación" />
+                    <RadioButton Content="Certificado de un diploma conseguido" IsChecked="{Binding EsCertificadoPropio}" GroupName="UsoDelDisenador" Foreground="{DynamicResource Texto}" VerticalAlignment="Center"
+                                 AutomationProperties.Name="Imprimir el certificado de un diploma conseguido" />
+                </DockPanel>
+
+                <Border Grid.Row="1" Background="{DynamicResource FondoCampo}" Padding="10">
+                    <Viewbox Stretch="Uniform">
+                        <Grid Width="{Binding AnchoMm}" Height="{Binding AltoMm}">
+                            <Image Source="{Binding VistaPrevia}" Stretch="Fill" />
+
+                            <!-- La tabla -->
+                            <Canvas>
+                                <Thumb Canvas.Left="{Binding TablaX}" Canvas.Top="{Binding TablaY}" Width="{Binding TablaAncho}" Height="{Binding TablaAlto}"
+                                       Cursor="SizeAll" ToolTip="Tabla de referencias" DragDelta="AlArrastrarLaTabla"
+                                       Template="{StaticResource AsaDeTabla}" AutomationProperties.Name="Tabla de referencias" />
+                            </Canvas>
+
+                            <!-- Logo, firma, adornos -->
+                            <ItemsControl ItemsSource="{Binding Imagenes}" Focusable="False">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Canvas />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="Canvas.Left" Value="{Binding XMm}" />
+                                        <Setter Property="Canvas.Top" Value="{Binding YMm}" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Thumb Width="{Binding AnchoMm}" Height="{Binding AltoMm}" Cursor="SizeAll" ToolTip="{Binding Nombre}"
+                                               DragStarted="AlEmpezarAArrastrar" DragDelta="AlArrastrar"
+                                               Template="{StaticResource Asa}" AutomationProperties.Name="{Binding Nombre}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Textos -->
+                            <ItemsControl ItemsSource="{Binding Campos}" Focusable="False">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Canvas />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style TargetType="ContentPresenter">
+                                        <Setter Property="Canvas.Left" Value="{Binding CajaX}" />
+                                        <Setter Property="Canvas.Top" Value="{Binding CajaY}" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Thumb Width="{Binding CajaAncho}" Height="{Binding CajaAlto}" Cursor="SizeAll" ToolTip="{Binding Nombre}"
+                                               DragStarted="AlEmpezarAArrastrar" DragDelta="AlArrastrar"
+                                               Template="{StaticResource Asa}" AutomationProperties.Name="{Binding Nombre}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </Viewbox>
+                </Border>
+
+                <StackPanel Grid.Row="2" Margin="0,8,0,0">
+                    <WrapPanel>
+                        <Button Content="Emitir y enviar por correo…" Command="{Binding EmitirYEnviarCommand}" Style="{StaticResource BotonPrincipal}"
+                                Margin="0,0,6,6" Padding="10,4" AutomationProperties.Name="Emitir el diploma y enviarlo por correo" />
+                        <Button Content="Emitir y guardar PDF…" Command="{Binding EmitirYGuardarPdfCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Emitir el diploma y guardarlo en PDF" />
+                        <Button Content="PDF de prueba…" Command="{Binding PdfDePruebaCommand}" Style="{StaticResource Boton}"
+                                ToolTip="Sin emitir: para revisarlo antes de darle número" AutomationProperties.Name="PDF de prueba sin emitir" />
+                        <Button Content="Guardar PNG…" Command="{Binding GuardarPngCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="Guardar el diploma como imagen PNG" />
+                    </WrapPanel>
+                    <TextBlock Text="{Binding TextoDelNumero}" Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding TextoDeHojas}" Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding Aviso}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,4,0,0" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ══ A quién, elemento elegido, correo e historial ══ -->
+        <Border Grid.Column="2" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <TextBlock Text="Diploma" Style="{StaticResource TituloDeSeccion}" />
+
+                    <!-- Emitir a otra estación -->
+                    <StackPanel Visibility="{Binding EsParaOtraEstacion, Converter={StaticResource BooleanoAVisible}}">
+                        <DockPanel>
+                            <TextBlock Text="Indicativo" Style="{StaticResource Etiqueta}" />
+                            <Button DockPanel.Dock="Right" Content="Buscar QSOs" Command="{Binding BuscarContactosCommand}" Padding="6,1" Margin="6,0,0,0"
+                                    ToolTip="Busca en el cuaderno los contactos con esta estación y rellena nombre, correo y tabla"
+                                    AutomationProperties.Name="Buscar los contactos con la estación" />
+                            <TextBox Text="{Binding Indicativo, UpdateSourceTrigger=PropertyChanged}" CharacterCasing="Upper" AutomationProperties.Name="Indicativo que recibe el diploma" />
+                        </DockPanel>
+                        <ListBox ItemsSource="{Binding Contactos}" MaxHeight="150" Margin="0,6,0,0" AutomationProperties.Name="Contactos que justifican el diploma"
+                                 Visibility="{Binding HayContactos, Converter={StaticResource BooleanoAVisible}}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Elegido}" Content="{Binding Texto}" AutomationProperties.Name="{Binding Texto}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+
+                    <!-- Certificado de un diploma conseguido -->
+                    <StackPanel Visibility="{Binding EsCertificadoPropio, Converter={StaticResource BooleanoAVisible}}">
+                        <TextBlock Text="Diploma conseguido (módulo de Diplomas)" Style="{StaticResource Rotulo}" />
+                        <ComboBox ItemsSource="{Binding Conseguidos}" SelectedItem="{Binding Conseguido}" AutomationProperties.Name="Diploma conseguido">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Texto}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBlock Text="✓ = llega al objetivo. La tabla lleva las referencias confirmadas con su primer contacto."
+                                   Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
+                        <DockPanel Margin="0,6,0,0">
+                            <TextBlock Text="Indicativo" Style="{StaticResource Etiqueta}" />
+                            <TextBox Text="{Binding Indicativo, UpdateSourceTrigger=PropertyChanged}" CharacterCasing="Upper" AutomationProperties.Name="Mi indicativo en el certificado" />
+                        </DockPanel>
+                    </StackPanel>
+
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="Nombre" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Nombre de quien recibe el diploma" />
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="Diploma" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding NombreDelDiploma, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Nombre del diploma" />
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="Categoría" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding Categoria, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Categoría o nivel" />
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="Fecha" Style="{StaticResource Etiqueta}" />
+                        <DatePicker SelectedDate="{Binding FechaDeEmision}" AutomationProperties.Name="Fecha de emisión" />
+                    </DockPanel>
+                    <DockPanel Margin="0,6,0,0">
+                        <TextBlock Text="Correo" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding Correo, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Correo del destinatario" />
+                    </DockPanel>
+
+                    <TextBlock Text="Elemento elegido" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,0" />
+                    <TextBlock Text="Elija un texto o una imagen en las listas o pinche en él sobre el diploma."
+                               Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap"
+                               Visibility="{Binding HayElementoElegido, Converter={StaticResource VisibleSiEsFalso}}" />
+                    <ContentControl Content="{Binding ElementoElegido}" Focusable="False" />
+
+                    <Expander Header="Correo del diploma" Margin="0,12,0,0">
+                        <StackPanel>
+                            <TextBlock Text="Asunto" Style="{StaticResource Rotulo}" />
+                            <TextBox Text="{Binding Asunto, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Asunto del correo del diploma" />
+                            <TextBlock Text="Texto" Style="{StaticResource Rotulo}" />
+                            <TextBox Text="{Binding TextoDelCorreo, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MinLines="4" MaxLines="10"
+                                     TextWrapping="Wrap" VerticalContentAlignment="Top" AutomationProperties.Name="Texto del correo del diploma" />
+                            <TextBlock Text="Sale por el mismo servidor que las QSL (Configuración › Correo de las QSL), con el diploma en PDF adjunto."
+                                       Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Header="Historial de emitidos" Margin="0,8,0,0" IsExpanded="True">
+                        <StackPanel>
+                            <ListBox ItemsSource="{Binding Historial}" SelectedItem="{Binding HistorialElegido}" MaxHeight="220" Margin="0,4,0,0"
+                                     AutomationProperties.Name="Historial de diplomas emitidos">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,1">
+                                            <TextBlock>
+                                                <Run Text="{Binding Numero, Mode=OneWay}" FontWeight="SemiBold" />
+                                                <Run Text=" · " />
+                                                <Run Text="{Binding Emitido.Indicativo, Mode=OneWay}" FontWeight="SemiBold" />
+                                                <Run Text=" · " />
+                                                <Run Text="{Binding Fecha, Mode=OneWay}" />
+                                            </TextBlock>
+                                            <TextBlock Text="{Binding Diploma}" Style="{StaticResource TextoTenueEstilo}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Envio}" Style="{StaticResource TextoTenueEstilo}" TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <TextBlock Text="Todavía no se ha emitido ningún diploma." Style="{StaticResource TextoTenueEstilo}"
+                                       Visibility="{Binding HistorialVacio, Converter={StaticResource BooleanoAVisible}}" />
+                            <WrapPanel Margin="0,6,0,0">
+                                <Button Content="Volver a sacar PDF…" Command="{Binding ReimprimirCommand}" Style="{StaticResource Boton}"
+                                        ToolTip="Con el mismo número y los datos de entonces" AutomationProperties.Name="Volver a sacar el PDF del diploma elegido" />
+                                <Button Content="Reenviar" Command="{Binding ReenviarCommand}" Style="{StaticResource Boton}"
+                                        AutomationProperties.Name="Volver a mandar por correo el diploma elegido" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </Expander>
+
+                    <Expander Header="Variables que se pueden escribir" Margin="0,8,0,0">
+                        <TextBlock Text="{Binding AyudaDeVariables}" TextWrapping="Wrap" Margin="0,4,0,0"
+                                   FontFamily="Consolas, Cascadia Mono, Courier New" FontSize="11" />
+                    </Expander>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

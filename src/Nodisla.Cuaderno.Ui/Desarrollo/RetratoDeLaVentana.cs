@@ -91,6 +91,58 @@ public static class RetratoDeLaVentana
     }
 
     /// <summary>
+    /// Un dialogo modal en una sesion de verificacion: apartado como la ventana principal y,
+    /// con <c>CUADERNO_CAPTURA_DIALOGO</c> (ruta del PNG), retratado y cerrado solo.
+    /// </summary>
+    /// <remarks>
+    /// Sin esto, con <c>CUADERNO_APARTADA</c> el dialogo del primer arranque salia en medio de
+    /// la pantalla del operador y se quedaba con el teclado. Fuera de las verificaciones no hace
+    /// nada.
+    /// </remarks>
+    /// <param name="dialogo">El dialogo, antes de <c>ShowDialog</c>.</param>
+    public static void PrepararDialogo(Window dialogo)
+    {
+        ArgumentNullException.ThrowIfNull(dialogo);
+
+        if (Environment.GetEnvironmentVariable("CUADERNO_APARTADA") is { Length: > 0 })
+        {
+            dialogo.WindowStartupLocation = WindowStartupLocation.Manual;
+            dialogo.Left = -6000;
+            dialogo.Top = 0;
+            dialogo.ShowActivated = false;
+            dialogo.ShowInTaskbar = false;
+        }
+
+        if (Environment.GetEnvironmentVariable("CUADERNO_CAPTURA_DIALOGO") is not { Length: > 0 } ruta) return;
+
+        dialogo.Loaded += (_, _) =>
+        {
+            var reloj = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
+            reloj.Tick += (_, _) =>
+            {
+                reloj.Stop();
+                try
+                {
+                    try { ApuntarEnlacesRotos(dialogo); }
+                    catch (Exception ex) { Log.Error(ex, "No se han podido repasar los enlaces del dialogo."); }
+                    Guardar(dialogo, ruta);
+                    Log.Information("Retrato del dialogo guardado en {Ruta}.", ruta);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "No se ha podido guardar el retrato del dialogo.");
+                }
+                finally
+                {
+                    dialogo.Close();
+                    Application.Current?.Shutdown();
+                }
+            };
+            reloj.Start();
+        };
+    }
+
+    /// <summary>
     /// Recorre lo que hay dibujado y apunta cada enlace que no ha podido resolverse.
     /// </summary>
     /// <remarks>

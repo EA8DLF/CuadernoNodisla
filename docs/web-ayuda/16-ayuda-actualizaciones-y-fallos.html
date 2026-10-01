@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ayuda, actualizaciones y reporte de fallos · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html" class="actual" aria-current="page">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="ayuda-actualizaciones-y-reporte-de-fallos">Ayuda, actualizaciones y reporte de fallos</h1>
+<h2 id="la-ayuda">La ayuda</h2>
+<p>La entrada <strong>Ayuda</strong>, a la derecha de la barra, abre esta misma ayuda dentro del programa: sin navegador y sin conexi&#243;n. A la izquierda, el buscador y el &#237;ndice de cap&#237;tulos; a la derecha, el cap&#237;tulo con sus capturas. Los enlaces entre cap&#237;tulos se siguen con un clic.</p>
+<figure><a href="capturas/ayuda-capitulo.png"><img src="capturas/ayuda-capitulo.png" alt="La ayuda integrada: el &#237;ndice a la izquierda y el cap&#237;tulo a la derecha" loading="lazy"></a><figcaption>La ayuda integrada: el &#237;ndice a la izquierda y el cap&#237;tulo a la derecha</figcaption></figure>
+<ul>
+<li><strong>F1</strong>, desde cualquier p&#225;gina, abre la ayuda <strong>por el cap&#237;tulo de esa p&#225;gina</strong>: desde la Cabina, el de Operar; desde Configuraci&#243;n, el de Configuraci&#243;n; desde QSL › Diplomas, el del dise&#241;ador.</li>
+<li><strong>Buscar en la ayuda</strong>: escriba una o varias palabras, sin preocuparse de may&#250;sculas ni tildes (&#171;fonia&#187; encuentra &#171;fon&#237;a&#187;). El &#237;ndice se queda con los cap&#237;tulos que las mencionan y, dentro del cap&#237;tulo, las palabras salen resaltadas.</li>
+<li>La letra sigue a la de la ventana: con <code>Ctrl</code> <code>+</code> y <code>Ctrl</code> <code>−</code> crece y mengua con todo lo dem&#225;s.</li>
+</ul>
+<figure><a href="capturas/ayuda-busqueda.png"><img src="capturas/ayuda-busqueda.png" alt="Buscar en la ayuda: solo quedan los cap&#237;tulos que lo mencionan, con la palabra resaltada" loading="lazy"></a><figcaption>Buscar en la ayuda: solo quedan los cap&#237;tulos que lo mencionan, con la palabra resaltada</figcaption></figure>
+<p>La ayuda que se lee dentro del programa es siempre la de <strong>su misma versi&#243;n</strong>: va dentro del ejecutable.</p>
+<h2 id="el-aviso-de-versi&#243;n-nueva">El aviso de versi&#243;n nueva</h2>
+<p>Al arrancar (en segundo plano y <strong>como mucho una vez al d&#237;a</strong>) el programa mira en la p&#225;gina p&#250;blica de versiones de GitHub si hay una m&#225;s nueva. Si la hay, aparece una barra fina encima de la p&#225;gina, sin ventanas ni robar el foco:</p>
+<figure><a href="capturas/aviso-de-version.png"><img src="capturas/aviso-de-version.png" alt="La barra del aviso de versi&#243;n nueva, encima de la p&#225;gina (versi&#243;n inventada para la captura)" loading="lazy"></a><figcaption>La barra del aviso de versi&#243;n nueva, encima de la p&#225;gina (versi&#243;n inventada para la captura)</figcaption></figure>
+<ul>
+<li><strong>Novedades de esta versi&#243;n</strong> despliega las notas.</li>
+<li><strong>Descargar e instalar</strong> baja el instalador, <strong>comprueba su suma SHA-256</strong> y, si cuadra, cierra el programa de forma ordenada y lo instala. Si la suma no cuadra o falta, borra lo descargado y no instala nada.</li>
+<li><strong>Ver en GitHub</strong> abre la p&#225;gina de la versi&#243;n.</li>
+<li><strong>✕</strong> oculta el aviso; de esa versi&#243;n no se vuelve a avisar al arrancar.</li>
+</ul>
+<p><strong>Nada se descarga ni se instala sin que usted lo pida</strong>, y la consulta no lleva cuenta ni datos suyos. Sus datos (<code>%AppData%\CuadernoNodisla\</code>) no se tocan al actualizar.</p>
+<h3 id="buscar-actualizaciones-a-mano">Buscar actualizaciones a mano</h3>
+<p>Desde <strong>Ayuda › Buscar actualizaciones</strong> o desde <strong>Configuraci&#243;n › Actualizaciones</strong>. Es el mismo aviso: si hay versi&#243;n nueva, se enciende la barra de arriba. En Configuraci&#243;n se elige adem&#225;s si se busca al arrancar.</p>
+<figure><a href="capturas/configuracion-actualizaciones.png"><img src="capturas/configuracion-actualizaciones.png" alt="Configuraci&#243;n › Actualizaciones: versi&#243;n instalada, b&#250;squeda al arrancar y b&#250;squeda a mano" loading="lazy"></a><figcaption>Configuraci&#243;n › Actualizaciones: versi&#243;n instalada, b&#250;squeda al arrancar y b&#250;squeda a mano</figcaption></figure>
+<h2 id="reportar-un-fallo">Reportar un fallo</h2>
+<p><strong>Ayuda › Reportar un fallo</strong> prepara un informe para el equipo de NODISLA. Cada vez que se abre sale un formulario nuevo, con el entorno de ese momento.</p>
+<figure><a href="capturas/ayuda-reportar-fallo.png"><img src="capturas/ayuda-reportar-fallo.png" alt="Reportar un fallo: lo que cuenta usted a la izquierda y la vista previa exacta a la derecha" loading="lazy"></a><figcaption>Reportar un fallo: lo que cuenta usted a la izquierda y la vista previa exacta a la derecha</figcaption></figure>
+<ol>
+<li>Rellene el <strong>t&#237;tulo</strong>, <strong>qu&#233; pas&#243;</strong>, <strong>qu&#233; esperaba</strong> y, si puede, los <strong>pasos para reproducirlo</strong>.</li>
+<li><strong>Se adjunta</strong> la versi&#243;n, Windows, el equipo y la v&#237;a de CAT. Se puede editar. Si quiere, marque <strong>Adjuntar las &#250;ltimas l&#237;neas del registro</strong>.</li>
+<li>Mire la <strong>vista previa</strong>: es exactamente lo que se enviar&#225;. Antes de enviar se quitan contrase&#241;as, claves, correos, localizadores y coordenadas, pero rev&#237;selo igualmente.</li>
+<li><strong>Abrir en GitHub para enviar</strong> abre en el navegador la p&#225;gina de nueva incidencia del repositorio con todo relleno. Se env&#237;a con su cuenta de GitHub; el programa no lleva ninguna clave y no manda nada por su cuenta.</li>
+</ol>
+<p>Si el informe es muy largo para la direcci&#243;n, el cuerpo va al portapapeles y la p&#225;gina le dice que lo pegue.</p>
+<h2 id="acerca-de">Acerca de</h2>
+<p><strong>Ayuda › Acerca de</strong> ense&#241;a la versi&#243;n instalada, la licencia, el repositorio y el contacto.</p>
+<figure><a href="capturas/ayuda-acerca-de.png"><img src="capturas/ayuda-acerca-de.png" alt="Acerca de: versi&#243;n, licencia GPL-3.0, repositorio y correo de contacto" loading="lazy"></a><figcaption>Acerca de: versi&#243;n, licencia GPL-3.0, repositorio y correo de contacto</figcaption></figure>
+<ul>
+<li><strong>Licencia</strong>: GPL-3.0, software libre y sin garant&#237;a.</li>
+<li><strong>C&#243;digo e incidencias</strong>: <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a></li>
+<li><strong>Contacto</strong>: <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></li>
+</ul>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

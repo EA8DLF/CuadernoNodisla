@@ -1,0 +1,50 @@
+name: Fallo
+description: Algo no funciona como debería.
+title: "[Fallo] "
+labels: ["fallo"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por avisar. Lo más cómodo es usar **Ayuda › Reportar un fallo** dentro del
+        programa: rellena la versión, Windows, la radio y el modo CAT, y quita los datos personales.
+        **No pegue contraseñas, claves, correos, locator ni coordenadas**: esta página es pública.
+  - type: textarea
+    id: que-paso
+    attributes:
+      label: ¿Qué pasó?
+    validations:
+      required: true
+  - type: textarea
+    id: que-esperaba
+    attributes:
+      label: ¿Qué esperaba que pasara?
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Pasos para reproducirlo
+      placeholder: |
+        1. Abrir…
+        2. Pulsar…
+  - type: input
+    id: version
+    attributes:
+      label: Versión de Cuaderno NODISLA
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Versión de Windows
+  - type: input
+    id: radio
+    attributes:
+      label: Radio y modo CAT
+      placeholder: "FT-710, CAT nativo por puerto serie"
+  - type: textarea
+    id: registro
+    attributes:
+      label: Últimas líneas del registro (opcional)
+      description: "%AppData%\CuadernoNodisla\registros\cuaderno-AAAAMMDD.log. Revíselas antes de pegarlas."
+      render: text

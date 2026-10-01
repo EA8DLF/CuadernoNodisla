@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Primer uso, paso a paso · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html" class="actual" aria-current="page">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="primer-uso-paso-a-paso">Primer uso, paso a paso</h1>
+<p>Este cap&#237;tulo lleva de la mano desde que se instala el programa hasta el primer contacto: el perfil de estaci&#243;n, el equipo por CAT (con el FT-710 como ejemplo), el audio para los modos digitales y las cuentas de LoTW, QRZ.com y compa&#241;&#237;a. Se hace una sola vez; despu&#233;s todo se recuerda de una sesi&#243;n a la siguiente.</p>
+<p>Las capturas de esta ayuda est&#225;n hechas con <strong>datos de prueba</strong> (por eso se ve la pastilla &#171;DATOS DE PRUEBA&#187; abajo a la izquierda): los contactos, los anuncios del cluster y la radio son inventados.</p>
+<h2 id="paso-1--instalar">Paso 1 &#183; Instalar</h2>
+<ol>
+<li>Ejecute <code>CuadernoNodisla-Instalador-&lt;versi&#243;n&gt;.exe</code>.</li>
+<li>El asistente pregunta si se instala <strong>solo para su usuario</strong> (no pide permisos de administrador; va a <code>%LocalAppData%\Programs\Cuaderno NODISLA</code>) o <strong>para todos los usuarios</strong> (Program Files, pide administrador). Cualquiera de las dos vale.</li>
+<li>Al terminar queda un acceso directo en el men&#250; Inicio, con el icono del cuaderno.</li>
+</ol>
+<p>No hace falta instalar .NET ni nada m&#225;s: el programa lleva dentro todo lo que necesita.</p>
+<p><strong>Sus datos no viven en la carpeta del programa</strong> sino en <code>%AppData%\CuadernoNodisla\</code>: el cuaderno (<code>cuaderno.sqlite</code>, un solo fichero), los ajustes, las plantillas de QSL y de diplomas y el registro. Ni instalar, ni actualizar, ni desinstalar tocan nunca esa carpeta.</p>
+<p>Para la radio, Windows necesita sus controladores:</p>
+<ul>
+<li><strong>CAT del FT-710</strong>: el controlador <em>CP210x</em> de Silicon Labs (el de Yaesu). Crea dos puertos serie: <em>Enhanced COM Port</em> y <em>Standard COM Port</em>.</li>
+<li><strong>Audio</strong>: no necesita nada; el c&#243;dec USB de la radio aparece solo como &#171;USB Audio Device&#187;.</li>
+<li><strong>Espectro del FT-710</strong> (opcional): el controlador <em>D2XX</em> de FTDI. Ver el paso 4.</li>
+</ul>
+<h2 id="paso-2--primer-arranque-el-perfil-de-estaci&#243;n">Paso 2 &#183; Primer arranque: el perfil de estaci&#243;n</h2>
+<p>La primera vez, antes de dejar tocar nada, el programa pide un <strong>perfil de estaci&#243;n</strong>: el indicativo con el que transmite y desde d&#243;nde opera. Sin eso el cuaderno no se puede exportar a ADIF ni sirve para pedir diplomas, as&#237; que no hay manera de salt&#225;rselo.</p>
+<figure><a href="capturas/primer-uso-perfil.png"><img src="capturas/primer-uso-perfil.png" alt="Ventana de bienvenida pidiendo el perfil de estaci&#243;n (datos de ejemplo)" loading="lazy"></a><figcaption>Ventana de bienvenida pidiendo el perfil de estaci&#243;n (datos de ejemplo)</figcaption></figure>
+<ul>
+<li><strong>Indicativo de la estaci&#243;n</strong> — el &#250;nico obligatorio.</li>
+<li><strong>Localizador</strong> — opcional, pero sin &#233;l no hay distancias, rumbos ni propagaci&#243;n.</li>
+<li><strong>Nombre del operador</strong> y <strong>Localidad</strong> — opcionales.</li>
+<li><strong>Nombre del perfil</strong> — para distinguirlo si alg&#250;n d&#237;a crea m&#225;s (Casa, Portable…).</li>
+</ul>
+<p>Pulse <strong>Crear el perfil y empezar</strong>. &#171;Salir del programa&#187; cierra sin crear nada.</p>
+<p>Se pueden tener varios perfiles y elegir el activo en el desplegable <strong>Perfil de estaci&#243;n</strong> de la cabecera. Los contactos se registran siempre con el perfil activo.</p>
+<h3 id="traerse-el-cuaderno-anterior">Traerse el cuaderno anterior</h3>
+<p>Si el cuaderno est&#225; vac&#237;o, el programa lo dice y ofrece <strong>importar un ADIF</strong> (el respaldo de Log4OM, de otro programa o de LoTW). <strong>No importa nada solo</strong>: decide usted con &#171;Importar un ADIF…&#187; o &#171;Empezar de cero&#187;. Los duplicados <strong>se funden, nunca se descartan</strong>, y al terminar se ense&#241;a el parte con las confirmaciones rescatadas. Se puede importar m&#225;s tarde desde <strong>Configuraci&#243;n › Libro (ADIF)</strong>.</p>
+<h2 id="paso-3--conocer-la-ventana">Paso 3 &#183; Conocer la ventana</h2>
+<figure><a href="capturas/operar.png"><img src="capturas/operar.png" alt="La ventana principal: la barra de navegaci&#243;n arriba y la cabina de Operar" loading="lazy"></a><figcaption>La ventana principal: la barra de navegaci&#243;n arriba y la cabina de Operar</figcaption></figure>
+<p>Arriba, la cabecera con el perfil activo, el tema claro u oscuro y el reloj UTC y local, con la franja solar debajo. Debajo, <strong>una sola barra</strong>:</p>
+<ul>
+<li><strong>Operar</strong> — Cabina, Digital, Sat&#233;lites y Ronda de control.</li>
+<li><strong>Libro</strong> — Contactos y Mapa.</li>
+<li><strong>QSL</strong> — Tarjeta QSL, Etiquetas y Diplomas (el dise&#241;ador).</li>
+<li><strong>Diplomas</strong> — el seguimiento de los diplomas conseguidos y por conseguir.</li>
+<li>A la derecha, <strong>Ayuda</strong> (o <code>F1</code>) y <strong>Configuraci&#243;n</strong>.</li>
+</ul>
+<p>Al elegir un grupo, sus p&#225;ginas salen en la misma barra, a continuaci&#243;n. Abajo, la barra de estado con las pastillas de cada servicio (verde al d&#237;a, &#225;mbar esperando, roja con un problema), el n&#250;mero de contactos y el mando de la letra (<code>−</code>, <code>+</code>, <code>100 %</code>).</p>
+<h2 id="paso-4--configuraci&#243;n--equipo-cat-con-el-ft-710">Paso 4 &#183; Configuraci&#243;n › Equipo (CAT), con el FT-710</h2>
+<p>Abra <strong>Configuraci&#243;n</strong> (a la derecha de la barra) y el apartado <strong>Equipo (CAT)</strong>.</p>
+<figure><a href="capturas/primer-uso-equipo-cat.png"><img src="capturas/primer-uso-equipo-cat.png" alt="Configuraci&#243;n › Equipo (CAT) con el FT-710: CAT nativo, Yaesu, FT-710 y 115.200 (captura con un equipo simulado: en su PC, elija en &#171;Puerto serie&#187; el Enhanced COM Port)" loading="lazy"></a><figcaption>Configuraci&#243;n › Equipo (CAT) con el FT-710: CAT nativo, Yaesu, FT-710 y 115.200 (captura con un equipo simulado: en su PC, elija en &#171;Puerto serie&#187; el Enhanced COM Port)</figcaption></figure>
+<ol>
+<li><strong>V&#237;a de control</strong>: <em>CAT nativo (Yaesu e ICOM)</em>. Es la &#250;nica que da filtros, ruido, medidores, memorias y el frontal dibujado. (<em>rigctld</em> de Hamlib y <em>OmniRig</em> tambi&#233;n est&#225;n, para equipos que no est&#233;n en la lista.)</li>
+<li><strong>Fabricante</strong>: <em>Yaesu</em>. <strong>Modelo</strong>: <em>FT-710</em>. Si no lo sabe, deje la detecci&#243;n autom&#225;tica: el programa pregunta la identificaci&#243;n por cada puerto.</li>
+<li><strong>Puerto serie</strong>: el <strong>Enhanced COM Port</strong> del FT-710 (en el Administrador de dispositivos, <em>Silicon Labs Dual CP210x USB to UART Bridge: Enhanced COM Port</em>; es el que Yaesu llama CAT-1). El <em>Standard</em> (CAT-2) es para PTT y manipulaci&#243;n: no lo use para el CAT. Si no sabe el n&#250;mero, marque <strong>Detectar autom&#225;ticamente por qu&#233; puerto est&#225; el equipo</strong>: se busca por lo que contesta la radio, nunca por el n&#250;mero.</li>
+<li><strong>Velocidad</strong>: <strong>115.200</strong>, y la misma en la radio: <strong>MENU › OPERATION SETTING › GENERAL › CAT-1 RATE = 115200 bps</strong>. La velocidad la manda el equipo, no el cable; si no coinciden, no contesta.</li>
+<li><strong>PTT</strong>: <em>Por CAT</em>. Deje el <strong>m&#225;ximo en antena</strong> en 180 s (tope duro 600 s): el vigilante suelta el PTT pase lo que pase.</li>
+<li>Pulse <strong>Probar</strong>: abre, lee la identificaci&#243;n, la frecuencia y el modo, y cierra. <strong>Nunca transmite.</strong> Si contesta, <strong>Aplicar</strong>.</li>
+</ol>
+<p>Despu&#233;s, en <strong>Operar › Cabina</strong>, pulse <strong>Conectar</strong>: sale el frontal del FT-710 con sus dos VFO. <strong>Abrir el programa nunca conecta solo con la radio</strong>: conectar es siempre un bot&#243;n.</p>
+<h3 id="el-espectro-del-ft-710-en-la-pantalla-del-frontal">El espectro del FT-710 en la pantalla del frontal</h3>
+<p>El analizador del frontal ense&#241;a <strong>el espectro de la propia radio</strong>, no uno calculado aqu&#237;. Para eso:</p>
+<ul>
+<li>En la radio: <strong>MENU › OPERATION SETTING › GENERAL › SCU-LAN10 = ON</strong>. No hace falta tener la SCU-LAN10: ese ajuste es el que abre la salida del espectro por el USB.</li>
+<li>En el PC: el controlador <strong>D2XX de FTDI</strong> (el FT-710 lleva dentro un puente FTDI FT4222).</li>
+</ul>
+<p>Si falta algo, el analizador lo dice con letras (&#171;falta la biblioteca&#187;, &#171;no aparece el dispositivo&#187;, &#171;no llegan tramas: mire SCU-LAN10&#187;). El resto del programa funciona igual sin &#233;l.</p>
+<h3 id="otros-equipos">Otros equipos</h3>
+<p>Adem&#225;s del FT-710 hay <strong>Yaesu</strong> FTDX10, FTDX101D/MP, FT-991/991A, FT-891, FTDX3000, FTDX5000, FTDX1200 y los de CAT antiguo (FT-817, FT-818, FT-857, FT-897), e <strong>ICOM</strong> IC-7300, IC-7610, IC-705, IC-7100, IC-9700 e IC-7851 (por CI-V, con su direcci&#243;n). Todos menos el FT-710 est&#225;n hechos <strong>seg&#250;n el manual, sin probar con la radio</strong>, y el programa lo avisa. Ver <a href="15-equipos.html">Equipos</a>.</p>
+<h2 id="paso-5--configuraci&#243;n--audio-y-digitales">Paso 5 &#183; Configuraci&#243;n › Audio y digitales</h2>
+<figure><a href="capturas/primer-uso-audio.png"><img src="capturas/primer-uso-audio.png" alt="Configuraci&#243;n › Audio y digitales: entrada y salida del c&#243;dec del equipo" loading="lazy"></a><figcaption>Configuraci&#243;n › Audio y digitales: entrada y salida del c&#243;dec del equipo</figcaption></figure>
+<ol>
+<li><strong>Entrada (del equipo)</strong> y <strong>Salida (al equipo)</strong>: el c&#243;dec USB de la radio. Sale marcado <strong>EL EQUIPO</strong> y el primero de la lista: se reconoce por el identificador USB, no por el nombre. En el FT-710 son <em>Micr&#243;fono (USB Audio Device)</em> y <em>Altavoces (USB Audio Device)</em>.</li>
+<li><strong>Muestras por segundo</strong>: 48.000.</li>
+<li><strong>Probar el nivel</strong> con la radio recibiendo ruido de banda: lo bueno est&#225; entre <strong>0,20 y 0,60</strong>. Por encima de 0,90 el c&#243;dec recorta; b&#225;jelo en la radio (en el FT-710, el nivel de salida de audio por USB del men&#250;) hasta que quede en verde.</li>
+<li>Las casillas de <strong>Transmitir y apuntar</strong> vienen bien de f&#225;brica: preguntar antes de transmitir, no recordar el permiso de transmitir entre sesiones, y apuntar solo el contacto completo. Pulse <strong>Guardar</strong>.</li>
+</ol>
+<p>Para los modos digitales, la radio tiene que estar en <strong>DATA-U</strong> (o DATA-L por debajo de 10 MHz), y para la fon&#237;a por el PC, con la fuente de modulaci&#243;n en USB: ver <a href="12-fonia.html">Fon&#237;a por el PC</a>.</p>
+<p><strong>El reloj del PC importa</strong>: FT8 no perdona m&#225;s de un segundo de desv&#237;o. En <strong>Operar › Digital</strong> el reloj va arriba del todo, con <strong>Medir</strong> y <strong>Poner el reloj en hora</strong>. Ver <a href="03-digital.html">Digital</a>.</p>
+<h2 id="paso-6--configuraci&#243;n--cuentas-y-servicios">Paso 6 &#183; Configuraci&#243;n › Cuentas y servicios</h2>
+<figure><a href="capturas/primer-uso-cuentas.png"><img src="capturas/primer-uso-cuentas.png" alt="Configuraci&#243;n › Cuentas y servicios: una tarjeta por servicio" loading="lazy"></a><figcaption>Configuraci&#243;n › Cuentas y servicios: una tarjeta por servicio</figcaption></figure>
+<p>Una <strong>tarjeta por servicio</strong>, cada una con su estado arriba a la derecha (verde <em>Configurada</em>, &#225;mbar <em>Incompleta</em>, gris <em>Sin configurar</em>):</p>
+<ol>
+<li><strong>QRZ.com</strong> — usuario y contrase&#241;a (rellena nombre, QTH y localizador del corresponsal) y la <em>Clave del cuaderno de QRZ</em> para subir contactos (QRZ › Logbook › Settings › API).</li>
+<li><strong>LoTW</strong> — instale antes <strong>TQSL</strong> con su certificado. Escriba la <strong>ubicaci&#243;n de estaci&#243;n de TQSL</strong> (el nombre que le puso en TQSL, no su indicativo), la contrase&#241;a de LoTW y la frase de paso del certificado, y pulse <strong>Guardar la cuenta</strong>. La tarjeta dice con claridad qu&#233; falta.</li>
+<li><strong>eQSL.cc</strong>, <strong>Club Log</strong> (con su clave de API) y <strong>HamQTH</strong> (reserva de QRZ).</li>
+<li><strong>Cluster de DX</strong> y <strong>Correo (SMTP)</strong> llevan a sus apartados con <strong>Configurar…</strong>.</li>
+</ol>
+<p>Las contrase&#241;as se guardan <strong>cifradas con la cuenta de Windows</strong> y no se vuelven a ense&#241;ar. Con las cuentas puestas, en <strong>Subidas y QRZ</strong> se marca qu&#233; servicios reciben cada contacto nuevo. Detalles en <a href="09-ajustes.html">Configuraci&#243;n</a>.</p>
+<h2 id="paso-7--listo-para-operar">Paso 7 &#183; Listo para operar</h2>
+<ul>
+<li>En <strong>Operar › Cabina</strong>, <strong>Conectar</strong> el equipo y el cluster.</li>
+<li>Teclee un indicativo: el retrato le dice si aporta algo (pa&#237;s, banda o modo nuevo).</li>
+<li><strong>Intro</strong> registra; <strong>Esc</strong> limpia; <strong>F7</strong> despliega m&#225;s datos.</li>
+</ul>
+<figure><a href="capturas/primer-uso-ayuda.png"><img src="capturas/primer-uso-ayuda.png" alt="La ayuda integrada, abierta por este cap&#237;tulo" loading="lazy"></a><figcaption>La ayuda integrada, abierta por este cap&#237;tulo</figcaption></figure>
+<p>Y cuando dude: <strong>F1</strong> abre la ayuda por el cap&#237;tulo de la p&#225;gina en la que est&#233;. Desde la propia Ayuda se puede <strong>buscar</strong>, <strong>reportar un fallo</strong> y <strong>buscar actualizaciones</strong>.</p>
+<h2 id="tres-reglas-que-valen-para-todo-el-programa">Tres reglas que valen para todo el programa</h2>
+<ul>
+<li><strong>Nada se conecta solo.</strong> El equipo, el cluster y el m&#243;dem arrancan desconectados.</li>
+<li><strong>Nada transmite solo.</strong> Emitir, subir el PTT o llamar CQ son siempre botones expl&#237;citos, con <strong>SOLTAR PTT</strong> siempre a mano.</li>
+<li><strong>Las credenciales se cifran</strong> y no se vuelven a mostrar.</li>
+</ul>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

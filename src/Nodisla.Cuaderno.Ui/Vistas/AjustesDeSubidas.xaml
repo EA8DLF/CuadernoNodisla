@@ -6,9 +6,8 @@
     <!--
         SUBIDA AUTOMÁTICA Y FICHA DE QRZ.
 
-        Las cuentas (usuarios: no son secretos; las contraseñas van arriba, cifradas), una
-        casilla por servicio y la cola con lo que falta por subir. Un usuario vacío es el
-        indicativo del perfil de estación, que es lo normal en QRZ, LoTW, eQSL y HamQTH.
+        Una casilla por servicio y la cola con lo que falta por subir. Las cuentas de cada
+        servicio (usuario y contraseña) están en su tarjeta, en «Cuentas y servicios».
     -->
 
     <UserControl.Resources>
@@ -30,54 +29,19 @@
 
     <StackPanel>
         <!-- ── Ficha de QRZ ── -->
-        <TextBlock Text="Completar con QRZ.com" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,4" />
+        <TextBlock Text="Completar con QRZ.com" Style="{StaticResource TituloDeSeccion}" Margin="0,0,0,4" />
         <CheckBox IsChecked="{Binding CompletarConQrz}"
                   Content="Rellenar nombre, QTH, localizador, país, zonas… con la ficha de QRZ.com (o HamQTH)"
                   AutomationProperties.Name="Completar los contactos con QRZ.com" />
         <TextBlock Text="Solo se rellena lo que esté vacío: nunca se pisa lo que usted escriba. Sin red o sin cuenta el contacto se guarda igual. Sin suscripción XML de pago, QRZ.com solo da una parte de la ficha."
                    Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,2,0,4" />
 
-        <StackPanel Visibility="{Binding HayCuentas, Converter={StaticResource BooleanoAVisible}}">
-            <TextBlock Text="{Binding UsuarioPorOmision}" Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
-
-            <TextBlock Text="Usuario de QRZ.com" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding UsuarioQrz, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Campo}"
-                     AutomationProperties.Name="Usuario de QRZ.com" />
-            <TextBlock Text="Usuario de HamQTH (de reserva)" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding UsuarioHamQth, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Campo}"
-                     AutomationProperties.Name="Usuario de HamQTH" />
-
-            <!-- ── Cuentas de subida ── -->
-            <TextBlock Text="Usuario de LoTW" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding UsuarioLotw, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Campo}"
-                     AutomationProperties.Name="Usuario de LoTW" />
-            <TextBlock Text="Ubicación de estación de TQSL" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding UbicacionTqsl, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Campo}"
-                     AutomationProperties.Name="Ubicación de estación de TQSL" />
-            <TextBlock Text="El nombre que le puso a la ubicación en TQSL, no su indicativo."
-                       Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
-            <TextBlock Text="Ruta de tqsl.exe (solo si no está donde se instala siempre)" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding RutaTqsl, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Campo}"
-                     AutomationProperties.Name="Ruta de tqsl.exe" />
-            <TextBlock Text="Usuario de eQSL.cc" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding UsuarioEqsl, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Campo}"
-                     AutomationProperties.Name="Usuario de eQSL" />
-            <TextBlock Text="Apodo del QTH en eQSL (si tiene varios)" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding ApodoEqsl, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Campo}"
-                     AutomationProperties.Name="Apodo del QTH en eQSL" />
-            <TextBlock Text="Correo de la cuenta de Club Log" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding CorreoClubLog, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Campo}"
-                     AutomationProperties.Name="Correo de Club Log" />
-            <TextBlock Text="Indicativo del cuaderno en Club Log" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding IndicativoClubLog, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Campo}"
-                     AutomationProperties.Name="Indicativo de Club Log" />
-
-            <Button Content="Guardar cuentas"
-                    Command="{Binding GuardarCuentasCommand}"
-                    HorizontalAlignment="Left"
-                    Margin="0,6,0,0"
-                    AutomationProperties.Name="Guardar las cuentas de los servicios" />
-        </StackPanel>
+        <!--
+            Los usuarios de cada servicio ya no van aquí: están en su tarjeta, en «Cuentas y
+            servicios», junto a su contraseña. Antes había que ir y venir entre dos listas.
+        -->
+        <TextBlock Text="Los usuarios y contraseñas de QRZ.com, HamQTH, LoTW, eQSL y Club Log se ponen en «Cuentas y servicios»."
+                   Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,0,0,4" />
 
         <!-- ── Subida automática ── -->
         <TextBlock Text="Subida automática" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,4" />

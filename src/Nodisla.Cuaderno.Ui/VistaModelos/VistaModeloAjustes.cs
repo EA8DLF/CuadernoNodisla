@@ -189,7 +189,150 @@ public sealed partial class VistaModeloAjustes : ObservableObject
         ];
 
         RefrescarLotw();
+
+        // Para capturar cada apartado sin tocar la ventana del operador.
+        if (Environment.GetEnvironmentVariable("CUADERNO_APARTADO") is { Length: > 0 } apartado
+            && int.TryParse(apartado, NumberStyles.Integer, CultureInfo.InvariantCulture, out var cual))
+        {
+            IndiceDelApartado = Math.Clamp(cual, 0, Apartados.Count - 1);
+        }
     }
+
+    /// <summary>Los apartados de la configuración, en el orden de la columna de la izquierda.</summary>
+    public static IReadOnlyList<string> Apartados { get; } =
+        ["Cuentas y servicios", "Subidas y QRZ", "Equipo (CAT)", "Audio y digitales", "Fonía", "Cluster", "Correo de las QSL", "Libro (ADIF)", "Actualizaciones"];
+
+    /// <summary>Índices de los apartados.</summary>
+    public const int ApartadoCuentas = 0, ApartadoSubidas = 1, ApartadoEquipo = 2, ApartadoAudio = 3,
+        ApartadoFonia = 4, ApartadoCluster = 5, ApartadoCorreo = 6, ApartadoLibro = 7, ApartadoActualizaciones = 8;
+
+    /// <summary>Apartado que se está viendo.</summary>
+    [ObservableProperty]
+    private int _indiceDelApartado;
+
+    private IReadOnlyList<TarjetaDeServicio>? _tarjetas;
+
+    /// <summary>
+    /// Una tarjeta por servicio con su cuenta, sus secretos y su estado.
+    /// </summary>
+    /// <remarks>
+    /// Se monta la primera vez que se pide y no en el constructor: las subidas, el correo y la
+    /// fonía llegan después, por inicializador.
+    /// </remarks>
+    public IReadOnlyList<TarjetaDeServicio> Tarjetas => _tarjetas ??= MontarTarjetas();
+
+    private IReadOnlyList<TarjetaDeServicio> MontarTarjetas()
+    {
+        SecretoDeServicio S(string clave) => Secretos.Single(s => s.Clave == clave);
+        var subidas = Subidas;
+        var guardarCuenta = subidas?.GuardarCuentasCommand;
+
+        IReadOnlyList<CampoDeCuenta> Campos(params (string Rotulo, Func<VistaModeloSubidas, string> Leer, Action<VistaModeloSubidas, string> Escribir, string? Nota)[] campos) =>
+            subidas is null
+                ? []
+                : campos.Select(c => new CampoDeCuenta(c.Rotulo, () => c.Leer(subidas), v => c.Escribir(subidas, v), c.Nota)).ToList();
+
+        var qrz = new[] { S(ClavesDeCredencial.QrzContrasena), S(ClavesDeCredencial.QrzClaveDeCuaderno) };
+        var lotw = new[] { S(ClavesDeCredencial.LotwContrasena), S(ClavesDeCredencial.TqslFraseDePaso) };
+        var eqsl = new[] { S(ClavesDeCredencial.EqslContrasena) };
+        var clubLog = new[] { S(ClavesDeCredencial.ClubLogContrasena), S(ClavesDeCredencial.ClubLogApi) };
+        var hamQth = new[] { S(ClavesDeCredencial.HamQthContrasena) };
+        var usuarioVacio = subidas?.UsuarioPorOmision ?? "Vacío: se usa el indicativo del perfil.";
+
+        var tarjetas = new List<TarjetaDeServicio>
+        {
+            new("QRZ.com", "Q", "Ficha del corresponsal y subida de contactos.",
+                () => TarjetaDeServicio.PorSecretos([qrz[0]], qrz), qrz,
+                Campos(("Usuario", s => s.UsuarioQrz, (s, v) => s.UsuarioQrz = v, usuarioVacio)))
+            { GuardarCuenta = guardarCuenta },
+
+            new("LoTW", "L", "Confirmaciones de la ARRL, firmadas con TQSL.",
+                () =>
+                {
+                    if (SePuedeSubirALotw) return (EstadoDeServicio.Configurado, "Lista para subir");
+                    var (estado, texto) = TarjetaDeServicio.PorSecretos([lotw[0]], lotw);
+
+                    // Con la contraseña puesta pero sin poder firmar, lo que falta es TQSL.
+                    return estado == EstadoDeServicio.Configurado ? (EstadoDeServicio.AMedias, "Falta TQSL") : (estado, texto);
+                },
+                lotw,
+                Campos(
+                    ("Usuario", s => s.UsuarioLotw, (s, v) => s.UsuarioLotw = v, usuarioVacio),
+                    ("Ubicación de estación de TQSL", s => s.UbicacionTqsl, (s, v) => s.UbicacionTqsl = v, "El nombre que le puso a la ubicación en TQSL, no su indicativo."),
+                    ("Ruta de tqsl.exe", s => s.RutaTqsl, (s, v) => s.RutaTqsl = v, "Solo si no está donde se instala siempre.")),
+                () => MotivoDeNoPoderSubirALotw,
+                this)
+            {
+                GuardarCuenta = guardarCuenta,
+                Probar = RefrescarCommand,
+                TextoDeProbar = "Volver a comprobar",
+                Nota = AvisoDeLaFraseDePaso,
+            },
+
+            new("eQSL.cc", "E", "Tarjetas QSL electrónicas.",
+                () => TarjetaDeServicio.PorSecretos(eqsl, eqsl), eqsl,
+                Campos(
+                    ("Usuario", s => s.UsuarioEqsl, (s, v) => s.UsuarioEqsl = v, usuarioVacio),
+                    ("Apodo del QTH", s => s.ApodoEqsl, (s, v) => s.ApodoEqsl = v, "Solo si tiene varios QTH en eQSL.")))
+            { GuardarCuenta = guardarCuenta },
+
+            new("Club Log", "C", "Subida del cuaderno y DXCC más buscados.",
+                () => TarjetaDeServicio.PorSecretos(clubLog, clubLog), clubLog,
+                Campos(
+                    ("Correo de la cuenta", s => s.CorreoClubLog, (s, v) => s.CorreoClubLog = v, null),
+                    ("Indicativo del cuaderno", s => s.IndicativoClubLog, (s, v) => s.IndicativoClubLog = v, null)))
+            { GuardarCuenta = guardarCuenta },
+
+            new("HamQTH", "H", "Ficha del corresponsal, de reserva si QRZ.com no responde.",
+                () => TarjetaDeServicio.PorSecretos(hamQth, hamQth), hamQth,
+                Campos(("Usuario", s => s.UsuarioHamQth, (s, v) => s.UsuarioHamQth = v, usuarioVacio)))
+            { GuardarCuenta = guardarCuenta },
+        };
+
+        tarjetas.Add(new TarjetaDeServicio("Cluster de DX", "D", "Nodo, indicativo de entrada y contraseña (si la pide).",
+            () => Cluster is null
+                ? (EstadoDeServicio.SinConfigurar, "Sin nodo de verdad")
+                : string.IsNullOrWhiteSpace(Cluster.Servidor)
+                    ? (EstadoDeServicio.SinConfigurar, "Sin nodo")
+                    : (EstadoDeServicio.Configurado, Cluster.ContrasenaGuardada ? "Configurado · con contraseña" : "Configurado"),
+            aviso: () => Cluster is null
+                ? "Con los puertos simulados el cluster es de mentira."
+                : string.IsNullOrWhiteSpace(Cluster.Servidor) ? string.Empty : $"{Cluster.Nombre} · {Cluster.Servidor}:{Cluster.Puerto} como {Cluster.IndicativoDeAcceso}",
+            origenes: Cluster)
+        {
+            Configurar = new RelayCommand(() => IndiceDelApartado = ApartadoCluster),
+        });
+
+        if (CorreoQsl is { } correo)
+        {
+            tarjetas.Add(new TarjetaDeServicio("Correo (SMTP)", "@", "La cuenta con la que se mandan las QSL por correo.",
+                () => string.IsNullOrWhiteSpace(correo.Servidor)
+                    ? (correo.ContrasenaGuardada ? EstadoDeServicio.AMedias : EstadoDeServicio.SinConfigurar,
+                       correo.ContrasenaGuardada ? "Incompleta" : "Sin configurar")
+                    : correo.ContrasenaGuardada || string.IsNullOrWhiteSpace(correo.Usuario)
+                        ? (EstadoDeServicio.Configurado, "Configurada")
+                        : (EstadoDeServicio.AMedias, "Falta la contraseña"),
+                aviso: () => correo.Aviso is { Length: > 0 } a
+                    ? a
+                    : string.IsNullOrWhiteSpace(correo.Servidor) ? string.Empty : $"{correo.Servidor}:{correo.Puerto} · {correo.Seguridad}",
+                origenes: correo)
+            {
+                Probar = correo.ProbarCommand,
+                Configurar = new RelayCommand(() => IndiceDelApartado = ApartadoCorreo),
+            });
+        }
+
+        return tarjetas;
+    }
+
+    /// <summary>Hay apartado de fonía que enseñar.</summary>
+    public bool HayFonia => Fonia is not null;
+
+    /// <summary>Hay apartado de correo que enseñar.</summary>
+    public bool HayCorreo => CorreoQsl is not null;
+
+    /// <summary>Hay apartado de subidas que enseñar.</summary>
+    public bool HaySubidas => Subidas is not null;
 
     /// <summary>
     /// La subida automatica y el completado con QRZ: cuentas, casillas y cola. Nulo si no se
@@ -226,6 +369,15 @@ public sealed partial class VistaModeloAjustes : ObservableObject
 
     /// <summary>Apartado del correo con el que se mandan las QSL, o nulo si no se registró.</summary>
     public VistaModeloCorreoQsl? CorreoQsl { get; init; }
+
+    /// <summary>
+    /// Apartado «Actualizaciones»: el MISMO objeto que la barra del aviso de versión, para que
+    /// buscar a mano desde aquí encienda también la barra. Nulo si no se registró.
+    /// </summary>
+    public VistaModeloActualizaciones? Actualizaciones { get; init; }
+
+    /// <summary>Hay apartado de actualizaciones que enseñar.</summary>
+    public bool HayActualizaciones => Actualizaciones is not null;
 
     /// <summary>Hay apartado de audio que enseñar.</summary>
     public bool HayAudio => Audio is not null;

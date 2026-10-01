@@ -1,6 +1,6 @@
 # Banco de medida de MSK144
 
-Generado por `BancoMsk144Pruebas` el 2026-09-27 (UTC). **No editar a mano.**
+Generado por `BancoMsk144Pruebas` el 2026-09-30 (UTC). **No editar a mano.**
 
 Pings sintéticos sobre ruido blanco gaussiano, relación señal-ruido referida a 2500 Hz. Cada
 ventana de 15 s lleva un solo ping de tantas tramas de 72 ms como diga la columna, con un
@@ -26,49 +26,49 @@ Tiempos de **procesador** de una compilación **de publicación (Release)**; la 
 
 | S/R (dB) | Tramas del ping | Ventanas | Recuperados | % | Falsos | Palabras válidas | Rechazadas | Sólo por promediado | Error del informe (dB) | ms de CPU/ventana |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 6 | 1 | 12 | 9 | 75,0 | 0 | 140 | 131 | 0 | -0,9 | 1612 |
-| 4 | 1 | 12 | 6 | 50,0 | 0 | 121 | 115 | 0 | -0,5 | 1581 |
-| 2 | 1 | 12 | 7 | 58,3 | 0 | 94 | 87 | 0 | -0,1 | 1578 |
-| 0 | 1 | 12 | 1 | 8,3 | 0 | 65 | 64 | 0 | +1,0 | 1570 |
-| -2 | 1 | 12 | 0 | 0,0 | 0 | 57 | 57 | 0 | 00 | 1574 |
-| -4 | 1 | 12 | 0 | 0,0 | 0 | 55 | 55 | 0 | 00 | 1589 |
+| 6 | 1 | 12 | 9 | 75,0 | 0 | 151 | 142 | 0 | -0,9 | 1598 |
+| 4 | 1 | 12 | 6 | 50,0 | 0 | 130 | 124 | 0 | -0,5 | 1585 |
+| 2 | 1 | 12 | 7 | 58,3 | 0 | 92 | 85 | 0 | -0,1 | 1590 |
+| 0 | 1 | 12 | 1 | 8,3 | 0 | 72 | 71 | 0 | +1,0 | 1600 |
+| -2 | 1 | 12 | 0 | 0,0 | 0 | 60 | 60 | 0 | 00 | 1573 |
+| -4 | 1 | 12 | 0 | 0,0 | 0 | 55 | 55 | 0 | 00 | 1603 |
 | -6 | 1 | 12 | 0 | 0,0 | 0 | 50 | 50 | 0 | 00 | 1578 |
 
 ### Ping de siete tramas (504 ms), por relación señal-ruido
 
 | S/R (dB) | Tramas del ping | Ventanas | Recuperados | % | Falsos | Palabras válidas | Rechazadas | Sólo por promediado | Error del informe (dB) | ms de CPU/ventana |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 0 | 7 | 12 | 10 | 83,3 | 0 | 228 | 197 | 2 | +0,6 | 1651 |
-| -2 | 7 | 12 | 11 | 91,7 | 0 | 136 | 112 | 10 | +0,4 | 1591 |
-| -4 | 7 | 12 | 8 | 66,7 | 0 | 87 | 75 | 8 | +0,8 | 1603 |
-| -6 | 7 | 12 | 4 | 33,3 | 0 | 58 | 54 | 4 | +1,3 | 1570 |
-| -8 | 7 | 12 | 0 | 0,0 | 0 | 62 | 62 | 0 | 00 | 1572 |
-| -10 | 7 | 12 | 0 | 0,0 | 0 | 62 | 62 | 0 | 00 | 1579 |
-| -12 | 7 | 12 | 0 | 0,0 | 0 | 58 | 58 | 0 | 00 | 1570 |
+| 0 | 7 | 12 | 10 | 83,3 | 0 | 248 | 216 | 2 | +0,6 | 1646 |
+| -2 | 7 | 12 | 11 | 91,7 | 0 | 135 | 110 | 10 | +0,5 | 1616 |
+| -4 | 7 | 12 | 8 | 66,7 | 0 | 85 | 73 | 8 | +0,8 | 1594 |
+| -6 | 7 | 12 | 4 | 33,3 | 0 | 60 | 56 | 4 | +1,3 | 1573 |
+| -8 | 7 | 12 | 0 | 0,0 | 0 | 63 | 63 | 0 | 00 | 1589 |
+| -10 | 7 | 12 | 0 | 0,0 | 0 | 65 | 65 | 0 | 00 | 1602 |
+| -12 | 7 | 12 | 0 | 0,0 | 0 | 60 | 60 | 0 | 00 | 1583 |
 
 ### A 0 dB, por duración del ping
 
 | S/R (dB) | Tramas del ping | Ventanas | Recuperados | % | Falsos | Palabras válidas | Rechazadas | Sólo por promediado | Error del informe (dB) | ms de CPU/ventana |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 0 | 1 | 12 | 1 | 8,3 | 0 | 73 | 72 | 0 | +2,0 | 1574 |
-| 0 | 2 | 12 | 6 | 50,0 | 0 | 102 | 95 | 3 | +0,7 | 1589 |
-| 0 | 3 | 12 | 9 | 75,0 | 0 | 125 | 112 | 3 | +0,4 | 1577 |
-| 0 | 5 | 12 | 11 | 91,7 | 0 | 195 | 167 | 1 | +0,6 | 1603 |
-| 0 | 7 | 12 | 12 | 100,0 | 0 | 242 | 202 | 1 | +0,8 | 1639 |
-| 0 | 14 | 12 | 12 | 100,0 | 0 | 390 | 314 | 0 | +0,8 | 1682 |
+| 0 | 1 | 12 | 1 | 8,3 | 0 | 74 | 73 | 0 | +2,0 | 1612 |
+| 0 | 2 | 12 | 5 | 41,7 | 0 | 105 | 99 | 2 | +0,4 | 1604 |
+| 0 | 3 | 12 | 9 | 75,0 | 0 | 118 | 107 | 3 | +0,1 | 1589 |
+| 0 | 5 | 12 | 10 | 83,3 | 0 | 192 | 165 | 1 | +0,5 | 1615 |
+| 0 | 7 | 12 | 12 | 100,0 | 0 | 253 | 209 | 1 | +0,8 | 1642 |
+| 0 | 14 | 12 | 12 | 100,0 | 0 | 368 | 291 | 0 | +0,8 | 1725 |
 
 ### A −6 dB, por duración del ping
 
 | S/R (dB) | Tramas del ping | Ventanas | Recuperados | % | Falsos | Palabras válidas | Rechazadas | Sólo por promediado | Error del informe (dB) | ms de CPU/ventana |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| -6 | 1 | 12 | 0 | 0,0 | 0 | 51 | 51 | 0 | 00 | 1566 |
-| -6 | 2 | 12 | 0 | 0,0 | 0 | 59 | 59 | 0 | 00 | 1569 |
-| -6 | 3 | 12 | 0 | 0,0 | 0 | 58 | 58 | 0 | 00 | 1574 |
-| -6 | 5 | 12 | 3 | 25,0 | 0 | 86 | 83 | 3 | +1,3 | 1586 |
-| -6 | 7 | 12 | 3 | 25,0 | 0 | 54 | 50 | 3 | +0,3 | 1577 |
-| -6 | 14 | 12 | 5 | 41,7 | 0 | 69 | 60 | 5 | +0,8 | 1583 |
+| -6 | 1 | 12 | 0 | 0,0 | 0 | 50 | 50 | 0 | 00 | 1577 |
+| -6 | 2 | 12 | 0 | 0,0 | 0 | 59 | 59 | 0 | 00 | 1574 |
+| -6 | 3 | 12 | 0 | 0,0 | 0 | 62 | 62 | 0 | 00 | 1605 |
+| -6 | 5 | 12 | 3 | 25,0 | 0 | 76 | 73 | 3 | +1,3 | 1578 |
+| -6 | 7 | 12 | 3 | 25,0 | 0 | 56 | 52 | 3 | +0,7 | 1577 |
+| -6 | 14 | 12 | 5 | 41,7 | 0 | 74 | 65 | 5 | +0,8 | 1583 |
 
 ### Ruido puro
 
-60 ventanas de 15 s sin señal: **0 mensajes**, 294 palabras válidas del corrector, 294 rechazadas por los frenos y el CRC, 1576 ms de CPU por ventana.
+60 ventanas de 15 s sin señal: **0 mensajes**, 294 palabras válidas del corrector, 294 rechazadas por los frenos y el CRC, 1592 ms de CPU por ventana.
 

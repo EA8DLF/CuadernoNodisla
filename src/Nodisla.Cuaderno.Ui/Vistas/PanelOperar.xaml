@@ -132,7 +132,7 @@
                 <TextBlock Text="Todavía no hay equipo conectado"
                            FontWeight="Bold"
                            TextWrapping="Wrap" />
-                <TextBlock Text="Cuando el equipo hable por CAT, aquí aparece su frontal dibujado con los mandos donde corresponde. Elija la vía de control en Ajustes y pulse «Conectar»: abrir el programa no toca la radio."
+                <TextBlock Text="Cuando el equipo hable por CAT, aquí aparece su frontal dibujado con los mandos donde corresponde. Elija la vía de control en Configuración › Equipo (CAT) y pulse «Conectar»: abrir el programa no toca la radio."
                            Style="{StaticResource TextoTenueEstilo}"
                            TextWrapping="Wrap"
                            Margin="0,3,0,0" />

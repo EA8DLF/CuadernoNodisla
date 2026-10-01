@@ -87,21 +87,7 @@ public static class DibujanteDeQsl
             foreach (var campo in diseno.Campos)
             {
                 if (!campo.Visible || (soloMisDatos && campo.EsDelContacto)) continue;
-                var texto = VariablesDeQsl.Sustituir(campo.Texto, variables);
-                if (string.IsNullOrWhiteSpace(texto)) continue;
-
-                var (formato, izquierda) = Formatear(campo, texto, k, ppp);
-                var arriba = campo.YMm * k;
-                if (!string.IsNullOrWhiteSpace(campo.ColorDeRecuadro))
-                {
-                    var aire = AireDelRecuadroMm * k;
-                    dc.DrawRoundedRectangle(
-                        Pincel(campo.ColorDeRecuadro, Colors.Transparent), null,
-                        new Rect(izquierda - aire, arriba - (aire / 2), formato.WidthIncludingTrailingWhitespace + (2 * aire), formato.Height + aire),
-                        aire * 0.8, aire * 0.8);
-                }
-
-                dc.DrawText(formato, new Point(izquierda, arriba));
+                DibujarCampo(dc, campo, VariablesDeQsl.Sustituir(campo.Texto, variables), k, ppp);
             }
         }
 
@@ -111,6 +97,29 @@ public static class DibujanteDeQsl
         mapa.Render(visual);
         mapa.Freeze();
         return mapa;
+    }
+
+    /// <summary>Dibuja un campo de texto ya relleno: el mismo trazo para la QSL y para el diploma.</summary>
+    /// <param name="dc">Donde se dibuja, en pixeles.</param>
+    /// <param name="campo">El campo.</param>
+    /// <param name="texto">Su texto con las variables ya sustituidas.</param>
+    /// <param name="k">Pixeles por milimetro.</param>
+    /// <param name="ppp">Puntos por pulgada.</param>
+    internal static void DibujarCampo(DrawingContext dc, CampoDeQsl campo, string texto, double k, double ppp)
+    {
+        if (string.IsNullOrWhiteSpace(texto)) return;
+        var (formato, izquierda) = Formatear(campo, texto, k, ppp);
+        var arriba = campo.YMm * k;
+        if (!string.IsNullOrWhiteSpace(campo.ColorDeRecuadro))
+        {
+            var aire = AireDelRecuadroMm * k;
+            dc.DrawRoundedRectangle(
+                Pincel(campo.ColorDeRecuadro, Colors.Transparent), null,
+                new Rect(izquierda - aire, arriba - (aire / 2), formato.WidthIncludingTrailingWhitespace + (2 * aire), formato.Height + aire),
+                aire * 0.8, aire * 0.8);
+        }
+
+        dc.DrawText(formato, new Point(izquierda, arriba));
     }
 
     /// <summary>
@@ -123,10 +132,19 @@ public static class DibujanteDeQsl
     {
         ArgumentNullException.ThrowIfNull(campo);
         ArgumentNullException.ThrowIfNull(variables);
-        const double Ppp = 96;
-        var k = Ppp / 25.4;
         var texto = VariablesDeQsl.Sustituir(campo.Texto, variables);
         if (string.IsNullOrWhiteSpace(texto)) texto = string.IsNullOrWhiteSpace(campo.Texto) ? campo.Nombre : campo.Texto;
+        return CajaDelTexto(campo, texto);
+    }
+
+    /// <summary>El hueco que ocupa un campo con su texto ya relleno, en milimetros.</summary>
+    /// <param name="campo">El campo.</param>
+    /// <param name="texto">El texto.</param>
+    /// <returns>El rectangulo.</returns>
+    internal static Rect CajaDelTexto(CampoDeQsl campo, string texto)
+    {
+        const double Ppp = 96;
+        var k = Ppp / 25.4;
         var (formato, izquierda) = Formatear(campo, texto, k, Ppp);
         return new Rect(
             (izquierda / k) - AireDelRecuadroMm,
@@ -184,7 +202,7 @@ public static class DibujanteDeQsl
         }
     }
 
-    private static (FormattedText Formato, double Izquierda) Formatear(CampoDeQsl campo, string texto, double k, double ppp)
+    internal static (FormattedText Formato, double Izquierda) Formatear(CampoDeQsl campo, string texto, double k, double ppp)
     {
         var tipo = new Typeface(
             new FontFamily(string.IsNullOrWhiteSpace(campo.Fuente) ? "Arial" : campo.Fuente),
@@ -201,7 +219,11 @@ public static class DibujanteDeQsl
             Pincel(campo.Color, Colors.Black),
             1.0);
 
-        var anchoDelTexto = formato.WidthIncludingTrailingWhitespace;
+        // Con ancho maximo el texto se parte en lineas; sin el, una linea por cada salto escrito.
+        if (campo.AnchoMaximoMm > 0) formato.MaxTextWidth = Math.Max(1, campo.AnchoMaximoMm * k);
+        var anchoDelTexto = campo.AnchoMaximoMm > 0
+            ? Math.Min(formato.MaxTextWidth, formato.WidthIncludingTrailingWhitespace)
+            : formato.WidthIncludingTrailingWhitespace;
 
         // Con varias lineas, cada linea se alinea dentro del bloque igual que el bloque en la tarjeta.
         formato.MaxTextWidth = Math.Max(1, anchoDelTexto + 0.5);
@@ -222,7 +244,7 @@ public static class DibujanteDeQsl
         return (formato, izquierda);
     }
 
-    private static Rect Colocar(BitmapSource imagen, Rect tarjeta, AjusteDeFondo ajuste)
+    internal static Rect Colocar(BitmapSource imagen, Rect tarjeta, AjusteDeFondo ajuste)
     {
         if (ajuste == AjusteDeFondo.Estirar || imagen.PixelWidth == 0 || imagen.PixelHeight == 0) return tarjeta;
         var escalaX = tarjeta.Width / imagen.PixelWidth;
@@ -230,10 +252,11 @@ public static class DibujanteDeQsl
         var escala = ajuste == AjusteDeFondo.Rellenar ? Math.Max(escalaX, escalaY) : Math.Min(escalaX, escalaY);
         var ancho = imagen.PixelWidth * escala;
         var alto = imagen.PixelHeight * escala;
-        return new Rect((tarjeta.Width - ancho) / 2, (tarjeta.Height - alto) / 2, ancho, alto);
+        // Centrada en la caja, donde este la caja (la tarjeta empieza en cero; el logo del diploma, no).
+        return new Rect(tarjeta.X + ((tarjeta.Width - ancho) / 2), tarjeta.Y + ((tarjeta.Height - alto) / 2), ancho, alto);
     }
 
-    private static BitmapSource? Fondo(string? ruta)
+    internal static BitmapSource? Fondo(string? ruta)
     {
         if (string.IsNullOrWhiteSpace(ruta) || !File.Exists(ruta)) return null;
         if (Fondos.TryGetValue(ruta, out var hecha)) return hecha;
@@ -262,7 +285,7 @@ public static class DibujanteDeQsl
         }
     }
 
-    private static SolidColorBrush Pincel(string? color, Color siNoVale)
+    internal static SolidColorBrush Pincel(string? color, Color siNoVale)
     {
         var pincel = new SolidColorBrush(AColor(color, siNoVale));
         pincel.Freeze();

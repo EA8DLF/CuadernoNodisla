@@ -41,6 +41,9 @@ public sealed class ContextoCuaderno : DbContext
     /// <summary>Los participantes de cada ronda.</summary>
     public DbSet<ParticipanteDeRonda> ParticipantesDeRonda => Set<ParticipanteDeRonda>();
 
+    /// <summary>El historial de diplomas emitidos.</summary>
+    public DbSet<DiplomaEmitido> DiplomasEmitidos => Set<DiplomaEmitido>();
+
     /// <inheritdoc/>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -85,6 +88,7 @@ public sealed class ContextoCuaderno : DbContext
         modelBuilder.ApplyConfiguration(new ConfiguracionQsoCampoExtra());
         modelBuilder.ApplyConfiguration(new ConfiguracionRonda());
         modelBuilder.ApplyConfiguration(new ConfiguracionParticipanteDeRonda());
+        modelBuilder.ApplyConfiguration(new ConfiguracionDiplomaEmitido());
 
         NombresDeColumna.Aplicar(modelBuilder);
 

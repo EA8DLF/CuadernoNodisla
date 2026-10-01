@@ -187,7 +187,7 @@ public sealed class ConsultaHamQth : IConsultaIndicativo
 
             var contrasena = _credenciales.Leer(ClavesDeCredencial.HamQthContrasena)
                 ?? throw new InvalidOperationException(
-                    "No hay contraseña de HamQTH guardada. Configúrela en los ajustes del programa.");
+                    "No hay contraseña de HamQTH guardada. Configúrela en Configuración › Cuentas y servicios.");
 
             var consulta =
                 $"u={Uri.EscapeDataString(_opciones.Usuario)}"

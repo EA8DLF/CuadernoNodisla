@@ -68,6 +68,9 @@ public sealed partial class CampoEditable : ObservableObject
     /// <summary>Alineacion respecto al ancla.</summary>
     public AlineacionDeCampo Alineacion { get => Campo.Alineacion; set => Poner(Campo.Alineacion, value, v => Campo.Alineacion = v); }
 
+    /// <summary>Ancho maximo en mm (0: sin limite); lo que no quepa pasa a otra linea.</summary>
+    public double AnchoMaximoMm { get => Campo.AnchoMaximoMm; set => Poner(Campo.AnchoMaximoMm, Math.Max(0, Math.Round(value, 1)), v => Campo.AnchoMaximoMm = v); }
+
     /// <summary>Se pinta.</summary>
     public bool Visible { get => Campo.Visible; set => Poner(Campo.Visible, value, v => Campo.Visible = v); }
 
@@ -140,10 +143,6 @@ public sealed record ContactoDeMuestra(Qso? Qso)
 /// </summary>
 public sealed partial class VistaModeloQsl : ObservableObject
 {
-    private static readonly Lazy<IReadOnlyList<string>> FuentesDelSistema = new(() =>
-        Fonts.SystemFontFamilies.Select(f => f.Source).Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(n => n, StringComparer.CurrentCultureIgnoreCase).ToList());
-
     private DatosDeMiEstacion _yo = DatosDeMiEstacion.Vacios;
     private bool _redibujoPendiente;
     private bool _cargando;
@@ -195,13 +194,13 @@ public sealed partial class VistaModeloQsl : ObservableObject
     public ObservableCollection<ContactoDeMuestra> Contactos { get; } = [new(null)];
 
     /// <summary>Tipografias instaladas.</summary>
-    public IReadOnlyList<string> Fuentes => FuentesDelSistema.Value;
+    public IReadOnlyList<string> Fuentes => CatalogosDelEditor.Fuentes;
 
     /// <summary>Alineaciones.</summary>
-    public IReadOnlyList<AlineacionDeCampo> Alineaciones { get; } = Enum.GetValues<AlineacionDeCampo>();
+    public IReadOnlyList<AlineacionDeCampo> Alineaciones => CatalogosDelEditor.Alineaciones;
 
     /// <summary>Ajustes del fondo.</summary>
-    public IReadOnlyList<AjusteDeFondo> AjustesDeFondo { get; } = Enum.GetValues<AjusteDeFondo>();
+    public IReadOnlyList<AjusteDeFondo> AjustesDeFondo => CatalogosDelEditor.AjustesDeFondo;
 
     /// <summary>Variables para escribir en los campos, con su explicacion.</summary>
     public string AyudaDeVariables { get; } = string.Join("\n", VariablesDeQsl.Conocidas.Select(v => $"{{{v.Nombre}}} — {v.Descripcion}"));

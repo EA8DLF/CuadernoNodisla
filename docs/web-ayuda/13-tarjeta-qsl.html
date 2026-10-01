@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tarjeta QSL propia: dise&#241;arla y enviarla por correo · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html" class="actual" aria-current="page">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="tarjeta-qsl-propia-dise&#241;arla-y-enviarla-por-correo">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</h1>
+<p>La p&#225;gina <strong>QSL › Tarjeta QSL</strong> (<code>Ctrl</code> <code>8</code>) es el editor de su tarjeta. Desde ah&#237;, desde el Cuaderno o desde la ficha de un contacto se genera la tarjeta de cualquier QSO como <strong>imagen</strong> (JPG/PNG) o <strong>PDF</strong> y se <strong>manda por correo</strong> al corresponsal sin salir del programa.</p>
+<figure><a href="capturas/tarjeta-qsl.png"><img src="capturas/tarjeta-qsl.png" alt="Editor de la tarjeta QSL: plantilla y campos a la izquierda, la tarjeta en el centro, el campo elegido a la derecha" loading="lazy"></a><figcaption>Editor de la tarjeta QSL: plantilla y campos a la izquierda, la tarjeta en el centro, el campo elegido a la derecha</figcaption></figure>
+<h2 id="el-editor">El editor</h2>
+<ul>
+<li><strong>Plantilla</strong> — puede tener varias (una para HF, otra para una activaci&#243;n…). <strong>Guardar</strong>, <strong>Deshacer</strong> (vuelve a lo guardado), <strong>Nueva</strong>, <strong>Duplicar</strong>, <strong>Borrar</strong> y <strong>Usar por omisi&#243;n</strong>: la de omisi&#243;n es la que sale al abrir el env&#237;o. Se guardan en la carpeta de datos del programa, en <code>qsl\disenos\</code> (un JSON por plantilla y su imagen de fondo).</li>
+<li><strong>Tama&#241;o</strong> — 140 &#215; 90 mm, el internacional de QSL. <strong>Vertical</strong> la pone en 90 &#215; 140 y recoloca los campos en proporci&#243;n.</li>
+<li><strong>Fondo</strong> — <strong>Elegir imagen…</strong> (JPG, PNG, BMP, GIF o TIFF: su foto, su logo). La imagen <strong>se copia</strong> a la carpeta de la plantilla, as&#237; que borrar o mover la original no deja la tarjeta sin fondo. <strong>Ajuste</strong>: <em>Rellenar</em> (cubre la tarjeta y recorta lo que sobre), <em>Encajar</em> (se ve entera; lo que falte queda del color de fondo) o <em>Estirar</em>. <strong>Color</strong> es el color liso de debajo.</li>
+<li><strong>Campos</strong> — cada texto de la tarjeta: mi indicativo (grande), mi nombre y QTH, mi localizador, &#171;To Radio&#187;, fecha, hora UTC, banda/frecuencia, modo, RST, &#171;PSE/TNX QSL&#187; y &#171;73&#187;. <strong>Se mueven arrastr&#225;ndolos sobre la tarjeta</strong>; para afinar, X/Y en mil&#237;metros. La casilla de la lista los enciende o apaga. <strong>A&#241;adir texto</strong> pone uno libre.</li>
+<li><strong>El campo elegido</strong> (a la derecha): texto, letra (cualquier tipograf&#237;a instalada), tama&#241;o en puntos, negrita, cursiva, color, <strong>recuadro detr&#225;s</strong> (por ejemplo <code>#E6FFFFFF</code>, blanco casi opaco, para que se lea sobre una foto) y alineaci&#243;n respecto a X (izquierda, centro, derecha).</li>
+<li><strong>Vista previa con</strong> — un contacto de verdad del cuaderno (los &#250;ltimos 40), o ninguno para ver solo sus datos.</li>
+</ul>
+<p>La tarjeta del centro <strong>es la imagen de verdad</strong>: la misma rutina la dibuja para el correo (200 ppp) y para el PDF (300 ppp). Lo que se ve es lo que recibe el corresponsal.</p>
+<p>En una pantalla peque&#241;a (1366 &#215; 768) cabe igual: las columnas laterales se desplazan.</p>
+<h3 id="variables">Variables</h3>
+<p>Los campos, el asunto y el texto del correo admiten variables entre llaves:</p>
+<div class="tabla"><table>
+<thead><tr><th>Variable</th><th>Qu&#233; pone</th></tr></thead>
+<tbody>
+<tr><td><code>{miindicativo}</code> <code>{milocalizador}</code> <code>{minombre}</code> <code>{miqth}</code></td><td>Mi estaci&#243;n (del contacto; si no lo trae, del perfil activo)</td></tr>
+<tr><td><code>{miequipo}</code> <code>{miantena}</code> <code>{micq}</code> <code>{miitu}</code></td><td>M&#225;s datos de mi estaci&#243;n</td></tr>
+<tr><td><code>{indicativo}</code> <code>{nombre}</code></td><td>El corresponsal</td></tr>
+<tr><td><code>{fecha}</code> <code>{hora}</code></td><td>Fecha AAAA-MM-DD y hora HH:MM, en UTC</td></tr>
+<tr><td><code>{banda}</code> <code>{frecuencia}</code> <code>{modo}</code></td><td>Banda, MHz y modo</td></tr>
+<tr><td><code>{rst}</code> <code>{rstrecibido}</code> <code>{potencia}</code> <code>{satelite}</code></td><td>Informes, mi potencia, sat&#233;lite</td></tr>
+<tr><td><code>{pse}</code></td><td>&#171;PSE QSL&#187;, o &#171;TNX QSL&#187; si ya lleg&#243; la suya</td></tr>
+<tr><td><code>{mensaje}</code></td><td>El mensaje QSL del contacto</td></tr>
+<tr><td><code>{contactos}</code></td><td>Solo en el correo: la lista de todos los QSO que van en &#233;l</td></tr>
+</tbody></table></div>
+<p>Una variable mal escrita se queda tal cual, con sus llaves, para que se vea en la vista previa.</p>
+<h2 id="generar-la-tarjeta">Generar la tarjeta</h2>
+<ul>
+<li><strong>Guardar imagen…</strong> — la del contacto de la vista previa, en JPG (pesa poco) o PNG.</li>
+<li><strong>PDF…</strong> — para imprimir. Desde la ventana de env&#237;o, <strong>PDF…</strong> mete todas las tarjetas elegidas en hojas A4 con marcas de corte (3 apaisadas o 2 verticales por hoja). Imprimir al <strong>100 %</strong>.</li>
+</ul>
+<h2 id="enviar-por-correo">Enviar por correo</h2>
+<p>Se abre la ventana <strong>Ver/enviar QSL</strong> desde:</p>
+<ul>
+<li>el <strong>Cuaderno</strong>: elija uno o varios contactos (Ctrl/May&#250;s + clic), <strong>clic derecho → &#171;Ver/enviar QSL…&#187;</strong> o el bot&#243;n <strong>Ver/enviar QSL…</strong> de arriba;</li>
+<li>la <strong>ficha del contacto</strong> (F2 en el Cuaderno): bot&#243;n <strong>Ver/enviar QSL…</strong> junto a &#171;Guardar cambios&#187;;</li>
+<li>el editor: <strong>Enviar por correo…</strong> manda la del contacto de la vista previa.</li>
+</ul>
+<p>En la ventana sale <strong>una fila por estaci&#243;n</strong>: si hay varios QSO con la misma, van <strong>en un solo correo con una tarjeta por contacto</strong>. La direcci&#243;n se busca sola:</p>
+<ol>
+<li>la apuntada en el contacto (campo correo);</li>
+<li>si no hay, la de su <strong>ficha de QRZ.com</strong> (o HamQTH), si la publica;</li>
+<li>si no la publica, la fila queda desmarcada con el aviso &#171;No publica correo&#187;: <strong>escriba la direcci&#243;n</strong> a mano en la columna <em>Correo</em> y m&#225;rquela, o <strong>se saltar&#225;</strong>.</li>
+</ol>
+<p>El asunto y el texto se pueden retocar para este env&#237;o (los de siempre se cambian en Configuraci&#243;n › Correo de las QSL). <strong>Enviar por correo</strong> manda las marcadas una a una; la columna <em>Estado</em> dice c&#243;mo ha ido cada una. Si falla el <strong>destinatario</strong> (buz&#243;n inexistente), se apunta y se sigue con la siguiente; si falla el <strong>servidor</strong> (contrase&#241;a, red), se para en vez de repetir el mismo error con todas. <strong>Parar</strong> detiene el lote tras el correo en curso.</p>
+<p>Al salir cada correo, sus contactos quedan con <strong>QSL enviada</strong> (<code>QSL_SENT=Y</code>), <strong>fecha de env&#237;o</strong> (<code>QSL_SDATE</code>) y <strong>v&#237;a electr&#243;nica</strong> (<code>QSL_SENT_VIA=E</code>). La columna QSL del Cuaderno lo refleja en la pastilla <em>Papel</em> (&#171;enviada&#187;) y el ADIF exportado lo lleva. Si el contacto estaba abierto en la ficha (F2), la ficha recibe la misma marca, as&#237; que &#171;Guardar cambios&#187; no la borra.</p>
+<h2 id="lo-que-hay-que-configurar-una-vez">Lo que hay que configurar una vez</h2>
+<p><strong>Configuraci&#243;n → Correo de las QSL</strong> (ver <a href="09-ajustes.html">Configuraci&#243;n</a>):</p>
+<ul>
+<li><strong>Servidor</strong>, <strong>puerto</strong> y <strong>cifrado</strong>: <em>StartTls</em> en el 587 (lo normal), <em>SslDirecto</em> en el 465, o <em>Ninguna</em> solo para un servidor de su red de casa.<ul>
+<li>Gmail: <code>smtp.gmail.com</code>, 587, StartTls. Hace falta una <strong>contrase&#241;a de aplicaci&#243;n</strong> (Cuenta de Google → Seguridad → Verificaci&#243;n en dos pasos → Contrase&#241;as de aplicaciones).</li>
+<li>Outlook/Hotmail: <code>smtp-mail.outlook.com</code>, 587, StartTls.</li>
+</ul>
+</li>
+<li><strong>Usuario</strong> y <strong>contrase&#241;a</strong> (se guarda <strong>cifrada</strong> con &#171;Guardar&#187;; no se vuelve a ense&#241;ar ni se escribe en ning&#250;n fichero ni registro).</li>
+<li><strong>Remitente</strong> (su direcci&#243;n) y <strong>nombre del remitente</strong> (p. ej. &#171;EA1ABC Ana&#187;).</li>
+<li><strong>Asunto</strong> y <strong>texto</strong> con variables, y el formato de la tarjeta adjunta (JPG o PNG).</li>
+<li><strong>Probar la conexi&#243;n</strong>: conecta y se identifica <strong>sin mandar ning&#250;n correo</strong>.</li>
+</ul>
+<p>La contrase&#241;a nunca viaja sin cifrar: con <em>Ninguna</em> y un servidor que no sea el propio equipo, el programa se niega a mandarla.</p>
+<h2 id="eqsl">eQSL</h2>
+<p>eQSL <strong>no admite una tarjeta distinta por contacto</strong>: pinta sus tarjetas con <strong>el dise&#241;o subido a la cuenta</strong> y los datos de cada QSO encima. Subir los contactos a eQSL ya lo hace el programa (Configuraci&#243;n → Subidas y QRZ).</p>
+<p>eQSL <strong>no tiene API para subir el dise&#241;o</strong>: solo se puede desde su web, con la sesi&#243;n iniciada. Lo que ofrece el editor:</p>
+<ul>
+<li><strong>Dise&#241;o para eQSL…</strong> — guarda su tarjeta en JPG <strong>sin los campos del contacto</strong> (los marcados como <em>Dato del contacto</em>), que es lo que eQSL espera como fondo.</li>
+<li><strong>Abrir eQSL</strong> — abre la web; s&#250;bala desde su perfil, en el apartado del dise&#241;o de la tarjeta (eQSL puede pedir una aportaci&#243;n para usar un dise&#241;o propio; revise sus condiciones).</li>
+</ul>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

@@ -67,12 +67,18 @@ Puntos que no hay que romper si se toca:
   tocar la carpeta de datos del operador. Si en el futuro hace falta tocar
   algo de `%AppData%` desde el instalador, pensarlo dos veces y, si hace
   falta, hacerlo con un `[Code]` que pregunte antes, nunca por omisión.
-- Icono: `src\Nodisla.Cuaderno.Ui\Recursos\CuadernoNodisla.ico`. Se generó a
-  mano (no había ninguno en el proyecto) porque hacía falta uno para el icono
-  de la aplicación (`ApplicationIcon` en el `.csproj`) y para el acceso
-  directo del menú inicio. Si se quiere un icono definitivo con más cuidado
-  de diseño, basta con sustituir ese fichero por otro `.ico` (recomendado con
-  tamaños 16/32/48/256) sin tocar nada más.
+- Icono: `src\Nodisla.Cuaderno.Ui\Recursos\CuadernoNodisla.ico`, con el estilo
+  de la casa NODISLA (la misma familia que SDR Nodisla TETRA «T» y DIGITAL
+  «D»: cuadrado oscuro con filo cian, libro abierto con ondas, punto verde y la
+  chapa con la «C»). Lleva 16, 24, 32, 48, 64 y 256. NO se edita a mano: sale
+  del dibujo vectorial `Recursos\Marca.xaml` con
+  `powershell -NoProfile -ExecutionPolicy Bypass -File herramientas\Icono\GenerarIcono.ps1`.
+  Se usa en el ejecutable (`ApplicationIcon`), en la barra de título de todas
+  las ventanas (va también como `Resource`), en la cabecera de la ventana
+  principal (el mismo dibujo, en vectorial), en el asistente del instalador
+  (`SetupIconFile`), en «Aplicaciones instaladas» (`UninstallDisplayIcon`, que
+  apunta al `.ico` copiado en `{app}`) y en los accesos directos del menú
+  inicio y del escritorio (este último, opcional, casilla apagada de fábrica).
 
 ## Verificación hecha antes de entregar esta primera versión (2026-09-26)
 
@@ -107,3 +113,56 @@ detectarlo y se confirmó que `cuaderno.sqlite` no cambió ni de tamaño ni de
 fecha. Para volver a probar el arranque del `.exe` sin este riesgo, la única
 forma limpia es con un usuario de Windows distinto (perfil separado de
 verdad), no con trucos de variables de entorno.
+
+## Sacar una versión y que el programa la avise
+
+Desde la 0.1.0 el programa busca versiones nuevas en
+`https://api.github.com/repos/EA8DLF/CuadernoNodisla/releases/latest` (anónimo, como mucho
+una vez al día, en segundo plano) y, si hay una más nueva, enseña una barra con las notas y
+el botón «Descargar e instalar». Ese botón **solo instala si la release trae dos adjuntos**:
+
+| Adjunto | Contenido |
+|---|---|
+| `CuadernoNodisla-Instalador-<x.y.z.0>.exe` | el instalador de Inno Setup |
+| `CuadernoNodisla-Instalador-<x.y.z.0>.exe.sha256` | `suma  nombre`, formato `sha256sum` |
+
+Si falta el `.sha256` o la suma no casa, el programa borra lo descargado y no instala nada.
+Mientras el repositorio sea privado la API responde 404 y el programa se calla (solo deja
+una línea `Debug` en el registro).
+
+### Pasos
+
+1. Subir `<Version>` en `Directory.Build.props` (p. ej. `0.2.0`). La etiqueta será `v0.2.0`;
+   el programa compara versiones semánticas, así que `v0.10.0` es mayor que `v0.9.0` y una
+   `0.2.0-beta.1` cuenta como previa (y `releases/latest` no la ofrece).
+2. Escribir las notas en un Markdown (lo que verá el operador en la barra del aviso).
+3. Generar sin subir, para revisar:
+
+   ```powershell
+   .\herramientas\publicacion\Publicar-Version.ps1
+   ```
+
+   Deja en `instalador\salida\` el `.exe` y su `.exe.sha256`.
+4. Publicar (necesita `gh auth login` hecho en este PC; **la ficha de GitHub nunca va dentro
+   del programa**):
+
+   ```powershell
+   .\herramientas\publicacion\Publicar-Version.ps1 -SinCompilar -Subir -Notas .\notas-0.2.0.md
+   ```
+
+   Crea la release `v0.2.0` con los dos adjuntos, o los reemplaza si ya existía.
+5. Comprobar en `https://github.com/EA8DLF/CuadernoNodisla/releases/latest` que están los dos
+   ficheros, y en un programa con la versión anterior: Ajustes › Actualizaciones › «Buscar
+   actualizaciones».
+
+El instalador se lanza con `/SP- /CLOSEAPPLICATIONS` después de cerrar la ventana principal
+de forma ordenada; `%AppData%\CuadernoNodisla\` sigue sin tocarse.
+
+## Incidencias
+
+`.github/ISSUE_TEMPLATE/` trae `fallo.yml`, `mejora.yml` y `config.yml`. En `config.yml`,
+`blank_issues_enabled` **tiene que quedarse en `true`**: «Reportar un fallo» abre
+`issues/new?title=…&body=…` con el informe relleno, y con las incidencias en blanco
+desactivadas GitHub manda al selector de plantillas y se pierde lo prellenado. Si el informe
+pasa de 7.500 caracteres de URL, el cuerpo va al portapapeles y el enlace lleva un aviso para
+pegarlo.

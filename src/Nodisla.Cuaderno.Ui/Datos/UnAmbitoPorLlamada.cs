@@ -47,6 +47,7 @@ public static class UnAmbitoPorLlamada
         servicios.AddScoped<Cuaderno.Datos.Repositorios.RepositorioEstacion>();
         servicios.AddScoped<Cuaderno.Datos.Informes.ConsultasDeInforme>();
         servicios.AddScoped<Cuaderno.Datos.Repositorios.RepositorioRondas>();
+        servicios.AddScoped<Cuaderno.Datos.Repositorios.RepositorioDiplomasEmitidos>();
 
         servicios.AddSingleton<IRepositorioQso>(
             p => new RepositorioQsoConAmbito(p.GetRequiredService<IServiceScopeFactory>()));
@@ -56,6 +57,8 @@ public static class UnAmbitoPorLlamada
             p => new ConsultasDeInformeConAmbito(p.GetRequiredService<IServiceScopeFactory>()));
         servicios.AddSingleton<IRepositorioRondas>(
             p => new RepositorioRondasConAmbito(p.GetRequiredService<IServiceScopeFactory>()));
+        servicios.AddSingleton<IRepositorioDiplomasEmitidos>(
+            p => new RepositorioDiplomasEmitidosConAmbito(p.GetRequiredService<IServiceScopeFactory>()));
 
         return servicios;
     }
@@ -248,5 +251,28 @@ public static class UnAmbitoPorLlamada
             EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioRondas>(
                 fabrica,
                 r => r.EliminarParticipanteAsync(participanteId, ct));
+    }
+
+    private sealed class RepositorioDiplomasEmitidosConAmbito(IServiceScopeFactory fabrica) : IRepositorioDiplomasEmitidos
+    {
+        /// <inheritdoc />
+        public Task<int> SiguienteNumeroAsync(string serie, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioDiplomasEmitidos, int>(fabrica, r => r.SiguienteNumeroAsync(serie, ct));
+
+        /// <inheritdoc />
+        public Task<DiplomaEmitido> EmitirAsync(DiplomaEmitido diploma, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioDiplomasEmitidos, DiplomaEmitido>(fabrica, r => r.EmitirAsync(diploma, ct));
+
+        /// <inheritdoc />
+        public Task<IReadOnlyList<DiplomaEmitido>> ListarAsync(int limite = 500, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioDiplomasEmitidos, IReadOnlyList<DiplomaEmitido>>(fabrica, r => r.ListarAsync(limite, ct));
+
+        /// <inheritdoc />
+        public Task<DiplomaEmitido?> ObtenerAsync(long id, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioDiplomasEmitidos, DiplomaEmitido?>(fabrica, r => r.ObtenerAsync(id, ct));
+
+        /// <inheritdoc />
+        public Task MarcarEnviadoAsync(long id, string correo, DateTimeOffset cuando, CancellationToken ct = default) =>
+            EnUnAmbitoAsync<Cuaderno.Datos.Repositorios.RepositorioDiplomasEmitidos>(fabrica, r => r.MarcarEnviadoAsync(id, correo, cuando, ct));
     }
 }

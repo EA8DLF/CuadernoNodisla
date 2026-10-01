@@ -610,7 +610,7 @@
                               FontWeight="Bold"
                               VerticalAlignment="Center"
                               Margin="0,0,12,0"
-                              ToolTip="Empieza cerrado en cada arranque, salvo que se pida lo contrario en Ajustes › Audio y modos digitales. Ábralo sólo con la antena o la carga artificial puestas." />
+                              ToolTip="Empieza cerrado en cada arranque, salvo que se pida lo contrario en Configuración › Audio y digitales. Ábralo sólo con la antena o la carga artificial puestas." />
                     <TextBlock Text="{Binding AvisoDeLaTransmision}"
                                ToolTip="{Binding AvisoDeLaTransmision}"
                                Style="{StaticResource TextoTenueEstilo}"

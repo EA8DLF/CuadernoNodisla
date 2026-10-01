@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fon&#237;a por el PC · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html" class="actual" aria-current="page">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="fon&#237;a-por-el-pc">Fon&#237;a por el PC</h1>
+<p>El panel <strong>Fon&#237;a</strong> de <strong>Operar › Cabina</strong> permite trabajar SSB, AM y FM con el ordenador: la radio se oye por los <strong>altavoces del PC</strong> y se habla por el <strong>micr&#243;fono del PC</strong>, con un bot&#243;n de PTT en pantalla.</p>
+<figure><a href="capturas/operar.png"><img src="capturas/operar.png" alt="Operar › Cabina: el panel de fon&#237;a, en columna a la derecha del frontal" loading="lazy"></a><figcaption>Operar › Cabina: el panel de fon&#237;a, en columna a la derecha del frontal</figcaption></figure>
+<h2 id="d&#243;nde-est&#225;">D&#243;nde est&#225;</h2>
+<ul>
+<li>Con el frontal del equipo a la vista, el panel va <strong>en columna a la derecha del frontal</strong>, en el hueco que queda libre: no quita alto al contacto nuevo ni al cluster.</li>
+<li>Con el frontal plegado (&#171;Ocultar equipo&#187;), el panel pasa a una <strong>franja</strong> bajo la barra del equipo.</li>
+</ul>
+<figure><a href="capturas/fonia-plegado-dispositivos.png"><img src="capturas/fonia-plegado-dispositivos.png" alt="Frontal plegado: la fon&#237;a en una franja bajo la barra del equipo" loading="lazy"></a><figcaption>Frontal plegado: la fon&#237;a en una franja bajo la barra del equipo</figcaption></figure>
+<h2 id="escuchar-la-radio-por-el-pc">Escuchar la radio por el PC</h2>
+<p>Pulse <strong>&#171;Escuchar por el PC&#187;</strong>. El audio que sale del codec USB del FT-710 (&#171;Micr&#243;fono (USB Audio Device)&#187;) se lleva a los altavoces o auriculares del PC, con poco retraso (del orden de una d&#233;cima de segundo).</p>
+<ul>
+<li>El control deslizante de <strong>Escucha</strong> es el volumen (de 0 a 200 %) y la barra verde, lo que llega del equipo.</li>
+<li><strong>Silencio</strong> calla los altavoces sin cerrar la escucha.</li>
+<li>El m&#243;dem digital puede estar escuchando a la vez: el audio del equipo se comparte, no se lo queda nadie.</li>
+<li>Si la radio se apaga o se desenchufa el USB, el panel lo dice (&#171;No llega audio del equipo…&#187; o &#171;La escucha por el PC se ha cortado&#187;) y la escucha se cierra sola; vuelva a pulsar cuando el equipo est&#233; otra vez encendido.</li>
+</ul>
+<h2 id="hablar-el-ptt-de-fon&#237;a">Hablar: el PTT de fon&#237;a</h2>
+<figure><a href="capturas/fonia-plegado-aire.png"><img src="capturas/fonia-plegado-aire.png" alt="En el aire: el bot&#243;n y el cartel en rojo, con el tiempo que se lleva y el m&#225;ximo" loading="lazy"></a><figcaption>En el aire: el bot&#243;n y el cartel en rojo, con el tiempo que se lleva y el m&#225;ximo</figcaption></figure>
+<ul>
+<li><strong>Mantener pulsado</strong> (por omisi&#243;n): se transmite mientras el bot&#243;n est&#225; pulsado y se vuelve a recepci&#243;n al soltarlo.</li>
+<li><strong>Conmutado</strong> (en Configuraci&#243;n › Fon&#237;a): un clic empieza y otro clic acaba.</li>
+<li><strong>Tecla del PTT</strong> (en Configuraci&#243;n › Fon&#237;a, por omisi&#243;n ninguna): F10, F11, F12, Pausa, Bloq Despl, Insert o Ctrl derecho. Solo funciona con la ventana del programa activa y <strong>nunca</strong> con el cursor en un campo de texto, para que escribir un indicativo no le saque al aire.</li>
+</ul>
+<p>Mientras transmite, el cartel dice <strong>EN EL AIRE</strong> con el tiempo que lleva y el m&#225;ximo, la barra <strong>Micro</strong> ense&#241;a su nivel (si pone <strong>SATURA</strong>, baje la ganancia) y los altavoces del PC se callan solos para que el micr&#243;fono no los oiga.</p>
+<h3 id="cu&#225;ndo-se-suelta-solo">Cu&#225;ndo se suelta solo</h3>
+<p>El PTT de fon&#237;a va siempre por el mismo vigilante que el de los modos digitales. Se suelta:</p>
+<ul>
+<li>al soltar el bot&#243;n o la tecla (o al segundo clic, en conmutado);</li>
+<li>con <strong>SOLTAR PTT</strong> de la barra del equipo;</li>
+<li>al llegar al <strong>tiempo m&#225;ximo</strong> de la pasada (3 minutos por omisi&#243;n; se cambia en Configuraci&#243;n › Fon&#237;a, de 10 a 600 segundos; manda el menor entre este y el del vigilante);</li>
+<li>si el programa <strong>pierde el foco</strong> (otra ventana pasa delante) o se cambia de p&#225;gina;</li>
+<li>si el audio del micr&#243;fono o del equipo se queda parado m&#225;s de dos segundos;</li>
+<li>si el equipo pasa a un modo de datos, se pierde la comunicaci&#243;n con &#233;l o el programa se cierra.</li>
+</ul>
+<h3 id="cu&#225;ndo-no-se-puede">Cu&#225;ndo no se puede</h3>
+<p>El bot&#243;n se apaga, y dice por qu&#233;, cuando:</p>
+<ul>
+<li>el equipo no est&#225; conectado;</li>
+<li>el equipo est&#225; en <strong>DATA, CW, RTTY</strong> u otro modo que no es de voz (para no mezclarse con el m&#243;dem);</li>
+<li>no est&#225;n elegidos el micr&#243;fono del PC y la salida hacia el equipo;</li>
+<li>ya hay otra transmisi&#243;n en el aire (por ejemplo, del m&#243;dem).</li>
+</ul>
+<h2 id="dispositivos">Dispositivos</h2>
+<p>&#171;Dispositivos…&#187; abre los cuatro selectores (tambi&#233;n est&#225;n en <strong>Configuraci&#243;n › Fon&#237;a</strong>):</p>
+<div class="tabla"><table>
+<thead><tr><th>Selector</th><th>Qu&#233; poner</th></tr></thead>
+<tbody>
+<tr><td>Micr&#243;fono del PC</td><td>el micro o los auriculares con micro del PC</td></tr>
+<tr><td>Altavoces del PC</td><td>los altavoces o auriculares del PC</td></tr>
+<tr><td>Entrada del equipo</td><td>&#171;Micr&#243;fono (USB Audio Device)&#187;, marcado &#171;del equipo&#187;</td></tr>
+<tr><td>Salida al equipo</td><td>&#171;Altavoces (USB Audio Device)&#187;, marcado &#171;del equipo&#187;</td></tr>
+</tbody></table></div>
+<p>Los del equipo se reconocen solos. Si algo est&#225; cruzado —el micro es la entrada del equipo, o los altavoces son la salida al equipo— el panel avisa en naranja.</p>
+<figure><a href="capturas/configuracion-fonia.png"><img src="capturas/configuracion-fonia.png" alt="Configuraci&#243;n de la fon&#237;a" loading="lazy"></a><figcaption>Configuraci&#243;n de la fon&#237;a</figcaption></figure>
+<h2 id="en-la-radio-la-fuente-de-modulaci&#243;n">En la radio: la fuente de modulaci&#243;n</h2>
+<p>Para que la voz del PC salga al aire, el FT-710 tiene que tomar el audio de <strong>USB</strong> y no del micr&#243;fono de la radio en los modos de voz. M&#237;relo en el men&#250; de la radio, en la parte de <strong>MODE SSB</strong> (y en AM/FM si los va a usar): la fuente de modulaci&#243;n tiene que estar en <strong>USB</strong> (&#171;REAR&#187;/&#171;USB&#187; seg&#250;n la pantalla). El programa <strong>no cambia men&#250;s de la radio</strong>.</p>
+<p>El programa <strong>lee</strong> (sin escribir nada) el men&#250; EX010113 al conectar en USB o LSB, o al pulsar &#171;Comprobar la radio&#187;, y avisa si no vale &#171;1&#187;. Ese &#237;ndice sale del mapa le&#237;do del propio equipo y <strong>est&#225; sin confirmar con el manual</strong>: si el aviso no cuadra con lo que ense&#241;a la radio, corrija el &#237;ndice o el valor en Configuraci&#243;n › Fon&#237;a, o desmarque la comprobaci&#243;n.</p>
+<p>Ajuste tambi&#233;n en la radio el nivel de entrada USB (USB MOD GAIN o equivalente) para que la ALC apenas se mueva con la ganancia del micro a 0 dB.</p>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

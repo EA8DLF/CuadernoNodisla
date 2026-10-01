@@ -38,11 +38,19 @@ Autor: **EA8DLF** · Proyecto NODISLA · Contacto: nodisla@nodisla.org · Licenc
   elevación en vivo y seguimiento Doppler; **propagación** por banda.
 - **QSL**: editor de tarjetas, envío por correo, etiquetas Avery en PDF, eQSL, LoTW, QRZ, ClubLog
   y HamQTH. Las credenciales se guardan cifradas con la protección de datos de Windows.
+- **Diseñador de diplomas**: plantillas propias para emitir diplomas a otras estaciones (con
+  numeración, firma y envío por correo) o certificados de los diplomas conseguidos.
 - **Ronda de control** para redes y net control.
+- **Navegación por grupos** (Operar, Libro, QSL, Diplomas) y **Configuración por apartados**
+  (cuentas, subidas, equipo, audio, fonía, cluster, correo, libro y actualizaciones).
+- **Ayuda integrada** (F1) con capturas y buscador, y la misma ayuda en HTML en `docs/web-ayuda/`.
+- **Avisos de versión nueva** (consulta la página pública de versiones de GitHub, sin datos del
+  usuario) y **«Reportar un fallo»**, que prepara la incidencia, quita contraseñas, correos,
+  localizadores y rutas personales, y la abre en GitHub para que el usuario la revise y la envíe.
 
 | | |
 |---|---|
-| ![Digital](docs/capturas/ayuda/digital.png) | ![Cuaderno](docs/capturas/ayuda/cuaderno.png) |
+| ![Digital](docs/capturas/ayuda/digital.png) | ![Cuaderno](docs/capturas/ayuda/contactos.png) |
 | ![ICOM IC-7300](docs/capturas/frontal-ic7300.png) | ![Tarjeta QSL](docs/capturas/qsl-pestana-1366.png) |
 
 La ayuda completa, con capturas, está en [`docs/ayuda/`](docs/ayuda/README.md). Los modelos de
@@ -75,6 +83,11 @@ Para verlo sin radio ni red, con datos inventados:
 $env:CUADERNO_SIMULADO = "1"
 dotnet run --project src\Nodisla.Cuaderno.Ui
 ```
+
+## Publicar una versión
+
+`herramientas\publicacion\Publicar-Version.ps1` compila, genera el instalador y prepara la
+publicación en GitHub. Las plantillas de incidencias están en `.github/ISSUE_TEMPLATE/`.
 
 ## Instalar
 

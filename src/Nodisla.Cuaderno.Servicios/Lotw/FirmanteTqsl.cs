@@ -105,7 +105,7 @@ public sealed class FirmanteTqsl : IFirmanteTqsl
             ?? throw new TqslNoInstaladoException(
                 "No se encontró TQSL (tqsl.exe) en este equipo. LoTW exige firmar los contactos "
                 + "con el certificado de la ARRL, así que hay que instalar Trusted QSL desde "
-                + "https://lotw.arrl.org/lotw-help/installation/ o indicar su ruta en los ajustes.");
+                + "https://lotw.arrl.org/lotw-help/installation/ o indicar su ruta en la tarjeta de LoTW (Configuración › Cuentas y servicios).");
 
         if (string.IsNullOrWhiteSpace(_opciones.UbicacionDeEstacion))
         {

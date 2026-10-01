@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sat&#233;lites · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html" class="actual" aria-current="page">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="sat&#233;lites">Sat&#233;lites</h1>
+<p><strong>Operar › Sat&#233;lites</strong> (<code>Ctrl</code> <code>7</code>) tiene dos columnas: a la izquierda el cat&#225;logo con el pr&#243;ximo paso de cada sat&#233;lite, a la derecha el sat&#233;lite elegido con sus datos en vivo y el seguimiento Doppler.</p>
+<figure><a href="capturas/satelites.png"><img src="capturas/satelites.png" alt="Operar › Sat&#233;lites: el cat&#225;logo a la izquierda y, a la derecha, el sat&#233;lite elegido con su transpondedor, los datos en vivo y el Doppler (aqu&#237; a&#250;n sin elementos orbitales descargados)" loading="lazy"></a><figcaption>Operar › Sat&#233;lites: el cat&#225;logo a la izquierda y, a la derecha, el sat&#233;lite elegido con su transpondedor, los datos en vivo y el Doppler (aqu&#237; a&#250;n sin elementos orbitales descargados)</figcaption></figure>
+<h2 id="el-cat&#225;logo-y-el-pr&#243;ximo-paso">El cat&#225;logo y el pr&#243;ximo paso</h2>
+<p>La lista de la izquierda trae los sat&#233;lites de aficionado en servicio — activos e intermitentes —, cada uno con su pr&#243;ximo paso por encima del horizonte. El texto del paso cambia de color seg&#250;n lo que diga:</p>
+<ul>
+<li><strong>Gris apagado</strong> — todav&#237;a no hay elementos orbitales cargados para ese sat&#233;lite; no se puede calcular nada hasta pulsar &#171;Actualizar elementos orbitales…&#187;.</li>
+<li><strong>&#193;mbar</strong> — el paso es <strong>rasante</strong>: sube poco antes de volver a ponerse, as&#237; que cualquier obst&#225;culo (un edificio, un &#225;rbol) puede tapar la ventana de trabajo casi entera.</li>
+<li><strong>Rojo</strong> — los elementos orbitales de ese sat&#233;lite son <strong>viejos</strong>: el c&#225;lculo del paso ya no es de fiar y conviene actualizarlos antes de confiar en la hora que da.</li>
+</ul>
+<p>Ning&#250;n dato se descarga solo: <strong>&#171;Actualizar elementos orbitales…&#187;</strong> es la &#250;nica puerta a la red de esta pantalla, y hay que pulsarla a prop&#243;sito. <strong>&#171;Actualizar pasos&#187;</strong> solo recalcula con lo que ya hay descargado, sin salir a internet.</p>
+<h2 id="el-sat&#233;lite-elegido-en-vivo">El sat&#233;lite elegido: en vivo</h2>
+<p>Al elegir un sat&#233;lite de la lista aparece, a la derecha, su <strong>transpondedor</strong> (repetidor de FM, lineal, digital o baliza, seg&#250;n lo que tenga) y tres datos que se actualizan solos mientras la p&#225;gina est&#225; abierta: <strong>azimut</strong>, <strong>elevaci&#243;n</strong> y <strong>distancia</strong>. Si el sat&#233;lite est&#225; por debajo del horizonte en ese momento, lo dice con un aviso en vez de ense&#241;ar cifras que no significan nada.</p>
+<h2 id="doppler-seguir-y-soltar">Doppler: seguir y soltar</h2>
+<p>Con el equipo conectado y dando sus dos VFO, se puede elegir cu&#225;l sigue la <strong>subida</strong> y cu&#225;l la <strong>bajada</strong>, y pulsar <strong>&#171;Seguir&#187;</strong>: a partir de ah&#237; el cuaderno corrige la frecuencia de cada VFO en tiempo real para compensar el Doppler del paso, sin que haga falta perseguirlo a mano. <strong>&#171;Soltar&#187;</strong> para de tocar el equipo en cualquier momento. Mientras se sigue, se ven los dos <strong>desplazamientos</strong> aplicados, en hercios, y un aviso si el equipo no informa de sus dos VFO — en ese caso no hay manera de seguir el Doppler y la pantalla lo dice en vez de fallar en silencio.</p>
+<p>El seguimiento <strong>solo mueve frecuencia</strong>: nunca toca el PTT ni el modo del equipo por su cuenta.</p>
+<h2 id="el-subpunto-en-el-mapa">El subpunto en el mapa</h2>
+<p>Mientras hay un sat&#233;lite elegido, su subpunto —el lugar de la superficie terrestre sobre el que vuela en ese instante— se dibuja como una marca m&#225;s en <strong>Libro › Mapa</strong>, junto a los contactos y los spots del cluster.</p>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

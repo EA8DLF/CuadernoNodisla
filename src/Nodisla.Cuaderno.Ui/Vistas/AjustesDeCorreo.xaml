@@ -81,7 +81,7 @@
         <TextBlock Text="Remitente (su dirección)" Style="{StaticResource Rotulo}" />
         <TextBox Text="{Binding Remitente, UpdateSourceTrigger=LostFocus}" Style="{StaticResource Campo}"
                  AutomationProperties.Name="Dirección del remitente" />
-        <TextBlock Text="Nombre del remitente (p. ej. EA8DLF Luis)" Style="{StaticResource Rotulo}" />
+        <TextBlock Text="Nombre del remitente (p. ej. EA1ABC Ana)" Style="{StaticResource Rotulo}" />
         <TextBox Text="{Binding NombreDelRemitente, UpdateSourceTrigger=LostFocus}" Style="{StaticResource Campo}"
                  AutomationProperties.Name="Nombre del remitente" />
 

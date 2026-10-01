@@ -1,6 +1,6 @@
 # Banco de medida de WSPR
 
-Generado por `BancoWsprPruebas` el 2026-09-27 (UTC). **No editar a mano.**
+Generado por `BancoWsprPruebas` el 2026-09-29 (UTC). **No editar a mano.**
 
 Señal sintética con ruido blanco gaussiano, relación señal-ruido referida a 2500 Hz, como
 en los informes de WSPR. Cada ventana de dos minutos lleva un mensaje al azar entre ocho
@@ -31,18 +31,18 @@ La columna **ms de CPU/ventana** es tiempo de procesador, no de reloj, de una co
 
 | S/R (dB) | Ventanas | Recuperados | % | Falsos | Caminos de Fano | Sin gramática | Sin coincidencia | Coincidencia mínima | Error del informe (dB) | ms de CPU/ventana |
 |---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| -20 | 50 | 50 | 100,0 | 0 | 50 | 0 | 0 | 1,00 | 00 | 492 |
-| -22 | 50 | 50 | 100,0 | 0 | 50 | 0 | 0 | 0,99 | 00 | 475 |
-| -24 | 50 | 50 | 100,0 | 0 | 50 | 0 | 0 | 0,98 | 00 | 473 |
-| -26 | 50 | 50 | 100,0 | 0 | 50 | 0 | 0 | 0,93 | -0,1 | 474 |
-| -28 | 50 | 48 | 96,0 | 0 | 48 | 0 | 0 | 0,84 | +0,1 | 474 |
+| -20 | 50 | 50 | 100,0 | 0 | 50 | 0 | 0 | 1,00 | 00 | 496 |
+| -22 | 50 | 50 | 100,0 | 0 | 50 | 0 | 0 | 0,99 | 00 | 484 |
+| -24 | 50 | 50 | 100,0 | 0 | 50 | 0 | 0 | 0,98 | 00 | 478 |
+| -26 | 50 | 50 | 100,0 | 0 | 50 | 0 | 0 | 0,93 | -0,1 | 477 |
+| -28 | 50 | 48 | 96,0 | 0 | 48 | 0 | 0 | 0,84 | +0,1 | 477 |
 | -30 | 50 | 13 | 26,0 | 0 | 13 | 0 | 0 | 0,82 | +0,6 | 515 |
-| -32 | 50 | 0 | 0,0 | 0 | 0 | 0 | 0 | 0,00 | 00 | 505 |
-| -34 | 50 | 0 | 0,0 | 0 | 0 | 0 | 0 | 0,00 | 00 | 490 |
+| -32 | 50 | 0 | 0,0 | 0 | 0 | 0 | 0 | 0,00 | 00 | 503 |
+| -34 | 50 | 0 | 0,0 | 0 | 0 | 0 | 0 | 0,00 | 00 | 487 |
 
 ### Ruido puro
 
 200 ventanas de ruido blanco sin ninguna señal: **0 mensajes**, 
 0 caminos completos de Fano, 0 sin gramática, 
-0 sin coincidencia, 486 ms de CPU por ventana.
+0 sin coincidencia, 488 ms de CPU por ventana.
 

@@ -58,7 +58,7 @@ Se entrega *as is*, sin garantías. No es una licencia de código abierto al uso
 expresa de la UIT a reclamar derechos sobre quien implemente la Recomendación. Por eso se usa en
 local pero no se publica en este repositorio.
 
-## Qué hay en esta carpeta (una vez descargado y compilado)
+## Qué hay en esta carpeta
 
 ```
 programa/   ITURHFProp.exe, P533.dll y P372.dll compilados aquí

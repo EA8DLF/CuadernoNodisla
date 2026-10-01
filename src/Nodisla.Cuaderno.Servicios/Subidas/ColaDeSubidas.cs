@@ -403,8 +403,8 @@ public sealed class ColaDeSubidas : IDisposable
             {
                 semaforo = pendientes + fallidos > 0 ? SemaforoDeSubida.Ambar : SemaforoDeSubida.Apagado;
                 texto = servicio is null || !SeguroConfigurado(servicio)
-                    ? $"{nombre}: subida automática sin configurar (faltan usuario o credenciales en Ajustes)."
-                    : $"{nombre}: subida automática desactivada en Ajustes.";
+                    ? $"{nombre}: subida automática sin configurar (faltan usuario o credenciales en Configuración › Cuentas y servicios)."
+                    : $"{nombre}: subida automática desactivada en Configuración › Subidas y QRZ.";
                 if (pendientes + fallidos > 0) texto += $" {pendientes + fallidos} contacto(s) en espera.";
             }
             else if (bloqueo is not null)
@@ -417,7 +417,7 @@ public sealed class ColaDeSubidas : IDisposable
                 semaforo = SemaforoDeSubida.Rojo;
                 texto = $"{nombre}: {fallidos} contacto(s) no se han podido subir"
                     + (pendientes > 0 ? $" y {pendientes} esperan turno" : string.Empty)
-                    + $". Último error: {error}. Use «Subir ahora» en Ajustes.";
+                    + $". Último error: {error}. Use «Subir ahora» en Configuración › Subidas y QRZ.";
             }
             else if (pendientes > 0)
             {
@@ -445,7 +445,7 @@ public sealed class ColaDeSubidas : IDisposable
         {
             if (servicio.PuedeSubir) return null;
             if (servicio is ServicioLotw lotw && lotw.MotivoDeNoPoderSubir is { } motivo) return motivo;
-            return $"No se puede subir a {NombreCorto(servicio.Medio)}: faltan el usuario o las credenciales en Ajustes.";
+            return $"No se puede subir a {NombreCorto(servicio.Medio)}: faltan el usuario o las credenciales en Configuración › Cuentas y servicios.";
         }
         catch (Exception ex)
         {

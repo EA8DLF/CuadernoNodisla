@@ -1,6 +1,6 @@
 # Mapa
 
-El mapa enseña dónde están los contactos del cuaderno y los anuncios del cluster, con la propia
+**Libro › Mapa** (`Ctrl` `4`) enseña dónde están los contactos del cuaderno y los anuncios del cluster, con la propia
 estación marcada con un triángulo verde.
 
 ![El mapa con contactos, spots y las dos líneas del paso gris](../capturas/ayuda/mapa.png)

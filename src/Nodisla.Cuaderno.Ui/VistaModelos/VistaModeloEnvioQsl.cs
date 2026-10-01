@@ -184,7 +184,7 @@ public sealed partial class VistaModeloEnvioQsl : ObservableObject
     /// <summary>Resumen del correo saliente, para que se sepa desde donde sale.</summary>
     public string DesdeTexto => Servicio.Ajustes.Smtp.EstaCompleta
         ? $"Sale de {Servicio.Ajustes.Smtp.Remitente} por {Servicio.Ajustes.Smtp.Servidor}:{Servicio.Ajustes.Smtp.Puerto}."
-        : "El correo saliente no está configurado: Ajustes → Correo de las QSL.";
+        : "El correo saliente no está configurado: Configuración › Correo de las QSL.";
 
     /// <summary>Carga los contactos, agrupa por estacion y busca las direcciones.</summary>
     /// <returns>Tarea.</returns>

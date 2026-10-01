@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dise&#241;ador de diplomas y certificados · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html" class="actual" aria-current="page">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="dise&#241;ador-de-diplomas-y-certificados">Dise&#241;ador de diplomas y certificados</h1>
+<p>En <strong>QSL › Diplomas</strong> (<code>Ctrl</code> <code>May&#250;s</code> <code>5</code>) se dise&#241;an e imprimen diplomas con el mismo editor que la <a href="13-tarjeta-qsl.html">tarjeta QSL</a>: plantillas, fondo, textos que se arrastran y una vista previa que es el dibujo de verdad. Sirve para dos cosas:</p>
+<ul>
+<li><strong>Emitir a otra estaci&#243;n</strong> un diploma propio o de club: se escribe su indicativo, el programa busca sus contactos en el cuaderno y lo rellena solo.</li>
+<li><strong>Imprimir el certificado de un diploma conseguido</strong>, sacado del m&#243;dulo de <a href="05-diplomas.html">Diplomas</a>, con la relaci&#243;n de referencias confirmadas.</li>
+</ul>
+<figure><a href="capturas/disenador-diplomas.png"><img src="capturas/disenador-diplomas.png" alt="Dise&#241;ador de diplomas: la plantilla a la izquierda, el diploma en el centro, a qui&#233;n va y el elemento elegido a la derecha" loading="lazy"></a><figcaption>Dise&#241;ador de diplomas: la plantilla a la izquierda, el diploma en el centro, a qui&#233;n va y el elemento elegido a la derecha</figcaption></figure>
+<h2 id="la-plantilla-columna-izquierda">La plantilla (columna izquierda)</h2>
+<ul>
+<li><strong>Plantilla</strong> — <strong>Guardar</strong>, <strong>Deshacer</strong>, <strong>Nueva</strong>, <strong>Duplicar</strong> (copia tambi&#233;n sus im&#225;genes), <strong>Borrar</strong> (una de f&#225;brica vuelve a como ven&#237;a), <strong>Usar por omisi&#243;n</strong>, <strong>Exportar…</strong> e <strong>Importar…</strong>: un solo fichero <code>.diploma-nodisla</code> con la plantilla y sus im&#225;genes, para llevarla a otro equipo o pas&#225;rsela a otro operador. Se guardan en la carpeta de datos, en <code>qsl\diplomas\</code>.</li>
+<li><strong>Papel</strong> — A4 o Carta, apaisado o <strong>Vertical</strong>. Al cambiarlo todo se recoloca en proporci&#243;n.</li>
+<li><strong>Fondo</strong> — una imagen (foto, textura de papel o una orla dibujada) con su ajuste, y el color del papel debajo.</li>
+<li><strong>Orla</strong> — <em>Filete</em>, <em>DobleFilete</em>, <em>Clasico</em> (doble filete con cuadros en las esquinas) o <em>Escuadras</em>, con su color, su color de adorno, margen y grosor.</li>
+<li><strong>Numeraci&#243;n y firma</strong> — la <strong>serie</strong> (cada serie numera por su cuenta; varias plantillas pueden compartirla), el prefijo (<code>EA8-</code>, <code>2026/</code>…), las cifras y el <strong>gestor</strong> que firma.</li>
+<li><strong>Textos</strong> — los mismos campos que la QSL: letra, tama&#241;o, color, alineaci&#243;n y, para p&#225;rrafos, un <strong>ancho m&#225;ximo</strong> a partir del cual el texto pasa a la l&#237;nea siguiente.</li>
+<li><strong>Logo, firma e im&#225;genes</strong> — huecos preparados en las plantillas de f&#225;brica; <strong>Elegir imagen…</strong> pone su logo o su firma escaneada. La imagen se copia a la carpeta de la plantilla.</li>
+<li><strong>Tabla de referencias o contactos</strong> — opcional: posici&#243;n, bloques uno al lado de otro, letra y columnas. Lo que no cabe sale en <strong>hojas de anexo</strong> del PDF con la misma orla.</li>
+</ul>
+<p>Plantillas de f&#225;brica: <em>NODISLA cl&#225;sico</em> (A4 apaisado), <em>NODISLA atl&#225;ntico, con tabla</em>, <em>Certificado sobrio</em> (A4 vertical) y <em>Volc&#225;n</em> (Carta apaisado). Sobrias, en los colores de NODISLA y sin marcas de nadie.</p>
+<h2 id="a-qui&#233;n-va-columna-derecha">A qui&#233;n va (columna derecha)</h2>
+<ul>
+<li><strong>Emitir a otra estaci&#243;n</strong> — escriba el indicativo y pulse <strong>Buscar QSOs</strong>: sale la lista de contactos (desmarque los que no cuenten) y se rellenan el nombre y el correo si el contacto o su ficha los tienen.</li>
+<li><strong>Certificado de un diploma conseguido</strong> — elija el diploma (✓ = llega al objetivo). El certificado lleva su indicativo, el diploma, la variante como categor&#237;a, la entidad que lo concede y la tabla de referencias confirmadas con su primer contacto.</li>
+</ul>
+<figure><a href="capturas/diplomas-certificado.png"><img src="capturas/diplomas-certificado.png" alt="Certificado de un diploma conseguido, en A4 vertical con su relaci&#243;n de referencias" loading="lazy"></a><figcaption>Certificado de un diploma conseguido, en A4 vertical con su relaci&#243;n de referencias</figcaption></figure>
+<h3 id="variables">Variables</h3>
+<div class="tabla"><table>
+<thead><tr><th>Variable</th><th>Qu&#233; pone</th></tr></thead>
+<tbody>
+<tr><td><code>{indicativo}</code> <code>{nombre}</code></td><td>Quien recibe el diploma</td></tr>
+<tr><td><code>{diploma}</code> <code>{categoria}</code></td><td>Nombre del diploma y categor&#237;a o nivel</td></tr>
+<tr><td><code>{numero}</code> <code>{serie}</code></td><td>N&#250;mero correlativo (con prefijo y ceros) y su serie</td></tr>
+<tr><td><code>{fecha}</code> <code>{fechacorta}</code> <code>{fechaiso}</code></td><td>Fecha de emisi&#243;n: &#171;30 de septiembre de 2026&#187;, 30/09/2026, 2026-09-30</td></tr>
+<tr><td><code>{referencias}</code> <code>{qsos}</code></td><td>Cu&#225;ntas referencias y cu&#225;ntos contactos lo justifican</td></tr>
+<tr><td><code>{primerqso}</code> <code>{ultimoqso}</code> <code>{bandas}</code> <code>{modos}</code></td><td>Resumen de los contactos</td></tr>
+<tr><td><code>{entidad}</code> <code>{gestor}</code></td><td>Quien lo concede y quien firma</td></tr>
+<tr><td><code>{miindicativo}</code> <code>{minombre}</code> <code>{miqth}</code> <code>{milocalizador}</code></td><td>Mi estaci&#243;n</td></tr>
+</tbody></table></div>
+<p>En las columnas de la tabla: <code>{referencia}</code> <code>{nombrereferencia}</code> <code>{indicativo}</code> <code>{fecha}</code> <code>{hora}</code> <code>{banda}</code> <code>{modo}</code> <code>{rst}</code> <code>{n}</code>.</p>
+<h2 id="emitir-imprimir-y-enviar">Emitir, imprimir y enviar</h2>
+<ul>
+<li><strong>Emitir y guardar PDF…</strong> — le da el <strong>siguiente n&#250;mero de la serie</strong>, lo apunta en el historial y guarda el PDF (del tama&#241;o del papel, con el texto buscable).</li>
+<li><strong>Emitir y enviar por correo…</strong> — igual, y lo manda en PDF por el <strong>mismo servidor que las QSL</strong> (Configuraci&#243;n › Correo de las QSL), con el asunto y el texto de &#171;Correo del diploma&#187;.</li>
+<li><strong>PDF de prueba…</strong> y <strong>Guardar PNG…</strong> — sin emitir, para revisar: el n&#250;mero que se ve es el que le tocar&#237;a.</li>
+<li><strong>Historial de emitidos</strong> — qui&#233;n, cu&#225;ndo, con qu&#233; n&#250;mero y si se mand&#243;. <strong>Volver a sacar PDF…</strong> lo reimprime con el mismo n&#250;mero y los datos de entonces; <strong>Reenviar</strong> lo vuelve a mandar.</li>
+</ul>
+<p>Un n&#250;mero emitido no se repite nunca: va en el cuaderno, y la base de datos rechaza dos diplomas con el mismo n&#250;mero en la misma serie.</p>
+<figure><a href="capturas/diplomas-diploma-emitido.png"><img src="capturas/diplomas-diploma-emitido.png" alt="Diploma emitido con la plantilla NODISLA cl&#225;sico" loading="lazy"></a><figcaption>Diploma emitido con la plantilla NODISLA cl&#225;sico</figcaption></figure>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

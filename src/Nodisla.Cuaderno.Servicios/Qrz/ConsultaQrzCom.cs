@@ -173,7 +173,7 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
 
             var contrasena = _credenciales.Leer(ClavesDeCredencial.QrzContrasena)
                 ?? throw new InvalidOperationException(
-                    "No hay contraseña de QRZ.com guardada. Configúrela en los ajustes del programa.");
+                    "No hay contraseña de QRZ.com guardada. Configúrela en Configuración › Cuentas y servicios.");
 
             var consulta =
                 $"username={Uri.EscapeDataString(_opciones.Usuario)}"

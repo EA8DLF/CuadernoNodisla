@@ -17,10 +17,13 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
 
-  <!-- El catalogo de diplomas NO se publica (sus referencias no traen licencia para
-       redistribuirlas). Se genera con recursos\diplomas\generar-diplomas.py y se deja en
-       %AppData%\CuadernoNodisla\diplomas\. Si ademas esta aqui al compilar, viaja incrustado. -->
+  <!-- El catalogo de diplomas viaja dentro del ensamblado, comprimido. Asi el motor no
+       depende en ejecucion de ningun fichero de Log4OM ni de nada suelto en disco.
+       Se genera con recursos\diplomas\generar-diplomas.py. -->
   <ItemGroup>
+    <!-- El catalogo completo NO se publica (sus referencias no traen licencia para
+         redistribuirlas). Se genera con recursos\diplomas\generar-diplomas.py y se deja en
+         %AppData%\CuadernoNodisla\diplomas\. Si ademas esta aqui al compilar, viaja incrustado. -->
     <EmbeddedResource Include="Recursos\catalogo-diplomas.tsv.gz" Condition="Exists('Recursos\catalogo-diplomas.tsv.gz')" />
   </ItemGroup>
 

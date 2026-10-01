@@ -30,7 +30,9 @@ AllowNoIcons=yes
 OutputDir=salida
 OutputBaseFilename=CuadernoNodisla-Instalador-{#MyAppVersion}
 SetupIconFile=..\src\Nodisla.Cuaderno.Ui\Recursos\CuadernoNodisla.ico
-UninstallDisplayIcon={app}\{#MyAppExeName}
+; El icono NODISLA del Cuaderno (sale de herramientas\Icono\GenerarIcono.ps1) va en el
+; asistente, en "Aplicaciones instaladas" de Windows y en todos los accesos directos.
+UninstallDisplayIcon={app}\CuadernoNodisla.ico
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -47,14 +49,19 @@ ShowLanguageDialog=no
 [Languages]
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 
+[Tasks]
+Name: "escritorio"; Description: "Crear un acceso directo en el escritorio"; GroupDescription: "Accesos directos:"; Flags: unchecked
+
 [Files]
 ; Copia todo lo publicado (self-contained, win-x64). No incluye nada de
 ; %AppData%: la publicacion de dotnet solo contiene los binarios del programa.
 Source: "{#MyPublishDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+Source: "..\src\Nodisla.Cuaderno.Ui\Recursos\CuadernoNodisla.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppExeName}"
-Name: "{group}\Desinstalar {#MyAppName}"; Filename: "{uninstallexe}"
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\CuadernoNodisla.ico"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\CuadernoNodisla.ico"; Tasks: escritorio
+Name: "{group}\Desinstalar {#MyAppName}"; Filename: "{uninstallexe}"; IconFilename: "{app}\CuadernoNodisla.ico"
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Ejecutar {#MyAppName}"; Flags: nowait postinstall skipifsilent

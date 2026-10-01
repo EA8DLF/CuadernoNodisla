@@ -140,6 +140,7 @@ public partial class VentanaPrincipal : Window
 
             var ventana = _cuadernoVacio();
             ventana.Owner = this;
+            Desarrollo.RetratoDeLaVentana.PrepararDialogo(ventana);
             ventana.ShowDialog();
         }
         catch (Exception ex)
@@ -157,6 +158,7 @@ public partial class VentanaPrincipal : Window
 
         var dialogo = _ventanaDePrimerArranque();
         dialogo.Owner = this;
+        Desarrollo.RetratoDeLaVentana.PrepararDialogo(dialogo);
 
         if (dialogo.ShowDialog() == true) return true;
 

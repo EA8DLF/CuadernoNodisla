@@ -1,14 +1,14 @@
-# Impresión de QSL
+# QSL: etiquetas del buró
 
-La pestaña **Imprimir (Ctrl 8)** tiene dos subpestañas: **Etiquetas**, que se explica aquí, y
-**Tarjeta QSL**, el editor de su propia tarjeta y su envío por correo (ver
-[Tarjeta QSL propia](13-tarjeta-qsl.md)).
+La entrada **QSL** de la barra tiene tres páginas: **Tarjeta QSL**, el editor de su propia
+tarjeta y su envío por correo (ver [Tarjeta QSL propia](13-tarjeta-qsl.md)); **Etiquetas**, que
+se explica aquí; y **Diplomas**, el [diseñador de diplomas](14-disenador-de-diplomas.md).
 
 **Etiquetas** compone etiquetas de QSL listas para pegar en el sobre. A la
 izquierda se filtran los contactos y se eligen las etiquetas de la tirada; a la derecha se elige
 el papel y se pide la vista previa.
 
-![Imprimir: filtro y lista de etiquetas a la izquierda, plantilla y vista previa a la derecha](../capturas/impresion.png)
+![QSL → Etiquetas: filtro y lista de etiquetas a la izquierda, plantilla y vista previa a la derecha](../capturas/ayuda/etiquetas.png)
 
 ## El filtro de contactos
 
