@@ -1,4 +1,5 @@
 using System.Globalization;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Impresion.Modelo;
 using PdfSharp.Drawing;
 using PdfSharp.Fonts;
@@ -76,7 +77,7 @@ public sealed class GeneradorDeImpresosPdf : IGeneradorDeImpresos
         if (!plantilla.CabeEnElPapel)
         {
             throw new ArgumentException(
-                $"La plantilla «{plantilla.Nombre}» no cabe en su hoja: revisa márgenes y separaciones.",
+                Textos.F("Servicios.Impresion.NoCabe", plantilla.NombreVisible),
                 nameof(plantilla));
         }
 
@@ -100,7 +101,7 @@ public sealed class GeneradorDeImpresosPdf : IGeneradorDeImpresos
                 // XGraphics; hay que cerrarlo aqui, antes de leer los bytes, no al salir del
                 // metodo con un «return» en la misma linea que lo abrio.
                 Texto(
-                    gfxVacia, "Ningún contacto cumple los criterios de la selección.",
+                    gfxVacia, Textos.T("Servicios.Impresion.NingunContacto"),
                     plantilla.MargenIzquierdoMm, plantilla.MargenSuperiorMm, Fuente(11));
             }
 
@@ -156,7 +157,7 @@ public sealed class GeneradorDeImpresosPdf : IGeneradorDeImpresos
             using (var gfxVacia = XGraphics.FromPdfPage(vacia))
             {
                 Texto(
-                    gfxVacia, "Ningún contacto cumple los criterios de la selección.",
+                    gfxVacia, Textos.T("Servicios.Impresion.NingunContacto"),
                     plantilla.MargenIzquierdoMm + 10, plantilla.MargenSuperiorMm, Fuente(11));
             }
 
@@ -435,7 +436,7 @@ public sealed class GeneradorDeImpresosPdf : IGeneradorDeImpresos
         y += 7;
 
         // ── A quien confirma.
-        TextoEnCasilla(gfx, "Confirmando QSO con", x, y, anchoUtil, Fuente(8), Alineacion.Centro, 0.4);
+        TextoEnCasilla(gfx, Textos.T("Servicios.Impresion.Tarjeta.Confirmando"), x, y, anchoUtil, Fuente(8), Alineacion.Centro, 0.4);
         y += 4;
         TextoEnCasilla(
             gfx, tarjeta.Etiqueta.Encabezado, x, y, anchoUtil, Fuente(16, negrita: true),
@@ -443,7 +444,14 @@ public sealed class GeneradorDeImpresosPdf : IGeneradorDeImpresos
         y += 9;
 
         // ── Tabla de contactos, esta vez con cabecera: una tarjeta se lee sin contexto.
-        string[] titulos = ["Fecha (UTC)", "Hora", "Banda", "Modo", "RST"];
+        string[] titulos =
+        [
+            Textos.T("Servicios.Impresion.Tarjeta.Fecha"),
+            Textos.T("Servicios.Impresion.Tarjeta.Hora"),
+            Textos.T("Servicios.Impresion.Tarjeta.Banda"),
+            Textos.T("Servicios.Impresion.Tarjeta.Modo"),
+            "RST",
+        ];
         double[] pesos = [0.26, 0.14, 0.18, 0.22, 0.12];
         var anchos = pesos.Select(p => p * anchoUtil).ToArray();
 
@@ -473,8 +481,8 @@ public sealed class GeneradorDeImpresosPdf : IGeneradorDeImpresos
             if (linea.EsPorSatelite)
             {
                 var marca = string.IsNullOrWhiteSpace(linea.ModoDelSatelite)
-                    ? $"Vía satélite {linea.Satelite}"
-                    : $"Vía satélite {linea.Satelite}, modo {linea.ModoDelSatelite}";
+                    ? Textos.F("Servicios.Impresion.Tarjeta.Satelite", linea.Satelite)
+                    : Textos.F("Servicios.Impresion.Tarjeta.SateliteModo", linea.Satelite, linea.ModoDelSatelite);
                 TextoEnCasilla(
                     gfx, marca, x + 2, y - 0.5, anchoUtil - 2, Fuente(7, cursiva: true),
                     Alineacion.Izquierda, 0.3);
@@ -486,7 +494,7 @@ public sealed class GeneradorDeImpresosPdf : IGeneradorDeImpresos
         var yPie = yMm + alto - margen - 3;
         Linea(gfx, x, yPie - 2, x + anchoUtil, yPie - 2, 0.15, 0.5);
         TextoEnCasilla(
-            gfx, tarjeta.Etiqueta.Mensaje ?? "¡Gracias por el contacto!  73",
+            gfx, tarjeta.Etiqueta.Mensaje ?? Textos.T("Servicios.Impresion.Tarjeta.Gracias"),
             x, yPie, anchoUtil * 0.6, Fuente(9, cursiva: true));
 
         var via = tarjeta.Etiqueta.TextoDeLaVia;

@@ -1,5 +1,7 @@
 using Nodisla.Cuaderno.Radio.Control.Ft710;
 
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Control.Icom;
 
 /// <summary>
@@ -99,12 +101,12 @@ public static class OrdenesIcom
 
         if (cuerpo.StartsWith(Apagar.ToArray()) && !(cuerpo.Length == 2 && ApagadoAutorizado.Value))
         {
-            throw new OrdenPeligrosaException(texto, "apagaría el equipo");
+            throw new OrdenPeligrosaException(texto, Textos.T("Servicios.Radio.Peligro.Apagaria"));
         }
 
         if (orden is 0x09 or 0x0B)
         {
-            throw new OrdenPeligrosaException(texto, "escribiría o borraría memorias del equipo");
+            throw new OrdenPeligrosaException(texto, Textos.T("Servicios.Radio.Peligro.MemoriasIcom"));
         }
 
         if (orden == 0x1A && cuerpo.Length > 1)
@@ -112,24 +114,24 @@ public static class OrdenesIcom
             var sub = cuerpo[1];
             if ((sub == 0x00 && cuerpo.Length > 4) || (sub == 0x01 && cuerpo.Length > 4) || sub == 0x02)
             {
-                throw new OrdenPeligrosaException(texto, "escribiría memorias o la pila de banda del equipo");
+                throw new OrdenPeligrosaException(texto, Textos.T("Servicios.Radio.Peligro.PilaDeBanda"));
             }
         }
 
         if (orden == 0x1E && cuerpo.Length > 2 && cuerpo[1] == 0x03)
         {
-            throw new OrdenPeligrosaException(texto, "cambiaría los límites de transmisión del equipo");
+            throw new OrdenPeligrosaException(texto, Textos.T("Servicios.Radio.Peligro.Limites"));
         }
 
         if (orden is 0x17 or 0x28)
         {
-            throw new OrdenPeligrosaException(texto, "pondría el equipo en antena (telegrafía o memoria de voz)");
+            throw new OrdenPeligrosaException(texto, Textos.T("Servicios.Radio.Peligro.TelegrafiaOVoz"));
         }
 
         if ((cuerpo.SequenceEqual(SubirPtt.ToArray()) || cuerpo.SequenceEqual(Sintonizar.ToArray()))
             && !TransmisionAutorizada.Value)
         {
-            throw new OrdenPeligrosaException(texto, "pondría el equipo en antena sin pasar por el vigilante del PTT");
+            throw new OrdenPeligrosaException(texto, Textos.T("Servicios.Radio.Peligro.SinVigilante"));
         }
     }
 
@@ -142,12 +144,12 @@ public static class OrdenesIcom
         // Cualquier 1C 00 con un dato que no sea 00 es pedir antena.
         if (Transmite(cuerpo) || (cuerpo.Length > 2 && cuerpo[0] == 0x1C && cuerpo[1] == 0x00 && cuerpo[2] != 0x00))
         {
-            throw new OrdenPeligrosaException(texto, "pondría el equipo en antena sin pasar por el vigilante del PTT");
+            throw new OrdenPeligrosaException(texto, Textos.T("Servicios.Radio.Peligro.SinVigilante"));
         }
 
         if (cuerpo.Length > 4 && cuerpo[0] == 0x1A && cuerpo[1] == 0x05)
         {
-            throw new OrdenPeligrosaException(texto, "escribiría en el menú del equipo (podría dejarlo sin control CI-V)");
+            throw new OrdenPeligrosaException(texto, Textos.T("Servicios.Radio.Peligro.Menu"));
         }
 
         ComprobarQueEsSegura(cuerpo);

@@ -1,6 +1,8 @@
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Control.OmniRig;
 
 /// <summary>
@@ -53,10 +55,10 @@ public sealed class OmniRigPorCom : IOmniRigCrudo
 
             var tipo = Type.GetTypeFromProgID(ProgId, throwOnError: false)
                 ?? throw new InvalidOperationException(
-                    "OmniRig no está instalado o no está registrado en este equipo.");
+                    Textos.T("Servicios.Radio.OmniRigNoInstalado"));
 
             var omni = Activator.CreateInstance(tipo)
-                ?? throw new InvalidOperationException("No se pudo crear el objeto COM de OmniRig.");
+                ?? throw new InvalidOperationException(Textos.T("Servicios.Radio.OmniRigSinObjeto"));
 
             dynamic dinamico = omni;
             _omni = omni;

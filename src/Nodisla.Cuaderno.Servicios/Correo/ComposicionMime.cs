@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Servicios.Correo;
 
@@ -24,8 +25,8 @@ public static class ComposicionMime
     public static string Componer(MensajeDeCorreo mensaje, string remitente, string? nombreDelRemitente, DateTimeOffset ahora)
     {
         ArgumentNullException.ThrowIfNull(mensaje);
-        if (!DireccionDeCorreo.EsValida(remitente)) throw new ErrorDeCorreo($"La dirección del remitente no es válida: «{remitente}».");
-        if (!DireccionDeCorreo.EsValida(mensaje.Para)) throw new ErrorDeCorreo($"La dirección del destinatario no es válida: «{mensaje.Para}».") { EsDelDestinatario = true };
+        if (!DireccionDeCorreo.EsValida(remitente)) throw new ErrorDeCorreo(Textos.F("Servicios.Correo.RemitenteNoValido", remitente));
+        if (!DireccionDeCorreo.EsValida(mensaje.Para)) throw new ErrorDeCorreo(Textos.F("Servicios.Correo.DestinatarioNoValido", mensaje.Para)) { EsDelDestinatario = true };
 
         var dominio = remitente[(remitente.LastIndexOf('@') + 1)..].Trim();
         var frontera = "=_nodisla_" + Guid.NewGuid().ToString("N");

@@ -4,6 +4,7 @@
              xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
              xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
              xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              Foreground="{DynamicResource Texto}">
 
     <!--
@@ -93,17 +94,17 @@
                 </DockPanel>
                 <DockPanel>
                     <Button DockPanel.Dock="Right"
-                            Content="Borrar"
+                            Content="{loc:Texto Comun.Borrar}"
                             Command="{Binding BorrarCommand}"
                             Margin="5,0,0,0"
                             Padding="8,2"
-                            AutomationProperties.Name="Borrar la credencial guardada" />
+                            AutomationProperties.Name="{loc:Texto Ajustes.Secreto.Borrar.Accesible}" />
                     <Button DockPanel.Dock="Right"
-                            Content="Guardar"
+                            Content="{loc:Texto Comun.Guardar}"
                             Command="{Binding GuardarCommand}"
                             Margin="5,0,0,0"
                             Padding="8,2"
-                            AutomationProperties.Name="Guardar la credencial cifrada" />
+                            AutomationProperties.Name="{loc:Texto Ajustes.Secreto.Guardar.Accesible}" />
                     <PasswordBox x:Name="Campo"
                                  PasswordChanged="AlEscribirElSecreto"
                                  Loaded="AlMontarLaCasillaDelSecreto"
@@ -201,7 +202,8 @@
                             Visibility="{Binding Nota, Converter={StaticResource NoEsVacio}}">
                         <Expander Foreground="{DynamicResource AvisoTexto}">
                             <Expander.Header>
-                                <TextBlock Text="Antes de escribir la frase de paso, lea esto"
+                                <TextBlock Text="{loc:Texto Ajustes.Tarjeta.LeaAntes}"
+                                           TextWrapping="Wrap"
                                            Foreground="{DynamicResource AvisoTexto}"
                                            FontWeight="SemiBold" />
                             </Expander.Header>
@@ -213,23 +215,23 @@
                     <ItemsControl ItemsSource="{Binding Secretos}" ItemTemplate="{StaticResource FilaDeSecreto}" Focusable="False" />
 
                     <WrapPanel Margin="0,10,0,0">
-                        <Button Content="Guardar la cuenta"
+                        <Button Content="{loc:Texto Ajustes.Tarjeta.GuardarCuenta}"
                                 Command="{Binding GuardarCuenta}"
                                 Margin="0,0,6,0"
                                 Padding="10,2"
-                                ToolTip="Guarda el usuario y los demás datos de la cuenta (las contraseñas, cada una con su «Guardar»)"
+                                ToolTip="{loc:Texto Ajustes.Tarjeta.GuardarCuenta.Ayuda}"
                                 Visibility="{Binding SePuedeGuardarLaCuenta, Converter={StaticResource BooleanoAVisible}}"
-                                AutomationProperties.Name="Guardar los datos de la cuenta" />
+                                AutomationProperties.Name="{loc:Texto Ajustes.Tarjeta.GuardarCuenta.Accesible}" />
                         <Button Content="{Binding TextoDeProbar}"
                                 Command="{Binding Probar}"
                                 Margin="0,0,6,0"
                                 Padding="10,2"
                                 Visibility="{Binding HayPrueba, Converter={StaticResource BooleanoAVisible}}" />
-                        <Button Content="Configurar…"
+                        <Button Content="{loc:Texto Ajustes.Tarjeta.Configurar}"
                                 Command="{Binding Configurar}"
                                 Padding="10,2"
                                 Visibility="{Binding HayConfigurar, Converter={StaticResource BooleanoAVisible}}"
-                                AutomationProperties.Name="Ir al apartado de este servicio" />
+                                AutomationProperties.Name="{loc:Texto Ajustes.Tarjeta.Configurar.Accesible}" />
                     </WrapPanel>
                 </StackPanel>
             </Border>
@@ -247,12 +249,12 @@
                 SelectedIndex="{Binding IndiceDelApartado}">
 
         <!-- ══ 0 · Cuentas y servicios ══ -->
-        <TabItem Header="Cuentas y servicios">
+        <TabItem Header="{loc:Texto Ajustes.Apartado.Cuentas}">
             <Border Style="{StaticResource CuerpoDelApartado}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
-                        <TextBlock Text="Cuentas y servicios" Style="{StaticResource TituloDeSeccion}" />
-                        <TextBlock Text="Una tarjeta por servicio. Las contraseñas se guardan cifradas con la protección de datos de su cuenta de Windows y no se vuelven a mostrar: solo se dice si están guardadas."
+                        <TextBlock Text="{loc:Texto Ajustes.Apartado.Cuentas}" Style="{StaticResource TituloDeSeccion}" />
+                        <TextBlock Text="{loc:Texto Ajustes.Cuentas.Explicacion}"
                                    Style="{StaticResource TextoTenueEstilo}"
                                    TextWrapping="Wrap"
                                    Margin="0,0,0,10" />
@@ -272,13 +274,13 @@
         </TabItem>
 
         <!-- ══ 1 · Subidas y QRZ ══ -->
-        <TabItem Header="Subidas y QRZ">
+        <TabItem Header="{loc:Texto Ajustes.Apartado.Subidas}">
             <Border Style="{StaticResource CuerpoDelApartado}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel MaxWidth="900" HorizontalAlignment="Left">
                         <!-- Subida automática a LoTW, eQSL, Club Log y QRZ, y la ficha de QRZ.com. -->
                         <ContentControl Content="{Binding Subidas}" Focusable="False" />
-                        <TextBlock Text="La subida automática no está montada en esta sesión."
+                        <TextBlock Text="{loc:Texto Ajustes.Subidas.NoMontada}"
                                    Style="{StaticResource TextoTenueEstilo}"
                                    TextWrapping="Wrap"
                                    Visibility="{Binding HaySubidas, Converter={StaticResource VisibleSiEsFalso}}" />
@@ -288,7 +290,7 @@
         </TabItem>
 
         <!-- ══ 2 · Equipo (CAT) ══ -->
-        <TabItem Header="Equipo (CAT)">
+        <TabItem Header="{loc:Texto Ajustes.Apartado.Equipo}">
             <Border Style="{StaticResource CuerpoDelApartado}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel MaxWidth="900" HorizontalAlignment="Left">
@@ -301,7 +303,7 @@
                                 BorderThickness="1"
                                 DataContext="{Binding DataContext.Equipo, RelativeSource={RelativeSource AncestorType=Window}}">
                             <TextBlock Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap">
-                                <Run Text="Equipo:" />
+                                <Run Text="{loc:Texto Ajustes.Equipo.EnUnaLinea}" />
                                 <Run Text="{Binding NombreDelEquipo, Mode=OneWay}" FontWeight="Bold" />
                                 <Run Text="  ·  " />
                                 <Run Text="{Binding ViaTexto, Mode=OneWay}" FontWeight="Bold" />
@@ -319,7 +321,7 @@
                                         Focusable="False"
                                         Visibility="{Binding HayCat, Converter={StaticResource BooleanoAVisible}}" />
 
-                        <TextBlock Text="Se está funcionando con los puertos simulados, así que no hay equipo de verdad que configurar. Cierre el programa y vuelva a abrirlo sin CUADERNO_SIMULADO para configurar el CAT."
+                        <TextBlock Text="{loc:Texto Ajustes.Equipo.Simulado}"
                                    Style="{StaticResource TextoTenueEstilo}"
                                    TextWrapping="Wrap"
                                    Margin="0,0,0,8"
@@ -330,14 +332,14 @@
         </TabItem>
 
         <!-- ══ 3 · Audio y digitales ══ -->
-        <TabItem Header="Audio y digitales">
+        <TabItem Header="{loc:Texto Ajustes.Apartado.Audio}">
             <Border Style="{StaticResource CuerpoDelApartado}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel MaxWidth="900" HorizontalAlignment="Left">
                         <ContentControl Content="{Binding Audio}"
                                         Focusable="False"
                                         Visibility="{Binding HayAudio, Converter={StaticResource BooleanoAVisible}}" />
-                        <TextBlock Text="El audio no está montado en esta sesión."
+                        <TextBlock Text="{loc:Texto Ajustes.Audio.NoMontado}"
                                    Style="{StaticResource TextoTenueEstilo}"
                                    TextWrapping="Wrap"
                                    Visibility="{Binding HayAudio, Converter={StaticResource VisibleSiEsFalso}}" />
@@ -347,13 +349,13 @@
         </TabItem>
 
         <!-- ══ 4 · Fonía ══ -->
-        <TabItem Header="Fonía">
+        <TabItem Header="{loc:Texto Ajustes.Apartado.Fonia}">
             <Border Style="{StaticResource CuerpoDelApartado}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel MaxWidth="900" HorizontalAlignment="Left">
                         <!-- La fonía por el PC: altavoces, micrófono y PTT de fonía -->
                         <ContentControl Content="{Binding Fonia}" Focusable="False" />
-                        <TextBlock Text="La fonía por el PC no está montada en esta sesión."
+                        <TextBlock Text="{loc:Texto Ajustes.Fonia.NoMontada}"
                                    Style="{StaticResource TextoTenueEstilo}"
                                    TextWrapping="Wrap"
                                    Visibility="{Binding HayFonia, Converter={StaticResource VisibleSiEsFalso}}" />
@@ -363,7 +365,7 @@
         </TabItem>
 
         <!-- ══ 5 · Cluster: la conexión y su consola ══ -->
-        <TabItem Header="Cluster">
+        <TabItem Header="{loc:Texto Ajustes.Apartado.Cluster}">
             <Border Style="{StaticResource CuerpoDelApartado}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel MaxWidth="900" HorizontalAlignment="Left">
@@ -371,7 +373,7 @@
                                         Focusable="False"
                                         Visibility="{Binding HayCluster, Converter={StaticResource BooleanoAVisible}}" />
 
-                        <TextBlock Text="Con los puertos simulados el cluster es de mentira, así que no hay nodo que configurar. Cierre el programa y vuelva a abrirlo sin CUADERNO_SIMULADO para elegir nodo, indicativo y contraseña."
+                        <TextBlock Text="{loc:Texto Ajustes.Cluster.Simulado}"
                                    Style="{StaticResource TextoTenueEstilo}"
                                    TextWrapping="Wrap"
                                    Margin="0,0,0,8"
@@ -386,13 +388,13 @@
         </TabItem>
 
         <!-- ══ 6 · Correo de las QSL ══ -->
-        <TabItem Header="Correo de las QSL">
+        <TabItem Header="{loc:Texto Ajustes.Apartado.Correo}">
             <Border Style="{StaticResource CuerpoDelApartado}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel MaxWidth="900" HorizontalAlignment="Left">
                         <!-- El correo con el que se mandan las QSL (QSL → Tarjeta QSL). -->
                         <ContentControl Content="{Binding CorreoQsl}" Focusable="False" />
-                        <TextBlock Text="El correo de las QSL no está montado en esta sesión."
+                        <TextBlock Text="{loc:Texto Ajustes.Correo.NoMontado}"
                                    Style="{StaticResource TextoTenueEstilo}"
                                    TextWrapping="Wrap"
                                    Visibility="{Binding HayCorreo, Converter={StaticResource VisibleSiEsFalso}}" />
@@ -402,28 +404,28 @@
         </TabItem>
 
         <!-- ══ 7 · Libro (ADIF) ══ -->
-        <TabItem Header="Libro (ADIF)">
+        <TabItem Header="{loc:Texto Ajustes.Apartado.Libro}">
             <Border Style="{StaticResource CuerpoDelApartado}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel MaxWidth="900" HorizontalAlignment="Left">
-                        <TextBlock Text="Libro de guardia" Style="{StaticResource TituloDeSeccion}" />
+                        <TextBlock Text="{loc:Texto Ajustes.Libro.Titulo}" Style="{StaticResource TituloDeSeccion}" />
                         <TextBlock Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap">
-                            <Run Text="Contactos:" />
+                            <Run Text="{loc:Texto Ajustes.Libro.Contactos}" />
                             <Run Text="{Binding ContactosDelCuaderno, Mode=OneWay}" FontWeight="Bold" />
                         </TextBlock>
 
                         <WrapPanel Margin="0,6,0,0">
-                            <Button Content="Importar ADIF…"
+                            <Button Content="{loc:Texto Ajustes.Libro.Importar}"
                                     Command="{Binding ImportarAdifCommand}"
                                     Margin="0,0,6,6"
-                                    AutomationProperties.Name="Importar un fichero ADIF en el cuaderno" />
-                            <Button Content="Exportar ADIF…"
+                                    AutomationProperties.Name="{loc:Texto Ajustes.Libro.Importar.Accesible}" />
+                            <Button Content="{loc:Texto Ajustes.Libro.Exportar}"
                                     Command="{Binding ExportarAdifCommand}"
                                     Margin="0,0,6,6"
-                                    AutomationProperties.Name="Exportar el cuaderno a un fichero ADIF" />
+                                    AutomationProperties.Name="{loc:Texto Ajustes.Libro.Exportar.Accesible}" />
                         </WrapPanel>
 
-                        <TextBlock Text="En esta sesión no hay escritor de ADIF: la exportación está apagada."
+                        <TextBlock Text="{loc:Texto Ajustes.Libro.SinEscritor}"
                                    Style="{StaticResource TextoTenueEstilo}"
                                    TextWrapping="Wrap"
                                    Margin="0,0,0,6"
@@ -444,7 +446,7 @@
                             <StackPanel>
                                 <TextBlock Text="{Binding ParteDeLaImportacion}" TextWrapping="Wrap" />
 
-                                <Expander Header="Datos que no cuadraban entre copias"
+                                <Expander Header="{loc:Texto Ajustes.Libro.Choques}"
                                           Margin="0,6,0,0"
                                           Visibility="{Binding HayChoques, Converter={StaticResource BooleanoAVisible}}">
                                     <ItemsControl ItemsSource="{Binding Choques}" Margin="0,4,0,0">
@@ -466,15 +468,40 @@
 
         <!-- ══ 8 · Actualizaciones ══ -->
         <!-- El MISMO VistaModeloActualizaciones que la barra del aviso (ver VistaModeloAjustes). -->
-        <TabItem Header="Actualizaciones">
+        <TabItem Header="{loc:Texto Ajustes.Apartado.Actualizaciones}">
             <Border Style="{StaticResource CuerpoDelApartado}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel MaxWidth="900" HorizontalAlignment="Left">
                         <ContentControl Content="{Binding Actualizaciones}" Focusable="False" />
-                        <TextBlock Text="El aviso de versiones no está montado en esta sesión."
+                        <TextBlock Text="{loc:Texto Ajustes.Actualizaciones.NoMontado}"
                                    Style="{StaticResource TextoTenueEstilo}"
                                    TextWrapping="Wrap"
                                    Visibility="{Binding HayActualizaciones, Converter={StaticResource VisibleSiEsFalso}}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </TabItem>
+        <!-- ══ 9 · Idioma ══ -->
+        <!-- Se cambia al momento, sin reiniciar: todos los textos son enlaces (ver Idiomas\Texto.cs). -->
+        <TabItem Header="{loc:Texto Ajustes.Apartado.Idioma}">
+            <Border Style="{StaticResource CuerpoDelApartado}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel MaxWidth="900" HorizontalAlignment="Left" DataContext="{Binding Idioma}">
+                        <TextBlock Text="{loc:Texto Ajustes.Idioma.Titulo}" Style="{StaticResource TituloDeSeccion}" />
+                        <ComboBox ItemsSource="{Binding Opciones}"
+                                  SelectedItem="{Binding Elegida}"
+                                  DisplayMemberPath="Nombre"
+                                  MinWidth="260"
+                                  HorizontalAlignment="Left"
+                                  Margin="0,6,0,10"
+                                  AutomationProperties.Name="{loc:Texto Ajustes.Idioma.Titulo}" />
+                        <TextBlock Text="{loc:Texto Ajustes.Idioma.Explicacion}"
+                                   Style="{StaticResource TextoTenueEstilo}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,6" />
+                        <TextBlock Text="{loc:Texto Ajustes.Idioma.Ayuda}"
+                                   Style="{StaticResource TextoTenueEstilo}"
+                                   TextWrapping="Wrap" />
                     </StackPanel>
                 </ScrollViewer>
             </Border>

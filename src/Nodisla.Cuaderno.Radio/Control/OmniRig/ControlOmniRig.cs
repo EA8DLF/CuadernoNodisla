@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Radio.Ptt;
 
 namespace Nodisla.Cuaderno.Radio.Control.OmniRig;
@@ -42,6 +43,8 @@ public sealed class ControlOmniRig : IControlEquipo, IPttDirecto, ISueltaDeEmerg
     private Task? _sondeo;
     private EstadoDelEquipo _estado = EstadoDelEquipo.Desconectado;
     private bool _desechado;
+    private bool _pttPedido;
+    private bool _abiertoAlgunaVez;
 
     /// <summary>Crea el control sobre un OmniRig concreto.</summary>
     /// <param name="omni">Acceso a OmniRig; si es nulo, se usa el COM de verdad.</param>
@@ -110,6 +113,7 @@ public sealed class ControlOmniRig : IControlEquipo, IPttDirecto, ISueltaDeEmerg
         ct.ThrowIfCancellationRequested();
 
         _omni.Abrir();
+        Volatile.Write(ref _abiertoAlgunaVez, true);
         if (_omni.Estado != EstadoOmniRig.EnLinea)
         {
             _registro.LogWarning("OmniRig contesta pero el equipo no está en línea (estado {Estado}).", _omni.Estado);
@@ -164,6 +168,7 @@ public sealed class ControlOmniRig : IControlEquipo, IPttDirecto, ISueltaDeEmerg
         try
         {
             _omni.Tx = ParametrosOmniRig.Rx;
+            Volatile.Write(ref _pttPedido, false);
         }
         catch (Exception ex)
         {
@@ -188,7 +193,7 @@ public sealed class ControlOmniRig : IControlEquipo, IPttDirecto, ISueltaDeEmerg
         ct.ThrowIfCancellationRequested();
 
         var nombre = _opciones.Traductor.AlEquipo(modo, Estado.Frecuencia)
-            ?? throw new ArgumentException($"No sé cómo pedirle a OmniRig el modo {modo}.", nameof(modo));
+            ?? throw new ArgumentException(Textos.F("Servicios.Radio.OmniRigModoDesconocido", modo), nameof(modo));
 
         _omni.Modo = ANumeroDeOmniRig(nombre);
         LeerEstado();
@@ -208,7 +213,22 @@ public sealed class ControlOmniRig : IControlEquipo, IPttDirecto, ISueltaDeEmerg
     /// <inheritdoc />
     Task IPttDirecto.PonerPttDirectoAsync(bool transmitir, CancellationToken ct)
     {
+        if (!transmitir
+            && !Volatile.Read(ref _pttPedido)
+            && (Volatile.Read(ref _desechado) || !Volatile.Read(ref _abiertoAlgunaVez)))
+        {
+            // OmniRig no se llego a abrir, o este control ya se desecho bajando el PTT, y no hay
+            // PTT pedido: no hay nada que bajar. Asi el vigilante que se cierra despues no
+            // levanta OmniRig ni da un «¡PTT PEGADO!» falso (01-10-2026).
+            _registro.LogDebug("OmniRig no está abierto y no hay PTT pedido: no hay nada que bajar.");
+            return Task.CompletedTask;
+        }
+
+        // Se apunta ANTES de mandar la subida: si la orden falla a medias, el PTT cuenta como
+        // pedido y cualquier bajada posterior se intenta de verdad.
+        if (transmitir) Volatile.Write(ref _pttPedido, true);
         _omni.Tx = transmitir ? ParametrosOmniRig.Tx : ParametrosOmniRig.Rx;
+        if (!transmitir) Volatile.Write(ref _pttPedido, false);
         Actualizar(estado => estado with { Transmitiendo = transmitir });
         return Task.CompletedTask;
     }
@@ -263,7 +283,7 @@ public sealed class ControlOmniRig : IControlEquipo, IPttDirecto, ISueltaDeEmerg
         "PKTLSB" or "DATA-L" or "DIGL" => ParametrosOmniRig.DatosInferior,
         "AM" => ParametrosOmniRig.Am,
         "FM" or "PKTFM" => ParametrosOmniRig.Fm,
-        _ => throw new ArgumentException($"OmniRig no maneja el modo {nombre}.", nameof(nombre)),
+        _ => throw new ArgumentException(Textos.F("Servicios.Radio.OmniRigSinModo", nombre), nameof(nombre)),
     };
 
     private async Task SondearSiempreAsync(CancellationToken ct)

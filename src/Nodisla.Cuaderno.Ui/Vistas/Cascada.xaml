@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.Cascada"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              Foreground="{DynamicResource Texto}">
 
     <!--
@@ -33,7 +34,7 @@
                 Background="#FF060809"
                 Cursor="Cross"
                 MouseLeftButtonDown="AlPulsarEnLaCascada"
-                ToolTip="Clic: pone la recepción (y la transmisión si no está fijada). Mayús+clic: sólo la transmisión.">
+                ToolTip="{loc:Texto Cabina.Cascada.ClicAyuda}">
             <Grid>
                 <Image x:Name="Lienzo"
                        Stretch="Fill"
@@ -41,7 +42,7 @@
                        SnapsToDevicePixels="True" />
 
                 <TextBlock x:Name="Hueco"
-                           Text="Sin cascada. Pulse «Escuchar» para abrir la entrada de audio."
+                           Text="{loc:Texto Cabina.Cascada.SinCascada}"
                            Foreground="#FF9BA6B2"
                            FontSize="11"
                            MaxWidth="320"

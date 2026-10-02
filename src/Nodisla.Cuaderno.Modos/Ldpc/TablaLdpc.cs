@@ -1,6 +1,7 @@
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Modos.Ldpc;
 
@@ -85,7 +86,7 @@ public sealed class TablaLdpc
 
     /// <summary>Un codigo de pruebas de las dimensiones pedidas, marcado como tal.</summary>
     public static TablaLdpc DePruebas(int longitud, int bitsDeMensaje, int semilla = 8) =>
-        new(CodigoLdpc.ConstruirDePrueba(semilla, longitud, bitsDeMensaje), esElCodigoReal: false, "código de pruebas");
+        new(CodigoLdpc.ConstruirDePrueba(semilla, longitud, bitsDeMensaje), esElCodigoReal: false, Textos.T("Servicios.Modos.CodigoDePruebas"));
 
     /// <summary>Lee y comprueba el contenido de un fichero de tablas.</summary>
     /// <param name="lineas">Lineas del fichero.</param>

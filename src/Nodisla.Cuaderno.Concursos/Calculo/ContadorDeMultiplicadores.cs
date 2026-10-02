@@ -2,6 +2,7 @@ using System.Globalization;
 using Nodisla.Cuaderno.Concursos.Catalogo;
 using Nodisla.Cuaderno.Concursos.Sesion;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Concursos.Calculo;
 
@@ -103,19 +104,19 @@ public sealed class ContadorDeMultiplicadores
     private static string Describir(Clave clave) =>
         clave.Donde.Length == 0
             ? $"{Nombre(clave.Tipo)} {clave.Valor}"
-            : $"{Nombre(clave.Tipo)} {clave.Valor} en {clave.Donde}";
+            : Textos.F("Servicios.Concursos.Multiplicador.En", Nombre(clave.Tipo), clave.Valor, clave.Donde);
 
     private static string Nombre(TipoDeMultiplicador tipo) => tipo switch
     {
-        TipoDeMultiplicador.Dxcc => "País",
-        TipoDeMultiplicador.ZonaCq => "Zona CQ",
-        TipoDeMultiplicador.ZonaItu => "Zona ITU",
-        TipoDeMultiplicador.PrefijoWpx => "Prefijo",
-        TipoDeMultiplicador.Locator => "Localizador",
-        TipoDeMultiplicador.CampoLocator => "Campo",
-        TipoDeMultiplicador.Seccion => "Sección",
-        TipoDeMultiplicador.Provincia => "Provincia",
-        TipoDeMultiplicador.Estado => "Estado",
-        _ => "Sociedad",
+        TipoDeMultiplicador.Dxcc => Textos.T("Comun.Pais"),
+        TipoDeMultiplicador.ZonaCq => Textos.T("Servicios.Concursos.Multiplicador.ZonaCq"),
+        TipoDeMultiplicador.ZonaItu => Textos.T("Servicios.Concursos.Multiplicador.ZonaItu"),
+        TipoDeMultiplicador.PrefijoWpx => Textos.T("Servicios.Concursos.Multiplicador.Prefijo"),
+        TipoDeMultiplicador.Locator => Textos.T("Libro.Localizador"),
+        TipoDeMultiplicador.CampoLocator => Textos.T("Servicios.Concursos.Multiplicador.Campo"),
+        TipoDeMultiplicador.Seccion => Textos.T("Servicios.Concursos.Multiplicador.Seccion"),
+        TipoDeMultiplicador.Provincia => Textos.T("Servicios.Concursos.Multiplicador.Provincia"),
+        TipoDeMultiplicador.Estado => Textos.T("Servicios.Concursos.Multiplicador.Estado"),
+        _ => Textos.T("Servicios.Concursos.Multiplicador.Sociedad"),
     };
 }

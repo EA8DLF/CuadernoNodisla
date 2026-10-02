@@ -1,4 +1,5 @@
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Integraciones.Digital;
 
@@ -66,7 +67,7 @@ public static class DeteccionDeDialecto
         DialectoDigital.Jtdx => "JTDX",
         DialectoDigital.Mshv => "MSHV",
         DialectoDigital.Js8Call => "JS8Call",
-        _ => "desconocido",
+        _ => Textos.T("Servicios.Integraciones.Desconocido"),
     };
 
     /// <summary>
@@ -89,6 +90,6 @@ public static class DeteccionDeDialecto
         6 => "Fox",
         7 => "Hound",
         8 => "ARRL Digi",
-        _ => $"modo especial {codigo}",
+        _ => Textos.F("Servicios.Integraciones.ModoEspecial", codigo),
     };
 }

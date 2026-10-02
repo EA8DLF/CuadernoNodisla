@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Comun.Abrir" xml:space="preserve">
+    <value>Abrir</value>
+  </data>
+  <data name="Comun.Aceptar" xml:space="preserve">
+    <value>Aceptar</value>
+  </data>
+  <data name="Comun.Actualizar" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
+  <data name="Comun.Aviso" xml:space="preserve">
+    <value>Aviso</value>
+  </data>
+  <data name="Comun.Banda" xml:space="preserve">
+    <value>Banda</value>
+  </data>
+  <data name="Comun.Borrar" xml:space="preserve">
+    <value>Borrar</value>
+  </data>
+  <data name="Comun.Buscar" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="Comun.Cancelar" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Comun.Cerrar" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="Comun.Comentario" xml:space="preserve">
+    <value>Comentario</value>
+  </data>
+  <data name="Comun.Conectado" xml:space="preserve">
+    <value>Conectado</value>
+  </data>
+  <data name="Comun.Conectar" xml:space="preserve">
+    <value>Conectar</value>
+  </data>
+  <data name="Comun.Desconectado" xml:space="preserve">
+    <value>Desconectado</value>
+  </data>
+  <data name="Comun.Desconectar" xml:space="preserve">
+    <value>Desconectar</value>
+  </data>
+  <data name="Comun.Elegir" xml:space="preserve">
+    <value>Elegir…</value>
+  </data>
+  <data name="Comun.Enviado" xml:space="preserve">
+    <value>Enviado</value>
+  </data>
+  <data name="Comun.Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Comun.Fecha" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
+  <data name="Comun.FormatoDeFecha" xml:space="preserve">
+    <value>dd-MM-yyyy</value>
+    <comment>Formato .NET de las fechas mostradas al operador. «d» = fecha corta de la cultura; el español conserva su dd-MM-yyyy de siempre.</comment>
+  </data>
+  <data name="Comun.Frecuencia" xml:space="preserve">
+    <value>Frecuencia</value>
+  </data>
+  <data name="Comun.Guardar" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Comun.Indicativo" xml:space="preserve">
+    <value>Indicativo</value>
+  </data>
+  <data name="Comun.Locator" xml:space="preserve">
+    <value>Locator</value>
+    <comment>Cuadrícula Maidenhead</comment>
+  </data>
+  <data name="Comun.Modo" xml:space="preserve">
+    <value>Modo</value>
+  </data>
+  <data name="Comun.Ninguno" xml:space="preserve">
+    <value>Ninguno</value>
+  </data>
+  <data name="Comun.No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Comun.Nombre" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Comun.NombreDelPrograma" xml:space="preserve">
+    <value>Cuaderno NODISLA</value>
+    <comment>Nombre propio del producto: no se traduce</comment>
+  </data>
+  <data name="Comun.Notas" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="Comun.Pais" xml:space="preserve">
+    <value>País</value>
+  </data>
+  <data name="Comun.Probar" xml:space="preserve">
+    <value>Probar</value>
+  </data>
+  <data name="Comun.Recibido" xml:space="preserve">
+    <value>Recibido</value>
+  </data>
+  <data name="Comun.Si" xml:space="preserve">
+    <value>Sí</value>
+  </data>
+</root>

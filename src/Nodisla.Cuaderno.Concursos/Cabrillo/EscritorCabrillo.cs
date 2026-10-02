@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using Nodisla.Cuaderno.Concursos.Catalogo;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Concursos.Cabrillo;
 
@@ -163,7 +164,7 @@ public sealed class EscritorCabrillo
         }
         else if (cabecera.Operadores == CategoriaOperador.Multioperador)
         {
-            avisos.Add("Un log de multioperador necesita CATEGORY-TRANSMITTER y no se ha declarado.");
+            avisos.Add(Textos.T("Servicios.Concursos.Cabrillo.FaltaTransmisor"));
         }
 
         Etiqueta(destino, "CATEGORY-TIME", cabecera.Tiempo);
@@ -181,7 +182,7 @@ public sealed class EscritorCabrillo
         {
             Etiqueta(destino, "ADDRESS", Recortar(linea, 45, "ADDRESS", avisos));
         }
-        if (cabecera.Direccion.Count > 6) avisos.Add("La dirección tiene más de seis líneas; se han escrito las seis primeras.");
+        if (cabecera.Direccion.Count > 6) avisos.Add(Textos.T("Servicios.Concursos.Cabrillo.DireccionLarga"));
         Etiqueta(destino, "ADDRESS-CITY", cabecera.Localidad);
         Etiqueta(destino, "ADDRESS-STATE-PROVINCE", cabecera.Provincia);
         Etiqueta(destino, "ADDRESS-POSTALCODE", cabecera.CodigoPostal);
@@ -204,17 +205,17 @@ public sealed class EscritorCabrillo
         var contest = (cabecera.Contest ?? string.Empty).Trim().ToUpperInvariant();
         if (contest.Length == 0)
         {
-            avisos.Add("El log no dice a qué concurso pertenece (CONTEST).");
+            avisos.Add(Textos.T("Servicios.Concursos.Cabrillo.SinConcurso"));
             return contest;
         }
         if (contest.Length > 32)
         {
-            avisos.Add($"CONTEST pasa de 32 caracteres: «{contest}».");
+            avisos.Add(Textos.F("Servicios.Concursos.Cabrillo.ConcursoLargo", contest));
             contest = contest[..32];
         }
         if (contest.Any(c => !char.IsAsciiLetterOrDigit(c) && c != '-'))
         {
-            avisos.Add($"CONTEST solo admite letras, números y guiones: «{contest}».");
+            avisos.Add(Textos.F("Servicios.Concursos.Cabrillo.ConcursoCaracteres", contest));
         }
         return contest;
     }
@@ -224,7 +225,7 @@ public sealed class EscritorCabrillo
         var frecuencia = FrecuenciaCabrillo.De(qso.Freq, qso.Band);
         if (frecuencia.Length == 0)
         {
-            avisos.Add($"El contacto con {qso.Call.Valor} no tiene frecuencia ni banda reconocible.");
+            avisos.Add(Textos.F("Servicios.Concursos.Cabrillo.SinFrecuencia", qso.Call.Valor));
         }
 
         var linea = new StringBuilder(96);
@@ -269,12 +270,12 @@ public sealed class EscritorCabrillo
         var valor = (texto ?? string.Empty).Trim().ToUpperInvariant();
         if (valor.Length == 0)
         {
-            avisos.Add("Hay un contacto sin indicativo.");
+            avisos.Add(Textos.T("Servicios.Concursos.Cabrillo.SinIndicativo"));
             return valor;
         }
         if (valor.Any(c => !char.IsAsciiLetterOrDigit(c) && c != '/'))
         {
-            avisos.Add($"El indicativo «{valor}» lleva caracteres que Cabrillo no admite.");
+            avisos.Add(Textos.F("Servicios.Concursos.Cabrillo.IndicativoNoAdmitido", valor));
             valor = new string(valor.Where(c => char.IsAsciiLetterOrDigit(c) || c == '/').ToArray());
         }
         return valor;
@@ -320,7 +321,7 @@ public sealed class EscritorCabrillo
         if (string.IsNullOrWhiteSpace(texto)) return null;
         var valor = texto.Trim();
         if (valor.Length <= maximo) return valor;
-        avisos.Add($"{etiqueta} pasa de {maximo} caracteres y se ha recortado.");
+        avisos.Add(Textos.F("Servicios.Concursos.Cabrillo.Recortado", etiqueta, maximo));
         return valor[..maximo];
     }
 

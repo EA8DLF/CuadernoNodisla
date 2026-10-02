@@ -1,6 +1,7 @@
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 using Serilog;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
@@ -29,71 +30,113 @@ public enum FormaDelMando
 /// </remarks>
 public sealed partial class VistaModeloMando : ObservableObject
 {
+    // Las CLAVES de los textos, no los textos: el nombre se resuelve al leerlo, en el idioma en uso.
     private static readonly IReadOnlyDictionary<MandoDeEquipo, (string Nombre, string Grupo)> Nombres =
         new Dictionary<MandoDeEquipo, (string, string)>
         {
-            [MandoDeEquipo.Potencia] = ("Potencia", "Nivel"),
-            [MandoDeEquipo.GananciaRf] = ("Ganancia de RF", "Nivel"),
-            [MandoDeEquipo.GananciaMicrofono] = ("Ganancia de micrófono", "Nivel"),
-            [MandoDeEquipo.Volumen] = ("Volumen", "Nivel"),
-            [MandoDeEquipo.Monitor] = ("Monitor", "Nivel"),
-            [MandoDeEquipo.Compresor] = ("Compresor de voz", "Nivel"),
+            [MandoDeEquipo.Potencia] = ("Cabina.Mando.Potencia", "Cabina.Mando.Grupo.Nivel"),
+            [MandoDeEquipo.GananciaRf] = ("Cabina.Mando.GananciaRf", "Cabina.Mando.Grupo.Nivel"),
+            [MandoDeEquipo.GananciaMicrofono] = ("Cabina.Mando.GananciaMicrofono", "Cabina.Mando.Grupo.Nivel"),
+            [MandoDeEquipo.Volumen] = ("Cabina.Mando.Volumen", "Cabina.Mando.Grupo.Nivel"),
+            [MandoDeEquipo.Monitor] = ("Cabina.Mando.Monitor", "Cabina.Mando.Grupo.Nivel"),
+            [MandoDeEquipo.Compresor] = ("Cabina.Mando.Compresor", "Cabina.Mando.Grupo.Nivel"),
 
-            [MandoDeEquipo.Atenuador] = ("Atenuador", "Recepción"),
-            [MandoDeEquipo.Preamplificador] = ("Preamplificador", "Recepción"),
-            [MandoDeEquipo.Agc] = ("Control automático de ganancia", "Recepción"),
-            [MandoDeEquipo.SupresorDeRuido] = ("Supresor de ruido", "Recepción"),
-            [MandoDeEquipo.NivelSupresorDeRuido] = ("Nivel del supresor", "Recepción"),
-            [MandoDeEquipo.ReductorDeRuido] = ("Reductor de ruido", "Recepción"),
-            [MandoDeEquipo.NivelReductorDeRuido] = ("Nivel del reductor", "Recepción"),
-            [MandoDeEquipo.MuescaAutomatica] = ("Muesca automática", "Recepción"),
-            [MandoDeEquipo.MuescaManual] = ("Muesca manual", "Recepción"),
-            [MandoDeEquipo.FrecuenciaDeMuesca] = ("Frecuencia de la muesca", "Recepción"),
-            [MandoDeEquipo.Contorno] = ("Contorno", "Recepción"),
-            [MandoDeEquipo.FrecuenciaDeContorno] = ("Frecuencia del contorno", "Recepción"),
-            [MandoDeEquipo.DesplazamientoFi] = ("Desplazamiento de FI", "Recepción"),
-            [MandoDeEquipo.AnchoDeFiltro] = ("Ancho del filtro", "Recepción"),
-            [MandoDeEquipo.FiltroDeTejado] = ("Filtro de tejado", "Recepción"),
-            [MandoDeEquipo.Silenciador] = ("Silenciador", "Recepción"),
+            [MandoDeEquipo.Atenuador] = ("Cabina.Mando.Atenuador", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.Preamplificador] = ("Cabina.Mando.Preamplificador", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.Agc] = ("Cabina.Mando.Agc", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.SupresorDeRuido] = ("Cabina.Mando.SupresorDeRuido", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.NivelSupresorDeRuido] = ("Cabina.Mando.NivelSupresorDeRuido", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.ReductorDeRuido] = ("Cabina.Mando.ReductorDeRuido", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.NivelReductorDeRuido] = ("Cabina.Mando.NivelReductorDeRuido", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.MuescaAutomatica] = ("Cabina.Mando.MuescaAutomatica", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.MuescaManual] = ("Cabina.Mando.MuescaManual", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.FrecuenciaDeMuesca] = ("Cabina.Mando.FrecuenciaDeMuesca", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.Contorno] = ("Cabina.Mando.Contorno", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.FrecuenciaDeContorno] = ("Cabina.Mando.FrecuenciaDeContorno", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.DesplazamientoFi] = ("Cabina.Mando.DesplazamientoFi", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.AnchoDeFiltro] = ("Cabina.Mando.AnchoDeFiltro", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.FiltroDeTejado] = ("Cabina.Mando.FiltroDeTejado", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.Silenciador] = ("Cabina.Mando.Silenciador", "Cabina.Mando.Grupo.Recepcion"),
 
-            [MandoDeEquipo.TonoCw] = ("Tono de telegrafía", "Telegrafía"),
-            [MandoDeEquipo.VelocidadKeyer] = ("Velocidad del manipulador", "Telegrafía"),
-            [MandoDeEquipo.BreakIn] = ("Escucha entre caracteres", "Telegrafía"),
-            [MandoDeEquipo.RetardoBreakIn] = ("Retardo de la escucha", "Telegrafía"),
+            [MandoDeEquipo.TonoCw] = ("Cabina.Mando.TonoCw", "Cabina.Mando.Grupo.Telegrafia"),
+            [MandoDeEquipo.VelocidadKeyer] = ("Cabina.Mando.VelocidadKeyer", "Cabina.Mando.Grupo.Telegrafia"),
+            [MandoDeEquipo.BreakIn] = ("Cabina.Mando.BreakIn", "Cabina.Mando.Grupo.Telegrafia"),
+            [MandoDeEquipo.RetardoBreakIn] = ("Cabina.Mando.RetardoBreakIn", "Cabina.Mando.Grupo.Telegrafia"),
 
-            [MandoDeEquipo.Vox] = ("Paso a transmisión por voz", "Transmisión"),
-            [MandoDeEquipo.GananciaVox] = ("Ganancia del circuito de voz", "Transmisión"),
-            [MandoDeEquipo.RetardoVox] = ("Retardo del circuito de voz", "Transmisión"),
-            [MandoDeEquipo.Sintonizador] = ("Acoplador de antena", "Transmisión"),
-            [MandoDeEquipo.Antena] = ("Antena", "Transmisión"),
+            [MandoDeEquipo.Vox] = ("Cabina.Mando.Vox", "Cabina.Mando.Grupo.Transmision"),
+            [MandoDeEquipo.GananciaVox] = ("Cabina.Mando.GananciaVox", "Cabina.Mando.Grupo.Transmision"),
+            [MandoDeEquipo.RetardoVox] = ("Cabina.Mando.RetardoVox", "Cabina.Mando.Grupo.Transmision"),
+            [MandoDeEquipo.Sintonizador] = ("Cabina.Mando.Sintonizador", "Cabina.Mando.Grupo.Transmision"),
+            [MandoDeEquipo.Antena] = ("Cabina.Mando.Antena", "Cabina.Mando.Grupo.Transmision"),
 
-            [MandoDeEquipo.Split] = ("Trabajo en dos frecuencias", "Frecuencia"),
-            [MandoDeEquipo.Rit] = ("Desplazamiento de recepción", "Frecuencia"),
-            [MandoDeEquipo.DesplazamientoRit] = ("Valor del desplazamiento de recepción", "Frecuencia"),
-            [MandoDeEquipo.Xit] = ("Desplazamiento de transmisión", "Frecuencia"),
-            [MandoDeEquipo.DesplazamientoXit] = ("Valor del desplazamiento de transmisión", "Frecuencia"),
+            [MandoDeEquipo.Split] = ("Cabina.Mando.Split", "Cabina.Mando.Grupo.Frecuencia"),
+            [MandoDeEquipo.Rit] = ("Cabina.Mando.Rit", "Cabina.Mando.Grupo.Frecuencia"),
+            [MandoDeEquipo.DesplazamientoRit] = ("Cabina.Mando.DesplazamientoRit", "Cabina.Mando.Grupo.Frecuencia"),
+            [MandoDeEquipo.Xit] = ("Cabina.Mando.Xit", "Cabina.Mando.Grupo.Frecuencia"),
+            [MandoDeEquipo.DesplazamientoXit] = ("Cabina.Mando.DesplazamientoXit", "Cabina.Mando.Grupo.Frecuencia"),
 
-            [MandoDeEquipo.FiltroEstrecho] = ("Filtro estrecho (NAR)", "Recepción"),
-            [MandoDeEquipo.Apf] = ("Filtro de pico de audio (APF)", "Recepción"),
-            [MandoDeEquipo.FrecuenciaApf] = ("Frecuencia del APF", "Recepción"),
-            [MandoDeEquipo.Bloqueo] = ("Bloqueo del dial (LOCK)", "Frecuencia"),
-            [MandoDeEquipo.SintoniaFinaRapida] = ("Sintonía fina o rápida (FINE/FAST)", "Frecuencia"),
-            [MandoDeEquipo.TonoDeReferenciaCw] = ("Tono de referencia (SPOT)", "Telegrafía"),
-            [MandoDeEquipo.NivelAmc] = ("Nivel del AMC", "Transmisión"),
-            [MandoDeEquipo.AntiVox] = ("Antivox", "Transmisión"),
-            [MandoDeEquipo.ContrastePantalla] = ("Contraste de la pantalla", "Pantalla"),
-            [MandoDeEquipo.BrilloPantalla] = ("Brillo de la pantalla", "Pantalla"),
-            [MandoDeEquipo.EspectroVelocidad] = ("Velocidad del analizador (SPEED)", "Pantalla"),
-            [MandoDeEquipo.EspectroAncho] = ("Ancho del analizador (SPAN)", "Pantalla"),
-            [MandoDeEquipo.EspectroModo] = ("Modo del analizador (CENTER/3DSS/EXPAND)", "Pantalla"),
-            [MandoDeEquipo.EspectroNivel] = ("Nivel del analizador", "Pantalla"),
-            [MandoDeEquipo.EspectroPicos] = ("Picos del analizador", "Pantalla"),
-            [MandoDeEquipo.EspectroColor] = ("Color del analizador", "Pantalla"),
-            [MandoDeEquipo.FuncionDelMandoFunc] = ("Función del mando FUNC", "Frontal"),
-            [MandoDeEquipo.FuncionDelMandoDsp] = ("Función del mando DSP", "Frontal"),
+            [MandoDeEquipo.FiltroEstrecho] = ("Cabina.Mando.FiltroEstrecho", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.Apf] = ("Cabina.Mando.Apf", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.FrecuenciaApf] = ("Cabina.Mando.FrecuenciaApf", "Cabina.Mando.Grupo.Recepcion"),
+            [MandoDeEquipo.Bloqueo] = ("Cabina.Mando.Bloqueo", "Cabina.Mando.Grupo.Frecuencia"),
+            [MandoDeEquipo.SintoniaFinaRapida] = ("Cabina.Mando.SintoniaFinaRapida", "Cabina.Mando.Grupo.Frecuencia"),
+            [MandoDeEquipo.TonoDeReferenciaCw] = ("Cabina.Mando.TonoDeReferenciaCw", "Cabina.Mando.Grupo.Telegrafia"),
+            [MandoDeEquipo.NivelAmc] = ("Cabina.Mando.NivelAmc", "Cabina.Mando.Grupo.Transmision"),
+            [MandoDeEquipo.AntiVox] = ("Cabina.Mando.AntiVox", "Cabina.Mando.Grupo.Transmision"),
+            [MandoDeEquipo.ContrastePantalla] = ("Cabina.Mando.ContrastePantalla", "Cabina.Mando.Grupo.Pantalla"),
+            [MandoDeEquipo.BrilloPantalla] = ("Cabina.Mando.BrilloPantalla", "Cabina.Mando.Grupo.Pantalla"),
+            [MandoDeEquipo.EspectroVelocidad] = ("Cabina.Mando.EspectroVelocidad", "Cabina.Mando.Grupo.Pantalla"),
+            [MandoDeEquipo.EspectroAncho] = ("Cabina.Mando.EspectroAncho", "Cabina.Mando.Grupo.Pantalla"),
+            [MandoDeEquipo.EspectroModo] = ("Cabina.Mando.EspectroModo", "Cabina.Mando.Grupo.Pantalla"),
+            [MandoDeEquipo.EspectroNivel] = ("Cabina.Mando.EspectroNivel", "Cabina.Mando.Grupo.Pantalla"),
+            [MandoDeEquipo.EspectroPicos] = ("Cabina.Mando.EspectroPicos", "Cabina.Mando.Grupo.Pantalla"),
+            [MandoDeEquipo.EspectroColor] = ("Cabina.Mando.EspectroColor", "Cabina.Mando.Grupo.Pantalla"),
+            [MandoDeEquipo.FuncionDelMandoFunc] = ("Cabina.Mando.FuncionDelMandoFunc", "Cabina.Mando.Grupo.Frontal"),
+            [MandoDeEquipo.FuncionDelMandoDsp] = ("Cabina.Mando.FuncionDelMandoDsp", "Cabina.Mando.Grupo.Frontal"),
         };
 
     private readonly IEquipoAvanzado _equipo;
+    private readonly string _claveDelNombre;
+    private readonly string _claveDelGrupo;
+    private readonly IReadOnlyList<string> _etiquetas;
+
+    private static readonly IReadOnlyDictionary<string, string> ClavesDeLasPosiciones =
+        new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["Apagado"] = "Cabina.Posicion.Apagado",
+            ["Encendido"] = "Cabina.Posicion.Encendido",
+            ["Rápido"] = "Cabina.Posicion.Rapido",
+            ["Medio"] = "Cabina.Posicion.Medio",
+            ["Lento"] = "Cabina.Posicion.Lento",
+            ["Automático rápido"] = "Cabina.Posicion.AutoRapido",
+            ["Automático medio"] = "Cabina.Posicion.AutoMedio",
+            ["Automático lento"] = "Cabina.Posicion.AutoLento",
+            ["Sintonizar (emite portadora)"] = "Cabina.Posicion.SintonizarEmite",
+            ["Sintonizar"] = "Cabina.Posicion.Sintonizar",
+            ["Fuera"] = "Cabina.Posicion.Fuera",
+            ["En línea"] = "Cabina.Posicion.EnLinea",
+            ["Semi"] = "Cabina.Posicion.Semi",
+            ["Total"] = "Cabina.Posicion.Total",
+            ["Ancho"] = "Cabina.Posicion.Ancho",
+            ["Estrecho"] = "Cabina.Posicion.Estrecho",
+            ["Normal"] = "Cabina.Posicion.Normal",
+            ["Fina (FINE)"] = "Cabina.Posicion.Fina",
+            ["Rápida (FAST)"] = "Cabina.Posicion.Rapida",
+            ["Sin preamplificador (IPO)"] = "Cabina.Posicion.SinPreampIpo",
+            ["Sin preamplificador"] = "Cabina.Posicion.SinPreamp",
+            ["Amplificador"] = "Cabina.Posicion.Amplificador",
+            ["Amplificador 1"] = "Cabina.Posicion.Amplificador1",
+            ["Amplificador 2"] = "Cabina.Posicion.Amplificador2",
+            ["Preamplificador"] = "Cabina.Posicion.Preamplificador",
+            ["Preamplificador 1"] = "Cabina.Posicion.Preamplificador1",
+            ["Preamplificador 2"] = "Cabina.Posicion.Preamplificador2",
+            ["Preamplificador externo"] = "Cabina.Posicion.PreampExterno",
+            ["Interno y externo"] = "Cabina.Posicion.InternoYExterno",
+            ["por omisión"] = "Cabina.Posicion.PorOmision",
+            ["índice"] = "Cabina.Unidad.Indice",
+            ["ppm"] = "Cabina.Unidad.Ppm",
+        };
+
     private bool _recogiendo;
 
     /// <summary>Monta el mando a partir de lo que declara el equipo.</summary>
@@ -109,10 +152,11 @@ public sealed partial class VistaModeloMando : ObservableObject
 
         var (nombre, grupo) = Nombres.TryGetValue(rango.Mando, out var texto)
             ? texto
-            : (rango.Mando.ToString(), "Otros");
+            : (string.Empty, "Cabina.Mando.Grupo.Otros");
 
-        Nombre = nombre;
-        Grupo = grupo;
+        _claveDelNombre = nombre;
+        _claveDelGrupo = grupo;
+        Textos.AlCambiar(this, static vm => vm.OnPropertyChanged(string.Empty));
 
         Forma = rango switch
         {
@@ -125,7 +169,7 @@ public sealed partial class VistaModeloMando : ObservableObject
         // ofrece en la lista: elegirla ahi la mandaba sin pasar por el vigilante del PTT, el
         // equipo la rechazaba y el mando se quedaba muerto. Se sintoniza desde el equipo.
         var etiquetas = rango.Etiquetas ?? [];
-        Posiciones = rango.TransmiteAlAccionar && etiquetas.Count > 1
+        _etiquetas = rango.TransmiteAlAccionar && etiquetas.Count > 1
             ? [.. etiquetas.Take(etiquetas.Count - 1)]
             : etiquetas;
     }
@@ -149,19 +193,35 @@ public sealed partial class VistaModeloMando : ObservableObject
     public MandoDeEquipo Mando => Rango.Mando;
 
     /// <summary>Nombre del mando en espanol.</summary>
-    public string Nombre { get; }
+    public string Nombre => _claveDelNombre.Length > 0 ? Textos.T(_claveDelNombre) : Rango.Mando.ToString();
 
     /// <summary>Grupo al que pertenece, para poder agruparlos en la pantalla.</summary>
-    public string Grupo { get; }
+    public string Grupo => Textos.T(_claveDelGrupo);
 
     /// <summary>Con que control se acciona.</summary>
     public FormaDelMando Forma { get; }
 
-    /// <summary>Nombres de las posiciones, cuando el mando las tiene.</summary>
-    public IReadOnlyList<string> Posiciones { get; }
+    /// <summary>Nombres de las posiciones, cuando el mando las tiene, en el idioma en uso.</summary>
+    public IReadOnlyList<string> Posiciones => [.. _etiquetas.Select(Traducir)];
+
+    /// <summary>
+    /// La posicion elegida tal y como la nombra el control del equipo (en espanol), para las
+    /// cuentas que dependen del nombre (<see cref="VistaModeloEquipo.TextoCorto"/>).
+    /// </summary>
+    public string EtiquetaSinTraducir =>
+        EsDePosiciones && Posicion >= 0 && Posicion < _etiquetas.Count ? _etiquetas[Posicion] : ValorTexto;
 
     /// <summary>Unidad que se escribe junto al valor.</summary>
-    public string Unidad => Rango.Unidad ?? string.Empty;
+    public string Unidad => Traducir(Rango.Unidad ?? string.Empty);
+
+    /// <summary>
+    /// Traduce el nombre de una posicion o de una unidad que da el control del equipo. Los
+    /// controles las dan en espanol; lo que no esta en la lista (6 dB, LV1, SLOW1...) se queda tal cual.
+    /// </summary>
+    /// <param name="etiqueta">Lo que dice el control.</param>
+    /// <returns>El texto en el idioma en uso.</returns>
+    public static string Traducir(string etiqueta) =>
+        ClavesDeLasPosiciones.TryGetValue(etiqueta, out var clave) ? Textos.T(clave) : etiqueta;
 
     /// <summary>Menor valor que admite.</summary>
     public double Minimo => Rango.Minimo;
@@ -221,7 +281,7 @@ public sealed partial class VistaModeloMando : ObservableObject
     {
         get
         {
-            if (EsInterruptor) return Encendido ? "Encendido" : "Apagado";
+            if (EsInterruptor) return Encendido ? Textos.T("Cabina.Mando.Encendido") : Textos.T("Cabina.Mando.Apagado");
 
             if (EsDePosiciones)
             {

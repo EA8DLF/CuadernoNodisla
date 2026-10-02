@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Servicios.Actualizaciones;
 using Nodisla.Cuaderno.Ui.Ajustes;
 using Nodisla.Cuaderno.Ui.Soporte;
@@ -54,6 +55,13 @@ public sealed partial class VistaModeloActualizaciones : ObservableObject
         _acciones = acciones ?? new AccionesDelSistema();
         _log = (ILogger?)log ?? NullLogger.Instance;
         _comprobarAlArrancar = ajustes.ComprobarAlArrancar;
+
+        // La barra del aviso y sus notas se escriben en el idioma nuevo.
+        Textos.AlCambiar(this, static vm =>
+        {
+            vm.OnPropertyChanged(nameof(TituloDelAviso));
+            vm.OnPropertyChanged(nameof(Notas));
+        });
     }
 
     /// <summary>
@@ -101,12 +109,12 @@ public sealed partial class VistaModeloActualizaciones : ObservableObject
     /// <summary>Texto de la barra.</summary>
     public string TituloDelAviso => Nueva is null
         ? string.Empty
-        : $"Hay una versión nueva de Cuaderno NODISLA: {Nueva.Version} (tiene la {VersionActual}).";
+        : Textos.F("Ajustes.Actualizaciones.TituloDelAviso", Nueva.Version, VersionActual);
 
     /// <summary>Notas de la version nueva.</summary>
     public string Notas => Nueva is null
         ? string.Empty
-        : string.IsNullOrWhiteSpace(Nueva.Notas) ? "Esta versión no trae notas." : Nueva.Notas.Trim();
+        : string.IsNullOrWhiteSpace(Nueva.Notas) ? Textos.T("Ajustes.Actualizaciones.SinNotas") : Nueva.Notas.Trim();
 
     /// <summary>La version nueva trae instalador y suma: se puede instalar desde aqui.</summary>
     public bool SePuedeInstalar => Nueva?.SePuedeInstalar == true;
@@ -163,7 +171,7 @@ public sealed partial class VistaModeloActualizaciones : ObservableObject
     private async Task BuscarActualizacionesAsync()
     {
         Buscando = true;
-        Estado = "Buscando…";
+        Estado = Textos.T("Ajustes.Actualizaciones.Buscando");
         try
         {
             var resultado = await Task.Run(() => _comprobador.ComprobarAsync());
@@ -172,20 +180,20 @@ public sealed partial class VistaModeloActualizaciones : ObservableObject
                 case EstadoDeComprobacion.HayVersionNueva:
                     Nueva = resultado.Nueva;
                     AvisoVisible = true;
-                    Estado = $"Hay una versión nueva: {resultado.Nueva!.Version}.";
+                    Estado = Textos.F("Ajustes.Actualizaciones.HayNueva", resultado.Nueva!.Version);
                     break;
                 case EstadoDeComprobacion.AlDia:
-                    Estado = $"Está al día (versión {VersionActual}).";
+                    Estado = Textos.F("Ajustes.Actualizaciones.AlDia", VersionActual);
                     break;
                 default:
-                    Estado = $"No se ha podido comprobar ahora. {resultado.Motivo}".TrimEnd();
+                    Estado = Textos.F("Ajustes.Actualizaciones.NoSeHaPodidoComprobarMotivo", resultado.Motivo).TrimEnd();
                     break;
             }
         }
         catch (Exception ex)
         {
             _log.LogDebug(ex, "La búsqueda de versiones no ha terminado.");
-            Estado = "No se ha podido comprobar ahora.";
+            Estado = Textos.T("Ajustes.Actualizaciones.NoSeHaPodidoComprobar");
         }
         finally
         {
@@ -205,13 +213,13 @@ public sealed partial class VistaModeloActualizaciones : ObservableObject
         var nueva = Nueva!;
         if (!nueva.SePuedeInstalar)
         {
-            Estado = "Esta versión no trae instalador comprobable. Descárguela desde la página de GitHub.";
+            Estado = Textos.T("Ajustes.Actualizaciones.SinInstalador");
             return;
         }
 
         Descargando = true;
         Progreso = 0;
-        Estado = "Descargando el instalador…";
+        Estado = Textos.T("Ajustes.Actualizaciones.Descargando");
         _cancelacionDeDescarga = new CancellationTokenSource();
         try
         {
@@ -221,20 +229,18 @@ public sealed partial class VistaModeloActualizaciones : ObservableObject
 
             if (resultado.Estado != EstadoDeDescarga.Verificado)
             {
-                Estado = resultado.Motivo ?? "No se ha podido descargar el instalador.";
+                Estado = resultado.Motivo ?? Textos.T("Ajustes.Actualizaciones.NoDescargado");
                 return;
             }
 
-            Estado = "Instalador descargado y comprobado (SHA-256 correcta).";
+            Estado = Textos.T("Ajustes.Actualizaciones.Comprobado");
             var seguir = _acciones.Confirmar(
-                $"Instalar la versión {nueva.Version}",
-                $"Se va a cerrar Cuaderno NODISLA y abrir el instalador de la versión {nueva.Version}.\n\n" +
-                "Sus contactos y ajustes no se tocan. Si está transmitiendo o a mitad de un contacto, " +
-                "cancele y termine primero.",
-                "Cerrar e instalar");
+                Textos.F("Ajustes.Actualizaciones.Confirmar.Titulo", nueva.Version),
+                Textos.F("Ajustes.Actualizaciones.Confirmar.Texto", nueva.Version),
+                Textos.T("Ajustes.Actualizaciones.Confirmar.Boton"));
             if (!seguir)
             {
-                Estado = "Instalación aplazada. El instalador ya está descargado.";
+                Estado = Textos.T("Ajustes.Actualizaciones.Aplazada");
                 return;
             }
 
@@ -244,12 +250,12 @@ public sealed partial class VistaModeloActualizaciones : ObservableObject
         }
         catch (OperationCanceledException)
         {
-            Estado = "Descarga cancelada.";
+            Estado = Textos.T("Ajustes.Actualizaciones.Cancelada");
         }
         catch (Exception ex)
         {
             _log.LogWarning(ex, "No se ha podido instalar la versión nueva.");
-            Estado = "No se ha podido abrir el instalador.";
+            Estado = Textos.T("Ajustes.Actualizaciones.NoAbreInstalador");
         }
         finally
         {
@@ -278,7 +284,7 @@ public sealed partial class VistaModeloActualizaciones : ObservableObject
         catch (Exception ex)
         {
             _log.LogDebug(ex, "No se ha podido abrir el navegador.");
-            Estado = $"No se ha podido abrir el navegador. La página es {Nueva!.Pagina}";
+            Estado = Textos.F("Ajustes.Actualizaciones.NoAbreNavegador", Nueva!.Pagina);
         }
     }
 

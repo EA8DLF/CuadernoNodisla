@@ -75,6 +75,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodisla.Cuaderno.Impresion"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodisla.Cuaderno.Impresion.Pruebas", "tests\Nodisla.Cuaderno.Impresion.Pruebas\Nodisla.Cuaderno.Impresion.Pruebas.csproj", "{D1EF91E5-AC34-47F0-A257-1C8424CD8DF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodisla.Cuaderno.Idiomas", "src\Nodisla.Cuaderno.Idiomas\Nodisla.Cuaderno.Idiomas.csproj", "{7A505446-D06E-4265-BAAF-EDE378A9E0A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -216,6 +218,10 @@ Global
 		{D1EF91E5-AC34-47F0-A257-1C8424CD8DF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1EF91E5-AC34-47F0-A257-1C8424CD8DF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1EF91E5-AC34-47F0-A257-1C8424CD8DF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A505446-D06E-4265-BAAF-EDE378A9E0A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A505446-D06E-4265-BAAF-EDE378A9E0A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A505446-D06E-4265-BAAF-EDE378A9E0A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A505446-D06E-4265-BAAF-EDE378A9E0A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{79062BAC-7D12-4142-816F-0350C82D295D} = {B7B1D405-5EC1-42A0-864C-CD2F305C03A1}
@@ -251,5 +257,6 @@ Global
 		{B03237AF-2E44-4F14-A725-DF2E60D200E2} = {2AB7AA5C-8CDE-4AE9-BB6C-042963F29BB7}
 		{1EA01A1E-9F72-4571-9D53-C75FB8F29042} = {B7B1D405-5EC1-42A0-864C-CD2F305C03A1}
 		{D1EF91E5-AC34-47F0-A257-1C8424CD8DF1} = {2AB7AA5C-8CDE-4AE9-BB6C-042963F29BB7}
+		{7A505446-D06E-4265-BAAF-EDE378A9E0A1} = {B7B1D405-5EC1-42A0-864C-CD2F305C03A1}
 	EndGlobalSection
 EndGlobal

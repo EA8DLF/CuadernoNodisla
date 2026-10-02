@@ -2,6 +2,7 @@ using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Dxcc;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 
@@ -100,7 +101,7 @@ public sealed class GestionarRonda(
     {
         if (!Indicativo.TryParse(indicativoTexto, out var indicativo))
         {
-            return new ResultadoDeParticipante { Error = $"«{indicativoTexto}» no es un indicativo válido." };
+            return new ResultadoDeParticipante { Error = Textos.F("Servicios.Aplicacion.NoEsIndicativoValido", indicativoTexto) };
         }
 
         var participante = new ParticipanteDeRonda

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Radio.Control.Ft710;
 using Nodisla.Cuaderno.Radio.Espectro;
 using Serilog;
@@ -227,7 +228,7 @@ public sealed partial class VistaModeloEquipo
 
         // Guardar en la QMB empuja la pila de memorias rapidas del equipo: no tiene vuelta atras.
         if (tecla == TeclaDelEquipo.GuardarMemoriaRapida
-            && !Confirmar("Guardar la frecuencia actual en la memoria rápida (QMB) del equipo."))
+            && !Confirmar(Textos.T("Cabina.Frontal.ConfirmarQmb")))
         {
             return;
         }
@@ -240,7 +241,7 @@ public sealed partial class VistaModeloEquipo
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido pulsar {Tecla}.", tecla);
-            Aviso = $"No se ha podido pulsar {tecla}: {ex.Message}";
+            Aviso = Textos.F("Cabina.Frontal.NoPulsa", tecla, ex.Message);
         }
     }
 
@@ -257,7 +258,7 @@ public sealed partial class VistaModeloEquipo
         catch (Exception ex)
         {
             Log.Warning(ex, "No se ha podido girar el dial.");
-            Aviso = $"No se ha podido girar el dial: {ex.Message}";
+            Aviso = Textos.F("Cabina.Frontal.NoGiraDial", ex.Message);
         }
     }
 
@@ -274,7 +275,7 @@ public sealed partial class VistaModeloEquipo
         catch (Exception ex)
         {
             Log.Warning(ex, "No se ha podido girar STEP/MCH.");
-            Aviso = $"No se ha podido girar STEP/MCH: {ex.Message}";
+            Aviso = Textos.F("Cabina.Frontal.NoGiraStep", ex.Message);
         }
     }
 
@@ -375,22 +376,22 @@ public sealed partial class VistaModeloEquipo
             _mox = null;
             OnPropertyChanged(nameof(EnMox));
             await enCurso.DisposeAsync().ConfigureAwait(true);
-            Aviso = "MOX quitado: PTT abajo.";
+            Aviso = Textos.T("Cabina.Frontal.MoxQuitado");
             return;
         }
 
-        if (ConfirmarQueVaATransmitir is { } preguntar && !preguntar("MOX (transmitir)")) return;
+        if (ConfirmarQueVaATransmitir is { } preguntar && !preguntar(Textos.T("Cabina.Frontal.MoxTransmitir"))) return;
 
         try
         {
             _mox = await _vigilante.PedirAntenaAsync("MOX desde el frontal").ConfigureAwait(true);
             OnPropertyChanged(nameof(EnMox));
-            Aviso = "MOX: el equipo está en antena. Vuelva a pulsar para quitarlo.";
+            Aviso = Textos.T("Cabina.Frontal.MoxEnAntena");
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido poner MOX.");
-            Aviso = $"No se ha podido poner MOX: {ex.Message}";
+            Aviso = Textos.F("Cabina.Frontal.NoMox", ex.Message);
         }
     }
 
@@ -402,7 +403,7 @@ public sealed partial class VistaModeloEquipo
     public async Task<bool> SintonizarAsync(TimeSpan tope)
     {
         if (!Conectado || _mox is not null || Real is not Radio.Control.IEquipoConSintonia ft710) return false;
-        if (ConfirmarQueVaATransmitir is { } preguntar && !preguntar("Sintonizar el acoplador (emite portadora)")) return false;
+        if (ConfirmarQueVaATransmitir is { } preguntar && !preguntar(Textos.T("Cabina.Frontal.ConfirmarSintonia"))) return false;
 
         try
         {
@@ -414,18 +415,17 @@ public sealed partial class VistaModeloEquipo
             }
 
             Aviso = termino
-                ? "Acoplador sintonizado."
+                ? Textos.T("Cabina.Frontal.Sintonizado")
                 : !ft710.VeElFinDeLaSintonia
-                    ? $"Sintonía lanzada. El {NombreDelEquipo} no dice por CAT cuándo termina: se ha soltado a los "
-                      + $"{Math.Min(tope.TotalSeconds, ControlFt710.SintoniaSinIndicador.TotalSeconds):N0} s. Mire la ROE en la radio."
-                    : $"El acoplador no terminó en {tope.TotalSeconds:N0} s: se ha cortado.";
+                    ? Textos.F("Cabina.Frontal.SintoniaSinFin", NombreDelEquipo, Math.Min(tope.TotalSeconds, ControlFt710.SintoniaSinIndicador.TotalSeconds))
+                    : Textos.F("Cabina.Frontal.SintoniaCortada", tope.TotalSeconds);
             await RefrescarElFrontalAsync().ConfigureAwait(true);
             return termino;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Fallo sintonizando el acoplador.");
-            Aviso = $"No se ha podido sintonizar: {ex.Message}";
+            Aviso = Textos.F("Cabina.Frontal.NoSintoniza", ex.Message);
             return false;
         }
     }

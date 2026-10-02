@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Servicios.Actualizaciones;
 
@@ -71,13 +72,13 @@ public sealed class ComprobadorDeVersiones
                 // Repositorio privado, o sin ninguna publicacion todavia. Lo normal hasta que
                 // El operador lo haga publico: se calla.
                 _log.LogDebug("Sin publicaciones visibles en {Repositorio} (404).", Repositorio.UltimaPublicacion);
-                return ResultadoDeComprobacion.NoDisponible("Todavía no hay versiones publicadas.");
+                return ResultadoDeComprobacion.NoDisponible(Textos.T("Servicios.Actualizaciones.SinVersiones"));
             }
 
             if (!respuesta.IsSuccessStatusCode)
             {
                 _log.LogDebug("GitHub respondió {Codigo} al buscar versiones.", (int)respuesta.StatusCode);
-                return ResultadoDeComprobacion.NoDisponible($"GitHub respondió {(int)respuesta.StatusCode}.");
+                return ResultadoDeComprobacion.NoDisponible(Textos.F("Servicios.Respondio", "GitHub", (int)respuesta.StatusCode));
             }
 
             var json = await respuesta.Content.ReadAsStringAsync(cancelacion).ConfigureAwait(false);
@@ -85,7 +86,7 @@ public sealed class ComprobadorDeVersiones
             if (publicada is null)
             {
                 _log.LogDebug("La última publicación de GitHub no trae un número de versión legible.");
-                return ResultadoDeComprobacion.NoDisponible("La publicación no tiene un número de versión legible.");
+                return ResultadoDeComprobacion.NoDisponible(Textos.T("Servicios.Actualizaciones.SinNumero"));
             }
 
             if (publicada.Version > Instalada)
@@ -107,7 +108,7 @@ public sealed class ComprobadorDeVersiones
         {
             // TaskCanceledException sin cancelacion pedida es el tiempo de espera del cliente.
             _log.LogDebug(ex, "No se ha podido consultar la última versión en GitHub.");
-            return ResultadoDeComprobacion.NoDisponible("No se ha podido contactar con GitHub.");
+            return ResultadoDeComprobacion.NoDisponible(Textos.T("Servicios.Actualizaciones.SinContacto"));
         }
     }
 

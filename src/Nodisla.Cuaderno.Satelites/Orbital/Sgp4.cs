@@ -1,3 +1,5 @@
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Satelites.Orbital;
 
 /// <summary>Por que no se ha podido propagar la orbita.</summary>
@@ -260,14 +262,14 @@ public sealed class Sgp4
     /// <param name="fallo">El fallo.</param>
     public static string Descripcion(FalloDePropagacion fallo) => fallo switch
     {
-        FalloDePropagacion.Ninguno => "sin problemas",
-        FalloDePropagacion.ExcentricidadMedia => "la excentricidad media se sale del margen válido",
-        FalloDePropagacion.MovimientoMedioNegativo => "el movimiento medio sale negativo",
-        FalloDePropagacion.ExcentricidadOsculatriz => "la excentricidad instantánea se sale del margen válido",
-        FalloDePropagacion.SemiladoRectoNegativo => "el semilado recto sale negativo",
-        FalloDePropagacion.Reentrado => "el satélite ha reentrado en la atmósfera",
-        FalloDePropagacion.EspacioProfundoNoImplementado => "haría falta el modelo de espacio profundo",
-        _ => "motivo desconocido",
+        FalloDePropagacion.Ninguno => Textos.T("Servicios.Satelites.Fallo.Ninguno"),
+        FalloDePropagacion.ExcentricidadMedia => Textos.T("Servicios.Satelites.Fallo.ExcentricidadMedia"),
+        FalloDePropagacion.MovimientoMedioNegativo => Textos.T("Servicios.Satelites.Fallo.MovimientoMedioNegativo"),
+        FalloDePropagacion.ExcentricidadOsculatriz => Textos.T("Servicios.Satelites.Fallo.ExcentricidadOsculatriz"),
+        FalloDePropagacion.SemiladoRectoNegativo => Textos.T("Servicios.Satelites.Fallo.SemiladoRectoNegativo"),
+        FalloDePropagacion.Reentrado => Textos.T("Servicios.Satelites.Fallo.Reentrado"),
+        FalloDePropagacion.EspacioProfundoNoImplementado => Textos.T("Servicios.Satelites.Fallo.EspacioProfundo"),
+        _ => Textos.T("Servicios.Satelites.Fallo.Desconocido"),
     };
 
     /// <summary>

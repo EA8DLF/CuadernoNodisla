@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Timers;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
@@ -95,7 +96,7 @@ public sealed class FuenteSpotsSimulada : IFuenteSpots, IAsyncDisposable
     public event EventHandler<string>? LineaRecibida;
 
     /// <inheritdoc />
-    public string Nombre => "Cluster simulado (sin red)";
+    public string Nombre => Textos.T("Dialogos.Simulado.Cluster");
 
     /// <inheritdoc />
     public EstadoDeConexion Estado { get; private set; } = EstadoDeConexion.Desconectado;

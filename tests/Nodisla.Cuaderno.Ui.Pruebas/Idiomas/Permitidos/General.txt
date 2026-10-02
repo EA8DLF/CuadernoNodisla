@@ -1,0 +1,40 @@
+# Literales que pueden quedarse tal cual en los XAML, uno por línea, exactos.
+# Ya se dejan pasar solos: los que no tienen letras (cifras, símbolos) y los que van
+# todo en mayúsculas, como los rótulos del panel de la radio (MODE, SPLIT, VFO A, CLAR).
+# Aquí van los demás: unidades, nombres propios y marcas, que se escriben igual en todos los idiomas.
+#
+# ── Nombre del programa y de la casa
+Cuaderno NODISLA
+NODISLA
+# ── Unidades
+Hz
+kHz
+MHz
+GHz
+dB
+dBm
+dBi
+ms
+km
+mi
+W
+V
+A
+s
+min
+# ── Servicios y programas (nombres propios)
+QRZ.com
+LoTW
+eQSL.cc
+eQSL
+Club Log
+HamQTH
+PSK Reporter
+WSJT-X
+FLDigi
+OmniRig
+Hamlib
+rigctld
+TQSL
+Telnet
+GitHub

@@ -135,6 +135,10 @@ identificador de contenedor USB, no por el nombre — así no hay que adivinar c
 dispositivos con nombres parecidos. **Probar el nivel** es la única acción de esta pantalla que
 abre de verdad la tarjeta de sonido; se cierra sola al parar la prueba o al salir.
 
+Al final, el apartado **Telegrafía (CW)**: tono por omisión, ancho del filtro, sensibilidad,
+velocidades mínima y máxima y cuántas señales se leen a la vez. Ver
+[Telegrafía (CW)](17-cw.md#ajustes).
+
 ## Fonía
 
 Altavoces, micrófono y el PTT de fonía por el PC. Ver [Fonía por el PC](12-fonia.md).

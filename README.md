@@ -1,6 +1,7 @@
 # Cuaderno NODISLA
 
-Cuaderno de guardia para radioaficionados, en español, para Windows. Nace como alternativa a
+Cuaderno de guardia para radioaficionados, para Windows, en español y con la interfaz traducida al
+inglés, francés, alemán, italiano y portugués. Nace como alternativa a
 Log4OM NextGen, con todo en castellano y un control a fondo de la radio por CAT. Reúne en un solo
 programa el libro de contactos, el control del equipo con su frontal dibujado, el cluster de DX,
 un módem propio de modos digitales, diplomas, mapa, satélites, e impresión y envío de QSL.
@@ -28,6 +29,8 @@ Autor: **EA8DLF** · Proyecto NODISLA · Contacto: nodisla@nodisla.org · Licenc
   Todo lo que no es el FT-710 está programado según el manual de cada modelo y **sin probar con
   la radio real**; el programa lo dice en pantalla. Un vigilante de PTT suelta la transmisión ante
   cualquier fallo.
+- **Decodificador de CW** en la cabina: lee la telegrafía del audio del equipo (tono automático,
+  velocidad en WPM, varias señales a la vez) y nunca transmite.
 - **Cluster de DX** por Telnet, con bandmap, filtros y aviso de entidad, banda o modo nuevos.
 - **Módem digital propio**: FT8, FT4, FST4/FST4W, JT65, JT9, Q65, MSK144 y WSPR, sin depender de
   WSJT-X. También puede escuchar a WSJT-X/JTDX por UDP si se prefiere.
@@ -38,6 +41,8 @@ Autor: **EA8DLF** · Proyecto NODISLA · Contacto: nodisla@nodisla.org · Licenc
   elevación en vivo y seguimiento Doppler; **propagación** por banda.
 - **QSL**: editor de tarjetas, envío por correo, etiquetas Avery en PDF, eQSL, LoTW, QRZ, ClubLog
   y HamQTH. Las credenciales se guardan cifradas con la protección de datos de Windows.
+- **Selector de color por paleta** en los editores de tarjetas y diplomas, con colores del diseño,
+  últimos usados, opacidad y color exacto.
 - **Diseñador de diplomas**: plantillas propias para emitir diplomas a otras estaciones (con
   numeración, firma y envío por correo) o certificados de los diplomas conseguidos.
 - **Ronda de control** para redes y net control.
@@ -52,6 +57,7 @@ Autor: **EA8DLF** · Proyecto NODISLA · Contacto: nodisla@nodisla.org · Licenc
 |---|---|
 | ![Digital](docs/capturas/ayuda/digital.png) | ![Cuaderno](docs/capturas/ayuda/contactos.png) |
 | ![ICOM IC-7300](docs/capturas/frontal-ic7300.png) | ![Tarjeta QSL](docs/capturas/qsl-pestana-1366.png) |
+| ![Interfaz en inglés](docs/capturas/idioma-en-operar.png) | ![Decodificador de CW](docs/capturas/ayuda/cw-cabina.png) |
 
 La ayuda completa, con capturas, está en [`docs/ayuda/`](docs/ayuda/README.md). Los modelos de
 radio se explican en [`docs/16-modelos.md`](docs/16-modelos.md),
@@ -130,7 +136,9 @@ Lo que falta o está a medias:
   `docs/16-modelos.md` y `docs/17-icom.md`.
 - Concursos (catálogo, puntos, macros y Cabrillo) y manipulador y entrenador de CW: hechos y
   probados en sus bibliotecas, pero todavía sin pantalla en la interfaz.
-- Solo Windows (WPF). La interfaz está en español; no hay traducciones.
+- Solo Windows (WPF). La interfaz está en seis idiomas (español, inglés, francés, alemán, italiano
+  y portugués), cambiables al momento en Configuración › Idioma; la ayuda integrada está en español
+  y solo algunos capítulos traducidos al inglés (`docs/ayuda/en`).
 
 La documentación técnica y las decisiones de diseño están en [`docs/`](docs/).
 

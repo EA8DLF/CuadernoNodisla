@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Impresion.Qsl;
 
@@ -57,30 +58,30 @@ public sealed record DatosDeMiEstacion(
 public static class VariablesDeQsl
 {
     /// <summary>Las variables que hay, con lo que ponen, para la ayuda y el editor.</summary>
-    public static IReadOnlyList<(string Nombre, string Descripcion)> Conocidas { get; } =
+    public static IReadOnlyList<(string Nombre, string Descripcion)> Conocidas =>
     [
-        ("miindicativo", "Mi indicativo"),
-        ("milocalizador", "Mi localizador"),
-        ("minombre", "Mi nombre"),
-        ("miqth", "Mi QTH (población, provincia)"),
-        ("miequipo", "Mi equipo"),
-        ("miantena", "Mi antena"),
-        ("micq", "Mi zona CQ"),
-        ("miitu", "Mi zona ITU"),
-        ("indicativo", "Indicativo del corresponsal"),
-        ("nombre", "Nombre del corresponsal"),
-        ("fecha", "Fecha del contacto, AAAA-MM-DD (UTC)"),
-        ("hora", "Hora del contacto, HH:MM (UTC)"),
-        ("banda", "Banda (20m, 2m…)"),
-        ("frecuencia", "Frecuencia en MHz"),
-        ("modo", "Modo (SSB, FT8…)"),
-        ("rst", "Informe enviado"),
-        ("rstrecibido", "Informe recibido"),
-        ("potencia", "Mi potencia en W"),
-        ("satelite", "Satélite, si lo hubo"),
-        ("pse", "«PSE QSL» o «TNX QSL» según si ya llegó la suya"),
-        ("mensaje", "Mensaje QSL del contacto"),
-        ("contactos", "Lista de todos los contactos del correo (solo en el correo)"),
+        ("miindicativo", Textos.T("Servicios.Impresion.VariableQsl.miindicativo")),
+        ("milocalizador", Textos.T("Servicios.Impresion.VariableQsl.milocalizador")),
+        ("minombre", Textos.T("Servicios.Impresion.VariableQsl.minombre")),
+        ("miqth", Textos.T("Servicios.Impresion.VariableQsl.miqth")),
+        ("miequipo", Textos.T("Servicios.Impresion.VariableQsl.miequipo")),
+        ("miantena", Textos.T("Servicios.Impresion.VariableQsl.miantena")),
+        ("micq", Textos.T("Servicios.Impresion.VariableQsl.micq")),
+        ("miitu", Textos.T("Servicios.Impresion.VariableQsl.miitu")),
+        ("indicativo", Textos.T("Servicios.Impresion.VariableQsl.indicativo")),
+        ("nombre", Textos.T("Servicios.Impresion.VariableQsl.nombre")),
+        ("fecha", Textos.T("Servicios.Impresion.VariableQsl.fecha")),
+        ("hora", Textos.T("Servicios.Impresion.VariableQsl.hora")),
+        ("banda", Textos.T("Servicios.Impresion.VariableQsl.banda")),
+        ("frecuencia", Textos.T("Servicios.Impresion.VariableQsl.frecuencia")),
+        ("modo", Textos.T("Servicios.Impresion.VariableQsl.modo")),
+        ("rst", Textos.T("Servicios.Impresion.VariableQsl.rst")),
+        ("rstrecibido", Textos.T("Servicios.Impresion.VariableQsl.rstrecibido")),
+        ("potencia", Textos.T("Servicios.Impresion.VariableQsl.potencia")),
+        ("satelite", Textos.T("Servicios.Impresion.VariableQsl.satelite")),
+        ("pse", Textos.T("Servicios.Impresion.VariableQsl.pse")),
+        ("mensaje", Textos.T("Servicios.Impresion.VariableQsl.mensaje")),
+        ("contactos", Textos.T("Servicios.Impresion.VariableQsl.contactos")),
     ];
 
     /// <summary>Los valores de las variables para un contacto.</summary>

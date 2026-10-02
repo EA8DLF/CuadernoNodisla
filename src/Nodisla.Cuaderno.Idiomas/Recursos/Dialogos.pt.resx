@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Dialogos.Confirmacion.NoVolverAPreguntar" xml:space="preserve">
+    <value>Não voltar a perguntar</value>
+  </data>
+  <data name="Dialogos.Confirmacion.NoVolverTooltip" xml:space="preserve">
+    <value>Pode voltar a ativá-lo em Definições › Áudio e digitais.</value>
+  </data>
+  <data name="Dialogos.NoSeAbreElCuaderno" xml:space="preserve">
+    <value>Não foi possível abrir o logbook.
+
+{0}
+
+O logbook está em {1}. Se o ficheiro estiver danificado, aí mesmo há uma pasta «copias» com as cópias de segurança anteriores.</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Bienvenida" xml:space="preserve">
+    <value>Bem-vindo ao logbook</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Crear" xml:space="preserve">
+    <value>Criar o perfil e começar</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Explicacion" xml:space="preserve">
+    <value>Antes de registar o primeiro contacto é preciso um perfil de estação: o indicativo com que transmite e de onde opera. Sem esses dados o logbook não se pode exportar para ADIF nem serve para pedir diplomas.</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Indicativo" xml:space="preserve">
+    <value>Indicativo da estação</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.IndicativoEjemplo" xml:space="preserve">
+    <value>Por exemplo EA8DLF</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Localidad" xml:space="preserve">
+    <value>Localidade (opcional)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Localizador" xml:space="preserve">
+    <value>Locator (opcional, mas necessário para distâncias e rumos)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.LocalizadorEjemplo" xml:space="preserve">
+    <value>Por exemplo IL18QK</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombreOperador" xml:space="preserve">
+    <value>Nome do operador (opcional)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombrePerfil" xml:space="preserve">
+    <value>Nome do perfil</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombrePerfilTooltip" xml:space="preserve">
+    <value>Para o distinguir de outros perfis: Casa, Portátil, Concursos…</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Salir" xml:space="preserve">
+    <value>Sair do programa</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Titulo" xml:space="preserve">
+    <value>Cuaderno NODISLA · primeiro arranque</value>
+  </data>
+  <data name="Dialogos.Simulado.Analizador" xml:space="preserve">
+    <value>Analisador simulado</value>
+  </data>
+  <data name="Dialogos.Simulado.Cluster" xml:space="preserve">
+    <value>Cluster simulado (sem rede)</value>
+  </data>
+  <data name="Dialogos.Simulado.FichaInventada" xml:space="preserve">
+    <value>Ficha inventada: sessão com portas simuladas.</value>
+  </data>
+  <data name="Dialogos.Simulado.ModemNoTransmite" xml:space="preserve">
+    <value>O modem simulado não transmite. Feche o programa e volte a abri-lo sem CUADERNO_SIMULADO.</value>
+  </data>
+  <data name="Dialogos.Simulado.QsoDuplicado" xml:space="preserve">
+    <value>O contacto com {0} já está no logbook.</value>
+  </data>
+  <data name="Dialogos.Simulado.RelojPuesto" xml:space="preserve">
+    <value>Relógio acertado (simulado): o relógio do computador não foi alterado.</value>
+  </data>
+  <data name="Dialogos.Simulado.ServicioDeHora" xml:space="preserve">
+    <value>Serviço de hora configurado (simulado).</value>
+  </data>
+  <data name="Dialogos.Simulado.SinConfirmaciones" xml:space="preserve">
+    <value>Ainda não há confirmações no logbook, por isso o confirmado fica a zero. O trabalhado é definitivo.</value>
+  </data>
+  <data name="Dialogos.Simulado.SinReferencias" xml:space="preserve">
+    <value>Este diploma conta referências —ilhas, cumes, parques— e o logbook ainda não as guarda. Não é que o número seja baixo: é que não há de onde o tirar. Chegará com a base de dados do logbook.</value>
+  </data>
+</root>

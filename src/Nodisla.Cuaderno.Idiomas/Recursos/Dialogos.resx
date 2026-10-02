@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Dialogos.Confirmacion.NoVolverAPreguntar" xml:space="preserve">
+    <value>No volver a preguntar</value>
+  </data>
+  <data name="Dialogos.Confirmacion.NoVolverTooltip" xml:space="preserve">
+    <value>Se puede volver a activar en Configuración › Audio y digitales.</value>
+  </data>
+  <data name="Dialogos.NoSeAbreElCuaderno" xml:space="preserve">
+    <value>No se ha podido abrir el cuaderno.
+
+{0}
+
+El cuaderno vive en {1}. Si el fichero está dañado, ahí mismo hay una carpeta «copias» con las copias de seguridad anteriores.</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Bienvenida" xml:space="preserve">
+    <value>Bienvenido al cuaderno</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Crear" xml:space="preserve">
+    <value>Crear el perfil y empezar</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Explicacion" xml:space="preserve">
+    <value>Antes de registrar el primer contacto hace falta un perfil de estación: el indicativo con el que transmite y desde dónde opera. Sin esos datos el cuaderno no se puede exportar a ADIF ni sirve para pedir diplomas.</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Indicativo" xml:space="preserve">
+    <value>Indicativo de la estación</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.IndicativoEjemplo" xml:space="preserve">
+    <value>Por ejemplo EA8DLF</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Localidad" xml:space="preserve">
+    <value>Localidad (opcional)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Localizador" xml:space="preserve">
+    <value>Localizador (opcional, pero hace falta para distancias y rumbos)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.LocalizadorEjemplo" xml:space="preserve">
+    <value>Por ejemplo IL18QK</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombreOperador" xml:space="preserve">
+    <value>Nombre del operador (opcional)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombrePerfil" xml:space="preserve">
+    <value>Nombre del perfil</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombrePerfilTooltip" xml:space="preserve">
+    <value>Para distinguirlo de otros perfiles: Casa, Portable, Concursos…</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Salir" xml:space="preserve">
+    <value>Salir del programa</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Titulo" xml:space="preserve">
+    <value>Cuaderno NODISLA · primer arranque</value>
+  </data>
+  <data name="Dialogos.Simulado.Analizador" xml:space="preserve">
+    <value>Analizador simulado</value>
+    <comment>Modo simulado (CUADERNO_SIMULADO)</comment>
+  </data>
+  <data name="Dialogos.Simulado.Cluster" xml:space="preserve">
+    <value>Cluster simulado (sin red)</value>
+    <comment>Modo simulado</comment>
+  </data>
+  <data name="Dialogos.Simulado.FichaInventada" xml:space="preserve">
+    <value>Ficha inventada: sesión con puertos simulados.</value>
+    <comment>Modo simulado</comment>
+  </data>
+  <data name="Dialogos.Simulado.ModemNoTransmite" xml:space="preserve">
+    <value>El módem simulado no transmite. Cierre el programa y vuelva a abrirlo sin CUADERNO_SIMULADO.</value>
+    <comment>Modo simulado</comment>
+  </data>
+  <data name="Dialogos.Simulado.QsoDuplicado" xml:space="preserve">
+    <value>El contacto con {0} ya está en el cuaderno.</value>
+    <comment>Modo simulado</comment>
+  </data>
+  <data name="Dialogos.Simulado.RelojPuesto" xml:space="preserve">
+    <value>Reloj puesto en hora (simulado): no se ha tocado el reloj del ordenador.</value>
+    <comment>Modo simulado</comment>
+  </data>
+  <data name="Dialogos.Simulado.ServicioDeHora" xml:space="preserve">
+    <value>Servicio de hora configurado (simulado).</value>
+    <comment>Modo simulado</comment>
+  </data>
+  <data name="Dialogos.Simulado.SinConfirmaciones" xml:space="preserve">
+    <value>Todavía no hay confirmaciones en el cuaderno, así que lo confirmado sale a cero. Lo trabajado sí es firme.</value>
+    <comment>Modo simulado, diplomas</comment>
+  </data>
+  <data name="Dialogos.Simulado.SinReferencias" xml:space="preserve">
+    <value>Este diploma cuenta referencias —islas, cumbres, parques— y el cuaderno todavía no las guarda. La cifra no es que sea baja: es que no hay de dónde sacarla. Llegará con la base de datos del cuaderno.</value>
+    <comment>Modo simulado, diplomas</comment>
+  </data>
+</root>

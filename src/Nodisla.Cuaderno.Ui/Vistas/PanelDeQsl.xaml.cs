@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 using Serilog;
 
@@ -48,7 +49,7 @@ public partial class PanelDeQsl : UserControl
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido abrir la ventana de envío de QSL.");
-            modelo.Aviso = $"No se ha podido abrir el envío: {ex.Message}";
+            modelo.Aviso = Textos.F("Qsl.Tarjeta.NoAbrirEnvio", ex.Message);
         }
     }
 

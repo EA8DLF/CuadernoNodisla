@@ -2,6 +2,7 @@ using System.Globalization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Audio.Reloj;
 
@@ -99,8 +100,7 @@ public sealed class SincronizadorDeHora : ISincronizadorDeHora
             return Anotar(new ResultadoDePuestaEnHora(
                 Hecho: false,
                 ViaDeSincronizacion.HoraPuestaAMano,
-                "No se puede poner el reloj en hora porque no se ha podido medir el desvío: no contestó "
-                    + "ningún servidor de hora. Comprueba la conexión a internet y vuelve a intentarlo.",
+                Textos.T("Servicios.Audio.Hora.SinMedida"),
                 Detalle: null,
                 DesvioAntesMs: null,
                 DesvioDespuesMs: null));
@@ -111,10 +111,7 @@ public sealed class SincronizadorDeHora : ISincronizadorDeHora
             return Anotar(new ResultadoDePuestaEnHora(
                 Hecho: false,
                 ViaDeSincronizacion.HoraPuestaAMano,
-                "Para cambiar la hora del ordenador hace falta ejecutar el programa como administrador. "
-                    + "Sin eso, la otra manera —y la mejor, porque deja el ordenador en hora para "
-                    + "siempre— es activar la sincronización de hora de Windows contra "
-                    + $"{_opciones.ServidorRecomendado}.",
+                Textos.F("Servicios.Audio.Hora.SinAdministrador", _opciones.ServidorRecomendado),
                 InstruccionesParaHacerloAMano,
                 desvio.DesvioMs,
                 DesvioDespuesMs: null));
@@ -131,8 +128,7 @@ public sealed class SincronizadorDeHora : ISincronizadorDeHora
             return Anotar(new ResultadoDePuestaEnHora(
                 Hecho: false,
                 ViaDeSincronizacion.HoraPuestaAMano,
-                "Windows no ha dejado cambiar la hora del sistema. Puedes hacerlo a mano o activar la "
-                    + $"sincronización de hora de Windows contra {_opciones.ServidorRecomendado}.",
+                Textos.F("Servicios.Audio.Hora.WindowsNoDeja", _opciones.ServidorRecomendado),
                 fallo.Message + Environment.NewLine + InstruccionesParaHacerloAMano,
                 desvio.DesvioMs,
                 DesvioDespuesMs: null));
@@ -151,10 +147,7 @@ public sealed class SincronizadorDeHora : ISincronizadorDeHora
         return Anotar(new ResultadoDePuestaEnHora(
             Hecho: true,
             ViaDeSincronizacion.HoraPuestaAMano,
-            string.Create(
-                CultureInfo.CurrentCulture,
-                $"Reloj puesto en hora: estaba {VeredictoDelReloj.ParaMostrar(desvio.DesvioMs)} según "
-                    + $"{desvio.Fuente} y ha quedado en {VeredictoDelReloj.ParaMostrar(despues.DesvioMs)}."),
+            Textos.F("Servicios.Audio.Hora.Puesta", VeredictoDelReloj.ParaMostrar(desvio.DesvioMs), desvio.Fuente, VeredictoDelReloj.ParaMostrar(despues.DesvioMs)),
             Detalle: null,
             desvio.DesvioMs,
             despues.DesvioMs));
@@ -175,8 +168,7 @@ public sealed class SincronizadorDeHora : ISincronizadorDeHora
             return Anotar(new ResultadoDePuestaEnHora(
                 Hecho: false,
                 ViaDeSincronizacion.ServicioConfigurado,
-                "Para configurar la hora de Windows hace falta ejecutar el programa como administrador. "
-                    + "Puedes hacerlo tú mismo con tres órdenes.",
+                Textos.T("Servicios.Audio.Hora.ConfigurarSinAdministrador"),
                 InstruccionesParaHacerloAMano,
                 antes,
                 DesvioDespuesMs: null));
@@ -204,7 +196,7 @@ public sealed class SincronizadorDeHora : ISincronizadorDeHora
                     return Anotar(new ResultadoDePuestaEnHora(
                         Hecho: false,
                         ViaDeSincronizacion.ServicioConfigurado,
-                        $"Windows no ha aceptado configurar la hora contra {servidor}. Puedes intentarlo a mano.",
+                        Textos.F("Servicios.Audio.Hora.NoAcepta", servidor),
                         string.Join(Environment.NewLine, contado)
                             + Environment.NewLine
                             + InstruccionesParaHacerloAMano,
@@ -219,7 +211,7 @@ public sealed class SincronizadorDeHora : ISincronizadorDeHora
                 return Anotar(new ResultadoDePuestaEnHora(
                     Hecho: false,
                     ViaDeSincronizacion.ServicioConfigurado,
-                    "No se ha podido configurar el servicio de hora de Windows. Puedes hacerlo a mano.",
+                    Textos.T("Servicios.Audio.Hora.ServicioFalla"),
                     fallo.Message + Environment.NewLine + InstruccionesParaHacerloAMano,
                     antes,
                     DesvioDespuesMs: null));
@@ -237,10 +229,7 @@ public sealed class SincronizadorDeHora : ISincronizadorDeHora
         return Anotar(new ResultadoDePuestaEnHora(
             Hecho: true,
             ViaDeSincronizacion.ServicioConfigurado,
-            string.Create(
-                CultureInfo.CurrentCulture,
-                $"Windows sincronizará la hora contra {servidor} a partir de ahora. El desvío ha quedado "
-                    + $"en {VeredictoDelReloj.ParaMostrar(despues.DesvioMs)}."),
+            Textos.F("Servicios.Audio.Hora.Configurada", servidor, VeredictoDelReloj.ParaMostrar(despues.DesvioMs)),
             string.Join(Environment.NewLine, contado),
             antes,
             despues.DesvioMs));
@@ -249,7 +238,7 @@ public sealed class SincronizadorDeHora : ISincronizadorDeHora
     /// <summary>Las ordenes para dejar el ordenador en hora sin el programa.</summary>
     private static string Instrucciones(string servidor) => string.Join(
         Environment.NewLine,
-        "Abre una consola como administrador y escribe:",
+        Textos.T("Servicios.Audio.Hora.Consola"),
         string.Create(
             CultureInfo.InvariantCulture,
             $"    w32tm /config /manualpeerlist:\"{servidor},0x8\" /syncfromflags:manual /update"),

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Dialogos.Confirmacion.NoVolverAPreguntar" xml:space="preserve">
+    <value>Nicht mehr fragen</value>
+  </data>
+  <data name="Dialogos.Confirmacion.NoVolverTooltip" xml:space="preserve">
+    <value>Kann unter Einstellungen › Audio und Digital wieder aktiviert werden.</value>
+  </data>
+  <data name="Dialogos.NoSeAbreElCuaderno" xml:space="preserve">
+    <value>Das Logbuch konnte nicht geöffnet werden.
+
+{0}
+
+Das Logbuch liegt in {1}. Ist die Datei beschädigt, finden Sie im selben Ordner einen Unterordner „copias“ mit den früheren Sicherungen.</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Bienvenida" xml:space="preserve">
+    <value>Willkommen im Logbuch</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Crear" xml:space="preserve">
+    <value>Profil anlegen und starten</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Explicacion" xml:space="preserve">
+    <value>Bevor Sie die erste Verbindung loggen, brauchen Sie ein Stationsprofil: das Rufzeichen, mit dem Sie senden, und den Ort, von dem aus Sie funken. Ohne diese Angaben lässt sich das Logbuch weder nach ADIF exportieren noch für Diplomanträge verwenden.</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Indicativo" xml:space="preserve">
+    <value>Rufzeichen der Station</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.IndicativoEjemplo" xml:space="preserve">
+    <value>Zum Beispiel EA8DLF</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Localidad" xml:space="preserve">
+    <value>Ort (optional)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Localizador" xml:space="preserve">
+    <value>Locator (optional, aber nötig für Entfernungen und Richtungen)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.LocalizadorEjemplo" xml:space="preserve">
+    <value>Zum Beispiel IL18QK</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombreOperador" xml:space="preserve">
+    <value>Name des Operators (optional)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombrePerfil" xml:space="preserve">
+    <value>Profilname</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombrePerfilTooltip" xml:space="preserve">
+    <value>Zur Unterscheidung von anderen Profilen: Zuhause, Portabel, Contest…</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Salir" xml:space="preserve">
+    <value>Programm beenden</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Titulo" xml:space="preserve">
+    <value>Cuaderno NODISLA · erster Start</value>
+  </data>
+  <data name="Dialogos.Simulado.Analizador" xml:space="preserve">
+    <value>Simuliertes Spektrum</value>
+  </data>
+  <data name="Dialogos.Simulado.Cluster" xml:space="preserve">
+    <value>Simulierter Cluster (ohne Netz)</value>
+  </data>
+  <data name="Dialogos.Simulado.FichaInventada" xml:space="preserve">
+    <value>Erfundener Eintrag: Sitzung mit simulierten Anschlüssen.</value>
+  </data>
+  <data name="Dialogos.Simulado.ModemNoTransmite" xml:space="preserve">
+    <value>Das simulierte Modem sendet nicht. Schließen Sie das Programm und öffnen Sie es ohne CUADERNO_SIMULADO erneut.</value>
+  </data>
+  <data name="Dialogos.Simulado.QsoDuplicado" xml:space="preserve">
+    <value>Die Verbindung mit {0} ist bereits im Logbuch.</value>
+  </data>
+  <data name="Dialogos.Simulado.RelojPuesto" xml:space="preserve">
+    <value>Uhr gestellt (simuliert): Die Uhr des Computers wurde nicht verändert.</value>
+  </data>
+  <data name="Dialogos.Simulado.ServicioDeHora" xml:space="preserve">
+    <value>Zeitdienst eingerichtet (simuliert).</value>
+  </data>
+  <data name="Dialogos.Simulado.SinConfirmaciones" xml:space="preserve">
+    <value>Im Logbuch gibt es noch keine Bestätigungen, daher steht „bestätigt“ auf null. „Gearbeitet“ ist dagegen endgültig.</value>
+  </data>
+  <data name="Dialogos.Simulado.SinReferencias" xml:space="preserve">
+    <value>Dieses Diplom zählt Referenzen (Inseln, Gipfel, Parks), die das Logbuch noch nicht speichert. Die Zahl ist nicht niedrig: Es gibt einfach nichts, woraus sie sich ergeben könnte. Das kommt mit der Datenbank des Logbuchs.</value>
+  </data>
+</root>

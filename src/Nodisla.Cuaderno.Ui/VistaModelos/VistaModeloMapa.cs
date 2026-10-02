@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Dominio.Dxcc;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.Mapa;
 using Serilog;
 
@@ -36,6 +37,9 @@ public sealed partial class VistaModeloMapa : ObservableObject
 
         _puntos = puntos;
         _dxcc = dxcc;
+
+        // El resumen y la etiqueta del paso gris se calculan al leerlos: basta con avisar.
+        Textos.AlCambiar(this, static vm => vm.OnPropertyChanged(string.Empty));
     }
 
     /// <summary>Salta cuando el operador toca una marca del mapa.</summary>
@@ -86,21 +90,21 @@ public sealed partial class VistaModeloMapa : ObservableObject
             var partes = new List<string>(2);
             if (MostrarContactos)
             {
-                partes.Add($"{_contactos.Count.ToString("N0", CultureInfo.CurrentCulture)} contactos");
+                partes.Add(Textos.F("Principal.Mapa.ResumenContactos", _contactos.Count));
             }
 
             if (MostrarSpots && _spots.Count > 0)
             {
-                partes.Add($"{_spots.Count.ToString("N0", CultureInfo.CurrentCulture)} spots");
+                partes.Add(Textos.F("Principal.Mapa.ResumenSpots", _spots.Count));
             }
 
-            return partes.Count == 0 ? "Mapa vacío" : string.Join(" · ", partes);
+            return partes.Count == 0 ? Textos.T("Principal.Mapa.Vacio") : string.Join(" · ", partes);
         }
     }
 
     /// <summary>Etiqueta del interruptor del paso gris, con la hora que se esta dibujando.</summary>
     public string TextoDelPasoGris =>
-        $"Paso gris ({InstanteDelPasoGris.UtcDateTime.ToString("HH:mm", CultureInfo.InvariantCulture)} UTC)";
+        Textos.F("Principal.Mapa.PasoGris", InstanteDelPasoGris.UtcDateTime.ToString("HH:mm", CultureInfo.InvariantCulture));
 
     /// <summary>Carga del cuaderno los contactos que se pueden situar.</summary>
     /// <param name="ct">Testigo de cancelacion.</param>
@@ -133,7 +137,7 @@ public sealed partial class VistaModeloMapa : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se han podido cargar los contactos del mapa.");
-            Aviso = $"No se han podido cargar los contactos del mapa: {ex.Message}";
+            Aviso = Textos.F("Principal.Mapa.NoSeCargan", ex.Message);
         }
         finally
         {
@@ -278,8 +282,8 @@ public sealed partial class VistaModeloMapa : ObservableObject
     {
         var fecha = contacto.CuandoUtc.UtcDateTime.ToString("dd-MM-yyyy HH:mm", CultureInfo.InvariantCulture);
         var sitio = contacto.Origen == OrigenDeLaPosicion.Localizador
-            ? "por localizador"
-            : "situado en el centro del país";
+            ? Textos.T("Principal.Mapa.PorLocator")
+            : Textos.T("Principal.Mapa.CentroDelPais");
 
         return $"{contacto.Indicativo.Valor} · {contacto.Banda} {contacto.Modo} · {fecha} UTC" +
                (contacto.Pais is { Length: > 0 } pais ? $" · {pais}" : string.Empty) +

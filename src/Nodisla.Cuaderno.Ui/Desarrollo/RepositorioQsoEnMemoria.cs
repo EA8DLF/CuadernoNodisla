@@ -1,3 +1,4 @@
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
@@ -76,7 +77,7 @@ public sealed class RepositorioQsoEnMemoria : IRepositorioQso
                         if (!omitirDuplicados)
                         {
                             throw new InvalidOperationException(
-                                $"El contacto con {q.Call.Valor} ya está en el cuaderno.");
+                                Textos.F("Dialogos.Simulado.QsoDuplicado", q.Call.Valor));
                         }
                         omitidos++;
                         continue;

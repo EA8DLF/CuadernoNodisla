@@ -1,0 +1,5 @@
+# Bloque Principal: rótulos técnicos que se escriben igual en todos los idiomas.
+# Índice geomagnético Kp
+Kp
+# Efecto Doppler (término técnico de satélites)
+Doppler

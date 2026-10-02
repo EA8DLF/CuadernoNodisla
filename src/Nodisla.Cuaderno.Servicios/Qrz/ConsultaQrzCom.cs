@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Servicios.Red;
 using Nodisla.Cuaderno.Servicios.Xml;
 
@@ -68,8 +69,7 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
         if (indicativo.EsVacio) return null;
         if (!EstaDisponible)
         {
-            throw new InvalidOperationException(
-                "QRZ.com no está configurado: faltan el usuario o la contraseña.");
+            throw new InvalidOperationException(Textos.F("Servicios.NoConfigurado", "QRZ.com"));
         }
 
         var clave = await ObtenerClaveAsync(renovar: false, ct).ConfigureAwait(false);
@@ -158,7 +158,7 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
         string clave, Indicativo indicativo, CancellationToken ct)
     {
         var consulta = $"s={Uri.EscapeDataString(clave)};callsign={Uri.EscapeDataString(indicativo.Valor)}";
-        return await PedirAsync(consulta, $"consultar {indicativo.Valor} en QRZ.com", ct)
+        return await PedirAsync(consulta, Textos.F("Servicios.ConsultarIndicativo", indicativo.Valor, "QRZ.com"), ct)
             .ConfigureAwait(false);
     }
 
@@ -172,22 +172,21 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
             if (!renovar && _clave is { } yaHecha) return yaHecha;
 
             var contrasena = _credenciales.Leer(ClavesDeCredencial.QrzContrasena)
-                ?? throw new InvalidOperationException(
-                    "No hay contraseña de QRZ.com guardada. Configúrela en Configuración › Cuentas y servicios.");
+                ?? throw new InvalidOperationException(Textos.F("Servicios.SinContrasena", "QRZ.com"));
 
             var consulta =
                 $"username={Uri.EscapeDataString(_opciones.Usuario)}"
                 + $";password={Uri.EscapeDataString(contrasena)}"
                 + $";agent={Uri.EscapeDataString(_opciones.Agente)}";
 
-            var documento = await PedirAsync(consulta, "abrir sesión en QRZ.com", ct).ConfigureAwait(false);
+            var documento = await PedirAsync(consulta, Textos.F("Servicios.AbrirSesion", "QRZ.com"), ct).ConfigureAwait(false);
             var sesion = LecturaXml.Hijo(documento.Root, "Session");
 
             var clave = LecturaXml.Texto(sesion, "Key");
             if (clave is null)
             {
-                var error = LecturaXml.Texto(sesion, "Error") ?? "sin detalle";
-                throw new RespuestaDelServicioException($"QRZ.com no dio sesión: {error}");
+                var error = LecturaXml.Texto(sesion, "Error") ?? Textos.T("Servicios.SinDetalle");
+                throw new RespuestaDelServicioException(Textos.F("Servicios.SinSesion", "QRZ.com", error));
             }
 
             // El aviso de suscripcion no impide consultar, pero el operador debe verlo.
@@ -217,7 +216,7 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
             if (!http.IsSuccessStatusCode)
             {
                 throw new RespuestaDelServicioException(
-                    $"QRZ.com respondió {(int)http.StatusCode}.", http.StatusCode);
+                    Textos.F("Servicios.Respondio", "QRZ.com", (int)http.StatusCode), http.StatusCode);
             }
             try
             {
@@ -226,7 +225,7 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
             catch (System.Xml.XmlException ex)
             {
                 throw new RespuestaDelServicioException(
-                    $"QRZ.com no devolvió un XML válido: {ex.Message}");
+                    Textos.F("Servicios.XmlNoValido", "QRZ.com", ex.Message));
             }
         }, ct).ConfigureAwait(false);
     }

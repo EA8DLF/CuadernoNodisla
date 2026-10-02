@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Windows;
 using Microsoft.Win32;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 
 namespace Nodisla.Cuaderno.Ui.Vistas;
@@ -60,8 +61,8 @@ public partial class VentanaDeCuadernoVacio : Window
     {
         var dialogo = new OpenFileDialog
         {
-            Title = "Elija el fichero ADIF que quiere traer al cuaderno",
-            Filter = "Ficheros ADIF (*.adi;*.adif;*.adx)|*.adi;*.adif;*.adx|Todos los ficheros (*.*)|*.*",
+            Title = Textos.T("Libro.Vacio.DialogoTitulo"),
+            Filter = Textos.T("Libro.Vacio.DialogoFiltro"),
             CheckFileExists = true,
         };
 

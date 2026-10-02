@@ -1,6 +1,7 @@
 <UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.FrontalFt710"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
              xmlns:puertos="clr-namespace:Nodisla.Cuaderno.Aplicacion.Puertos;assembly=Nodisla.Cuaderno.Aplicacion">
 
@@ -225,15 +226,15 @@
                     PreviewMouseLeftButtonUp="AlSoltarLock"
                     MouseLeave="AlSalirDeLock"
                     Tag="{Binding Pilotos[Bloqueo].Encendido, FallbackValue=False, TargetNullValue=False}"
-                    AutomationProperties.Name="Bloqueo del dial (LOCK); pulsación larga, encender o apagar"
-                    ToolTip="LOCK — Pulsación corta: bloquea el dial. Pulsación larga (1 s): enciende o apaga la radio (apagar pide confirmación).">
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.LockNombre}"
+                    ToolTip="{loc:Texto Cabina.Ft710.LockAyuda}">
                 <TextBlock><Run Text="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="12" FontWeight="Normal" /><Run Text="LOCK" /></TextBlock>
             </Button>
 
             <!-- El piloto azul de debajo de LOCK: el equipo está encendido y hablando. -->
             <Border Canvas.Left="37" Canvas.Top="57" Width="16" Height="5" CornerRadius="2"
-                    AutomationProperties.Name="Piloto de encendido"
-                    ToolTip="Piloto de encendido: azul con el equipo conectado">
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.Piloto}"
+                    ToolTip="{loc:Texto Cabina.Ft710.PilotoAyuda}">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Setter Property="Background" Value="{StaticResource PilotoApagado}" />
@@ -257,9 +258,9 @@
                     Command="{Binding AlternarMandoCommand}"
                     CommandParameter="{x:Static puertos:MandoDeEquipo.Sintonizador}"
                     Tag="{Binding Frontal[Sintonizador].Encendido, FallbackValue=False, TargetNullValue=False}"
-                    AutomationProperties.Name="Acoplador de antena (TUNE)"
-                    AutomationProperties.HelpText="Clic: acoplador en línea o fuera (AC001/AC000), no emite. Clic derecho: sintonizar (AC003), emite portadora dentro de una transmisión vigilada de 10 s como mucho."
-                    ToolTip="TUNE — Clic: pone el acoplador en línea o lo quita (no emite). Clic derecho = mantener TUNE: sintoniza (AC003), EMITE PORTADORA; pide confirmación y va por el vigilante del PTT, con corte a los 10 s.">
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.TuneNombre}"
+                    AutomationProperties.HelpText="{loc:Texto Cabina.Ft710.TuneDescripcion}"
+                    ToolTip="{loc:Texto Cabina.Ft710.TuneAyuda}">
                 <Button.InputBindings>
                     <MouseBinding Gesture="RightClick" Command="{Binding SintonizarAcopladorCommand}" />
                 </Button.InputBindings>
@@ -284,9 +285,9 @@
                     Command="{Binding AlternarMandoCommand}"
                     CommandParameter="{x:Static puertos:MandoDeEquipo.Vox}"
                     Tag="{Binding Frontal[Vox].Encendido, FallbackValue=False, TargetNullValue=False}"
-                    AutomationProperties.Name="Paso a transmisión por voz (VOX/MOX)"
-                    AutomationProperties.HelpText="Clic: VOX (VX1/VX0). Clic derecho: MOX, pone el equipo en antena por el vigilante del PTT; otro clic derecho lo quita."
-                    ToolTip="VOX MOX — Clic: VOX encendido/apagado. Clic derecho = MOX: TRANSMITE (pide confirmación, va por el vigilante del PTT); otro clic derecho lo quita. El rótulo MOX se pone rojo mientras transmite.">
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.VoxNombre}"
+                    AutomationProperties.HelpText="{loc:Texto Cabina.Ft710.VoxDescripcion}"
+                    ToolTip="{loc:Texto Cabina.Ft710.VoxAyuda}">
                 <Button.InputBindings>
                     <MouseBinding Gesture="RightClick" Command="{Binding MoxCommand}" />
                 </Button.InputBindings>
@@ -314,8 +315,8 @@
 
             <!-- La toma de auriculares: tuerca y agujero. -->
             <Grid Canvas.Left="22" Canvas.Top="176" Width="50" Height="50"
-                  AutomationProperties.Name="Toma de auriculares (PHONES)"
-                  ToolTip="PHONES — Toma de auriculares">
+                  AutomationProperties.Name="{loc:Texto Cabina.Ft710.PhonesNombre}"
+                  ToolTip="{loc:Texto Cabina.Frontal.Phones}">
                 <Ellipse Fill="{StaticResource Hueco}" Stroke="#FF0A0B0D" StrokeThickness="1" />
                 <Ellipse Margin="6" Stroke="{StaticResource CantoMetalico}" StrokeThickness="4" Fill="#FF15171A" />
                 <Ellipse Margin="16" Fill="#FF020203" Stroke="#FF3A4047" StrokeThickness="1" />
@@ -327,8 +328,8 @@
 
             <!-- El conector de micrófono. -->
             <Grid Canvas.Left="16" Canvas.Top="250" Width="62" Height="62"
-                  AutomationProperties.Name="Conector de micrófono (MIC)"
-                  ToolTip="MIC — Conector de micrófono">
+                  AutomationProperties.Name="{loc:Texto Cabina.Ft710.MicNombre}"
+                  ToolTip="{loc:Texto Cabina.Frontal.Mic}">
                 <Ellipse Fill="{StaticResource Hueco}" />
                 <Ellipse Margin="5" Stroke="{StaticResource CantoMetalico}" StrokeThickness="4" Fill="#FF0D0F11" />
                 <Ellipse Margin="14" Fill="#FF050607" Stroke="#FF2E3339" StrokeThickness="1" />
@@ -379,15 +380,15 @@
             <Button Canvas.Left="604" Canvas.Top="2" Width="66" Height="19"
                     Style="{StaticResource TeclaDelFrontal}" Content="MODE" FontSize="12"
                     Command="{Binding SiguienteModoCommand}"
-                    AutomationProperties.Name="Selección de modo (MODE)"
-                    ToolTip="MODE — Pasa al modo siguiente" />
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.ModeNombre}"
+                    ToolTip="{loc:Texto Cabina.Frontal.Mode}" />
             <Button Canvas.Left="676" Canvas.Top="2" Width="66" Height="19"
                     Style="{StaticResource TeclaDelFrontal}" FontSize="12"
                     Command="{Binding PulsarTeclaCommand}"
                     CommandParameter="{x:Static puertos:TeclaDelEquipo.AjusteACero}"
                     Tag="{Binding Pilotos[TonoDeReferenciaCw].Encendido, FallbackValue=False, TargetNullValue=False}"
-                    AutomationProperties.Name="Ajuste a cero y tono de referencia en telegrafía (ZIN/SPOT)"
-                    ToolTip="ZIN/SPOT — Clic: ZIN, ajuste a cero sobre la señal (ZI0; solo hace algo en CW y con una señal en la banda de paso). Clic derecho: SPOT, tono de referencia (CS1/CS0).">
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.ZinNombre}"
+                    ToolTip="{loc:Texto Cabina.Ft710.ZinAyuda}">
                 <Button.InputBindings>
                     <MouseBinding Gesture="RightClick" Command="{Binding AlternarMandoCommand}" CommandParameter="{x:Static puertos:MandoDeEquipo.TonoDeReferenciaCw}" />
                 </Button.InputBindings>
@@ -403,16 +404,16 @@
                     Command="{Binding AlternarMandoCommand}"
                     CommandParameter="{x:Static puertos:MandoDeEquipo.Split}"
                     Tag="{Binding Frontal[Split].Encendido, FallbackValue=False, TargetNullValue=False}"
-                    AutomationProperties.Name="Trabajo en dos frecuencias (SPLIT)"
-                    ToolTip="SPLIT — Trabajo en dos frecuencias (ST1/ST0)" />
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.SplitNombre}"
+                    ToolTip="{loc:Texto Cabina.Ft710.SplitAyuda}" />
             <Button x:Name="TeclaClar" Canvas.Left="820" Canvas.Top="2" Width="66" Height="19"
                     Style="{StaticResource TeclaDelFrontal}" Content="CLAR" FontSize="12"
                     Command="{Binding AlternarMandoCommand}"
                     CommandParameter="{x:Static puertos:MandoDeEquipo.Rit}"
                     Tag="{Binding Frontal[Rit].Encendido, FallbackValue=False, TargetNullValue=False}"
                     MouseWheel="AlGirarSobreClar"
-                    AutomationProperties.Name="Clarificador: desplazamiento de recepción (CLAR)"
-                    ToolTip="CLAR — Clic: clarificador de recepción (CF000). Rueda encima: desplazamiento ±10 Hz por muesca (CF001). Clic derecho: desplazamiento a cero. RT/XT/RC no existen en el FT-710; la orden buena es CF.">
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.ClarNombre}"
+                    ToolTip="{loc:Texto Cabina.Ft710.ClarAyuda}">
                 <Button.InputBindings>
                     <MouseBinding Gesture="RightClick" Command="{Binding PulsarTeclaCommand}" CommandParameter="{x:Static puertos:TeclaDelEquipo.BorrarClarificador}" />
                 </Button.InputBindings>
@@ -422,8 +423,8 @@
                     Command="{Binding AlternarMandoCommand}"
                     CommandParameter="{x:Static puertos:MandoDeEquipo.SupresorDeRuido}"
                     Tag="{Binding Frontal[SupresorDeRuido].Encendido, FallbackValue=False, TargetNullValue=False}"
-                    AutomationProperties.Name="Supresor de ruido de impulsos (NB)"
-                    ToolTip="NB — Supresor de ruido de impulsos" />
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.NbNombre}"
+                    ToolTip="{loc:Texto Cabina.Frontal.Nb}" />
 
             <!-- ══ ⑫⑬⑭ Segunda fila, en su canal ══ -->
             <Border Canvas.Left="588" Canvas.Top="26" Width="426" Height="38"
@@ -434,15 +435,15 @@
                     Style="{StaticResource TeclaDelFrontal}" Content="M▶V"
                     Command="{Binding PulsarTeclaCommand}"
                     CommandParameter="{x:Static puertos:TeclaDelEquipo.MemoriaAVfo}"
-                    AutomationProperties.Name="Pasar la memoria al VFO (M a V)"
-                    ToolTip="M▶V — Copia la memoria elegida en el VFO A (MA;). Pisa lo que tenga el VFO A." />
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.MaVNombre}"
+                    ToolTip="{loc:Texto Cabina.Ft710.MaVAyuda}" />
             <Button Canvas.Left="678" Canvas.Top="30" Width="76" Height="29"
                     Style="{StaticResource TeclaDelFrontal}"
                     Command="{Binding PulsarTeclaCommand}"
                     CommandParameter="{x:Static puertos:TeclaDelEquipo.VfoOMemoria}"
                     Tag="{Binding EnMemoria}"
-                    AutomationProperties.Name="Alternar entre VFO y memorias (V/M)"
-                    ToolTip="V/M — Alterna entre el VFO y las memorias (VM;). En ámbar mientras está en memorias; STEP/MCH cambia entonces de canal.">
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.VMNombre}"
+                    ToolTip="{loc:Texto Cabina.Ft710.VMAyuda}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="V/M" VerticalAlignment="Center" />
                     <Border Background="#FF9AA3AD" CornerRadius="3" Width="10" Height="10" Margin="2,0,0,0">
@@ -454,8 +455,8 @@
                     Style="{StaticResource TeclaDelFrontal}" Content="A/B"
                     Command="{Binding PulsarTeclaCommand}"
                     CommandParameter="{x:Static puertos:TeclaDelEquipo.AlternarVfo}"
-                    AutomationProperties.Name="Cambiar de VFO (A/B)"
-                    ToolTip="A/B — Cambia el VFO con el que se opera, como la tecla del equipo (SV;, que en el FT-710 alterna VS0/VS1 sin tocar las frecuencias). Clic derecho: A=B, copia el VFO activo sobre el otro (pide confirmación).">
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.ABNombre}"
+                    ToolTip="{loc:Texto Cabina.Ft710.ABAyuda}">
                 <Button.InputBindings>
                     <MouseBinding Gesture="RightClick" Command="{Binding IgualarVfosCommand}" />
                 </Button.InputBindings>
@@ -464,8 +465,8 @@
                     Style="{StaticResource TeclaDelFrontal}" Content="BAND"
                     Command="{Binding PulsarTeclaCommand}"
                     CommandParameter="{x:Static puertos:TeclaDelEquipo.BandaArriba}"
-                    AutomationProperties.Name="Cambio de banda (BAND)"
-                    ToolTip="BAND — Banda siguiente (BU0;), con la memoria de banda del equipo: vuelve a la frecuencia y el modo que tenía allí. Clic derecho: banda anterior (BD0;).">
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.BandNombre}"
+                    ToolTip="{loc:Texto Cabina.Ft710.BandAyuda}">
                 <Button.InputBindings>
                     <MouseBinding Gesture="RightClick" Command="{Binding PulsarTeclaCommand}" CommandParameter="{x:Static puertos:TeclaDelEquipo.BandaAbajo}" />
                 </Button.InputBindings>
@@ -474,8 +475,8 @@
                     Style="{StaticResource TeclaDelFrontal}" Content="QMB"
                     Command="{Binding PulsarTeclaCommand}"
                     CommandParameter="{x:Static puertos:TeclaDelEquipo.RecuperarMemoriaRapida}"
-                    AutomationProperties.Name="Memoria rápida (QMB)"
-                    ToolTip="QMB — Clic: recupera la memoria rápida (QR;). Clic derecho = mantener: guarda la frecuencia en la memoria rápida (QI;), pide confirmación porque empuja la pila QMB del equipo.">
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.QmbNombre}"
+                    ToolTip="{loc:Texto Cabina.Ft710.QmbAyuda}">
                 <Button.InputBindings>
                     <MouseBinding Gesture="RightClick" Command="{Binding PulsarTeclaCommand}" CommandParameter="{x:Static puertos:TeclaDelEquipo.GuardarMemoriaRapida}" />
                 </Button.InputBindings>
@@ -487,14 +488,14 @@
                     Command="{Binding AlternarMandoCommand}"
                     CommandParameter="{x:Static puertos:MandoDeEquipo.ReductorDeRuido}"
                     Tag="{Binding Frontal[ReductorDeRuido].Encendido, FallbackValue=False, TargetNullValue=False}"
-                    AutomationProperties.Name="Reductor de ruido digital (DNR)"
-                    ToolTip="DNR — Reductor de ruido digital" />
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.DnrNombre}"
+                    ToolTip="{loc:Texto Cabina.Frontal.Dnr}" />
 
             <TextBlock Canvas.Left="769" Canvas.Top="68" Width="80" Text="BUSY/TX" Style="{StaticResource Serigrafiado}" FontSize="12" />
             <Border Canvas.Left="804" Canvas.Top="82" Width="10" Height="9" CornerRadius="1.5"
                     BorderBrush="#FF0A0B0D" BorderThickness="1"
-                    AutomationProperties.Name="Indicador de ocupado y transmisión (BUSY/TX)"
-                    ToolTip="BUSY/TX — Rojo en transmisión">
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.BusyNombre}"
+                    ToolTip="{loc:Texto Cabina.Ft710.BusyAyuda}">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Setter Property="Background" Value="#FF3A3F46" />
@@ -517,20 +518,20 @@
                     Command="{Binding AlternarMandoCommand}"
                     CommandParameter="{x:Static puertos:MandoDeEquipo.FiltroEstrecho}"
                     Tag="{Binding Pilotos[FiltroEstrecho].Encendido, FallbackValue=False, TargetNullValue=False}"
-                    AutomationProperties.Name="Filtro estrecho (NAR)"
-                    ToolTip="NAR — Filtro estrecho (NA01/NA00). El ancho estrecho es el del menú NAR WIDTH de cada modo." />
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.NarNombre}"
+                    ToolTip="{loc:Texto Cabina.Ft710.NarAyuda}" />
 
             <!-- ══ ⑨ FUNC · STEP/MCH-DSP ══ -->
             <TextBlock Canvas.Left="576" Canvas.Top="76" Width="72" Text="FUNC" Style="{StaticResource Serigrafiado}" />
             <vistas:MandoGiratorio Canvas.Left="570" Canvas.Top="92" Width="84" Height="84"
                                    Rotulo="FUNC"
-                                   Explicacion="Ajusta la función elegida (SF0): potencia, micrófono, VOX, telegrafía, analizador…"
+                                   Explicacion="{loc:Texto Cabina.Explica.Func}"
                                    Mando="{Binding MandoDelFunc}"
                                    AlPulsar="{Binding CambiarFuncionCommand}" ParametroAlPulsar="FUNC+"
                                    AlPulsarDerecho="{Binding CambiarFuncionCommand}" ParametroAlPulsarDerecho="FUNC-" />
             <TextBlock Canvas.Left="562" Canvas.Top="178" Width="100" Text="{Binding RotuloDelFunc}"
                        Style="{StaticResource Serigrafiado}" FontSize="11" Foreground="#FFFFB23F"
-                       ToolTip="Lo que ajusta ahora el FUNC. Clic en el mando: función siguiente; clic derecho: anterior." />
+                       ToolTip="{loc:Texto Cabina.Ft710.FuncAyuda}" />
 
             <TextBlock Canvas.Left="566" Canvas.Top="196" Width="84" Text="STEP/MCH" Style="{StaticResource Serigrafiado}" />
             <Border Canvas.Left="590" Canvas.Top="211" Width="36" Height="13" CornerRadius="2"
@@ -539,7 +540,7 @@
             </Border>
             <vistas:MandoGiratorio x:Name="MandoDePasos" Canvas.Left="570" Canvas.Top="240" Width="84" Height="84"
                                    Rotulo="STEP/MCH · DSP"
-                                   Explicacion="Anillo: saltos de canal en VFO o canal de memoria en memorias. Centro: el filtro DSP elegido (SF1)"
+                                   Explicacion="{loc:Texto Cabina.Explica.StepDsp}"
                                    GiroLibre="True"
                                    Girado="AlGirarLosPasos"
                                    MandoInterior="{Binding MandoDelDsp}"
@@ -547,31 +548,31 @@
                                    AlPulsarDerecho="{Binding CambiarFuncionCommand}" ParametroAlPulsarDerecho="DSP-" />
             <TextBlock Canvas.Left="562" Canvas.Top="323" Width="100" Text="{Binding RotuloDelDsp}"
                        Style="{StaticResource Serigrafiado}" FontSize="11" Foreground="#FFFFB23F"
-                       ToolTip="Lo que ajusta ahora el centro del mando (DSP). Clic en el mando: siguiente; clic derecho: anterior." />
+                       ToolTip="{loc:Texto Cabina.Ft710.DspAyuda}" />
 
             <!-- ══ ⑲ RF GAIN/SQL · ⑳ AF GAIN ══ -->
             <TextBlock Canvas.Left="948" Canvas.Top="77" Width="84" Text="RF GAIN/SQL" Style="{StaticResource Serigrafiado}" FontSize="11" FontStyle="Italic" />
             <vistas:MandoGiratorio Canvas.Left="946" Canvas.Top="92" Width="84" Height="84"
                                    Rotulo="RF GAIN/SQL"
-                                   Explicacion="Ganancia de radiofrecuencia (anillo) y silenciador (centro)"
+                                   Explicacion="{loc:Texto Cabina.Explica.RfSql}"
                                    Mando="{Binding MandoDeGananciaRf}"
                                    MandoInterior="{Binding Frontal[Silenciador]}" />
 
             <TextBlock Canvas.Left="946" Canvas.Top="222" Width="84" Text="AF GAIN" Style="{StaticResource Serigrafiado}" />
             <vistas:MandoGiratorio Canvas.Left="946" Canvas.Top="240" Width="84" Height="84"
                                    Rotulo="AF GAIN"
-                                   Explicacion="Volumen de audio"
+                                   Explicacion="{loc:Texto Cabina.Explica.Volumen}"
                                    Mando="{Binding MandoDeVolumen}" />
 
             <!-- ══ ⑮ Los dos arcos azules del indicador de VFO ══ -->
             <Path DataContext="{Binding A}" Style="{StaticResource ArcoDeVfo}"
                   Data="M 684,152 A 140,140 0 0 0 684,272"
-                  AutomationProperties.Name="Indicador del VFO A"
-                  ToolTip="Indicador del VFO A" />
+                  AutomationProperties.Name="{loc:Texto Cabina.Ft710.IndicadorVfoA}"
+                  ToolTip="{loc:Texto Cabina.Ft710.IndicadorVfoA}" />
             <Path DataContext="{Binding B}" Style="{StaticResource ArcoDeVfo}"
                   Data="M 934,152 A 140,140 0 0 1 934,272"
-                  AutomationProperties.Name="Indicador del VFO B"
-                  ToolTip="Indicador del VFO B" />
+                  AutomationProperties.Name="{loc:Texto Cabina.Ft710.IndicadorVfoB}"
+                  ToolTip="{loc:Texto Cabina.Ft710.IndicadorVfoB}" />
 
             <!--
                 ⑦ EL DIAL MANDA. En la radio es el mando más grande con diferencia y lo primero
@@ -581,8 +582,8 @@
             <Grid Canvas.Left="696" Canvas.Top="100" Width="222" Height="222"
                   Background="Transparent" Focusable="True"
                   MouseWheel="AlGirarElDial" PreviewKeyDown="AlTeclearElDial"
-                  ToolTip="Dial principal. Rueda del ratón (o flechas): cada muesca, diez pasos del dial del equipo (menú 03-05-01/02: 20 Hz en SSB/CW); con FINE un paso, con FAST cien. Con LOCK no se mueve."
-                  AutomationProperties.Name="Dial principal">
+                  ToolTip="{loc:Texto Cabina.Ft710.DialAyuda}"
+                  AutomationProperties.Name="{loc:Texto Cabina.Frontal.DialPrincipal}">
                 <Ellipse Fill="#90000000" Margin="3,6,-3,-6" />
                 <Ellipse Fill="#FF0B0C0E" />
                 <!-- El canto estriado, ancho, en diamante. -->
@@ -622,8 +623,8 @@
                     Style="{StaticResource TeclaDelFrontal}" FontSize="12"
                     Command="{Binding PulsarTeclaCommand}"
                     CommandParameter="{x:Static puertos:TeclaDelEquipo.RestablecerDsp}"
-                    AutomationProperties.Name="Devolver los filtros de interferencia a su sitio (DSP RESET)"
-                    ToolTip="DSP RESET — No hay orden CAT para esta tecla: el programa hace lo mismo a mano (desplazamiento de FI a 0, ancho por omisión del modo, muesca, contorno y APF apagados).">
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.DspResetNombre}"
+                    ToolTip="{loc:Texto Cabina.Ft710.DspResetAyuda}">
                 <TextBlock Text="DSP&#x0a;RESET" TextAlignment="Center" LineHeight="12" LineStackingStrategy="BlockLineHeight" />
             </Button>
             <Button Canvas.Left="880" Canvas.Top="298" Width="62" Height="30"
@@ -631,8 +632,8 @@
                     Command="{Binding SiguientePosicionCommand}"
                     CommandParameter="{x:Static puertos:MandoDeEquipo.SintoniaFinaRapida}"
                     Tag="{Binding Pilotos[SintoniaFinaRapida].Encendido, FallbackValue=False, TargetNullValue=False}"
-                    AutomationProperties.Name="Sintonía fina y rápida (FINE/FAST)"
-                    ToolTip="FINE/FAST — Cada clic: normal → FINE → FAST → normal (FN0/FN1/FN2). En ámbar con FINE o FAST. Cambia el paso del dial dibujado igual que el del equipo.">
+                    AutomationProperties.Name="{loc:Texto Cabina.Ft710.FineFastNombre}"
+                    ToolTip="{loc:Texto Cabina.Ft710.FineFastAyuda}">
                 <TextBlock Text="FINE&#x0a;/FAST" TextAlignment="Center" LineHeight="12" LineStackingStrategy="BlockLineHeight" />
             </Button>
 

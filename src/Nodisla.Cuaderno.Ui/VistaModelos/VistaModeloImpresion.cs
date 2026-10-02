@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,6 +7,7 @@ using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Impresion;
 using Nodisla.Cuaderno.Impresion.Modelo;
 using Nodisla.Cuaderno.Ui.Ajustes;
@@ -20,8 +20,11 @@ public sealed partial class FilaDeEtiqueta : ObservableObject
 {
     /// <summary>Monta la fila sobre la etiqueta ya compuesta.</summary>
     /// <param name="etiqueta">Etiqueta con sus contactos.</param>
-    public FilaDeEtiqueta(EtiquetaDeQsl etiqueta) =>
+    public FilaDeEtiqueta(EtiquetaDeQsl etiqueta)
+    {
         Etiqueta = etiqueta ?? throw new ArgumentNullException(nameof(etiqueta));
+        Textos.AlCambiar(this, static f => f.OnPropertyChanged(string.Empty));
+    }
 
     /// <summary>La etiqueta tal cual la compuso el modelo de impresion.</summary>
     public EtiquetaDeQsl Etiqueta { get; }
@@ -30,12 +33,12 @@ public sealed partial class FilaDeEtiqueta : ObservableObject
     public string Encabezado => Etiqueta.Encabezado;
 
     /// <summary>Por donde va.</summary>
-    public string ViaTexto => Etiqueta.TextoDeLaVia.Length == 0 ? "sin vía apuntada" : Etiqueta.TextoDeLaVia;
+    public string ViaTexto => Etiqueta.TextoDeLaVia.Length == 0 ? Textos.T("Qsl.Impresion.SinVia") : Etiqueta.TextoDeLaVia;
 
     /// <summary>Cuantos contactos confirma, escrito.</summary>
     public string ContactosTexto => Etiqueta.Contactos.Count == 1
-        ? "1 contacto"
-        : $"{Etiqueta.Contactos.Count.ToString("N0", CultureInfo.CurrentCulture)} contactos";
+        ? Textos.T("Qsl.Impresion.UnContacto")
+        : Textos.F("Qsl.Impresion.NContactos", Etiqueta.Contactos.Count);
 
     /// <summary>Se imprime esta etiqueta.</summary>
     [ObservableProperty]
@@ -90,6 +93,7 @@ public sealed partial class VistaModeloImpresion : ObservableObject
         _contorno = ajustes.Impresion.Contorno;
         _mensaje = ajustes.Impresion.Mensaje;
         _empezarEnLaEtiqueta = Math.Clamp(ajustes.Impresion.PrimeraCasilla + 1, 1, _plantillaElegida.PorHoja);
+        Textos.AlCambiar(this, static vm => vm.OnPropertyChanged(nameof(ResumenTexto)));
 
         // Con CUADERNO_IMPRIMIR puesta se busca sola nada mas abrir la pantalla, para poder
         // capturarla con etiquetas de verdad sin tener que darle clics a la ventana del
@@ -190,10 +194,8 @@ public sealed partial class VistaModeloImpresion : ObservableObject
 
     /// <summary>Cuantas etiquetas ha dejado el filtro y cuantas estan marcadas, en una linea.</summary>
     public string ResumenTexto => Etiquetas.Count == 0
-        ? "Sin etiquetas: pulse «Buscar» para aplicar el filtro."
-        : $"{Etiquetas.Count.ToString("N0", CultureInfo.CurrentCulture)} etiqueta(s) de "
-          + $"{ContactosEncontrados.ToString("N0", CultureInfo.CurrentCulture)} contacto(s), "
-          + $"{Etiquetas.Count(e => e.Elegida).ToString("N0", CultureInfo.CurrentCulture)} marcada(s).";
+        ? Textos.T("Qsl.Impresion.SinEtiquetas")
+        : Textos.F("Qsl.Impresion.Resumen", Etiquetas.Count, ContactosEncontrados, Etiquetas.Count(e => e.Elegida));
 
     /// <summary>Busca en el cuaderno y compone las etiquetas segun el filtro.</summary>
     [RelayCommand(CanExecute = nameof(SePuedeBuscar))]
@@ -240,13 +242,13 @@ public sealed partial class VistaModeloImpresion : ObservableObject
 
             AvisarDeLasMarcas();
             Aviso = Etiquetas.Count == 0
-                ? "Ningún contacto cumple el filtro."
+                ? Textos.T("Qsl.Impresion.NingunContacto")
                 : string.Empty;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido buscar los contactos para imprimir.");
-            Aviso = $"No se ha podido buscar: {ex.Message}";
+            Aviso = Textos.F("Qsl.Impresion.NoBuscar", ex.Message);
         }
         finally
         {
@@ -312,7 +314,7 @@ public sealed partial class VistaModeloImpresion : ObservableObject
             .ToList();
         if (elegidas.Count == 0)
         {
-            Aviso = "No hay ninguna etiqueta marcada.";
+            Aviso = Textos.T("Qsl.Impresion.NingunaMarcada");
             return;
         }
 
@@ -336,12 +338,12 @@ public sealed partial class VistaModeloImpresion : ObservableObject
 
             AbrirDocumento(ruta);
 
-            Aviso = $"Vista previa abierta: {impreso.Paginas} hoja(s) con {elegidas.Count} etiqueta(s).";
+            Aviso = Textos.F("Qsl.Impresion.VistaAbierta", impreso.Paginas, elegidas.Count);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido componer o abrir la vista previa de etiquetas.");
-            Aviso = $"No se ha podido abrir la vista previa: {ex.Message}";
+            Aviso = Textos.F("Qsl.Impresion.NoVistaPrevia", ex.Message);
         }
         finally
         {

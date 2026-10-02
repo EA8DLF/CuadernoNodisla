@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Radio.Control.Rigctld;
 
@@ -107,7 +108,7 @@ public sealed class LanzadorDeRigctld : IDisposable
 
         var ruta = _opciones.RutaDeRigctld ?? BuscarRigctld()
             ?? throw new FileNotFoundException(
-                "No se encuentra rigctld.exe. Indique su ruta en los ajustes de radio.");
+                Textos.T("Servicios.Radio.RigctldNoEsta"));
 
         var arranque = new ProcessStartInfo(ruta)
         {
@@ -126,7 +127,7 @@ public sealed class LanzadorDeRigctld : IDisposable
         if (!proceso.Start())
         {
             proceso.Dispose();
-            throw new InvalidOperationException($"No se pudo lanzar {ruta}.");
+            throw new InvalidOperationException(Textos.F("Servicios.Radio.NoSeLanza", ruta));
         }
 
         lock (_candado)
@@ -146,7 +147,7 @@ public sealed class LanzadorDeRigctld : IDisposable
         {
             var error = await LeerErrorAsync(proceso).ConfigureAwait(false);
             throw new InvalidOperationException(
-                $"rigctld se cerró nada más arrancar (código {proceso.ExitCode}). {error}".Trim());
+                Textos.F("Servicios.Radio.RigctldSeCierra", proceso.ExitCode, error).Trim());
         }
     }
 

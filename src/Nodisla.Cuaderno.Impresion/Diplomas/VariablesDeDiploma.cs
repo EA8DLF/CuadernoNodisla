@@ -1,4 +1,5 @@
 using System.Globalization;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Impresion.Qsl;
 
 namespace Nodisla.Cuaderno.Impresion.Diplomas;
@@ -81,43 +82,43 @@ public static class VariablesDeDiploma
     private static readonly CultureInfo Es = CultureInfo.GetCultureInfo("es-ES");
 
     /// <summary>Las variables del diploma, para la ayuda y el editor.</summary>
-    public static IReadOnlyList<(string Nombre, string Descripcion)> Conocidas { get; } =
+    public static IReadOnlyList<(string Nombre, string Descripcion)> Conocidas =>
     [
-        ("indicativo", "Indicativo del que recibe el diploma"),
-        ("nombre", "Su nombre"),
-        ("diploma", "Nombre del diploma"),
-        ("categoria", "Categoría, nivel o variante"),
-        ("numero", "Número de diploma, con prefijo y ceros"),
-        ("serie", "Serie de la numeración"),
-        ("fecha", "Fecha de emisión, «30 de septiembre de 2026»"),
-        ("fechacorta", "Fecha de emisión, 30/09/2026"),
-        ("fechaiso", "Fecha de emisión, 2026-09-30"),
-        ("referencias", "Número de referencias"),
-        ("qsos", "Número de contactos"),
-        ("primerqso", "Fecha del primer contacto de la lista"),
-        ("ultimoqso", "Fecha del último contacto de la lista"),
-        ("bandas", "Bandas de los contactos"),
-        ("modos", "Modos de los contactos"),
-        ("entidad", "Quien concede el diploma"),
-        ("gestor", "Nombre del gestor que firma"),
-        ("miindicativo", "Mi indicativo"),
-        ("minombre", "Mi nombre"),
-        ("miqth", "Mi QTH"),
-        ("milocalizador", "Mi localizador"),
+        ("indicativo", Textos.T("Servicios.Impresion.VariableDiploma.indicativo")),
+        ("nombre", Textos.T("Servicios.Impresion.VariableDiploma.nombre")),
+        ("diploma", Textos.T("Servicios.Impresion.VariableDiploma.diploma")),
+        ("categoria", Textos.T("Servicios.Impresion.VariableDiploma.categoria")),
+        ("numero", Textos.T("Servicios.Impresion.VariableDiploma.numero")),
+        ("serie", Textos.T("Servicios.Impresion.VariableDiploma.serie")),
+        ("fecha", Textos.T("Servicios.Impresion.VariableDiploma.fecha")),
+        ("fechacorta", Textos.T("Servicios.Impresion.VariableDiploma.fechacorta")),
+        ("fechaiso", Textos.T("Servicios.Impresion.VariableDiploma.fechaiso")),
+        ("referencias", Textos.T("Servicios.Impresion.VariableDiploma.referencias")),
+        ("qsos", Textos.T("Servicios.Impresion.VariableDiploma.qsos")),
+        ("primerqso", Textos.T("Servicios.Impresion.VariableDiploma.primerqso")),
+        ("ultimoqso", Textos.T("Servicios.Impresion.VariableDiploma.ultimoqso")),
+        ("bandas", Textos.T("Servicios.Impresion.VariableDiploma.bandas")),
+        ("modos", Textos.T("Servicios.Impresion.VariableDiploma.modos")),
+        ("entidad", Textos.T("Servicios.Impresion.VariableDiploma.entidad")),
+        ("gestor", Textos.T("Servicios.Impresion.VariableDiploma.gestor")),
+        ("miindicativo", Textos.T("Servicios.Impresion.VariableDiploma.miindicativo")),
+        ("minombre", Textos.T("Servicios.Impresion.VariableDiploma.minombre")),
+        ("miqth", Textos.T("Servicios.Impresion.VariableDiploma.miqth")),
+        ("milocalizador", Textos.T("Servicios.Impresion.VariableDiploma.milocalizador")),
     ];
 
     /// <summary>Las variables de cada fila de la tabla.</summary>
-    public static IReadOnlyList<(string Nombre, string Descripcion)> DeLaFila { get; } =
+    public static IReadOnlyList<(string Nombre, string Descripcion)> DeLaFila =>
     [
-        ("referencia", "Referencia"),
-        ("nombrereferencia", "Nombre de la referencia"),
-        ("indicativo", "Indicativo del contacto"),
-        ("fecha", "Fecha AAAA-MM-DD (UTC)"),
-        ("hora", "Hora HH:MM (UTC)"),
-        ("banda", "Banda"),
-        ("modo", "Modo"),
-        ("rst", "Informe"),
-        ("n", "Número de fila"),
+        ("referencia", Textos.T("Servicios.Impresion.VariableFila.referencia")),
+        ("nombrereferencia", Textos.T("Servicios.Impresion.VariableFila.nombrereferencia")),
+        ("indicativo", Textos.T("Servicios.Impresion.VariableFila.indicativo")),
+        ("fecha", Textos.T("Servicios.Impresion.VariableFila.fecha")),
+        ("hora", Textos.T("Servicios.Impresion.VariableFila.hora")),
+        ("banda", Textos.T("Servicios.Impresion.VariableFila.banda")),
+        ("modo", Textos.T("Servicios.Impresion.VariableFila.modo")),
+        ("rst", Textos.T("Servicios.Impresion.VariableFila.rst")),
+        ("n", Textos.T("Servicios.Impresion.VariableFila.n")),
     ];
 
     /// <summary>Los valores de las variables de un diploma.</summary>

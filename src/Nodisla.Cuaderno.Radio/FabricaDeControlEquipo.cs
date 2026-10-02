@@ -3,6 +3,7 @@ using System.Runtime.Versioning;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Radio.Control;
 using Nodisla.Cuaderno.Radio.Control.Ft710;
 using Nodisla.Cuaderno.Radio.Control.OmniRig;
@@ -129,13 +130,13 @@ public static class FabricaDeControlEquipo
             if (proveedor is null) return null;
             if (!string.IsNullOrWhiteSpace(puertoGuardado))
             {
-                aviso?.Report($"Probando el {elegido.Nombre} por {puertoGuardado}…");
+                aviso?.Report(Textos.F("Servicios.Radio.ProbandoModelo", elegido.Nombre, puertoGuardado));
                 var alli = await proveedor.IdentificarAsync(
                     puertoGuardado, [ajustes.Ft710.Baudios, .. elegido.Velocidades], ajustes, registro, ct).ConfigureAwait(false);
                 if (alli is not null) return alli with { Modelo = elegido };
             }
 
-            aviso?.Report($"Buscando el {elegido.Nombre} por los puertos serie… (puede tardar unos segundos)");
+            aviso?.Report(Textos.F("Servicios.Radio.BuscandoModelo", elegido.Nombre));
             var visto = await BuscarConAsync(proveedor, elegido, ajustes, registro, ct).ConfigureAwait(false);
             return visto is null ? null : visto with { Modelo = elegido };
         }
@@ -148,7 +149,7 @@ public static class FabricaDeControlEquipo
         // de darse por vencido.
         if (!string.IsNullOrWhiteSpace(puertoGuardado))
         {
-            aviso?.Report($"Probando por {puertoGuardado} a {ajustes.Ft710.Baudios} baudios…");
+            aviso?.Report(Textos.F("Servicios.Radio.ProbandoPuerto", puertoGuardado, ajustes.Ft710.Baudios));
             var dondeEstaba = await AutodeteccionFt710.ComprobarAsync(
                 puertoGuardado,
                 ajustes.Ft710.Baudios,
@@ -166,7 +167,7 @@ public static class FabricaDeControlEquipo
                 ajustes.Ft710.Baudios);
         }
 
-        aviso?.Report("Buscando el equipo por los puertos serie… (puede tardar unos segundos)");
+        aviso?.Report(Textos.T("Servicios.Radio.BuscandoEquipo"));
         var equipos = await AutodeteccionFt710.BuscarAsync(registro, ct).ConfigureAwait(false);
         var yaesu = perfilElegido is not null
             ? equipos.FirstOrDefault(e => PerfilesYaesu.PorIdentificador(e.Identificador) == perfilElegido)
@@ -184,7 +185,7 @@ public static class FabricaDeControlEquipo
             // Automatico y ningun Yaesu: los demas protocolos que sepan identificarse.
             foreach (var proveedor in CatalogoDeModelos.Proveedores.Where(p => p.Protocolo is not ProtocoloCat.YaesuAscii and not ProtocoloCat.YaesuBinario))
             {
-                aviso?.Report($"Buscando equipos {proveedor.Protocolo} por los puertos serie…");
+                aviso?.Report(Textos.F("Servicios.Radio.BuscandoProtocolo", proveedor.Protocolo));
                 var encontrado = await BuscarConAsync(proveedor, null, ajustes, registro, ct).ConfigureAwait(false);
                 if (encontrado?.Modelo is not null)
                 {
@@ -213,9 +214,9 @@ public static class FabricaDeControlEquipo
         }
 
         var modelo = encontrado.Modelo ?? CatalogoDeModelos.Buscar(ajustes.Modelo)
-            ?? throw new InvalidOperationException($"Ha contestado un equipo {encontrado.Protocolo} que no está en el catálogo.");
+            ?? throw new InvalidOperationException(Textos.F("Servicios.Radio.FueraDelCatalogo", encontrado.Protocolo));
         var proveedor = CatalogoDeModelos.ProveedorDe(modelo)
-            ?? throw new InvalidOperationException($"No hay control para {modelo.NombreCompleto}.");
+            ?? throw new InvalidOperationException(Textos.F("Servicios.Radio.SinControl", modelo.NombreCompleto));
         return proveedor.Crear(modelo, encontrado.Puerto, encontrado.Baudios, ajustes, registro);
     }
 

@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Libro.Borrar" xml:space="preserve">
+    <value>Borrar (Supr)</value>
+  </data>
+  <data name="Libro.Buscar" xml:space="preserve">
+    <value>Buscar en el cuaderno (F3)</value>
+  </data>
+  <data name="Libro.Buscar.Ayuda" xml:space="preserve">
+    <value>Indicativo, nombre, QTH, localizador, país o comentario</value>
+  </data>
+  <data name="Libro.Cargando" xml:space="preserve">
+    <value>Cargando…</value>
+  </data>
+  <data name="Libro.Columna.Antena" xml:space="preserve">
+    <value>ANTENA</value>
+  </data>
+  <data name="Libro.Columna.Banda" xml:space="preserve">
+    <value>BANDA</value>
+  </data>
+  <data name="Libro.Columna.Casual" xml:space="preserve">
+    <value>CASUAL</value>
+  </data>
+  <data name="Libro.Columna.Comentario" xml:space="preserve">
+    <value>COMENTARIO</value>
+  </data>
+  <data name="Libro.Columna.Completado" xml:space="preserve">
+    <value>COMPLETADO</value>
+  </data>
+  <data name="Libro.Columna.Distancia" xml:space="preserve">
+    <value>DISTANCIA</value>
+  </data>
+  <data name="Libro.Columna.Enviado" xml:space="preserve">
+    <value>ENV.</value>
+    <comment>Informe RST enviado; columna de 4 letras</comment>
+  </data>
+  <data name="Libro.Columna.FechaUtc" xml:space="preserve">
+    <value>FECHA UTC</value>
+    <comment>Cabecera de columna estrecha (9 letras)</comment>
+  </data>
+  <data name="Libro.Columna.Frecuencia" xml:space="preserve">
+    <value>FRECUENCIA</value>
+  </data>
+  <data name="Libro.Columna.Hora" xml:space="preserve">
+    <value>HORA</value>
+  </data>
+  <data name="Libro.Columna.Indicativo" xml:space="preserve">
+    <value>INDICATIVO</value>
+  </data>
+  <data name="Libro.Columna.Localizador" xml:space="preserve">
+    <value>LOCALIZADOR</value>
+  </data>
+  <data name="Libro.Columna.MensajeQsl" xml:space="preserve">
+    <value>MENSAJE QSL</value>
+  </data>
+  <data name="Libro.Columna.MiIndicativo" xml:space="preserve">
+    <value>MI INDICATIVO</value>
+  </data>
+  <data name="Libro.Columna.MiNombre" xml:space="preserve">
+    <value>MI NOMBRE</value>
+  </data>
+  <data name="Libro.Columna.Modo" xml:space="preserve">
+    <value>MODO</value>
+    <comment>Columna de 5 letras: en alemán «Mode», como lo rotulan los programas de log alemanes; «Betriebsart» no cabe.</comment>
+  </data>
+  <data name="Libro.Columna.Nombre" xml:space="preserve">
+    <value>NOMBRE</value>
+  </data>
+  <data name="Libro.Columna.Propagacion" xml:space="preserve">
+    <value>PROPAGACIÓN</value>
+  </data>
+  <data name="Libro.Columna.Recibido" xml:space="preserve">
+    <value>REC.</value>
+    <comment>Informe RST recibido; columna de 4 letras</comment>
+  </data>
+  <data name="Libro.Columna.Swl" xml:space="preserve">
+    <value>RADIOESCUCHA</value>
+  </data>
+  <data name="Libro.Columnas" xml:space="preserve">
+    <value>Columnas del cuaderno</value>
+  </data>
+  <data name="Libro.Columnas.Antena" xml:space="preserve">
+    <value>Antena</value>
+  </data>
+  <data name="Libro.Columnas.Casual" xml:space="preserve">
+    <value>Casual</value>
+  </data>
+  <data name="Libro.Columnas.Completado" xml:space="preserve">
+    <value>Completado</value>
+  </data>
+  <data name="Libro.Columnas.Confirmaciones" xml:space="preserve">
+    <value>Confirmaciones</value>
+  </data>
+  <data name="Libro.Columnas.Distancia" xml:space="preserve">
+    <value>Distancia</value>
+  </data>
+  <data name="Libro.Columnas.Informes" xml:space="preserve">
+    <value>Informes</value>
+  </data>
+  <data name="Libro.Columnas.MensajeQsl" xml:space="preserve">
+    <value>Mensaje QSL</value>
+  </data>
+  <data name="Libro.Columnas.MiIndicativo" xml:space="preserve">
+    <value>Mi indicativo</value>
+  </data>
+  <data name="Libro.Columnas.MiNombre" xml:space="preserve">
+    <value>Mi nombre</value>
+  </data>
+  <data name="Libro.Columnas.Propagacion" xml:space="preserve">
+    <value>Propagación</value>
+  </data>
+  <data name="Libro.Columnas.Swl" xml:space="preserve">
+    <value>Radioescucha</value>
+  </data>
+  <data name="Libro.ElijaContactos" xml:space="preserve">
+    <value>Elija antes uno o varios contactos del cuaderno.</value>
+  </data>
+  <data name="Libro.Entrada.Ahora" xml:space="preserve">
+    <value>Ahora (F8)</value>
+  </data>
+  <data name="Libro.Entrada.CambiosGuardados" xml:space="preserve">
+    <value>Cambios guardados en el contacto con {0}.</value>
+  </data>
+  <data name="Libro.Entrada.DatosAmpliados.Ayuda" xml:space="preserve">
+    <value>Muestra u oculta fecha, hora, nombre, QTH, localizador y comentario</value>
+  </data>
+  <data name="Libro.Entrada.Duplicado" xml:space="preserve">
+    <value>Ya hay un contacto con {0} en {1} {2} el {3} UTC. Pulse Intro otra vez para registrarlo igualmente.</value>
+  </data>
+  <data name="Libro.Entrada.FechaNoValida" xml:space="preserve">
+    <value>La fecha o la hora no se entienden. Use dd-mm-aaaa y hh:mm en UTC.</value>
+  </data>
+  <data name="Libro.Entrada.FechaUtc" xml:space="preserve">
+    <value>Fecha UTC</value>
+  </data>
+  <data name="Libro.Entrada.FechaUtc.Ayuda" xml:space="preserve">
+    <value>Desmarque «Hora automática» para escribir otra fecha</value>
+  </data>
+  <data name="Libro.Entrada.Ficha.Accesible" xml:space="preserve">
+    <value>Resumen de la ficha de QRZ.com</value>
+  </data>
+  <data name="Libro.Entrada.Ficha.Ayuda" xml:space="preserve">
+    <value>Datos de la ficha del corresponsal. Nombre, QTH y localizador solo se rellenan si estaban vacíos.</value>
+  </data>
+  <data name="Libro.Entrada.Frecuencia" xml:space="preserve">
+    <value>Frecuencia (MHz)</value>
+  </data>
+  <data name="Libro.Entrada.Frecuencia.Ayuda" xml:space="preserve">
+    <value>Siempre con punto decimal, como en el dial. La coma también vale.</value>
+  </data>
+  <data name="Libro.Entrada.GuardarCambios" xml:space="preserve">
+    <value>Guardar cambios (Intro)</value>
+  </data>
+  <data name="Libro.Entrada.HoraAutomatica" xml:space="preserve">
+    <value>Hora automática</value>
+  </data>
+  <data name="Libro.Entrada.HoraAutomatica.Ayuda" xml:space="preserve">
+    <value>Mientras esté marcada, la fecha y la hora siguen al reloj UTC</value>
+  </data>
+  <data name="Libro.Entrada.HoraUtc" xml:space="preserve">
+    <value>Hora UTC</value>
+  </data>
+  <data name="Libro.Entrada.Indicativo.Accesible" xml:space="preserve">
+    <value>Indicativo del corresponsal</value>
+  </data>
+  <data name="Libro.Entrada.Indicativo.Ayuda" xml:space="preserve">
+    <value>Indicativo del corresponsal. F4 trae el foco aquí.</value>
+  </data>
+  <data name="Libro.Entrada.Indicativo.AyudaAccesible" xml:space="preserve">
+    <value>F4 trae el foco aquí. Al escribirlo se rellena el retrato: si aporta país, banda o modo nuevos.</value>
+  </data>
+  <data name="Libro.Entrada.InformeEnviado" xml:space="preserve">
+    <value>Informe enviado</value>
+  </data>
+  <data name="Libro.Entrada.InformeEnviado.Ayuda" xml:space="preserve">
+    <value>Informe enviado al corresponsal</value>
+  </data>
+  <data name="Libro.Entrada.InformeRecibido" xml:space="preserve">
+    <value>Informe recibido</value>
+  </data>
+  <data name="Libro.Entrada.InformeRecibido.Ayuda" xml:space="preserve">
+    <value>Informe recibido del corresponsal</value>
+  </data>
+  <data name="Libro.Entrada.Informes" xml:space="preserve">
+    <value>Informe env. / rec.</value>
+  </data>
+  <data name="Libro.Entrada.Limpiar" xml:space="preserve">
+    <value>Limpiar (Esc)</value>
+  </data>
+  <data name="Libro.Entrada.LosPoneUsted" xml:space="preserve">
+    <value>Los pone usted</value>
+  </data>
+  <data name="Libro.Entrada.LotwNoAdmite" xml:space="preserve">
+    <value>LoTW no admite modificar un contacto ya subido: allí queda como se subió. Club Log y QRZ reciben la corrección.</value>
+  </data>
+  <data name="Libro.Entrada.Modificando" xml:space="preserve">
+    <value>Modificando el contacto con {0}. Escape cancela.</value>
+  </data>
+  <data name="Libro.Entrada.ModoNoAdif" xml:space="preserve">
+    <value>El modo «{0}» no está en la tabla de ADIF.</value>
+  </data>
+  <data name="Libro.Entrada.NuevoEnBanda" xml:space="preserve">
+    <value>nuevo en esta banda</value>
+  </data>
+  <data name="Libro.Entrada.NuevoEnModo" xml:space="preserve">
+    <value>nuevo en este modo</value>
+  </data>
+  <data name="Libro.Entrada.QslVia" xml:space="preserve">
+    <value>QSL vía {0}</value>
+  </data>
+  <data name="Libro.Entrada.Registrado" xml:space="preserve">
+    <value>Contacto con {0} registrado en {1} {2}.</value>
+  </data>
+  <data name="Libro.Entrada.Registrar" xml:space="preserve">
+    <value>Registrar contacto (Intro)</value>
+  </data>
+  <data name="Libro.Entrada.Seria" xml:space="preserve">
+    <value>{0} · Sería {1}.</value>
+  </data>
+  <data name="Libro.Entrada.SiguiendoAlEquipo" xml:space="preserve">
+    <value>Siguiendo al equipo</value>
+  </data>
+  <data name="Libro.Entrada.TituloModificar" xml:space="preserve">
+    <value>Modificar contacto</value>
+  </data>
+  <data name="Libro.Entrada.TituloNuevo" xml:space="preserve">
+    <value>Contacto nuevo</value>
+  </data>
+  <data name="Libro.Entrada.Usa" xml:space="preserve">
+    <value>usa {0}</value>
+  </data>
+  <data name="Libro.Entrada.VerEnviarQsl.Accesible" xml:space="preserve">
+    <value>Ver y enviar la tarjeta QSL de este contacto</value>
+  </data>
+  <data name="Libro.Entrada.Y" xml:space="preserve">
+    <value>y</value>
+  </data>
+  <data name="Libro.Entrada.YaNoEsta" xml:space="preserve">
+    <value>Ese contacto ya no está en el cuaderno.</value>
+  </data>
+  <data name="Libro.Fila.Dudoso" xml:space="preserve">
+    <value>Dudoso</value>
+    <comment>QSO_COMPLETE = ?</comment>
+  </data>
+  <data name="Libro.Fila.Elevacion" xml:space="preserve">
+    <value>el. {0}°</value>
+  </data>
+  <data name="Libro.Fila.NoHubo" xml:space="preserve">
+    <value>No hubo</value>
+    <comment>QSO_COMPLETE = NIL</comment>
+  </data>
+  <data name="Libro.Fila.QslConfirmada" xml:space="preserve">
+    <value>{0}: confirmada</value>
+  </data>
+  <data name="Libro.Fila.QslEnviada" xml:space="preserve">
+    <value>{0}: enviada, sin confirmar</value>
+  </data>
+  <data name="Libro.Fila.QslVerificada" xml:space="preserve">
+    <value>{0}: verificada</value>
+  </data>
+  <data name="Libro.Fila.SinQsl" xml:space="preserve">
+    <value>Sin QSL enviada ni recibida</value>
+  </data>
+  <data name="Libro.Fila.Verificado" xml:space="preserve">
+    <value>Verificado</value>
+  </data>
+  <data name="Libro.Filtro.Todas" xml:space="preserve">
+    <value>(todas)</value>
+    <comment>Filtro de banda sin filtrar</comment>
+  </data>
+  <data name="Libro.Filtro.Todos" xml:space="preserve">
+    <value>(todos)</value>
+    <comment>Filtro de modo sin filtrar</comment>
+  </data>
+  <data name="Libro.Localizador" xml:space="preserve">
+    <value>Localizador</value>
+  </data>
+  <data name="Libro.Modificar" xml:space="preserve">
+    <value>Modificar (F2)</value>
+  </data>
+  <data name="Libro.Pagina.Anterior" xml:space="preserve">
+    <value>◀ Anterior</value>
+  </data>
+  <data name="Libro.Pagina.Primera" xml:space="preserve">
+    <value>⏮ Primera</value>
+  </data>
+  <data name="Libro.Pagina.Siguiente" xml:space="preserve">
+    <value>Siguiente ▶</value>
+  </data>
+  <data name="Libro.Pagina.SinContactos" xml:space="preserve">
+    <value>Sin contactos</value>
+  </data>
+  <data name="Libro.Pagina.Texto" xml:space="preserve">
+    <value>Página {0} de {1} · {2:N0} contactos</value>
+  </data>
+  <data name="Libro.Pagina.Ultima" xml:space="preserve">
+    <value>Última ⏭</value>
+  </data>
+  <data name="Libro.PorPagina" xml:space="preserve">
+    <value>Por página</value>
+  </data>
+  <data name="Libro.QslNoDisponible" xml:space="preserve">
+    <value>El editor de QSL no está disponible.</value>
+  </data>
+  <data name="Libro.QuitarFiltro" xml:space="preserve">
+    <value>Quitar filtro</value>
+  </data>
+  <data name="Libro.Retrato.Aporta" xml:space="preserve">
+    <value>APORTA</value>
+    <comment>Pastilla: el indicativo trae algo nuevo</comment>
+  </data>
+  <data name="Libro.Retrato.Casilla.Accesible" xml:space="preserve">
+    <value>{0} por {1}: {2}</value>
+  </data>
+  <data name="Libro.Retrato.Casilla.Nuevo" xml:space="preserve">
+    <value>NUEVO</value>
+  </data>
+  <data name="Libro.Retrato.Casilla.Ok" xml:space="preserve">
+    <value>✓ OK</value>
+  </data>
+  <data name="Libro.Retrato.Casilla.SinDato" xml:space="preserve">
+    <value>{0} por {1}: sin dato para calcularlo</value>
+  </data>
+  <data name="Libro.Retrato.Casilla.SinQsl" xml:space="preserve">
+    <value>sin QSL</value>
+  </data>
+  <data name="Libro.Retrato.ConEl" xml:space="preserve">
+    <value>Con él</value>
+  </data>
+  <data name="Libro.Retrato.EscribaUnIndicativo" xml:space="preserve">
+    <value>Escriba un indicativo para ver si aporta algo.</value>
+  </data>
+  <data name="Libro.Retrato.Familia.Digitales" xml:space="preserve">
+    <value>digitales</value>
+  </data>
+  <data name="Libro.Retrato.Familia.Fonia" xml:space="preserve">
+    <value>fonía</value>
+  </data>
+  <data name="Libro.Retrato.Familia.Telegrafia" xml:space="preserve">
+    <value>telegrafía</value>
+  </data>
+  <data name="Libro.Retrato.Fonia" xml:space="preserve">
+    <value>FONÍA</value>
+  </data>
+  <data name="Libro.Retrato.Leyenda" xml:space="preserve">
+    <value>Vacía: sin trabajar · número: trabajado · ✓: confirmado.</value>
+  </data>
+  <data name="Libro.Retrato.Nuevo" xml:space="preserve">
+    <value>¿Nuevo?</value>
+  </data>
+  <data name="Libro.Retrato.Papel" xml:space="preserve">
+    <value>Papel</value>
+    <comment>Vía de confirmación: QSL en papel</comment>
+  </data>
+  <data name="Libro.Retrato.Rejilla.Confirmados" xml:space="preserve">
+    <value>{0} en {1}: {2} contacto(s), {3} confirmado(s)</value>
+  </data>
+  <data name="Libro.Retrato.Rejilla.NingunoConfirmado" xml:space="preserve">
+    <value>{0} en {1}: {2} contacto(s), ninguno confirmado</value>
+  </data>
+  <data name="Libro.Retrato.Rejilla.SinTrabajar" xml:space="preserve">
+    <value>{0} en {1}: sin trabajar</value>
+  </data>
+  <data name="Libro.Retrato.Resumen.Nunca" xml:space="preserve">
+    <value>Nunca trabajado.</value>
+  </data>
+  <data name="Libro.Retrato.Resumen.UnaVez" xml:space="preserve">
+    <value>Trabajado 1 vez.</value>
+  </data>
+  <data name="Libro.Retrato.Resumen.Vacio" xml:space="preserve">
+    <value>Escriba un indicativo.</value>
+  </data>
+  <data name="Libro.Retrato.Resumen.Veces" xml:space="preserve">
+    <value>Trabajado {0} veces.</value>
+  </data>
+  <data name="Libro.Retrato.SinEntidad" xml:space="preserve">
+    <value>entidad sin resolver</value>
+  </data>
+  <data name="Libro.Vacia.Cuaderno" xml:space="preserve">
+    <value>El cuaderno está vacío. Registre un contacto en «{0}» o importe un ADIF.</value>
+    <comment>{0} = nombre de la pestaña Operar (Principal.Nav.Operar)</comment>
+  </data>
+  <data name="Libro.Vacia.Filtro" xml:space="preserve">
+    <value>Ningún contacto cumple el filtro. Pulse «Quitar filtro» para verlos todos.</value>
+  </data>
+  <data name="Libro.Vacio.Avisos" xml:space="preserve">
+    <value>Con {0:N0} aviso(s) de lectura.</value>
+  </data>
+  <data name="Libro.Vacio.Choques" xml:space="preserve">
+    <value>Hay {0:N0} dato(s) que no cuadraban entre dos copias; se pueden revisar en {1} › Libro (ADIF).</value>
+    <comment>{1} = Principal.Nav.Configuracion</comment>
+  </data>
+  <data name="Libro.Vacio.DeCero" xml:space="preserve">
+    <value>Empezar de cero</value>
+  </data>
+  <data name="Libro.Vacio.DeCero.Accesible" xml:space="preserve">
+    <value>Empezar con el cuaderno vacío</value>
+  </data>
+  <data name="Libro.Vacio.DialogoFiltro" xml:space="preserve">
+    <value>Ficheros ADIF (*.adi;*.adif;*.adx)|*.adi;*.adif;*.adx|Todos los ficheros (*.*)|*.*</value>
+    <comment>Filtro del diálogo de abrir: los patrones tras cada | no se traducen</comment>
+  </data>
+  <data name="Libro.Vacio.DialogoTitulo" xml:space="preserve">
+    <value>Elija el fichero ADIF que quiere traer al cuaderno</value>
+  </data>
+  <data name="Libro.Vacio.DondeVive" xml:space="preserve">
+    <value>Dónde vive su cuaderno</value>
+  </data>
+  <data name="Libro.Vacio.Duracion" xml:space="preserve">
+    <value>Ha tardado {0:N1} s.</value>
+  </data>
+  <data name="Libro.Vacio.Explicacion" xml:space="preserve">
+    <value>Acaba de crearse un cuaderno nuevo y todavía no tiene ningún contacto. Si ya lleva su cuaderno en otro programa, puede traérselo ahora desde un fichero ADIF.</value>
+  </data>
+  <data name="Libro.Vacio.Importando" xml:space="preserve">
+    <value>Importando…</value>
+  </data>
+  <data name="Libro.Vacio.Importar" xml:space="preserve">
+    <value>Importar un ADIF…</value>
+  </data>
+  <data name="Libro.Vacio.Importar.Accesible" xml:space="preserve">
+    <value>Importar un fichero ADIF en el cuaderno</value>
+  </data>
+  <data name="Libro.Vacio.NoCuadra" xml:space="preserve">
+    <value>Las cuentas no cuadran: hay registros del fichero que no se pueden explicar ni como nuevos, ni como fundidos, ni como ya existentes. Conviene revisar el fichero antes de fiarse del cuaderno.</value>
+  </data>
+  <data name="Libro.Vacio.NoSeHaPodido" xml:space="preserve">
+    <value>No se ha podido importar: {0}</value>
+  </data>
+  <data name="Libro.Vacio.Parte" xml:space="preserve">
+    <value>{0:N0} registros leídos, {1:N0} contactos nuevos en el cuaderno, {2:N0} copias fundidas dentro del propio fichero, {3:N0} fundidas con lo que ya había y {4:N0} que ya estaban igual.</value>
+  </data>
+  <data name="Libro.Vacio.Programa" xml:space="preserve">
+    <value>El fichero lo generó {0}.</value>
+  </data>
+  <data name="Libro.Vacio.Rescatadas" xml:space="preserve">
+    <value>Se han rescatado {0:N0} confirmaciones que se habrían perdido descartando las copias repetidas. Cada una cuenta para un diploma.</value>
+  </data>
+  <data name="Libro.Vacio.Titulo" xml:space="preserve">
+    <value>Su cuaderno está vacío</value>
+  </data>
+  <data name="Libro.Vacio.UnSoloFichero" xml:space="preserve">
+    <value>Es un solo fichero: se puede copiar, llevar a otro equipo o guardar como respaldo. Al lado hay una carpeta «copias» con las de seguridad.</value>
+    <comment>«copias» es el nombre real de la carpeta en disco: no se traduce</comment>
+  </data>
+  <data name="Libro.VerEnviarQsl" xml:space="preserve">
+    <value>Ver/enviar QSL…</value>
+  </data>
+  <data name="Libro.VerEnviarQsl.Accesible" xml:space="preserve">
+    <value>Ver y enviar la tarjeta QSL de los contactos elegidos</value>
+  </data>
+  <data name="Libro.VerEnviarQsl.Ayuda" xml:space="preserve">
+    <value>La tarjeta QSL de los contactos elegidos, para verla o mandarla por correo</value>
+  </data>
+</root>

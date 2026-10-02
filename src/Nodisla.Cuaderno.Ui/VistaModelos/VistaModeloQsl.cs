@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Impresion.Qsl;
 using Nodisla.Cuaderno.Ui.Qsl;
 using Serilog;
@@ -130,7 +131,7 @@ public sealed record ContactoDeMuestra(Qso? Qso)
 {
     /// <summary>Como se ve en la lista.</summary>
     public string Texto => Qso is null
-        ? "(sin contacto: solo mis datos)"
+        ? Textos.T("Qsl.Tarjeta.SinContacto")
         : string.Create(CultureInfo.InvariantCulture, $"{Qso.Call.Valor}  {Qso.InicioUtc.UtcDateTime:yyyy-MM-dd HH:mm}  {Qso.Band.Nombre} {Qso.Mode.NombreUsual}");
 
     /// <inheritdoc />
@@ -141,7 +142,7 @@ public sealed record ContactoDeMuestra(Qso? Qso)
 /// El editor de la tarjeta QSL: plantillas, fondo, campos que se arrastran y vista previa con un
 /// contacto de verdad.
 /// </summary>
-public sealed partial class VistaModeloQsl : ObservableObject
+public sealed partial class VistaModeloQsl : ObservableObject, IColoresDelDiseno
 {
     private DatosDeMiEstacion _yo = DatosDeMiEstacion.Vacios;
     private bool _redibujoPendiente;
@@ -153,7 +154,8 @@ public sealed partial class VistaModeloQsl : ObservableObject
     {
         Servicio = servicio ?? throw new ArgumentNullException(nameof(servicio));
         RecargarPlantillas(Servicio.Disenos.IdPorOmision());
-        Servicio.QslEnviadas += (_, _) => Aviso = "Tarjeta(s) enviada(s) y apuntada(s) en el cuaderno.";
+        Servicio.QslEnviadas += (_, _) => Aviso = Textos.T("Qsl.Tarjeta.Enviadas");
+        Textos.AlCambiar(this, static vm => vm.AlCambiarDeIdioma());
     }
 
     /// <summary>Piden abrir la ventana de envio con estos contactos.</summary>
@@ -171,8 +173,8 @@ public sealed partial class VistaModeloQsl : ObservableObject
     {
         var dialogo = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "Imagen de fondo de la tarjeta",
-            Filter = "Imágenes|*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.tif;*.tiff",
+            Title = Textos.T("Qsl.Tarjeta.DialogoFondo"),
+            Filter = Textos.T("Qsl.Editor.FiltroImagenes"),
         };
         return dialogo.ShowDialog() == true ? dialogo.FileName : null;
     };
@@ -203,7 +205,7 @@ public sealed partial class VistaModeloQsl : ObservableObject
     public IReadOnlyList<AjusteDeFondo> AjustesDeFondo => CatalogosDelEditor.AjustesDeFondo;
 
     /// <summary>Variables para escribir en los campos, con su explicacion.</summary>
-    public string AyudaDeVariables { get; } = string.Join("\n", VariablesDeQsl.Conocidas.Select(v => $"{{{v.Nombre}}} — {v.Descripcion}"));
+    public string AyudaDeVariables => string.Join("\n", VariablesDeQsl.Conocidas.Select(v => $"{{{v.Nombre}}} — {v.Descripcion}"));
 
     /// <summary>La plantilla elegida.</summary>
     [ObservableProperty]
@@ -284,6 +286,18 @@ public sealed partial class VistaModeloQsl : ObservableObject
         }
     }
 
+    /// <inheritdoc />
+    public IEnumerable<string?> ColoresEnUso()
+    {
+        if (Diseno is not { } d) yield break;
+        yield return d.ColorDeFondo;
+        foreach (var campo in d.Campos.Where(c => c.Visible))
+        {
+            yield return campo.Color;
+            yield return campo.ColorDeRecuadro;
+        }
+    }
+
     /// <summary>Color liso del fondo.</summary>
     public string ColorDeFondo
     {
@@ -329,7 +343,7 @@ public sealed partial class VistaModeloQsl : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se han podido cargar los contactos de muestra de la QSL.");
-            Aviso = $"No se han podido leer los contactos: {ex.Message}";
+            Aviso = Textos.F("Qsl.Tarjeta.NoContactos", ex.Message);
         }
 
         Redibujar();
@@ -372,7 +386,7 @@ public sealed partial class VistaModeloQsl : ObservableObject
     {
         var nueva = DisenoDeQsl.PorOmision();
         nueva.Id = Guid.NewGuid().ToString("N")[..12];
-        nueva.Nombre = "Tarjeta nueva";
+        nueva.Nombre = Textos.T("Qsl.Tarjeta.TarjetaNueva");
         Disenos.Add(nueva);
         Diseno = nueva;
         HayCambios = true;
@@ -385,7 +399,7 @@ public sealed partial class VistaModeloQsl : ObservableObject
         if (Diseno is null) return;
         var copia = Diseno.Copiar();
         copia.Id = Guid.NewGuid().ToString("N")[..12];
-        copia.Nombre = Diseno.Nombre + " (copia)";
+        copia.Nombre = Textos.F("Qsl.Editor.Copia", Diseno.Nombre);
         if (Servicio.Disenos.RutaDelFondo(Diseno) is { } fondo)
         {
             copia.ImagenDeFondo = null;
@@ -406,12 +420,12 @@ public sealed partial class VistaModeloQsl : ObservableObject
         {
             Servicio.Disenos.Guardar(Diseno);
             HayCambios = false;
-            Aviso = $"Plantilla «{Diseno.Nombre}» guardada.";
+            Aviso = Textos.F("Qsl.Editor.PlantillaGuardada", Diseno.Nombre);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
         {
             Log.Error(ex, "No se ha podido guardar la plantilla de QSL.");
-            Aviso = $"No se ha podido guardar: {ex.Message}";
+            Aviso = Textos.F("Qsl.Editor.NoSeHaPodidoGuardar", ex.Message);
         }
     }
 
@@ -427,7 +441,7 @@ public sealed partial class VistaModeloQsl : ObservableObject
         var nombre = Diseno.Nombre;
         Servicio.Disenos.Borrar(Diseno);
         RecargarPlantillas(null);
-        Aviso = $"Plantilla «{nombre}» borrada.";
+        Aviso = Textos.F("Qsl.Editor.PlantillaBorrada", nombre);
     }
 
     /// <summary>La elegida pasa a ser la de omision.</summary>
@@ -438,7 +452,7 @@ public sealed partial class VistaModeloQsl : ObservableObject
         Guardar();
         Servicio.Disenos.PonerPorOmision(Diseno.Id);
         OnPropertyChanged(nameof(EsLaDeOmision));
-        Aviso = $"«{Diseno.Nombre}» es ahora la tarjeta por omisión.";
+        Aviso = Textos.F("Qsl.Tarjeta.AhoraPorOmision", Diseno.Nombre);
     }
 
     /// <summary>Elige la imagen de fondo.</summary>
@@ -455,7 +469,7 @@ public sealed partial class VistaModeloQsl : ObservableObject
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
         {
-            Aviso = $"No se ha podido usar esa imagen: {ex.Message}";
+            Aviso = Textos.F("Qsl.Editor.NoImagen", ex.Message);
         }
     }
 
@@ -474,7 +488,7 @@ public sealed partial class VistaModeloQsl : ObservableObject
     public void AnadirCampo()
     {
         if (Diseno is null) return;
-        var campo = new CampoDeQsl { Nombre = "Texto", Texto = "Texto libre", XMm = AnchoMm / 2, YMm = AltoMm / 2, Alineacion = AlineacionDeCampo.Centro, TamanoPt = 14 };
+        var campo = new CampoDeQsl { Nombre = Textos.T("Qsl.Editor.Texto"), Texto = Textos.T("Qsl.Editor.TextoLibre"), XMm = AnchoMm / 2, YMm = AltoMm / 2, Alineacion = AlineacionDeCampo.Centro, TamanoPt = 14 };
         Diseno.Campos.Add(campo);
         var editable = new CampoEditable(campo, Cambiado);
         Campos.Add(editable);
@@ -488,7 +502,7 @@ public sealed partial class VistaModeloQsl : ObservableObject
     {
         if (Diseno is null || CampoElegido is null) return;
         var campo = CampoElegido.Campo.Copiar();
-        campo.Nombre += " (copia)";
+        campo.Nombre = Textos.F("Qsl.Editor.Copia", campo.Nombre);
         campo.YMm = Math.Min(AltoMm - 5, campo.YMm + 5);
         Diseno.Campos.Add(campo);
         var editable = new CampoEditable(campo, Cambiado);
@@ -515,16 +529,16 @@ public sealed partial class VistaModeloQsl : ObservableObject
         if (Diseno is null) return;
         var qso = Contacto?.Qso;
         var nombre = qso is null ? "QSL_" + Limpio(Diseno.Nombre) : ServicioDeQsl.NombreDeFichero(qso, _yo);
-        if (ElegirDondeGuardar(nombre + ".jpg", "JPG (correo)|*.jpg|PNG (sin pérdida)|*.png") is not { } ruta) return;
+        if (ElegirDondeGuardar(nombre + ".jpg", Textos.T("Qsl.Tarjeta.FiltroImagen")) is not { } ruta) return;
         var formato = ruta.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ? FormatoDeImagen.Png : FormatoDeImagen.Jpg;
         try
         {
             File.WriteAllBytes(ruta, DibujanteDeQsl.Codificar(Servicio.Dibujar(Diseno, qso, _yo, DibujanteDeQsl.PppDeImprenta), formato));
-            Aviso = $"Tarjeta guardada en {ruta}.";
+            Aviso = Textos.F("Qsl.Tarjeta.Guardada", ruta);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            Aviso = $"No se ha podido guardar: {ex.Message}";
+            Aviso = Textos.F("Qsl.Editor.NoSeHaPodidoGuardar", ex.Message);
         }
     }
 
@@ -534,7 +548,7 @@ public sealed partial class VistaModeloQsl : ObservableObject
     {
         if (Diseno is null || Contacto?.Qso is not { } qso)
         {
-            Aviso = "Elija un contacto para la vista previa: el PDF lleva sus datos.";
+            Aviso = Textos.T("Qsl.Tarjeta.ElijaContactoPdf");
             return;
         }
 
@@ -544,11 +558,11 @@ public sealed partial class VistaModeloQsl : ObservableObject
         {
             File.WriteAllBytes(ruta, impreso.Bytes);
             AbrirFichero(ruta);
-            Aviso = $"PDF guardado en {ruta}.";
+            Aviso = Textos.F("Qsl.Editor.PdfGuardado", ruta);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception)
         {
-            Aviso = $"No se ha podido guardar o abrir el PDF: {ex.Message}";
+            Aviso = Textos.F("Qsl.Editor.NoPdf", ex.Message);
         }
     }
 
@@ -568,11 +582,11 @@ public sealed partial class VistaModeloQsl : ObservableObject
         {
             var imagen = Servicio.Dibujar(Diseno, null, _yo, DibujanteDeQsl.PppDeCorreo, soloMisDatos: true);
             File.WriteAllBytes(ruta, DibujanteDeQsl.Codificar(imagen, FormatoDeImagen.Jpg));
-            Aviso = $"Diseño para eQSL guardado en {ruta}. Súbalo en eQSL → Profile → Design your QSL.";
+            Aviso = Textos.F("Qsl.Tarjeta.EqslGuardado", ruta);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            Aviso = $"No se ha podido guardar: {ex.Message}";
+            Aviso = Textos.F("Qsl.Editor.NoSeHaPodidoGuardar", ex.Message);
         }
     }
 
@@ -586,7 +600,7 @@ public sealed partial class VistaModeloQsl : ObservableObject
         }
         catch (System.ComponentModel.Win32Exception ex)
         {
-            Aviso = $"No se ha podido abrir el navegador: {ex.Message}";
+            Aviso = Textos.F("Qsl.Tarjeta.NoNavegador", ex.Message);
         }
     }
 
@@ -596,7 +610,7 @@ public sealed partial class VistaModeloQsl : ObservableObject
     {
         if (Contacto?.Qso is not { } qso)
         {
-            Aviso = "Elija un contacto en «Vista previa con» para mandarle la tarjeta.";
+            Aviso = Textos.T("Qsl.Tarjeta.ElijaContactoEnviar");
             return;
         }
 
@@ -668,7 +682,7 @@ public sealed partial class VistaModeloQsl : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido dibujar la vista previa de la QSL.");
-            Aviso = $"No se ha podido dibujar la tarjeta: {ex.Message}";
+            Aviso = Textos.F("Qsl.Tarjeta.NoDibujar", ex.Message);
         }
     }
 
@@ -677,6 +691,20 @@ public sealed partial class VistaModeloQsl : ObservableObject
         if (_cargando) return;
         HayCambios = true;
         Redibujar();
+    }
+
+    /// <summary>
+    /// Al cambiar de idioma: la ayuda de variables y el texto del contacto «sin contacto» se
+    /// vuelven a leer (la lista se rehace con los mismos contactos).
+    /// </summary>
+    private void AlCambiarDeIdioma()
+    {
+        OnPropertyChanged(nameof(AyudaDeVariables));
+        var elegido = Contacto;
+        var lista = Contactos.ToList();
+        Contactos.Clear();
+        foreach (var c in lista) Contactos.Add(c with { });
+        Contacto = elegido is null ? null : Contactos.FirstOrDefault(c => c.Qso?.Id == elegido.Qso?.Id);
     }
 
     private static string Limpio(string s) => new(s.Select(c => char.IsAsciiLetterOrDigit(c) ? c : '_').ToArray());

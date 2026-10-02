@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Servicios.Adif;
 using Nodisla.Cuaderno.Servicios.Red;
 
@@ -125,7 +126,7 @@ public sealed class ServicioClubLog : IServicioQsl
         var reloj = Stopwatch.StartNew();
         if (qsos.Count == 0) return new ResultadoDeSubida(0, 0, SinMotivos(), reloj.Elapsed);
 
-        Avisar(progreso, 0, qsos.Count, $"Enviando {qsos.Count} contactos a Club Log…");
+        Avisar(progreso, 0, qsos.Count, Textos.F("Servicios.ClubLog.Enviando", qsos.Count));
 
         var registros = qsos.Select(q => ConversorDeQso.Proyectar(q, CamposAdmitidos)).ToList();
         var adif = AdifLigero.EscribirRegistros(registros, new Dictionary<string, string>
@@ -141,7 +142,7 @@ public sealed class ServicioClubLog : IServicioQsl
             _log.LogInformation(
                 "Club Log aceptó {Cuantos} contactos en {Duracion}. Respuesta: {Respuesta}",
                 qsos.Count, reloj.Elapsed, Recortar(respuesta));
-            Avisar(progreso, qsos.Count, qsos.Count, "Subida a Club Log terminada.");
+            Avisar(progreso, qsos.Count, qsos.Count, Textos.T("Servicios.ClubLog.Terminada"));
             return new ResultadoDeSubida(qsos.Count, 0, SinMotivos(), reloj.Elapsed);
         }
         catch (Exception ex) when (ex is RespuestaDelServicioException or ServicioNoDisponibleException)
@@ -174,7 +175,7 @@ public sealed class ServicioClubLog : IServicioQsl
         var (contrasena, api) = LeerSecretos();
         try
         {
-            await _reintentos.EjecutarAsync("subir un contacto en directo a Club Log", async testigo =>
+            await _reintentos.EjecutarAsync(Textos.T("Servicios.ClubLog.SubirEnDirecto"), async testigo =>
             {
                 var cliente = _fabrica.CreateClient(NombresDeClienteHttp.ClubLog);
                 using var formulario = new FormUrlEncodedContent(new Dictionary<string, string>
@@ -211,7 +212,7 @@ public sealed class ServicioClubLog : IServicioQsl
     {
         _log.LogInformation(
             "Club Log no ofrece descarga de confirmaciones; no hay nada que sincronizar hacia el cuaderno.");
-        Avisar(progreso, 0, 0, "Club Log no permite descargar confirmaciones.");
+        Avisar(progreso, 0, 0, Textos.T("Servicios.ClubLog.SinDescarga"));
         return Task.FromResult<IReadOnlyList<ConfirmacionDescargada>>([]);
     }
 
@@ -223,7 +224,7 @@ public sealed class ServicioClubLog : IServicioQsl
     {
         var (contrasena, api) = LeerSecretos();
 
-        return await _reintentos.EjecutarAsync("subir el cuaderno a Club Log", async testigo =>
+        return await _reintentos.EjecutarAsync(Textos.T("Servicios.ClubLog.SubirCuaderno"), async testigo =>
         {
             var cliente = _fabrica.CreateClient(NombresDeClienteHttp.ClubLog);
             using var formulario = new MultipartFormDataContent();
@@ -249,18 +250,15 @@ public sealed class ServicioClubLog : IServicioQsl
         if (http.IsSuccessStatusCode) return cuerpo;
 
         throw new RespuestaDelServicioException(
-            $"Club Log respondió {(int)http.StatusCode}: {Recortar(cuerpo)}", http.StatusCode);
+            Textos.F("Servicios.ClubLog.Respondio", (int)http.StatusCode, Recortar(cuerpo)), http.StatusCode);
     }
 
     private (string Contrasena, string Api) LeerSecretos()
     {
         var contrasena = _credenciales.Leer(ClavesDeCredencial.ClubLogContrasena)
-            ?? throw new InvalidOperationException(
-                "No hay contraseña de Club Log guardada. Configúrela en Configuración › Cuentas y servicios.");
+            ?? throw new InvalidOperationException(Textos.F("Servicios.SinContrasena", "Club Log"));
         var api = _credenciales.Leer(ClavesDeCredencial.ClubLogApi)
-            ?? throw new InvalidOperationException(
-                "No hay clave de API de Club Log guardada. Se pide al soporte de Club Log y se "
-                + "guarda cifrada en Configuración › Cuentas y servicios.");
+            ?? throw new InvalidOperationException(Textos.T("Servicios.ClubLog.SinApi"));
         return (contrasena, api);
     }
 

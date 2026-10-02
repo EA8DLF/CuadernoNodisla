@@ -9,6 +9,7 @@ using Nodisla.Cuaderno.Diplomas.Calculo;
 using Nodisla.Cuaderno.Diplomas.Catalogo;
 using Nodisla.Cuaderno.Dominio.Dxcc;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Diplomas;
 
@@ -142,7 +143,7 @@ public sealed class MotorDeDiplomas(
             await AsegurarConexionAsync(ct).ConfigureAwait(false);
             var reglas = await BuscarReglasSinPuertaAsync(codigo, variante, ct).ConfigureAwait(false);
             return reglas is null
-                ? "El diploma o la variante no están en el catálogo."
+                ? Textos.T("Servicios.Diplomas.NoEnCatalogo")
                 : PorQueNoEsFirme(reglas);
         }
         finally
@@ -159,31 +160,25 @@ public sealed class MotorDeDiplomas(
         if (!reglas.Premio.Calculable)
         {
             return reglas.Premio.MotivoNoCalculable is { } motivo
-                ? $"No se calcula: {motivo}."
-                : "No se calcula: el diploma cuenta por algo que el cuaderno no guarda.";
+                ? Textos.F("Servicios.Diplomas.NoSeCalculaPor", motivo)
+                : Textos.T("Servicios.Diplomas.NoSeCalcula");
         }
 
         if (FaltaAlgunaColumna(reglas.Premio) is { } columna)
         {
-            return $"No se calcula: este cuaderno todavía no guarda la columna «{columna}», " +
-                   "que es de donde sale la referencia de este diploma.";
+            return Textos.F("Servicios.Diplomas.FaltaColumna", columna);
         }
 
         var avisos = new List<string>(reglas.Avisos);
 
         if (reglas.Premio.ValidaElGestor && reglas.Premio.MediosValidos.Count == 0)
         {
-            avisos.Add(
-                "Este diploma lo valida su gestor con su propia base de datos, que el cuaderno " +
-                "no puede consultar: se cuenta lo confirmado por cualquier vía, que es una cota " +
-                "inferior de lo que en realidad tienes.");
+            avisos.Add(Textos.T("Servicios.Diplomas.LoValidaElGestor"));
         }
 
         if (ConsultasDeProgreso.TieneUniverso(reglas) && UniversoVacio(reglas.Premio.Codigo))
         {
-            avisos.Add(
-                "El catálogo no trae ninguna referencia de este diploma, así que el progreso " +
-                "sale a cero aunque lo tengas trabajado.");
+            avisos.Add(Textos.T("Servicios.Diplomas.SinReferencias"));
         }
 
         return avisos.Count == 0 ? null : string.Join(" ", avisos);
@@ -291,7 +286,7 @@ public sealed class MotorDeDiplomas(
             !catalogo.Variantes.TryGetValue(diploma, out var variantes))
         {
             throw new ArgumentException(
-                $"El diploma «{diploma}» no está en el catálogo.", nameof(codigo));
+                Textos.F("Servicios.Diplomas.DiplomaNoEsta", diploma), nameof(codigo));
         }
 
         if (variante.Length == 0)
@@ -309,7 +304,7 @@ public sealed class MotorDeDiplomas(
         if (encontrada is null)
         {
             throw new ArgumentException(
-                $"El diploma «{diploma}» no tiene ninguna clase llamada «{variante}».", nameof(codigo));
+                Textos.F("Servicios.Diplomas.SinClase", diploma, variante), nameof(codigo));
         }
 
         return Clave(diploma, encontrada.Variante);
@@ -493,7 +488,7 @@ public sealed class MotorDeDiplomas(
 
             await AsegurarConjuntosAsync(ct).ConfigureAwait(false);
             progreso?.Report(new ProgresoDeSincronizacion(
-                "Diplomas", hecho, claves.Count, "Progreso recalculado."));
+                "Diplomas", hecho, claves.Count, Textos.T("Servicios.Diplomas.ProgresoRecalculado")));
         }
         finally
         {
@@ -527,7 +522,7 @@ public sealed class MotorDeDiplomas(
             // Puede pasar si el catalogo ha encogido desde que el operador eligio.
             return new ProgresoDeDiploma(codigo, variante, 0, 0, null, DateTimeOffset.UtcNow)
             {
-                PorQueNoEsFirme = "El diploma o la clase ya no están en el catálogo.",
+                PorQueNoEsFirme = Textos.T("Servicios.Diplomas.YaNoEsta"),
             };
         }
 
@@ -658,18 +653,18 @@ public sealed class MotorDeDiplomas(
         var detalle = reglas.Premio.Campo switch
         {
             CampoDeQso.Dxcc => identificado.Entidad?.NombreParaMostrar ?? valor,
-            CampoDeQso.CqZone => $"zona CQ {valor}",
-            CampoDeQso.ItuZone => $"zona ITU {valor}",
-            CampoDeQso.Continent => $"continente {valor}",
-            CampoDeQso.Pfx => $"prefijo {valor}",
+            CampoDeQso.CqZone => Textos.F("Servicios.Diplomas.ZonaCq", valor),
+            CampoDeQso.ItuZone => Textos.F("Servicios.Diplomas.ZonaItu", valor),
+            CampoDeQso.Continent => Textos.F("Servicios.Diplomas.Continente", valor),
+            CampoDeQso.Pfx => Textos.F("Servicios.Diplomas.Prefijo", valor),
             _ => valor,
         };
 
-        var hueco = reglas.BandasEfectivas.Count == 1 && !banda.EsVacia ? $" en {banda.Nombre}" : string.Empty;
+        var hueco = reglas.BandasEfectivas.Count == 1 && !banda.EsVacia ? " " + Textos.F("Servicios.Diplomas.EnBanda", banda.Nombre) : string.Empty;
 
         return nueva
-            ? $"{nombre}{variante}: {detalle} es nuevo{hueco}."
-            : $"{nombre}{variante}: {detalle} está trabajado{hueco} pero sin confirmar.";
+            ? Textos.F("Servicios.Diplomas.EsNuevo", nombre, variante, detalle, hueco)
+            : Textos.F("Servicios.Diplomas.TrabajadoSinConfirmar", nombre, variante, detalle, hueco);
     }
 
     /// <summary>

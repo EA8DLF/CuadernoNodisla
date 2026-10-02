@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 
 namespace Nodisla.Cuaderno.Ui.Vistas;
@@ -214,34 +215,34 @@ public partial class MandoGiratorio : UserControl
     /// <summary>Pone el nombre accesible y el rotulo de ayuda.</summary>
     private void PonerElNombreAccesible()
     {
-        var nombre = Explicacion.Length > 0 ? Explicacion : Rotulo;
+        var nombre = string.IsNullOrEmpty(Explicacion) ? Rotulo : Explicacion;
         AutomationProperties.SetName(this, $"{nombre} ({Rotulo})");
 
         if (Mando is null && MandoInterior is null && !GiroLibre && AlPulsar is null)
         {
-            AutomationProperties.SetHelpText(this, "Este equipo no ofrece este mando por CAT.");
-            ToolTip = $"{Rotulo} — {nombre}. Este equipo no lo ofrece por CAT.";
+            AutomationProperties.SetHelpText(this, Textos.T("Cabina.Giratorio.SinCat"));
+            ToolTip = Textos.F("Cabina.Giratorio.SinCatAyuda", Rotulo, nombre);
             IsEnabled = false;
             return;
         }
 
         IsEnabled = true;
         var partes = new List<string>();
-        if (Mando is { } anillo) partes.Add($"Anillo: {anillo.Nombre} ({Rango(anillo)}).");
-        else if (GiroLibre) partes.Add("Anillo: mueve el equipo.");
-        if (MandoInterior is { } centro) partes.Add($"Centro: {centro.Nombre} ({Rango(centro)}).");
-        if (AlPulsar is not null) partes.Add("Clic: pulsar el mando.");
-        if (AlPulsarDerecho is not null) partes.Add("Clic derecho: mantenerlo pulsado.");
+        if (Mando is { } anillo) partes.Add(Textos.F("Cabina.Giratorio.Anillo", anillo.Nombre, Rango(anillo)));
+        else if (GiroLibre) partes.Add(Textos.T("Cabina.Giratorio.AnilloLibre"));
+        if (MandoInterior is { } centro) partes.Add(Textos.F("Cabina.Giratorio.Centro", centro.Nombre, Rango(centro)));
+        if (AlPulsar is not null) partes.Add(Textos.T("Cabina.Giratorio.Clic"));
+        if (AlPulsarDerecho is not null) partes.Add(Textos.T("Cabina.Giratorio.ClicDerecho"));
         var ayuda = string.Join(" ", partes);
 
         AutomationProperties.SetHelpText(this, ayuda);
-        ToolTip = $"{Rotulo} — {nombre}. {ayuda} Gire con la rueda del ratón o con las flechas.";
+        ToolTip = Textos.F("Cabina.Giratorio.Ayuda", Rotulo, nombre, ayuda);
     }
 
     private static string Rango(VistaModeloMando mando) =>
         mando.EsDePosiciones
             ? string.Join(", ", mando.Posiciones)
-            : $"{mando.Minimo} a {mando.Maximo}{(mando.Unidad.Length > 0 ? " " + mando.Unidad : string.Empty)}";
+            : Textos.F("Cabina.Giratorio.Rango", mando.Minimo, mando.Maximo) + (mando.Unidad.Length > 0 ? " " + mando.Unidad : string.Empty);
 
     /// <summary>Lleva la marca y los valores a lo que dicen los mandos.</summary>
     private void Recoger()

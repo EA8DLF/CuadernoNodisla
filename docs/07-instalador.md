@@ -39,6 +39,21 @@ termine esa compilación en marcha antes de reintentar (no hace falta redirigir
 subcarpeta, porque una ruta relativa se resuelve contra cada proyecto y crea
 carpetas `instalador\` dentro de `src\*` — ya nos pasó una vez).
 
+## Idiomas del asistente
+
+El asistente habla los seis idiomas del programa (español, inglés, portugués —europeo y de
+Brasil—, francés, italiano y alemán) con los ficheros `.isl` que trae Inno Setup 6. Elige el de
+Windows; si no es ninguno de ellos, pregunta con el inglés marcado, igual que el programa
+(`ShowLanguageDialog=auto`). Los textos propios del script (acceso directo del escritorio,
+desinstalar, ejecutar al acabar) son los mensajes de serie de Inno (`{cm:CreateDesktopIcon}`,
+`{cm:UninstallProgram,…}`, `{cm:LaunchProgram,…}`), ya traducidos. El idioma del instalador no
+se le pasa al programa: el programa decide el suyo (Configuración › Idioma) y el instalador sigue
+sin tocar `%AppData%`.
+
+Las traducciones del programa van en ensamblados satélite (`en\`, `pt\`, `fr\`, `it\`, `de\`
+junto al `.exe`); `SatelliteResourceLanguages` del `.csproj` de la interfaz tiene que llevar los
+seis o la publicación los deja fuera.
+
 ## De dónde sale la versión
 
 El número de versión del instalador (`0.1.0.0` en la primera entrega) se lee

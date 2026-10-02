@@ -1,0 +1,1513 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Qsl.Ajuste.Encajar" xml:space="preserve">
+    <value>Ajuster</value>
+  </data>
+  <data name="Qsl.Ajuste.Estirar" xml:space="preserve">
+    <value>Étirer</value>
+  </data>
+  <data name="Qsl.Ajuste.Rellenar" xml:space="preserve">
+    <value>Remplir</value>
+  </data>
+  <data name="Qsl.Alineacion.Centro" xml:space="preserve">
+    <value>Centre</value>
+  </data>
+  <data name="Qsl.Alineacion.Derecha" xml:space="preserve">
+    <value>Droite</value>
+  </data>
+  <data name="Qsl.Alineacion.Izquierda" xml:space="preserve">
+    <value>Gauche</value>
+  </data>
+  <data name="Qsl.Color.AbrePaleta" xml:space="preserve">
+    <value>Ouvre la palette de couleurs</value>
+  </data>
+  <data name="Qsl.Color.AlPorcentaje" xml:space="preserve">
+    <value>{0} à {1:0} %</value>
+  </data>
+  <data name="Qsl.Color.Apagado" xml:space="preserve">
+    <value>{0} terne</value>
+  </data>
+  <data name="Qsl.Color.Avanzado" xml:space="preserve">
+    <value>Avancé</value>
+  </data>
+  <data name="Qsl.Color.AvanzadoNombre" xml:space="preserve">
+    <value>Avancé : code de la couleur</value>
+  </data>
+  <data name="Qsl.Color.Boton" xml:space="preserve">
+    <value>{0} : {1}. Cliquez pour choisir dans la palette.</value>
+  </data>
+  <data name="Qsl.Color.BotonNombre" xml:space="preserve">
+    <value>{0} : {1}</value>
+  </data>
+  <data name="Qsl.Color.Codigo" xml:space="preserve">
+    <value>Code de la couleur (facultatif)</value>
+  </data>
+  <data name="Qsl.Color.CodigoAyuda" xml:space="preserve">
+    <value>#RRGGBB, #AARRGGBB (AA = opacité) ou un nom en anglais. Entrée pour l’appliquer.</value>
+  </data>
+  <data name="Qsl.Color.CodigoNombre" xml:space="preserve">
+    <value>Code de la couleur</value>
+  </data>
+  <data name="Qsl.Color.DelDiseno" xml:space="preserve">
+    <value>Couleurs du modèle</value>
+  </data>
+  <data name="Qsl.Color.DelDisenoNombre" xml:space="preserve">
+    <value>Couleurs déjà utilisées par le modèle</value>
+  </data>
+  <data name="Qsl.Color.Exacto" xml:space="preserve">
+    <value>Couleur exacte (teinte, saturation et luminosité)</value>
+  </data>
+  <data name="Qsl.Color.ExactoNombre" xml:space="preserve">
+    <value>Couleur exacte</value>
+  </data>
+  <data name="Qsl.Color.NoEsUnColor" xml:space="preserve">
+    <value>Ce n’est pas une couleur : essayez #1B3A5C ou choisissez dans la palette.</value>
+  </data>
+  <data name="Qsl.Color.Nombre.AguamarinaNODISLA" xml:space="preserve">
+    <value>Aigue-marine NODISLA</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Amarillo" xml:space="preserve">
+    <value>Jaune</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Ambar" xml:space="preserve">
+    <value>Ambre</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Arena" xml:space="preserve">
+    <value>Sable</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Azul" xml:space="preserve">
+    <value>Bleu</value>
+  </data>
+  <data name="Qsl.Color.Nombre.AzulCieloNODISLA" xml:space="preserve">
+    <value>Bleu ciel NODISLA</value>
+  </data>
+  <data name="Qsl.Color.Nombre.AzulMarino" xml:space="preserve">
+    <value>Bleu marine</value>
+  </data>
+  <data name="Qsl.Color.Nombre.AzulNODISLA" xml:space="preserve">
+    <value>Bleu NODISLA</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Blanco" xml:space="preserve">
+    <value>Blanc</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Carmesi" xml:space="preserve">
+    <value>Cramoisi</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Celeste" xml:space="preserve">
+    <value>Bleu céleste</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Cian" xml:space="preserve">
+    <value>Cyan</value>
+  </data>
+  <data name="Qsl.Color.Nombre.CianNODISLA" xml:space="preserve">
+    <value>Cyan NODISLA</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Fucsia" xml:space="preserve">
+    <value>Fuchsia</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Grafito" xml:space="preserve">
+    <value>Graphite</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Gris" xml:space="preserve">
+    <value>Gris</value>
+  </data>
+  <data name="Qsl.Color.Nombre.GrisClaro" xml:space="preserve">
+    <value>Gris clair</value>
+  </data>
+  <data name="Qsl.Color.Nombre.GrisMedio" xml:space="preserve">
+    <value>Gris moyen</value>
+  </data>
+  <data name="Qsl.Color.Nombre.GrisOscuro" xml:space="preserve">
+    <value>Gris foncé</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Humo" xml:space="preserve">
+    <value>Fumée</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Lavanda" xml:space="preserve">
+    <value>Lavande</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Lila" xml:space="preserve">
+    <value>Lilas</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Magenta" xml:space="preserve">
+    <value>Magenta</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Marfil" xml:space="preserve">
+    <value>Ivoire</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Melocoton" xml:space="preserve">
+    <value>Pêche</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Menta" xml:space="preserve">
+    <value>Menthe</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Naranja" xml:space="preserve">
+    <value>Orange</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Negro" xml:space="preserve">
+    <value>Noir</value>
+  </data>
+  <data name="Qsl.Color.Nombre.NocheNODISLA" xml:space="preserve">
+    <value>Nuit NODISLA</value>
+  </data>
+  <data name="Qsl.Color.Nombre.OroViejo" xml:space="preserve">
+    <value>Vieil or</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Pergamino" xml:space="preserve">
+    <value>Parchemin</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Plata" xml:space="preserve">
+    <value>Argent</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Rojo" xml:space="preserve">
+    <value>Rouge</value>
+  </data>
+  <data name="Qsl.Color.Nombre.RosaPastel" xml:space="preserve">
+    <value>Rose pastel</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Tinta" xml:space="preserve">
+    <value>Encre</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Transparente" xml:space="preserve">
+    <value>Transparent</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Turquesa" xml:space="preserve">
+    <value>Turquoise</value>
+  </data>
+  <data name="Qsl.Color.Nombre.TurquesaNODISLA" xml:space="preserve">
+    <value>Turquoise NODISLA</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Vainilla" xml:space="preserve">
+    <value>Vanille</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Verde" xml:space="preserve">
+    <value>Vert</value>
+  </data>
+  <data name="Qsl.Color.Nombre.VerdeAgua" xml:space="preserve">
+    <value>Vert d’eau</value>
+  </data>
+  <data name="Qsl.Color.Nombre.VerdeBosque" xml:space="preserve">
+    <value>Vert forêt</value>
+  </data>
+  <data name="Qsl.Color.Nombre.VerdeHierba" xml:space="preserve">
+    <value>Vert herbe</value>
+  </data>
+  <data name="Qsl.Color.Nombre.VerdeLima" xml:space="preserve">
+    <value>Vert citron</value>
+  </data>
+  <data name="Qsl.Color.Nombre.VerdeNODISLA" xml:space="preserve">
+    <value>Vert NODISLA</value>
+  </data>
+  <data name="Qsl.Color.Nombre.Violeta" xml:space="preserve">
+    <value>Violet</value>
+  </data>
+  <data name="Qsl.Color.Opacidad" xml:space="preserve">
+    <value>Opacité</value>
+  </data>
+  <data name="Qsl.Color.OpacidadAyuda" xml:space="preserve">
+    <value>Faites glisser, ou utilisez les flèches : à gauche, transparent</value>
+  </data>
+  <data name="Qsl.Color.Oscuro" xml:space="preserve">
+    <value>{0} foncé</value>
+  </data>
+  <data name="Qsl.Color.Paleta" xml:space="preserve">
+    <value>Palette</value>
+  </data>
+  <data name="Qsl.Color.PaletaDeColores" xml:space="preserve">
+    <value>Palette de couleurs</value>
+  </data>
+  <data name="Qsl.Color.Pastel" xml:space="preserve">
+    <value>{0} pastel</value>
+  </data>
+  <data name="Qsl.Color.Porcentaje" xml:space="preserve">
+    <value>{0:0} %</value>
+  </data>
+  <data name="Qsl.Color.Recientes" xml:space="preserve">
+    <value>Récemment utilisées</value>
+  </data>
+  <data name="Qsl.Color.RecientesNombre" xml:space="preserve">
+    <value>Couleurs récemment utilisées</value>
+  </data>
+  <data name="Qsl.Color.SinColor" xml:space="preserve">
+    <value>Sans couleur</value>
+  </data>
+  <data name="Qsl.Color.SvAyuda" xml:space="preserve">
+    <value>Faites glisser : vers la droite, plus vif ; vers le haut, plus clair. Les flèches fonctionnent aussi.</value>
+  </data>
+  <data name="Qsl.Color.SvNombre" xml:space="preserve">
+    <value>Saturation et luminosité</value>
+  </data>
+  <data name="Qsl.Color.Tono" xml:space="preserve">
+    <value>Teinte</value>
+  </data>
+  <data name="Qsl.Color.TonoAyuda" xml:space="preserve">
+    <value>Faites glisser pour changer la teinte, ou utilisez les flèches</value>
+  </data>
+  <data name="Qsl.Diplomas.Calculando" xml:space="preserve">
+    <value>Calcul de {0} diplôme(s)…</value>
+  </data>
+  <data name="Qsl.Diplomas.Cifra" xml:space="preserve">
+    <value>{0:N0} sur {1:N0}</value>
+  </data>
+  <data name="Qsl.Diplomas.Detalle" xml:space="preserve">
+    <value>Contactées {0:N0}, confirmées {1:N0}. Calculé à {2} UTC.</value>
+  </data>
+  <data name="Qsl.Diplomas.DetalleDe" xml:space="preserve">
+    <value>Détail · {0}</value>
+  </data>
+  <data name="Qsl.Diplomas.ElijaVerDetalle" xml:space="preserve">
+    <value>Choisissez « Voir le détail » sur un diplôme pour voir ses références : celles que vous avez, celles qui sont confirmées et celles qui manquent.</value>
+  </data>
+  <data name="Qsl.Diplomas.Estado.Confirmada" xml:space="preserve">
+    <value>confirmée</value>
+  </data>
+  <data name="Qsl.Diplomas.Estado.Falta" xml:space="preserve">
+    <value>manquante</value>
+  </data>
+  <data name="Qsl.Diplomas.Estado.SinQsl" xml:space="preserve">
+    <value>sans QSL</value>
+  </data>
+  <data name="Qsl.Diplomas.LeFaltan" xml:space="preserve">
+    <value>Il en manque {0:N0}</value>
+  </data>
+  <data name="Qsl.Diplomas.MarqueLosQueSigue" xml:space="preserve">
+    <value>Cochez ceux que vous suivez. Seuls ceux-ci sont calculés : il y a 87 diplômes et un demi-million de références, et tout calculer au cas où serait du travail perdu.</value>
+  </data>
+  <data name="Qsl.Diplomas.MisDiplomas" xml:space="preserve">
+    <value>Mes diplômes</value>
+  </data>
+  <data name="Qsl.Diplomas.NoCatalogo" xml:space="preserve">
+    <value>Impossible de charger le catalogue : {0}</value>
+  </data>
+  <data name="Qsl.Diplomas.NoDetalle" xml:space="preserve">
+    <value>Impossible de charger le détail : {0}</value>
+  </data>
+  <data name="Qsl.Diplomas.NoEsFirme" xml:space="preserve">
+    <value>Le chiffre est un minimum, pas le définitif</value>
+  </data>
+  <data name="Qsl.Diplomas.NoProgreso" xml:space="preserve">
+    <value>Impossible de calculer la progression : {0}</value>
+  </data>
+  <data name="Qsl.Diplomas.NoSeleccion" xml:space="preserve">
+    <value>Impossible d’enregistrer la sélection, rien n’a été enregistré : {0}</value>
+  </data>
+  <data name="Qsl.Diplomas.Pagina" xml:space="preserve">
+    <value>{0:N0} à {1:N0} sur {2:N0}</value>
+  </data>
+  <data name="Qsl.Diplomas.PaginaAnterior" xml:space="preserve">
+    <value>Page précédente des références</value>
+  </data>
+  <data name="Qsl.Diplomas.PaginaSiguiente" xml:space="preserve">
+    <value>Page suivante des références</value>
+  </data>
+  <data name="Qsl.Diplomas.Progreso" xml:space="preserve">
+    <value>Progression</value>
+  </data>
+  <data name="Qsl.Diplomas.Recontar" xml:space="preserve">
+    <value>Recompter</value>
+  </data>
+  <data name="Qsl.Diplomas.RecontarAyuda" xml:space="preserve">
+    <value>Recalcule la progression des diplômes choisis</value>
+  </data>
+  <data name="Qsl.Diplomas.RecontarNombre" xml:space="preserve">
+    <value>Recalculer la progression</value>
+  </data>
+  <data name="Qsl.Diplomas.SinCalcular" xml:space="preserve">
+    <value>Non calculé</value>
+  </data>
+  <data name="Qsl.Diplomas.SinEleccion" xml:space="preserve">
+    <value>Vous ne suivez encore aucun diplôme</value>
+  </data>
+  <data name="Qsl.Diplomas.SinEleccionAyuda" xml:space="preserve">
+    <value>Cochez à gauche ceux qui vous intéressent et vous verrez ici où en est chacun, avec ce qui manque.</value>
+  </data>
+  <data name="Qsl.Diplomas.SinGestor" xml:space="preserve">
+    <value>gestionnaire inconnu</value>
+  </data>
+  <data name="Qsl.Diplomas.SinReferencias" xml:space="preserve">
+    <value>Ce diplôme compte des références que le carnet de trafic n’enregistre pas encore.</value>
+  </data>
+  <data name="Qsl.Diplomas.TituloDetalle" xml:space="preserve">
+    <value>Détail</value>
+  </data>
+  <data name="Qsl.Diplomas.Trayendo" xml:space="preserve">
+    <value>Chargement du catalogue des diplômes…</value>
+  </data>
+  <data name="Qsl.Diplomas.VerDetalle" xml:space="preserve">
+    <value>Voir le détail</value>
+  </data>
+  <data name="Qsl.Diplomas.YaLoTiene" xml:space="preserve">
+    <value>Déjà obtenu</value>
+  </data>
+  <data name="Qsl.Disenador.Adorno" xml:space="preserve">
+    <value>Ornement</value>
+  </data>
+  <data name="Qsl.Disenador.AhoraPorOmision" xml:space="preserve">
+    <value>« {0} » est maintenant le modèle de diplôme par défaut.</value>
+  </data>
+  <data name="Qsl.Disenador.AnadirColumna" xml:space="preserve">
+    <value>Ajouter une colonne</value>
+  </data>
+  <data name="Qsl.Disenador.AnadirColumnaNombre" xml:space="preserve">
+    <value>Ajouter une colonne</value>
+  </data>
+  <data name="Qsl.Disenador.AnadirImagen" xml:space="preserve">
+    <value>Ajouter une image…</value>
+  </data>
+  <data name="Qsl.Disenador.AnadirImagenNombre" xml:space="preserve">
+    <value>Ajouter une image</value>
+  </data>
+  <data name="Qsl.Disenador.AnadirTextoNombre" xml:space="preserve">
+    <value>Ajouter un texte</value>
+  </data>
+  <data name="Qsl.Disenador.AnchoColumna" xml:space="preserve">
+    <value>Largeur de la colonne</value>
+  </data>
+  <data name="Qsl.Disenador.Anexo" xml:space="preserve">
+    <value>Ce qui ne tient pas, sur des feuilles d’annexe</value>
+  </data>
+  <data name="Qsl.Disenador.AnexoNombre" xml:space="preserve">
+    <value>Annexer ce qui ne tient pas</value>
+  </data>
+  <data name="Qsl.Disenador.AsuntoNombre" xml:space="preserve">
+    <value>Objet de l’e-mail du diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.Bloques" xml:space="preserve">
+    <value>Blocs</value>
+  </data>
+  <data name="Qsl.Disenador.BloquesAyuda" xml:space="preserve">
+    <value>Colonnes du tableau côte à côte (1 à 4)</value>
+  </data>
+  <data name="Qsl.Disenador.BloquesNombre" xml:space="preserve">
+    <value>Blocs du tableau</value>
+  </data>
+  <data name="Qsl.Disenador.BorrarAyuda" xml:space="preserve">
+    <value>Ceux d’origine reviennent à leur état initial</value>
+  </data>
+  <data name="Qsl.Disenador.BuscarQsos" xml:space="preserve">
+    <value>Chercher les QSO</value>
+  </data>
+  <data name="Qsl.Disenador.BuscarQsosAyuda" xml:space="preserve">
+    <value>Cherche dans le carnet de trafic les QSO avec cette station et remplit le nom, l’e-mail et le tableau</value>
+  </data>
+  <data name="Qsl.Disenador.BuscarQsosNombre" xml:space="preserve">
+    <value>Chercher les QSO avec la station</value>
+  </data>
+  <data name="Qsl.Disenador.Cabecera" xml:space="preserve">
+    <value>En-tête</value>
+  </data>
+  <data name="Qsl.Disenador.CabeceraColumna" xml:space="preserve">
+    <value>En-tête de la colonne</value>
+  </data>
+  <data name="Qsl.Disenador.Categoria" xml:space="preserve">
+    <value>Catégorie</value>
+  </data>
+  <data name="Qsl.Disenador.CategoriaNombre" xml:space="preserve">
+    <value>Catégorie ou niveau</value>
+  </data>
+  <data name="Qsl.Disenador.Certificado" xml:space="preserve">
+    <value>Certificat d’un diplôme obtenu</value>
+  </data>
+  <data name="Qsl.Disenador.CertificadoNombre" xml:space="preserve">
+    <value>Imprimer le certificat d’un diplôme obtenu</value>
+  </data>
+  <data name="Qsl.Disenador.CertificadoPropio" xml:space="preserve">
+    <value>certificat personnel</value>
+  </data>
+  <data name="Qsl.Disenador.Cifras" xml:space="preserve">
+    <value>Chiffres</value>
+  </data>
+  <data name="Qsl.Disenador.CifrasNombre" xml:space="preserve">
+    <value>Chiffres du numéro</value>
+  </data>
+  <data name="Qsl.Disenador.ColorCabecera" xml:space="preserve">
+    <value>Couleur de l’en-tête et du titre du tableau</value>
+  </data>
+  <data name="Qsl.Disenador.ColorDelAdorno" xml:space="preserve">
+    <value>Couleur du filet et des ornements de la bordure</value>
+  </data>
+  <data name="Qsl.Disenador.ColorDeLaOrla" xml:space="preserve">
+    <value>Couleur de la bordure</value>
+  </data>
+  <data name="Qsl.Disenador.ColorDelPapel" xml:space="preserve">
+    <value>Couleur du papier</value>
+  </data>
+  <data name="Qsl.Disenador.Colores" xml:space="preserve">
+    <value>Couleurs</value>
+  </data>
+  <data name="Qsl.Disenador.ColorLineas" xml:space="preserve">
+    <value>Couleur des lignes du tableau</value>
+  </data>
+  <data name="Qsl.Disenador.ColorTextoTabla" xml:space="preserve">
+    <value>Couleur du texte du tableau</value>
+  </data>
+  <data name="Qsl.Disenador.Columna" xml:space="preserve">
+    <value>Colonne</value>
+  </data>
+  <data name="Qsl.Disenador.Columnas" xml:space="preserve">
+    <value>Colonnes (en-tête · contenu · largeur)</value>
+  </data>
+  <data name="Qsl.Disenador.Conseguido" xml:space="preserve">
+    <value>Diplôme obtenu (module Diplômes)</value>
+  </data>
+  <data name="Qsl.Disenador.ConseguidoAyuda" xml:space="preserve">
+    <value>✓ = objectif atteint. Le tableau reprend les références confirmées avec leur premier QSO.</value>
+  </data>
+  <data name="Qsl.Disenador.ConseguidoNombre" xml:space="preserve">
+    <value>Diplôme obtenu</value>
+  </data>
+  <data name="Qsl.Disenador.ConseguidoTexto" xml:space="preserve">
+    <value>{0} · {1} — {2} confirmées</value>
+  </data>
+  <data name="Qsl.Disenador.ContactosCon" xml:space="preserve">
+    <value>{0} QSO avec {1}. Décochez ceux qui ne doivent pas compter.</value>
+  </data>
+  <data name="Qsl.Disenador.ContactosNombre" xml:space="preserve">
+    <value>QSO qui justifient le diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.ContenidoColumna" xml:space="preserve">
+    <value>Contenu de la colonne</value>
+  </data>
+  <data name="Qsl.Disenador.CorreoAyuda" xml:space="preserve">
+    <value>Envoyé par le même serveur que les QSL (Paramètres › E-mail des QSL), avec le diplôme en PDF joint.</value>
+  </data>
+  <data name="Qsl.Disenador.CorreoDelDiploma" xml:space="preserve">
+    <value>E-mail du diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.CorreoNombre" xml:space="preserve">
+    <value>E-mail du destinataire</value>
+  </data>
+  <data name="Qsl.Disenador.DialogoImagen" xml:space="preserve">
+    <value>Image pour le diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.Diploma" xml:space="preserve">
+    <value>Diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.DiplomaNuevo" xml:space="preserve">
+    <value>Nouveau diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.DuplicarElemento" xml:space="preserve">
+    <value>Dupliquer l’élément choisi</value>
+  </data>
+  <data name="Qsl.Disenador.ElegirImagenAyuda" xml:space="preserve">
+    <value>Place votre logo ou votre signature numérisée dans l’emplacement choisi</value>
+  </data>
+  <data name="Qsl.Disenador.ElegirImagenNombre" xml:space="preserve">
+    <value>Choisir l’image de l’emplacement choisi</value>
+  </data>
+  <data name="Qsl.Disenador.ElementoElegido" xml:space="preserve">
+    <value>Élément choisi</value>
+  </data>
+  <data name="Qsl.Disenador.ElijaConseguido" xml:space="preserve">
+    <value>Choisissez l’un de vos diplômes obtenus.</value>
+  </data>
+  <data name="Qsl.Disenador.ElijaElemento" xml:space="preserve">
+    <value>Choisissez un texte ou une image dans les listes ou cliquez dessus sur le diplôme.</value>
+  </data>
+  <data name="Qsl.Disenador.ElijaHueco" xml:space="preserve">
+    <value>Choisissez d’abord un logo, une signature ou un ornement dans la liste des images.</value>
+  </data>
+  <data name="Qsl.Disenador.Emitido" xml:space="preserve">
+    <value>Diplôme n° {0} délivré à {1}.</value>
+  </data>
+  <data name="Qsl.Disenador.EmitidoConNumero" xml:space="preserve">
+    <value>Délivré sous le n° {0} (série {1}).</value>
+  </data>
+  <data name="Qsl.Disenador.EmitidoSinMandar" xml:space="preserve">
+    <value>Le diplôme n° {0} est délivré mais n’a pas pu être envoyé : {1}</value>
+  </data>
+  <data name="Qsl.Disenador.EmitirAOtra" xml:space="preserve">
+    <value>Délivrer à une autre station</value>
+  </data>
+  <data name="Qsl.Disenador.EmitirAOtraNombre" xml:space="preserve">
+    <value>Délivrer un diplôme à une autre station</value>
+  </data>
+  <data name="Qsl.Disenador.EmitirYEnviar" xml:space="preserve">
+    <value>Délivrer et envoyer par e-mail…</value>
+  </data>
+  <data name="Qsl.Disenador.EmitirYEnviarNombre" xml:space="preserve">
+    <value>Délivrer le diplôme et l’envoyer par e-mail</value>
+  </data>
+  <data name="Qsl.Disenador.EmitirYGuardar" xml:space="preserve">
+    <value>Délivrer et enregistrer en PDF…</value>
+  </data>
+  <data name="Qsl.Disenador.EmitirYGuardarNombre" xml:space="preserve">
+    <value>Délivrer le diplôme et l’enregistrer en PDF</value>
+  </data>
+  <data name="Qsl.Disenador.Enviado" xml:space="preserve">
+    <value>Diplôme n° {0} envoyé à {1}.</value>
+  </data>
+  <data name="Qsl.Disenador.EscribaCorreo" xml:space="preserve">
+    <value>Saisissez une adresse e-mail valide pour envoyer le diplôme.</value>
+  </data>
+  <data name="Qsl.Disenador.EscribaIndicativo" xml:space="preserve">
+    <value>Saisissez l’indicatif de la station qui reçoit le diplôme.</value>
+  </data>
+  <data name="Qsl.Disenador.Estilo" xml:space="preserve">
+    <value>Style</value>
+  </data>
+  <data name="Qsl.Disenador.EstiloDeLaOrla" xml:space="preserve">
+    <value>Style de la bordure</value>
+  </data>
+  <data name="Qsl.Disenador.Exportada" xml:space="preserve">
+    <value>Modèle exporté vers {0}.</value>
+  </data>
+  <data name="Qsl.Disenador.Exportar" xml:space="preserve">
+    <value>Exporter…</value>
+  </data>
+  <data name="Qsl.Disenador.ExportarAyuda" xml:space="preserve">
+    <value>Un seul fichier avec le modèle et ses images, pour le transférer sur un autre ordinateur</value>
+  </data>
+  <data name="Qsl.Disenador.ExportarNombre" xml:space="preserve">
+    <value>Exporter le modèle</value>
+  </data>
+  <data name="Qsl.Disenador.FaltaIndicativo" xml:space="preserve">
+    <value>L’indicatif du destinataire du diplôme manque.</value>
+  </data>
+  <data name="Qsl.Disenador.FaltaNombre" xml:space="preserve">
+    <value>Le nom du diplôme manque.</value>
+  </data>
+  <data name="Qsl.Disenador.FechaNombre" xml:space="preserve">
+    <value>Date de délivrance</value>
+  </data>
+  <data name="Qsl.Disenador.FiltroImportar" xml:space="preserve">
+    <value>Modèle de diplôme|*{0}|Tous|*.*</value>
+  </data>
+  <data name="Qsl.Disenador.FiltroPlantilla" xml:space="preserve">
+    <value>Modèle de diplôme|*{0}</value>
+  </data>
+  <data name="Qsl.Disenador.FondoAyuda" xml:space="preserve">
+    <value>Une photo, une texture de papier ou une bordure en image</value>
+  </data>
+  <data name="Qsl.Disenador.Gestor" xml:space="preserve">
+    <value>Gestionnaire</value>
+  </data>
+  <data name="Qsl.Disenador.GestorAyuda" xml:space="preserve">
+    <value>Variable {{gestor}} : qui signe le diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.GestorNombre" xml:space="preserve">
+    <value>Nom du gestionnaire</value>
+  </data>
+  <data name="Qsl.Disenador.Grosor" xml:space="preserve">
+    <value>Épaisseur</value>
+  </data>
+  <data name="Qsl.Disenador.GrosorNombre" xml:space="preserve">
+    <value>Épaisseur de la bordure en millimètres</value>
+  </data>
+  <data name="Qsl.Disenador.GuardarPng" xml:space="preserve">
+    <value>Enregistrer en PNG…</value>
+  </data>
+  <data name="Qsl.Disenador.GuardarPngNombre" xml:space="preserve">
+    <value>Enregistrer le diplôme en image PNG</value>
+  </data>
+  <data name="Qsl.Disenador.Historial" xml:space="preserve">
+    <value>Historique des délivrés</value>
+  </data>
+  <data name="Qsl.Disenador.HistorialNombre" xml:space="preserve">
+    <value>Historique des diplômes délivrés</value>
+  </data>
+  <data name="Qsl.Disenador.HistorialVacio" xml:space="preserve">
+    <value>Aucun diplôme n’a encore été délivré.</value>
+  </data>
+  <data name="Qsl.Disenador.Hojas.Anexo" xml:space="preserve">
+    <value>{0} lignes : {1} tiennent sur le diplôme, le reste va sur des feuilles d’annexe du PDF.</value>
+  </data>
+  <data name="Qsl.Disenador.Hojas.Caben" xml:space="preserve">
+    <value>Le tableau compte {0} ligne(s) ; {1} tiennent.</value>
+  </data>
+  <data name="Qsl.Disenador.Hojas.SoloCaben" xml:space="preserve">
+    <value>{0} lignes : seules {1} tiennent ; activez « Annexe » pour toutes les inclure.</value>
+  </data>
+  <data name="Qsl.Disenador.Imagen" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="Qsl.Disenador.Imagenes" xml:space="preserve">
+    <value>Logo, signature et images</value>
+  </data>
+  <data name="Qsl.Disenador.ImagenesDelDiploma" xml:space="preserve">
+    <value>Images du diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.ImagenFichero" xml:space="preserve">
+    <value>Image : {0}</value>
+  </data>
+  <data name="Qsl.Disenador.ImagenGuardada" xml:space="preserve">
+    <value>Image enregistrée dans {0}.</value>
+  </data>
+  <data name="Qsl.Disenador.Importada" xml:space="preserve">
+    <value>Modèle « {0} » importé.</value>
+  </data>
+  <data name="Qsl.Disenador.Importar" xml:space="preserve">
+    <value>Importer…</value>
+  </data>
+  <data name="Qsl.Disenador.ImportarNombre" xml:space="preserve">
+    <value>Importer un modèle</value>
+  </data>
+  <data name="Qsl.Disenador.Impreso.Anexo" xml:space="preserve">
+    <value>Annexe {0} sur {1}</value>
+  </data>
+  <data name="Qsl.Disenador.Impreso.Referencia" xml:space="preserve">
+    <value>Référence</value>
+  </data>
+  <data name="Qsl.Disenador.Impreso.SigueEnAnexo" xml:space="preserve">
+    <value>… suite en annexe ({0} de plus)</value>
+  </data>
+  <data name="Qsl.Disenador.Impreso.TituloDelAnexo" xml:space="preserve">
+    <value>{{diploma}} · {{indicativo}} · n° {{numero}}</value>
+  </data>
+  <data name="Qsl.Disenador.Impreso.YMas" xml:space="preserve">
+    <value>… et {0} de plus</value>
+  </data>
+  <data name="Qsl.Disenador.IndicativoNombre" xml:space="preserve">
+    <value>Indicatif qui reçoit le diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.Lineas" xml:space="preserve">
+    <value>Lignes</value>
+  </data>
+  <data name="Qsl.Disenador.LlevaraNumero" xml:space="preserve">
+    <value>À la délivrance, il portera le n° {0} de la série « {1} ».</value>
+  </data>
+  <data name="Qsl.Disenador.MargenMm" xml:space="preserve">
+    <value>Marge mm</value>
+  </data>
+  <data name="Qsl.Disenador.MargenNombre" xml:space="preserve">
+    <value>Marge de la bordure en millimètres</value>
+  </data>
+  <data name="Qsl.Disenador.MiIndicativoNombre" xml:space="preserve">
+    <value>Mon indicatif sur le certificat</value>
+  </data>
+  <data name="Qsl.Disenador.NoBuscar" xml:space="preserve">
+    <value>Impossible de chercher les QSO : {0}</value>
+  </data>
+  <data name="Qsl.Disenador.NoDatos" xml:space="preserve">
+    <value>Impossible de lire les données : {0}</value>
+  </data>
+  <data name="Qsl.Disenador.NoDibujar" xml:space="preserve">
+    <value>Impossible de dessiner le diplôme : {0}</value>
+  </data>
+  <data name="Qsl.Disenador.NoDuplicar" xml:space="preserve">
+    <value>Impossible de dupliquer : {0}</value>
+  </data>
+  <data name="Qsl.Disenador.NoEmitir" xml:space="preserve">
+    <value>Impossible de délivrer le diplôme : {0}</value>
+  </data>
+  <data name="Qsl.Disenador.NoExportar" xml:space="preserve">
+    <value>Impossible d’exporter : {0}</value>
+  </data>
+  <data name="Qsl.Disenador.NoImportar" xml:space="preserve">
+    <value>Impossible d’importer : {0}</value>
+  </data>
+  <data name="Qsl.Disenador.NoLeerDiploma" xml:space="preserve">
+    <value>Impossible de lire le diplôme : {0}</value>
+  </data>
+  <data name="Qsl.Disenador.NoMandar" xml:space="preserve">
+    <value>Impossible d’envoyer le diplôme : {0}</value>
+  </data>
+  <data name="Qsl.Disenador.NombreDelDiploma" xml:space="preserve">
+    <value>Nom du diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.NombreNombre" xml:space="preserve">
+    <value>Nom du destinataire du diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.NoNumeracion" xml:space="preserve">
+    <value>Impossible de lire la numérotation.</value>
+  </data>
+  <data name="Qsl.Disenador.NumeracionYFirma" xml:space="preserve">
+    <value>Numérotation et signature</value>
+  </data>
+  <data name="Qsl.Disenador.Orla" xml:space="preserve">
+    <value>Bordure</value>
+  </data>
+  <data name="Qsl.Disenador.Papel" xml:space="preserve">
+    <value>Papier</value>
+  </data>
+  <data name="Qsl.Disenador.PdfDePrueba" xml:space="preserve">
+    <value>PDF d’essai…</value>
+  </data>
+  <data name="Qsl.Disenador.PdfDePruebaAyuda" xml:space="preserve">
+    <value>Sans le délivrer : pour le vérifier avant de lui donner un numéro</value>
+  </data>
+  <data name="Qsl.Disenador.PdfDePruebaNombre" xml:space="preserve">
+    <value>PDF d’essai sans délivrer</value>
+  </data>
+  <data name="Qsl.Disenador.PdfGuardado" xml:space="preserve">
+    <value>PDF enregistré dans {0} ({1} feuille(s)).</value>
+  </data>
+  <data name="Qsl.Disenador.Plantilla" xml:space="preserve">
+    <value>Modèle de diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.PonerTabla" xml:space="preserve">
+    <value>Afficher le tableau</value>
+  </data>
+  <data name="Qsl.Disenador.Prefijo" xml:space="preserve">
+    <value>Préfixe</value>
+  </data>
+  <data name="Qsl.Disenador.PrefijoAyuda" xml:space="preserve">
+    <value>Par exemple EA8- ou 2026/</value>
+  </data>
+  <data name="Qsl.Disenador.PrefijoNombre" xml:space="preserve">
+    <value>Préfixe du numéro</value>
+  </data>
+  <data name="Qsl.Disenador.QuitarColumna" xml:space="preserve">
+    <value>Retirer la colonne</value>
+  </data>
+  <data name="Qsl.Disenador.QuitarElemento" xml:space="preserve">
+    <value>Retirer l’élément choisi</value>
+  </data>
+  <data name="Qsl.Disenador.Reenviar" xml:space="preserve">
+    <value>Renvoyer</value>
+  </data>
+  <data name="Qsl.Disenador.ReenviarNombre" xml:space="preserve">
+    <value>Renvoyer par e-mail le diplôme choisi</value>
+  </data>
+  <data name="Qsl.Disenador.ReferenciasConfirmadas" xml:space="preserve">
+    <value>{0} : {1} référence(s) confirmée(s).</value>
+  </data>
+  <data name="Qsl.Disenador.Reimprimir" xml:space="preserve">
+    <value>Régénérer le PDF…</value>
+  </data>
+  <data name="Qsl.Disenador.ReimprimirAyuda" xml:space="preserve">
+    <value>Avec le même numéro et les données d’origine</value>
+  </data>
+  <data name="Qsl.Disenador.ReimprimirNombre" xml:space="preserve">
+    <value>Régénérer le PDF du diplôme choisi</value>
+  </data>
+  <data name="Qsl.Disenador.ReleerAyuda" xml:space="preserve">
+    <value>Relire ma station, les diplômes obtenus et l’historique</value>
+  </data>
+  <data name="Qsl.Disenador.ReleerNombre" xml:space="preserve">
+    <value>Relire les données</value>
+  </data>
+  <data name="Qsl.Disenador.Serie" xml:space="preserve">
+    <value>Série</value>
+  </data>
+  <data name="Qsl.Disenador.SerieAyuda" xml:space="preserve">
+    <value>Chaque série a sa propre numérotation continue ; plusieurs modèles peuvent la partager.</value>
+  </data>
+  <data name="Qsl.Disenador.SerieNombre" xml:space="preserve">
+    <value>Série de numérotation</value>
+  </data>
+  <data name="Qsl.Disenador.SeVe" xml:space="preserve">
+    <value>Visible sur le diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.SinContactos" xml:space="preserve">
+    <value>Aucun QSO avec {0} dans le carnet de trafic : le diplôme sort sans tableau.</value>
+  </data>
+  <data name="Qsl.Disenador.SinDatos" xml:space="preserve">
+    <value>Ce diplôme n’a pas conservé ses données et ne peut pas être régénéré à l’identique.</value>
+  </data>
+  <data name="Qsl.Disenador.SinDireccion" xml:space="preserve">
+    <value>Ce diplôme n’a pas d’adresse : saisissez-la dans « E-mail » et cliquez à nouveau.</value>
+  </data>
+  <data name="Qsl.Disenador.SinEnviar" xml:space="preserve">
+    <value>non envoyé</value>
+  </data>
+  <data name="Qsl.Disenador.SinImagen" xml:space="preserve">
+    <value>Sans image : emplacement prêt. « Choisir une image… » pour mettre la vôtre.</value>
+  </data>
+  <data name="Qsl.Disenador.Tabla" xml:space="preserve">
+    <value>Tableau des références ou QSO</value>
+  </data>
+  <data name="Qsl.Disenador.TablaAlto" xml:space="preserve">
+    <value>Hauteur du tableau</value>
+  </data>
+  <data name="Qsl.Disenador.TablaAncho" xml:space="preserve">
+    <value>Largeur du tableau</value>
+  </data>
+  <data name="Qsl.Disenador.TablaDeReferencias" xml:space="preserve">
+    <value>Tableau des références</value>
+  </data>
+  <data name="Qsl.Disenador.TablaLetra" xml:space="preserve">
+    <value>Police du tableau</value>
+  </data>
+  <data name="Qsl.Disenador.TablaTamano" xml:space="preserve">
+    <value>Taille de police du tableau</value>
+  </data>
+  <data name="Qsl.Disenador.TablaX" xml:space="preserve">
+    <value>Bord gauche du tableau</value>
+  </data>
+  <data name="Qsl.Disenador.TablaY" xml:space="preserve">
+    <value>Bord supérieur du tableau</value>
+  </data>
+  <data name="Qsl.Disenador.TamanoDePapel" xml:space="preserve">
+    <value>Format du papier</value>
+  </data>
+  <data name="Qsl.Disenador.TextoCorreoNombre" xml:space="preserve">
+    <value>Texte de l’e-mail du diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.Textos" xml:space="preserve">
+    <value>Textes</value>
+  </data>
+  <data name="Qsl.Disenador.TextosDelDiploma" xml:space="preserve">
+    <value>Textes du diplôme</value>
+  </data>
+  <data name="Qsl.Disenador.Titulo" xml:space="preserve">
+    <value>Titre</value>
+  </data>
+  <data name="Qsl.Disenador.TituloDeLaTabla" xml:space="preserve">
+    <value>Titre du tableau</value>
+  </data>
+  <data name="Qsl.Disenador.VariablesDeLaTabla" xml:space="preserve">
+    <value>Dans les colonnes du tableau :</value>
+  </data>
+  <data name="Qsl.Disenador.Vertical" xml:space="preserve">
+    <value>Portrait</value>
+  </data>
+  <data name="Qsl.Disenador.VerticalNombre" xml:space="preserve">
+    <value>Diplôme en portrait</value>
+  </data>
+  <data name="Qsl.Disenador.VueltaDeFabrica" xml:space="preserve">
+    <value>« {0} » est revenu à son état d’origine.</value>
+  </data>
+  <data name="Qsl.Editor.Ajuste" xml:space="preserve">
+    <value>Ajustement</value>
+  </data>
+  <data name="Qsl.Editor.Alineacion" xml:space="preserve">
+    <value>Alignement par rapport à X</value>
+  </data>
+  <data name="Qsl.Editor.AlineacionNombre" xml:space="preserve">
+    <value>Alignement du champ</value>
+  </data>
+  <data name="Qsl.Editor.Alto" xml:space="preserve">
+    <value>Hauteur</value>
+  </data>
+  <data name="Qsl.Editor.AnadirTexto" xml:space="preserve">
+    <value>Ajouter un texte</value>
+  </data>
+  <data name="Qsl.Editor.Ancho" xml:space="preserve">
+    <value>Largeur</value>
+  </data>
+  <data name="Qsl.Editor.AnchoMaximo" xml:space="preserve">
+    <value>Largeur maximale (mm, 0 = sans limite)</value>
+  </data>
+  <data name="Qsl.Editor.AnchoMaximoAyuda" xml:space="preserve">
+    <value>Ce qui ne tient pas dans cette largeur passe à la ligne suivante : pour les paragraphes.</value>
+  </data>
+  <data name="Qsl.Editor.AnchoMaximoNombre" xml:space="preserve">
+    <value>Largeur maximale du texte en millimètres</value>
+  </data>
+  <data name="Qsl.Editor.Asunto" xml:space="preserve">
+    <value>Objet</value>
+  </data>
+  <data name="Qsl.Editor.BorrarLaPlantilla" xml:space="preserve">
+    <value>Supprimer le modèle</value>
+  </data>
+  <data name="Qsl.Editor.CambiosSinGuardar" xml:space="preserve">
+    <value>● Modifications non enregistrées.</value>
+  </data>
+  <data name="Qsl.Editor.Color" xml:space="preserve">
+    <value>Couleur</value>
+  </data>
+  <data name="Qsl.Editor.ColorDelTexto" xml:space="preserve">
+    <value>Couleur du texte</value>
+  </data>
+  <data name="Qsl.Editor.ColorLineaDeFirma" xml:space="preserve">
+    <value>Couleur de la ligne de signature</value>
+  </data>
+  <data name="Qsl.Editor.ComoSeAjusta" xml:space="preserve">
+    <value>Ajustement de l’image de fond</value>
+  </data>
+  <data name="Qsl.Editor.Copia" xml:space="preserve">
+    <value>{0} (copie)</value>
+  </data>
+  <data name="Qsl.Editor.Correo" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="Qsl.Editor.Cursiva" xml:space="preserve">
+    <value>Italique</value>
+  </data>
+  <data name="Qsl.Editor.DatoDelContacto" xml:space="preserve">
+    <value>Donnée du QSO (QSL)</value>
+  </data>
+  <data name="Qsl.Editor.DatoDelContactoAyuda" xml:space="preserve">
+    <value>Sur la carte QSL, les données du QSO sont retirées du « Modèle pour eQSL » : eQSL les ajoute lui-même.</value>
+  </data>
+  <data name="Qsl.Editor.DatoDelContactoNombre" xml:space="preserve">
+    <value>C’est une donnée du QSO</value>
+  </data>
+  <data name="Qsl.Editor.Deshacer" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Qsl.Editor.DeshacerCambios" xml:space="preserve">
+    <value>Annuler les modifications non enregistrées</value>
+  </data>
+  <data name="Qsl.Editor.Duplicar" xml:space="preserve">
+    <value>Dupliquer</value>
+  </data>
+  <data name="Qsl.Editor.DuplicarLaPlantilla" xml:space="preserve">
+    <value>Dupliquer le modèle</value>
+  </data>
+  <data name="Qsl.Editor.ElegirImagen" xml:space="preserve">
+    <value>Choisir une image…</value>
+  </data>
+  <data name="Qsl.Editor.ElegirImagenDeFondo" xml:space="preserve">
+    <value>Choisir l’image de fond</value>
+  </data>
+  <data name="Qsl.Editor.EsLaDeOmision" xml:space="preserve">
+    <value>✓ C’est le modèle par défaut.</value>
+  </data>
+  <data name="Qsl.Editor.FiltroImagenes" xml:space="preserve">
+    <value>Images|*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.tif;*.tiff</value>
+  </data>
+  <data name="Qsl.Editor.Fondo" xml:space="preserve">
+    <value>Fond</value>
+  </data>
+  <data name="Qsl.Editor.GuardarLaPlantilla" xml:space="preserve">
+    <value>Enregistrer le modèle</value>
+  </data>
+  <data name="Qsl.Editor.ImagenAlto" xml:space="preserve">
+    <value>Hauteur de l’image en millimètres</value>
+  </data>
+  <data name="Qsl.Editor.ImagenAncho" xml:space="preserve">
+    <value>Largeur de l’image en millimètres</value>
+  </data>
+  <data name="Qsl.Editor.ImagenX" xml:space="preserve">
+    <value>Bord gauche de l’image en millimètres</value>
+  </data>
+  <data name="Qsl.Editor.ImagenY" xml:space="preserve">
+    <value>Bord supérieur de l’image en millimètres</value>
+  </data>
+  <data name="Qsl.Editor.Letra" xml:space="preserve">
+    <value>Police</value>
+  </data>
+  <data name="Qsl.Editor.LineaDeFirma" xml:space="preserve">
+    <value>Ligne de signature en dessous</value>
+  </data>
+  <data name="Qsl.Editor.LineaDeFirmaNombre" xml:space="preserve">
+    <value>Tracer la ligne de signature</value>
+  </data>
+  <data name="Qsl.Editor.Negrita" xml:space="preserve">
+    <value>Gras</value>
+  </data>
+  <data name="Qsl.Editor.NoImagen" xml:space="preserve">
+    <value>Impossible d’utiliser cette image : {0}</value>
+  </data>
+  <data name="Qsl.Editor.NombreDeLaImagen" xml:space="preserve">
+    <value>Nom de l’image</value>
+  </data>
+  <data name="Qsl.Editor.NombreDeLaPlantilla" xml:space="preserve">
+    <value>Nom du modèle</value>
+  </data>
+  <data name="Qsl.Editor.NombreDelCampo" xml:space="preserve">
+    <value>Nom du champ</value>
+  </data>
+  <data name="Qsl.Editor.NoPdf" xml:space="preserve">
+    <value>Impossible d’enregistrer ou d’ouvrir le PDF : {0}</value>
+  </data>
+  <data name="Qsl.Editor.NoSeHaPodidoGuardar" xml:space="preserve">
+    <value>Impossible d’enregistrer : {0}</value>
+  </data>
+  <data name="Qsl.Editor.Nueva" xml:space="preserve">
+    <value>Nouveau</value>
+  </data>
+  <data name="Qsl.Editor.Opacidad01" xml:space="preserve">
+    <value>Opacité (0–1)</value>
+  </data>
+  <data name="Qsl.Editor.OpacidadAyuda" xml:space="preserve">
+    <value>1 = opaque ; 0,15 = filigrane</value>
+  </data>
+  <data name="Qsl.Editor.OpacidadNombre" xml:space="preserve">
+    <value>Opacité de l’image</value>
+  </data>
+  <data name="Qsl.Editor.PdfGuardado" xml:space="preserve">
+    <value>PDF enregistré dans {0}.</value>
+  </data>
+  <data name="Qsl.Editor.Plantilla" xml:space="preserve">
+    <value>Modèle</value>
+  </data>
+  <data name="Qsl.Editor.PlantillaBorrada" xml:space="preserve">
+    <value>Modèle « {0} » supprimé.</value>
+  </data>
+  <data name="Qsl.Editor.PlantillaGuardada" xml:space="preserve">
+    <value>Modèle « {0} » enregistré.</value>
+  </data>
+  <data name="Qsl.Editor.PlantillaNueva" xml:space="preserve">
+    <value>Nouveau modèle</value>
+  </data>
+  <data name="Qsl.Editor.PosicionX" xml:space="preserve">
+    <value>Position horizontale en millimètres</value>
+  </data>
+  <data name="Qsl.Editor.PosicionY" xml:space="preserve">
+    <value>Position verticale en millimètres</value>
+  </data>
+  <data name="Qsl.Editor.Quitar" xml:space="preserve">
+    <value>Retirer</value>
+  </data>
+  <data name="Qsl.Editor.QuitarImagenDeFondo" xml:space="preserve">
+    <value>Retirer l’image de fond</value>
+  </data>
+  <data name="Qsl.Editor.RecuadroAyuda" xml:space="preserve">
+    <value>Un cadre blanc presque opaque aide à lire le texte sur une photo</value>
+  </data>
+  <data name="Qsl.Editor.RecuadroDetras" xml:space="preserve">
+    <value>Cadre derrière</value>
+  </data>
+  <data name="Qsl.Editor.RecuadroDetrasDelTexto" xml:space="preserve">
+    <value>Cadre derrière le texte</value>
+  </data>
+  <data name="Qsl.Editor.SinRecuadro" xml:space="preserve">
+    <value>Sans cadre</value>
+  </data>
+  <data name="Qsl.Editor.TamanoPt" xml:space="preserve">
+    <value>Taille (pt)</value>
+  </data>
+  <data name="Qsl.Editor.TamanoPtNombre" xml:space="preserve">
+    <value>Taille de police en points</value>
+  </data>
+  <data name="Qsl.Editor.Texto" xml:space="preserve">
+    <value>Texte</value>
+  </data>
+  <data name="Qsl.Editor.TextoConVariables" xml:space="preserve">
+    <value>Texte (avec variables)</value>
+  </data>
+  <data name="Qsl.Editor.TextoDelCampo" xml:space="preserve">
+    <value>Texte du champ</value>
+  </data>
+  <data name="Qsl.Editor.TextoLibre" xml:space="preserve">
+    <value>Texte libre</value>
+  </data>
+  <data name="Qsl.Editor.TipoDeLetra" xml:space="preserve">
+    <value>Police de caractères</value>
+  </data>
+  <data name="Qsl.Editor.UsarEstaPorOmision" xml:space="preserve">
+    <value>Utiliser ce modèle par défaut</value>
+  </data>
+  <data name="Qsl.Editor.UsarPorOmision" xml:space="preserve">
+    <value>Par défaut</value>
+  </data>
+  <data name="Qsl.Editor.Uso" xml:space="preserve">
+    <value>Usage</value>
+  </data>
+  <data name="Qsl.Editor.UsoDeLaImagen" xml:space="preserve">
+    <value>Usage de l’image</value>
+  </data>
+  <data name="Qsl.Editor.Variables" xml:space="preserve">
+    <value>Variables utilisables</value>
+  </data>
+  <data name="Qsl.Envio.AsuntoNombre" xml:space="preserve">
+    <value>Objet de l’e-mail</value>
+  </data>
+  <data name="Qsl.Envio.Buscando" xml:space="preserve">
+    <value>Recherche des adresses e-mail…</value>
+  </data>
+  <data name="Qsl.Envio.Cancelado" xml:space="preserve">
+    <value>Annulé.</value>
+  </data>
+  <data name="Qsl.Envio.CerrarNombre" xml:space="preserve">
+    <value>Fermer la fenêtre</value>
+  </data>
+  <data name="Qsl.Envio.Contactos" xml:space="preserve">
+    <value>QSO</value>
+  </data>
+  <data name="Qsl.Envio.De" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="Qsl.Envio.Destinatarios" xml:space="preserve">
+    <value>Destinataires</value>
+  </data>
+  <data name="Qsl.Envio.DestinatariosNombre" xml:space="preserve">
+    <value>Stations auxquelles la carte est envoyée</value>
+  </data>
+  <data name="Qsl.Envio.DialogoCarpeta" xml:space="preserve">
+    <value>Dossier où enregistrer les cartes</value>
+  </data>
+  <data name="Qsl.Envio.DireccionNoValida" xml:space="preserve">
+    <value>L’adresse « {0} » n’est pas valide.</value>
+  </data>
+  <data name="Qsl.Envio.Enviada" xml:space="preserve">
+    <value>Envoyée {0:HH:mm}.</value>
+  </data>
+  <data name="Qsl.Envio.Enviar" xml:space="preserve">
+    <value>Envoyer</value>
+  </data>
+  <data name="Qsl.Envio.EnviarNombre" xml:space="preserve">
+    <value>Envoyer par e-mail les cartes cochées</value>
+  </data>
+  <data name="Qsl.Envio.EnviarPorCorreo" xml:space="preserve">
+    <value>Envoyer par e-mail</value>
+  </data>
+  <data name="Qsl.Envio.Estado" xml:space="preserve">
+    <value>État</value>
+  </data>
+  <data name="Qsl.Envio.FaltaConfigurar" xml:space="preserve">
+    <value>L’e-mail sortant n’est pas configuré : Paramètres › E-mail des QSL (serveur, port et expéditeur).</value>
+  </data>
+  <data name="Qsl.Envio.Guardadas" xml:space="preserve">
+    <value>{0} carte(s) enregistrée(s) dans {1}.</value>
+  </data>
+  <data name="Qsl.Envio.GuardarImagenes" xml:space="preserve">
+    <value>Enregistrer les images…</value>
+  </data>
+  <data name="Qsl.Envio.GuardarImagenesNombre" xml:space="preserve">
+    <value>Enregistrer les cartes en images</value>
+  </data>
+  <data name="Qsl.Envio.Listo" xml:space="preserve">
+    <value>Prêt à envoyer.</value>
+  </data>
+  <data name="Qsl.Envio.Mandando" xml:space="preserve">
+    <value>Envoi…</value>
+  </data>
+  <data name="Qsl.Envio.NContactos" xml:space="preserve">
+    <value>{0} QSO</value>
+  </data>
+  <data name="Qsl.Envio.NingunaMarcada" xml:space="preserve">
+    <value>Aucune station n’est cochée pour l’envoi.</value>
+  </data>
+  <data name="Qsl.Envio.NoGuardadas" xml:space="preserve">
+    <value>Impossible de les enregistrer : {0}</value>
+  </data>
+  <data name="Qsl.Envio.NoPreparar" xml:space="preserve">
+    <value>Impossible de préparer : {0}</value>
+  </data>
+  <data name="Qsl.Envio.NoPublica" xml:space="preserve">
+    <value>Pas d’e-mail publié : saisissez-le ou il sera ignoré.</value>
+  </data>
+  <data name="Qsl.Envio.Origen.DeLaFicha" xml:space="preserve">
+    <value>de sa fiche QRZ</value>
+  </data>
+  <data name="Qsl.Envio.Origen.DelContacto" xml:space="preserve">
+    <value>du QSO</value>
+  </data>
+  <data name="Qsl.Envio.Origen.Escrita" xml:space="preserve">
+    <value>saisie à la main</value>
+  </data>
+  <data name="Qsl.Envio.Origen.Ninguno" xml:space="preserve">
+    <value>sans e-mail</value>
+  </data>
+  <data name="Qsl.Envio.Parado" xml:space="preserve">
+    <value>Arrêté : {0}</value>
+  </data>
+  <data name="Qsl.Envio.Parar" xml:space="preserve">
+    <value>Arrêter</value>
+  </data>
+  <data name="Qsl.Envio.PararNombre" xml:space="preserve">
+    <value>Arrêter l’envoi</value>
+  </data>
+  <data name="Qsl.Envio.PdfNombre" xml:space="preserve">
+    <value>Enregistrer toutes les cartes en PDF</value>
+  </data>
+  <data name="Qsl.Envio.Resumen" xml:space="preserve">
+    <value>Envoyées {0} ; ignorées {1} ; en échec {2}.</value>
+  </data>
+  <data name="Qsl.Envio.SaleDe" xml:space="preserve">
+    <value>Envoyé depuis {0} par {1}:{2}.</value>
+  </data>
+  <data name="Qsl.Envio.Saltado" xml:space="preserve">
+    <value>Ignoré : pas d’adresse e-mail.</value>
+  </data>
+  <data name="Qsl.Envio.SinConfigurar" xml:space="preserve">
+    <value>L’e-mail sortant n’est pas configuré : Paramètres › E-mail des QSL.</value>
+  </data>
+  <data name="Qsl.Envio.SinCorreo" xml:space="preserve">
+    <value>{0} station(s) sans e-mail publié : saisissez l’adresse ou elles seront ignorées.</value>
+  </data>
+  <data name="Qsl.Envio.Texto" xml:space="preserve">
+    <value>Texte ({{indicativo}}, {{fecha}}, {{banda}}, {{contactos}}…)</value>
+  </data>
+  <data name="Qsl.Envio.TextoNombre" xml:space="preserve">
+    <value>Texte de l’e-mail</value>
+  </data>
+  <data name="Qsl.Envio.TextoPorOmision" xml:space="preserve">
+    <value>Dear {{nombre}} ({{indicativo}}),
+
+Thank you for our QSO on {{fecha}} at {{hora}} UTC, {{banda}} {{modo}}.
+Please find attached my QSL card.
+
+Merci pour le QSO. Vous trouverez ci-joint ma carte QSL.
+
+73 de {{miindicativo}}</value>
+  </data>
+  <data name="Qsl.Envio.Titulo" xml:space="preserve">
+    <value>Voir / envoyer QSL — Cuaderno NODISLA</value>
+  </data>
+  <data name="Qsl.Envio.VistaPrevia" xml:space="preserve">
+    <value>Aperçu de la carte</value>
+  </data>
+  <data name="Qsl.Envio.YaNoEstan" xml:space="preserve">
+    <value>Ces QSO ne sont plus dans le carnet de trafic.</value>
+  </data>
+  <data name="Qsl.Impresion.Bandas" xml:space="preserve">
+    <value>Bandes (séparées par des virgules)</value>
+  </data>
+  <data name="Qsl.Impresion.BandasAyuda" xml:space="preserve">
+    <value>Vide : toutes les bandes</value>
+  </data>
+  <data name="Qsl.Impresion.BuscarNombre" xml:space="preserve">
+    <value>Chercher les QSO qui correspondent au filtre</value>
+  </data>
+  <data name="Qsl.Impresion.Contorno" xml:space="preserve">
+    <value>Tracer le contour (essai sur papier normal)</value>
+  </data>
+  <data name="Qsl.Impresion.Desde" xml:space="preserve">
+    <value>Du</value>
+  </data>
+  <data name="Qsl.Impresion.EmpezarEn" xml:space="preserve">
+    <value>Commencer à l’étiquette n°</value>
+  </data>
+  <data name="Qsl.Impresion.EmpezarEnAyuda" xml:space="preserve">
+    <value>Pour réutiliser une planche entamée ; 1 est la première case</value>
+  </data>
+  <data name="Qsl.Impresion.ExcluirConfirmados" xml:space="preserve">
+    <value>Exclure ceux déjà confirmés sur papier</value>
+  </data>
+  <data name="Qsl.Impresion.Filtro" xml:space="preserve">
+    <value>Filtre des QSO</value>
+  </data>
+  <data name="Qsl.Impresion.Frase" xml:space="preserve">
+    <value>Phrase en bas des étiquettes</value>
+  </data>
+  <data name="Qsl.Impresion.FraseAyuda" xml:space="preserve">
+    <value>Facultatif : remerciement pour le QSO, demande de carte…</value>
+  </data>
+  <data name="Qsl.Impresion.Hasta" xml:space="preserve">
+    <value>Au</value>
+  </data>
+  <data name="Qsl.Impresion.Indicativos" xml:space="preserve">
+    <value>Indicatifs (séparés par des virgules)</value>
+  </data>
+  <data name="Qsl.Impresion.IndicativosAyuda" xml:space="preserve">
+    <value>Vide : n’importe quel indicatif</value>
+  </data>
+  <data name="Qsl.Impresion.MarcarTodas" xml:space="preserve">
+    <value>Tout cocher</value>
+  </data>
+  <data name="Qsl.Impresion.MarcarTodasNombre" xml:space="preserve">
+    <value>Cocher toutes les étiquettes trouvées</value>
+  </data>
+  <data name="Qsl.Impresion.NContactos" xml:space="preserve">
+    <value>{0:N0} QSO</value>
+  </data>
+  <data name="Qsl.Impresion.Ninguna" xml:space="preserve">
+    <value>Aucune</value>
+  </data>
+  <data name="Qsl.Impresion.NingunaMarcada" xml:space="preserve">
+    <value>Aucune étiquette n’est cochée.</value>
+  </data>
+  <data name="Qsl.Impresion.NingunaNombre" xml:space="preserve">
+    <value>Décocher toutes les étiquettes trouvées</value>
+  </data>
+  <data name="Qsl.Impresion.NingunContacto" xml:space="preserve">
+    <value>Aucun QSO ne correspond au filtre.</value>
+  </data>
+  <data name="Qsl.Impresion.NoBuscar" xml:space="preserve">
+    <value>Impossible de rechercher : {0}</value>
+  </data>
+  <data name="Qsl.Impresion.NoVistaPrevia" xml:space="preserve">
+    <value>Impossible d’ouvrir l’aperçu : {0}</value>
+  </data>
+  <data name="Qsl.Impresion.Plantilla" xml:space="preserve">
+    <value>Modèle d’étiquettes</value>
+  </data>
+  <data name="Qsl.Impresion.PlantillaAyuda" xml:space="preserve">
+    <value>Planche d’étiquettes sur laquelle on imprime</value>
+  </data>
+  <data name="Qsl.Impresion.Resumen" xml:space="preserve">
+    <value>{0:N0} étiquette(s) pour {1:N0} QSO, {2:N0} cochée(s).</value>
+  </data>
+  <data name="Qsl.Impresion.SinEtiquetas" xml:space="preserve">
+    <value>Aucune étiquette : cliquez sur « Rechercher » pour appliquer le filtre.</value>
+  </data>
+  <data name="Qsl.Impresion.SinVia" xml:space="preserve">
+    <value>aucune voie notée</value>
+  </data>
+  <data name="Qsl.Impresion.SoloPendientes" xml:space="preserve">
+    <value>Seulement celles à envoyer sur papier</value>
+  </data>
+  <data name="Qsl.Impresion.UnContacto" xml:space="preserve">
+    <value>1 QSO</value>
+  </data>
+  <data name="Qsl.Impresion.Via" xml:space="preserve">
+    <value>Voie (aucune cochée = toutes)</value>
+  </data>
+  <data name="Qsl.Impresion.ViaBuro" xml:space="preserve">
+    <value>Bureau</value>
+  </data>
+  <data name="Qsl.Impresion.ViaDirecta" xml:space="preserve">
+    <value>Directe</value>
+  </data>
+  <data name="Qsl.Impresion.ViaElectronica" xml:space="preserve">
+    <value>Électronique</value>
+  </data>
+  <data name="Qsl.Impresion.ViaGestor" xml:space="preserve">
+    <value>Manager</value>
+  </data>
+  <data name="Qsl.Impresion.VistaAbierta" xml:space="preserve">
+    <value>Aperçu ouvert : {0} feuille(s) avec {1} étiquette(s).</value>
+  </data>
+  <data name="Qsl.Impresion.VistaPrevia" xml:space="preserve">
+    <value>Aperçu / Imprimer…</value>
+  </data>
+  <data name="Qsl.Impresion.VistaPreviaAyuda" xml:space="preserve">
+    <value>Il s’ouvre avec la visionneuse PDF du système. On l’imprime de là comme n’importe quel document.</value>
+  </data>
+  <data name="Qsl.Impresion.VistaPreviaNombre" xml:space="preserve">
+    <value>Composer le PDF et l’ouvrir avec la visionneuse du système</value>
+  </data>
+  <data name="Qsl.Orla.Clasico" xml:space="preserve">
+    <value>Classique</value>
+  </data>
+  <data name="Qsl.Orla.DobleFilete" xml:space="preserve">
+    <value>Double filet</value>
+  </data>
+  <data name="Qsl.Orla.Escuadras" xml:space="preserve">
+    <value>Équerres</value>
+  </data>
+  <data name="Qsl.Orla.Filete" xml:space="preserve">
+    <value>Filet</value>
+  </data>
+  <data name="Qsl.Orla.Ninguno" xml:space="preserve">
+    <value>Sans bordure</value>
+  </data>
+  <data name="Qsl.Papel.A4" xml:space="preserve">
+    <value>A4</value>
+  </data>
+  <data name="Qsl.Papel.Carta" xml:space="preserve">
+    <value>Lettre US</value>
+  </data>
+  <data name="Qsl.Tarjeta.AbrirEqsl" xml:space="preserve">
+    <value>Ouvrir eQSL</value>
+  </data>
+  <data name="Qsl.Tarjeta.AbrirEqslAyuda" xml:space="preserve">
+    <value>Ouvrir le site d’eQSL</value>
+  </data>
+  <data name="Qsl.Tarjeta.AhoraPorOmision" xml:space="preserve">
+    <value>« {0} » est maintenant la carte par défaut.</value>
+  </data>
+  <data name="Qsl.Tarjeta.AnadirCampo" xml:space="preserve">
+    <value>Ajouter un champ de texte</value>
+  </data>
+  <data name="Qsl.Tarjeta.Campo" xml:space="preserve">
+    <value>Champ</value>
+  </data>
+  <data name="Qsl.Tarjeta.Campos" xml:space="preserve">
+    <value>Champs</value>
+  </data>
+  <data name="Qsl.Tarjeta.CamposDeLaTarjeta" xml:space="preserve">
+    <value>Champs de la carte</value>
+  </data>
+  <data name="Qsl.Tarjeta.ColorDeFondo" xml:space="preserve">
+    <value>Couleur de fond de la carte</value>
+  </data>
+  <data name="Qsl.Tarjeta.ContactoDeVistaPrevia" xml:space="preserve">
+    <value>QSO de l’aperçu</value>
+  </data>
+  <data name="Qsl.Tarjeta.DialogoFondo" xml:space="preserve">
+    <value>Image de fond de la carte</value>
+  </data>
+  <data name="Qsl.Tarjeta.DisenoParaEqsl" xml:space="preserve">
+    <value>Modèle pour eQSL…</value>
+  </data>
+  <data name="Qsl.Tarjeta.DisenoParaEqslAyuda" xml:space="preserve">
+    <value>La carte sans les données du QSO, à téléverser sur votre compte eQSL</value>
+  </data>
+  <data name="Qsl.Tarjeta.DisenoParaEqslNombre" xml:space="preserve">
+    <value>Enregistrer le modèle pour le téléverser sur eQSL</value>
+  </data>
+  <data name="Qsl.Tarjeta.DuplicarCampo" xml:space="preserve">
+    <value>Dupliquer le champ</value>
+  </data>
+  <data name="Qsl.Tarjeta.ElijaContactoEnviar" xml:space="preserve">
+    <value>Choisissez un QSO dans « Aperçu avec » pour lui envoyer la carte.</value>
+  </data>
+  <data name="Qsl.Tarjeta.ElijaContactoPdf" xml:space="preserve">
+    <value>Choisissez un QSO pour l’aperçu : le PDF reprend ses données.</value>
+  </data>
+  <data name="Qsl.Tarjeta.ElijaUnCampo" xml:space="preserve">
+    <value>Choisissez un champ dans la liste ou cliquez dessus sur la carte.</value>
+  </data>
+  <data name="Qsl.Tarjeta.Enviadas" xml:space="preserve">
+    <value>Carte(s) envoyée(s) et notée(s) dans le carnet de trafic.</value>
+  </data>
+  <data name="Qsl.Tarjeta.EnviarAyuda" xml:space="preserve">
+    <value>Envoyer cette carte par e-mail au correspondant</value>
+  </data>
+  <data name="Qsl.Tarjeta.EnviarPorCorreo" xml:space="preserve">
+    <value>Envoyer par e-mail…</value>
+  </data>
+  <data name="Qsl.Tarjeta.EqslGuardado" xml:space="preserve">
+    <value>Modèle pour eQSL enregistré dans {0}. Téléversez-le dans eQSL → Profile → Design your QSL.</value>
+  </data>
+  <data name="Qsl.Tarjeta.FiltroImagen" xml:space="preserve">
+    <value>JPG (e-mail)|*.jpg|PNG (sans perte)|*.png</value>
+  </data>
+  <data name="Qsl.Tarjeta.Guardada" xml:space="preserve">
+    <value>Carte enregistrée dans {0}.</value>
+  </data>
+  <data name="Qsl.Tarjeta.GuardarImagen" xml:space="preserve">
+    <value>Enregistrer l’image…</value>
+  </data>
+  <data name="Qsl.Tarjeta.GuardarImagenAyuda" xml:space="preserve">
+    <value>Enregistrer la carte en image</value>
+  </data>
+  <data name="Qsl.Tarjeta.Instrucciones" xml:space="preserve">
+    <value>Faites glisser les champs sur la carte. Pour en envoyer plusieurs à la fois : dans le carnet de trafic, sélectionnez les QSO, clic droit → « Voir/envoyer QSL… ».</value>
+  </data>
+  <data name="Qsl.Tarjeta.NoAbrirEnvio" xml:space="preserve">
+    <value>Impossible d’ouvrir l’envoi : {0}</value>
+  </data>
+  <data name="Qsl.Tarjeta.NoContactos" xml:space="preserve">
+    <value>Impossible de lire les QSO : {0}</value>
+  </data>
+  <data name="Qsl.Tarjeta.NoDibujar" xml:space="preserve">
+    <value>Impossible de dessiner la carte : {0}</value>
+  </data>
+  <data name="Qsl.Tarjeta.NoNavegador" xml:space="preserve">
+    <value>Impossible d’ouvrir le navigateur : {0}</value>
+  </data>
+  <data name="Qsl.Tarjeta.PdfAyuda" xml:space="preserve">
+    <value>Enregistrer la carte en PDF pour l’imprimer</value>
+  </data>
+  <data name="Qsl.Tarjeta.PlantillaDeTarjeta" xml:space="preserve">
+    <value>Modèle de carte</value>
+  </data>
+  <data name="Qsl.Tarjeta.QuitarCampo" xml:space="preserve">
+    <value>Retirer le champ</value>
+  </data>
+  <data name="Qsl.Tarjeta.ReleerContactos" xml:space="preserve">
+    <value>Relire les QSO</value>
+  </data>
+  <data name="Qsl.Tarjeta.ReleerContactosAyuda" xml:space="preserve">
+    <value>Relire les QSO du carnet de trafic</value>
+  </data>
+  <data name="Qsl.Tarjeta.SeVe" xml:space="preserve">
+    <value>Visible sur la carte</value>
+  </data>
+  <data name="Qsl.Tarjeta.SinContacto" xml:space="preserve">
+    <value>(sans QSO : mes données seulement)</value>
+  </data>
+  <data name="Qsl.Tarjeta.TamanoInternacional" xml:space="preserve">
+    <value>Format international QSL : 140 × 90 mm.</value>
+  </data>
+  <data name="Qsl.Tarjeta.TarjetaNueva" xml:space="preserve">
+    <value>Nouvelle carte</value>
+  </data>
+  <data name="Qsl.Tarjeta.TarjetaVertical" xml:space="preserve">
+    <value>Carte en portrait</value>
+  </data>
+  <data name="Qsl.Tarjeta.Vertical" xml:space="preserve">
+    <value>Portrait (90 × 140 mm)</value>
+  </data>
+  <data name="Qsl.Tarjeta.VistaPreviaCon" xml:space="preserve">
+    <value>Aperçu avec</value>
+  </data>
+  <data name="Qsl.UsoDeImagen.Adorno" xml:space="preserve">
+    <value>Ornement</value>
+  </data>
+  <data name="Qsl.UsoDeImagen.Firma" xml:space="preserve">
+    <value>Signature</value>
+  </data>
+  <data name="Qsl.UsoDeImagen.Logo" xml:space="preserve">
+    <value>Logo</value>
+  </data>
+</root>

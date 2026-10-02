@@ -2,6 +2,7 @@ using System.Globalization;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 
@@ -48,16 +49,27 @@ public sealed record ResultadoTrabajadoAntes
     {
         get
         {
-            if (!TrabajadoAntes) return "Indicativo nuevo, no está en el cuaderno.";
+            if (!TrabajadoAntes) return Textos.T("Servicios.Aplicacion.TrabajadoAntes.Nuevo");
 
             var veces = HayMas
-                ? $"Trabajado antes {Veces} veces o más"
-                : Veces == 1 ? "Trabajado antes 1 vez" : $"Trabajado antes {Veces} veces";
+                ? Textos.F("Servicios.Aplicacion.TrabajadoAntes.VecesOMas", Veces)
+                : Veces == 1
+                    ? Textos.T("Servicios.Aplicacion.TrabajadoAntes.UnaVez")
+                    : Textos.F("Servicios.Aplicacion.TrabajadoAntes.Veces", Veces);
+
+            // La fecha como se escribe en el idioma en uso; la hora UTC, siempre «HH:mm».
             var ultima = UltimaVezUtc is { } u
-                ? $", la última el {u.UtcDateTime.ToString("dd-MM-yyyy HH:mm", CultureInfo.CurrentCulture)} UTC"
+                ? Textos.F(
+                    "Servicios.Aplicacion.TrabajadoAntes.Ultima",
+                    u.UtcDateTime.ToString(Textos.T("Comun.FormatoDeFecha"), Textos.Cultura) + " "
+                        + u.UtcDateTime.ToString("HH:mm", CultureInfo.InvariantCulture))
                 : string.Empty;
-            var bandas = Bandas.Count > 0 ? $" · Bandas: {string.Join(", ", Bandas)}" : string.Empty;
-            var modos = Modos.Count > 0 ? $" · Modos: {string.Join(", ", Modos)}" : string.Empty;
+            var bandas = Bandas.Count > 0
+                ? " · " + Textos.F("Servicios.Aplicacion.TrabajadoAntes.Bandas", string.Join(", ", Bandas))
+                : string.Empty;
+            var modos = Modos.Count > 0
+                ? " · " + Textos.F("Servicios.Aplicacion.TrabajadoAntes.Modos", string.Join(", ", Modos))
+                : string.Empty;
             return $"{veces}{ultima}.{bandas}{modos}";
         }
     }

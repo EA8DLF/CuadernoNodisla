@@ -9,6 +9,7 @@ using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.Ajustes;
 using Nodisla.Cuaderno.Ui.Conversores;
 using Nodisla.Cuaderno.Ui.Digital;
@@ -38,11 +39,46 @@ public sealed record EstadoDelCorrector(bool EsElCodigoReal, string Procedencia)
 
 /// <summary>Una opcion de un selector: el valor y como se llama.</summary>
 /// <typeparam name="T">Tipo del valor.</typeparam>
-/// <param name="Valor">El valor.</param>
-/// <param name="Nombre">Como se ve.</param>
-/// <param name="Detalle">Una segunda linea, si la hay.</param>
-public sealed record Opcion<T>(T Valor, string Nombre, string Detalle = "")
+/// <remarks>
+/// El nombre y el detalle se piden al leerlos y la opcion avisa al cambiar de idioma: asi el
+/// selector sigue al idioma en caliente sin rehacer la lista (ni perder lo elegido).
+/// </remarks>
+public sealed class Opcion<T> : ObservableObject
 {
+    private readonly Func<string> _nombre;
+    private readonly Func<string> _detalle;
+
+    /// <summary>Una opcion con textos fijos.</summary>
+    /// <param name="valor">El valor.</param>
+    /// <param name="nombre">Como se ve.</param>
+    /// <param name="detalle">Una segunda linea, si la hay.</param>
+    public Opcion(T valor, string nombre, string detalle = "")
+        : this(valor, () => nombre, () => detalle)
+    {
+    }
+
+    /// <summary>Una opcion cuyos textos dependen del idioma.</summary>
+    /// <param name="valor">El valor.</param>
+    /// <param name="nombre">Como se ve, en el idioma en uso.</param>
+    /// <param name="detalle">Una segunda linea, si la hay.</param>
+    public Opcion(T valor, Func<string> nombre, Func<string>? detalle = null)
+    {
+        ArgumentNullException.ThrowIfNull(nombre);
+        Valor = valor;
+        _nombre = nombre;
+        _detalle = detalle ?? (() => string.Empty);
+        Textos.AlCambiar(this, static o => o.OnPropertyChanged(string.Empty));
+    }
+
+    /// <summary>El valor.</summary>
+    public T Valor { get; }
+
+    /// <summary>Como se ve.</summary>
+    public string Nombre => _nombre();
+
+    /// <summary>Una segunda linea, si la hay.</summary>
+    public string Detalle => _detalle();
+
     /// <inheritdoc />
     public override string ToString() => Nombre;
 }
@@ -102,11 +138,11 @@ public sealed class FilaDeDecodificacionPropia
 
         // Lo que sale de un WAV no trae hora (llega el 1-1-1970): «00:00:00» era mentira.
         Hora = decodificacion.VentanaUtc.Year < 2000
-            ? "fichero"
+            ? Textos.T("Digital.Modem.Fichero")
             : decodificacion.VentanaUtc.UtcDateTime.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
         Decibelios = decodificacion.Decibelios.ToString("+00;-00;+00", CultureInfo.InvariantCulture);
-        Desfase = decodificacion.DesfaseSegundos.ToString("+0.0;-0.0;0.0", CultureInfo.CurrentCulture);
-        Tono = decodificacion.TonoHz.ToString("N0", CultureInfo.CurrentCulture);
+        Desfase = decodificacion.DesfaseSegundos.ToString("+0.0;-0.0;0.0", Textos.Cultura);
+        Tono = decodificacion.TonoHz.ToString("N0", Textos.Cultura);
         Texto = decodificacion.Texto;
         Indicativo = decodificacion.Llamante.EsVacio ? Mensaje.Llamante : decodificacion.Llamante.Valor;
         Localizador = decodificacion.Locator.EsVacio ? Mensaje.Locator : decodificacion.Locator.Valor;
@@ -123,7 +159,7 @@ public sealed class FilaDeDecodificacionPropia
         Hora = ventana.UtcDateTime.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
         Decibelios = "Tx";
         Desfase = string.Empty;
-        Tono = tonoHz.ToString("N0", CultureInfo.CurrentCulture);
+        Tono = tonoHz.ToString("N0", Textos.Cultura);
         Texto = texto;
         Indicativo = Mensaje.Llamado;
         Localizador = string.Empty;
@@ -369,16 +405,17 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         _permitirTransmitir = digital.RecordarPermisoDeTransmitir;
 
         var modos = modem?.ModosDisponibles ?? [ModoDelModem.Ft8, ModoDelModem.Ft4];
-        Modos = modos.Select(m => new Opcion<ModoDelModem>(m, DescripcionDelModo.Nombre(m), DescripcionDelModo.PeriodoTexto(m))).ToList();
+        Modos = modos.Select(m => new Opcion<ModoDelModem>(m, () => DescripcionDelModo.Nombre(m), () => DescripcionDelModo.PeriodoTexto(m))).ToList();
         if (Modos.All(o => o.Valor != _modo)) _modo = Modos[0].Valor;
         _modoElegido = Modos.First(o => o.Valor == _modo);
 
         Operaciones = Enum.GetValues<TipoDeOperacion>()
-            .Select(o => new Opcion<TipoDeOperacion>(o, GramaticaDeMensajes.Nombre(o))).ToList();
+            .Select(o => new Opcion<TipoDeOperacion>(o, () => GramaticaDeMensajes.Nombre(o))).ToList();
         _operacionElegida = Operaciones.First(o => o.Valor == digital.Operacion);
 
-        Paletas = Enum.GetValues<PaletaDeCascada>().Select(p => new Opcion<PaletaDeCascada>(p, p.ToString())).ToList();
-        _paletaElegida = Paletas.FirstOrDefault(p => string.Equals(p.Nombre, digital.PaletaDeLaCascada, StringComparison.OrdinalIgnoreCase)) ?? Paletas[0];
+        // En los ajustes se guarda el nombre interno de la paleta, no el traducido.
+        Paletas = Enum.GetValues<PaletaDeCascada>().Select(p => new Opcion<PaletaDeCascada>(p, () => NombreDePaleta(p))).ToList();
+        _paletaElegida = Paletas.FirstOrDefault(p => string.Equals(p.Valor.ToString(), digital.PaletaDeLaCascada, StringComparison.OrdinalIgnoreCase)) ?? Paletas[0];
 
         Pintor.GananciaDb = _gananciaDeLaCascada;
         Pintor.CeroDb = _ceroDeLaCascada;
@@ -421,7 +458,19 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         };
 
         GenerarMensajes();
+
+        // Los textos calculados (estado, secuencia, avisos de la transmision) siguen al idioma.
+        Textos.AlCambiar(this, static vm => vm.OnPropertyChanged(string.Empty));
     }
+
+    /// <summary>Nombre de una paleta de la cascada, en el idioma en uso.</summary>
+    public static string NombreDePaleta(PaletaDeCascada paleta) => paleta switch
+    {
+        PaletaDeCascada.Gris => Textos.T("Digital.Paleta.Gris"),
+        PaletaDeCascada.Fuego => Textos.T("Digital.Paleta.Fuego"),
+        PaletaDeCascada.Azul => Textos.T("Digital.Paleta.Azul"),
+        _ => paleta.ToString(),
+    };
 
     /// <summary>Salta cuando entra en el cuaderno un contacto hecho con el modem propio.</summary>
     public event EventHandler? CuadernoCambiado;
@@ -763,10 +812,10 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
     /// <summary>Si se esta escuchando o no, en una linea.</summary>
     public string EstadoTexto => !HayModem
-        ? "El módem propio no está montado en esta sesión."
+        ? Textos.T("Digital.Modem.Estado.SinModem")
         : Escuchando
-            ? $"Escuchando en {ModoTexto} · {DispositivoDeEntradaTexto}"
-            : "Parado";
+            ? Textos.F("Digital.Modem.Estado.Escuchando", ModoTexto, DispositivoDeEntradaTexto)
+            : Textos.T("Digital.Modem.Estado.Parado");
 
     /// <summary>El modo, en letras.</summary>
     public string ModoTexto => DescripcionDelModo.Nombre(Modo);
@@ -793,10 +842,14 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
     /// <summary>La secuencia, en una linea.</summary>
     public string EstadoDeLaSecuencia => !_secuenciador.Activo
-        ? TxHabilitado ? "Tx habilitado, sin secuencia en marcha." : "Secuencia parada."
-        : $"En marcha: toca Tx{_secuenciador.TxActual}"
-          + (_secuenciador.DxCall.Length > 0 ? $" con {_secuenciador.DxCall}" : string.Empty)
-          + (TxHabilitado ? string.Empty : " (Tx deshabilitado: no sale nada)");
+        ? Textos.T(TxHabilitado ? "Digital.Modem.Secuencia.TxSinSecuencia" : "Digital.Modem.Secuencia.Parada")
+        : (_secuenciador.DxCall.Length > 0, TxHabilitado) switch
+        {
+            (false, true) => Textos.F("Digital.Modem.Secuencia.EnMarcha", _secuenciador.TxActual),
+            (true, true) => Textos.F("Digital.Modem.Secuencia.EnMarchaCon", _secuenciador.TxActual, _secuenciador.DxCall),
+            (false, false) => Textos.F("Digital.Modem.Secuencia.EnMarchaSinTx", _secuenciador.TxActual),
+            (true, false) => Textos.F("Digital.Modem.Secuencia.EnMarchaConSinTx", _secuenciador.TxActual, _secuenciador.DxCall),
+        };
 
     /// <summary>La frecuencia de trabajo del modo para la banda del dial, en letras.</summary>
     public string FrecuenciaDelModoTexto
@@ -805,8 +858,8 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         {
             var f = Digital.FrecuenciasDeTrabajo.Para(FrecuenciasDeTrabajo, Modo, _dial);
             return f is null
-                ? $"No hay frecuencia de trabajo para {ModoTexto}."
-                : string.Create(CultureInfo.CurrentCulture, $"{ModoTexto} en {f.Banda}: {f.Megahercios:0.000###} MHz");
+                ? Textos.F("Digital.Modem.SinFrecuenciaDeTrabajo", ModoTexto)
+                : Textos.F("Digital.Modem.FrecuenciaDelModo", ModoTexto, f.Banda, f.Megahercios.ToString("0.000###", CultureInfo.CurrentCulture));
         }
     }
 
@@ -821,14 +874,14 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             var destino = Coordenada.Desde(suyo);
             var km = Geodesia.DistanciaKm(origen, destino);
             var rumbo = Geodesia.RumboGrados(origen, destino);
-            return string.Create(CultureInfo.CurrentCulture, $"{km:N0} km · {rumbo:0}°");
+            return string.Create(Textos.Cultura, $"{km:N0} km · {rumbo:0}°");
         }
     }
 
     /// <summary>Cuantas recepciones han salido hacia PSK Reporter.</summary>
     public string PskReporterTexto => !PskReporterActivo
-        ? "PSK Reporter apagado."
-        : string.Create(CultureInfo.CurrentCulture, $"PSK Reporter: {RecepcionesInformadas} enviadas, {_psk.Pendientes} pendientes.");
+        ? Textos.T("Digital.Modem.PskApagado")
+        : Textos.F("Digital.Modem.Psk", RecepcionesInformadas, _psk.Pendientes);
 
     /// <summary>Dispositivo de entrada que se va a abrir, dicho con su nombre.</summary>
     public string DispositivoDeEntradaTexto
@@ -841,8 +894,8 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             if (elegido is not null) return elegido.Nombre;
 
             return _ajustes.Digital.NombreDeEntrada is { Length: > 0 } guardado
-                ? $"{guardado} (no está)"
-                : "sin dispositivo de entrada";
+                ? Textos.F("Digital.Modem.DispositivoNoEsta", guardado)
+                : Textos.T("Digital.Modem.SinDispositivoDeEntrada");
         }
     }
 
@@ -857,10 +910,10 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
     /// <summary>El nivel de entrada, en palabras y corto.</summary>
     public string NivelTexto => NivelSatura
-        ? string.Create(CultureInfo.CurrentCulture, $"{NivelDeEntrada:0.00} — SATURANDO")
+        ? Textos.F("Digital.Modem.Nivel.Saturando", NivelDeEntrada)
         : NivelCorto
-            ? string.Create(CultureInfo.CurrentCulture, $"{NivelDeEntrada:0.00} — muy bajo")
-            : string.Create(CultureInfo.CurrentCulture, $"{NivelDeEntrada:0.00}");
+            ? Textos.F("Digital.Modem.Nivel.MuyBajo", NivelDeEntrada)
+            : string.Create(Textos.Cultura, $"{NivelDeEntrada:0.00}");
 
     /// <summary>Hay algo que decir.</summary>
     public bool HayAviso => !string.IsNullOrEmpty(Aviso);
@@ -876,10 +929,10 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
     /// <summary>Por que el botón de emitir está como está.</summary>
     public string AvisoDeLaTransmision => _salida?.Abierto is null
-        ? "No hay salida de audio abierta: el módem no puede transmitir. Pulse «Escuchar» primero."
+        ? Textos.T("Digital.Modem.Transmision.SinSalida")
         : PermitirTransmitir
-            ? "TRANSMISIÓN PERMITIDA. Cada envío son trece segundos con el equipo en antena."
-            : "La transmisión está cerrada con pestillo. Ábralo sólo con la antena o la carga artificial puestas.";
+            ? Textos.T("Digital.Modem.Transmision.Permitida")
+            : Textos.T("Digital.Modem.Transmision.Cerrada");
 
     /// <summary>El secuenciador, para que las pruebas lo miren.</summary>
     public SecuenciadorDeQso Secuenciador => _secuenciador;
@@ -954,7 +1007,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         d.GananciaDeLaCascadaDb = GananciaDeLaCascada;
         d.CeroDeLaCascadaDb = CeroDeLaCascada;
         d.PromedioDeColumnas = PromedioDeColumnas;
-        d.PaletaDeLaCascada = PaletaElegida.Nombre;
+        d.PaletaDeLaCascada = PaletaElegida.Valor.ToString();
         d.AnchoVisibleHz = AnchoVisibleHz;
         d.FrecuenciasDeTrabajo = FrecuenciasDeTrabajo.ToList();
         d.Acotar();
@@ -993,7 +1046,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
                 var dispositivo = ElegirLaEntrada();
                 if (dispositivo is null)
                 {
-                    Aviso = "No hay ningún dispositivo de entrada que abrir. Elija uno en Configuración › Audio y digitales.";
+                    Aviso = Textos.T("Digital.Modem.Aviso.SinEntrada");
                     return;
                 }
 
@@ -1007,8 +1060,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
                 var dispositivoDeSalida = ElegirLaSalida();
                 if (dispositivoDeSalida is null)
                 {
-                    Aviso = "No hay ningún dispositivo de salida que abrir: no se podrá transmitir. " +
-                            "Elija uno en Configuración › Audio y digitales.";
+                    Aviso = Textos.T("Digital.Modem.Aviso.SinSalida");
                 }
                 else
                 {
@@ -1021,7 +1073,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
                     catch (Exception ex)
                     {
                         Log.Error(ex, "No se ha podido abrir la salida de audio del módem propio.");
-                        Aviso = $"No se podrá transmitir: no se ha podido abrir «{dispositivoDeSalida.Nombre}»: {ex.Message}";
+                        Aviso = Textos.F("Digital.Modem.Aviso.NoSeAbreLaSalida", dispositivoDeSalida.Nombre, ex.Message);
                     }
                 }
             }
@@ -1041,7 +1093,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido arrancar el módem propio.");
-            Aviso = $"No se ha podido escuchar: {ex.Message}";
+            Aviso = Textos.F("Digital.Aviso.NoSePudoEscuchar", ex.Message);
             _arrancando = false;
             await PararAsync().ConfigureAwait(true);
         }
@@ -1180,7 +1232,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     {
         if (EsBaliza)
         {
-            Aviso = $"{ModoTexto} es una baliza: no se llama CQ.";
+            Aviso = Textos.F("Digital.Modem.Aviso.BalizaNoCq", ModoTexto);
             return;
         }
 
@@ -1190,7 +1242,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         OnPropertyChanged(nameof(EstadoDeLaSecuencia));
 
         if (!TxHabilitado && !IntentarHabilitarTx()) return;
-        Informar($"Llamando CQ: Tx6 sale al empezar la próxima ventana ({ProximaVentanaTexto(_secuenciador.Paridad)}).");
+        Informar(Textos.F("Digital.Modem.Aviso.LlamandoCq", ProximaVentanaTexto(_secuenciador.Paridad)));
         await EmitirSiEsSuVentanaAsync().ConfigureAwait(true);
     }
 
@@ -1212,7 +1264,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
             if (EsBaliza)
             {
-                Aviso = $"{ModoTexto} es una baliza: aquí no hay secuencia que habilitar.";
+                Aviso = Textos.F("Digital.Modem.Aviso.BalizaSinSecuencia", ModoTexto);
                 return;
             }
 
@@ -1221,7 +1273,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             if (!_secuenciador.Activo) _secuenciador.Enviar(TxSiguiente, Reloj.Ahora);
             else _secuenciador.ElegirSiguiente(TxSiguiente);
 
-            Informar($"Tx habilitado: Tx{TxSiguiente} sale al empezar la próxima ventana propia ({ProximaVentanaTexto(_secuenciador.Paridad)}).");
+            Informar(Textos.F("Digital.Modem.Aviso.TxHabilitadoSale", TxSiguiente, ProximaVentanaTexto(_secuenciador.Paridad)));
             await EmitirSiEsSuVentanaAsync().ConfigureAwait(true);
         }
         finally
@@ -1252,12 +1304,12 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             catch (Exception ex)
             {
                 Log.Error(ex, "No se ha podido cortar la emisión al detener.");
-                Aviso = $"No se ha podido cortar la emisión: {ex.Message}";
+                Aviso = Textos.F("Digital.Modem.Aviso.NoSePudoCortar", ex.Message);
                 return;
             }
         }
 
-        Informar(habiaEmision ? "Detenido: emisión cortada y secuencia parada." : "Secuencia parada y Tx deshabilitado.");
+        Informar(Textos.T(habiaEmision ? "Digital.Modem.Aviso.DetenidoConEmision" : "Digital.Modem.Aviso.DetenidoSinEmision"));
     }
 
     /// <summary>Para la secuencia y deshabilita Tx, sin tocar lo que ya esta sonando.</summary>
@@ -1289,7 +1341,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         var suyo = mensaje.Llamante.Length > 0 ? mensaje.Llamante : fila.Indicativo;
         if (suyo.Length == 0)
         {
-            Aviso = "Esa decodificación no trae un indicativo del que se pueda sacar un contacto.";
+            Aviso = Textos.T("Digital.Modem.Aviso.SinIndicativo");
             return;
         }
 
@@ -1329,7 +1381,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         }
 
         OnPropertyChanged(nameof(EstadoDeLaSecuencia));
-        Aviso = $"Contacto preparado con {suyo}: toca Tx{TxSiguiente}. Nada ha salido al aire todavía.";
+        Aviso = Textos.F("Digital.Modem.Aviso.ContactoPreparado", suyo, TxSiguiente);
 
         if (decision.ContactoCompleto)
         {
@@ -1345,7 +1397,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         // No se usa el «ya toca» del secuenciador para emitir: se emite solo si AHORA es el
         // principio de una ventana propia. Antes se emitia en el acto y, pulsando a media
         // ventana, se salia encima del corresponsal.
-        Aviso = $"Contestando a {suyo}: Tx{TxSiguiente} sale al empezar la próxima ventana propia ({ProximaVentanaTexto(_secuenciador.Paridad)}).";
+        Aviso = Textos.F("Digital.Modem.Aviso.Contestando", suyo, TxSiguiente, ProximaVentanaTexto(_secuenciador.Paridad));
         await EmitirSiEsSuVentanaAsync().ConfigureAwait(true);
     }
 
@@ -1383,13 +1435,13 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     {
         if (!Indicativo.TryParse(Corresponsal, out var suyo))
         {
-            Aviso = $"El indicativo «{Corresponsal}» no tiene una forma válida.";
+            Aviso = Textos.F("Digital.Modem.Aviso.IndicativoNoValido", Corresponsal);
             return;
         }
 
         if (_contactoYaGuardado)
         {
-            Aviso = $"El contacto con {suyo.Valor} ya se guardó solo al completarse.";
+            Aviso = Textos.F("Digital.Modem.Aviso.YaGuardado", suyo.Valor);
             return;
         }
 
@@ -1397,7 +1449,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         if (!await MeterEnElCuadernoAsync(qso).ConfigureAwait(true)) return;
 
         OlvidarContacto();
-        Aviso = $"Contacto con {suyo.Valor} guardado en el cuaderno.";
+        Aviso = Textos.F("Digital.Aviso.ContactoGuardado", suyo.Valor);
         CuadernoCambiado?.Invoke(this, EventArgs.Empty);
     }
 
@@ -1433,7 +1485,9 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
         _ultimoGuardadoSolo = (suyo.Valor, banda, modo, fin);
         Log.Information("Contacto con {Indicativo} guardado solo al completarse ({Banda} {Modo}).", suyo.Valor, banda, modo);
-        Informar(banda.Length > 0 ? $"Guardado: {suyo.Valor} {banda} {modo}" : $"Guardado: {suyo.Valor} {modo}");
+        Informar(banda.Length > 0
+            ? Textos.F("Digital.Modem.Aviso.GuardadoSolo", suyo.Valor, banda, modo)
+            : Textos.F("Digital.Modem.Aviso.GuardadoSoloSinBanda", suyo.Valor, modo));
         CuadernoCambiado?.Invoke(this, EventArgs.Empty);
     }
 
@@ -1450,7 +1504,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         if (_secuenciador.Activo && _secuenciador.TxActual == 4)
         {
             _guardarTrasElRr73 = true;
-            Aviso = $"Contacto con {Corresponsal} completo: se guarda al salir el RR73.";
+            Aviso = Textos.F("Digital.Modem.Aviso.SeGuardaTrasRr73", Corresponsal);
             return;
         }
 
@@ -1498,7 +1552,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
             if (!resultado.Correcto)
             {
-                Aviso = $"No se ha podido guardar: {string.Join("; ", resultado.Errores)}";
+                Aviso = Textos.F("Digital.Aviso.NoSePudoGuardar", string.Join("; ", resultado.Errores));
                 return false;
             }
 
@@ -1508,7 +1562,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido guardar el contacto del módem propio.");
-            Aviso = $"No se ha podido guardar el contacto: {ex.Message}";
+            Aviso = Textos.F("Digital.Aviso.NoSePudoGuardarElContacto", ex.Message);
             return false;
         }
     }
@@ -1527,7 +1581,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         var texto = MensajeAEmitir.Trim();
         if (texto.Length == 0)
         {
-            Aviso = "No hay mensaje que emitir.";
+            Aviso = Textos.T("Digital.Modem.Aviso.SinMensaje");
             return;
         }
 
@@ -1557,7 +1611,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         }
 
         _librePendiente = (texto, paridad);
-        Aviso = $"«{texto}» sale al empezar la próxima ventana ({ProximaVentanaTexto(paridad)}). «Detener» lo anula.";
+        Aviso = Textos.F("Digital.Modem.Aviso.LibrePendiente", texto, ProximaVentanaTexto(paridad));
     }
 
     /// <summary>
@@ -1579,13 +1633,13 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             // El aviso dice lo que ha pasado de verdad y se va solo: antes se quedaba puesto
             // para siempre, aunque no hubiera habido ninguna emision que cortar.
             Informar(habiaEmision
-                ? "Emisión cortada y PTT soltado."
-                : "No había emisión en curso. PTT soltado por si acaso y secuencia parada.");
+                ? Textos.T("Digital.Modem.Aviso.EmisionCortada")
+                : Textos.T("Digital.Modem.Aviso.NoHabiaEmision"));
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido abortar la emisión.");
-            Aviso = $"No se ha podido cortar la emisión: {ex.Message}";
+            Aviso = Textos.F("Digital.Modem.Aviso.NoSePudoCortar", ex.Message);
         }
     }
 
@@ -1598,7 +1652,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         var f = Digital.FrecuenciasDeTrabajo.Para(FrecuenciasDeTrabajo, Modo, _dial);
         if (f is null)
         {
-            Aviso = $"No hay frecuencia de trabajo apuntada para {ModoTexto}.";
+            Aviso = Textos.F("Digital.Modem.Aviso.SinFrecuenciaApuntada", ModoTexto);
             return;
         }
 
@@ -1653,16 +1707,16 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
         try
         {
-            Aviso = $"Decodificando «{Path.GetFileName(ruta)}»…";
+            Aviso = Textos.F("Digital.Modem.Aviso.Decodificando", Path.GetFileName(ruta));
             var decodificaciones = await _modem.DecodificarFicheroAsync(ruta, Modo).ConfigureAwait(true);
             var ventana = new VentanaDecodificada(DateTimeOffset.UtcNow, decodificaciones, TimeSpan.Zero, double.NaN);
             await ProcesarVentanaAsync(ventana, alimentarLaSecuencia: false).ConfigureAwait(true);
-            Aviso = $"«{Path.GetFileName(ruta)}»: {decodificaciones.Count} decodificaciones.";
+            Aviso = Textos.F("Digital.Modem.Aviso.Decodificado", Path.GetFileName(ruta), decodificaciones.Count);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido decodificar el fichero {Ruta}.", ruta);
-            Aviso = $"No se ha podido decodificar el fichero: {ex.Message}";
+            Aviso = Textos.F("Digital.Modem.Aviso.NoSePudoDecodificar", ex.Message);
         }
     }
 
@@ -1680,14 +1734,14 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         var texto = Mensajes[tx - 1].Texto.Trim();
         if (texto.Length == 0 || texto.Contains('<', StringComparison.Ordinal))
         {
-            Aviso = $"Tx{tx} está incompleto: «{texto}». Rellene el DX y el localizador propio.";
+            Aviso = Textos.F("Digital.Modem.Aviso.TxIncompleto", tx, texto);
             DetenerTx();
             return;
         }
 
         if (OperacionElegida.Valor == TipoDeOperacion.Hound && TonoDeTransmision < TonoMinimoDeHound && tx == 1)
         {
-            Aviso = $"En hound se llama por encima de {TonoMinimoDeHound} Hz. Suba el tono de transmisión.";
+            Aviso = Textos.F("Digital.Modem.Aviso.HoundTono", TonoMinimoDeHound);
             DetenerTx();
             return;
         }
@@ -1720,8 +1774,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
         if (Reloj.RelojFueraDeVentana)
         {
-            Aviso = "No se transmite con el reloj así: se emitiría fuera de ventana y se molestaría "
-                    + "a los demás. Ponga el reloj en hora primero.";
+            Aviso = Textos.T("Digital.Modem.Aviso.RelojMal");
             if (tx > 0) DetenerTx();
             return false;
         }
@@ -1733,7 +1786,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         {
             var ventana = Reloj.Ahora;
             await _modem.EmitirAsync(texto, TonoDeTransmision).ConfigureAwait(true);
-            Informar($"Emitido «{texto}».");
+            Informar(Textos.F("Digital.Modem.Aviso.Emitido", texto));
             AnadirALaLista(FilaDeDecodificacionPropia.DeTransmision(texto, TonoDeTransmision, ventana, Modo));
             if (tx > 0 && HayContactoEnCurso) _inicioDelContacto ??= ventana;
             ApuntarEnElRegistro(ventana, "Tx", texto, 0, 0, TonoDeTransmision);
@@ -1745,7 +1798,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             // El módem envuelve el motivo en una ArgumentException, que le pega «(Parameter
             // 'texto')»: al operador se le enseña el motivo tal cual, que ya está en español.
             var motivo = ex is ArgumentException { InnerException: FormatException f } ? f.Message : ex.Message;
-            Aviso = $"No se ha podido emitir: {motivo}";
+            Aviso = Textos.F("Digital.Modem.Aviso.NoSePudoEmitir", motivo);
             if (tx > 0) DetenerTx();
             return false;
         }
@@ -1763,11 +1816,11 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     {
         if (!SePuedeEmitir)
         {
-            Aviso = "Preparado, pero no sale nada: " + AvisoDeLaTransmision;
+            Aviso = Textos.F("Digital.Modem.Aviso.PreparadoSinSalir", AvisoDeLaTransmision);
             return false;
         }
 
-        if (!OperadorConforme("la secuencia automática: cada ventana propia son trece segundos en antena hasta que termine el contacto o se pulse «Detener»"))
+        if (!OperadorConforme(Textos.T("Digital.Modem.Pregunta.Secuencia")))
         {
             return false;
         }
@@ -1806,7 +1859,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     {
         var periodo = DescripcionDelModo.Periodo(Modo);
         var inicio = ComienzoDeVentana(Reloj.Ahora, periodo);
-        if (EsMomentoDeEmitir(paridad)) return "ahora";
+        if (EsMomentoDeEmitir(paridad)) return Textos.T("Digital.Modem.Ahora");
 
         var siguiente = inicio + periodo;
         if (paridad >= 0 && SecuenciadorDeQso.ParidadDe(siguiente, periodo) != paridad) siguiente += periodo;
@@ -1847,7 +1900,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         if (decision.ContactoCompleto)
         {
             ContactoCompleto = true;
-            Aviso = $"Contacto con {Corresponsal} completo: guárdelo en el cuaderno.";
+            Aviso = Textos.F("Digital.Modem.Aviso.GuardeloEnElCuaderno", Corresponsal);
             AlCompletarseElContacto();
         }
 
@@ -1953,16 +2006,15 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             if (!double.IsNaN(ventana.RuidoDbm))
             {
                 LlegoTarde = ventana.LlegoTarde;
-                UltimaVentana = string.Create(
-                    CultureInfo.CurrentCulture,
-                    $"{ventana.VentanaUtc.UtcDateTime:HH:mm:ss} UTC · "
-                    + $"{ventana.Decodificaciones.Count} decodificaciones en "
-                    + $"{ventana.DuracionDelProceso.TotalSeconds:0.0} s");
+                UltimaVentana = Textos.F(
+                    "Digital.Modem.UltimaVentana",
+                    ventana.VentanaUtc.UtcDateTime.ToString("HH:mm:ss", CultureInfo.InvariantCulture),
+                    ventana.Decodificaciones.Count,
+                    ventana.DuracionDelProceso.TotalSeconds);
 
                 if (ventana.LlegoTarde)
                 {
-                    Aviso = "La ventana ha tardado más que el propio período: el ordenador no da abasto "
-                            + "y se están perdiendo decodificaciones.";
+                    Aviso = Textos.T("Digital.Modem.Aviso.VentanaTarde");
                 }
             }
 
@@ -2096,10 +2148,10 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     }
 
     private void AlPerderMuestras(object? origen, HuecoDeAudio hueco) => Hilo.EnLaVentana(() =>
-        Aviso = string.Create(
-            CultureInfo.CurrentCulture,
-            $"Se han perdido {hueco.Muestras:N0} muestras de audio a las "
-            + $"{hueco.InstanteUtc.UtcDateTime:HH:mm:ss} UTC: esa ventana no decodificará bien."));
+        Aviso = Textos.F(
+            "Digital.Modem.Aviso.MuestrasPerdidas",
+            hueco.Muestras,
+            hueco.InstanteUtc.UtcDateTime.ToString("HH:mm:ss", CultureInfo.InvariantCulture)));
 
     private async Task EnviarAPskReporterAsync()
     {
@@ -2126,19 +2178,19 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     {
         if (_equipo is null)
         {
-            Aviso = "No hay equipo al que mandar: conecte la radio en Operar.";
+            Aviso = Textos.T("Digital.Modem.Aviso.SinEquipo");
             return;
         }
 
         try
         {
             await _equipo.PonerFrecuenciaAsync(f.Frecuencia).ConfigureAwait(true);
-            Aviso = string.Create(CultureInfo.CurrentCulture, $"Equipo en {f.Megahercios:0.000###} MHz ({f.ModoTexto}, {f.Banda}).");
+            Aviso = Textos.F("Digital.Modem.Aviso.EquipoEn", f.Megahercios.ToString("0.000###", CultureInfo.CurrentCulture), f.ModoTexto, f.Banda);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido mover el equipo a la frecuencia de trabajo.");
-            Aviso = $"No se ha podido mover el equipo: {ex.Message}";
+            Aviso = Textos.F("Digital.Modem.Aviso.NoSePudoMover", ex.Message);
         }
     }
 

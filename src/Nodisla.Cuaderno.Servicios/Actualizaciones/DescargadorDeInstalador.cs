@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Servicios.Actualizaciones;
 
@@ -79,13 +80,13 @@ public sealed partial class DescargadorDeInstalador
         if (version.Instalador is null)
         {
             return new ResultadoDeDescarga(EstadoDeDescarga.Fallida,
-                Motivo: "La versión publicada no trae instalador. Descárguela desde la página de GitHub.");
+                Motivo: Textos.T("Servicios.Actualizaciones.SinInstalador"));
         }
 
         if (version.Suma is null)
         {
             return new ResultadoDeDescarga(EstadoDeDescarga.Fallida,
-                Motivo: "La versión publicada no trae el fichero .sha256; sin él no se puede comprobar el instalador y no se instala.");
+                Motivo: Textos.T("Servicios.Actualizaciones.SinSha"));
         }
 
         string? parcial = null;
@@ -98,7 +99,7 @@ public sealed partial class DescargadorDeInstalador
             if (esperada is null)
             {
                 return new ResultadoDeDescarga(EstadoDeDescarga.Fallida,
-                    Motivo: "El fichero .sha256 publicado no contiene una suma SHA-256 legible.");
+                    Motivo: Textos.T("Servicios.Actualizaciones.ShaIlegible"));
             }
 
             var destino = Path.Combine(_carpeta, NombreSeguro(version.Etiqueta));
@@ -114,7 +115,7 @@ public sealed partial class DescargadorDeInstalador
             var total = respuesta.Content.Headers.ContentLength ?? version.Instalador.Bytes;
             if (total > TamanoMaximo)
             {
-                return new ResultadoDeDescarga(EstadoDeDescarga.Fallida, Motivo: "El instalador anunciado es demasiado grande.");
+                return new ResultadoDeDescarga(EstadoDeDescarga.Fallida, Motivo: Textos.T("Servicios.Actualizaciones.DemasiadoGrande"));
             }
 
             string obtenida;
@@ -144,7 +145,7 @@ public sealed partial class DescargadorDeInstalador
                     "La suma SHA-256 del instalador {Nombre} no casa: esperada {Esperada}, obtenida {Obtenida}. No se instala.",
                     nombre, esperada, obtenida);
                 return new ResultadoDeDescarga(EstadoDeDescarga.SumaNoCasa,
-                    Motivo: "El instalador descargado no coincide con la suma SHA-256 publicada. Se ha borrado y no se instalará.");
+                    Motivo: Textos.T("Servicios.Actualizaciones.NoCoincide"));
             }
 
             if (File.Exists(final)) File.Delete(final);
@@ -165,7 +166,7 @@ public sealed partial class DescargadorDeInstalador
             if (parcial is not null) BorrarSinFallar(parcial);
             _log.LogWarning(ex, "No se ha podido descargar el instalador.");
             return new ResultadoDeDescarga(EstadoDeDescarga.Fallida,
-                Motivo: "No se ha podido descargar el instalador. Compruebe la conexión e inténtelo más tarde.");
+                Motivo: Textos.T("Servicios.Actualizaciones.NoDescargado"));
         }
     }
 

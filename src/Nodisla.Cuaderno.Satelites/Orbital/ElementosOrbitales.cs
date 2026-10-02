@@ -1,4 +1,4 @@
-using System.Globalization;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Satelites.Orbital;
 
@@ -106,14 +106,12 @@ public sealed record ElementosOrbitales
     /// </remarks>
     public string DescribirAntiguedad(DateTimeOffset ahoraUtc, TimeSpan frescura)
     {
-        var es = CultureInfo.GetCultureInfo("es-ES");
-        var epoca = Epoca.ToUniversalTime().ToString("dd/MM/yyyy HH:mm", es);
+        var epoca = Epoca.ToUniversalTime().ToString("dd/MM/yyyy HH:mm", Textos.Cultura);
         var edad = TextoDeEdad(Antiguedad(ahoraUtc));
 
         return EstanFrescos(ahoraUtc, frescura)
-            ? $"Elementos del {epoca} UTC, hace {edad}."
-            : $"Elementos caducados: son del {epoca} UTC, hace {edad}. "
-              + "La predicción se degrada; conviene descargarlos otra vez.";
+            ? Textos.F("Servicios.Satelites.ElementosDel", epoca, edad)
+            : Textos.F("Servicios.Satelites.ElementosCaducados", epoca, edad);
     }
 
     /// <summary>Pone una duracion en palabras cortas: "35 min", "2 h 10 min", "3 días".</summary>
@@ -122,22 +120,24 @@ public sealed record ElementosOrbitales
     {
         if (edad < TimeSpan.FromMinutes(1))
         {
-            return "menos de un minuto";
+            return Textos.T("Servicios.Propagacion.Edad.MenosDeUnMinuto");
         }
 
         if (edad < TimeSpan.FromHours(1))
         {
-            return $"{(int)edad.TotalMinutes} min";
+            return Textos.F("Servicios.Propagacion.Edad.Minutos", (int)edad.TotalMinutes);
         }
 
         if (edad < TimeSpan.FromDays(1))
         {
             var horas = (int)edad.TotalHours;
             var minutos = edad.Minutes;
-            return minutos == 0 ? $"{horas} h" : $"{horas} h {minutos} min";
+            return minutos == 0
+                ? Textos.F("Servicios.Propagacion.Edad.Horas", horas)
+                : Textos.F("Servicios.Propagacion.Edad.HorasYMinutos", horas, minutos);
         }
 
         var dias = (int)edad.TotalDays;
-        return dias == 1 ? "1 día" : $"{dias} días";
+        return dias == 1 ? Textos.T("Servicios.Propagacion.Edad.UnDia") : Textos.F("Servicios.Propagacion.Edad.Dias", dias);
     }
 }

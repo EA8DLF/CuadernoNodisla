@@ -181,6 +181,22 @@ public sealed class TarjetaQslPruebas : IDisposable
         });
 
     [Fact]
+    public Task Los_colores_del_diseno_son_los_de_la_tarjeta_abierta() =>
+        HiloDeVentana.Ejecutar(async () =>
+        {
+            var (servicio, _, _, _) = Montar();
+            var editor = new VistaModeloQsl(servicio);
+            await editor.RefrescarAsync();
+            editor.ColorDeFondo = "#F5EBD7";
+            editor.Campos[0].Visible = true;
+            editor.Campos[0].Color = "#9B111E";
+            editor.Campos[0].ColorDeRecuadro = "#E6FFFFFF";
+
+            var codigos = PaletaDeColores.DelDiseno(editor.ColoresEnUso()).Select(m => m.Codigo).ToList();
+            codigos.Should().StartWith("#F5EBD7").And.Contain(["#9B111E", "#E6FFFFFF"]).And.OnlyHaveUniqueItems();
+        });
+
+    [Fact]
     public Task Editor_y_ventana_de_envio_se_pintan_sin_enlaces_rotos() =>
         HiloDeVentana.Ejecutar(async () =>
         {

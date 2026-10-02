@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Modos.Tablas;
 
 namespace Nodisla.Cuaderno.Modos.Wspr;
@@ -98,10 +99,10 @@ public sealed record MensajeWspr
     public static MensajeWspr Tipo1(string indicativo, string localizador, int potenciaDbm)
     {
         var ind = NormalizarIndicativo(indicativo);
-        if (!TryComprimirIndicativo(ind, out _)) throw new FormatException($"El indicativo «{indicativo}» no cabe en un mensaje de tipo 1.");
+        if (!TryComprimirIndicativo(ind, out _)) throw new FormatException(Textos.F("Servicios.Modos.Wspr.IndicativoTipo1", indicativo));
         var loc = localizador.Trim().ToUpperInvariant();
-        if (!TryComprimirLocalizador(loc, out _)) throw new FormatException($"El localizador «{localizador}» no vale: hacen falta cuatro caracteres, de AA00 a RR99.");
-        if (!TablasWspr.EsPotenciaValida(potenciaDbm)) throw new FormatException($"La potencia {potenciaDbm} dBm no es de las que admite WSPR (0, 3, 7, 10, 13... 60).");
+        if (!TryComprimirLocalizador(loc, out _)) throw new FormatException(Textos.F("Servicios.Modos.Wspr.Localizador4", localizador));
+        if (!TablasWspr.EsPotenciaValida(potenciaDbm)) throw new FormatException(Textos.F("Servicios.Modos.Wspr.PotenciaLista", potenciaDbm));
         return new MensajeWspr(1, ind, loc, potenciaDbm, 0);
     }
 
@@ -110,8 +111,8 @@ public sealed record MensajeWspr
     public static MensajeWspr Tipo2(string indicativoCompuesto, int potenciaDbm)
     {
         var ind = NormalizarIndicativo(indicativoCompuesto);
-        if (!TryComprimirCompuesto(ind, out _, out _, out _)) throw new FormatException($"El indicativo «{indicativoCompuesto}» no cabe en un mensaje de tipo 2: hace falta un prefijo de hasta tres caracteres o un sufijo de un caracter o de dos cifras.");
-        if (!TablasWspr.EsPotenciaValida(potenciaDbm)) throw new FormatException($"La potencia {potenciaDbm} dBm no es de las que admite WSPR.");
+        if (!TryComprimirCompuesto(ind, out _, out _, out _)) throw new FormatException(Textos.F("Servicios.Modos.Wspr.IndicativoTipo2", indicativoCompuesto));
+        if (!TablasWspr.EsPotenciaValida(potenciaDbm)) throw new FormatException(Textos.F("Servicios.Modos.Wspr.Potencia", potenciaDbm));
         return new MensajeWspr(2, ind, string.Empty, potenciaDbm, 0);
     }
 
@@ -120,10 +121,10 @@ public sealed record MensajeWspr
     public static MensajeWspr Tipo3(string indicativoCompuesto, string localizador6, int potenciaDbm)
     {
         var ind = NormalizarIndicativo(indicativoCompuesto);
-        if (!Dominio.Valores.Indicativo.EsFormaValida(ind)) throw new FormatException($"El indicativo «{indicativoCompuesto}» no tiene forma de indicativo.");
+        if (!Dominio.Valores.Indicativo.EsFormaValida(ind)) throw new FormatException(Textos.F("Servicios.Modos.Wspr.SinForma", indicativoCompuesto));
         var loc = localizador6.Trim().ToUpperInvariant();
-        if (loc.Length != 6 || !Locator.TryParse(loc, out _)) throw new FormatException($"El localizador «{localizador6}» no vale: hacen falta seis caracteres.");
-        if (!TablasWspr.EsPotenciaValida(potenciaDbm)) throw new FormatException($"La potencia {potenciaDbm} dBm no es de las que admite WSPR.");
+        if (loc.Length != 6 || !Locator.TryParse(loc, out _)) throw new FormatException(Textos.F("Servicios.Modos.Wspr.Localizador6", localizador6));
+        if (!TablasWspr.EsPotenciaValida(potenciaDbm)) throw new FormatException(Textos.F("Servicios.Modos.Wspr.Potencia", potenciaDbm));
         return new MensajeWspr(3, ind, loc, potenciaDbm, HashDeIndicativo.Calcular(ind));
     }
 
@@ -165,7 +166,7 @@ public sealed record MensajeWspr
                     mensaje = Tipo1(partes[0], partes[1], LeerPotencia(partes[2]));
                     return true;
                 default:
-                    motivo = "Un mensaje de WSPR es «indicativo localizador potencia», «indicativo/sufijo potencia» o «<indicativo> localizador6 potencia».";
+                    motivo = Textos.T("Servicios.Modos.Wspr.Forma");
                     return false;
             }
         }
@@ -289,7 +290,7 @@ public sealed record MensajeWspr
     private static int LeerPotencia(string texto) =>
         int.TryParse(texto, NumberStyles.Integer, CultureInfo.InvariantCulture, out var p)
             ? p
-            : throw new FormatException($"La potencia «{texto}» no es un numero.");
+            : throw new FormatException(Textos.F("Servicios.Modos.Wspr.PotenciaNoNumero", texto));
 
     private static string NormalizarIndicativo(string? indicativo) =>
         (indicativo ?? string.Empty).Trim().ToUpperInvariant();

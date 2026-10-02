@@ -55,10 +55,11 @@ public sealed class EntradaDeAudioSimulada : IEntradaDeAudio
     {
         Abierto = Inventados.FirstOrDefault(d => d.Id == idDispositivo) ?? Inventados[0];
         _frecuencia = frecuenciaDeMuestreo > 0 ? frecuenciaDeMuestreo : 48_000;
+        _llave700 = _llave940 = null;
 
         // Nunca hay huecos: no hay tarjeta que se atasque.
         _ = MuestrasPerdidas;
-        _reloj ??= new Timer(_ => Inventar(), null, TimeSpan.Zero, TimeSpan.FromMilliseconds(20));
+        if (!SinReloj) _reloj ??= new Timer(_ => Inventar(), null, TimeSpan.Zero, TimeSpan.FromMilliseconds(20));
         return Task.CompletedTask;
     }
 
@@ -83,15 +84,48 @@ public sealed class EntradaDeAudioSimulada : IEntradaDeAudio
         _reloj = null;
     }
 
-    /// <summary>20 ms de audio de recepcion inventado: ruido, un tono de 700 Hz y otro que va y viene.</summary>
+    /// <summary>Lo que se oye en telegrafía a 700 Hz, en bucle (22 WPM).</summary>
+    public const string TextoCw = "CQ CQ CQ DE EA5XYZ EA5XYZ K   EA5XYZ DE EA8DLF EA8DLF <KN>   EA8DLF DE EA5XYZ GM UR RST 599 5NN <BT> NAME PACO QTH VALENCIA HW? <KN>   ";
+
+    /// <summary>Otra señal más débil a 940 Hz, en bucle (28 WPM), para que se vea el skimmer.</summary>
+    public const string OtraCw = "TEST DL1ABC DL1ABC TEST   ";
+
+    /// <summary>Abrir no arranca el reloj: el audio solo llega con <see cref="Adelantar"/> (capturas y pruebas).</summary>
+    public bool SinReloj { get; init; }
+
+    private float[]? _llave700;
+    private float[]? _llave940;
+
+    /// <summary>
+    /// Inventa <paramref name="segundos"/> de audio de golpe y lo entrega en bloques de 20 ms, sin
+    /// esperar al reloj: para capturas y pruebas fuera de tiempo real.
+    /// </summary>
+    public void Adelantar(double segundos)
+    {
+        var bloques = (int)Math.Ceiling(segundos * 50);
+        for (var i = 0; i < bloques; i++) Inventar();
+    }
+
+    /// <summary>
+    /// 20 ms de audio de recepcion inventado: ruido, telegrafía a 700 Hz (y otra más floja a
+    /// 940) y un tono de 1850 Hz que va y viene.
+    /// </summary>
+    private float[] Llave(string texto, double wpm) =>
+        Modos.Cw.SintetizadorCw.Envolvente(
+            Modos.Cw.SintetizadorCw.Tramos(texto, new Modos.Cw.ManeraDeManipular(wpm)), _frecuencia, 5, 0.8, 0.4);
+
     private void Inventar()
     {
         var bloque = new float[_frecuencia / 50];
+        _llave700 ??= Llave(TextoCw, 22);
+        _llave940 ??= Llave(OtraCw, 28);
         for (var i = 0; i < bloque.Length; i++)
         {
-            var t = (_muestra + i) / (double)_frecuencia;
+            var n = _muestra + i;
+            var t = n / (double)_frecuencia;
             var vaiviene = 0.5 + (0.5 * Math.Sin(2 * Math.PI * 0.7 * t));
-            bloque[i] = (float)((0.25 * Math.Sin(2 * Math.PI * 700 * t))
+            bloque[i] = (float)((0.25 * _llave700[n % _llave700.Length] * Math.Sin(2 * Math.PI * 700 * t))
+                + (0.08 * _llave940[n % _llave940.Length] * Math.Sin(2 * Math.PI * 940 * t))
                 + (0.15 * vaiviene * Math.Sin(2 * Math.PI * 1850 * t))
                 + (0.05 * ((_azar.NextDouble() * 2) - 1)));
         }

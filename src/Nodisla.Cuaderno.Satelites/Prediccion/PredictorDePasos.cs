@@ -1,4 +1,5 @@
 using System.Globalization;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Satelites.Orbital;
 
 namespace Nodisla.Cuaderno.Satelites.Prediccion;
@@ -48,22 +49,29 @@ public sealed record PasoDeSatelite(
     /// <param name="frescura">Plazo dentro del cual los elementos se dan por buenos.</param>
     public string Describir(DateTimeOffset ahoraUtc, TimeSpan frescura)
     {
-        var es = CultureInfo.GetCultureInfo("es-ES");
-        var texto =
-            $"{Satelite}: sale {Salida.Instante:dd/MM HH:mm:ss} UTC por {Salida.AzimutGrados:F0}°, "
-            + $"culmina {Culminacion.Instante:HH:mm:ss} a {ElevacionMaximaGrados:F1}° "
-            + $"({Culminacion.AzimutGrados:F0}°), se pone {Puesta.Instante:HH:mm:ss} "
-            + $"por {Puesta.AzimutGrados:F0}°, dura {Duracion.TotalMinutes.ToString("F1", es)} min";
+        // Las horas UTC van con su formato tecnico fijo; los grados y minutos, con la cultura.
+        var hora = CultureInfo.InvariantCulture;
+        var texto = Textos.F(
+            "Servicios.Satelites.Paso",
+            Satelite,
+            Salida.Instante.ToString("dd/MM HH:mm:ss", hora),
+            Salida.AzimutGrados,
+            Culminacion.Instante.ToString("HH:mm:ss", hora),
+            ElevacionMaximaGrados,
+            Culminacion.AzimutGrados,
+            Puesta.Instante.ToString("HH:mm:ss", hora),
+            Puesta.AzimutGrados,
+            Duracion.TotalMinutes);
 
         if (EsRasante)
         {
-            texto += ". Paso rasante: se perderá detrás de cualquier obstáculo";
+            texto += Textos.T("Servicios.Satelites.PasoRasante");
         }
 
         var edad = ahoraUtc - EpocaDeLosElementos;
         if (edad > frescura)
         {
-            texto += $". Ojo: elementos de hace {ElementosOrbitales.TextoDeEdad(edad)}";
+            texto += Textos.F("Servicios.Satelites.OjoElementos", ElementosOrbitales.TextoDeEdad(edad));
         }
 
         return texto + ".";

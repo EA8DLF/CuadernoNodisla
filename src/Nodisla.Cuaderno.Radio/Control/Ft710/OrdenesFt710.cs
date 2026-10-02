@@ -1,3 +1,5 @@
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Control.Ft710;
 
 /// <summary>Se lanza cuando se intenta mandar al equipo una orden que puede hacer daño.</summary>
@@ -7,7 +9,7 @@ public sealed class OrdenPeligrosaException : Exception
     /// <param name="orden">La orden que se intentaba mandar.</param>
     /// <param name="porque">Por que no se manda.</param>
     public OrdenPeligrosaException(string orden, string porque)
-        : base($"La orden «{orden}» no se envía: {porque}")
+        : base(Textos.F("Servicios.Radio.OrdenPeligrosa", orden, porque))
     {
         Orden = orden;
     }
@@ -110,9 +112,9 @@ public static class OrdenesFt710
                     orden,
                     prohibida switch
                     {
-                        "PS0" => "apagaría el equipo",
-                        "MW" => "escribiría en las memorias del equipo",
-                        _ => "manipularía telegrafía y pondría el equipo en antena",
+                        "PS0" => Textos.T("Servicios.Radio.Peligro.Apagaria"),
+                        "MW" => Textos.T("Servicios.Radio.Peligro.EscribiriaMemorias"),
+                        _ => Textos.T("Servicios.Radio.Peligro.Telegrafia"),
                     });
             }
         }
@@ -135,7 +137,7 @@ public static class OrdenesFt710
         {
             throw new OrdenPeligrosaException(
                 orden,
-                "pondría el equipo en antena sin pasar por el vigilante del PTT");
+                Textos.T("Servicios.Radio.Peligro.SinVigilante"));
         }
     }
 

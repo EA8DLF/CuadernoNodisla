@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
              xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              Foreground="{DynamicResource Texto}">
 
     <!--
@@ -42,16 +43,16 @@
         <Border Grid.Column="0" Style="{StaticResource Tarjeta}" Margin="0,0,8,0" Padding="10,8">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Top">
-                    <TextBlock Text="Buscar en la ayuda" Style="{StaticResource EtiquetaDeCampo}" />
+                    <TextBlock Text="{loc:Texto Ayuda.BuscarEnLaAyuda}" Style="{StaticResource EtiquetaDeCampo}" />
                     <TextBox x:Name="CampoDeBusqueda"
                              Text="{Binding Busqueda, UpdateSourceTrigger=PropertyChanged, Delay=250}"
-                             ToolTip="Una o varias palabras; da igual mayúsculas o tildes"
-                             AutomationProperties.Name="Buscar en la ayuda" />
+                             ToolTip="{loc:Texto Ayuda.BuscarTooltip}"
+                             AutomationProperties.Name="{loc:Texto Ayuda.BuscarEnLaAyuda}" />
                     <TextBlock Text="{Binding ResultadoDeLaBusqueda}"
                                Style="{StaticResource TextoTenueEstilo}"
                                TextWrapping="Wrap"
                                Margin="0,3,0,0" />
-                    <TextBlock Text="Capítulos" Style="{StaticResource EtiquetaDeCampo}" Margin="0,10,0,2" />
+                    <TextBlock Text="{loc:Texto Ayuda.Capitulos}" Style="{StaticResource EtiquetaDeCampo}" Margin="0,10,0,2" />
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
@@ -59,22 +60,22 @@
                     <Button Style="{StaticResource BotonDeLaAyuda}"
                             Command="{Binding ReportarUnFalloCommand}"
                             Visibility="{Binding SePuedeReportar, Converter={StaticResource BooleanoAVisible}}"
-                            ToolTip="Prepara un informe del fallo, con lo que usted vea antes de mandarlo"
-                            AutomationProperties.Name="Reportar un fallo">
+                            ToolTip="{loc:Texto Ayuda.ReportarTooltip}"
+                            AutomationProperties.Name="{loc:Texto Ayuda.ReportarUnFallo}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource IconoAyuda}" Width="14" Height="14" Margin="0,0,7,0" />
-                            <TextBlock Text="Reportar un fallo" />
+                            <TextBlock Text="{loc:Texto Ayuda.ReportarUnFallo}" />
                         </StackPanel>
                     </Button>
                     <StackPanel Visibility="{Binding HayActualizaciones, Converter={StaticResource BooleanoAVisible}}">
                     <StackPanel DataContext="{Binding Actualizaciones}">
                         <Button Style="{StaticResource BotonDeLaAyuda}"
                                 Command="{Binding BuscarActualizacionesCommand}"
-                                ToolTip="Mira ahora si hay una versión nueva; si la hay, sale el aviso arriba"
-                                AutomationProperties.Name="Buscar actualizaciones">
+                                ToolTip="{loc:Texto Ayuda.BuscarActualizacionesTooltip}"
+                                AutomationProperties.Name="{loc:Texto Ayuda.BuscarActualizaciones}">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="{StaticResource IconoAjustes}" Width="14" Height="14" Margin="0,0,7,0" />
-                                <TextBlock Text="Buscar actualizaciones" />
+                                <TextBlock Text="{loc:Texto Ayuda.BuscarActualizaciones}" />
                             </StackPanel>
                         </Button>
                         <TextBlock Text="{Binding Estado}"
@@ -85,11 +86,11 @@
                     </StackPanel>
                     <Button Style="{StaticResource BotonDeLaAyuda}"
                             Command="{Binding VerAcercaDeCommand}"
-                            ToolTip="Versión, licencia, repositorio y contacto"
-                            AutomationProperties.Name="Acerca de Cuaderno NODISLA">
+                            ToolTip="{loc:Texto Ayuda.AcercaDeTooltip}"
+                            AutomationProperties.Name="{loc:Texto Ayuda.AcercaDeCuaderno}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource MarcaDelCuaderno}" Width="14" Height="14" Margin="0,0,7,0" />
-                            <TextBlock Text="Acerca de" />
+                            <TextBlock Text="{loc:Texto Ayuda.AcercaDe}" />
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -102,7 +103,7 @@
                          Background="Transparent"
                          Foreground="{DynamicResource Texto}"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         AutomationProperties.Name="Índice de capítulos de la ayuda">
+                         AutomationProperties.Name="{loc:Texto Ayuda.IndiceDeCapitulos}">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="Padding" Value="4,4" />
@@ -122,12 +123,12 @@
                                           IsToolBarVisible="False"
                                           Focusable="True"
                                           Visibility="{Binding VerCapitulo, Converter={StaticResource BooleanoAVisible}}"
-                                          AutomationProperties.Name="Capítulo de la ayuda" />
+                                          AutomationProperties.Name="{loc:Texto Ayuda.CapituloDeLaAyuda}" />
 
                 <DockPanel Visibility="{Binding VerReporte, Converter={StaticResource BooleanoAVisible}}" Margin="14,10">
                     <Button DockPanel.Dock="Top"
                             HorizontalAlignment="Right"
-                            Content="Volver a la ayuda"
+                            Content="{loc:Texto Ayuda.VolverALaAyuda}"
                             Command="{Binding VolverAlCapituloCommand}"
                             Padding="10,3"
                             Margin="0,0,0,2" />
@@ -143,32 +144,32 @@
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                             <Image Source="{StaticResource MarcaDelCuaderno}" Width="56" Height="56" Margin="0,0,14,0" />
                             <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="Cuaderno NODISLA" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource Acento}" />
+                                <TextBlock Text="{loc:Texto Comun.NombreDelPrograma}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource Acento}" />
                                 <TextBlock Style="{StaticResource TextoTenueEstilo}">
-                                    <Run Text="Versión" />
+                                    <Run Text="{loc:Texto Ayuda.Version}" />
                                     <Run Text="{Binding Version, Mode=OneWay}" FontWeight="SemiBold" />
                                 </TextBlock>
                             </StackPanel>
                         </StackPanel>
 
                         <TextBlock TextWrapping="Wrap" Margin="0,0,0,10"
-                                   Text="Cuaderno de guardia para radioaficionados, en español: operación con el equipo por CAT, modos digitales con módem propio, cluster, diplomas, QSL y mapa. Es un proyecto de la suite NODISLA." />
+                                   Text="{loc:Texto Ayuda.Descripcion}" />
 
-                        <TextBlock Text="Licencia" Style="{StaticResource EtiquetaDeCampo}" />
+                        <TextBlock Text="{loc:Texto Ayuda.Licencia}" Style="{StaticResource EtiquetaDeCampo}" />
                         <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
                             <Run Text="{Binding TextoDeLicencia, Mode=OneWay}" FontWeight="SemiBold" />
                             <LineBreak />
-                            <Run Text="Es software libre: puede usarlo, estudiarlo, compartirlo y modificarlo según esa licencia. Se ofrece sin ninguna garantía." />
+                            <Run Text="{loc:Texto Ayuda.SoftwareLibre}" />
                         </TextBlock>
 
-                        <TextBlock Text="Código fuente e incidencias" Style="{StaticResource EtiquetaDeCampo}" />
+                        <TextBlock Text="{loc:Texto Ayuda.CodigoFuente}" Style="{StaticResource EtiquetaDeCampo}" />
                         <TextBlock Margin="0,0,0,10">
                             <Hyperlink Command="{Binding AbrirElRepositorioCommand}" Foreground="{DynamicResource Acento}">
                                 <Run Text="{Binding Repositorio, Mode=OneWay}" />
                             </Hyperlink>
                         </TextBlock>
 
-                        <TextBlock Text="Contacto" Style="{StaticResource EtiquetaDeCampo}" />
+                        <TextBlock Text="{loc:Texto Ayuda.Contacto}" Style="{StaticResource EtiquetaDeCampo}" />
                         <TextBlock Margin="0,0,0,10">
                             <Hyperlink Command="{Binding EscribirUnCorreoCommand}" Foreground="{DynamicResource Acento}">
                                 <Run Text="{Binding Correo, Mode=OneWay}" />
@@ -176,7 +177,7 @@
                         </TextBlock>
 
                         <TextBlock Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap"
-                                   Text="Para avisar de un fallo, mejor «Reportar un fallo»: prepara el informe con la versión y el equipo, y usted ve todo lo que se manda antes de mandarlo." />
+                                   Text="{loc:Texto Ayuda.MejorReportar}" />
                     </StackPanel>
                 </ScrollViewer>
             </Grid>

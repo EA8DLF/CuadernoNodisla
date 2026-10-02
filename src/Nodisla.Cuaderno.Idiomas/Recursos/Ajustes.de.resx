@@ -1,0 +1,1124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Ajustes.Actualizaciones.AlArrancar" xml:space="preserve">
+    <value>Beim Start nach neuen Versionen suchen (höchstens einmal täglich)</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.AlArrancar.Accesible" xml:space="preserve">
+    <value>Beim Start nach neuen Versionen suchen</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.AlDia" xml:space="preserve">
+    <value>Sie sind auf dem neuesten Stand (Version {0}).</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Aplazada" xml:space="preserve">
+    <value>Installation verschoben. Das Installationsprogramm ist bereits heruntergeladen.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Buscando" xml:space="preserve">
+    <value>Suche läuft…</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Buscar" xml:space="preserve">
+    <value>Nach Updates suchen</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Buscar.Accesible" xml:space="preserve">
+    <value>Jetzt nach Updates suchen</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Cancelada" xml:space="preserve">
+    <value>Download abgebrochen.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Comprobado" xml:space="preserve">
+    <value>Installationsprogramm heruntergeladen und geprüft (SHA-256 korrekt).</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Confirmar.Boton" xml:space="preserve">
+    <value>Schließen und installieren</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Confirmar.Texto" xml:space="preserve">
+    <value>Cuaderno NODISLA wird geschlossen und das Installationsprogramm für Version {0} geöffnet.
+
+Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden oder mitten in einer Verbindung sind, brechen Sie ab und beenden Sie diese zuerst.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Confirmar.Titulo" xml:space="preserve">
+    <value>Version {0} installieren</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Descargando" xml:space="preserve">
+    <value>Installationsprogramm wird heruntergeladen…</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Explicacion" xml:space="preserve">
+    <value>Abgefragt wird die öffentliche Versionsseite auf GitHub, ohne Konto und ohne Ihre Daten. Gibt es eine neue Version, erscheint oben ein Hinweis; nichts wird ohne Ihre Zustimmung heruntergeladen oder installiert.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.HayNueva" xml:space="preserve">
+    <value>Eine neue Version ist verfügbar: {0}.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoAbreInstalador" xml:space="preserve">
+    <value>Das Installationsprogramm konnte nicht geöffnet werden.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoAbreNavegador" xml:space="preserve">
+    <value>Der Browser konnte nicht geöffnet werden. Die Seite ist {0}</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoDescargado" xml:space="preserve">
+    <value>Das Installationsprogramm konnte nicht heruntergeladen werden.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoMontado" xml:space="preserve">
+    <value>Der Versionshinweis ist in dieser Sitzung nicht verfügbar.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoSeHaPodidoComprobar" xml:space="preserve">
+    <value>Prüfung im Moment nicht möglich.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoSeHaPodidoComprobarMotivo" xml:space="preserve">
+    <value>Prüfung im Moment nicht möglich. {0}</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.SinInstalador" xml:space="preserve">
+    <value>Diese Version hat kein prüfbares Installationsprogramm. Laden Sie sie von der GitHub-Seite herunter.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.SinNotas" xml:space="preserve">
+    <value>Diese Version hat keine Versionshinweise.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.TituloDelAviso" xml:space="preserve">
+    <value>Eine neue Version von Cuaderno NODISLA ist verfügbar: {0} (Sie haben {1}).</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.VersionInstalada" xml:space="preserve">
+    <value>Installierte Version:</value>
+  </data>
+  <data name="Ajustes.Apartado.Actualizaciones" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data name="Ajustes.Apartado.Audio" xml:space="preserve">
+    <value>Audio und Digital</value>
+  </data>
+  <data name="Ajustes.Apartado.Cluster" xml:space="preserve">
+    <value>Cluster</value>
+  </data>
+  <data name="Ajustes.Apartado.Correo" xml:space="preserve">
+    <value>QSL-E-Mail</value>
+  </data>
+  <data name="Ajustes.Apartado.Cuentas" xml:space="preserve">
+    <value>Konten und Dienste</value>
+  </data>
+  <data name="Ajustes.Apartado.Equipo" xml:space="preserve">
+    <value>Funkgerät (CAT)</value>
+  </data>
+  <data name="Ajustes.Apartado.Fonia" xml:space="preserve">
+    <value>Sprechfunk</value>
+  </data>
+  <data name="Ajustes.Apartado.Idioma" xml:space="preserve">
+    <value>Sprache</value>
+  </data>
+  <data name="Ajustes.Apartado.Libro" xml:space="preserve">
+    <value>Logbuch (ADIF)</value>
+  </data>
+  <data name="Ajustes.Apartado.Subidas" xml:space="preserve">
+    <value>Uploads und QRZ</value>
+  </data>
+  <data name="Ajustes.Audio.Discrepancia" xml:space="preserve">
+    <value>Achtung: Eingang „{0}“ und Ausgang „{1}“ scheinen nicht zum selben Gerät zu gehören. Hat das Funkgerät einen USB-Codec, sollten Eingang und Ausgang beide „FUNKGERÄT“ sein; wenn nicht, prüfen Sie sie vor dem Senden.</value>
+  </data>
+  <data name="Ajustes.Audio.ElEquipo" xml:space="preserve">
+    <value>FUNKGERÄT</value>
+  </data>
+  <data name="Ajustes.Audio.Entrada" xml:space="preserve">
+    <value>Eingang (vom Funkgerät)</value>
+  </data>
+  <data name="Ajustes.Audio.Entrada.Accesible" xml:space="preserve">
+    <value>Audio-Eingabegerät</value>
+  </data>
+  <data name="Ajustes.Audio.Entrada.Ayuda" xml:space="preserve">
+    <value>Woher der Empfangston kommt. Beim FT-710 ist es sein USB-Codec.</value>
+  </data>
+  <data name="Ajustes.Audio.Escuchando" xml:space="preserve">
+    <value>Höre „{0}“. Sprechen Sie oder stimmen Sie das Funkgerät auf ein Signal ab, um den Pegel zu sehen.</value>
+  </data>
+  <data name="Ajustes.Audio.Explicacion" xml:space="preserve">
+    <value>Wo der Ton des Funkgeräts ein- und ausgeht und wer FT8 und FT4 dekodiert.</value>
+  </data>
+  <data name="Ajustes.Audio.Muestras" xml:space="preserve">
+    <value>Abtastrate</value>
+  </data>
+  <data name="Ajustes.Audio.Muestras.Ayuda" xml:space="preserve">
+    <value>48.000 liefert der Codec des FT-710, und das erwarten FT8 und FT4.</value>
+  </data>
+  <data name="Ajustes.Audio.Nivel.Bajo" xml:space="preserve">
+    <value>{0:0.00} — sehr niedrig. Erhöhen Sie die Aufnahmelautstärke des Codecs.</value>
+  </data>
+  <data name="Ajustes.Audio.Nivel.Bien" xml:space="preserve">
+    <value>{0:0.00} — gut.</value>
+  </data>
+  <data name="Ajustes.Audio.Nivel.Satura" xml:space="preserve">
+    <value>{0:0.00} — ÜBERSTEUERT. Senken Sie die Aufnahmelautstärke des Codecs in Windows, bis der Pegel zwischen 0,20 und 0,60 liegt.</value>
+  </data>
+  <data name="Ajustes.Audio.NivelBueno" xml:space="preserve">
+    <value>Gut ist ein Pegel zwischen 0,20 und 0,60. Über 0,90 übersteuert der Codec und schwache Signale gehen verloren; unter 0,03 kommt nichts an.</value>
+  </data>
+  <data name="Ajustes.Audio.NivelDeEntrada" xml:space="preserve">
+    <value>Eingangspegel</value>
+  </data>
+  <data name="Ajustes.Audio.NivelDeEntrada.Accesible" xml:space="preserve">
+    <value>Audio-Eingangspegel</value>
+  </data>
+  <data name="Ajustes.Audio.NoMontado" xml:space="preserve">
+    <value>Audio ist in dieser Sitzung nicht verfügbar.</value>
+  </data>
+  <data name="Ajustes.Audio.NoSeHaPodidoAbrir" xml:space="preserve">
+    <value>„{0}“ konnte nicht geöffnet werden: {1}</value>
+  </data>
+  <data name="Ajustes.Audio.PararPrueba" xml:space="preserve">
+    <value>Test beenden</value>
+  </data>
+  <data name="Ajustes.Audio.PreguntarAntes" xml:space="preserve">
+    <value>Vor dem Senden mit dem Modem nachfragen</value>
+  </data>
+  <data name="Ajustes.Audio.PreguntarAntes.Ayuda" xml:space="preserve">
+    <value>Das schaltet „Nicht mehr fragen“ aus. PTT-Wächter, Uhr und Ausgang werden immer verlangt.</value>
+  </data>
+  <data name="Ajustes.Audio.ProbarNivel" xml:space="preserve">
+    <value>Pegel testen</value>
+  </data>
+  <data name="Ajustes.Audio.ProbarNivel.Ayuda" xml:space="preserve">
+    <value>Öffnet den gewählten Eingang und zeigt den Pegel. Nur das greift auf dieser Seite auf die Soundkarte zu.</value>
+  </data>
+  <data name="Ajustes.Audio.RecordarPermiso" xml:space="preserve">
+    <value>„Senden erlauben“ zwischen Sitzungen merken</value>
+  </data>
+  <data name="Ajustes.Audio.RecordarPermiso.Ayuda" xml:space="preserve">
+    <value>Die Sperre im Tab Digital startet offen. Standardmäßig startet sie in jeder Sitzung geschlossen.</value>
+  </data>
+  <data name="Ajustes.Audio.RegistrarAlCompletar" xml:space="preserve">
+    <value>Vollständige Verbindung automatisch ins Logbuch</value>
+  </data>
+  <data name="Ajustes.Audio.RegistrarAlCompletar.Ayuda" xml:space="preserve">
+    <value>Beim Empfang von RR73/RRR/73 der Gegenstation oder wenn Ihr eigenes RR73 nach deren R+Rapport hinausgeht, wird die Verbindung ohne „Ins Logbuch speichern“ geloggt.</value>
+  </data>
+  <data name="Ajustes.Audio.Salida" xml:space="preserve">
+    <value>Ausgang (zum Funkgerät)</value>
+  </data>
+  <data name="Ajustes.Audio.Salida.Accesible" xml:space="preserve">
+    <value>Audio-Ausgabegerät</value>
+  </data>
+  <data name="Ajustes.Audio.Salida.Ayuda" xml:space="preserve">
+    <value>Worüber der Ton beim Senden zum Funkgerät geht.</value>
+  </data>
+  <data name="Ajustes.Audio.SinModulo" xml:space="preserve">
+    <value>In dieser Sitzung gibt es kein Audiomodul, hier ist also nichts einzurichten. Schließen Sie das Programm und starten Sie es ohne CUADERNO_SIMULADO neu.</value>
+  </data>
+  <data name="Ajustes.Audio.Titulo" xml:space="preserve">
+    <value>Audio und Digitalbetrieb</value>
+  </data>
+  <data name="Ajustes.Audio.TransmitirYApuntar" xml:space="preserve">
+    <value>Senden und Loggen</value>
+  </data>
+  <data name="Ajustes.Cluster.Aplicado" xml:space="preserve">
+    <value>Gespeichert und übernommen: {0} ({1}:{2}) als {3}. Klicken Sie auf Verbinden, um sich anzumelden.</value>
+  </data>
+  <data name="Ajustes.Cluster.Conexion.Ayuda" xml:space="preserve">
+    <value>Öffnet oder schließt die Verbindung zum Knoten</value>
+  </data>
+  <data name="Ajustes.Cluster.Enviar" xml:space="preserve">
+    <value>Senden</value>
+  </data>
+  <data name="Ajustes.Cluster.FaltaServidor" xml:space="preserve">
+    <value>Der Server des Knotens fehlt.</value>
+  </data>
+  <data name="Ajustes.Cluster.IndicativoNoVale" xml:space="preserve">
+    <value>Das Rufzeichen „{0}“ ist ungültig: {1}</value>
+  </data>
+  <data name="Ajustes.Cluster.Orden.Ayuda" xml:space="preserve">
+    <value>Befehl für den Knoten, zum Beispiel sh/dx</value>
+  </data>
+  <data name="Ajustes.Cluster.Simulado" xml:space="preserve">
+    <value>Mit simulierten Schnittstellen ist der Cluster nur eine Attrappe, es gibt also keinen Knoten einzurichten. Schließen Sie das Programm und starten Sie es ohne CUADERNO_SIMULADO neu, um Knoten, Rufzeichen und Passwort zu wählen.</value>
+  </data>
+  <data name="Ajustes.Cluster.SinIndicativo" xml:space="preserve">
+    <value>Es gibt kein Rufzeichen für die Anmeldung: Tragen Sie es hier ein oder legen Sie ein Stationsprofil an.</value>
+  </data>
+  <data name="Ajustes.Correo.Asunto" xml:space="preserve">
+    <value>Betreff</value>
+  </data>
+  <data name="Ajustes.Correo.Asunto.Accesible" xml:space="preserve">
+    <value>Betreff der QSL-E-Mail</value>
+  </data>
+  <data name="Ajustes.Correo.Cifrado" xml:space="preserve">
+    <value>Verschlüsselung</value>
+  </data>
+  <data name="Ajustes.Correo.Cifrado.Accesible" xml:space="preserve">
+    <value>Verschlüsselung der Verbindung zum Mailserver</value>
+  </data>
+  <data name="Ajustes.Correo.Cifrado.Explicacion" xml:space="preserve">
+    <value>STARTTLS: Port 587 (üblich). Direktes SSL: Port 465. Keine: nur für einen Server im Heimnetz.</value>
+  </data>
+  <data name="Ajustes.Correo.ConexionCorrecta" xml:space="preserve">
+    <value>Verbindung in Ordnung: Der Server akzeptiert das Konto. Es wurde keine E-Mail gesendet.</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena" xml:space="preserve">
+    <value>Passwort</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena.Accesible" xml:space="preserve">
+    <value>E-Mail-Passwort</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena.Borrar.Accesible" xml:space="preserve">
+    <value>Gespeichertes E-Mail-Passwort löschen</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena.Explicacion" xml:space="preserve">
+    <value>Es wird mit dem Datenschutz Ihres Windows-Kontos verschlüsselt und nie wieder angezeigt.</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena.Guardar.Accesible" xml:space="preserve">
+    <value>E-Mail-Passwort verschlüsselt speichern</value>
+  </data>
+  <data name="Ajustes.Correo.ContrasenaBorrada" xml:space="preserve">
+    <value>Passwort gelöscht.</value>
+  </data>
+  <data name="Ajustes.Correo.ContrasenaGuardada" xml:space="preserve">
+    <value>Passwort verschlüsselt gespeichert.</value>
+  </data>
+  <data name="Ajustes.Correo.Explicacion" xml:space="preserve">
+    <value>Das Konto, mit dem QSL-Karten per E-Mail verschickt werden. Gmail: smtp.gmail.com, 587, STARTTLS und ein App-Passwort. Outlook: smtp-mail.outlook.com, 587, STARTTLS.</value>
+  </data>
+  <data name="Ajustes.Correo.NombreDelRemitente" xml:space="preserve">
+    <value>Absendername (z. B. EA1ABC Ana)</value>
+  </data>
+  <data name="Ajustes.Correo.NombreDelRemitente.Accesible" xml:space="preserve">
+    <value>Absendername</value>
+  </data>
+  <data name="Ajustes.Correo.NoMontado" xml:space="preserve">
+    <value>Die QSL-E-Mail ist in dieser Sitzung nicht verfügbar.</value>
+  </data>
+  <data name="Ajustes.Correo.NoSeHaPodidoProbar" xml:space="preserve">
+    <value>Test nicht möglich: {0}</value>
+  </data>
+  <data name="Ajustes.Correo.Probar.Accesible" xml:space="preserve">
+    <value>Verbindung zum Mailserver testen, ohne etwas zu senden</value>
+  </data>
+  <data name="Ajustes.Correo.Puerto" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="Ajustes.Correo.Puerto.Accesible" xml:space="preserve">
+    <value>Port des Mailservers</value>
+  </data>
+  <data name="Ajustes.Correo.Remitente" xml:space="preserve">
+    <value>Absender (Ihre Adresse)</value>
+  </data>
+  <data name="Ajustes.Correo.Remitente.Accesible" xml:space="preserve">
+    <value>Absenderadresse</value>
+  </data>
+  <data name="Ajustes.Correo.Seguridad.Ninguna" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="Ajustes.Correo.Seguridad.SslDirecto" xml:space="preserve">
+    <value>Direktes SSL</value>
+  </data>
+  <data name="Ajustes.Correo.Seguridad.StartTls" xml:space="preserve">
+    <value>STARTTLS</value>
+  </data>
+  <data name="Ajustes.Correo.Servidor" xml:space="preserve">
+    <value>Postausgangsserver (SMTP)</value>
+  </data>
+  <data name="Ajustes.Correo.Servidor.Accesible" xml:space="preserve">
+    <value>Postausgangsserver</value>
+  </data>
+  <data name="Ajustes.Correo.TarjetaAdjunta" xml:space="preserve">
+    <value>Karte anhängen als</value>
+  </data>
+  <data name="Ajustes.Correo.TarjetaAdjunta.Accesible" xml:space="preserve">
+    <value>Format der angehängten Karte</value>
+  </data>
+  <data name="Ajustes.Correo.Texto" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="Ajustes.Correo.Texto.Accesible" xml:space="preserve">
+    <value>Text der QSL-E-Mail</value>
+  </data>
+  <data name="Ajustes.Correo.TextoDeOmision" xml:space="preserve">
+    <value>Standardtext</value>
+  </data>
+  <data name="Ajustes.Correo.TextoDeOmision.Accesible" xml:space="preserve">
+    <value>Standard-Betreff und -Text wiederherstellen</value>
+  </data>
+  <data name="Ajustes.Correo.Usuario" xml:space="preserve">
+    <value>Benutzername (leer, wenn der Server keine Anmeldung verlangt)</value>
+  </data>
+  <data name="Ajustes.Correo.Usuario.Accesible" xml:space="preserve">
+    <value>E-Mail-Benutzername</value>
+  </data>
+  <data name="Ajustes.Correo.Variables" xml:space="preserve">
+    <value>Variablen: {{indicativo}} {{nombre}} {{fecha}} {{hora}} {{banda}} {{frecuencia}} {{modo}} {{rst}} {{miindicativo}} {{minombre}} {{contactos}}…</value>
+  </data>
+  <data name="Ajustes.Cuenta.ApodoQth" xml:space="preserve">
+    <value>QTH-Spitzname</value>
+  </data>
+  <data name="Ajustes.Cuenta.ApodoQth.Nota" xml:space="preserve">
+    <value>Nur wenn Sie bei eQSL mehrere QTHs haben.</value>
+  </data>
+  <data name="Ajustes.Cuenta.CorreoClubLog" xml:space="preserve">
+    <value>E-Mail des Kontos</value>
+  </data>
+  <data name="Ajustes.Cuenta.IndicativoClubLog" xml:space="preserve">
+    <value>Rufzeichen des Logbuchs</value>
+  </data>
+  <data name="Ajustes.Cuenta.RutaTqsl" xml:space="preserve">
+    <value>Pfad zu tqsl.exe</value>
+  </data>
+  <data name="Ajustes.Cuenta.RutaTqsl.Nota" xml:space="preserve">
+    <value>Nur wenn es nicht am üblichen Installationsort liegt.</value>
+  </data>
+  <data name="Ajustes.Cuenta.UbicacionTqsl" xml:space="preserve">
+    <value>TQSL-Stationsstandort</value>
+  </data>
+  <data name="Ajustes.Cuenta.UbicacionTqsl.Nota" xml:space="preserve">
+    <value>Der Name, den Sie dem Standort in TQSL gegeben haben, nicht Ihr Rufzeichen.</value>
+  </data>
+  <data name="Ajustes.Cuenta.Usuario" xml:space="preserve">
+    <value>Benutzername</value>
+  </data>
+  <data name="Ajustes.Cuenta.UsuarioVacio" xml:space="preserve">
+    <value>Leer: Es wird das Rufzeichen des Profils verwendet.</value>
+  </data>
+  <data name="Ajustes.Cuentas.Explicacion" xml:space="preserve">
+    <value>Eine Karte pro Dienst. Passwörter werden mit dem Datenschutz Ihres Windows-Kontos verschlüsselt gespeichert und nie wieder angezeigt: Es wird nur angegeben, ob sie gespeichert sind.</value>
+  </data>
+  <data name="Ajustes.Cw.Ancho" xml:space="preserve">
+    <value>Filterbreite</value>
+  </data>
+  <data name="Ajustes.Cw.Ancho.Ayuda" xml:space="preserve">
+    <value>Schmaler holt schwächere Signale heraus und trennt Nachbarn besser, folgt aber über 40 WPM schlecht. 100 Hz passt fast immer.</value>
+  </data>
+  <data name="Ajustes.Cw.Explicacion" xml:space="preserve">
+    <value>Der Decoder im Funkplatz. Er hört den Audioeingang oben ab und sendet nie.</value>
+  </data>
+  <data name="Ajustes.Cw.Hasta" xml:space="preserve">
+    <value>bis</value>
+  </data>
+  <data name="Ajustes.Cw.Senales" xml:space="preserve">
+    <value>Signale gleichzeitig</value>
+  </data>
+  <data name="Ajustes.Cw.Senales.Ayuda" xml:space="preserve">
+    <value>Liest neben dem Hauptsignal die anderen Signale im Durchlassbereich, jedes in einer eigenen Zeile. 1 = nur das Hauptsignal.</value>
+  </data>
+  <data name="Ajustes.Cw.Sensibilidad" xml:space="preserve">
+    <value>Empfindlichkeit</value>
+  </data>
+  <data name="Ajustes.Cw.Sensibilidad.Ayuda" xml:space="preserve">
+    <value>Höher liest schwächere Signale; niedriger verlangt mehr Signal, bevor geschrieben wird. Rauschen schreibt bei keiner Einstellung.</value>
+  </data>
+  <data name="Ajustes.Cw.Titulo" xml:space="preserve">
+    <value>Telegrafie (CW)</value>
+  </data>
+  <data name="Ajustes.Cw.Tono" xml:space="preserve">
+    <value>Standardton</value>
+  </data>
+  <data name="Ajustes.Cw.Tono.Ayuda" xml:space="preserve">
+    <value>Ton, mit dem der Decoder startet, bevor er ein Signal findet.</value>
+  </data>
+  <data name="Ajustes.Cw.Velocidad" xml:space="preserve">
+    <value>Geschwindigkeit</value>
+  </data>
+  <data name="Ajustes.Cw.Velocidad.Ayuda" xml:space="preserve">
+    <value>Verfolgte Geschwindigkeiten, 5 bis 60 WPM. Eingrenzen vermeidet, ein langsames Signal mit einem schnellen zu verwechseln.</value>
+  </data>
+  <data name="Ajustes.Cw.WpmMaxima" xml:space="preserve">
+    <value>Höchstgeschwindigkeit</value>
+  </data>
+  <data name="Ajustes.Cw.WpmMinima" xml:space="preserve">
+    <value>Mindestgeschwindigkeit</value>
+  </data>
+  <data name="Ajustes.Descartar" xml:space="preserve">
+    <value>Verwerfen</value>
+  </data>
+  <data name="Ajustes.Equipo.Abriendo" xml:space="preserve">
+    <value>Verbindung wird geöffnet…</value>
+  </data>
+  <data name="Ajustes.Equipo.Aplicando" xml:space="preserve">
+    <value>Wird übernommen…</value>
+  </data>
+  <data name="Ajustes.Equipo.Aplicar" xml:space="preserve">
+    <value>Übernehmen</value>
+  </data>
+  <data name="Ajustes.Equipo.Aplicar.Accesible" xml:space="preserve">
+    <value>Funkgeräte-Einstellungen speichern und übernehmen</value>
+  </data>
+  <data name="Ajustes.Equipo.Aplicar.Ayuda" xml:space="preserve">
+    <value>Speichert und wechselt die Gerätesteuerung, ohne das Logbuch zu schließen</value>
+  </data>
+  <data name="Ajustes.Equipo.Civ" xml:space="preserve">
+    <value>CI-V-Adresse</value>
+  </data>
+  <data name="Ajustes.Equipo.Civ.Accesible" xml:space="preserve">
+    <value>CI-V-Adresse hexadezimal</value>
+  </data>
+  <data name="Ajustes.Equipo.Civ.Ayuda" xml:space="preserve">
+    <value>Hexadezimal (94 für den IC-7300). Leer = Werkseinstellung des Modells.</value>
+  </data>
+  <data name="Ajustes.Equipo.Contesta" xml:space="preserve">
+    <value>{0} antwortet{1}. Frequenz {2} MHz, Betriebsart {3}.</value>
+  </data>
+  <data name="Ajustes.Equipo.DeFabrica" xml:space="preserve">
+    <value>Standard: {0}</value>
+  </data>
+  <data name="Ajustes.Equipo.Descartar.Accesible" xml:space="preserve">
+    <value>Änderungen verwerfen und zum gespeicherten Stand zurückkehren</value>
+  </data>
+  <data name="Ajustes.Equipo.DeteccionAutomatica" xml:space="preserve">
+    <value>Automatische Erkennung</value>
+  </data>
+  <data name="Ajustes.Equipo.Detectar" xml:space="preserve">
+    <value>Automatisch erkennen, an welchem Port das Funkgerät hängt</value>
+  </data>
+  <data name="Ajustes.Equipo.Detectar.Ayuda" xml:space="preserve">
+    <value>Versucht es zuerst am bisherigen Port und fragt, falls keine Antwort kommt, alle Ports mit ID; ab</value>
+  </data>
+  <data name="Ajustes.Equipo.Detectar.Explicacion" xml:space="preserve">
+    <value>Erkannt wird das Gerät an seiner Antwort auf ID;, nie an der Portnummer: Auf diesem Computer kann es weitere Geräte geben, die seriell kommunizieren.</value>
+  </data>
+  <data name="Ajustes.Equipo.EnPuerto" xml:space="preserve">
+    <value>an {0} mit {1} Baud</value>
+  </data>
+  <data name="Ajustes.Equipo.EnUnaLinea" xml:space="preserve">
+    <value>Funkgerät:</value>
+  </data>
+  <data name="Ajustes.Equipo.Espera" xml:space="preserve">
+    <value>Befehls-Timeout (ms)</value>
+  </data>
+  <data name="Ajustes.Equipo.Espera.Accesible" xml:space="preserve">
+    <value>Befehls-Timeout in Millisekunden</value>
+  </data>
+  <data name="Ajustes.Equipo.Explicacion" xml:space="preserve">
+    <value>Wie das Logbuch mit dem Funkgerät spricht. Solange hier „Keine“ steht, öffnet die Schaltfläche Verbinden im Funkgeräte-Bereich nichts.</value>
+  </data>
+  <data name="Ajustes.Equipo.Fabricante" xml:space="preserve">
+    <value>Hersteller</value>
+  </data>
+  <data name="Ajustes.Equipo.Fabricante.Accesible" xml:space="preserve">
+    <value>Hersteller des Funkgeräts</value>
+  </data>
+  <data name="Ajustes.Equipo.Generico" xml:space="preserve">
+    <value>generisches Funkgerät</value>
+  </data>
+  <data name="Ajustes.Equipo.GuardadoPero" xml:space="preserve">
+    <value>Gespeichert, aber: {0}</value>
+  </data>
+  <data name="Ajustes.Equipo.GuardadoSinEquipo" xml:space="preserve">
+    <value>Gespeichert. Das Logbuch arbeitet jetzt ohne Funkgerät: Frequenz und Betriebsart geben Sie selbst ein.</value>
+  </data>
+  <data name="Ajustes.Equipo.GuardadoYAplicado" xml:space="preserve">
+    <value>Gespeichert und übernommen: {0}{1}. Klicken Sie im Funkgeräte-Bereich auf Verbinden, um die Verbindung zu öffnen.</value>
+  </data>
+  <data name="Ajustes.Equipo.Maquina" xml:space="preserve">
+    <value>Rechner</value>
+  </data>
+  <data name="Ajustes.Equipo.Maquina.Accesible" xml:space="preserve">
+    <value>Rechner, auf dem rigctld lauscht</value>
+  </data>
+  <data name="Ajustes.Equipo.MaximoEnAntena" xml:space="preserve">
+    <value>Max. Sendezeit (s)</value>
+  </data>
+  <data name="Ajustes.Equipo.MaximoEnAntena.Accesible" xml:space="preserve">
+    <value>Maximale Sendezeit in Sekunden</value>
+  </data>
+  <data name="Ajustes.Equipo.MaximoEnAntena.DeFabrica" xml:space="preserve">
+    <value>Standard: 180 · feste Obergrenze: 600</value>
+  </data>
+  <data name="Ajustes.Equipo.Modelo" xml:space="preserve">
+    <value>Modell</value>
+  </data>
+  <data name="Ajustes.Equipo.Modelo.Accesible" xml:space="preserve">
+    <value>Modell des Funkgeräts</value>
+  </data>
+  <data name="Ajustes.Equipo.NadaQueProbar" xml:space="preserve">
+    <value>Kein Funkgerät: Es gibt nichts zu testen. Frequenz und Betriebsart geben Sie selbst ein.</value>
+  </data>
+  <data name="Ajustes.Equipo.NoAparece" xml:space="preserve">
+    <value>Das Funkgerät wurde an keinem seriellen Port gefunden. Prüfen Sie, ob es eingeschaltet ist, das USB-Kabel steckt, das gewählte Modell stimmt und kein anderes Programm den Port belegt.</value>
+  </data>
+  <data name="Ajustes.Equipo.NoContesta" xml:space="preserve">
+    <value>Die Verbindung ist offen, aber das Funkgerät antwortet nicht. Prüfen Sie die Baudrate (im Menü CAT RATE des Geräts).</value>
+  </data>
+  <data name="Ajustes.Equipo.NoSeHaPodidoConectar" xml:space="preserve">
+    <value>Verbindung nicht möglich: {0}</value>
+  </data>
+  <data name="Ajustes.Equipo.OmniRig" xml:space="preserve">
+    <value>OmniRig-Gerät</value>
+  </data>
+  <data name="Ajustes.Equipo.OmniRig.Accesible" xml:space="preserve">
+    <value>OmniRig-Gerätenummer</value>
+  </data>
+  <data name="Ajustes.Equipo.OmniRig.Explicacion" xml:space="preserve">
+    <value>OmniRig verwaltet zwei Geräte: 1 und 2. Das hier eingetragene ist das, dem das Logbuch folgt.</value>
+  </data>
+  <data name="Ajustes.Equipo.Probando" xml:space="preserve">
+    <value>Wird getestet…</value>
+  </data>
+  <data name="Ajustes.Equipo.Probar.Accesible" xml:space="preserve">
+    <value>Verbindung zum Funkgerät testen</value>
+  </data>
+  <data name="Ajustes.Equipo.Probar.Ayuda" xml:space="preserve">
+    <value>Öffnet die Verbindung, liest Kennung, Frequenz und Betriebsart und schließt wieder. Sendet nicht.</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Cat" xml:space="preserve">
+    <value>Über CAT</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Cat.Explicacion" xml:space="preserve">
+    <value>Das Funkgerät schaltet mit dem Befehl des Herstellers auf Senden. Das ist der Normalfall.</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Dtr" xml:space="preserve">
+    <value>Über DTR</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Dtr.Explicacion" xml:space="preserve">
+    <value>Wie RTS, nur über die andere Leitung.</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Rts" xml:space="preserve">
+    <value>Über RTS</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Rts.Explicacion" xml:space="preserve">
+    <value>Durch Setzen der RTS-Leitung des seriellen Ports: Audio-Interfaces mit Optokoppler.</value>
+  </data>
+  <data name="Ajustes.Equipo.Puerto" xml:space="preserve">
+    <value>Serieller Port</value>
+  </data>
+  <data name="Ajustes.Equipo.Puerto.Accesible" xml:space="preserve">
+    <value>Serieller Port des Funkgeräts</value>
+  </data>
+  <data name="Ajustes.Equipo.PuertoTcp" xml:space="preserve">
+    <value>TCP-Port</value>
+  </data>
+  <data name="Ajustes.Equipo.PuertoTcp.Accesible" xml:space="preserve">
+    <value>TCP-Port von rigctld</value>
+  </data>
+  <data name="Ajustes.Equipo.Rigctld.Explicacion" xml:space="preserve">
+    <value>rigctld muss bereits laufen. Üblich ist 127.0.0.1 auf Port 4532.</value>
+  </data>
+  <data name="Ajustes.Equipo.SeSube" xml:space="preserve">
+    <value>Getastet über</value>
+  </data>
+  <data name="Ajustes.Equipo.SeSube.Accesible" xml:space="preserve">
+    <value>Wie die PTT getastet wird</value>
+  </data>
+  <data name="Ajustes.Equipo.Simulado" xml:space="preserve">
+    <value>Das Programm läuft mit simulierten Schnittstellen, es gibt also kein echtes Funkgerät einzurichten. Schließen Sie das Programm und starten Sie es ohne CUADERNO_SIMULADO neu, um CAT einzurichten.</value>
+  </data>
+  <data name="Ajustes.Equipo.SinLatido" xml:space="preserve">
+    <value>Ohne Lebenszeichen (s)</value>
+  </data>
+  <data name="Ajustes.Equipo.SinLatido.Accesible" xml:space="preserve">
+    <value>Zeit ohne Lebenszeichen in Sekunden</value>
+  </data>
+  <data name="Ajustes.Equipo.SinProbarConRadio" xml:space="preserve">
+    <value>Nach Handbuch programmiert, nicht mit dem Gerät getestet.</value>
+  </data>
+  <data name="Ajustes.Equipo.Sondeo" xml:space="preserve">
+    <value>Abfrage (ms)</value>
+  </data>
+  <data name="Ajustes.Equipo.Sondeo.Accesible" xml:space="preserve">
+    <value>Abfrageintervall in Millisekunden</value>
+  </data>
+  <data name="Ajustes.Equipo.TiempoAgotado" xml:space="preserve">
+    <value>Zeitüberschreitung ({0:N0} s) bei der Suche nach dem Funkgerät. Prüfen Sie, ob das Gerät eingeschaltet ist und kein anderes Programm den Port belegt.</value>
+  </data>
+  <data name="Ajustes.Equipo.Titulo" xml:space="preserve">
+    <value>CAT · Funkgerätesteuerung</value>
+  </data>
+  <data name="Ajustes.Equipo.Velocidad" xml:space="preserve">
+    <value>Baudrate</value>
+  </data>
+  <data name="Ajustes.Equipo.Velocidad.Accesible" xml:space="preserve">
+    <value>Baudrate des seriellen Ports</value>
+  </data>
+  <data name="Ajustes.Equipo.Velocidad.Explicacion" xml:space="preserve">
+    <value>Die Baudrate bestimmt das Funkgerät, nicht das Kabel: Sie steht in seinem Menü unter CAT RATE. Werkseinstellung ist 38400. Wenn Sie sie nicht kennen, lassen Sie die automatische Erkennung an: Sie probiert alle durch.</value>
+  </data>
+  <data name="Ajustes.Equipo.VelocidadHabitual" xml:space="preserve">
+    <value>{0:N0}  (üblich)</value>
+  </data>
+  <data name="Ajustes.Equipo.Via" xml:space="preserve">
+    <value>Steuerungsart</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Accesible" xml:space="preserve">
+    <value>Steuerungsart des Funkgeräts</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.CatNativo" xml:space="preserve">
+    <value>Natives CAT (Yaesu und ICOM)</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.CatNativo.Explicacion" xml:space="preserve">
+    <value>Über den seriellen Port des Funkgeräts. Nur so stehen Filter, Rauschunterdrückung, Contour, Messinstrumente und Speicher zur Verfügung.</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Ninguna" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Ninguna.Explicacion" xml:space="preserve">
+    <value>Kein Funkgerät: Frequenz und Betriebsart geben Sie von Hand ein.</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.OmniRig" xml:space="preserve">
+    <value>OmniRig</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.OmniRig.Explicacion" xml:space="preserve">
+    <value>Für alle, die OmniRig bereits mit ihrem Funkgerät eingerichtet haben.</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Rigctld" xml:space="preserve">
+    <value>Hamlib (rigctld)</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Rigctld.Explicacion" xml:space="preserve">
+    <value>Für jedes andere Funkgerät oder um das Gerät mit WSJT-X zu teilen. rigctld muss laufen.</value>
+  </data>
+  <data name="Ajustes.Equipo.Vigilante" xml:space="preserve">
+    <value>Der Wächter lässt die PTT in jedem Fall los: wenn die Zeit abläuft, wenn der Sender keine Lebenszeichen mehr gibt, bei einem Fehler und beim Schließen des Programms. Eine hängende PTT zerstört die Endstufe.</value>
+  </data>
+  <data name="Ajustes.Equipo.VolverAMirar" xml:space="preserve">
+    <value>Neu suchen</value>
+  </data>
+  <data name="Ajustes.Equipo.VolverAMirar.Accesible" xml:space="preserve">
+    <value>Erneut nach seriellen Ports suchen</value>
+  </data>
+  <data name="Ajustes.Estado.Configurada" xml:space="preserve">
+    <value>Eingerichtet</value>
+  </data>
+  <data name="Ajustes.Estado.Configurado" xml:space="preserve">
+    <value>Eingerichtet</value>
+  </data>
+  <data name="Ajustes.Estado.ConfiguradoConContrasena" xml:space="preserve">
+    <value>Eingerichtet · mit Passwort</value>
+  </data>
+  <data name="Ajustes.Estado.FaltaContrasena" xml:space="preserve">
+    <value>Passwort fehlt</value>
+  </data>
+  <data name="Ajustes.Estado.FaltaTqsl" xml:space="preserve">
+    <value>TQSL fehlt</value>
+  </data>
+  <data name="Ajustes.Estado.Incompleta" xml:space="preserve">
+    <value>Unvollständig</value>
+  </data>
+  <data name="Ajustes.Estado.ListaParaSubir" xml:space="preserve">
+    <value>Bereit zum Hochladen</value>
+  </data>
+  <data name="Ajustes.Estado.SinConfigurar" xml:space="preserve">
+    <value>Nicht eingerichtet</value>
+  </data>
+  <data name="Ajustes.Estado.SinNodo" xml:space="preserve">
+    <value>Kein Knoten</value>
+  </data>
+  <data name="Ajustes.Estado.SinNodoDeVerdad" xml:space="preserve">
+    <value>Kein echter Knoten</value>
+  </data>
+  <data name="Ajustes.Fonia.Altavoces" xml:space="preserve">
+    <value>PC-Lautsprecher oder Kopfhörer</value>
+  </data>
+  <data name="Ajustes.Fonia.Altavoces.Accesible" xml:space="preserve">
+    <value>PC-Lautsprecher</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.AltavocesSonSalida" xml:space="preserve">
+    <value>Die gewählten Lautsprecher sind der Ausgang zum Funkgerät: Der Empfangston würde gesendet.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.MicrofonoEsEntrada" xml:space="preserve">
+    <value>Das gewählte Mikrofon ist der Eingang des Funkgeräts: Das Empfangene würde wieder gesendet.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.SalidaNoEsDelEquipo" xml:space="preserve">
+    <value>Der Ausgang zum Funkgerät ist nicht der Codec des Geräts: Die Stimme würde das Funkgerät nicht erreichen.</value>
+  </data>
+  <data name="Ajustes.Fonia.ComprobarFuente" xml:space="preserve">
+    <value>SSB-Modulationsquelle per CAT prüfen · Menü EX</value>
+  </data>
+  <data name="Ajustes.Fonia.EntradaDelEquipo" xml:space="preserve">
+    <value>Eingang vom Funkgerät (was man hört)</value>
+  </data>
+  <data name="Ajustes.Fonia.EntradaDelEquipo.Accesible" xml:space="preserve">
+    <value>Audioeingang vom Funkgerät</value>
+  </data>
+  <data name="Ajustes.Fonia.EscucharAlEntrar" xml:space="preserve">
+    <value>Empfang beim Öffnen von Betrieb starten</value>
+  </data>
+  <data name="Ajustes.Fonia.Explicacion" xml:space="preserve">
+    <value>Das Funkgerät hört man über die PC-Lautsprecher und spricht über das PC-Mikrofon mit der PTT im Bereich „Sprechfunk“ unter Betrieb. Die PTT läuft immer über den Wächter und hat eine Höchstdauer. Am Funkgerät muss die SSB-Modulationsquelle auf USB stehen.</value>
+  </data>
+  <data name="Ajustes.Fonia.GananciaMicro" xml:space="preserve">
+    <value>Mikrofonverstärkung:</value>
+  </data>
+  <data name="Ajustes.Fonia.GananciaMicro.Accesible" xml:space="preserve">
+    <value>Mikrofonverstärkung</value>
+  </data>
+  <data name="Ajustes.Fonia.IndiceFuente.Accesible" xml:space="preserve">
+    <value>Menüindex der Modulationsquelle</value>
+  </data>
+  <data name="Ajustes.Fonia.Microfono" xml:space="preserve">
+    <value>PC-Mikrofon</value>
+  </data>
+  <data name="Ajustes.Fonia.NoMontada" xml:space="preserve">
+    <value>Sprechfunk über den PC ist in dieser Sitzung nicht verfügbar.</value>
+  </data>
+  <data name="Ajustes.Fonia.PttConmutado" xml:space="preserve">
+    <value>PTT umschaltend (Klick zum Starten, Klick zum Beenden)</value>
+  </data>
+  <data name="Ajustes.Fonia.SalidaAlEquipo" xml:space="preserve">
+    <value>Ausgang zum Funkgerät (was gesendet wird)</value>
+  </data>
+  <data name="Ajustes.Fonia.SalidaAlEquipo.Accesible" xml:space="preserve">
+    <value>Audioausgang zum Funkgerät</value>
+  </data>
+  <data name="Ajustes.Fonia.SoloSeLee" xml:space="preserve">
+    <value>Das Menü wird nur GELESEN; das Programm ändert nichts am Funkgerät. Der Index stammt aus der vom FT-710 gelesenen Tabelle und ist nicht mit dem Handbuch abgeglichen: Wenn der Hinweis nicht zu dem passt, was das Gerät anzeigt, korrigieren Sie ihn hier.</value>
+  </data>
+  <data name="Ajustes.Fonia.Tecla.BloqDespl" xml:space="preserve">
+    <value>Rollen</value>
+  </data>
+  <data name="Ajustes.Fonia.Tecla.CtrlDerecho" xml:space="preserve">
+    <value>Strg rechts</value>
+  </data>
+  <data name="Ajustes.Fonia.Tecla.Ninguna" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="Ajustes.Fonia.Tecla.Pausa" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Ajustes.Fonia.TeclaDelPtt" xml:space="preserve">
+    <value>PTT-Taste</value>
+  </data>
+  <data name="Ajustes.Fonia.TeclaDelPtt.Accesible" xml:space="preserve">
+    <value>PTT-Taste für Sprechfunk</value>
+  </data>
+  <data name="Ajustes.Fonia.TeclaDelPtt.Ayuda" xml:space="preserve">
+    <value>Nur bei aktivem Fenster und nie beim Tippen in einem Textfeld</value>
+  </data>
+  <data name="Ajustes.Fonia.TiempoMaximo" xml:space="preserve">
+    <value>Maximale Dauer pro Durchgang (Sekunden, 10 bis 600)</value>
+  </data>
+  <data name="Ajustes.Fonia.TiempoMaximo.Accesible" xml:space="preserve">
+    <value>Maximale Sprechfunk-Sendezeit in Sekunden</value>
+  </data>
+  <data name="Ajustes.Fonia.Titulo" xml:space="preserve">
+    <value>Sprechfunk über den PC (SSB, AM, FM)</value>
+  </data>
+  <data name="Ajustes.Fonia.ValorDeUsb" xml:space="preserve">
+    <value>Wert für USB</value>
+  </data>
+  <data name="Ajustes.Fonia.ValorDeUsb.Accesible" xml:space="preserve">
+    <value>Wert, der USB bedeutet</value>
+  </data>
+  <data name="Ajustes.Fonia.VolumenEscucha" xml:space="preserve">
+    <value>Empfangslautstärke:</value>
+  </data>
+  <data name="Ajustes.Fonia.VolumenEscucha.Accesible" xml:space="preserve">
+    <value>Empfangslautstärke</value>
+  </data>
+  <data name="Ajustes.Guardado" xml:space="preserve">
+    <value>Gespeichert.</value>
+  </data>
+  <data name="Ajustes.Idioma.Ayuda" xml:space="preserve">
+    <value>Die integrierte Hilfe ist auf Spanisch. Bereits übersetzte Kapitel erscheinen in Ihrer Sprache, die übrigen auf Spanisch mit einem Hinweis.</value>
+  </data>
+  <data name="Ajustes.Idioma.DelSistema" xml:space="preserve">
+    <value>Systemsprache ({0})</value>
+  </data>
+  <data name="Ajustes.Idioma.Explicacion" xml:space="preserve">
+    <value>Die Änderung gilt sofort, ohne Neustart. Die Programmprotokolle bleiben auf Spanisch, und die Beschriftungen, die die Frontplatte des Funkgeräts nachbilden (MODE, SPLIT, CLAR…), bleiben wie am Gerät.</value>
+  </data>
+  <data name="Ajustes.Idioma.Titulo" xml:space="preserve">
+    <value>Programmsprache</value>
+  </data>
+  <data name="Ajustes.Libro.Choques" xml:space="preserve">
+    <value>Daten, die zwischen den Kopien nicht übereinstimmten</value>
+  </data>
+  <data name="Ajustes.Libro.Contactos" xml:space="preserve">
+    <value>Verbindungen:</value>
+  </data>
+  <data name="Ajustes.Libro.ElegirExportar" xml:space="preserve">
+    <value>Wählen Sie, wo das Logbuch als ADIF gespeichert wird</value>
+  </data>
+  <data name="Ajustes.Libro.ElegirImportar" xml:space="preserve">
+    <value>Wählen Sie die zu importierende ADIF-Datei</value>
+  </data>
+  <data name="Ajustes.Libro.ErrorAlExportar" xml:space="preserve">
+    <value>Export nicht möglich: {0} Die Datei wurde nicht geschrieben.</value>
+  </data>
+  <data name="Ajustes.Libro.ErrorAlImportar" xml:space="preserve">
+    <value>Import nicht möglich: {0}</value>
+  </data>
+  <data name="Ajustes.Libro.Exportados" xml:space="preserve">
+    <value>{0}: {1:N0} Verbindungen nach ADIF exportiert.</value>
+  </data>
+  <data name="Ajustes.Libro.Exportando" xml:space="preserve">
+    <value>Exportiere…</value>
+  </data>
+  <data name="Ajustes.Libro.Exportar" xml:space="preserve">
+    <value>ADIF exportieren…</value>
+  </data>
+  <data name="Ajustes.Libro.Exportar.Accesible" xml:space="preserve">
+    <value>Das Logbuch in eine ADIF-Datei exportieren</value>
+  </data>
+  <data name="Ajustes.Libro.FiltroExportar" xml:space="preserve">
+    <value>ADIF-Dateien (*.adi)|*.adi</value>
+  </data>
+  <data name="Ajustes.Libro.FiltroImportar" xml:space="preserve">
+    <value>ADIF-Dateien (*.adi;*.adif;*.adx)|*.adi;*.adif;*.adx|Alle Dateien (*.*)|*.*</value>
+  </data>
+  <data name="Ajustes.Libro.Importando" xml:space="preserve">
+    <value>Importiere…</value>
+  </data>
+  <data name="Ajustes.Libro.Importar" xml:space="preserve">
+    <value>ADIF importieren…</value>
+  </data>
+  <data name="Ajustes.Libro.Importar.Accesible" xml:space="preserve">
+    <value>Eine ADIF-Datei ins Logbuch importieren</value>
+  </data>
+  <data name="Ajustes.Libro.NoSeHaPodidoContar" xml:space="preserve">
+    <value>Zählung nicht möglich</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Avisos" xml:space="preserve">
+    <value>Mit {0:N0} Lesewarnung(en).</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Duracion" xml:space="preserve">
+    <value>Dauer: {0:N1} s.</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.NoCuadra" xml:space="preserve">
+    <value>ACHTUNG: Die Zahlen gehen nicht auf, einige Datensätze lassen sich nicht erklären. Prüfen Sie die Datei.</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Programa" xml:space="preserve">
+    <value>Erzeugt von {0}.</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Rescatadas" xml:space="preserve">
+    <value>{0:N0} Bestätigungen wurden gerettet, die beim Verwerfen der Kopien verloren gegangen wären.</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Resumen" xml:space="preserve">
+    <value>{0}: {1:N0} Datensätze gelesen, {2:N0} neu, {3:N0} zusammengeführt ({4:N0} innerhalb der Datei und {5:N0} mit dem Logbuch), {6:N0} schon vorhanden.</value>
+  </data>
+  <data name="Ajustes.Libro.SinEscritor" xml:space="preserve">
+    <value>In dieser Sitzung gibt es keinen ADIF-Schreiber: Der Export ist deaktiviert.</value>
+  </data>
+  <data name="Ajustes.Libro.SinEscritorAlExportar" xml:space="preserve">
+    <value>In dieser Sitzung gibt es keinen ADIF-Schreiber: Die Datei wurde nicht geschrieben.</value>
+  </data>
+  <data name="Ajustes.Libro.Titulo" xml:space="preserve">
+    <value>Logbuch</value>
+  </data>
+  <data name="Ajustes.NoSeHanPodidoAplicar" xml:space="preserve">
+    <value>Übernehmen nicht möglich: {0}</value>
+  </data>
+  <data name="Ajustes.NoSeHanPodidoGuardar" xml:space="preserve">
+    <value>Speichern nicht möglich: {0}</value>
+  </data>
+  <data name="Ajustes.Secreto.Borrar.Accesible" xml:space="preserve">
+    <value>Gespeicherte Zugangsdaten löschen</value>
+  </data>
+  <data name="Ajustes.Secreto.ClubLogApi" xml:space="preserve">
+    <value>Club-Log-API-Schlüssel</value>
+  </data>
+  <data name="Ajustes.Secreto.ClubLogApi.Ayuda" xml:space="preserve">
+    <value>Sie wird beim Club-Log-Support angefordert und mit niemandem geteilt.</value>
+  </data>
+  <data name="Ajustes.Secreto.ClubLogContrasena" xml:space="preserve">
+    <value>Club-Log-Passwort</value>
+  </data>
+  <data name="Ajustes.Secreto.ClubLogContrasena.Ayuda" xml:space="preserve">
+    <value>Das Ihres Kontos oder ein App-Passwort, falls Sie eines haben.</value>
+  </data>
+  <data name="Ajustes.Secreto.EqslContrasena" xml:space="preserve">
+    <value>eQSL.cc-Passwort</value>
+  </data>
+  <data name="Ajustes.Secreto.EqslContrasena.Ayuda" xml:space="preserve">
+    <value>Das Ihres eQSL.cc-Kontos.</value>
+  </data>
+  <data name="Ajustes.Secreto.Guardada" xml:space="preserve">
+    <value>Verschlüsselt gespeichert</value>
+  </data>
+  <data name="Ajustes.Secreto.Guardar.Accesible" xml:space="preserve">
+    <value>Zugangsdaten verschlüsselt speichern</value>
+  </data>
+  <data name="Ajustes.Secreto.HamQthContrasena" xml:space="preserve">
+    <value>HamQTH-Passwort</value>
+  </data>
+  <data name="Ajustes.Secreto.HamQthContrasena.Ayuda" xml:space="preserve">
+    <value>Das Ihres HamQTH-Kontos.</value>
+  </data>
+  <data name="Ajustes.Secreto.LotwContrasena" xml:space="preserve">
+    <value>LoTW-Passwort</value>
+  </data>
+  <data name="Ajustes.Secreto.LotwContrasena.Ayuda" xml:space="preserve">
+    <value>Das Ihres ARRL-Kontos. Damit wird der Bestätigungsbericht heruntergeladen.</value>
+  </data>
+  <data name="Ajustes.Secreto.QrzClaveDeCuaderno" xml:space="preserve">
+    <value>QRZ-Logbuch-Schlüssel</value>
+  </data>
+  <data name="Ajustes.Secreto.QrzClaveDeCuaderno.Ayuda" xml:space="preserve">
+    <value>Sie ist nicht das Kontopasswort: QRZ stellt sie für das Hochladen von Verbindungen aus.</value>
+  </data>
+  <data name="Ajustes.Secreto.QrzContrasena" xml:space="preserve">
+    <value>QRZ.com-Passwort</value>
+  </data>
+  <data name="Ajustes.Secreto.QrzContrasena.Ayuda" xml:space="preserve">
+    <value>Für die Rufzeichenabfrage per XML.</value>
+  </data>
+  <data name="Ajustes.Secreto.SinGuardar" xml:space="preserve">
+    <value>Nicht gespeichert</value>
+  </data>
+  <data name="Ajustes.Secreto.TqslFrase" xml:space="preserve">
+    <value>Passphrase des Zertifikats</value>
+  </data>
+  <data name="Ajustes.Secreto.TqslFrase.Ayuda" xml:space="preserve">
+    <value>Nur wenn Ihr Zertifikat eine hat. Lesen Sie vor der Eingabe den Hinweis unten.</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola" xml:space="preserve">
+    <value>Upload-Warteschlange</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.Fallo" xml:space="preserve">
+    <value>Fehlgeschlagen: {0}</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.Pendiente" xml:space="preserve">
+    <value>Ausstehend</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.PendienteCorregido" xml:space="preserve">
+    <value>Ausstehend (korrigiert)</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.Reintento" xml:space="preserve">
+    <value>Wiederholung {0}: {1}</value>
+  </data>
+  <data name="Ajustes.Subidas.ColaVacia" xml:space="preserve">
+    <value>Es wartet nichts auf den Upload.</value>
+  </data>
+  <data name="Ajustes.Subidas.Completar" xml:space="preserve">
+    <value>Name, QTH, Locator, Land, Zonen… aus dem QRZ.com-Eintrag (oder HamQTH) ergänzen</value>
+  </data>
+  <data name="Ajustes.Subidas.Completar.Accesible" xml:space="preserve">
+    <value>Verbindungen mit QRZ.com ergänzen</value>
+  </data>
+  <data name="Ajustes.Subidas.Completar.Explicacion" xml:space="preserve">
+    <value>Es wird nur Leeres ergänzt: Was Sie eingeben, wird nie überschrieben. Ohne Netz oder Konto wird die Verbindung trotzdem gespeichert. Ohne kostenpflichtiges XML-Abo liefert QRZ.com nur einen Teil des Eintrags.</value>
+  </data>
+  <data name="Ajustes.Subidas.CompletarTitulo" xml:space="preserve">
+    <value>Mit QRZ.com ergänzen</value>
+  </data>
+  <data name="Ajustes.Subidas.CuentasEn" xml:space="preserve">
+    <value>Benutzernamen und Passwörter für QRZ.com, HamQTH, LoTW, eQSL und Club Log tragen Sie unter „Konten und Dienste“ ein.</value>
+  </data>
+  <data name="Ajustes.Subidas.CuentasGuardadas" xml:space="preserve">
+    <value>Konten gespeichert. Sie gelten sofort, ohne Neustart.</value>
+  </data>
+  <data name="Ajustes.Subidas.ErrorAlSubir" xml:space="preserve">
+    <value>Hochladen nicht möglich: {0}</value>
+  </data>
+  <data name="Ajustes.Subidas.Explicacion" xml:space="preserve">
+    <value>Jede gespeicherte Verbindung (Formular, Digital oder Runde) wird automatisch zu den angehakten Diensten hochgeladen. Ohne Netz bleibt sie in der Warteschlange und wird mit wachsendem Abstand sowie beim Start erneut versucht. Standardmäßig sind die Dienste mit Zugangsdaten angehakt.</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha" xml:space="preserve">
+    <value>Abfrage</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.AvisoDelServicio" xml:space="preserve">
+    <value>Hinweis des Dienstes: {0}</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.Desactivada" xml:space="preserve">
+    <value>Mit QRZ.com ergänzen: ausgeschaltet unter Einstellungen › Uploads und QRZ.</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.Listo" xml:space="preserve">
+    <value>Mit {0} ergänzen: bereit.</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.Problema" xml:space="preserve">
+    <value>{0} Verbindungen werden trotzdem gespeichert, ohne die Daten aus dem Eintrag.</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.SinContrasena" xml:space="preserve">
+    <value>Mit QRZ.com ergänzen: Das QRZ.com-Passwort (oder HamQTH) fehlt unter Einstellungen › Konten und Dienste. Verbindungen werden trotzdem gespeichert, ohne Name und QTH aus dem Eintrag.</value>
+  </data>
+  <data name="Ajustes.Subidas.NadaPendiente" xml:space="preserve">
+    <value>Es stand nichts aus.</value>
+  </data>
+  <data name="Ajustes.Subidas.NadaSubido" xml:space="preserve">
+    <value>Es konnte nichts hochgeladen werden: Prüfen Sie den Status jedes Dienstes.</value>
+  </data>
+  <data name="Ajustes.Subidas.NoMontada" xml:space="preserve">
+    <value>Der automatische Upload ist in dieser Sitzung nicht verfügbar.</value>
+  </data>
+  <data name="Ajustes.Subidas.NotaModificable" xml:space="preserve">
+    <value>Wenn Sie eine bereits hochgeladene Verbindung ändern (F2), wird sie korrigiert erneut gesendet.</value>
+  </data>
+  <data name="Ajustes.Subidas.NotaNoModificable" xml:space="preserve">
+    <value>Änderungen werden nicht unterstützt: Eine hochgeladene Verbindung bleibt, wie sie hochgeladen wurde.</value>
+  </data>
+  <data name="Ajustes.Subidas.Subidos" xml:space="preserve">
+    <value>{0:N0} Verbindung(en) hochgeladen.</value>
+  </data>
+  <data name="Ajustes.Subidas.Subiendo" xml:space="preserve">
+    <value>Wird hochgeladen…</value>
+  </data>
+  <data name="Ajustes.Subidas.SubirA" xml:space="preserve">
+    <value>Zu {0} hochladen</value>
+  </data>
+  <data name="Ajustes.Subidas.SubirAhora" xml:space="preserve">
+    <value>Jetzt hochladen</value>
+  </data>
+  <data name="Ajustes.Subidas.SubirAhora.Accesible" xml:space="preserve">
+    <value>Alles Ausstehende jetzt hochladen</value>
+  </data>
+  <data name="Ajustes.Subidas.Titulo" xml:space="preserve">
+    <value>Automatischer Upload</value>
+  </data>
+  <data name="Ajustes.Subidas.UsuarioPorOmision" xml:space="preserve">
+    <value>Leer: Es wird das Rufzeichen des Stationsprofils verwendet.</value>
+  </data>
+  <data name="Ajustes.Subidas.UsuarioPorOmisionCon" xml:space="preserve">
+    <value>Leer: Es wird das Rufzeichen des Profils verwendet ({0}).</value>
+  </data>
+  <data name="Ajustes.Tarjeta.ClubLog.Descripcion" xml:space="preserve">
+    <value>Logbuch-Upload und meistgesuchte DXCC.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Cluster.Aviso" xml:space="preserve">
+    <value>{0} · {1}:{2} als {3}</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Cluster.Descripcion" xml:space="preserve">
+    <value>Knoten, Login-Rufzeichen und Passwort (falls verlangt).</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Cluster.Nombre" xml:space="preserve">
+    <value>DX-Cluster</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Cluster.Simulado" xml:space="preserve">
+    <value>Mit simulierten Schnittstellen ist der Cluster nur eine Attrappe.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Configurar" xml:space="preserve">
+    <value>Einrichten…</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Configurar.Accesible" xml:space="preserve">
+    <value>Zum Bereich dieses Dienstes</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Correo.Descripcion" xml:space="preserve">
+    <value>Das Konto, mit dem die QSL-Karten per E-Mail verschickt werden.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Correo.Nombre" xml:space="preserve">
+    <value>E-Mail (SMTP)</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Eqsl.Descripcion" xml:space="preserve">
+    <value>Elektronische QSL-Karten.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.GuardarCuenta" xml:space="preserve">
+    <value>Konto speichern</value>
+  </data>
+  <data name="Ajustes.Tarjeta.GuardarCuenta.Accesible" xml:space="preserve">
+    <value>Kontodaten speichern</value>
+  </data>
+  <data name="Ajustes.Tarjeta.GuardarCuenta.Ayuda" xml:space="preserve">
+    <value>Speichert den Benutzernamen und die übrigen Kontodaten (die Passwörter jeweils mit ihrem eigenen „Speichern“)</value>
+  </data>
+  <data name="Ajustes.Tarjeta.HamQth.Descripcion" xml:space="preserve">
+    <value>Stationsdaten der Gegenstation, als Ersatz, wenn QRZ.com nicht antwortet.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.LeaAntes" xml:space="preserve">
+    <value>Bitte lesen, bevor Sie die Passphrase eingeben</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Lotw.Descripcion" xml:space="preserve">
+    <value>ARRL-Bestätigungen, mit TQSL signiert.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Lotw.ErrorAlComprobar" xml:space="preserve">
+    <value>Der LoTW-Status konnte nicht geprüft werden: {0}</value>
+  </data>
+  <data name="Ajustes.Tarjeta.ProbarLaConexion" xml:space="preserve">
+    <value>Verbindung testen</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Qrz.Descripcion" xml:space="preserve">
+    <value>Stationsdaten der Gegenstation und Upload von Verbindungen.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.VolverAComprobar" xml:space="preserve">
+    <value>Erneut prüfen</value>
+  </data>
+  <data name="Ajustes.VolverABuscarDispositivos" xml:space="preserve">
+    <value>Geräte neu suchen</value>
+  </data>
+</root>

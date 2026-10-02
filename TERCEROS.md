@@ -35,6 +35,13 @@ Los manuales no se incluyen: se descargan de yaesu.com e icomjapan.com.
 | Catálogo reducido de diplomas para las pruebas | `tests/Nodisla.Cuaderno.Diplomas.Pruebas/Datos/catalogo-de-prueba.tsv.gz` | Definiciones de los 87 diplomas y solo referencias factuales: entidades DXCC, estados de EE. UU., cantones suizos, prefijos de la Commonwealth, bases antárticas y un puñado de IOTA y POTA | Solo para las pruebas; no es el catálogo del programa |
 | Casos de verificación de SGP4 | `tests/Nodisla.Cuaderno.Satelites.Pruebas/Datos/SGP4-VER.TLE`, `tcppver.out` | Vallado, Crawford, Hujsak y Kelso, *Revisiting Spacetrack Report #3* (AIAA 2006), distribuidos por CelesTrak | Distribuidos libremente como banco de verificación |
 
+### Traducciones
+
+Los textos de la interfaz en inglés, francés, alemán, italiano y portugués
+(`src/Nodisla.Cuaderno.Idiomas/Recursos/*.resx`) y la ayuda en inglés (`docs/ayuda/en`) son
+traducciones propias del proyecto, bajo la misma GPL-3.0. El instalador usa los ficheros de
+idioma que trae Inno Setup, que no se incluyen en el repositorio.
+
 ### Material propio basado en terceros
 
 - **Frontales de las radios** (FT-710, FT-891, FT-991A, FTDX10, FTDX101, IC-705, IC-7300,

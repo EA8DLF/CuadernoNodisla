@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using DominioBanda = Nodisla.Cuaderno.Dominio.Valores.Banda;
 using DominioFrecuencia = Nodisla.Cuaderno.Dominio.Valores.Frecuencia;
 using DominioIndicativo = Nodisla.Cuaderno.Dominio.Valores.Indicativo;
@@ -73,6 +74,17 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         Modos = ModosHabituales();
 
         Limpiar();
+
+        Textos.AlCambiar(this, static vm => vm.AlCambiarDeIdioma());
+    }
+
+    /// <summary>Vuelve a escribir en el idioma nuevo lo fijo del formulario.</summary>
+    private void AlCambiarDeIdioma()
+    {
+        OnPropertyChanged(nameof(OrigenDeLaSintonia));
+        OnPropertyChanged(nameof(TituloDelPanel));
+        OnPropertyChanged(nameof(TextoDelBotonGuardar));
+        for (var i = 0; i < ContactosPrevios.Count; i++) ContactosPrevios[i] = new FilaDeQso(ContactosPrevios[i].Qso);
     }
 
     /// <summary>Se dispara cuando el cuaderno ha cambiado y la rejilla debe refrescarse.</summary>
@@ -120,8 +132,8 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
 
     /// <summary>De donde salen la frecuencia y el modo, escrito para el operador.</summary>
     public string OrigenDeLaSintonia => SiguiendoAlEquipo
-        ? "Siguiendo al equipo"
-        : "Los pone usted";
+        ? Textos.T("Libro.Entrada.SiguiendoAlEquipo")
+        : Textos.T("Libro.Entrada.LosPoneUsted");
 
     /// <summary>
     /// Prepara el formulario para trabajar a una estacion anunciada en el cluster.
@@ -209,10 +221,10 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
     public bool EnEdicion => IdEnEdicion > 0;
 
     /// <summary>Titulo del panel, que cambia segun se este dando de alta o modificando.</summary>
-    public string TituloDelPanel => EnEdicion ? "Modificar contacto" : "Contacto nuevo";
+    public string TituloDelPanel => Textos.T(EnEdicion ? "Libro.Entrada.TituloModificar" : "Libro.Entrada.TituloNuevo");
 
     /// <summary>Texto del boton principal.</summary>
-    public string TextoDelBotonGuardar => EnEdicion ? "Guardar cambios (Intro)" : "Registrar contacto (Intro)";
+    public string TextoDelBotonGuardar => Textos.T(EnEdicion ? "Libro.Entrada.GuardarCambios" : "Libro.Entrada.Registrar");
 
     /// <summary>Pone la hora en los campos mientras el operador no la haya fijado a mano.</summary>
     public void ActualizarReloj(DateTimeOffset utc)
@@ -307,7 +319,7 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         Comentario = qso.Comentario ?? string.Empty;
         _silencio = false;
 
-        Mensaje = $"Modificando el contacto con {qso.Call.Valor}. Escape cancela.";
+        Mensaje = Textos.F("Libro.Entrada.Modificando", qso.Call.Valor);
         Tono = TonoDeMensaje.Aviso;
         LanzarConsultaDeTrabajadoAntes(Indicativo);
     }
@@ -336,7 +348,7 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
 
             if (edicion.NoEncontrado)
             {
-                Mensaje = "Ese contacto ya no está en el cuaderno.";
+                Mensaje = Textos.T("Libro.Entrada.YaNoEsta");
                 Tono = TonoDeMensaje.Error;
                 return;
             }
@@ -347,9 +359,9 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
                 return;
             }
 
-            Mensaje = $"Cambios guardados en el contacto con {qso.Call.Valor}."
+            Mensaje = Textos.F("Libro.Entrada.CambiosGuardados", qso.Call.Valor)
                 + (lotwYaSubido
-                    ? " LoTW no admite modificar un contacto ya subido: allí queda como se subió. Club Log y QRZ reciben la corrección."
+                    ? " " + Textos.T("Libro.Entrada.LotwNoAdmite")
                     : string.Empty);
             Tono = TonoDeMensaje.Correcto;
             Vaciar(conservarMensaje: true);
@@ -367,9 +379,15 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         if (registro.Duplicado is { } duplicado)
         {
             _insistirConElDuplicado = true;
-            var cuando = duplicado.InicioUtc.UtcDateTime.ToString("dd-MM-yyyy HH:mm", CultureInfo.InvariantCulture);
-            Mensaje = $"Ya hay un contacto con {duplicado.Call.Valor} en {duplicado.Band.Nombre} " +
-                      $"{duplicado.Mode.NombreUsual} el {cuando} UTC. Pulse Intro otra vez para registrarlo igualmente.";
+            var instante = duplicado.InicioUtc.UtcDateTime;
+            var cuando = instante.ToString(Textos.T("Comun.FormatoDeFecha"), Textos.Cultura) + " "
+                + instante.ToString("HH:mm", CultureInfo.InvariantCulture);
+            Mensaje = Textos.F(
+                "Libro.Entrada.Duplicado",
+                duplicado.Call.Valor,
+                duplicado.Band.Nombre,
+                duplicado.Mode.NombreUsual,
+                cuando);
             Tono = TonoDeMensaje.Aviso;
             return;
         }
@@ -381,7 +399,7 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
             return;
         }
 
-        Mensaje = $"Contacto con {qso.Call.Valor} registrado en {qso.Band.Nombre} {qso.Mode.NombreUsual}.";
+        Mensaje = Textos.F("Libro.Entrada.Registrado", qso.Call.Valor, qso.Band.Nombre, qso.Mode.NombreUsual);
         Tono = TonoDeMensaje.Correcto;
         Vaciar(conservarMensaje: true);
         CuadernoCambiado?.Invoke(this, EventArgs.Empty);
@@ -446,15 +464,15 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         if (!DominioIndicativo.TryParse(Indicativo, out var call))
         {
             Mensaje = string.IsNullOrWhiteSpace(Indicativo)
-                ? "Falta el indicativo del corresponsal."
-                : $"El indicativo «{Indicativo}» no tiene una forma válida.";
+                ? Textos.T("Servicios.Aplicacion.FaltaIndicativo")
+                : Textos.F("Servicios.Aplicacion.IndicativoNoValido", Indicativo);
             Tono = TonoDeMensaje.Error;
             return null;
         }
 
         if (!DominioModo.TryParse(Modo, null, out var modo))
         {
-            Mensaje = $"El modo «{Modo}» no está en la tabla de ADIF.";
+            Mensaje = Textos.F("Libro.Entrada.ModoNoAdif", Modo);
             Tono = TonoDeMensaje.Error;
             return null;
         }
@@ -464,7 +482,7 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
 
         if (!LeerInstante(out var inicio))
         {
-            Mensaje = "La fecha o la hora no se entienden. Use dd-mm-aaaa y hh:mm en UTC.";
+            Mensaje = Textos.T("Libro.Entrada.FechaNoValida");
             Tono = TonoDeMensaje.Error;
             return null;
         }
@@ -635,11 +653,11 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         DominioModo.TryParse(Modo, null, out var modo);
 
         var novedad = new List<string>();
-        if (resultado.EsNuevoEnBanda(banda)) novedad.Add("nuevo en esta banda");
-        if (resultado.EsNuevoEnModo(modo)) novedad.Add("nuevo en este modo");
+        if (resultado.EsNuevoEnBanda(banda)) novedad.Add(Textos.T("Libro.Entrada.NuevoEnBanda"));
+        if (resultado.EsNuevoEnModo(modo)) novedad.Add(Textos.T("Libro.Entrada.NuevoEnModo"));
 
         AvisoTrabajadoAntes = novedad.Count > 0
-            ? $"{resultado.Resumen} · Sería {string.Join(" y ", novedad)}."
+            ? Textos.F("Libro.Entrada.Seria", resultado.Resumen, string.Join(" " + Textos.T("Libro.Entrada.Y") + " ", novedad))
             : resultado.Resumen;
 
         // Cuatro caben en una linea a lo ancho de la ventana; mas obligarian a robarle
@@ -693,9 +711,9 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
 
         var partes = new List<string> { ficha.Fuente };
         if (ficha.Pais is { Length: > 0 } pais) partes.Add(pais);
-        if (ficha.GestorQsl is { Length: > 0 } via) partes.Add($"QSL vía {via}");
-        if (ficha.UsaLotw == true) partes.Add("usa LoTW");
-        if (ficha.UsaEqsl == true) partes.Add("usa eQSL");
+        if (ficha.GestorQsl is { Length: > 0 } via) partes.Add(Textos.F("Libro.Entrada.QslVia", via));
+        if (ficha.UsaLotw == true) partes.Add(Textos.F("Libro.Entrada.Usa", "LoTW"));
+        if (ficha.UsaEqsl == true) partes.Add(Textos.F("Libro.Entrada.Usa", "eQSL"));
         ResumenDeFicha = string.Join(" · ", partes);
     }
 

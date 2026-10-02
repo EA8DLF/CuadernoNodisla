@@ -1,3 +1,5 @@
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Impresion.Modelo;
 
 /// <summary>
@@ -42,6 +44,18 @@ public sealed record PlantillaDeEtiquetas(
 {
     /// <summary>Cuantas etiquetas entran en una hoja.</summary>
     public int PorHoja => Columnas * Filas;
+
+    /// <summary>
+    /// Como se ve en pantalla, en el idioma del programa. Las de fabrica (Avery) se describen por
+    /// sus medidas; cualquier otra enseña su <see cref="Nombre"/> tal cual.
+    /// </summary>
+    public string NombreVisible => Nombre.StartsWith("Avery ", StringComparison.Ordinal)
+        ? Textos.F(
+            Pagina == TamanoDePagina.Carta ? "Servicios.Impresion.Etiquetas.PorHojaCarta" : "Servicios.Impresion.Etiquetas.PorHoja",
+            PorHoja,
+            AnchoMm,
+            AltoMm)
+        : Nombre;
 
     /// <summary>Esquina superior izquierda de una etiqueta por su numero dentro de la hoja.</summary>
     /// <param name="indice">Numero de la etiqueta en la hoja, empezando en cero.</param>

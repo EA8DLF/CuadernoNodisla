@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Radio.Control;
 
 namespace Nodisla.Cuaderno.Radio.Ptt;
@@ -79,6 +80,19 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
     private long _marcaDeLatido;
     private volatile bool _cerrando;
     private bool _desechado;
+
+    /// <summary>
+    /// Uno en cuanto este vigilante ha concedido la antena alguna vez. No vuelve nunca a cero.
+    /// </summary>
+    /// <remarks>
+    /// Se apunta <b>antes</b> de mandar la subida, no despues: una subida que falla a medias
+    /// puede haber dejado el PTT arriba, y eso tiene que contar. No se borra al bajar a
+    /// proposito: lo conservador es que, una vez se ha transmitido, cualquier bajada fallida
+    /// siga siendo alarma como siempre. Solo sirve para una cosa: que un control ya cerrado
+    /// (<see cref="ObjectDisposedException"/>) por el que <b>nunca</b> se transmitio no se tome
+    /// por un PTT pegado.
+    /// </remarks>
+    private int _pttPuedeEstarArriba;
 
     /// <summary>Crea el vigilante sobre un control de equipo.</summary>
     /// <param name="control">Control por el que se habla con el equipo.</param>
@@ -184,8 +198,11 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
         if (Interlocked.CompareExchange(ref _estado, EnAntenaEstado, Libre) != Libre)
         {
             throw new InvalidOperationException(
-                "Ya hay una transmisión en curso: hay que soltar la anterior antes de pedir antena otra vez.");
+                Textos.T("Servicios.Radio.Ptt.EnCurso"));
         }
+
+        // Desde aqui el PTT puede subir: cualquier bajada que falle a partir de ahora es de verdad.
+        Volatile.Write(ref _pttPuedeEstarArriba, 1);
 
         var ahora = Stopwatch.GetTimestamp();
         Volatile.Write(ref _marcaDeInicio, ahora);
@@ -465,8 +482,7 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
         }
 
         var seQuedoPuesto = new PttPegadoException(
-            "¡PTT PEGADO! Ni las vías normales ni las síncronas han podido bajar el PTT. Apague "
-            + "el equipo o el amplificador a mano ahora mismo.",
+            Textos.T("Servicios.Radio.Ptt.PegadoSincronas"),
             fallo is null ? [] : [fallo]);
         _registro.LogError(seQuedoPuesto, seQuedoPuesto.Message);
         Avisar(PttPegado, seQuedoPuesto);
@@ -564,7 +580,10 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
             catch (Exception ex)
             {
                 fallos.Add(ex);
-                _registro.LogWarning(ex, "La vía normal no ha podido bajar el PTT; se prueban las vías de emergencia.");
+                _registro.Log(
+                    NivelDelFallo(ex),
+                    ex,
+                    "La vía normal no ha podido bajar el PTT; se prueban las vías de emergencia.");
             }
 
             if (!soltado && _control is ISueltaDeEmergenciaPtt emergencia)
@@ -582,7 +601,11 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
                     catch (Exception ex)
                     {
                         fallos.Add(ex);
-                        _registro.LogWarning(ex, "Falló la vía de emergencia «{Via}» al bajar el PTT.", via.Nombre);
+                        _registro.Log(
+                            NivelDelFallo(ex),
+                            ex,
+                            "Falló la vía de emergencia «{Via}» al bajar el PTT.",
+                            via.Nombre);
                     }
                 }
             }
@@ -605,11 +628,22 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
             }
         }
 
+        if (!soltado && NuncaTransmitioYElControlEstaCerrado(fallos))
+        {
+            // Falsa alarma, no PTT pegado: este vigilante no ha concedido la antena nunca y todo
+            // lo que ha fallado es que el control ya estaba desechado. Por un control cerrado sin
+            // haber transmitido no hay PTT que se haya podido quedar arriba (01-10-2026: cerrar el
+            // Cuaderno sin haber conectado daba «¡PTT PEGADO!»).
+            _registro.LogDebug(
+                "El control del equipo ya estaba cerrado y este vigilante no ha transmitido nunca: no hay PTT que bajar.");
+            soltado = true;
+            viaBuena = "ninguna (control cerrado sin haber transmitido)";
+        }
+
         if (!soltado)
         {
             var pegado = new PttPegadoException(
-                "¡PTT PEGADO! Han fallado todas las vías de bajar el PTT. Apague el equipo o el "
-                + "amplificador a mano ahora mismo.",
+                Textos.T("Servicios.Radio.Ptt.PegadoTodas"),
                 fallos);
             _registro.LogError(pegado, pegado.Message);
             Avisar(PttPegado, pegado);
@@ -619,6 +653,30 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
         _registro.LogDebug("PTT abajo por la {Via}.", viaBuena);
         aviso.AvisarUnaVez(this, motivo);
     }
+
+    /// <summary>
+    /// Dice si una bajada fallida es en realidad un control ya cerrado por el que nunca se
+    /// transmitio.
+    /// </summary>
+    /// <remarks>
+    /// Las dos cosas a la vez, y nada mas: que este vigilante no haya concedido la antena nunca
+    /// y que <b>todos</b> los fallos sean <see cref="ObjectDisposedException"/>. Con un solo
+    /// fallo de otra clase, o con una sola transmision en la historia del vigilante, sigue
+    /// siendo un PTT pegado y se avisa como siempre.
+    /// </remarks>
+    private bool NuncaTransmitioYElControlEstaCerrado(IReadOnlyList<Exception> fallos) =>
+        Volatile.Read(ref _pttPuedeEstarArriba) == 0
+        && fallos.Count > 0
+        && fallos.All(EsControlCerrado);
+
+    private static bool EsControlCerrado(Exception ex) =>
+        ex is ObjectDisposedException || ex.GetBaseException() is ObjectDisposedException;
+
+    /// <summary>Un control cerrado sin haber transmitido no es un aviso, es una nota.</summary>
+    private LogLevel NivelDelFallo(Exception ex) =>
+        EsControlCerrado(ex) && Volatile.Read(ref _pttPuedeEstarArriba) == 0
+            ? LogLevel.Debug
+            : LogLevel.Warning;
 
     /// <summary>
     /// El bucle del hilo vigilante. Mira el reloj, no espera a nadie.

@@ -1,6 +1,7 @@
 using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
 using Nodisla.Cuaderno.Modos.Ft8;
@@ -355,7 +356,7 @@ public sealed class ModemPropio : IModemPropio
         // avisa con un registro y se sigue: se para aqui.
         if (_salida is null || _vigilante is null)
             throw new InvalidOperationException(
-                "Este módem no puede emitir: no se le ha dado salida de audio ni vigilante de PTT.");
+                Textos.T("Servicios.Modos.NoPuedeEmitir"));
         var modo = ModoRegistrado(Modo);
         const int FrecuenciaDeSalida = 48000;
         float[] mensaje;

@@ -1,6 +1,7 @@
 <UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.BotoneraCb"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas">
 
     <!--
@@ -19,12 +20,12 @@
             <DockPanel>
                 <Button x:Name="BotonCambiar" DockPanel.Dock="Right" Content="◂ HAM" Style="{StaticResource PestanaDeLaBotonera}"
                         Visibility="Collapsed" Click="AlPedirCambio" VerticalAlignment="Center"
-                        ToolTip="Volver a bandas, modos y memorias"
-                        AutomationProperties.Name="Ver bandas, modos y memorias" />
-                <TextBlock Text="Canales CB" Style="{StaticResource TituloDeLaBotonera}" />
+                        ToolTip="{loc:Texto Cabina.Botonera.VolverAyuda}"
+                        AutomationProperties.Name="{loc:Texto Cabina.Botonera.Volver}" />
+                <TextBlock Text="{loc:Texto Cabina.Botonera.CanalesCb}" Style="{StaticResource TituloDeLaBotonera}" />
             </DockPanel>
 
-            <ItemsControl ItemsSource="{Binding CanalesDeCb}" AutomationProperties.Name="Canales de 27 MHz">
+            <ItemsControl ItemsSource="{Binding CanalesDeCb}" AutomationProperties.Name="{loc:Texto Cabina.Botonera.Canales27}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <UniformGrid Columns="8" />
@@ -39,8 +40,8 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <TextBlock Text="Plan" Style="{StaticResource SubtituloDeLaBotonera}" />
-            <ItemsControl ItemsSource="{Binding PlanesDeCb}" AutomationProperties.Name="Plan de canales">
+            <TextBlock Text="{loc:Texto Cabina.Botonera.Plan}" Style="{StaticResource SubtituloDeLaBotonera}" />
+            <ItemsControl ItemsSource="{Binding PlanesDeCb}" AutomationProperties.Name="{loc:Texto Cabina.Botonera.PlanDeCanales}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <UniformGrid Columns="5" />
@@ -55,8 +56,8 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <TextBlock Text="Modo" Style="{StaticResource SubtituloDeLaBotonera}" />
-            <ItemsControl ItemsSource="{Binding TeclasDeModo}" AutomationProperties.Name="Teclas de modo">
+            <TextBlock Text="{loc:Texto Comun.Modo}" Style="{StaticResource SubtituloDeLaBotonera}" />
+            <ItemsControl ItemsSource="{Binding TeclasDeModo}" AutomationProperties.Name="{loc:Texto Cabina.Botonera.TeclasDeModo}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <UniformGrid Columns="6" />

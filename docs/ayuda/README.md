@@ -51,6 +51,8 @@ volver a ella se vuelve a la página que se vio la última vez.
     MULTI.
 16. [Ayuda, actualizaciones y fallos](16-ayuda-actualizaciones-y-fallos.md) — la ayuda, el aviso
     de versión nueva, reportar un fallo y «Acerca de».
+17. [Telegrafía (CW)](17-cw.md) — el decodificador de CW de la cabina: texto en vivo, velocidad,
+    tono, indicativos con un clic y varias señales a la vez.
 
 ## Antes de nada
 

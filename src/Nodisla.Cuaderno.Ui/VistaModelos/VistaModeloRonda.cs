@@ -5,6 +5,7 @@ using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.Conversores;
 using Serilog;
 using DominioBanda = Nodisla.Cuaderno.Dominio.Valores.Banda;
@@ -30,7 +31,7 @@ public sealed partial class FilaDeParticipante : ObservableObject
     public string Indicativo => Participante.Call.Valor;
 
     /// <summary>Hora UTC de entrada en la ronda.</summary>
-    public string HoraEntrada => Participante.EntradaUtc.UtcDateTime.ToString("HH:mm:ss");
+    public string HoraEntrada => Participante.EntradaUtc.UtcDateTime.ToString("HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
 
     /// <summary>Pais resuelto, si lo hay.</summary>
     public string Pais => Participante.Pais ?? string.Empty;
@@ -149,13 +150,22 @@ public sealed partial class VistaModeloRonda(
     /// <summary>Cabecera de la ronda abierta, para la pantalla.</summary>
     public string TituloDeLaRonda => RondaAbierta is { } r
         ? string.Join(" · ", new[] { r.Nombre, r.Band.Nombre, r.Mode.NombreUsual, TextoDeFrecuencia.Escribir(r.Freq) is { Length: > 0 } mhz ? $"{mhz} MHz" : string.Empty }.Where(t => !string.IsNullOrWhiteSpace(t)))
-        : "Sin ronda abierta";
+        : Textos.T("Principal.Ronda.SinRonda");
+
+    private bool _atentoAlIdioma;
 
     /// <summary>
     /// Carga los perfiles de estacion, el historial y reabre la ronda si quedo una abierta.
     /// </summary>
     public async Task CargarAsync(CancellationToken ct = default)
     {
+        // Con constructor primario no hay cuerpo donde suscribirse: se hace en la primera carga.
+        if (!_atentoAlIdioma)
+        {
+            _atentoAlIdioma = true;
+            Textos.AlCambiar(this, static vm => vm.OnPropertyChanged(nameof(TituloDeLaRonda)));
+        }
+
         try
         {
             var perfiles = await estaciones.TodasAsync(ct: ct).ConfigureAwait(true);
@@ -175,7 +185,7 @@ public sealed partial class VistaModeloRonda(
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido cargar la ronda de control.");
-            Mensaje = $"No se ha podido cargar la ronda: {ex.Message}";
+            Mensaje = Textos.F("Principal.Ronda.NoSeCarga", ex.Message);
             Tono = TonoDeMensaje.Error;
         }
     }
@@ -186,14 +196,14 @@ public sealed partial class VistaModeloRonda(
     {
         if (string.IsNullOrWhiteSpace(NombreRonda))
         {
-            Mensaje = "Falta el nombre de la ronda.";
+            Mensaje = Textos.T("Principal.Ronda.FaltaNombre");
             Tono = TonoDeMensaje.Error;
             return;
         }
 
         if (!DominioModo.TryParse(Modo, null, out var modo))
         {
-            Mensaje = $"El modo «{Modo}» no está en la tabla de ADIF.";
+            Mensaje = Textos.F("Principal.Ronda.ModoDesconocido", Modo);
             Tono = TonoDeMensaje.Error;
             return;
         }
@@ -205,7 +215,7 @@ public sealed partial class VistaModeloRonda(
         var freq = Dominio.Valores.Frecuencia.Cero;
         if (!string.IsNullOrWhiteSpace(Frecuencia) && !TextoDeFrecuencia.TryLeer(Frecuencia, out freq))
         {
-            Mensaje = $"La frecuencia «{Frecuencia}» no se entiende. Escríbala en MHz, por ejemplo 7.150.";
+            Mensaje = Textos.F("Principal.Ronda.FrecuenciaIlegible", Frecuencia);
             Tono = TonoDeMensaje.Error;
             return;
         }
@@ -226,14 +236,14 @@ public sealed partial class VistaModeloRonda(
                 .ConfigureAwait(true);
 
             CargarRonda(ronda);
-            Mensaje = $"Ronda «{ronda.Nombre}» abierta.";
+            Mensaje = Textos.F("Principal.Ronda.Abierta.Mensaje", ronda.Nombre);
             Tono = TonoDeMensaje.Correcto;
             await RefrescarHistorialAsync().ConfigureAwait(true);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido abrir la ronda.");
-            Mensaje = $"No se ha podido abrir la ronda: {ex.Message}";
+            Mensaje = Textos.F("Principal.Ronda.NoSeAbre", ex.Message);
             Tono = TonoDeMensaje.Error;
         }
     }
@@ -250,14 +260,14 @@ public sealed partial class VistaModeloRonda(
             RondaAbierta = null;
             Participantes.Clear();
             ParticipanteElegido = null;
-            Mensaje = $"Ronda «{ronda.Nombre}» cerrada.";
+            Mensaje = Textos.F("Principal.Ronda.Cerrada", ronda.Nombre);
             Tono = TonoDeMensaje.Correcto;
             await RefrescarHistorialAsync().ConfigureAwait(true);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido cerrar la ronda.");
-            Mensaje = $"No se ha podido cerrar la ronda: {ex.Message}";
+            Mensaje = Textos.F("Principal.Ronda.NoSeCierra", ex.Message);
             Tono = TonoDeMensaje.Error;
         }
     }
@@ -273,7 +283,7 @@ public sealed partial class VistaModeloRonda(
             var resultado = await gestionar.AnadirParticipanteAsync(ronda.Id, IndicativoNuevo).ConfigureAwait(true);
             if (!resultado.Correcto)
             {
-                Mensaje = resultado.Error ?? "No se ha podido añadir el participante.";
+                Mensaje = resultado.Error ?? Textos.T("Principal.Ronda.NoSeAnade");
                 Tono = TonoDeMensaje.Error;
                 return;
             }
@@ -283,14 +293,14 @@ public sealed partial class VistaModeloRonda(
             ParticipanteElegido = fila;
             IndicativoNuevo = string.Empty;
             Mensaje = string.IsNullOrEmpty(fila.Pais)
-                ? $"{fila.Indicativo} entra en la ronda."
-                : $"{fila.Indicativo} ({fila.Pais}) entra en la ronda.";
+                ? Textos.F("Principal.Ronda.Entra", fila.Indicativo)
+                : Textos.F("Principal.Ronda.EntraConPais", fila.Indicativo, fila.Pais);
             Tono = TonoDeMensaje.Correcto;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido anadir un participante a la ronda.");
-            Mensaje = $"No se ha podido añadir el participante: {ex.Message}";
+            Mensaje = Textos.F("Principal.Ronda.NoSeAnadeMotivo", ex.Message);
             Tono = TonoDeMensaje.Error;
         }
     }
@@ -305,13 +315,13 @@ public sealed partial class VistaModeloRonda(
         {
             fila.VolcarEnElDominio();
             await gestionar.ActualizarParticipanteAsync(fila.Participante).ConfigureAwait(true);
-            Mensaje = $"Guardado el RST y el comentario de {fila.Indicativo}.";
+            Mensaje = Textos.F("Principal.Ronda.RstGuardado", fila.Indicativo);
             Tono = TonoDeMensaje.Correcto;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido guardar el participante de la ronda.");
-            Mensaje = $"No se ha podido guardar: {ex.Message}";
+            Mensaje = Textos.F("Principal.Ronda.NoSeGuarda", ex.Message);
             Tono = TonoDeMensaje.Error;
         }
     }
@@ -333,8 +343,8 @@ public sealed partial class VistaModeloRonda(
             if (!resultado.Correcto)
             {
                 Mensaje = resultado.Duplicado is not null
-                    ? $"{fila.Indicativo} ya está en el cuaderno con esa hora, banda y modo."
-                    : $"No se ha podido guardar: {string.Join("; ", resultado.Errores)}";
+                    ? Textos.F("Principal.Ronda.Duplicado", fila.Indicativo)
+                    : Textos.F("Principal.Ronda.NoSeGuarda", string.Join("; ", resultado.Errores));
                 Tono = TonoDeMensaje.Error;
                 return;
             }
@@ -344,14 +354,14 @@ public sealed partial class VistaModeloRonda(
             // Ya confirmado: el boton se apaga. Antes seguia encendido y un segundo clic metia
             // el mismo contacto otra vez en el cuaderno.
             MarcarTrabajadoCommand.NotifyCanExecuteChanged();
-            Mensaje = $"{fila.Indicativo} añadido al cuaderno.";
+            Mensaje = Textos.F("Principal.Ronda.AnadidoAlCuaderno", fila.Indicativo);
             Tono = TonoDeMensaje.Correcto;
             CuadernoCambiado?.Invoke(this, EventArgs.Empty);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido confirmar un participante de la ronda.");
-            Mensaje = $"No se ha podido confirmar el contacto: {ex.Message}";
+            Mensaje = Textos.F("Principal.Ronda.NoSeConfirma", ex.Message);
             Tono = TonoDeMensaje.Error;
         }
     }
@@ -368,14 +378,14 @@ public sealed partial class VistaModeloRonda(
             Participantes.Remove(fila);
             ParticipanteElegido = null;
             Mensaje = fila.Trabajado
-                ? $"{fila.Indicativo} quitado de la ronda. Su contacto sigue en el cuaderno."
-                : $"{fila.Indicativo} quitado de la ronda.";
+                ? Textos.F("Principal.Ronda.QuitadoConContacto", fila.Indicativo)
+                : Textos.F("Principal.Ronda.Quitado", fila.Indicativo);
             Tono = TonoDeMensaje.Correcto;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido quitar un participante de la ronda.");
-            Mensaje = $"No se ha podido quitar el participante: {ex.Message}";
+            Mensaje = Textos.F("Principal.Ronda.NoSeQuita", ex.Message);
             Tono = TonoDeMensaje.Error;
         }
     }

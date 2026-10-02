@@ -4,6 +4,7 @@
              xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
              xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
              xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:DataContext="{d:DesignInstance Type=vistamodelos:VistaModeloModemPropio}"
@@ -69,14 +70,14 @@
         <!-- ══ Cabecera: qué es esto, el modo y los dos botones ══ -->
         <DockPanel Grid.Row="0" Margin="0,0,0,6">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="Modo" Style="{StaticResource Etiqueta}" Margin="0,0,6,0" />
+                <TextBlock Text="{loc:Texto Comun.Modo}" Style="{StaticResource Etiqueta}" Margin="0,0,6,0" />
                 <ComboBox ItemsSource="{Binding Modos}"
                           SelectedItem="{Binding ModoElegido}"
                           Width="120"
                           Margin="0,0,12,0"
                           VerticalAlignment="Center"
-                          AutomationProperties.Name="Modo del módem"
-                          ToolTip="Los modos que sabe hacer el módem. Cambiar de modo en caliente reinicia la escucha.">
+                          AutomationProperties.Name="{loc:Texto Digital.Modem.Modo.Nombre}"
+                          ToolTip="{loc:Texto Digital.Modem.Modo.Ayuda}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -87,21 +88,21 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
 
-                <Button Content="Escuchar"
+                <Button Content="{loc:Texto Digital.Escuchar}"
                         Command="{Binding EscucharCommand}"
                         Style="{StaticResource BotonPrincipal}"
                         Visibility="{Binding Escuchando, Converter={StaticResource VisibleSiEsFalso}}"
-                        ToolTip="Abre la entrada de audio y empieza a decodificar. No transmite nada." />
+                        ToolTip="{loc:Texto Digital.Modem.Escuchar.Ayuda}" />
 
-                <Button Content="Parar"
+                <Button Content="{loc:Texto Digital.Modem.Parar}"
                         Command="{Binding PararCommand}"
                         Visibility="{Binding Escuchando, Converter={StaticResource BooleanoAVisible}}"
-                        ToolTip="Para el módem, la secuencia y suelta la tarjeta de sonido" />
+                        ToolTip="{loc:Texto Digital.Modem.Parar.Ayuda}" />
             </StackPanel>
 
             <!-- En una línea: el alto es para la cascada y la lista. -->
             <DockPanel VerticalAlignment="Center">
-                <TextBlock DockPanel.Dock="Left" Text="Módem propio" Style="{StaticResource TituloDeSeccion}" Margin="0,0,10,0" VerticalAlignment="Center" />
+                <TextBlock DockPanel.Dock="Left" Text="{loc:Texto Digital.Modem.Titulo}" Style="{StaticResource TituloDeSeccion}" Margin="0,0,10,0" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding EstadoTexto}" Style="{StaticResource TextoTenueEstilo}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
             </DockPanel>
         </DockPanel>
@@ -116,18 +117,18 @@
                 BorderThickness="1"
                 Visibility="{Binding SinLaTablaDelCorrector, Converter={StaticResource BooleanoAVisible}}">
             <StackPanel>
-                <TextBlock Text="EL MÓDEM TRABAJA CON EL CÓDIGO CORRECTOR DE PRUEBAS"
+                <TextBlock Text="{loc:Texto Digital.Modem.CorrectorDePruebas.Titulo}"
                            Foreground="{DynamicResource ErrorTexto}"
                            FontWeight="Bold"
                            TextWrapping="Wrap"
                            TextTrimming="None" />
-                <TextBlock Text="Funciona entero y se entiende consigo mismo, pero NO va a decodificar a ninguna otra estación: falta la tabla del LDPC(174,91). Mientras esto esté aquí, lo que salga en la lista no es tráfico real."
+                <TextBlock Text="{loc:Texto Digital.Modem.CorrectorDePruebas.Texto}"
                            Foreground="{DynamicResource ErrorTexto}"
                            TextWrapping="Wrap"
                            TextTrimming="None"
                            Margin="0,3,0,0" />
                 <TextBlock Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,3,0,0">
-                    <Run Text="Tablas cargadas de:" />
+                    <Run Text="{loc:Texto Digital.Modem.TablasCargadasDe}" />
                     <Run Text="{Binding ProcedenciaDeLasTablas, Mode=OneWay}" FontWeight="Bold" />
                 </TextBlock>
             </StackPanel>
@@ -170,14 +171,14 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" Text="Entrada" Style="{StaticResource Etiqueta}" Margin="0,0,6,0" />
+                    <TextBlock Grid.Column="0" Text="{loc:Texto Digital.Modem.Entrada}" Style="{StaticResource Etiqueta}" Margin="0,0,6,0" />
 
                     <ProgressBar Grid.Column="1"
                                  Minimum="0"
                                  Maximum="100"
                                  Height="14"
                                  Value="{Binding NivelPorCiento, Mode=OneWay}"
-                                 AutomationProperties.Name="Nivel de entrada de audio">
+                                 AutomationProperties.Name="{loc:Texto Digital.Modem.Entrada.Nombre}">
                         <ProgressBar.Style>
                             <Style TargetType="ProgressBar" BasedOn="{StaticResource {x:Type ProgressBar}}">
                                 <Style.Triggers>
@@ -196,7 +197,7 @@
                                Text="{Binding NivelTexto}"
                                VerticalAlignment="Center"
                                Margin="8,0,12,0"
-                               ToolTip="Lo bueno está entre 0,20 y 0,60. Por encima de 0,90 el codec recorta y las señales débiles se pierden.">
+                               ToolTip="{loc:Texto Digital.Modem.Nivel.Ayuda}">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource TextoTenueEstilo}">
                                 <Setter Property="FontFamily" Value="Consolas, Cascadia Mono, Courier New" />
@@ -219,19 +220,19 @@
                                  Width="62"
                                  Margin="0,0,8,0"
                                  VerticalAlignment="Center"
-                                 AutomationProperties.Name="Frecuencia de recepción, en hercios"
-                                 ToolTip="Frecuencia de recepción, en hercios. Clic en la cascada la pone." />
+                                 AutomationProperties.Name="{loc:Texto Digital.Modem.FrecuenciaRx.Nombre}"
+                                 ToolTip="{loc:Texto Digital.Modem.FrecuenciaRx.Ayuda}" />
                         <TextBlock Text="Tx" Style="{StaticResource Etiqueta}" Margin="0,0,4,0" Foreground="#FFFF4A3D" FontWeight="Bold" />
                         <TextBox Text="{Binding TonoDeTransmision, UpdateSourceTrigger=PropertyChanged}"
                                  Width="62"
                                  Margin="0,0,8,0"
                                  VerticalAlignment="Center"
-                                 AutomationProperties.Name="Frecuencia de transmisión, en hercios"
-                                 ToolTip="Frecuencia de transmisión, en hercios. Mayús+clic en la cascada la pone." />
-                        <CheckBox Content="Mantener Tx"
+                                 AutomationProperties.Name="{loc:Texto Digital.Modem.FrecuenciaTx.Nombre}"
+                                 ToolTip="{loc:Texto Digital.Modem.FrecuenciaTx.Ayuda}" />
+                        <CheckBox Content="{loc:Texto Digital.Modem.MantenerTx}"
                                   IsChecked="{Binding MantenerTx}"
                                   VerticalAlignment="Center"
-                                  ToolTip="La transmisión no sigue al clic ni al doble clic: sólo se mueve con Mayús+clic o escribiéndola." />
+                                  ToolTip="{loc:Texto Digital.Modem.MantenerTx.Ayuda}" />
                     </StackPanel>
                 </Grid>
 
@@ -244,11 +245,11 @@
 
                     <DockPanel Grid.Row="0" Margin="0,0,0,4">
                         <WrapPanel DockPanel.Dock="Right">
-                            <CheckBox Content="Sólo CQ" IsChecked="{Binding SoloCq}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="Deja sólo las llamadas generales" />
-                            <CheckBox Content="Sólo a mí" IsChecked="{Binding SoloMeLlaman}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="Deja sólo lo que va dirigido a su indicativo" />
-                            <CheckBox Content="Sólo nuevos" IsChecked="{Binding SoloNuevos}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="Deja sólo lo que aporta algo: indicativo, entidad, banda o cuadrícula nuevos" />
-                            <Button Content="Vaciar" Command="{Binding LimpiarCommand}" Margin="0,0,6,0" />
-                            <Button Content="WAV…" Command="{Binding DecodificarFicheroCommand}" ToolTip="Decodifica un fichero de audio y mete lo que salga en la lista" />
+                            <CheckBox Content="{loc:Texto Digital.Modem.SoloCq}" IsChecked="{Binding SoloCq}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="{loc:Texto Digital.Modem.SoloCq.Ayuda}" />
+                            <CheckBox Content="{loc:Texto Digital.Modem.SoloAMi}" IsChecked="{Binding SoloMeLlaman}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="{loc:Texto Digital.Modem.SoloAMi.Ayuda}" />
+                            <CheckBox Content="{loc:Texto Digital.Modem.SoloNuevos}" IsChecked="{Binding SoloNuevos}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="{loc:Texto Digital.Modem.SoloNuevos.Ayuda}" />
+                            <Button Content="{loc:Texto Digital.Vaciar}" Command="{Binding LimpiarCommand}" Margin="0,0,6,0" />
+                            <Button Content="WAV…" Command="{Binding DecodificarFicheroCommand}" ToolTip="{loc:Texto Digital.Modem.Wav.Ayuda}" />
                         </WrapPanel>
 
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -257,8 +258,8 @@
                             <Border CornerRadius="8" Padding="7,1" Margin="8,0,0,0" VerticalAlignment="Center"
                                     Background="{DynamicResource AvisoFondo}" BorderBrush="{DynamicResource AvisoBorde}" BorderThickness="1"
                                     Visibility="{Binding LlegoTarde, Converter={StaticResource BooleanoAVisible}}"
-                                    ToolTip="La ventana tardó más que el propio período: el ordenador no da abasto y se están perdiendo decodificaciones">
-                                <TextBlock Text="EL ORDENADOR NO DA ABASTO" Foreground="{DynamicResource AvisoTexto}" FontSize="10" FontWeight="Bold" TextTrimming="None" />
+                                    ToolTip="{loc:Texto Digital.Modem.LlegoTarde.Ayuda}">
+                                <TextBlock Text="{loc:Texto Digital.Modem.LlegoTarde}" Foreground="{DynamicResource AvisoTexto}" FontSize="10" FontWeight="Bold" TextTrimming="None" />
                             </Border>
                         </StackPanel>
                     </DockPanel>
@@ -268,8 +269,8 @@
                              SelectedItem="{Binding DecodificacionElegida}"
                              HorizontalContentAlignment="Stretch"
                              x:Name="ListaDeDecodificaciones"
-                             AutomationProperties.Name="Decodificaciones del módem propio"
-                             ToolTip="Doble clic: fija el DX, compone los mensajes y pone la secuencia en marcha. Sin el pestillo abierto no sale nada.">
+                             AutomationProperties.Name="{loc:Texto Digital.Modem.Lista.Nombre}"
+                             ToolTip="{loc:Texto Digital.Modem.Lista.Ayuda}">
                         <!--
                             El doble clic va por el evento de cada fila y no por un MouseBinding
                             de la lista: la fila se come el clic (lo marca como atendido) y el
@@ -318,14 +319,14 @@
                             <DataTemplate>
                                 <WrapPanel>
                                     <TextBlock Text="{Binding Hora}" Style="{StaticResource Mono}" Opacity="0.75" Margin="0,0,10,0" />
-                                    <TextBlock Text="{Binding Decibelios}" Style="{StaticResource Mono}" Margin="0,0,10,0" ToolTip="Relación señal-ruido en decibelios" />
-                                    <TextBlock Text="{Binding Desfase}" Style="{StaticResource Mono}" Opacity="0.75" Margin="0,0,10,0" ToolTip="Desfase de la señal respecto a la ventana, en segundos" />
-                                    <TextBlock Text="{Binding Tono}" Style="{StaticResource Mono}" Opacity="0.75" Margin="0,0,10,0" ToolTip="Tono dentro del ancho de banda de audio, en hercios" />
+                                    <TextBlock Text="{Binding Decibelios}" Style="{StaticResource Mono}" Margin="0,0,10,0" ToolTip="{loc:Texto Digital.Decibelios.Ayuda}" />
+                                    <TextBlock Text="{Binding Desfase}" Style="{StaticResource Mono}" Opacity="0.75" Margin="0,0,10,0" ToolTip="{loc:Texto Digital.Modem.Desfase.Ayuda}" />
+                                    <TextBlock Text="{Binding Tono}" Style="{StaticResource Mono}" Opacity="0.75" Margin="0,0,10,0" ToolTip="{loc:Texto Digital.Tono.Ayuda}" />
                                     <TextBlock Text="{Binding Texto}" Style="{StaticResource Mono}" Margin="0,0,10,0" TextTrimming="None" />
 
                                     <Border CornerRadius="8" Padding="6,0" Margin="0,0,6,0" VerticalAlignment="Center"
                                             Background="{DynamicResource AvisoFondo}" BorderBrush="{DynamicResource AvisoBorde}" BorderThickness="1"
-                                            ToolTip="Rescatada con corrección profunda: señal muy débil recuperada con más esfuerzo. Algo más de riesgo de ser falsa; compruébela antes de apuntarla.">
+                                            ToolTip="{loc:Texto Digital.Modem.Rescatada.Ayuda}">
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="Visibility" Value="Collapsed" />
@@ -336,7 +337,7 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
-                                        <TextBlock Text="RESCATADA" Foreground="{DynamicResource AvisoTexto}" FontSize="10" FontWeight="Bold" TextTrimming="None" />
+                                        <TextBlock Text="{loc:Texto Digital.Modem.Rescatada}" Foreground="{DynamicResource AvisoTexto}" FontSize="10" FontWeight="Bold" TextTrimming="None" />
                                     </Border>
 
                                     <Border Padding="6,0" VerticalAlignment="Center">
@@ -350,7 +351,7 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
-                                        <TextBlock Text="Nuevo" Foreground="{DynamicResource CorrectoTexto}" FontWeight="Bold" FontSize="10" TextTrimming="None" />
+                                        <TextBlock Text="{loc:Texto Digital.Nuevo}" Foreground="{DynamicResource CorrectoTexto}" FontWeight="Bold" FontSize="10" TextTrimming="None" />
                                     </Border>
 
                                     <TextBlock Text="{Binding Novedad.Entidad}" FontSize="10" VerticalAlignment="Center" Margin="4,0,0,0">
@@ -382,25 +383,25 @@
                 <StackPanel>
 
                     <!-- ── El DX ── -->
-                    <TextBlock Text="Contacto" Style="{StaticResource EtiquetaDeCampo}" Margin="0,0,0,4" />
+                    <TextBlock Text="{loc:Texto Digital.Modem.Contacto}" Style="{StaticResource EtiquetaDeCampo}" Margin="0,0,0,4" />
                     <WrapPanel Margin="0,0,0,2">
                         <TextBlock Text="DX Call" Style="{StaticResource Etiqueta}" />
-                        <TextBox Text="{Binding Corresponsal, UpdateSourceTrigger=PropertyChanged}" Width="96" Style="{StaticResource CampoCorto}" CharacterCasing="Upper" AutomationProperties.Name="Indicativo del corresponsal" />
+                        <TextBox Text="{Binding Corresponsal, UpdateSourceTrigger=PropertyChanged}" Width="96" Style="{StaticResource CampoCorto}" CharacterCasing="Upper" AutomationProperties.Name="{loc:Texto Digital.Modem.Corresponsal.Nombre}" />
                         <TextBlock Text="DX Grid" Style="{StaticResource Etiqueta}" />
-                        <TextBox Text="{Binding LocalizadorDelCorresponsal, UpdateSourceTrigger=PropertyChanged}" Width="64" Style="{StaticResource CampoCorto}" CharacterCasing="Upper" AutomationProperties.Name="Localizador del corresponsal" />
-                        <TextBlock Text="{Binding DistanciaYAcimut}" Style="{StaticResource Mono}" VerticalAlignment="Center" Margin="0,0,8,4" ToolTip="Distancia y acimut desde el localizador del perfil" />
+                        <TextBox Text="{Binding LocalizadorDelCorresponsal, UpdateSourceTrigger=PropertyChanged}" Width="64" Style="{StaticResource CampoCorto}" CharacterCasing="Upper" AutomationProperties.Name="{loc:Texto Digital.Modem.LocalizadorDelCorresponsal.Nombre}" />
+                        <TextBlock Text="{Binding DistanciaYAcimut}" Style="{StaticResource Mono}" VerticalAlignment="Center" Margin="0,0,8,4" ToolTip="{loc:Texto Digital.Modem.DistanciaYAcimut.Ayuda}" />
                         <TextBlock Text="{Binding NombreDelCorresponsal}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,8,4"
                                    TextTrimming="CharacterEllipsis" MaxWidth="260"
-                                   ToolTip="Nombre del corresponsal según su ficha de QRZ.com"
-                                   AutomationProperties.Name="Nombre del corresponsal" />
+                                   ToolTip="{loc:Texto Digital.Modem.NombreDelCorresponsal.Ayuda}"
+                                   AutomationProperties.Name="{loc:Texto Digital.Modem.NombreDelCorresponsal.Nombre}" />
                     </WrapPanel>
                     <WrapPanel Margin="0,0,0,4">
-                        <TextBlock Text="Enviado" Style="{StaticResource Etiqueta}" />
-                        <TextBox Text="{Binding InformeEnviado, UpdateSourceTrigger=PropertyChanged}" Width="58" Style="{StaticResource CampoCorto}" AutomationProperties.Name="Informe enviado" />
-                        <TextBlock Text="Recibido" Style="{StaticResource Etiqueta}" />
-                        <TextBox Text="{Binding InformeRecibido, UpdateSourceTrigger=PropertyChanged}" Width="58" Style="{StaticResource CampoCorto}" AutomationProperties.Name="Informe recibido" />
-                        <Button Content="Guardar en el cuaderno" Command="{Binding RegistrarContactoCommand}" Margin="0,0,6,4"
-                                ToolTip="Apunta el contacto con la frecuencia del dial más el tono de audio, y el modo como manda ADIF.">
+                        <TextBlock Text="{loc:Texto Comun.Enviado}" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding InformeEnviado, UpdateSourceTrigger=PropertyChanged}" Width="58" Style="{StaticResource CampoCorto}" AutomationProperties.Name="{loc:Texto Digital.Modem.InformeEnviado.Nombre}" />
+                        <TextBlock Text="{loc:Texto Comun.Recibido}" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding InformeRecibido, UpdateSourceTrigger=PropertyChanged}" Width="58" Style="{StaticResource CampoCorto}" AutomationProperties.Name="{loc:Texto Digital.Modem.InformeRecibido.Nombre}" />
+                        <Button Content="{loc:Texto Digital.GuardarEnElCuaderno}" Command="{Binding RegistrarContactoCommand}" Margin="0,0,6,4"
+                                ToolTip="{loc:Texto Digital.Modem.GuardarEnElCuaderno.Ayuda}">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                     <Style.Triggers>
@@ -412,13 +413,13 @@
                                 </Style>
                             </Button.Style>
                         </Button>
-                        <Button Content="Olvidar" Command="{Binding OlvidarContactoCommand}" Margin="0,0,0,4" />
+                        <Button Content="{loc:Texto Digital.Modem.Olvidar}" Command="{Binding OlvidarContactoCommand}" Margin="0,0,0,4" />
                     </WrapPanel>
 
                     <!-- ── Los seis mensajes ── -->
                     <DockPanel Margin="0,4,0,2">
-                        <Button DockPanel.Dock="Right" Content="Generar" Command="{Binding GenerarMensajesCommand}" ToolTip="Vuelve a componer Tx1–Tx6 con el DX, los localizadores y el informe" />
-                        <TextBlock Text="Mensajes · doble clic envía ese; la marca es el siguiente" Style="{StaticResource EtiquetaDeCampo}" VerticalAlignment="Center" />
+                        <Button DockPanel.Dock="Right" Content="{loc:Texto Digital.Modem.Generar}" Command="{Binding GenerarMensajesCommand}" ToolTip="{loc:Texto Digital.Modem.Generar.Ayuda}" />
+                        <TextBlock Text="{loc:Texto Digital.Modem.Mensajes.Titulo}" Style="{StaticResource EtiquetaDeCampo}" VerticalAlignment="Center" TextWrapping="Wrap" TextTrimming="None" />
                     </DockPanel>
                     <ItemsControl ItemsSource="{Binding Mensajes}">
                         <ItemsControl.ItemTemplate>
@@ -433,11 +434,11 @@
                                     <!-- Sin GroupName: la exclusión la lleva el modelo, que es quien sabe cuál toca. -->
                                     <RadioButton Grid.Column="0"
                                                  IsChecked="{Binding EsElSiguiente, Mode=OneWay}"
-                                                 AutomationProperties.Name="{Binding Etiqueta, StringFormat='{}{0} es el siguiente'}"
+                                                 AutomationProperties.Name="{loc:Texto Digital.Modem.EsElSiguiente.Nombre, Valor={Binding Etiqueta}}"
                                                  Checked="AlMarcarElSiguiente"
                                                  VerticalAlignment="Center"
                                                  Margin="0,0,6,0"
-                                                 ToolTip="Marca este como el siguiente que sale" />
+                                                 ToolTip="{loc:Texto Digital.Modem.MarcarSiguiente.Ayuda}" />
                                     <TextBox Grid.Column="1"
                                              Text="{Binding Texto, UpdateSourceTrigger=PropertyChanged}"
                                              FontFamily="Consolas, Cascadia Mono, Courier New"
@@ -445,12 +446,12 @@
                                              MouseDoubleClick="AlDobleClicEnUnMensaje" />
                                     <TextBlock Grid.Column="2" Text="{Binding Etiqueta}" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="6,0,6,0" />
                                     <Button Grid.Column="3"
-                                            Content="Enviar"
+                                            Content="{loc:Texto Digital.Modem.Enviar}"
                                             Padding="6,0"
                                             Command="{Binding DataContext.EnviarTxCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}"
-                                            AutomationProperties.Name="{Binding Etiqueta, StringFormat='Enviar {0}'}"
-                                            ToolTip="Este mensaje sale en la próxima ventana propia (lo mismo que el doble clic). Pasa por el pestillo y la pregunta." />
+                                            AutomationProperties.Name="{loc:Texto Digital.Modem.EnviarTx.Nombre, Valor={Binding Etiqueta}}"
+                                            ToolTip="{loc:Texto Digital.Modem.Enviar.Ayuda}" />
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -458,40 +459,40 @@
 
                     <!-- ── La secuencia ── -->
                     <WrapPanel Margin="0,6,0,2">
-                        <Button Content="Llamar CQ" Command="{Binding LlamarCqCommand}" Style="{StaticResource BotonPrincipal}" Margin="0,0,6,4" ToolTip="Empieza a llamar con Tx6 en la siguiente ventana. Pasa por el pestillo." />
-                        <Button Content="Detener" Command="{Binding DetenerTxCommand}" Margin="0,0,6,4" ToolTip="Para la secuencia y deshabilita Tx" />
+                        <Button Content="{loc:Texto Digital.Modem.LlamarCq}" Command="{Binding LlamarCqCommand}" Style="{StaticResource BotonPrincipal}" Margin="0,0,6,4" ToolTip="{loc:Texto Digital.Modem.LlamarCq.Ayuda}" />
+                        <Button Content="{loc:Texto Digital.Modem.Detener}" Command="{Binding DetenerTxCommand}" Margin="0,0,6,4" ToolTip="{loc:Texto Digital.Modem.Detener.Ayuda}" />
                         <!--
                             Por orden y no enlazada a dos bandas: antes la casilla escribía
                             TxHabilitado a pelo, saltándose la pregunta de antes de transmitir,
                             y encendida sin secuencia no hacía nada.
                         -->
-                        <CheckBox Content="Tx habilitado" IsChecked="{Binding TxHabilitado, Mode=OneWay}" Command="{Binding AlternarTxHabilitadoCommand}" IsEnabled="{Binding SePuedeEmitir}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,4"
-                                  ToolTip="Emite el mensaje marcado en cada ventana propia. Sólo se enciende con el pestillo abierto y la salida de audio abierta, y pregunta antes." />
-                        <CheckBox Content="Secuencia automática" IsChecked="{Binding SecuenciaAutomatica}" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="Avanza sola por Tx1…Tx5 según lo que conteste el corresponsal" />
+                        <CheckBox Content="{loc:Texto Digital.Modem.TxHabilitado}" IsChecked="{Binding TxHabilitado, Mode=OneWay}" Command="{Binding AlternarTxHabilitadoCommand}" IsEnabled="{Binding SePuedeEmitir}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,4"
+                                  ToolTip="{loc:Texto Digital.Modem.TxHabilitado.Ayuda}" />
+                        <CheckBox Content="{loc:Texto Digital.Modem.SecuenciaAutomatica}" IsChecked="{Binding SecuenciaAutomatica}" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="{loc:Texto Digital.Modem.SecuenciaAutomatica.Ayuda}" />
                     </WrapPanel>
                     <WrapPanel Margin="0,0,0,2">
-                        <CheckBox Content="Saltar Tx1" IsChecked="{Binding SaltarTx1}" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="Al contestar a un CQ se empieza por el informe (Tx2), como en JTDX" />
-                        <CheckBox Content="Llamar al primero" IsChecked="{Binding LlamarAlPrimero}" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="Llamando CQ, se contesta solo al primero que llame" />
-                        <CheckBox Content="Tx4 con RRR" IsChecked="{Binding Tx4ConRrr}" VerticalAlignment="Center" Margin="0,0,10,4" />
-                        <TextBlock Text="Parar tras" Style="{StaticResource Etiqueta}" />
-                        <TextBox Text="{Binding CiclosSinRespuesta, UpdateSourceTrigger=PropertyChanged}" Width="34" Style="{StaticResource CampoCorto}" Margin="0,0,4,4" AutomationProperties.Name="Ciclos sin respuesta" />
-                        <TextBlock Text="ciclos sin respuesta" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="0,0,0,4" />
+                        <CheckBox Content="{loc:Texto Digital.Modem.SaltarTx1}" IsChecked="{Binding SaltarTx1}" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="{loc:Texto Digital.Modem.SaltarTx1.Ayuda}" />
+                        <CheckBox Content="{loc:Texto Digital.Modem.LlamarAlPrimero}" IsChecked="{Binding LlamarAlPrimero}" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="{loc:Texto Digital.Modem.LlamarAlPrimero.Ayuda}" />
+                        <CheckBox Content="{loc:Texto Digital.Modem.Tx4ConRrr}" IsChecked="{Binding Tx4ConRrr}" VerticalAlignment="Center" Margin="0,0,10,4" />
+                        <TextBlock Text="{loc:Texto Digital.Modem.PararTras}" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding CiclosSinRespuesta, UpdateSourceTrigger=PropertyChanged}" Width="34" Style="{StaticResource CampoCorto}" Margin="0,0,4,4" AutomationProperties.Name="{loc:Texto Digital.Modem.CiclosSinRespuesta.Nombre}" />
+                        <TextBlock Text="{loc:Texto Digital.Modem.CiclosSinRespuesta}" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="0,0,0,4" />
                     </WrapPanel>
                     <WrapPanel Margin="0,0,0,2">
                         <TextBlock Text="CQ" Style="{StaticResource Etiqueta}" />
-                        <TextBox Text="{Binding CqDirigido, UpdateSourceTrigger=PropertyChanged}" Width="52" Style="{StaticResource CampoCorto}" CharacterCasing="Upper" ToolTip="Sufijo del CQ: vacío, DX, EU, POTA…" AutomationProperties.Name="Sufijo del CQ" />
-                        <TextBlock Text="Operación" Style="{StaticResource Etiqueta}" />
-                        <ComboBox ItemsSource="{Binding Operaciones}" SelectedItem="{Binding OperacionElegida}" DisplayMemberPath="Nombre" Width="170" Margin="0,0,8,4" VerticalAlignment="Center" AutomationProperties.Name="Tipo de operación" />
-                        <TextBlock Text="Intercambio" Style="{StaticResource Etiqueta}" />
-                        <TextBox Text="{Binding IntercambioDeConcurso, UpdateSourceTrigger=PropertyChanged}" Width="96" Style="{StaticResource CampoCorto}" CharacterCasing="Upper" ToolTip="Intercambio de concurso: «2A EMA», «579 MA», «570123 IO91NP»" AutomationProperties.Name="Intercambio de concurso" />
+                        <TextBox Text="{Binding CqDirigido, UpdateSourceTrigger=PropertyChanged}" Width="52" Style="{StaticResource CampoCorto}" CharacterCasing="Upper" ToolTip="{loc:Texto Digital.Modem.CqDirigido.Ayuda}" AutomationProperties.Name="{loc:Texto Digital.Modem.CqDirigido.Nombre}" />
+                        <TextBlock Text="{loc:Texto Digital.Modem.Operacion}" Style="{StaticResource Etiqueta}" />
+                        <ComboBox ItemsSource="{Binding Operaciones}" SelectedItem="{Binding OperacionElegida}" DisplayMemberPath="Nombre" MinWidth="170" Margin="0,0,8,4" VerticalAlignment="Center" AutomationProperties.Name="{loc:Texto Digital.Modem.Operacion.Nombre}" />
+                        <TextBlock Text="{loc:Texto Digital.Modem.Intercambio}" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding IntercambioDeConcurso, UpdateSourceTrigger=PropertyChanged}" Width="96" Style="{StaticResource CampoCorto}" CharacterCasing="Upper" ToolTip="{loc:Texto Digital.Modem.Intercambio.Ayuda}" AutomationProperties.Name="{loc:Texto Digital.Modem.Intercambio.Nombre}" />
                     </WrapPanel>
                     <TextBlock Text="{Binding EstadoDeLaSecuencia}" Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,0,0,6" />
 
                     <!-- ── Frecuencias de trabajo ── -->
-                    <Expander Header="Frecuencias de trabajo por banda y modo" IsExpanded="False" Margin="0,2,0,2">
+                    <Expander Header="{loc:Texto Digital.Modem.FrecuenciasDeTrabajo.Titulo}" IsExpanded="False" Margin="0,2,0,2">
                         <StackPanel Margin="0,6,0,0">
                             <WrapPanel Margin="0,0,0,4">
-                                <Button Content="Ir a la frecuencia del modo" Command="{Binding IrALaFrecuenciaDelModoCommand}" Style="{StaticResource BotonPrincipal}" Margin="0,0,6,4" ToolTip="Mueve el equipo por CAT a la frecuencia del modo en la banda del dial" />
+                                <Button Content="{loc:Texto Digital.Modem.IrALaFrecuenciaDelModo}" Command="{Binding IrALaFrecuenciaDelModoCommand}" Style="{StaticResource BotonPrincipal}" Margin="0,0,6,4" ToolTip="{loc:Texto Digital.Modem.IrALaFrecuenciaDelModo.Ayuda}" />
                                 <TextBlock Text="{Binding FrecuenciaDelModoTexto}" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="0,0,0,4" />
                             </WrapPanel>
                             <DataGrid ItemsSource="{Binding FrecuenciasDeTrabajo}"
@@ -500,48 +501,48 @@
                                       CanUserAddRows="False"
                                       HeadersVisibility="Column"
                                       MaxHeight="220"
-                                      AutomationProperties.Name="Frecuencias de trabajo">
+                                      AutomationProperties.Name="{loc:Texto Digital.Modem.FrecuenciasDeTrabajo.Nombre}">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Modo" Binding="{Binding ModoTexto}" IsReadOnly="True" Width="64" />
-                                    <DataGridTextColumn Header="Banda" Binding="{Binding Banda}" IsReadOnly="True" Width="60" />
+                                    <DataGridTextColumn Header="{loc:Texto Comun.Modo}" Binding="{Binding ModoTexto}" IsReadOnly="True" Width="Auto" MinWidth="64" />
+                                    <DataGridTextColumn Header="{loc:Texto Comun.Banda}" Binding="{Binding Banda}" IsReadOnly="True" Width="Auto" MinWidth="60" />
                                     <DataGridTextColumn Header="MHz" Binding="{Binding Megahercios, StringFormat=0.000###}" Width="90" />
-                                    <DataGridTextColumn Header="Nota" Binding="{Binding Nota}" Width="*" />
+                                    <DataGridTextColumn Header="{loc:Texto Digital.Modem.Nota}" Binding="{Binding Nota}" Width="*" />
                                 </DataGrid.Columns>
                             </DataGrid>
                             <WrapPanel Margin="0,4,0,0">
-                                <Button Content="Ir a la elegida" Command="{Binding IrALaFrecuenciaElegidaCommand}" Margin="0,0,6,0" />
-                                <Button Content="Añadir" Command="{Binding AnadirFrecuenciaCommand}" Margin="0,0,6,0" ToolTip="Añade una fila con el modo y el dial actuales" />
-                                <Button Content="Quitar" Command="{Binding QuitarFrecuenciaCommand}" Margin="0,0,6,0" />
-                                <Button Content="Las de WSJT-X" Command="{Binding RestaurarFrecuenciasCommand}" ToolTip="Vuelve a poner la tabla de fábrica" />
+                                <Button Content="{loc:Texto Digital.Modem.IrALaElegida}" Command="{Binding IrALaFrecuenciaElegidaCommand}" Margin="0,0,6,0" />
+                                <Button Content="{loc:Texto Digital.Modem.Anadir}" Command="{Binding AnadirFrecuenciaCommand}" Margin="0,0,6,0" ToolTip="{loc:Texto Digital.Modem.Anadir.Ayuda}" />
+                                <Button Content="{loc:Texto Digital.Modem.Quitar}" Command="{Binding QuitarFrecuenciaCommand}" Margin="0,0,6,0" />
+                                <Button Content="{loc:Texto Digital.Modem.LasDeWsjtx}" Command="{Binding RestaurarFrecuenciasCommand}" ToolTip="{loc:Texto Digital.Modem.LasDeWsjtx.Ayuda}" />
                             </WrapPanel>
                         </StackPanel>
                     </Expander>
 
                     <!-- ── La cascada ── -->
-                    <Expander Header="Cascada" IsExpanded="False" Margin="0,2,0,2">
+                    <Expander Header="{loc:Texto Digital.Modem.Cascada}" IsExpanded="False" Margin="0,2,0,2">
                         <WrapPanel Margin="0,6,0,0">
-                            <TextBlock Text="Ganancia" Style="{StaticResource Etiqueta}" />
-                            <Slider Value="{Binding GananciaDeLaCascada}" Minimum="-30" Maximum="30" Width="90" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="Brillo, en decibelios" AutomationProperties.Name="Ganancia de la cascada" />
-                            <TextBlock Text="Cero" Style="{StaticResource Etiqueta}" />
-                            <Slider Value="{Binding CeroDeLaCascada}" Minimum="-30" Maximum="30" Width="90" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="Dónde empieza el negro respecto al ruido" AutomationProperties.Name="Cero de la cascada" />
-                            <TextBlock Text="Promedio" Style="{StaticResource Etiqueta}" />
-                            <TextBox Text="{Binding PromedioDeColumnas, UpdateSourceTrigger=PropertyChanged}" Width="34" Style="{StaticResource CampoCorto}" ToolTip="Columnas que se promedian por fila (1–10)" AutomationProperties.Name="Promedio de columnas" />
-                            <TextBlock Text="Paleta" Style="{StaticResource Etiqueta}" />
-                            <ComboBox ItemsSource="{Binding Paletas}" SelectedItem="{Binding PaletaElegida}" DisplayMemberPath="Nombre" Width="90" Margin="0,0,10,4" VerticalAlignment="Center" AutomationProperties.Name="Paleta" />
-                            <TextBlock Text="Ancho" Style="{StaticResource Etiqueta}" />
-                            <TextBox Text="{Binding AnchoVisibleHz, UpdateSourceTrigger=PropertyChanged}" Width="46" Style="{StaticResource CampoCorto}" Margin="0,0,4,4" ToolTip="Hasta qué frecuencia se pinta (1000–5000 Hz)" AutomationProperties.Name="Ancho visible" />
+                            <TextBlock Text="{loc:Texto Digital.Modem.Ganancia}" Style="{StaticResource Etiqueta}" />
+                            <Slider Value="{Binding GananciaDeLaCascada}" Minimum="-30" Maximum="30" Width="90" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="{loc:Texto Digital.Modem.Ganancia.Ayuda}" AutomationProperties.Name="{loc:Texto Digital.Modem.Ganancia.Nombre}" />
+                            <TextBlock Text="{loc:Texto Digital.Modem.Cero}" Style="{StaticResource Etiqueta}" />
+                            <Slider Value="{Binding CeroDeLaCascada}" Minimum="-30" Maximum="30" Width="90" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="{loc:Texto Digital.Modem.Cero.Ayuda}" AutomationProperties.Name="{loc:Texto Digital.Modem.Cero.Nombre}" />
+                            <TextBlock Text="{loc:Texto Digital.Modem.Promedio}" Style="{StaticResource Etiqueta}" />
+                            <TextBox Text="{Binding PromedioDeColumnas, UpdateSourceTrigger=PropertyChanged}" Width="34" Style="{StaticResource CampoCorto}" ToolTip="{loc:Texto Digital.Modem.Promedio.Ayuda}" AutomationProperties.Name="{loc:Texto Digital.Modem.Promedio.Nombre}" />
+                            <TextBlock Text="{loc:Texto Digital.Modem.Paleta}" Style="{StaticResource Etiqueta}" />
+                            <ComboBox ItemsSource="{Binding Paletas}" SelectedItem="{Binding PaletaElegida}" DisplayMemberPath="Nombre" MinWidth="90" Margin="0,0,10,4" VerticalAlignment="Center" AutomationProperties.Name="{loc:Texto Digital.Modem.Paleta}" />
+                            <TextBlock Text="{loc:Texto Digital.Modem.Ancho}" Style="{StaticResource Etiqueta}" />
+                            <TextBox Text="{Binding AnchoVisibleHz, UpdateSourceTrigger=PropertyChanged}" Width="46" Style="{StaticResource CampoCorto}" Margin="0,0,4,4" ToolTip="{loc:Texto Digital.Modem.Ancho.Ayuda}" AutomationProperties.Name="{loc:Texto Digital.Modem.Ancho.Nombre}" />
                             <TextBlock Text="Hz" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="0,0,0,4" />
                         </WrapPanel>
                     </Expander>
 
                     <!-- ── Red y ficheros ── -->
-                    <Expander Header="PSK Reporter y ficheros" IsExpanded="False" Margin="0,2,0,6">
+                    <Expander Header="{loc:Texto Digital.Modem.PskYFicheros}" IsExpanded="False" Margin="0,2,0,6">
                         <StackPanel Margin="0,6,0,0">
-                            <CheckBox Content="Mandar lo que se oye a PSK Reporter (red saliente)" IsChecked="{Binding PskReporterActivo}" Margin="0,0,0,2"
-                                      ToolTip="UDP al puerto 4739 de report.pskreporter.info, cada 5 minutos. Manda su indicativo y su localizador con cada decodificación." />
+                            <CheckBox Content="{loc:Texto Digital.Modem.MandarAPsk}" IsChecked="{Binding PskReporterActivo}" Margin="0,0,0,2"
+                                      ToolTip="{loc:Texto Digital.Modem.MandarAPsk.Ayuda}" />
                             <TextBlock Text="{Binding PskReporterTexto}" Style="{StaticResource TextoTenueEstilo}" Margin="20,0,0,6" />
-                            <CheckBox Content="Guardar un WAV de cada ventana (carpeta wav de los datos)" IsChecked="{Binding GuardarWav}" Margin="0,0,0,2" />
-                            <CheckBox Content="Apuntar todas las decodificaciones en decodificaciones.txt" IsChecked="{Binding GuardarDecodificacionesEnTexto}" Margin="0,0,0,2" />
+                            <CheckBox Content="{loc:Texto Digital.Modem.GuardarWav}" IsChecked="{Binding GuardarWav}" Margin="0,0,0,2" />
+                            <CheckBox Content="{loc:Texto Digital.Modem.GuardarDecodificaciones}" IsChecked="{Binding GuardarDecodificacionesEnTexto}" Margin="0,0,0,2" />
                         </StackPanel>
                     </Expander>
                 </StackPanel>
@@ -555,7 +556,7 @@
                     Visibility="{Binding Aviso, Converter={StaticResource NoEsVacio}}">
                 <DockPanel>
                     <Button DockPanel.Dock="Right" Content="✕" Command="{Binding CerrarAvisoCommand}" Padding="6,0" Margin="8,0,0,0" VerticalAlignment="Center"
-                            AutomationProperties.Name="Cerrar el aviso" ToolTip="Quita el aviso" />
+                            AutomationProperties.Name="{loc:Texto Digital.Modem.CerrarAviso.Nombre}" ToolTip="{loc:Texto Digital.Modem.CerrarAviso.Ayuda}" />
                     <TextBlock Text="{Binding Aviso}" Foreground="{DynamicResource AvisoTexto}" TextWrapping="Wrap" TextTrimming="None" VerticalAlignment="Center" />
                 </DockPanel>
             </Border>
@@ -582,18 +583,18 @@
                 -->
                 <DockPanel LastChildFill="True">
                     <Button DockPanel.Dock="Right"
-                            Content="Cortar y soltar PTT"
+                            Content="{loc:Texto Digital.Modem.CortarYSoltarPtt}"
                             Command="{Binding AbortarEmisionCommand}"
                             Style="{StaticResource BotonDePanico}"
-                            ToolTip="Corta lo que esté sonando, suelta el PTT y para la secuencia. Funciona siempre." />
+                            ToolTip="{loc:Texto Digital.Modem.CortarYSoltarPtt.Ayuda}" />
 
                     <Button DockPanel.Dock="Right"
-                            Content="Emitir — PONE EL EQUIPO EN ANTENA"
+                            Content="{loc:Texto Digital.Modem.Emitir}"
                             Command="{Binding EmitirCommand}"
                             Style="{StaticResource BotonQueTransmite}"
                             Margin="0,0,8,0"
-                            AutomationProperties.Name="Emitir el mensaje. Pone el equipo en antena trece segundos."
-                            ToolTip="Emite el mensaje libre al empezar la próxima ventana: el equipo SALE AL AIRE. Pasa por el vigilante de PTT, que lo suelta pase lo que pase. «Detener» lo anula mientras espera." />
+                            AutomationProperties.Name="{loc:Texto Digital.Modem.Emitir.Nombre}"
+                            ToolTip="{loc:Texto Digital.Modem.Emitir.Ayuda}" />
 
                     <TextBox DockPanel.Dock="Right"
                              Text="{Binding MensajeAEmitir, UpdateSourceTrigger=PropertyChanged}"
@@ -601,16 +602,16 @@
                              Margin="0,0,8,0"
                              VerticalAlignment="Center"
                              FontFamily="Consolas, Cascadia Mono, Courier New"
-                             AutomationProperties.Name="Mensaje que se emitiría" />
-                    <TextBlock DockPanel.Dock="Right" Text="Mensaje libre" Style="{StaticResource EtiquetaDeCampo}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                             AutomationProperties.Name="{loc:Texto Digital.Modem.MensajeAEmitir.Nombre}" />
+                    <TextBlock DockPanel.Dock="Right" Text="{loc:Texto Digital.Modem.MensajeLibre}" Style="{StaticResource EtiquetaDeCampo}" VerticalAlignment="Center" Margin="0,0,6,0" />
 
                     <CheckBox DockPanel.Dock="Left"
-                              Content="Permitir transmitir en esta sesión"
+                              Content="{loc:Texto Digital.Modem.PermitirTransmitir}"
                               IsChecked="{Binding PermitirTransmitir}"
                               FontWeight="Bold"
                               VerticalAlignment="Center"
                               Margin="0,0,12,0"
-                              ToolTip="Empieza cerrado en cada arranque, salvo que se pida lo contrario en Configuración › Audio y digitales. Ábralo sólo con la antena o la carga artificial puestas." />
+                              ToolTip="{loc:Texto Digital.Modem.PermitirTransmitir.Ayuda}" />
                     <TextBlock Text="{Binding AvisoDeLaTransmision}"
                                ToolTip="{Binding AvisoDeLaTransmision}"
                                Style="{StaticResource TextoTenueEstilo}"

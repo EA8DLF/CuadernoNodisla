@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Satelites.Orbital;
 
 namespace Nodisla.Cuaderno.Satelites.Fuentes;
@@ -33,23 +34,23 @@ public static class FuentesDeElementos
     /// <summary>Elementos de los satelites de aficionado, que es lo que interesa aqui.</summary>
     public static FuenteDeElementos CelestrakAficionado { get; } = new(
         "celestrak-aficionado",
-        "Celestrak · satélites de aficionado",
+        Textos.T("Servicios.Satelites.Fuente.CelestrakAficionado"),
         "https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=tle",
-        "El grupo de aficionados del catálogo de Celestrak. Es la fuente principal.");
+        Textos.T("Servicios.Satelites.Fuente.CelestrakAficionadoDescripcion"));
 
     /// <summary>Elementos de las estaciones tripuladas, para la ISS.</summary>
     public static FuenteDeElementos CelestrakEstaciones { get; } = new(
         "celestrak-estaciones",
-        "Celestrak · estaciones espaciales",
+        Textos.T("Servicios.Satelites.Fuente.CelestrakEstaciones"),
         "https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=tle",
-        "Estaciones tripuladas. Aquí está la ISS, que no viene en el grupo de aficionados.");
+        Textos.T("Servicios.Satelites.Fuente.CelestrakEstacionesDescripcion"));
 
     /// <summary>El fichero de AMSAT, que es el que siguen los operadores de satelite.</summary>
     public static FuenteDeElementos Amsat { get; } = new(
         "amsat",
         "AMSAT · nasabare.txt",
         "https://www.amsat.org/tle/current/nasabare.txt",
-        "La selección de AMSAT, con los nombres que usa la comunidad de satélite.");
+        Textos.T("Servicios.Satelites.Fuente.AmsatDescripcion"));
 
     /// <summary>Todas las fuentes conocidas.</summary>
     public static IReadOnlyList<FuenteDeElementos> Todas { get; } =
@@ -97,17 +98,18 @@ public sealed record LecturaDeElementos(
     {
         if (Elementos.Count == 0)
         {
-            return $"Sin elementos orbitales ({Fuente}).";
+            return Textos.F("Servicios.Satelites.SinElementosDe", Fuente);
         }
 
         var antigua = EpocaMasAntigua!.Value;
         var edad = ElementosOrbitales.TextoDeEdad(ahoraUtc - antigua);
-        var cuantos = Elementos.Count == 1 ? "1 satélite" : $"{Elementos.Count} satélites";
+        var cuantos = Elementos.Count == 1
+            ? Textos.T("Servicios.Satelites.UnSatelite")
+            : Textos.F("Servicios.Satelites.NSatelites", Elementos.Count);
 
         return ahoraUtc - antigua <= frescura
-            ? $"{cuantos} de {Fuente}; los más antiguos son de hace {edad}."
-            : $"{cuantos} de {Fuente}, pero los más antiguos son de hace {edad}: "
-              + "conviene descargarlos otra vez.";
+            ? Textos.F("Servicios.Satelites.LoteFresco", cuantos, Fuente, edad)
+            : Textos.F("Servicios.Satelites.LoteViejo", cuantos, Fuente, edad);
     }
 }
 

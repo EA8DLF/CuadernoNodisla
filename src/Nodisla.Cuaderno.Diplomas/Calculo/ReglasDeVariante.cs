@@ -4,6 +4,7 @@ using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Diplomas.Catalogo;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Diplomas.Calculo;
 
@@ -116,7 +117,7 @@ public sealed class ReglasDeVariante
         {
             // Las dos listas existen pero no comparten ninguna banda: nada puede contar.
             sql.Append(" AND 0");
-            avisos.Add("Las bandas del diploma y las de la variante no coinciden en ninguna.");
+            avisos.Add(Textos.T("Servicios.Diplomas.BandasNoCoinciden"));
         }
 
         // ── modos y tipo de emision ──────────────────────────────────────────

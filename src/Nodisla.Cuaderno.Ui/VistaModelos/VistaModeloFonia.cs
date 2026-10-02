@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Audio.Fonia;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Radio.Control.Ft710;
 using Nodisla.Cuaderno.Ui.Conversores;
 using Serilog;
@@ -72,10 +73,18 @@ public sealed partial class VistaModeloFonia : ObservableObject
         _control.EscuchaPerdida += (_, fallo) => Hilo.EnLaVentana(() =>
         {
             Escuchando = false;
-            Aviso = "La escucha por el PC se ha cortado: " + fallo.Message;
+            Aviso = Textos.F("Cabina.Fonia.EscuchaCortada", fallo.Message);
         });
 
         RecalcularSiSePuede();
+
+        // El rótulo del PTT, el tope y el motivo de no poder transmitir cambian con el idioma.
+        Textos.AlCambiar(this, static vm =>
+        {
+            vm.OnPropertyChanged(nameof(TextoDelPtt));
+            vm.OnPropertyChanged(nameof(TextoDelTope));
+            vm.RecalcularSiSePuede();
+        });
     }
 
     /// <summary>Dispositivos, volumenes y tiempos.</summary>
@@ -123,11 +132,11 @@ public sealed partial class VistaModeloFonia : ObservableObject
 
     /// <summary>Rotulo del boton grande.</summary>
     public string TextoDelPtt => Transmitiendo
-        ? (Ajustes.PttConmutado ? "EN EL AIRE · clic para acabar" : "EN EL AIRE · suelte para acabar")
-        : (Ajustes.PttConmutado ? "PTT · clic para hablar" : "PTT · mantenga pulsado");
+        ? (Ajustes.PttConmutado ? Textos.T("Cabina.Fonia.PttFinClic") : Textos.T("Cabina.Fonia.PttFinSoltar"))
+        : (Ajustes.PttConmutado ? Textos.T("Cabina.Fonia.PttClic") : Textos.T("Cabina.Fonia.PttMantener"));
 
     /// <summary>Lo que dice el tope de la pasada.</summary>
-    public string TextoDelTope => "máx. " + Formatear(_control.TiempoMaximoEfectivo);
+    public string TextoDelTope => Textos.F("Cabina.Fonia.Tope", Formatear(_control.TiempoMaximoEfectivo));
 
     /// <summary>
     /// Boton o tecla del PTT, hacia abajo. En conmutado alterna; en mantener, empieza.
@@ -155,7 +164,7 @@ public sealed partial class VistaModeloFonia : ObservableObject
     {
         if (!_control.Transmitiendo && !Transmitiendo) return;
         await TerminarAsync(MotivoDeSuelta.Cancelado).ConfigureAwait(true);
-        Aviso = "PTT soltado: el programa ha perdido el foco.";
+        Aviso = Textos.T("Cabina.Fonia.SinFoco");
     }
 
     /// <summary>Abre o cierra la escucha por los altavoces del PC.</summary>
@@ -229,7 +238,7 @@ public sealed partial class VistaModeloFonia : ObservableObject
         var ultimo = _control.Recepcion.UltimoAvanceUtc ?? _escuchaAbiertaUtc;
         var parado = ahora - ultimo;
         return parado > TimeSpan.FromSeconds(2)
-            ? $"No llega audio del equipo desde hace {(int)parado.TotalSeconds} s: ¿está apagada la radio o desenchufado el USB?"
+            ? Textos.F("Cabina.Fonia.SinAudio", (int)parado.TotalSeconds)
             : string.Empty;
     }
 
@@ -264,7 +273,7 @@ public sealed partial class VistaModeloFonia : ObservableObject
         catch (Exception fallo)
         {
             Log.Warning(fallo, "No se ha podido salir al aire en fonía.");
-            Aviso = "No se ha podido transmitir: " + fallo.Message;
+            Aviso = Textos.F("Cabina.Fonia.NoTransmite", fallo.Message);
         }
         finally
         {
@@ -292,7 +301,7 @@ public sealed partial class VistaModeloFonia : ObservableObject
     {
         if (!Ajustes.EscuchaConfigurada)
         {
-            Aviso = "Elija la entrada del equipo y los altavoces del PC.";
+            Aviso = Textos.T("Cabina.Fonia.ElijaEscucha");
             return;
         }
 
@@ -305,7 +314,7 @@ public sealed partial class VistaModeloFonia : ObservableObject
         catch (Exception fallo)
         {
             Log.Warning(fallo, "No se ha podido abrir la escucha por el PC.");
-            Aviso = "No se ha podido abrir la escucha: " + fallo.Message;
+            Aviso = Textos.F("Cabina.Fonia.NoAbreEscucha", fallo.Message);
         }
     }
 
@@ -320,12 +329,12 @@ public sealed partial class VistaModeloFonia : ObservableObject
         {
             MotivoDeSuelta.Normal => string.Empty,
             MotivoDeSuelta.Cancelado => Aviso,
-            MotivoDeSuelta.TiempoAgotado => $"PTT soltado: se agotó el tiempo máximo ({Formatear(_control.TiempoMaximoEfectivo)}).",
-            MotivoDeSuelta.SinLatido => "PTT soltado: el audio del micrófono o del equipo se paró.",
-            MotivoDeSuelta.Panico => "PTT soltado con «SOLTAR PTT».",
-            MotivoDeSuelta.EquipoPerdido => "PTT soltado: se perdió la comunicación con el equipo.",
-            MotivoDeSuelta.Cierre => "PTT soltado: el programa se cierra.",
-            _ => "PTT soltado por un fallo; mire el registro.",
+            MotivoDeSuelta.TiempoAgotado => Textos.F("Cabina.Fonia.SueltaTiempo", Formatear(_control.TiempoMaximoEfectivo)),
+            MotivoDeSuelta.SinLatido => Textos.T("Cabina.Fonia.SueltaSinLatido"),
+            MotivoDeSuelta.Panico => Textos.T("Cabina.Fonia.SueltaPanico"),
+            MotivoDeSuelta.EquipoPerdido => Textos.T("Cabina.Fonia.SueltaEquipo"),
+            MotivoDeSuelta.Cierre => Textos.T("Cabina.Fonia.SueltaCierre"),
+            _ => Textos.T("Cabina.Fonia.SueltaFallo"),
         };
     }
 
@@ -371,7 +380,7 @@ public sealed partial class VistaModeloFonia : ObservableObject
             if (_control.Transmitiendo && !EsModoDeVoz(_equipo.Modo))
             {
                 _ = TerminarAsync(MotivoDeSuelta.Cancelado);
-                Aviso = $"PTT soltado: el equipo ha pasado a {_equipo.Modo}.";
+                Aviso = Textos.F("Cabina.Fonia.SueltaModo", _equipo.Modo);
             }
 
             ComprobarFuenteSiToca();
@@ -407,7 +416,7 @@ public sealed partial class VistaModeloFonia : ObservableObject
         }
         catch (ArgumentException)
         {
-            return "El índice del menú de la fuente de modulación no es válido (seis cifras).";
+            return Textos.T("Cabina.Fonia.IndiceMal");
         }
 
         try
@@ -420,7 +429,7 @@ public sealed partial class VistaModeloFonia : ObservableObject
 
             return string.Equals(lectura.Texto, Ajustes.ValorDeFuenteUsb, StringComparison.OrdinalIgnoreCase)
                 ? string.Empty
-                : $"La radio no parece tener la fuente de modulación de SSB en USB (menú EX{lectura.Indice} = {lectura.Texto}, se esperaba {Ajustes.ValorDeFuenteUsb}). Con el micro de la radio como fuente, el audio del PC no sale al aire.";
+                : Textos.F("Cabina.Fonia.FuenteNoUsb", lectura.Indice, lectura.Texto, Ajustes.ValorDeFuenteUsb);
         }
         catch (Exception fallo)
         {
@@ -434,15 +443,15 @@ public sealed partial class VistaModeloFonia : ObservableObject
         string motivo;
         if (!_equipo.Conectado)
         {
-            motivo = "Conecte el equipo para usar el PTT de fonía.";
+            motivo = Textos.T("Cabina.Fonia.ConecteElEquipo");
         }
         else if (!EsModoDeVoz(_equipo.Modo))
         {
-            motivo = $"El equipo está en {_equipo.Modo}: el PTT de fonía solo va en SSB, AM y FM, para no mezclarse con el módem.";
+            motivo = Textos.F("Cabina.Fonia.ModoNoVoz", _equipo.Modo);
         }
         else if (!Ajustes.TransmisionConfigurada)
         {
-            motivo = "Elija el micrófono del PC y la salida hacia el equipo.";
+            motivo = Textos.T("Cabina.Fonia.ElijaTransmision");
         }
         else
         {

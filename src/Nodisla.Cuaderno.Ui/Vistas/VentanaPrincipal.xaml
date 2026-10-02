@@ -1,6 +1,7 @@
 ﻿<Window x:Class="Nodisla.Cuaderno.Ui.Vistas.VentanaPrincipal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
         xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
         xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
         xmlns:vqsl="clr-namespace:Nodisla.Cuaderno.Ui.Vistas.Qsl"
@@ -97,18 +98,18 @@
                            Height="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=2.6}"
                            Margin="0,0,10,0"
                            VerticalAlignment="Center"
-                           AutomationProperties.Name="Marca de Cuaderno NODISLA" />
+                           AutomationProperties.Name="{loc:Texto Principal.Ventana.Marca}" />
                     <StackPanel Style="{StaticResource BloqueDeCampo}" VerticalAlignment="Center">
                         <TextBlock Text="Cuaderno NODISLA"
                                    FontWeight="Bold"
                                    FontSize="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=1.35}"
                                    Foreground="{DynamicResource Acento}" />
-                        <TextBlock Text="Cuaderno de guardia de EA8DLF" Style="{StaticResource TextoTenueEstilo}" />
+                        <TextBlock Text="{loc:Texto Principal.Ventana.Subtitulo}" Style="{StaticResource TextoTenueEstilo}" />
                     </StackPanel>
 
                     <StackPanel Style="{StaticResource BloqueDeCampo}"
                                 Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=17}">
-                        <TextBlock Text="Perfil de estación" Style="{StaticResource EtiquetaDeCampo}" />
+                        <TextBlock Text="{loc:Texto Principal.Ventana.PerfilDeEstacion}" Style="{StaticResource EtiquetaDeCampo}" />
                         <ComboBox ItemsSource="{Binding Estaciones}"
                                   SelectedItem="{Binding EstacionActiva}"
                                   ToolTip="{Binding AvisoDelPerfil}">
@@ -127,7 +128,7 @@
                     -->
 
                     <StackPanel Style="{StaticResource BloqueDeCampo}" VerticalAlignment="Bottom">
-                        <CheckBox Content="Tema oscuro (F9)" IsChecked="{Binding TemaOscuro}" />
+                        <CheckBox Content="{loc:Texto Principal.Ventana.TemaOscuro}" IsChecked="{Binding TemaOscuro}" />
                     </StackPanel>
                 </WrapPanel>
 
@@ -207,21 +208,21 @@
                             Style="{StaticResource EntradaDeNavegacion}"
                             Tag="11"
                             Command="{Binding VerLaAyudaCommand}"
-                            ToolTip="Ayuda: capítulos, primer uso, reportar un fallo, buscar actualizaciones y acerca de (F1 abre la de la página en la que está)"
-                            AutomationProperties.Name="Ayuda">
+                            ToolTip="{loc:Texto Principal.Nav.AyudaConsejo}"
+                            AutomationProperties.Name="{loc:Texto Principal.Nav.Ayuda}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource IconoAyuda}" Width="16" Height="16" Margin="0,0,7,0" />
-                            <TextBlock Text="Ayuda" VerticalAlignment="Center" />
+                            <TextBlock Text="{loc:Texto Principal.Nav.Ayuda}" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                     <Button Style="{StaticResource EntradaDeNavegacion}"
                             Tag="5"
                             Command="{Binding VerLosAjustesCommand}"
-                            ToolTip="Configuración: cuentas, equipo, audio, cluster, correo… (Ctrl 6)"
-                            AutomationProperties.Name="Configuración">
+                            ToolTip="{loc:Texto Principal.Nav.ConfiguracionConsejo}"
+                            AutomationProperties.Name="{loc:Texto Principal.Nav.Configuracion}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource IconoAjustes}" Width="16" Height="16" Margin="0,0,7,0" />
-                            <TextBlock Text="Configuración" VerticalAlignment="Center" />
+                            <TextBlock Text="{loc:Texto Principal.Nav.Configuracion}" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -231,29 +232,29 @@
                             Tag="0,1,6,8"
                             Command="{Binding VerElGrupoCommand}"
                             CommandParameter="Operar"
-                            ToolTip="Operar: cabina (Ctrl 1), digital (Ctrl 2), satélites (Ctrl 7) y ronda de control (Ctrl 9)"
-                            AutomationProperties.Name="Operar">
+                            ToolTip="{loc:Texto Principal.Nav.OperarConsejo}"
+                            AutomationProperties.Name="{loc:Texto Principal.Nav.Operar}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource IconoOperar}" Width="16" Height="16" Margin="0,0,7,0" />
-                            <TextBlock Text="Operar" VerticalAlignment="Center" />
+                            <TextBlock Text="{loc:Texto Principal.Nav.Operar}" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                     <Button Style="{StaticResource EntradaDeNavegacion}"
                             Tag="2,3"
                             Command="{Binding VerElGrupoCommand}"
                             CommandParameter="Libro"
-                            ToolTip="Libro: los contactos (Ctrl 3) y su mapa (Ctrl 4)"
-                            AutomationProperties.Name="Libro">
+                            ToolTip="{loc:Texto Principal.Nav.LibroConsejo}"
+                            AutomationProperties.Name="{loc:Texto Principal.Nav.Libro}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource IconoCuaderno}" Width="16" Height="16" Margin="0,0,7,0" />
-                            <TextBlock Text="Libro" VerticalAlignment="Center" />
+                            <TextBlock Text="{loc:Texto Principal.Nav.Libro}" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                     <Button Style="{StaticResource EntradaDeNavegacion}"
                             Tag="7,9,10"
                             Command="{Binding VerElGrupoCommand}"
                             CommandParameter="QSL"
-                            ToolTip="QSL: la tarjeta y su envío por correo (Ctrl 8), las etiquetas del buró y el diseñador de diplomas (Ctrl Mayús 5)"
+                            ToolTip="{loc:Texto Principal.Nav.QslConsejo}"
                             AutomationProperties.Name="QSL">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource IconoQsl}" Width="16" Height="16" Margin="0,0,7,0" />
@@ -264,11 +265,11 @@
                             Tag="4"
                             Command="{Binding VerElGrupoCommand}"
                             CommandParameter="Diplomas"
-                            ToolTip="Diplomas (Ctrl 5)"
-                            AutomationProperties.Name="Diplomas">
+                            ToolTip="{loc:Texto Principal.Nav.DiplomasConsejo}"
+                            AutomationProperties.Name="{loc:Texto Principal.Nav.Diplomas}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource IconoDiplomas}" Width="16" Height="16" Margin="0,0,7,0" />
-                            <TextBlock Text="Diplomas" VerticalAlignment="Center" />
+                            <TextBlock Text="{loc:Texto Principal.Nav.Diplomas}" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
 
@@ -278,14 +279,14 @@
                                 Margin="8,0,8,0"
                                 Visibility="{Binding EnElGrupoOperar, Converter={StaticResource BooleanoAVisible}}">
                         <Border Width="1" Height="18" Margin="0,0,10,0" Background="{DynamicResource Borde}" />
-                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="0" Content="Cabina"
-                                Command="{Binding VerOperarCommand}" ToolTip="La cabina: equipo, entrada, cluster y bandmap (Ctrl 1)" />
-                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="1" Content="Digital"
-                                Command="{Binding VerLoDigitalCommand}" ToolTip="Modos digitales: FT8, FT4… (Ctrl 2)" />
-                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="6" Content="Satélites"
-                                Command="{Binding VerLosSatelitesCommand}" ToolTip="Pasos y Doppler de los satélites (Ctrl 7)" />
-                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="8" Content="Ronda de control"
-                                Command="{Binding VerLaRondaCommand}" ToolTip="Ronda de control de una red (Ctrl 9)" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="0" Content="{loc:Texto Principal.Nav.Cabina}"
+                                Command="{Binding VerOperarCommand}" ToolTip="{loc:Texto Principal.Nav.CabinaConsejo}" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="1" Content="{loc:Texto Principal.Nav.Digital}"
+                                Command="{Binding VerLoDigitalCommand}" ToolTip="{loc:Texto Principal.Nav.DigitalConsejo}" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="6" Content="{loc:Texto Principal.Nav.Satelites}"
+                                Command="{Binding VerLosSatelitesCommand}" ToolTip="{loc:Texto Principal.Nav.SatelitesConsejo}" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="8" Content="{loc:Texto Principal.Nav.Ronda}"
+                                Command="{Binding VerLaRondaCommand}" ToolTip="{loc:Texto Principal.Nav.RondaConsejo}" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal"
@@ -293,10 +294,10 @@
                                 Margin="8,0,8,0"
                                 Visibility="{Binding EnElGrupoLibro, Converter={StaticResource BooleanoAVisible}}">
                         <Border Width="1" Height="18" Margin="0,0,10,0" Background="{DynamicResource Borde}" />
-                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="2" Content="Contactos"
-                                Command="{Binding VerElCuadernoCommand}" ToolTip="Los contactos del cuaderno (Ctrl 3, F3 para buscar)" />
-                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="3" Content="Mapa"
-                                Command="{Binding VerElMapaCommand}" ToolTip="El mapa de contactos, anuncios y línea gris (Ctrl 4)" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="2" Content="{loc:Texto Principal.Nav.Contactos}"
+                                Command="{Binding VerElCuadernoCommand}" ToolTip="{loc:Texto Principal.Nav.ContactosConsejo}" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="3" Content="{loc:Texto Principal.Nav.Mapa}"
+                                Command="{Binding VerElMapaCommand}" ToolTip="{loc:Texto Principal.Nav.MapaConsejo}" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal"
@@ -304,12 +305,12 @@
                                 Margin="8,0,8,0"
                                 Visibility="{Binding EnElGrupoQsl, Converter={StaticResource BooleanoAVisible}}">
                         <Border Width="1" Height="18" Margin="0,0,10,0" Background="{DynamicResource Borde}" />
-                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="7" Content="Tarjeta QSL"
-                                Command="{Binding VerLaQslCommand}" ToolTip="Diseñar la tarjeta y mandarla por correo (Ctrl 8)" />
-                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="9" Content="Etiquetas"
-                                Command="{Binding VerLasEtiquetasCommand}" ToolTip="Etiquetas de las QSL para el buró" />
-                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="10" Content="Diplomas"
-                                Command="{Binding VerElDisenadorDeDiplomasCommand}" ToolTip="Diseñar y emitir diplomas propios y certificados (Ctrl Mayús 5)" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="7" Content="{loc:Texto Principal.Nav.TarjetaQsl}"
+                                Command="{Binding VerLaQslCommand}" ToolTip="{loc:Texto Principal.Nav.TarjetaQslConsejo}" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="9" Content="{loc:Texto Principal.Nav.Etiquetas}"
+                                Command="{Binding VerLasEtiquetasCommand}" ToolTip="{loc:Texto Principal.Nav.EtiquetasConsejo}" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="10" Content="{loc:Texto Principal.Nav.Diplomas}"
+                                Command="{Binding VerElDisenadorDeDiplomasCommand}" ToolTip="{loc:Texto Principal.Nav.DisenadorConsejo}" />
                     </StackPanel>
                 </WrapPanel>
             </DockPanel>
@@ -325,72 +326,72 @@
                     SelectedIndex="{Binding IndiceDeLaPestana}"
                     Margin="0,0,0,8">
             <!-- 0 · Operar → Cabina -->
-            <TabItem Header="Cabina">
+            <TabItem Header="{loc:Texto Principal.Nav.Cabina}">
                 <vistas:PanelOperar x:Name="Operar" />
             </TabItem>
 
             <!-- 1 · Operar → Digital -->
-            <TabItem Header="Digital">
+            <TabItem Header="{loc:Texto Principal.Nav.Digital}">
                 <vistas:PestanaDigital />
             </TabItem>
 
             <!-- 2 · Libro → Contactos -->
-            <TabItem Header="Contactos">
+            <TabItem Header="{loc:Texto Principal.Nav.Contactos}">
                 <Border Style="{StaticResource Tarjeta}" Margin="0">
                     <vistas:PanelDelCuaderno x:Name="Cuaderno" Fallo="AlFallarElCuaderno" />
                 </Border>
             </TabItem>
 
             <!-- 3 · Libro → Mapa -->
-            <TabItem Header="Mapa">
+            <TabItem Header="{loc:Texto Principal.Nav.Mapa}">
                 <Border Style="{StaticResource Tarjeta}" Margin="0">
                     <vistas:PanelDeMapa DataContext="{Binding Mapa}" />
                 </Border>
             </TabItem>
 
             <!-- 4 · Diplomas -->
-            <TabItem Header="Diplomas">
+            <TabItem Header="{loc:Texto Principal.Nav.Diplomas}">
                 <vistas:PanelDeDiplomas DataContext="{Binding Diplomas}" />
             </TabItem>
 
             <!-- 5 · Configuración -->
-            <TabItem Header="Configuración">
+            <TabItem Header="{loc:Texto Principal.Nav.Configuracion}">
                 <vistas:PanelDeAjustes DataContext="{Binding Configuracion}" />
             </TabItem>
 
             <!-- 6 · Operar → Satélites -->
-            <TabItem Header="Satélites">
+            <TabItem Header="{loc:Texto Principal.Nav.Satelites}">
                 <Border Style="{StaticResource Tarjeta}" Margin="0">
                     <vistas:PanelDeSatelites DataContext="{Binding Satelites}" />
                 </Border>
             </TabItem>
 
             <!-- 7 · QSL → Tarjeta QSL (su diseño y el envío por correo) -->
-            <TabItem Header="Tarjeta QSL">
+            <TabItem Header="{loc:Texto Principal.Nav.TarjetaQsl}">
                 <vistas:PanelDeQsl DataContext="{Binding Impresion.Qsl}" />
             </TabItem>
 
             <!-- 8 · Operar → Ronda de control -->
-            <TabItem Header="Ronda de control">
+            <TabItem Header="{loc:Texto Principal.Nav.Ronda}">
                 <Border Style="{StaticResource Tarjeta}" Margin="0">
                     <vistas:PestanaRonda DataContext="{Binding Ronda}" />
                 </Border>
             </TabItem>
 
             <!-- 9 · QSL → Etiquetas del buró -->
-            <TabItem Header="Etiquetas">
+            <TabItem Header="{loc:Texto Principal.Nav.Etiquetas}">
                 <Border Style="{StaticResource Tarjeta}" Margin="0">
                     <vistas:PanelDeImpresion DataContext="{Binding Impresion}" />
                 </Border>
             </TabItem>
 
             <!-- 10 · QSL → Diplomas (el diseñador de diplomas propios y certificados) -->
-            <TabItem Header="Diseñador de diplomas">
+            <TabItem Header="{loc:Texto Principal.Nav.Disenador}">
                 <vqsl:DisenadorDeDiplomas DataContext="{Binding DisenadorDeDiplomas}" />
             </TabItem>
 
             <!-- 11 · Ayuda -->
-            <TabItem Header="Ayuda">
+            <TabItem Header="{loc:Texto Principal.Nav.Ayuda}">
                 <vistas:PanelDeAyuda x:Name="PaginaDeAyuda" DataContext="{Binding Ayuda}" />
             </TabItem>
         </TabControl>
@@ -427,8 +428,8 @@
                             VerticalAlignment="Center"
                             Margin="16,0,0,0"
                             TextElement.FontSize="12"
-                            AutomationProperties.Name="Tamaño de la letra de la ventana">
-                    <TextBlock Text="Letra"
+                            AutomationProperties.Name="{loc:Texto Principal.Letra.Tamano}">
+                    <TextBlock Text="{loc:Texto Principal.Letra.Rotulo}"
                                FontSize="12"
                                VerticalAlignment="Center"
                                Margin="0,0,6,0"
@@ -439,8 +440,8 @@
                             FontSize="12"
                             Padding="8,1"
                             MinWidth="26"
-                            ToolTip="Letra más pequeña (Ctrl −)"
-                            AutomationProperties.Name="Reducir el tamaño de la letra" />
+                            ToolTip="{loc:Texto Principal.Letra.Menor}"
+                            AutomationProperties.Name="{loc:Texto Principal.Letra.Reducir}" />
 
                     <TextBlock Text="{Binding EscalaDeLetraTexto}"
                                FontSize="12"
@@ -455,16 +456,16 @@
                             FontSize="12"
                             Padding="8,1"
                             MinWidth="26"
-                            ToolTip="Letra más grande (Ctrl +)"
-                            AutomationProperties.Name="Aumentar el tamaño de la letra" />
+                            ToolTip="{loc:Texto Principal.Letra.Mayor}"
+                            AutomationProperties.Name="{loc:Texto Principal.Letra.Aumentar}" />
 
                     <Button Content="100 %"
                             Command="{Binding LetraNormalCommand}"
                             FontSize="12"
                             Padding="8,1"
                             Margin="6,0,0,0"
-                            ToolTip="Vuelve al tamaño normal (Ctrl 0)"
-                            AutomationProperties.Name="Volver al tamaño de letra normal" />
+                            ToolTip="{loc:Texto Principal.Letra.NormalConsejo}"
+                            AutomationProperties.Name="{loc:Texto Principal.Letra.Normal}" />
                 </StackPanel>
 
                 <WrapPanel>
@@ -480,10 +481,10 @@
                         Background="{DynamicResource AvisoFondo}"
                         BorderBrush="{DynamicResource AvisoBorde}"
                         BorderThickness="1"
-                        ToolTip="Los datos son inventados: el cuaderno no se guarda, la radio no existe y los anuncios del cluster son de mentira."
-                        AutomationProperties.Name="Modo de pruebas: los datos son inventados y no se guardan"
+                        ToolTip="{loc:Texto Principal.Pruebas.Consejo}"
+                        AutomationProperties.Name="{loc:Texto Principal.Pruebas.Nombre}"
                         Visibility="{Binding Source={x:Static vistas:VentanaPrincipal.EnPruebas}, Converter={StaticResource BooleanoAVisible}}">
-                    <TextBlock Text="DATOS DE PRUEBA"
+                    <TextBlock Text="{loc:Texto Principal.Pruebas.Rotulo}"
                                FontWeight="Bold"
                                FontSize="11"
                                Foreground="{DynamicResource AvisoTexto}"
@@ -494,21 +495,21 @@
                 <vistas:PastillasDeServicio Margin="0,0,16,0" />
 
                 <TextBlock Margin="0,0,20,0" VerticalAlignment="Center">
-                    <Run Text="Estación:" Foreground="{DynamicResource TextoTenue}" />
+                    <Run Text="{loc:Texto Principal.Estado.Estacion}" Foreground="{DynamicResource TextoTenue}" />
                     <Run Text="{Binding PerfilActivo, Mode=OneWay}" FontWeight="Bold" />
                 </TextBlock>
                 <TextBlock Margin="0,0,20,0">
-                    <Run Text="Hora UTC:" Foreground="{DynamicResource TextoTenue}" />
+                    <Run Text="{loc:Texto Principal.Estado.HoraUtc}" Foreground="{DynamicResource TextoTenue}" />
                     <Run Text="{Binding HoraUtc, Mode=OneWay}" FontWeight="Bold" />
                 </TextBlock>
                 <TextBlock Margin="0,0,20,0">
-                    <Run Text="Contactos en el cuaderno:" Foreground="{DynamicResource TextoTenue}" />
+                    <Run Text="{loc:Texto Principal.Estado.Contactos}" Foreground="{DynamicResource TextoTenue}" />
                     <Run Text="{Binding TotalDeQsosTexto, Mode=OneWay}" FontWeight="Bold" />
                 </TextBlock>
                 <TextBlock Style="{StaticResource TextoTenueEstilo}"
                            Visibility="{Binding LeyendaVisible, Converter={StaticResource BooleanoAVisible}}"
-                           ToolTip="Atajos de teclado"
-                           Text="F1 ayuda · Intro registra · Esc limpia · F2 modifica · F3 buscar · F4 indicativo · F5 refresca · F7 más datos · F8 hora · F9 tema · Supr borra · Ctrl1…Ctrl9 páginas (ver la barra) · Ctrl+ y Ctrl− escala" />
+                           ToolTip="{loc:Texto Principal.Estado.Atajos}"
+                           Text="{loc:Texto Principal.Estado.Leyenda}" />
                 </WrapPanel>
             </DockPanel>
         </Border>

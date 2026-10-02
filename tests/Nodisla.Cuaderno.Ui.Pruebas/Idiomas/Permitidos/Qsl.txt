@@ -1,0 +1,4 @@
+# Bloque QSL y diplomas: unidades junto a los ejes del editor.
+X mm
+Y mm
+pt

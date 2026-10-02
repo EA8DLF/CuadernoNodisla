@@ -2,6 +2,7 @@ using System.Globalization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Satelites.Catalogo;
 using Nodisla.Cuaderno.Satelites.Doppler;
 using Nodisla.Cuaderno.Satelites.Orbital;
@@ -32,18 +33,14 @@ public sealed record EstadoDeSeguimiento(
     /// <param name="frescura">Plazo dentro del cual los elementos se dan por buenos.</param>
     public string Describir(DateTimeOffset ahoraUtc, TimeSpan frescura)
     {
-        var es = CultureInfo.GetCultureInfo("es-ES");
         var texto = Vista.SobreElHorizonte
-            ? $"{Satelite}: azimut {Vista.AzimutGrados.ToString("F1", es)}°, "
-              + $"elevación {Vista.ElevacionGrados.ToString("F1", es)}°, "
-              + $"{Vista.DistanciaKm.ToString("N0", es)} km"
-            : $"{Satelite}: por debajo del horizonte "
-              + $"({Vista.ElevacionGrados.ToString("F1", es)}°), sobre {LocalizadorDelSubpunto}";
+            ? Textos.F("Servicios.Satelites.Posicion", Satelite, Vista.AzimutGrados, Vista.ElevacionGrados, Vista.DistanciaKm)
+            : Textos.F("Servicios.Satelites.PosicionBajo", Satelite, Vista.ElevacionGrados, LocalizadorDelSubpunto);
 
         var edad = ahoraUtc - EpocaDeLosElementos;
         if (edad > frescura)
         {
-            texto += $". Elementos de hace {ElementosOrbitales.TextoDeEdad(edad)}";
+            texto += Textos.F("Servicios.Satelites.ElementosDeHace", ElementosOrbitales.TextoDeEdad(edad));
         }
 
         return texto + ".";

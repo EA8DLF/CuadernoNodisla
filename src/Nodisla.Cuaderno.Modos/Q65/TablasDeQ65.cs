@@ -1,6 +1,7 @@
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Modos.Q65;
 
@@ -182,7 +183,7 @@ public sealed class TablasDeQ65
 
             Comprobar(entradas, pesos, sincronismo, repeticiones);
             return new TablasDeQ65(entradas, pesos, sincronismo, 0xF01, esElCodigoReal: false,
-                "codigo de pruebas: no interopera con nadie");
+                Textos.T("Servicios.Modos.CodigoDePruebasQ65"));
         }
     }
 

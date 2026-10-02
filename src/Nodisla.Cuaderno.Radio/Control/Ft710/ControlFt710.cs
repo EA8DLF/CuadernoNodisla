@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Radio.Ptt;
 
 namespace Nodisla.Cuaderno.Radio.Control.Ft710;
@@ -118,7 +119,7 @@ public sealed class ControlFt710
         ObjectDisposedException.ThrowIf(_desechado, this);
         if (!_canal.Abierto)
         {
-            throw new InvalidOperationException("La radio no está conectada: no se puede apagar desde el programa.");
+            throw new InvalidOperationException(Textos.T("Servicios.Radio.NoApagaDesconectada"));
         }
 
         await BajarElPttComoSeaAsync(ct).ConfigureAwait(false);
@@ -144,8 +145,7 @@ public sealed class ControlFt710
         }
         catch (CanalNoDisponibleException)
         {
-            return $"No se puede encender desde el programa: con la radio apagada el puerto {_canal.Descripcion} "
-                   + "no está disponible. Enciéndela con su tecla.";
+            return Textos.F("Servicios.Radio.NoEnciendePuerto", _canal.Descripcion);
         }
 
         await _canal.MandarAsync("PS1;", ct).ConfigureAwait(false);
@@ -168,7 +168,7 @@ public sealed class ControlFt710
             }
         }
 
-        return "Se ha mandado la orden de encendido pero la radio no ha contestado en 20 segundos.";
+        return Textos.T("Servicios.Radio.EncendidoSinRespuesta");
     }
 
     /// <summary>Lo que contesta el FT-710 a <c>ID;</c>.</summary>
@@ -330,7 +330,7 @@ public sealed class ControlFt710
         if (!identificador.StartsWith("ID", StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidOperationException(
-                $"Por {_canal.Descripcion} contesta algo que no es un equipo Yaesu: «{identificador}».");
+                Textos.F("Servicios.Radio.NoEsYaesu", _canal.Descripcion, identificador));
         }
 
         var codigo = identificador[2..].Trim();
@@ -438,10 +438,10 @@ public sealed class ControlFt710
                 var enB = await ElActivoEsBAsync(ct).ConfigureAwait(false);
                 var frecuencia = enB ? Vfos.B.Frecuencia : Vfos.A.Frecuencia;
                 var nombre = _opciones.Traductor.AlEquipo(modo, frecuencia.EsCero ? Estado.Frecuencia : frecuencia)
-                    ?? throw new ArgumentException($"No sé cómo pedirle al FT-710 el modo {modo}.", nameof(modo));
+                    ?? throw new ArgumentException(Textos.F("Servicios.Radio.ModoDesconocido", "FT-710", modo), nameof(modo));
 
                 var codigo = ModosFt710.AlEquipo(nombre)
-                    ?? throw new ArgumentException($"El FT-710 no tiene el modo {nombre}.", nameof(modo));
+                    ?? throw new ArgumentException(Textos.F("Servicios.Radio.SinEseModo", "FT-710", nombre), nameof(modo));
 
                 await MandarAsync($"{OrdenDeModoDelActivo(enB)}{codigo};", ct).ConfigureAwait(false);
                 await LeerEstadoAsync(ct).ConfigureAwait(false);
@@ -463,8 +463,8 @@ public sealed class ControlFt710
                 nameof(frecuencia),
                 frecuencia,
                 _perfil.CifrasDeFrecuencia == 9 && _perfil == Yaesu.PerfilesYaesu.Ft710
-                    ? "El FT-710 solo admite frecuencias de nueve cifras en hercios."
-                    : $"El {_perfil.Nombre} no admite esa frecuencia (hasta {_perfil.HerciosMaximo} Hz, {_perfil.CifrasDeFrecuencia} cifras).");
+                    ? Textos.T("Servicios.Radio.Ft710NueveCifras")
+                    : Textos.F("Servicios.Radio.FrecuenciaFueraDelPerfil", _perfil.Nombre, _perfil.HerciosMaximo, _perfil.CifrasDeFrecuencia));
         }
     }
 
@@ -561,7 +561,7 @@ public sealed class ControlFt710
         if (fa?.Length != largo || fb?.Length != largo || ma is not { Length: 4 } || mb is not { Length: 4 })
         {
             throw new InvalidOperationException(
-                $"No se pueden intercambiar los VFO: el equipo no ha dado los dos ({fa}, {fb}, {ma}, {mb}).");
+                Textos.F("Servicios.Radio.NoIntercambiaVfos", $"{fa}, {fb}, {ma}, {mb}"));
         }
 
         // Primero el modo y luego la frecuencia: al cambiar de LSB a USB el FT-710 corre el
@@ -585,7 +585,7 @@ public sealed class ControlFt710
     {
         if (!_perfil.Teclas.Contains(tecla))
         {
-            throw new NotSupportedException($"El {_perfil.Nombre} no tiene la tecla {tecla} por CAT.");
+            throw new NotSupportedException(Textos.F("Servicios.Radio.SinTeclaCat", _perfil.Nombre, tecla));
         }
 
         return tecla == TeclaDelEquipo.BorrarClarificador
@@ -644,7 +644,7 @@ public sealed class ControlFt710
         Tecla(8, "24", "12m", "12 m (24,9 MHz)"),
         Tecla(9, "28", "10m", "10 m (28 MHz)"),
         Tecla(10, "50", "6m", "6 m (50 MHz)"),
-        new TeclaDeBanda(11, "GEN", Banda.Vacia, "Cobertura general (recepción fuera de las bandas)"),
+        new TeclaDeBanda(11, "GEN", Banda.Vacia, Textos.T("Servicios.Radio.CoberturaGeneralLarga")),
     ];
 
     private static TeclaDeBanda Tecla(int codigo, string rotulo, string banda, string descripcion) =>
@@ -905,7 +905,7 @@ public sealed class ControlFt710
         var n = _perfil.CifrasDeFrecuencia;
         if (informe is null || informe.Length < 5 + n || !long.TryParse(informe.AsSpan(5, n), NumberStyles.None, CultureInfo.InvariantCulture, out var ahora))
         {
-            throw new InvalidOperationException($"No se sabe en que frecuencia esta el equipo ({informe}).");
+            throw new InvalidOperationException(Textos.F("Servicios.Radio.FrecuenciaDesconocida", informe));
         }
 
         var nueva = ahora + hercios;
@@ -952,10 +952,10 @@ public sealed class ControlFt710
     {
         var frecuencia = vfo == NombreDeVfo.B ? Vfos.B.Frecuencia : Vfos.A.Frecuencia;
         var nombre = _opciones.Traductor.AlEquipo(modo, frecuencia)
-            ?? throw new ArgumentException($"No sé cómo pedirle al FT-710 el modo {modo}.", nameof(modo));
+            ?? throw new ArgumentException(Textos.F("Servicios.Radio.ModoDesconocido", "FT-710", modo), nameof(modo));
 
         var codigo = ModosFt710.AlEquipo(nombre)
-            ?? throw new ArgumentException($"El FT-710 no tiene el modo {nombre}.", nameof(modo));
+            ?? throw new ArgumentException(Textos.F("Servicios.Radio.SinEseModo", "FT-710", nombre), nameof(modo));
 
         // MD0 es el VFO activo y MD1 el otro, sea A o B (FT-710). En los de doble receptor MD0
         // es siempre el A y MD1 el B.
@@ -963,7 +963,7 @@ public sealed class ControlFt710
         if (!esElActivo && !_perfil.TieneModoDelSegundoVfo)
         {
             throw new NotSupportedException(
-                $"El {_perfil.Nombre} no deja cambiar por CAT el modo del VFO que no está en uso (no tiene MD1).");
+                Textos.F("Servicios.Radio.SinMd1", _perfil.Nombre));
         }
 
         var orden = _perfil.ModoPrincipalEsElActivo
@@ -986,6 +986,14 @@ public sealed class ControlFt710
     /// <inheritdoc />
     async Task IPttDirecto.PonerPttDirectoAsync(bool transmitir, CancellationToken ct)
     {
+        if (!transmitir && NoHayNadaQueBajar())
+        {
+            _registro.LogDebug(
+                "{Canal} está cerrado y no hay PTT pedido: no hay nada que bajar.",
+                _canal.Descripcion);
+            return;
+        }
+
         if (transmitir && Interlocked.Exchange(ref _sintoniaPedida, 0) == 1)
         {
             // La transmision vigilada de TUNE: el que emite es el propio acoplador («Tuning
@@ -1186,12 +1194,12 @@ public sealed class ControlFt710
         var rango = Rango(mando, vfo);
         if (descripcion is null || rango is null)
         {
-            throw new NotSupportedException($"Este equipo no admite el mando {mando} en el VFO {vfo}.");
+            throw new NotSupportedException(Textos.F("Servicios.Radio.MandoNoEnVfo", mando, vfo));
         }
 
         if (rango.SoloLectura)
         {
-            throw new NotSupportedException($"El mando {mando} se puede leer pero no accionar.");
+            throw new NotSupportedException(Textos.F("Servicios.Radio.MandoSoloLectura", mando));
         }
 
         // En el acoplador solo emite la ultima posicion («Sintonizar», AC002); encenderlo o
@@ -1215,7 +1223,7 @@ public sealed class ControlFt710
                 || !loQueHay!.StartsWith(descripcion.Consulta, StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException(
-                    $"Para accionar {mando} hay que saber antes lo que tiene el equipo, y contesta «{loQueHay}».");
+                    Textos.F("Servicios.Radio.MandoSinEstado", mando, loQueHay));
             }
         }
 
@@ -2153,6 +2161,22 @@ public sealed class ControlFt710
     /// pulsado «Conectar» (27-09-2026). Con PTT pedido se recorren siempre, pase lo que pase.
     /// </para>
     /// </remarks>
+    /// <summary>
+    /// Dice si una orden de bajar el PTT no tiene a quien llegar ni nada que bajar.
+    /// </summary>
+    /// <remarks>
+    /// Es asi cuando el canal esta cerrado, no hay PTT pedido y, ademas, o el canal no se llego
+    /// a abrir nunca, o este control ya esta desechado —y al desecharse ya bajo el PTT por todas
+    /// sus vias—. Sin esto, el vigilante que se cierra despues del control chocaba con el
+    /// semaforo ya liberado del canal y daba un «¡PTT PEGADO!» falso (01-10-2026). Con PTT
+    /// pedido nunca se cumple: entonces se intenta bajar siempre, y si falla, se avisa.
+    /// </remarks>
+    private bool NoHayNadaQueBajar() =>
+        !_canal.Abierto
+        && !Volatile.Read(ref _pttPedido)
+        && !Volatile.Read(ref _sintonizando)
+        && (Volatile.Read(ref _desechado) || !Volatile.Read(ref _canalAbiertoAlgunaVez));
+
     private async Task BajarElPttComoSeaAsync(CancellationToken ct)
     {
         if (!_canal.Abierto

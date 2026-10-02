@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.Ajustes;
 using Serilog;
 
@@ -67,6 +67,13 @@ public sealed partial class VistaModeloAjustesAudio : ObservableObject
 
         Refrescar();
         RecogerDeLosAjustes();
+
+        // El nivel en palabras y el aviso de los dispositivos se escriben en el idioma nuevo.
+        Textos.AlCambiar(this, static vm =>
+        {
+            vm.OnPropertyChanged(nameof(NivelTexto));
+            vm.OnPropertyChanged(nameof(AvisoDeDiscrepancia));
+        });
     }
 
     /// <summary>Dispositivos de captura del sistema, con el del equipo el primero.</summary>
@@ -77,6 +84,38 @@ public sealed partial class VistaModeloAjustesAudio : ObservableObject
 
     /// <summary>Muestras por segundo que se ofrecen.</summary>
     public IReadOnlyList<int> Frecuencias { get; } = [12000, 24000, 48000, 96000];
+
+    // ── Telegrafía (CW): el decodificador de la cabina ───────────────────────
+
+    /// <summary>Salta al guardar, para que el panel de telegrafía tome los ajustes nuevos.</summary>
+    public event EventHandler? AjustesDeCwGuardados;
+
+    /// <summary>Anchos de filtro que se ofrecen (Hz).</summary>
+    public IReadOnlyList<int> AnchosDeFiltroCw { get; } = [50, 75, 100, 150, 200, 300, 500];
+
+    /// <summary>Tono por omisión del decodificador (Hz).</summary>
+    [ObservableProperty]
+    private int _cwTonoHz = 700;
+
+    /// <summary>Ancho del filtro (Hz).</summary>
+    [ObservableProperty]
+    private int _cwAnchoHz = 100;
+
+    /// <summary>Sensibilidad, de 1 a 10.</summary>
+    [ObservableProperty]
+    private int _cwSensibilidad = 6;
+
+    /// <summary>Velocidad mínima (WPM).</summary>
+    [ObservableProperty]
+    private int _cwWpmMinima = 5;
+
+    /// <summary>Velocidad máxima (WPM).</summary>
+    [ObservableProperty]
+    private int _cwWpmMaxima = 60;
+
+    /// <summary>Señales que se leen a la vez.</summary>
+    [ObservableProperty]
+    private int _cwSenales = 4;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HayDiscrepanciaDeDispositivos))]
@@ -138,13 +177,9 @@ public sealed partial class VistaModeloAjustesAudio : ObservableObject
     public bool NivelCorto => Probando && Nivel < AjustesDeDigital.NivelQueSeQuedaCorto;
 
     /// <summary>El nivel, en palabras, con el aviso si procede.</summary>
-    public string NivelTexto => NivelSatura
-        ? string.Create(
-            CultureInfo.CurrentCulture,
-            $"{Nivel:0.00} — SATURANDO. Baje el volumen de grabación del codec en Windows hasta quedarse entre 0,20 y 0,60.")
-        : NivelCorto
-            ? string.Create(CultureInfo.CurrentCulture, $"{Nivel:0.00} — muy bajo. Suba el volumen de grabación del codec.")
-            : string.Create(CultureInfo.CurrentCulture, $"{Nivel:0.00} — bien.");
+    public string NivelTexto => Textos.F(
+        NivelSatura ? "Ajustes.Audio.Nivel.Satura" : NivelCorto ? "Ajustes.Audio.Nivel.Bajo" : "Ajustes.Audio.Nivel.Bien",
+        Nivel);
 
     /// <summary>Hay un parte que enseñar.</summary>
     public bool HayParte => !string.IsNullOrEmpty(Parte);
@@ -166,9 +201,7 @@ public sealed partial class VistaModeloAjustesAudio : ObservableObject
 
     /// <summary>El aviso de la discrepancia, listo para pintar; vacío si no hay nada que decir.</summary>
     public string AvisoDeDiscrepancia => HayDiscrepanciaDeDispositivos
-        ? $"Atención: la entrada «{EntradaElegida?.Nombre}» y la salida «{SalidaElegida?.Nombre}» no "
-          + "parecen del mismo aparato. Si el equipo trae un códec USB, la entrada y la salida "
-          + "deberían ser las dos «EL EQUIPO»; si no lo son, revíselas antes de transmitir."
+        ? Textos.F("Ajustes.Audio.Discrepancia", EntradaElegida?.Nombre, SalidaElegida?.Nombre)
         : string.Empty;
 
     /// <summary>Vuelve a preguntarle a Windows que dispositivos de sonido hay.</summary>
@@ -201,13 +234,13 @@ public sealed partial class VistaModeloAjustesAudio : ObservableObject
             Probando = true;
             _medidor.Start();
             Fallo = false;
-            Parte = $"Escuchando «{EntradaElegida.Nombre}». Hable o ponga la radio en una señal para ver el nivel.";
+            Parte = Textos.F("Ajustes.Audio.Escuchando", EntradaElegida.Nombre);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido abrir la entrada de audio para probar el nivel.");
             Fallo = true;
-            Parte = $"No se ha podido abrir «{EntradaElegida.Nombre}»: {ex.Message}";
+            Parte = Textos.F("Ajustes.Audio.NoSeHaPodidoAbrir", EntradaElegida.Nombre, ex.Message);
             await PararLaPruebaAsync().ConfigureAwait(true);
         }
     }
@@ -245,16 +278,27 @@ public sealed partial class VistaModeloAjustesAudio : ObservableObject
             digital.FrecuenciaDeMuestreo = FrecuenciaDeMuestreo;
             digital.Acotar();
 
+            var cw = _ajustes.Cw;
+            cw.TonoPorOmisionHz = CwTonoHz;
+            cw.AnchoDelFiltroHz = CwAnchoHz;
+            cw.Sensibilidad = CwSensibilidad;
+            cw.WpmMinima = CwWpmMinima;
+            cw.WpmMaxima = CwWpmMaxima;
+            cw.Senales = CwSenales;
+            cw.Acotar();
+
             _ajustes.Guardar(_carpetaDeDatos);
+            RecogerLosDeCw();
+            AjustesDeCwGuardados?.Invoke(this, EventArgs.Empty);
 
             Fallo = false;
-            Parte = "Guardado.";
+            Parte = Textos.T("Ajustes.Guardado");
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se han podido guardar los ajustes de audio.");
             Fallo = true;
-            Parte = $"No se han podido guardar: {ex.Message}";
+            Parte = Textos.F("Ajustes.NoSeHanPodidoGuardar", ex.Message);
         }
     }
 
@@ -290,6 +334,18 @@ public sealed partial class VistaModeloAjustesAudio : ObservableObject
 
         EntradaElegida = Escoger(Entradas, digital.DispositivoDeEntrada);
         SalidaElegida = Escoger(Salidas, digital.DispositivoDeSalida);
+        RecogerLosDeCw();
+    }
+
+    private void RecogerLosDeCw()
+    {
+        var cw = _ajustes.Cw;
+        CwTonoHz = cw.TonoPorOmisionHz;
+        CwAnchoHz = cw.AnchoDelFiltroHz;
+        CwSensibilidad = cw.Sensibilidad;
+        CwWpmMinima = cw.WpmMinima;
+        CwWpmMaxima = cw.WpmMaxima;
+        CwSenales = cw.Senales;
     }
 
     private static void Rellenar(

@@ -3,7 +3,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
-        Title="Su cuaderno está vacío"
+        xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+        Title="{loc:Texto Libro.Vacio.Titulo}"
         Width="640"
         SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
@@ -37,16 +38,13 @@
 
     <Border Padding="18">
         <StackPanel>
-            <TextBlock Text="Su cuaderno está vacío"
+            <TextBlock Text="{loc:Texto Libro.Vacio.Titulo}"
                        FontSize="20"
                        FontWeight="Bold"
                        Foreground="{DynamicResource Acento}"
                        TextWrapping="Wrap" />
 
-            <TextBlock TextWrapping="Wrap" Margin="0,8,0,0">
-                Acaba de crearse un cuaderno nuevo y todavía no tiene ningún contacto. Si ya
-                lleva su cuaderno en otro programa, puede traérselo ahora desde un fichero ADIF.
-            </TextBlock>
+            <TextBlock Text="{loc:Texto Libro.Vacio.Explicacion}" TextWrapping="Wrap" Margin="0,8,0,0" />
 
             <Border Margin="0,12,0,0"
                     Padding="10,8"
@@ -55,12 +53,12 @@
                     BorderBrush="{DynamicResource Borde}"
                     BorderThickness="1">
                 <StackPanel>
-                    <TextBlock Text="Dónde vive su cuaderno" FontWeight="Bold" />
+                    <TextBlock Text="{loc:Texto Libro.Vacio.DondeVive}" FontWeight="Bold" />
                     <TextBlock Text="{Binding RutaDelCuaderno}"
                                FontFamily="Consolas, Cascadia Mono, Courier New"
                                TextWrapping="Wrap"
                                Margin="0,3,0,0" />
-                    <TextBlock Text="Es un solo fichero: se puede copiar, llevar a otro equipo o guardar como respaldo. Al lado hay una carpeta «copias» con las de seguridad."
+                    <TextBlock Text="{loc:Texto Libro.Vacio.UnSoloFichero}"
                                Style="{StaticResource TextoTenueEstilo}"
                                TextWrapping="Wrap"
                                Margin="0,3,0,0" />
@@ -94,16 +92,16 @@
                        Visibility="{Binding Aviso, Converter={StaticResource NoEsVacio}}" />
 
             <WrapPanel Margin="0,16,0,0" HorizontalAlignment="Right">
-                <Button Content="Importar un ADIF…"
+                <Button Content="{loc:Texto Libro.Vacio.Importar}"
                         Click="AlPedirImportar"
                         Style="{StaticResource BotonPrincipal}"
                         Margin="0,0,8,0"
                         x:Name="BotonImportar"
-                        AutomationProperties.Name="Importar un fichero ADIF en el cuaderno" />
+                        AutomationProperties.Name="{loc:Texto Libro.Vacio.Importar.Accesible}" />
 
-                <Button Content="Empezar de cero"
+                <Button Content="{loc:Texto Libro.Vacio.DeCero}"
                         Click="AlEmpezarDeCero"
-                        AutomationProperties.Name="Empezar con el cuaderno vacío" />
+                        AutomationProperties.Name="{loc:Texto Libro.Vacio.DeCero.Accesible}" />
             </WrapPanel>
         </StackPanel>
     </Border>

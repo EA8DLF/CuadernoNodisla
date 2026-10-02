@@ -1,0 +1,1128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Ajustes.Actualizaciones.AlArrancar" xml:space="preserve">
+    <value>Buscar versiones nuevas al arrancar (como mucho una vez al día)</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.AlArrancar.Accesible" xml:space="preserve">
+    <value>Buscar versiones nuevas al arrancar</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.AlDia" xml:space="preserve">
+    <value>Está al día (versión {0}).</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Aplazada" xml:space="preserve">
+    <value>Instalación aplazada. El instalador ya está descargado.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Buscando" xml:space="preserve">
+    <value>Buscando…</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Buscar" xml:space="preserve">
+    <value>Buscar actualizaciones</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Buscar.Accesible" xml:space="preserve">
+    <value>Buscar actualizaciones ahora</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Cancelada" xml:space="preserve">
+    <value>Descarga cancelada.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Comprobado" xml:space="preserve">
+    <value>Instalador descargado y comprobado (SHA-256 correcta).</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Confirmar.Boton" xml:space="preserve">
+    <value>Cerrar e instalar</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Confirmar.Texto" xml:space="preserve">
+    <value>Se va a cerrar Cuaderno NODISLA y abrir el instalador de la versión {0}.
+
+Sus contactos y ajustes no se tocan. Si está transmitiendo o a mitad de un contacto, cancele y termine primero.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Confirmar.Titulo" xml:space="preserve">
+    <value>Instalar la versión {0}</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Descargando" xml:space="preserve">
+    <value>Descargando el instalador…</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Explicacion" xml:space="preserve">
+    <value>Se consulta la página pública de versiones en GitHub, sin cuenta ni datos suyos. Si hay una versión nueva aparece un aviso arriba; nada se descarga ni se instala sin que usted lo pida.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.HayNueva" xml:space="preserve">
+    <value>Hay una versión nueva: {0}.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoAbreInstalador" xml:space="preserve">
+    <value>No se ha podido abrir el instalador.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoAbreNavegador" xml:space="preserve">
+    <value>No se ha podido abrir el navegador. La página es {0}</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoDescargado" xml:space="preserve">
+    <value>No se ha podido descargar el instalador.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoMontado" xml:space="preserve">
+    <value>El aviso de versiones no está montado en esta sesión.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoSeHaPodidoComprobar" xml:space="preserve">
+    <value>No se ha podido comprobar ahora.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoSeHaPodidoComprobarMotivo" xml:space="preserve">
+    <value>No se ha podido comprobar ahora. {0}</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.SinInstalador" xml:space="preserve">
+    <value>Esta versión no trae instalador comprobable. Descárguela desde la página de GitHub.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.SinNotas" xml:space="preserve">
+    <value>Esta versión no trae notas.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.TituloDelAviso" xml:space="preserve">
+    <value>Hay una versión nueva de Cuaderno NODISLA: {0} (tiene la {1}).</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.VersionInstalada" xml:space="preserve">
+    <value>Versión instalada:</value>
+  </data>
+  <data name="Ajustes.Apartado.Actualizaciones" xml:space="preserve">
+    <value>Actualizaciones</value>
+  </data>
+  <data name="Ajustes.Apartado.Audio" xml:space="preserve">
+    <value>Audio y digitales</value>
+  </data>
+  <data name="Ajustes.Apartado.Cluster" xml:space="preserve">
+    <value>Cluster</value>
+  </data>
+  <data name="Ajustes.Apartado.Correo" xml:space="preserve">
+    <value>Correo de las QSL</value>
+  </data>
+  <data name="Ajustes.Apartado.Cuentas" xml:space="preserve">
+    <value>Cuentas y servicios</value>
+  </data>
+  <data name="Ajustes.Apartado.Equipo" xml:space="preserve">
+    <value>Equipo (CAT)</value>
+  </data>
+  <data name="Ajustes.Apartado.Fonia" xml:space="preserve">
+    <value>Fonía</value>
+  </data>
+  <data name="Ajustes.Apartado.Idioma" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="Ajustes.Apartado.Libro" xml:space="preserve">
+    <value>Libro (ADIF)</value>
+  </data>
+  <data name="Ajustes.Apartado.Subidas" xml:space="preserve">
+    <value>Subidas y QRZ</value>
+  </data>
+  <data name="Ajustes.Audio.Discrepancia" xml:space="preserve">
+    <value>Atención: la entrada «{0}» y la salida «{1}» no parecen del mismo aparato. Si el equipo trae un códec USB, la entrada y la salida deberían ser las dos «EL EQUIPO»; si no lo son, revíselas antes de transmitir.</value>
+  </data>
+  <data name="Ajustes.Audio.ElEquipo" xml:space="preserve">
+    <value>EL EQUIPO</value>
+    <comment>Pastilla que marca el dispositivo de sonido del equipo de radio</comment>
+  </data>
+  <data name="Ajustes.Audio.Entrada" xml:space="preserve">
+    <value>Entrada (del equipo)</value>
+  </data>
+  <data name="Ajustes.Audio.Entrada.Accesible" xml:space="preserve">
+    <value>Dispositivo de entrada de audio</value>
+  </data>
+  <data name="Ajustes.Audio.Entrada.Ayuda" xml:space="preserve">
+    <value>De dónde sale el audio recibido. En el FT-710 es su codec USB.</value>
+  </data>
+  <data name="Ajustes.Audio.Escuchando" xml:space="preserve">
+    <value>Escuchando «{0}». Hable o ponga la radio en una señal para ver el nivel.</value>
+  </data>
+  <data name="Ajustes.Audio.Explicacion" xml:space="preserve">
+    <value>Por dónde entra y sale el sonido del equipo, y quién decodifica FT8 y FT4.</value>
+  </data>
+  <data name="Ajustes.Audio.Muestras" xml:space="preserve">
+    <value>Muestras por segundo</value>
+  </data>
+  <data name="Ajustes.Audio.Muestras.Ayuda" xml:space="preserve">
+    <value>48.000 es lo que da el codec del FT-710 y lo que esperan FT8 y FT4.</value>
+  </data>
+  <data name="Ajustes.Audio.Nivel.Bajo" xml:space="preserve">
+    <value>{0:0.00} — muy bajo. Suba el volumen de grabación del codec.</value>
+  </data>
+  <data name="Ajustes.Audio.Nivel.Bien" xml:space="preserve">
+    <value>{0:0.00} — bien.</value>
+  </data>
+  <data name="Ajustes.Audio.Nivel.Satura" xml:space="preserve">
+    <value>{0:0.00} — SATURANDO. Baje el volumen de grabación del codec en Windows hasta quedarse entre 0,20 y 0,60.</value>
+  </data>
+  <data name="Ajustes.Audio.NivelBueno" xml:space="preserve">
+    <value>Lo bueno está entre 0,20 y 0,60. Por encima de 0,90 el codec recorta y las señales débiles se pierden; por debajo de 0,03 no llega nada.</value>
+  </data>
+  <data name="Ajustes.Audio.NivelDeEntrada" xml:space="preserve">
+    <value>Nivel de entrada</value>
+  </data>
+  <data name="Ajustes.Audio.NivelDeEntrada.Accesible" xml:space="preserve">
+    <value>Nivel de entrada de audio</value>
+  </data>
+  <data name="Ajustes.Audio.NoMontado" xml:space="preserve">
+    <value>El audio no está montado en esta sesión.</value>
+  </data>
+  <data name="Ajustes.Audio.NoSeHaPodidoAbrir" xml:space="preserve">
+    <value>No se ha podido abrir «{0}»: {1}</value>
+  </data>
+  <data name="Ajustes.Audio.PararPrueba" xml:space="preserve">
+    <value>Parar la prueba</value>
+  </data>
+  <data name="Ajustes.Audio.PreguntarAntes" xml:space="preserve">
+    <value>Preguntar antes de transmitir con el módem</value>
+  </data>
+  <data name="Ajustes.Audio.PreguntarAntes.Ayuda" xml:space="preserve">
+    <value>Es lo que apaga «No volver a preguntar». El vigilante de PTT, el reloj y la salida se exigen siempre.</value>
+  </data>
+  <data name="Ajustes.Audio.ProbarNivel" xml:space="preserve">
+    <value>Probar el nivel</value>
+  </data>
+  <data name="Ajustes.Audio.ProbarNivel.Ayuda" xml:space="preserve">
+    <value>Abre la entrada elegida y enseña el nivel. Es lo único de esta pantalla que toca la tarjeta de sonido.</value>
+  </data>
+  <data name="Ajustes.Audio.RecordarPermiso" xml:space="preserve">
+    <value>Recordar «Permitir transmitir» entre sesiones</value>
+  </data>
+  <data name="Ajustes.Audio.RecordarPermiso.Ayuda" xml:space="preserve">
+    <value>El pestillo de la pestaña Digital arranca abierto. De fábrica arranca cerrado en cada sesión.</value>
+  </data>
+  <data name="Ajustes.Audio.RegistrarAlCompletar" xml:space="preserve">
+    <value>Guardar solo en el cuaderno el contacto completo</value>
+  </data>
+  <data name="Ajustes.Audio.RegistrarAlCompletar.Ayuda" xml:space="preserve">
+    <value>Al recibir RR73/RRR/73 del corresponsal, o al salir el RR73 propio tras su R+informe, el contacto se apunta sin pulsar «Guardar en el cuaderno».</value>
+  </data>
+  <data name="Ajustes.Audio.Salida" xml:space="preserve">
+    <value>Salida (al equipo)</value>
+  </data>
+  <data name="Ajustes.Audio.Salida.Accesible" xml:space="preserve">
+    <value>Dispositivo de salida de audio</value>
+  </data>
+  <data name="Ajustes.Audio.Salida.Ayuda" xml:space="preserve">
+    <value>Por dónde se le manda el audio al equipo al transmitir.</value>
+  </data>
+  <data name="Ajustes.Audio.SinModulo" xml:space="preserve">
+    <value>No hay módulo de audio en esta sesión, así que no hay nada que configurar aquí. Cierre el programa y vuelva a abrirlo sin CUADERNO_SIMULADO.</value>
+  </data>
+  <data name="Ajustes.Audio.Titulo" xml:space="preserve">
+    <value>Audio y modos digitales</value>
+  </data>
+  <data name="Ajustes.Audio.TransmitirYApuntar" xml:space="preserve">
+    <value>Transmitir y apuntar</value>
+  </data>
+  <data name="Ajustes.Cluster.Aplicado" xml:space="preserve">
+    <value>Guardado y aplicado: {0} ({1}:{2}) como {3}. Pulse Conectar para entrar.</value>
+  </data>
+  <data name="Ajustes.Cluster.Conexion.Ayuda" xml:space="preserve">
+    <value>Abre o cierra la conexión con el nodo</value>
+  </data>
+  <data name="Ajustes.Cluster.Enviar" xml:space="preserve">
+    <value>Enviar</value>
+  </data>
+  <data name="Ajustes.Cluster.FaltaServidor" xml:space="preserve">
+    <value>Falta el servidor del nodo.</value>
+  </data>
+  <data name="Ajustes.Cluster.IndicativoNoVale" xml:space="preserve">
+    <value>El indicativo «{0}» no vale: {1}</value>
+  </data>
+  <data name="Ajustes.Cluster.Orden.Ayuda" xml:space="preserve">
+    <value>Orden para el nodo, por ejemplo sh/dx</value>
+  </data>
+  <data name="Ajustes.Cluster.Simulado" xml:space="preserve">
+    <value>Con los puertos simulados el cluster es de mentira, así que no hay nodo que configurar. Cierre el programa y vuelva a abrirlo sin CUADERNO_SIMULADO para elegir nodo, indicativo y contraseña.</value>
+  </data>
+  <data name="Ajustes.Cluster.SinIndicativo" xml:space="preserve">
+    <value>No hay indicativo con el que entrar: escríbalo aquí o cree un perfil de estación.</value>
+  </data>
+  <data name="Ajustes.Correo.Asunto" xml:space="preserve">
+    <value>Asunto</value>
+  </data>
+  <data name="Ajustes.Correo.Asunto.Accesible" xml:space="preserve">
+    <value>Asunto del correo de la QSL</value>
+  </data>
+  <data name="Ajustes.Correo.Cifrado" xml:space="preserve">
+    <value>Cifrado</value>
+  </data>
+  <data name="Ajustes.Correo.Cifrado.Accesible" xml:space="preserve">
+    <value>Cifrado de la conexión con el servidor de correo</value>
+  </data>
+  <data name="Ajustes.Correo.Cifrado.Explicacion" xml:space="preserve">
+    <value>StartTls: puerto 587 (lo normal). SslDirecto: puerto 465. Ninguna: solo para un servidor de la red de casa.</value>
+  </data>
+  <data name="Ajustes.Correo.ConexionCorrecta" xml:space="preserve">
+    <value>Conexión correcta: el servidor acepta la cuenta. No se ha mandado ningún correo.</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena.Accesible" xml:space="preserve">
+    <value>Contraseña del correo</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena.Borrar.Accesible" xml:space="preserve">
+    <value>Borrar la contraseña guardada del correo</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena.Explicacion" xml:space="preserve">
+    <value>Se cifra con la protección de datos de su cuenta de Windows y no se vuelve a enseñar.</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena.Guardar.Accesible" xml:space="preserve">
+    <value>Guardar cifrada la contraseña del correo</value>
+  </data>
+  <data name="Ajustes.Correo.ContrasenaBorrada" xml:space="preserve">
+    <value>Contraseña borrada.</value>
+  </data>
+  <data name="Ajustes.Correo.ContrasenaGuardada" xml:space="preserve">
+    <value>Contraseña guardada cifrada.</value>
+  </data>
+  <data name="Ajustes.Correo.Explicacion" xml:space="preserve">
+    <value>La cuenta con la que se mandan las tarjetas QSL por correo. Gmail: smtp.gmail.com, 587, STARTTLS y una contraseña de aplicación. Outlook: smtp-mail.outlook.com, 587, STARTTLS.</value>
+  </data>
+  <data name="Ajustes.Correo.NombreDelRemitente" xml:space="preserve">
+    <value>Nombre del remitente (p. ej. EA1ABC Ana)</value>
+  </data>
+  <data name="Ajustes.Correo.NombreDelRemitente.Accesible" xml:space="preserve">
+    <value>Nombre del remitente</value>
+  </data>
+  <data name="Ajustes.Correo.NoMontado" xml:space="preserve">
+    <value>El correo de las QSL no está montado en esta sesión.</value>
+  </data>
+  <data name="Ajustes.Correo.NoSeHaPodidoProbar" xml:space="preserve">
+    <value>No se ha podido probar: {0}</value>
+  </data>
+  <data name="Ajustes.Correo.Probar.Accesible" xml:space="preserve">
+    <value>Probar la conexión con el servidor de correo sin mandar nada</value>
+  </data>
+  <data name="Ajustes.Correo.Puerto" xml:space="preserve">
+    <value>Puerto</value>
+  </data>
+  <data name="Ajustes.Correo.Puerto.Accesible" xml:space="preserve">
+    <value>Puerto del servidor de correo</value>
+  </data>
+  <data name="Ajustes.Correo.Remitente" xml:space="preserve">
+    <value>Remitente (su dirección)</value>
+  </data>
+  <data name="Ajustes.Correo.Remitente.Accesible" xml:space="preserve">
+    <value>Dirección del remitente</value>
+  </data>
+  <data name="Ajustes.Correo.Seguridad.Ninguna" xml:space="preserve">
+    <value>Ninguna</value>
+  </data>
+  <data name="Ajustes.Correo.Seguridad.SslDirecto" xml:space="preserve">
+    <value>SslDirecto</value>
+  </data>
+  <data name="Ajustes.Correo.Seguridad.StartTls" xml:space="preserve">
+    <value>StartTls</value>
+  </data>
+  <data name="Ajustes.Correo.Servidor" xml:space="preserve">
+    <value>Servidor de salida (SMTP)</value>
+  </data>
+  <data name="Ajustes.Correo.Servidor.Accesible" xml:space="preserve">
+    <value>Servidor de correo saliente</value>
+  </data>
+  <data name="Ajustes.Correo.TarjetaAdjunta" xml:space="preserve">
+    <value>Tarjeta adjunta en</value>
+  </data>
+  <data name="Ajustes.Correo.TarjetaAdjunta.Accesible" xml:space="preserve">
+    <value>Formato de la tarjeta adjunta</value>
+  </data>
+  <data name="Ajustes.Correo.Texto" xml:space="preserve">
+    <value>Texto</value>
+  </data>
+  <data name="Ajustes.Correo.Texto.Accesible" xml:space="preserve">
+    <value>Texto del correo de la QSL</value>
+  </data>
+  <data name="Ajustes.Correo.TextoDeOmision" xml:space="preserve">
+    <value>Texto de omisión</value>
+  </data>
+  <data name="Ajustes.Correo.TextoDeOmision.Accesible" xml:space="preserve">
+    <value>Volver al asunto y texto de omisión</value>
+  </data>
+  <data name="Ajustes.Correo.Usuario" xml:space="preserve">
+    <value>Usuario (vacío si el servidor no pide identificarse)</value>
+  </data>
+  <data name="Ajustes.Correo.Usuario.Accesible" xml:space="preserve">
+    <value>Usuario del correo</value>
+  </data>
+  <data name="Ajustes.Correo.Variables" xml:space="preserve">
+    <value>Variables: {{indicativo}} {{nombre}} {{fecha}} {{hora}} {{banda}} {{frecuencia}} {{modo}} {{rst}} {{miindicativo}} {{minombre}} {{contactos}}…</value>
+    <comment>Las llaves van dobladas: se leen con un hueco (Valor). Los nombres entre llaves no se traducen</comment>
+  </data>
+  <data name="Ajustes.Cuenta.ApodoQth" xml:space="preserve">
+    <value>Apodo del QTH</value>
+  </data>
+  <data name="Ajustes.Cuenta.ApodoQth.Nota" xml:space="preserve">
+    <value>Solo si tiene varios QTH en eQSL.</value>
+  </data>
+  <data name="Ajustes.Cuenta.CorreoClubLog" xml:space="preserve">
+    <value>Correo de la cuenta</value>
+  </data>
+  <data name="Ajustes.Cuenta.IndicativoClubLog" xml:space="preserve">
+    <value>Indicativo del cuaderno</value>
+  </data>
+  <data name="Ajustes.Cuenta.RutaTqsl" xml:space="preserve">
+    <value>Ruta de tqsl.exe</value>
+  </data>
+  <data name="Ajustes.Cuenta.RutaTqsl.Nota" xml:space="preserve">
+    <value>Solo si no está donde se instala siempre.</value>
+  </data>
+  <data name="Ajustes.Cuenta.UbicacionTqsl" xml:space="preserve">
+    <value>Ubicación de estación de TQSL</value>
+  </data>
+  <data name="Ajustes.Cuenta.UbicacionTqsl.Nota" xml:space="preserve">
+    <value>El nombre que le puso a la ubicación en TQSL, no su indicativo.</value>
+  </data>
+  <data name="Ajustes.Cuenta.Usuario" xml:space="preserve">
+    <value>Usuario</value>
+  </data>
+  <data name="Ajustes.Cuenta.UsuarioVacio" xml:space="preserve">
+    <value>Vacío: se usa el indicativo del perfil.</value>
+  </data>
+  <data name="Ajustes.Cuentas.Explicacion" xml:space="preserve">
+    <value>Una tarjeta por servicio. Las contraseñas se guardan cifradas con la protección de datos de su cuenta de Windows y no se vuelven a mostrar: solo se dice si están guardadas.</value>
+  </data>
+  <data name="Ajustes.Cw.Ancho" xml:space="preserve">
+    <value>Ancho del filtro</value>
+  </data>
+  <data name="Ajustes.Cw.Ancho.Ayuda" xml:space="preserve">
+    <value>Más estrecho saca señales más débiles y aparta mejor las vecinas, pero no deja seguir bien más de 40 WPM. 100 Hz va bien casi siempre.</value>
+  </data>
+  <data name="Ajustes.Cw.Explicacion" xml:space="preserve">
+    <value>El decodificador de la cabina. Escucha el audio de la entrada de arriba y nunca transmite.</value>
+  </data>
+  <data name="Ajustes.Cw.Hasta" xml:space="preserve">
+    <value>a</value>
+  </data>
+  <data name="Ajustes.Cw.Senales" xml:space="preserve">
+    <value>Señales a la vez</value>
+  </data>
+  <data name="Ajustes.Cw.Senales.Ayuda" xml:space="preserve">
+    <value>Además de la principal, lee las demás señales de la banda de paso, cada una en su línea. 1 = solo la principal.</value>
+  </data>
+  <data name="Ajustes.Cw.Sensibilidad" xml:space="preserve">
+    <value>Sensibilidad</value>
+  </data>
+  <data name="Ajustes.Cw.Sensibilidad.Ayuda" xml:space="preserve">
+    <value>Más alta, lee señales más débiles; más baja, exige más señal antes de escribir. El ruido no escribe con ninguna.</value>
+  </data>
+  <data name="Ajustes.Cw.Titulo" xml:space="preserve">
+    <value>Telegrafía (CW)</value>
+  </data>
+  <data name="Ajustes.Cw.Tono" xml:space="preserve">
+    <value>Tono por omisión</value>
+  </data>
+  <data name="Ajustes.Cw.Tono.Ayuda" xml:space="preserve">
+    <value>Tono con que arranca el decodificador antes de encontrar una señal.</value>
+  </data>
+  <data name="Ajustes.Cw.Velocidad" xml:space="preserve">
+    <value>Velocidad</value>
+  </data>
+  <data name="Ajustes.Cw.Velocidad.Ayuda" xml:space="preserve">
+    <value>Velocidades que se siguen, de 5 a 60 WPM. Acotarlas evita confundir una señal lenta con otra rápida.</value>
+  </data>
+  <data name="Ajustes.Cw.WpmMaxima" xml:space="preserve">
+    <value>Velocidad máxima</value>
+  </data>
+  <data name="Ajustes.Cw.WpmMinima" xml:space="preserve">
+    <value>Velocidad mínima</value>
+  </data>
+  <data name="Ajustes.Descartar" xml:space="preserve">
+    <value>Descartar</value>
+  </data>
+  <data name="Ajustes.Equipo.Abriendo" xml:space="preserve">
+    <value>Abriendo la conexión…</value>
+  </data>
+  <data name="Ajustes.Equipo.Aplicando" xml:space="preserve">
+    <value>Aplicando…</value>
+  </data>
+  <data name="Ajustes.Equipo.Aplicar" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="Ajustes.Equipo.Aplicar.Accesible" xml:space="preserve">
+    <value>Guardar y aplicar los ajustes del equipo</value>
+  </data>
+  <data name="Ajustes.Equipo.Aplicar.Ayuda" xml:space="preserve">
+    <value>Guarda y cambia el control del equipo sin cerrar el cuaderno</value>
+  </data>
+  <data name="Ajustes.Equipo.Civ" xml:space="preserve">
+    <value>Dirección CI-V</value>
+  </data>
+  <data name="Ajustes.Equipo.Civ.Accesible" xml:space="preserve">
+    <value>Dirección CI-V en hexadecimal</value>
+  </data>
+  <data name="Ajustes.Equipo.Civ.Ayuda" xml:space="preserve">
+    <value>En hexadecimal (94 para el IC-7300). Vacío = la de fábrica del modelo.</value>
+  </data>
+  <data name="Ajustes.Equipo.Contesta" xml:space="preserve">
+    <value>Contesta {0}{1}. Frecuencia {2} MHz, modo {3}.</value>
+    <comment>{1} = « en COM15 a 38400 baudios» o vacío</comment>
+  </data>
+  <data name="Ajustes.Equipo.DeFabrica" xml:space="preserve">
+    <value>de fábrica, {0}</value>
+  </data>
+  <data name="Ajustes.Equipo.Descartar.Accesible" xml:space="preserve">
+    <value>Descartar los cambios y volver a lo guardado</value>
+  </data>
+  <data name="Ajustes.Equipo.DeteccionAutomatica" xml:space="preserve">
+    <value>Detección automática</value>
+  </data>
+  <data name="Ajustes.Equipo.Detectar" xml:space="preserve">
+    <value>Detectar automáticamente por qué puerto está el equipo</value>
+  </data>
+  <data name="Ajustes.Equipo.Detectar.Ayuda" xml:space="preserve">
+    <value>Prueba primero por donde estaba y, si no contesta, recorre todos los puertos preguntando ID;</value>
+  </data>
+  <data name="Ajustes.Equipo.Detectar.Explicacion" xml:space="preserve">
+    <value>Se identifica por lo que contesta a ID;, nunca por el número de puerto: en esta máquina hay otro cacharro que también habla por serie.</value>
+  </data>
+  <data name="Ajustes.Equipo.EnPuerto" xml:space="preserve">
+    <value>en {0} a {1} baudios</value>
+  </data>
+  <data name="Ajustes.Equipo.EnUnaLinea" xml:space="preserve">
+    <value>Equipo:</value>
+  </data>
+  <data name="Ajustes.Equipo.Espera" xml:space="preserve">
+    <value>Espera de orden (ms)</value>
+  </data>
+  <data name="Ajustes.Equipo.Espera.Accesible" xml:space="preserve">
+    <value>Espera de orden en milisegundos</value>
+  </data>
+  <data name="Ajustes.Equipo.Explicacion" xml:space="preserve">
+    <value>Por dónde habla el cuaderno con la radio. Mientras esto sea «Ninguna», el botón Conectar del panel del equipo no abre nada.</value>
+  </data>
+  <data name="Ajustes.Equipo.Fabricante" xml:space="preserve">
+    <value>Fabricante</value>
+  </data>
+  <data name="Ajustes.Equipo.Fabricante.Accesible" xml:space="preserve">
+    <value>Fabricante del equipo</value>
+  </data>
+  <data name="Ajustes.Equipo.Generico" xml:space="preserve">
+    <value>equipo genérico</value>
+  </data>
+  <data name="Ajustes.Equipo.GuardadoPero" xml:space="preserve">
+    <value>Guardado, pero {0}</value>
+  </data>
+  <data name="Ajustes.Equipo.GuardadoSinEquipo" xml:space="preserve">
+    <value>Guardado. El cuaderno queda sin equipo: la frecuencia y el modo los escribe usted.</value>
+  </data>
+  <data name="Ajustes.Equipo.GuardadoYAplicado" xml:space="preserve">
+    <value>Guardado y aplicado: {0}{1}. Pulse Conectar en el panel del equipo para abrir la comunicación.</value>
+  </data>
+  <data name="Ajustes.Equipo.Maquina" xml:space="preserve">
+    <value>Máquina</value>
+  </data>
+  <data name="Ajustes.Equipo.Maquina.Accesible" xml:space="preserve">
+    <value>Máquina donde escucha rigctld</value>
+  </data>
+  <data name="Ajustes.Equipo.MaximoEnAntena" xml:space="preserve">
+    <value>Máximo en antena (s)</value>
+  </data>
+  <data name="Ajustes.Equipo.MaximoEnAntena.Accesible" xml:space="preserve">
+    <value>Tiempo máximo en antena, en segundos</value>
+  </data>
+  <data name="Ajustes.Equipo.MaximoEnAntena.DeFabrica" xml:space="preserve">
+    <value>de fábrica, 180 · tope duro, 600</value>
+  </data>
+  <data name="Ajustes.Equipo.Modelo" xml:space="preserve">
+    <value>Modelo</value>
+  </data>
+  <data name="Ajustes.Equipo.Modelo.Accesible" xml:space="preserve">
+    <value>Modelo del equipo</value>
+  </data>
+  <data name="Ajustes.Equipo.NadaQueProbar" xml:space="preserve">
+    <value>Sin equipo: no hay nada que probar. La frecuencia y el modo los escribe usted.</value>
+  </data>
+  <data name="Ajustes.Equipo.NoAparece" xml:space="preserve">
+    <value>No se ha encontrado el equipo por los puertos serie. Compruebe que está encendido, que el cable USB está puesto, que el modelo elegido es el suyo y que ningún otro programa tiene cogido el puerto.</value>
+  </data>
+  <data name="Ajustes.Equipo.NoContesta" xml:space="preserve">
+    <value>Se ha abierto la conexión pero el equipo no contesta. Compruebe la velocidad (la manda el menú CAT RATE del equipo).</value>
+  </data>
+  <data name="Ajustes.Equipo.NoSeHaPodidoConectar" xml:space="preserve">
+    <value>No se ha podido conectar: {0}</value>
+  </data>
+  <data name="Ajustes.Equipo.OmniRig" xml:space="preserve">
+    <value>Equipo de OmniRig</value>
+  </data>
+  <data name="Ajustes.Equipo.OmniRig.Accesible" xml:space="preserve">
+    <value>Número de equipo de OmniRig</value>
+  </data>
+  <data name="Ajustes.Equipo.OmniRig.Explicacion" xml:space="preserve">
+    <value>OmniRig maneja dos equipos: el 1 y el 2. El que aquí se ponga es el que sigue el cuaderno.</value>
+  </data>
+  <data name="Ajustes.Equipo.Probando" xml:space="preserve">
+    <value>Probando…</value>
+  </data>
+  <data name="Ajustes.Equipo.Probar.Accesible" xml:space="preserve">
+    <value>Probar la conexión con el equipo</value>
+  </data>
+  <data name="Ajustes.Equipo.Probar.Ayuda" xml:space="preserve">
+    <value>Abre la conexión, lee identificación, frecuencia y modo, y cierra. No transmite.</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Cat" xml:space="preserve">
+    <value>Por CAT</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Cat.Explicacion" xml:space="preserve">
+    <value>El equipo pasa a transmitir con la orden del fabricante. Es lo normal.</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Dtr" xml:space="preserve">
+    <value>Por DTR</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Dtr.Explicacion" xml:space="preserve">
+    <value>Igual que RTS, pero por la otra línea.</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Rts" xml:space="preserve">
+    <value>Por RTS</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Rts.Explicacion" xml:space="preserve">
+    <value>Levantando la línea RTS del puerto serie: interfaces de audio con optoacoplador.</value>
+  </data>
+  <data name="Ajustes.Equipo.Puerto" xml:space="preserve">
+    <value>Puerto serie</value>
+  </data>
+  <data name="Ajustes.Equipo.Puerto.Accesible" xml:space="preserve">
+    <value>Puerto serie del equipo</value>
+  </data>
+  <data name="Ajustes.Equipo.PuertoTcp" xml:space="preserve">
+    <value>Puerto TCP</value>
+  </data>
+  <data name="Ajustes.Equipo.PuertoTcp.Accesible" xml:space="preserve">
+    <value>Puerto TCP de rigctld</value>
+  </data>
+  <data name="Ajustes.Equipo.Rigctld.Explicacion" xml:space="preserve">
+    <value>Hay que tener rigctld ya arrancado. Lo habitual es 127.0.0.1 en el puerto 4532.</value>
+  </data>
+  <data name="Ajustes.Equipo.SeSube" xml:space="preserve">
+    <value>Se sube</value>
+  </data>
+  <data name="Ajustes.Equipo.SeSube.Accesible" xml:space="preserve">
+    <value>Por dónde se sube el PTT</value>
+  </data>
+  <data name="Ajustes.Equipo.Simulado" xml:space="preserve">
+    <value>Se está funcionando con los puertos simulados, así que no hay equipo de verdad que configurar. Cierre el programa y vuelva a abrirlo sin CUADERNO_SIMULADO para configurar el CAT.</value>
+  </data>
+  <data name="Ajustes.Equipo.SinLatido" xml:space="preserve">
+    <value>Sin latido (s)</value>
+  </data>
+  <data name="Ajustes.Equipo.SinLatido.Accesible" xml:space="preserve">
+    <value>Tiempo sin latido, en segundos</value>
+  </data>
+  <data name="Ajustes.Equipo.SinProbarConRadio" xml:space="preserve">
+    <value>Programado según el manual, sin probar con la radio.</value>
+  </data>
+  <data name="Ajustes.Equipo.Sondeo" xml:space="preserve">
+    <value>Sondeo (ms)</value>
+  </data>
+  <data name="Ajustes.Equipo.Sondeo.Accesible" xml:space="preserve">
+    <value>Intervalo de sondeo en milisegundos</value>
+  </data>
+  <data name="Ajustes.Equipo.TiempoAgotado" xml:space="preserve">
+    <value>Se ha agotado el tiempo ({0:N0} s) buscando el equipo. Compruebe que la radio está encendida y que ningún otro programa tiene cogido el puerto.</value>
+  </data>
+  <data name="Ajustes.Equipo.Titulo" xml:space="preserve">
+    <value>CAT · control del equipo</value>
+  </data>
+  <data name="Ajustes.Equipo.Velocidad" xml:space="preserve">
+    <value>Velocidad</value>
+  </data>
+  <data name="Ajustes.Equipo.Velocidad.Accesible" xml:space="preserve">
+    <value>Velocidad del puerto serie</value>
+  </data>
+  <data name="Ajustes.Equipo.Velocidad.Explicacion" xml:space="preserve">
+    <value>La velocidad la manda el equipo, no el cable: está en su menú, en CAT RATE. De fábrica son 38400. Si no la sabe, deje puesta la detección automática: las prueba todas.</value>
+  </data>
+  <data name="Ajustes.Equipo.VelocidadHabitual" xml:space="preserve">
+    <value>{0:N0}  (habitual)</value>
+  </data>
+  <data name="Ajustes.Equipo.Via" xml:space="preserve">
+    <value>Vía de control</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Accesible" xml:space="preserve">
+    <value>Vía de control del equipo</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.CatNativo" xml:space="preserve">
+    <value>CAT nativo (Yaesu e ICOM)</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.CatNativo.Explicacion" xml:space="preserve">
+    <value>Por el puerto serie del equipo. Es la única vía que da filtros, ruido, contorno, medidores y memorias.</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Ninguna" xml:space="preserve">
+    <value>Ninguna</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Ninguna.Explicacion" xml:space="preserve">
+    <value>Sin equipo: la frecuencia y el modo los escribe usted a mano.</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.OmniRig" xml:space="preserve">
+    <value>OmniRig</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.OmniRig.Explicacion" xml:space="preserve">
+    <value>Para quien ya tenga OmniRig montado con su equipo configurado.</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Rigctld" xml:space="preserve">
+    <value>Hamlib (rigctld)</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Rigctld.Explicacion" xml:space="preserve">
+    <value>Para cualquier otro equipo, o para compartir la radio con WSJT-X. Hay que tener rigctld arrancado.</value>
+  </data>
+  <data name="Ajustes.Equipo.Vigilante" xml:space="preserve">
+    <value>El vigilante baja el PTT pase lo que pase: al agotarse el tiempo, si quien transmite deja de dar señales de vida, si salta un fallo y al cerrar el programa. Un PTT pegado quema la etapa final.</value>
+  </data>
+  <data name="Ajustes.Equipo.VolverAMirar" xml:space="preserve">
+    <value>Volver a mirar</value>
+  </data>
+  <data name="Ajustes.Equipo.VolverAMirar.Accesible" xml:space="preserve">
+    <value>Volver a mirar qué puertos serie hay</value>
+  </data>
+  <data name="Ajustes.Estado.Configurada" xml:space="preserve">
+    <value>Configurada</value>
+  </data>
+  <data name="Ajustes.Estado.Configurado" xml:space="preserve">
+    <value>Configurado</value>
+  </data>
+  <data name="Ajustes.Estado.ConfiguradoConContrasena" xml:space="preserve">
+    <value>Configurado · con contraseña</value>
+  </data>
+  <data name="Ajustes.Estado.FaltaContrasena" xml:space="preserve">
+    <value>Falta la contraseña</value>
+  </data>
+  <data name="Ajustes.Estado.FaltaTqsl" xml:space="preserve">
+    <value>Falta TQSL</value>
+  </data>
+  <data name="Ajustes.Estado.Incompleta" xml:space="preserve">
+    <value>Incompleta</value>
+  </data>
+  <data name="Ajustes.Estado.ListaParaSubir" xml:space="preserve">
+    <value>Lista para subir</value>
+  </data>
+  <data name="Ajustes.Estado.SinConfigurar" xml:space="preserve">
+    <value>Sin configurar</value>
+  </data>
+  <data name="Ajustes.Estado.SinNodo" xml:space="preserve">
+    <value>Sin nodo</value>
+  </data>
+  <data name="Ajustes.Estado.SinNodoDeVerdad" xml:space="preserve">
+    <value>Sin nodo de verdad</value>
+  </data>
+  <data name="Ajustes.Fonia.Altavoces" xml:space="preserve">
+    <value>Altavoces o auriculares del PC</value>
+  </data>
+  <data name="Ajustes.Fonia.Altavoces.Accesible" xml:space="preserve">
+    <value>Altavoces del PC</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.AltavocesSonSalida" xml:space="preserve">
+    <value>Los altavoces elegidos son la salida al equipo: la escucha se transmitiría.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.MicrofonoEsEntrada" xml:space="preserve">
+    <value>El micrófono elegido es la entrada del equipo: se retransmitiría lo que se recibe.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.SalidaNoEsDelEquipo" xml:space="preserve">
+    <value>La salida al equipo no es la del codec del equipo: la voz no llegaría a la radio.</value>
+  </data>
+  <data name="Ajustes.Fonia.ComprobarFuente" xml:space="preserve">
+    <value>Comprobar por CAT la fuente de modulación de SSB · menú EX</value>
+  </data>
+  <data name="Ajustes.Fonia.EntradaDelEquipo" xml:space="preserve">
+    <value>Entrada del equipo (lo que se oye)</value>
+  </data>
+  <data name="Ajustes.Fonia.EntradaDelEquipo.Accesible" xml:space="preserve">
+    <value>Entrada de audio del equipo</value>
+  </data>
+  <data name="Ajustes.Fonia.EscucharAlEntrar" xml:space="preserve">
+    <value>Abrir la escucha al entrar en Operar</value>
+  </data>
+  <data name="Ajustes.Fonia.Explicacion" xml:space="preserve">
+    <value>La radio se oye por los altavoces del PC y se habla por el micrófono del PC con el PTT del panel «Fonía» de Operar. El PTT va siempre por el vigilante y tiene tiempo máximo. En la radio, la fuente de modulación de SSB tiene que estar en USB.</value>
+  </data>
+  <data name="Ajustes.Fonia.GananciaMicro" xml:space="preserve">
+    <value>Ganancia del micrófono:</value>
+  </data>
+  <data name="Ajustes.Fonia.GananciaMicro.Accesible" xml:space="preserve">
+    <value>Ganancia del micrófono</value>
+  </data>
+  <data name="Ajustes.Fonia.IndiceFuente.Accesible" xml:space="preserve">
+    <value>Índice del menú de la fuente de modulación</value>
+  </data>
+  <data name="Ajustes.Fonia.Microfono" xml:space="preserve">
+    <value>Micrófono del PC</value>
+  </data>
+  <data name="Ajustes.Fonia.NoMontada" xml:space="preserve">
+    <value>La fonía por el PC no está montada en esta sesión.</value>
+  </data>
+  <data name="Ajustes.Fonia.PttConmutado" xml:space="preserve">
+    <value>PTT conmutado (clic para empezar, clic para acabar)</value>
+  </data>
+  <data name="Ajustes.Fonia.SalidaAlEquipo" xml:space="preserve">
+    <value>Salida al equipo (lo que se transmite)</value>
+  </data>
+  <data name="Ajustes.Fonia.SalidaAlEquipo.Accesible" xml:space="preserve">
+    <value>Salida de audio hacia el equipo</value>
+  </data>
+  <data name="Ajustes.Fonia.SoloSeLee" xml:space="preserve">
+    <value>Solo se LEE el menú; el programa no cambia nada en la radio. El índice sale del mapa leído del FT-710 y está sin confirmar con el manual: si el aviso no cuadra con lo que dice la radio, corríjalo aquí.</value>
+  </data>
+  <data name="Ajustes.Fonia.Tecla.BloqDespl" xml:space="preserve">
+    <value>Bloq Despl</value>
+  </data>
+  <data name="Ajustes.Fonia.Tecla.CtrlDerecho" xml:space="preserve">
+    <value>Ctrl derecho</value>
+  </data>
+  <data name="Ajustes.Fonia.Tecla.Ninguna" xml:space="preserve">
+    <value>Ninguna</value>
+  </data>
+  <data name="Ajustes.Fonia.Tecla.Pausa" xml:space="preserve">
+    <value>Pausa</value>
+  </data>
+  <data name="Ajustes.Fonia.TeclaDelPtt" xml:space="preserve">
+    <value>Tecla del PTT</value>
+  </data>
+  <data name="Ajustes.Fonia.TeclaDelPtt.Accesible" xml:space="preserve">
+    <value>Tecla del PTT de fonía</value>
+  </data>
+  <data name="Ajustes.Fonia.TeclaDelPtt.Ayuda" xml:space="preserve">
+    <value>Solo con la ventana activa y nunca escribiendo en un campo de texto</value>
+  </data>
+  <data name="Ajustes.Fonia.TiempoMaximo" xml:space="preserve">
+    <value>Tiempo máximo por pasada (segundos, 10 a 600)</value>
+  </data>
+  <data name="Ajustes.Fonia.TiempoMaximo.Accesible" xml:space="preserve">
+    <value>Tiempo máximo de fonía en segundos</value>
+  </data>
+  <data name="Ajustes.Fonia.Titulo" xml:space="preserve">
+    <value>Fonía por el PC (SSB, AM, FM)</value>
+  </data>
+  <data name="Ajustes.Fonia.ValorDeUsb" xml:space="preserve">
+    <value>valor de USB</value>
+  </data>
+  <data name="Ajustes.Fonia.ValorDeUsb.Accesible" xml:space="preserve">
+    <value>Valor que significa USB</value>
+  </data>
+  <data name="Ajustes.Fonia.VolumenEscucha" xml:space="preserve">
+    <value>Volumen de la escucha:</value>
+  </data>
+  <data name="Ajustes.Fonia.VolumenEscucha.Accesible" xml:space="preserve">
+    <value>Volumen de la escucha</value>
+  </data>
+  <data name="Ajustes.Guardado" xml:space="preserve">
+    <value>Guardado.</value>
+  </data>
+  <data name="Ajustes.Idioma.Ayuda" xml:space="preserve">
+    <value>La ayuda integrada está en español. Los capítulos que ya están traducidos se ven en su idioma; los demás, en español con un aviso.</value>
+  </data>
+  <data name="Ajustes.Idioma.DelSistema" xml:space="preserve">
+    <value>Idioma del sistema ({0})</value>
+  </data>
+  <data name="Ajustes.Idioma.Explicacion" xml:space="preserve">
+    <value>El cambio se aplica al momento, sin reiniciar. Los registros del programa siguen en español, y los rótulos que imitan el panel de la radio (MODE, SPLIT, CLAR…) se quedan como en la radio.</value>
+  </data>
+  <data name="Ajustes.Idioma.Titulo" xml:space="preserve">
+    <value>Idioma del programa</value>
+  </data>
+  <data name="Ajustes.Libro.Choques" xml:space="preserve">
+    <value>Datos que no cuadraban entre copias</value>
+  </data>
+  <data name="Ajustes.Libro.Contactos" xml:space="preserve">
+    <value>Contactos:</value>
+  </data>
+  <data name="Ajustes.Libro.ElegirExportar" xml:space="preserve">
+    <value>Elija dónde guardar el cuaderno en ADIF</value>
+  </data>
+  <data name="Ajustes.Libro.ElegirImportar" xml:space="preserve">
+    <value>Elija el fichero ADIF que quiere importar</value>
+  </data>
+  <data name="Ajustes.Libro.ErrorAlExportar" xml:space="preserve">
+    <value>No se ha podido exportar: {0} El fichero no se ha escrito.</value>
+  </data>
+  <data name="Ajustes.Libro.ErrorAlImportar" xml:space="preserve">
+    <value>No se ha podido importar: {0}</value>
+  </data>
+  <data name="Ajustes.Libro.Exportados" xml:space="preserve">
+    <value>{0}: {1:N0} contactos exportados a ADIF.</value>
+  </data>
+  <data name="Ajustes.Libro.Exportando" xml:space="preserve">
+    <value>Exportando…</value>
+  </data>
+  <data name="Ajustes.Libro.Exportar" xml:space="preserve">
+    <value>Exportar ADIF…</value>
+  </data>
+  <data name="Ajustes.Libro.Exportar.Accesible" xml:space="preserve">
+    <value>Exportar el cuaderno a un fichero ADIF</value>
+  </data>
+  <data name="Ajustes.Libro.FiltroExportar" xml:space="preserve">
+    <value>Ficheros ADIF (*.adi)|*.adi</value>
+  </data>
+  <data name="Ajustes.Libro.FiltroImportar" xml:space="preserve">
+    <value>Ficheros ADIF (*.adi;*.adif;*.adx)|*.adi;*.adif;*.adx|Todos los ficheros (*.*)|*.*</value>
+  </data>
+  <data name="Ajustes.Libro.Importando" xml:space="preserve">
+    <value>Importando…</value>
+  </data>
+  <data name="Ajustes.Libro.Importar" xml:space="preserve">
+    <value>Importar ADIF…</value>
+  </data>
+  <data name="Ajustes.Libro.Importar.Accesible" xml:space="preserve">
+    <value>Importar un fichero ADIF en el cuaderno</value>
+  </data>
+  <data name="Ajustes.Libro.NoSeHaPodidoContar" xml:space="preserve">
+    <value>no se ha podido contar</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Avisos" xml:space="preserve">
+    <value>Con {0:N0} aviso(s) de lectura.</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Duracion" xml:space="preserve">
+    <value>Ha tardado {0:N1} s.</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.NoCuadra" xml:space="preserve">
+    <value>AVISO: las cuentas no cuadran, hay registros que no se pueden explicar. Revise el fichero.</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Programa" xml:space="preserve">
+    <value>Lo generó {0}.</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Rescatadas" xml:space="preserve">
+    <value>Se han rescatado {0:N0} confirmaciones que se habrían perdido descartando las copias.</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Resumen" xml:space="preserve">
+    <value>{0}: {1:N0} registros leídos, {2:N0} nuevos, {3:N0} fundidos ({4:N0} dentro del fichero y {5:N0} contra el cuaderno), {6:N0} ya estaban.</value>
+  </data>
+  <data name="Ajustes.Libro.SinEscritor" xml:space="preserve">
+    <value>En esta sesión no hay escritor de ADIF: la exportación está apagada.</value>
+  </data>
+  <data name="Ajustes.Libro.SinEscritorAlExportar" xml:space="preserve">
+    <value>No hay escritor de ADIF en esta sesión: el fichero no se ha escrito.</value>
+  </data>
+  <data name="Ajustes.Libro.Titulo" xml:space="preserve">
+    <value>Libro de guardia</value>
+  </data>
+  <data name="Ajustes.NoSeHanPodidoAplicar" xml:space="preserve">
+    <value>No se han podido aplicar: {0}</value>
+  </data>
+  <data name="Ajustes.NoSeHanPodidoGuardar" xml:space="preserve">
+    <value>No se han podido guardar: {0}</value>
+  </data>
+  <data name="Ajustes.Secreto.Borrar.Accesible" xml:space="preserve">
+    <value>Borrar la credencial guardada</value>
+  </data>
+  <data name="Ajustes.Secreto.ClubLogApi" xml:space="preserve">
+    <value>Clave de API de Club Log</value>
+  </data>
+  <data name="Ajustes.Secreto.ClubLogApi.Ayuda" xml:space="preserve">
+    <value>Se pide al soporte de Club Log y no se comparte con nadie.</value>
+  </data>
+  <data name="Ajustes.Secreto.ClubLogContrasena" xml:space="preserve">
+    <value>Contraseña de Club Log</value>
+  </data>
+  <data name="Ajustes.Secreto.ClubLogContrasena.Ayuda" xml:space="preserve">
+    <value>La de su cuenta, o una contraseña de aplicación si la tiene.</value>
+  </data>
+  <data name="Ajustes.Secreto.EqslContrasena" xml:space="preserve">
+    <value>Contraseña de eQSL.cc</value>
+  </data>
+  <data name="Ajustes.Secreto.EqslContrasena.Ayuda" xml:space="preserve">
+    <value>La de su cuenta de eQSL.cc.</value>
+  </data>
+  <data name="Ajustes.Secreto.Guardada" xml:space="preserve">
+    <value>Guardada y cifrada</value>
+  </data>
+  <data name="Ajustes.Secreto.Guardar.Accesible" xml:space="preserve">
+    <value>Guardar la credencial cifrada</value>
+  </data>
+  <data name="Ajustes.Secreto.HamQthContrasena" xml:space="preserve">
+    <value>Contraseña de HamQTH</value>
+  </data>
+  <data name="Ajustes.Secreto.HamQthContrasena.Ayuda" xml:space="preserve">
+    <value>La de su cuenta de HamQTH.</value>
+  </data>
+  <data name="Ajustes.Secreto.LotwContrasena" xml:space="preserve">
+    <value>Contraseña de LoTW</value>
+  </data>
+  <data name="Ajustes.Secreto.LotwContrasena.Ayuda" xml:space="preserve">
+    <value>La de su cuenta de la ARRL. Se usa para descargar el informe de confirmaciones.</value>
+  </data>
+  <data name="Ajustes.Secreto.QrzClaveDeCuaderno" xml:space="preserve">
+    <value>Clave del cuaderno de QRZ</value>
+  </data>
+  <data name="Ajustes.Secreto.QrzClaveDeCuaderno.Ayuda" xml:space="preserve">
+    <value>Es distinta de la contraseña de la cuenta: la da QRZ para subir contactos.</value>
+  </data>
+  <data name="Ajustes.Secreto.QrzContrasena" xml:space="preserve">
+    <value>Contraseña de QRZ.com</value>
+  </data>
+  <data name="Ajustes.Secreto.QrzContrasena.Ayuda" xml:space="preserve">
+    <value>Para la consulta de indicativos por XML.</value>
+  </data>
+  <data name="Ajustes.Secreto.SinGuardar" xml:space="preserve">
+    <value>Sin guardar</value>
+  </data>
+  <data name="Ajustes.Secreto.TqslFrase" xml:space="preserve">
+    <value>Frase de paso del certificado</value>
+  </data>
+  <data name="Ajustes.Secreto.TqslFrase.Ayuda" xml:space="preserve">
+    <value>Solo si su certificado la lleva. Lea el aviso de abajo antes de escribirla.</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola" xml:space="preserve">
+    <value>Cola de subidas</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.Fallo" xml:space="preserve">
+    <value>Falló: {0}</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.Pendiente" xml:space="preserve">
+    <value>Pendiente</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.PendienteCorregido" xml:space="preserve">
+    <value>Pendiente (corregido)</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.Reintento" xml:space="preserve">
+    <value>Reintento {0}: {1}</value>
+  </data>
+  <data name="Ajustes.Subidas.ColaVacia" xml:space="preserve">
+    <value>No hay nada pendiente de subir.</value>
+  </data>
+  <data name="Ajustes.Subidas.Completar" xml:space="preserve">
+    <value>Rellenar nombre, QTH, localizador, país, zonas… con la ficha de QRZ.com (o HamQTH)</value>
+  </data>
+  <data name="Ajustes.Subidas.Completar.Accesible" xml:space="preserve">
+    <value>Completar los contactos con QRZ.com</value>
+  </data>
+  <data name="Ajustes.Subidas.Completar.Explicacion" xml:space="preserve">
+    <value>Solo se rellena lo que esté vacío: nunca se pisa lo que usted escriba. Sin red o sin cuenta el contacto se guarda igual. Sin suscripción XML de pago, QRZ.com solo da una parte de la ficha.</value>
+  </data>
+  <data name="Ajustes.Subidas.CompletarTitulo" xml:space="preserve">
+    <value>Completar con QRZ.com</value>
+  </data>
+  <data name="Ajustes.Subidas.CuentasEn" xml:space="preserve">
+    <value>Los usuarios y contraseñas de QRZ.com, HamQTH, LoTW, eQSL y Club Log se ponen en «Cuentas y servicios».</value>
+  </data>
+  <data name="Ajustes.Subidas.CuentasGuardadas" xml:space="preserve">
+    <value>Cuentas guardadas. Valen ya, sin reiniciar.</value>
+  </data>
+  <data name="Ajustes.Subidas.ErrorAlSubir" xml:space="preserve">
+    <value>No se ha podido subir: {0}</value>
+  </data>
+  <data name="Ajustes.Subidas.Explicacion" xml:space="preserve">
+    <value>Cada contacto que se guarda (formulario, Digital o ronda) se sube solo a los servicios marcados. Sin red se queda en la cola y se reintenta con espera creciente y al arrancar. Por omisión se marcan los que tienen credenciales.</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha" xml:space="preserve">
+    <value>Ficha</value>
+    <comment>Pastilla de la barra de estado: el completado con QRZ.com</comment>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.AvisoDelServicio" xml:space="preserve">
+    <value>Aviso del servicio: {0}</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.Desactivada" xml:space="preserve">
+    <value>Completar con QRZ.com: desactivado en Configuración › Subidas y QRZ.</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.Listo" xml:space="preserve">
+    <value>Completar con {0}: listo.</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.Problema" xml:space="preserve">
+    <value>{0} Los contactos se guardan igual, sin los datos de la ficha.</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.SinContrasena" xml:space="preserve">
+    <value>Completar con QRZ.com: falta la contraseña de QRZ.com (o de HamQTH) en Configuración › Cuentas y servicios. Los contactos se guardan igual, sin nombre ni QTH de la ficha.</value>
+  </data>
+  <data name="Ajustes.Subidas.NadaPendiente" xml:space="preserve">
+    <value>No había nada pendiente.</value>
+  </data>
+  <data name="Ajustes.Subidas.NadaSubido" xml:space="preserve">
+    <value>No se ha podido subir nada: mire el estado de cada servicio.</value>
+  </data>
+  <data name="Ajustes.Subidas.NoMontada" xml:space="preserve">
+    <value>La subida automática no está montada en esta sesión.</value>
+  </data>
+  <data name="Ajustes.Subidas.NotaModificable" xml:space="preserve">
+    <value>Si modifica un contacto ya subido (F2), se vuelve a enviar corregido.</value>
+  </data>
+  <data name="Ajustes.Subidas.NotaNoModificable" xml:space="preserve">
+    <value>No admite modificar: un contacto ya subido queda como se subió.</value>
+  </data>
+  <data name="Ajustes.Subidas.Subidos" xml:space="preserve">
+    <value>{0:N0} contacto(s) subido(s).</value>
+  </data>
+  <data name="Ajustes.Subidas.Subiendo" xml:space="preserve">
+    <value>Subiendo…</value>
+  </data>
+  <data name="Ajustes.Subidas.SubirA" xml:space="preserve">
+    <value>Subir a {0}</value>
+  </data>
+  <data name="Ajustes.Subidas.SubirAhora" xml:space="preserve">
+    <value>Subir ahora</value>
+  </data>
+  <data name="Ajustes.Subidas.SubirAhora.Accesible" xml:space="preserve">
+    <value>Subir ahora todo lo pendiente</value>
+  </data>
+  <data name="Ajustes.Subidas.Titulo" xml:space="preserve">
+    <value>Subida automática</value>
+  </data>
+  <data name="Ajustes.Subidas.UsuarioPorOmision" xml:space="preserve">
+    <value>Vacío: se usa el indicativo del perfil de estación.</value>
+  </data>
+  <data name="Ajustes.Subidas.UsuarioPorOmisionCon" xml:space="preserve">
+    <value>Vacío: se usa el indicativo del perfil ({0}).</value>
+  </data>
+  <data name="Ajustes.Tarjeta.ClubLog.Descripcion" xml:space="preserve">
+    <value>Subida del cuaderno y DXCC más buscados.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Cluster.Aviso" xml:space="preserve">
+    <value>{0} · {1}:{2} como {3}</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Cluster.Descripcion" xml:space="preserve">
+    <value>Nodo, indicativo de entrada y contraseña (si la pide).</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Cluster.Nombre" xml:space="preserve">
+    <value>Cluster de DX</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Cluster.Simulado" xml:space="preserve">
+    <value>Con los puertos simulados el cluster es de mentira.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Configurar" xml:space="preserve">
+    <value>Configurar…</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Configurar.Accesible" xml:space="preserve">
+    <value>Ir al apartado de este servicio</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Correo.Descripcion" xml:space="preserve">
+    <value>La cuenta con la que se mandan las QSL por correo.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Correo.Nombre" xml:space="preserve">
+    <value>Correo (SMTP)</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Eqsl.Descripcion" xml:space="preserve">
+    <value>Tarjetas QSL electrónicas.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.GuardarCuenta" xml:space="preserve">
+    <value>Guardar la cuenta</value>
+  </data>
+  <data name="Ajustes.Tarjeta.GuardarCuenta.Accesible" xml:space="preserve">
+    <value>Guardar los datos de la cuenta</value>
+  </data>
+  <data name="Ajustes.Tarjeta.GuardarCuenta.Ayuda" xml:space="preserve">
+    <value>Guarda el usuario y los demás datos de la cuenta (las contraseñas, cada una con su «Guardar»)</value>
+  </data>
+  <data name="Ajustes.Tarjeta.HamQth.Descripcion" xml:space="preserve">
+    <value>Ficha del corresponsal, de reserva si QRZ.com no responde.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.LeaAntes" xml:space="preserve">
+    <value>Antes de escribir la frase de paso, lea esto</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Lotw.Descripcion" xml:space="preserve">
+    <value>Confirmaciones de la ARRL, firmadas con TQSL.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Lotw.ErrorAlComprobar" xml:space="preserve">
+    <value>No se ha podido comprobar el estado de LoTW: {0}</value>
+  </data>
+  <data name="Ajustes.Tarjeta.ProbarLaConexion" xml:space="preserve">
+    <value>Probar la conexión</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Qrz.Descripcion" xml:space="preserve">
+    <value>Ficha del corresponsal y subida de contactos.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.VolverAComprobar" xml:space="preserve">
+    <value>Volver a comprobar</value>
+  </data>
+  <data name="Ajustes.VolverABuscarDispositivos" xml:space="preserve">
+    <value>Volver a buscar dispositivos</value>
+  </data>
+</root>

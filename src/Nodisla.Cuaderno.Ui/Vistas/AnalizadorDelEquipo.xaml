@@ -1,7 +1,8 @@
 ﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.AnalizadorDelEquipo"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             AutomationProperties.Name="Analizador de espectro del equipo">
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+             AutomationProperties.Name="{loc:Texto Cabina.Analizador.Nombre}">
 
     <!--
         EL ANALIZADOR DE ESPECTRO DE LA PROPIA RADIO, no el del audio: la traza y la cascada que
@@ -38,7 +39,7 @@
         </Grid>
         <Image Grid.Row="0" x:Name="VistaTresD" Source="{Binding ImagenTresD}" Stretch="Fill"
                RenderOptions.BitmapScalingMode="Linear" Visibility="Collapsed"
-               AutomationProperties.Name="Vista 3DSS del analizador" />
+               AutomationProperties.Name="{loc:Texto Cabina.Analizador.Vista3dss}" />
 
         <!-- La marca del VFO: triángulo rojo arriba y línea roja fina, como en la radio. -->
         <Canvas Grid.Row="0" x:Name="CapaDelVfo" IsHitTestVisible="False"
@@ -54,10 +55,10 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Border Grid.Column="0" BorderBrush="#FF2A333D" BorderThickness="0,1,1,0"
-                    ToolTip="OSCILLOSCOPE — La forma de onda del audio de recepción (codec USB de la radio), a 10 ms por división como en la radio. En la radio este panel deja tocar el nivel y el barrido; esos ajustes no tienen orden CAT: aquí el nivel se ajusta solo.">
+                    ToolTip="{loc:Texto Cabina.Analizador.OsciloscopioAyuda}">
                 <Grid>
                     <Image Source="{Binding ImagenDelOsciloscopio}" Stretch="Fill" RenderOptions.BitmapScalingMode="Linear"
-                           AutomationProperties.Name="Osciloscopio del audio de recepción" />
+                           AutomationProperties.Name="{loc:Texto Cabina.Analizador.Osciloscopio}" />
                     <TextBlock Text="OSCILLOSCOPE" Foreground="#FF6CC3FF" Background="#B805070A" Padding="2,0" FontSize="12" FontWeight="Bold"
                                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="2,0,0,0" TextTrimming="None" />
                     <TextBlock Text="10ms/Div" Foreground="#FF6CC3FF" Background="#B805070A" Padding="2,0" FontSize="12" FontWeight="Bold"
@@ -65,10 +66,10 @@
                 </Grid>
             </Border>
             <Border Grid.Column="1" BorderBrush="#FF2A333D" BorderThickness="0,1,0,0"
-                    ToolTip="AF-FFT — El espectro del audio de recepción, de 0 a 4 kHz, calculado del codec USB de la radio. En la radio este panel deja poner un atenuador; ese ajuste no tiene orden CAT: aquí la escala se ajusta sola.">
+                    ToolTip="{loc:Texto Cabina.Analizador.AfFftAyuda}">
                 <Grid>
                     <Image Source="{Binding ImagenDelAfFft}" Stretch="Fill" RenderOptions.BitmapScalingMode="Linear"
-                           AutomationProperties.Name="AF-FFT del audio de recepción" />
+                           AutomationProperties.Name="{loc:Texto Cabina.Analizador.AfFft}" />
                     <TextBlock Text="AF-FFT" Foreground="#FF6CC3FF" Background="#B805070A" Padding="2,0" FontSize="12" FontWeight="Bold"
                                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="2,0,0,0" TextTrimming="None" />
                     <TextBlock Text="0–4 kHz" Foreground="#FF6CC3FF" Background="#B805070A" Padding="2,0" FontSize="12" FontWeight="Bold"
@@ -79,12 +80,12 @@
             <!-- Con el audio cerrado no se dejan dos huecos negros: se dice y se ofrece abrirlo. -->
             <StackPanel Grid.ColumnSpan="2" x:Name="AvisoDeAudio" HorizontalAlignment="Center" VerticalAlignment="Center"
                         Orientation="Horizontal" Background="#CC05070A">
-                <TextBlock Text="AUDIO CERRADO: sin osciloscopio ni AF-FFT" Foreground="#FFF29A2E" FontSize="12"
+                <TextBlock Text="{loc:Texto Cabina.Analizador.AudioCerrado}" Foreground="#FFF29A2E" FontSize="12"
                            FontWeight="Bold" VerticalAlignment="Center" Margin="4,0,6,0" TextTrimming="None" />
-                <Button Content="Abrir el audio" FontSize="12" Padding="6,0" VerticalAlignment="Center"
+                <Button Content="{loc:Texto Cabina.Analizador.AbrirAudio}" FontSize="12" Padding="6,0" VerticalAlignment="Center"
                         Command="{Binding DataContext.Modem.EscucharCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                        ToolTip="Abre la entrada de audio del equipo (la misma que usa el módem propio). No transmite."
-                        AutomationProperties.Name="Abrir el audio de recepción para MULTI" />
+                        ToolTip="{loc:Texto Cabina.Visor.AbrirAudioAyuda}"
+                        AutomationProperties.Name="{loc:Texto Cabina.Analizador.AbrirAudioMulti}" />
             </StackPanel>
         </Grid>
 

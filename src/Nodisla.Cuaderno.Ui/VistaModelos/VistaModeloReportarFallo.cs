@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Servicios.Actualizaciones;
 using Nodisla.Cuaderno.Servicios.Informes;
 using Nodisla.Cuaderno.Ui.Soporte;
@@ -21,6 +22,12 @@ namespace Nodisla.Cuaderno.Ui.VistaModelos;
 /// Enviar no publica nada: abre en el navegador la pagina de nueva incidencia de GitHub con el
 /// titulo y el cuerpo ya puestos, y el operador la manda con su cuenta. En el programa no hay
 /// ninguna ficha de acceso a GitHub.
+/// </para>
+/// <para>
+/// <b>Idioma.</b> Lo que ve el operador (rotulos, avisos, estado) va en su idioma, pero el
+/// cuerpo de la incidencia (<see cref="InformeDeFallo"/>, con sus encabezados y los datos del
+/// entorno) sigue en espanol: va dirigido al desarrollador y conviene que todas las incidencias
+/// se lean igual. El operador puede escribir en su idioma lo que cuenta.
 /// </para>
 /// </remarks>
 public sealed partial class VistaModeloReportarFallo : ObservableObject
@@ -135,9 +142,8 @@ public sealed partial class VistaModeloReportarFallo : ObservableObject
 
             _acciones.AbrirEnNavegador(envio.Direccion);
             Estado = envio.CuerpoEnElPortapapeles
-                ? "El informe era demasiado largo para el enlace: se ha copiado al portapapeles. " +
-                  "En la página de GitHub, borre el aviso del cuerpo y pegue con Ctrl+V."
-                : "Se ha abierto GitHub con el informe rellenado. Revíselo y pulse «Submit new issue» (hace falta una cuenta de GitHub).";
+                ? Textos.T("Ayuda.Fallo.EstadoPortapapeles")
+                : Textos.T("Ayuda.Fallo.EstadoAbierto");
         }
         catch (Exception ex)
         {
@@ -145,12 +151,12 @@ public sealed partial class VistaModeloReportarFallo : ObservableObject
             try
             {
                 _acciones.CopiarAlPortapapeles(envio.CuerpoCompleto);
-                Estado = $"No se ha podido abrir el navegador. El informe está en el portapapeles; péguelo en {_repositorio.NuevaIncidencia}";
+                Estado = Textos.F("Ayuda.Fallo.EstadoSinNavegador", _repositorio.NuevaIncidencia);
             }
             catch (Exception ex2)
             {
                 _log.LogWarning(ex2, "Tampoco se ha podido copiar al portapapeles.");
-                Estado = $"No se ha podido abrir el navegador ni copiar el informe. Abra {_repositorio.NuevaIncidencia} y copie la vista previa.";
+                Estado = Textos.F("Ayuda.Fallo.EstadoSinNada", _repositorio.NuevaIncidencia);
             }
         }
     }

@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Servicios.Correo;
 
@@ -60,7 +61,7 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
         }
         catch (ErrorDeCorreo ex) when (ex.Codigo is >= 500 and < 600)
         {
-            throw new ErrorDeCorreo($"El servidor no acepta la dirección {mensaje.Para}: {ex.Message}", ex)
+            throw new ErrorDeCorreo(Textos.F("Servicios.Correo.DireccionNoAceptada", mensaje.Para, ex.Message), ex)
             {
                 Codigo = ex.Codigo,
                 EsDelDestinatario = true,
@@ -83,8 +84,8 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
 
     private async Task<Sesion> AbrirAsync(ConfiguracionSmtp c, string? contrasena, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(c.Servidor)) throw new ErrorDeCorreo("Falta el servidor de correo saliente (Configuración › Correo de las QSL).");
-        if (c.Puerto is <= 0 or > 65535) throw new ErrorDeCorreo($"El puerto {c.Puerto} no es válido.");
+        if (string.IsNullOrWhiteSpace(c.Servidor)) throw new ErrorDeCorreo(Textos.T("Servicios.Correo.FaltaServidor"));
+        if (c.Puerto is <= 0 or > 65535) throw new ErrorDeCorreo(Textos.F("Servicios.Correo.PuertoNoValido", c.Puerto));
 
         var espera = TimeSpan.FromSeconds(Math.Clamp(c.EsperaSegundos, 5, 300));
         var servidor = c.Servidor.Trim();
@@ -100,11 +101,11 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
                 }
                 catch (OperationCanceledException) when (!ct.IsCancellationRequested)
                 {
-                    throw new ErrorDeCorreo($"El servidor {servidor}:{c.Puerto} no contesta.");
+                    throw new ErrorDeCorreo(Textos.F("Servicios.Correo.NoContesta", servidor, c.Puerto));
                 }
                 catch (SocketException ex)
                 {
-                    throw new ErrorDeCorreo($"No se puede conectar con {servidor}:{c.Puerto}: {ex.Message}", ex);
+                    throw new ErrorDeCorreo(Textos.F("Servicios.Correo.NoSePuedeConectar", servidor, c.Puerto, ex.Message), ex);
                 }
             }
 
@@ -121,7 +122,7 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
                 {
                     if (!capacidades.Contains("STARTTLS"))
                     {
-                        throw new ErrorDeCorreo($"El servidor {servidor} no ofrece STARTTLS en el puerto {c.Puerto}. Pruebe «SSL directo» en el 465.");
+                        throw new ErrorDeCorreo(Textos.F("Servicios.Correo.SinStartTls", servidor, c.Puerto));
                     }
 
                     await sesion.OrdenAsync("STARTTLS", 220, ct).ConfigureAwait(false);
@@ -133,12 +134,12 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
                 {
                     if (!sesion.Cifrada && !EsLocal(servidor))
                     {
-                        throw new ErrorDeCorreo("No se manda la contraseña por una conexión sin cifrar. Elija STARTTLS o SSL directo.");
+                        throw new ErrorDeCorreo(Textos.T("Servicios.Correo.SinCifrar"));
                     }
 
                     if (string.IsNullOrEmpty(contrasena))
                     {
-                        throw new ErrorDeCorreo("Falta la contraseña del correo: guárdela en Configuración › Correo de las QSL.");
+                        throw new ErrorDeCorreo(Textos.T("Servicios.Correo.FaltaContrasena"));
                     }
 
                     await sesion.IdentificarseAsync(c.Usuario.Trim(), contrasena, capacidades, ct).ConfigureAwait(false);
@@ -201,12 +202,12 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
             catch (AuthenticationException ex)
             {
                 await ssl.DisposeAsync().ConfigureAwait(false);
-                throw new ErrorDeCorreo($"No se ha podido cifrar la conexión con {servidor}: {ex.Message}", ex);
+                throw new ErrorDeCorreo(Textos.F("Servicios.Correo.NoSeHaPodidoCifrar", servidor, ex.Message), ex);
             }
             catch (OperationCanceledException) when (!ct.IsCancellationRequested)
             {
                 await ssl.DisposeAsync().ConfigureAwait(false);
-                throw new ErrorDeCorreo($"El servidor {servidor} no termina de negociar el cifrado. ¿Es el puerto correcto para ese cifrado?");
+                throw new ErrorDeCorreo(Textos.F("Servicios.Correo.NoTerminaDeNegociar", servidor));
             }
 
             _flujo = ssl;
@@ -256,7 +257,7 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
                 return;
             }
 
-            throw new ErrorDeCorreo("El servidor no ofrece una forma de identificarse que el programa sepa usar (PLAIN o LOGIN).");
+            throw new ErrorDeCorreo(Textos.T("Servicios.Correo.SinFormaDeIdentificarse"));
         }
 
         public Task OrdenAsync(string orden, int esperado, CancellationToken ct) => OrdenAsync(orden, [esperado], ct);
@@ -271,7 +272,7 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
         public async Task EsperarAsync(int esperado, CancellationToken ct)
         {
             var (codigo, lineas) = await LeerRespuestaAsync(ct).ConfigureAwait(false);
-            if (codigo != esperado) throw Error(codigo, lineas, "saludo");
+            if (codigo != esperado) throw Error(codigo, lineas, Textos.T("Servicios.Correo.Saludo"));
         }
 
         public async Task DatosAsync(string cuerpo, CancellationToken ct)
@@ -324,8 +325,7 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
             if (codigo == 235) return;
             if (codigo == 535)
             {
-                throw new ErrorDeCorreo(
-                    "El servidor rechaza el usuario o la contraseña (535). En Gmail, Outlook o Yahoo hace falta una «contraseña de aplicación», no la de siempre.")
+                throw new ErrorDeCorreo(Textos.T("Servicios.Correo.Rechaza535"))
                 { Codigo = codigo };
             }
 
@@ -334,7 +334,7 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
 
         private async Task EscribirAsync(string linea, string paraElRegistro, CancellationToken ct)
         {
-            if (linea.Contains('\r') || linea.Contains('\n')) throw new ErrorDeCorreo("Orden SMTP con saltos de línea: no se manda.");
+            if (linea.Contains('\r') || linea.Contains('\n')) throw new ErrorDeCorreo(Textos.T("Servicios.Correo.SaltosDeLinea"));
             var bytes = Encoding.UTF8.GetBytes(linea + "\r\n");
             using var limite = CancellationTokenSource.CreateLinkedTokenSource(ct);
             limite.CancelAfter(_espera);
@@ -345,11 +345,11 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
             }
             catch (OperationCanceledException) when (!ct.IsCancellationRequested)
             {
-                throw new ErrorDeCorreo("El servidor de correo no recibe datos (tiempo agotado).");
+                throw new ErrorDeCorreo(Textos.T("Servicios.Correo.NoRecibeDatos"));
             }
             catch (IOException ex)
             {
-                throw new ErrorDeCorreo($"Se ha cortado la conexión con el servidor de correo: {ex.Message}", ex);
+                throw new ErrorDeCorreo(Textos.F("Servicios.Correo.Cortado", ex.Message), ex);
             }
 
             _log?.LogDebug("SMTP > {Orden}", paraElRegistro);
@@ -363,13 +363,13 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
                 var linea = await LeerLineaAsync(ct).ConfigureAwait(false);
                 if (linea.Length < 3 || !int.TryParse(linea.AsSpan(0, 3), NumberStyles.None, CultureInfo.InvariantCulture, out var codigo))
                 {
-                    throw new ErrorDeCorreo($"Respuesta del servidor que no es SMTP: «{Recortar(linea)}». ¿Es el puerto y el cifrado correctos?");
+                    throw new ErrorDeCorreo(Textos.F("Servicios.Correo.NoEsSmtp", Recortar(linea)));
                 }
 
                 lineas.Add(linea.Length > 4 ? linea[4..] : string.Empty);
                 _log?.LogDebug("SMTP < {Linea}", Recortar(linea));
                 if (linea.Length == 3 || linea[3] != '-') return (codigo, lineas);
-                if (lineas.Count > 200) throw new ErrorDeCorreo("El servidor manda una respuesta interminable.");
+                if (lineas.Count > 200) throw new ErrorDeCorreo(Textos.T("Servicios.Correo.Interminable"));
             }
         }
 
@@ -388,15 +388,15 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
                     }
                     catch (OperationCanceledException) when (!ct.IsCancellationRequested)
                     {
-                        throw new ErrorDeCorreo("El servidor de correo no contesta (tiempo agotado).");
+                        throw new ErrorDeCorreo(Textos.T("Servicios.Correo.NoContestaTiempo"));
                     }
                     catch (IOException ex)
                     {
-                        throw new ErrorDeCorreo($"Se ha cortado la conexión con el servidor de correo: {ex.Message}", ex);
+                        throw new ErrorDeCorreo(Textos.F("Servicios.Correo.Cortado", ex.Message), ex);
                     }
 
                     _posicion = 0;
-                    if (_leidos == 0) throw new ErrorDeCorreo("El servidor de correo ha cerrado la conexión.");
+                    if (_leidos == 0) throw new ErrorDeCorreo(Textos.T("Servicios.Correo.HaCerrado"));
                 }
 
                 var b = _buffer[_posicion++];
@@ -407,12 +407,12 @@ public sealed class ClienteSmtp : IEnviadorDeCorreo
                 }
 
                 linea.Add(b);
-                if (linea.Count > 8192) throw new ErrorDeCorreo("El servidor manda una línea demasiado larga.");
+                if (linea.Count > 8192) throw new ErrorDeCorreo(Textos.T("Servicios.Correo.LineaLarga"));
             }
         }
 
         private static ErrorDeCorreo Error(int codigo, List<string> lineas, string orden) =>
-            new($"El servidor ha contestado {codigo} a {orden}: {Recortar(string.Join(" ", lineas))}") { Codigo = codigo };
+            new(Textos.F("Servicios.Correo.HaContestado", codigo, orden, Recortar(string.Join(" ", lineas)))) { Codigo = codigo };
 
         private static string Recortar(string texto) => texto.Length <= 300 ? texto : texto[..300] + "…";
 

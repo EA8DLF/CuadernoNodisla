@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
 
@@ -16,7 +17,8 @@ public sealed class FilaDeQso
         Qso = qso;
 
         var inicio = qso.InicioUtc.UtcDateTime;
-        Fecha = inicio.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
+        // La fecha, como se escribe en el idioma en uso; la hora UTC, siempre «HH:mm».
+        Fecha = inicio.ToString(Textos.T("Comun.FormatoDeFecha"), Textos.Cultura);
         Hora = inicio.ToString("HH:mm", CultureInfo.InvariantCulture);
         Indicativo = qso.Call.Valor;
         Banda = qso.Band.Nombre;
@@ -42,24 +44,24 @@ public sealed class FilaDeQso
 
         // Si el corresponsal declaro una distancia en el fichero, esa manda sobre la calculada.
         Distancia = (qso.Distance ?? qso.DistanciaKm) is { } km
-            ? km.ToString("N0", CultureInfo.CurrentCulture) + " km"
+            ? km.ToString("N0", Textos.Cultura) + " km"
             : string.Empty;
 
-        Confirmado = qso.Confirmaciones.Any(c => c.EstaVerificada) ? "Verificado"
-            : qso.Confirmaciones.Any(c => c.EstaConfirmada) ? "Sí"
+        Confirmado = qso.Confirmaciones.Any(c => c.EstaVerificada) ? Textos.T("Libro.Fila.Verificado")
+            : qso.Confirmaciones.Any(c => c.EstaConfirmada) ? Textos.T("Comun.Si")
             : string.Empty;
 
         Lotw = ComoEsta(qso, MedioDeConfirmacion.Lotw);
         Eqsl = ComoEsta(qso, MedioDeConfirmacion.Eqsl);
         Papel = ComoEsta(qso, MedioDeConfirmacion.Papel);
         Qrz = ComoEsta(qso, MedioDeConfirmacion.QrzCom);
-        ResumenQsl = Resumir(("LoTW", Lotw), ("eQSL", Eqsl), ("Papel", Papel), ("QRZ.com", Qrz));
+        ResumenQsl = Resumir(("LoTW", Lotw), ("eQSL", Eqsl), (Textos.T("Libro.Retrato.Papel"), Papel), ("QRZ.com", Qrz));
 
         Antena = FormatoDeAntena(qso);
         Propagacion = FormatoDePropagacion(qso);
-        Swl = qso.Swl ? "Sí" : string.Empty;
+        Swl = qso.Swl ? Textos.T("Comun.Si") : string.Empty;
         Completado = TextoDeCompletado(qso.QsoComplete);
-        Casual = qso.QsoRandom is { } casual ? (casual ? "Sí" : "No") : string.Empty;
+        Casual = qso.QsoRandom is { } casual ? Textos.T(casual ? "Comun.Si" : "Comun.No") : string.Empty;
         MensajeQsl = qso.QslMsg ?? string.Empty;
         MiNombre = qso.MyName ?? string.Empty;
         Iota = qso.IotaIslandId ?? string.Empty;
@@ -185,12 +187,12 @@ public sealed class FilaDeQso
             .Where(v => v.Estado != EstadoDePastilla.Nada)
             .Select(v => v.Estado switch
             {
-                EstadoDePastilla.Enviada => $"{v.Via}: enviada, sin confirmar",
-                EstadoDePastilla.Confirmada => $"{v.Via}: confirmada",
-                _ => $"{v.Via}: verificada",
+                EstadoDePastilla.Enviada => Textos.F("Libro.Fila.QslEnviada", v.Via),
+                EstadoDePastilla.Confirmada => Textos.F("Libro.Fila.QslConfirmada", v.Via),
+                _ => Textos.F("Libro.Fila.QslVerificada", v.Via),
             })
             .ToList();
-        return partes.Count == 0 ? "Sin QSL enviada ni recibida" : string.Join("\n", partes);
+        return partes.Count == 0 ? Textos.T("Libro.Fila.SinQsl") : string.Join("\n", partes);
     }
 
     private static string FormatoDeAntena(Qso qso)
@@ -199,27 +201,27 @@ public sealed class FilaDeQso
         if (azimut is null && qso.AntEl is null) return string.Empty;
 
         var partes = new List<string>(2);
-        if (azimut is { } az) partes.Add($"{az.ToString("N0", CultureInfo.CurrentCulture)}°");
-        if (qso.AntEl is { } el) partes.Add($"el. {el.ToString("N0", CultureInfo.CurrentCulture)}°");
+        if (azimut is { } az) partes.Add($"{az.ToString("N0", Textos.Cultura)}°");
+        if (qso.AntEl is { } el) partes.Add(Textos.F("Libro.Fila.Elevacion", el.ToString("N0", Textos.Cultura)));
         return string.Join(" · ", partes);
     }
 
     private static string FormatoDePropagacion(Qso qso)
     {
         var partes = new List<string>(3);
-        if (qso.AIndex is { } a) partes.Add($"A {a.ToString("N0", CultureInfo.CurrentCulture)}");
-        if (qso.KIndex is { } k) partes.Add($"K {k.ToString("N0", CultureInfo.CurrentCulture)}");
-        if (qso.Sfi is { } sfi) partes.Add($"SFI {sfi.ToString("N0", CultureInfo.CurrentCulture)}");
+        if (qso.AIndex is { } a) partes.Add($"A {a.ToString("N0", Textos.Cultura)}");
+        if (qso.KIndex is { } k) partes.Add($"K {k.ToString("N0", Textos.Cultura)}");
+        if (qso.Sfi is { } sfi) partes.Add($"SFI {sfi.ToString("N0", Textos.Cultura)}");
         return string.Join(" · ", partes);
     }
 
     /// <summary>Traduce el codigo <c>QSO_COMPLETE</c> de ADIF, que no es un si o un no.</summary>
     private static string TextoDeCompletado(string? codigo) => codigo?.Trim().ToUpperInvariant() switch
     {
-        "Y" => "Sí",
-        "N" => "No",
-        "NIL" => "No hubo",
-        "?" => "Dudoso",
+        "Y" => Textos.T("Comun.Si"),
+        "N" => Textos.T("Comun.No"),
+        "NIL" => Textos.T("Libro.Fila.NoHubo"),
+        "?" => Textos.T("Libro.Fila.Dudoso"),
         null or "" => string.Empty,
         _ => codigo!,
     };

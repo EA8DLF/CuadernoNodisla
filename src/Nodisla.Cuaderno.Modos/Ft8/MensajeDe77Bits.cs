@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Modos.Ft8;
 
@@ -148,7 +149,7 @@ public static class MensajeDe77Bits
         motivo = string.Empty;
         if (string.IsNullOrWhiteSpace(texto))
         {
-            motivo = "El mensaje esta vacío.";
+            motivo = Textos.T("Servicios.Modos.MensajeVacio");
             return false;
         }
 
@@ -197,25 +198,20 @@ public static class MensajeDe77Bits
         var palabras = limpio.Split(' ');
         if (palabras.Any(p => p.StartsWith('<') && p.EndsWith('>') && !EsIndicativoResumible(p[1..^1])))
         {
-            return $"«{limpio}» lleva entre ángulos algo que no es un indicativo (o un indicativo sin resolver, «<...>»): "
-                   + "no se puede emitir porque no se sabe qué indicativo es.";
+            return Textos.F("Servicios.Modos.Ft8.Angulos", limpio);
         }
 
         var largo = palabras.FirstOrDefault(p => p.Length > CaracteresDeIndicativoLargo
                                                  && p.Any(char.IsAsciiDigit) && p.Any(char.IsAsciiLetter));
         if (largo is not null)
         {
-            return $"El indicativo «{largo}» tiene {largo.Length} caracteres y el protocolo admite como mucho "
-                   + $"{CaracteresDeIndicativoLargo}: no se puede emitir.";
+            return Textos.F("Servicios.Modos.Ft8.IndicativoLargo", largo, largo.Length, CaracteresDeIndicativoLargo);
         }
 
         var raros = limpio.Where(c => c != ' ' && !AlfabetoLibre.Contains(c, StringComparison.Ordinal)).Distinct().ToArray();
-        var queLleva = raros.Length > 0
-            ? $" y además lleva caracteres que no se pueden emitir ({string.Join(' ', raros)})"
-            : $" y este tiene {limpio.Length}";
-        return $"«{limpio}» no es un mensaje estándar (indicativos más localizador, informe, RRR, RR73 o 73) "
-               + $"y como texto libre no cabe: el texto libre admite {CaracteresDeTextoLibre} caracteres "
-               + $"(letras, cifras, espacio y + - . / ?){queLleva}.";
+        return raros.Length > 0
+            ? Textos.F("Servicios.Modos.Ft8.NoCabeRaros", limpio, CaracteresDeTextoLibre, string.Join(' ', raros))
+            : Textos.F("Servicios.Modos.Ft8.NoCabeLargo", limpio, CaracteresDeTextoLibre, limpio.Length);
     }
 
     private static string NormalizarTexto(string texto)

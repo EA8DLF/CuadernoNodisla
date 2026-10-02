@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Radio.Control.Rigctld;
 
@@ -217,7 +218,7 @@ internal sealed class ClienteRigctld : IAsyncDisposable
         var lector = _lector;
         if (escritor is null || lector is null || !Conectado)
         {
-            throw new InvalidOperationException("No hay conexión abierta con rigctld.");
+            throw new InvalidOperationException(Textos.T("Servicios.Radio.RigctldSinConexion"));
         }
 
         using var espera = CancellationTokenSource.CreateLinkedTokenSource(ct);
@@ -231,7 +232,7 @@ internal sealed class ClienteRigctld : IAsyncDisposable
         for (var cuenta = 0; cuenta < 256; cuenta++)
         {
             var linea = await lector.ReadLineAsync(espera.Token).ConfigureAwait(false)
-                ?? throw new IOException("rigctld cerró la conexión.");
+                ?? throw new IOException(Textos.T("Servicios.Radio.RigctldCerro"));
 
             if (linea.StartsWith("RPRT ", StringComparison.Ordinal))
             {
@@ -255,7 +256,7 @@ internal sealed class ClienteRigctld : IAsyncDisposable
             lineas.Add(linea);
         }
 
-        throw new IOException("rigctld contestó más líneas de las razonables sin cerrar con RPRT.");
+        throw new IOException(Textos.T("Servicios.Radio.RigctldDemasiadasLineas"));
     }
 
     private void CerrarSinCandado()

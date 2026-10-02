@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.FranjaSolar"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas">
 
     <!--
         LA FRANJA SOLAR.
@@ -51,7 +52,7 @@
             CornerRadius="3"
             Padding="9,3"
             ToolTip="{Binding Procedencia}"
-            AutomationProperties.Name="Estado del Sol y del campo magnético"
+            AutomationProperties.Name="{loc:Texto Principal.Solar.Nombre}"
             AutomationProperties.HelpText="{Binding Procedencia}">
         <WrapPanel>
             <TextBlock Text="Kp" Style="{StaticResource RotuloSolar}" />
@@ -70,26 +71,26 @@
             <TextBlock Text="A" Style="{StaticResource RotuloSolar}" />
             <TextBlock Text="{Binding IndiceA}" Style="{StaticResource ValorSolar}" />
 
-            <TextBlock Text="Flujo" Style="{StaticResource RotuloSolar}" />
+            <TextBlock Text="{loc:Texto Principal.Solar.Flujo}" Style="{StaticResource RotuloSolar}" />
             <TextBlock Text="{Binding FlujoSolar}" Style="{StaticResource ValorSolar}" />
 
-            <TextBlock Text="Manchas" Style="{StaticResource RotuloSolar}" />
+            <TextBlock Text="{loc:Texto Principal.Solar.Manchas}" Style="{StaticResource RotuloSolar}" />
             <TextBlock Text="{Binding Manchas}" Style="{StaticResource ValorSolar}" />
 
-            <TextBlock Text="Orto" Style="{StaticResource RotuloSolar}" />
+            <TextBlock Text="{loc:Texto Principal.Solar.Orto}" Style="{StaticResource RotuloSolar}" />
             <TextBlock Text="{Binding Orto}" Style="{StaticResource ValorSolar}" />
 
-            <TextBlock Text="Ocaso" Style="{StaticResource RotuloSolar}" />
+            <TextBlock Text="{loc:Texto Principal.Solar.Ocaso}" Style="{StaticResource RotuloSolar}" />
             <TextBlock Text="{Binding Ocaso}" Style="{StaticResource ValorSolar}" Margin="0" />
 
             <!-- El aviso de datos viejos: ocupa cero cuando los datos son de ahora. -->
-            <TextBlock Text="· copia guardada"
+            <TextBlock Text="{loc:Texto Principal.Solar.CopiaGuardada}"
                        Foreground="{StaticResource AmbarDelVisor}"
                        FontSize="10"
                        VerticalAlignment="Center"
                        Margin="10,0,0,0"
                        TextTrimming="None"
-                       AutomationProperties.Name="Los índices vienen de la copia guardada, no de una descarga de ahora">
+                       AutomationProperties.Name="{loc:Texto Principal.Solar.CopiaGuardadaNombre}">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <Setter Property="Visibility" Value="Collapsed" />
@@ -102,7 +103,7 @@
                 </TextBlock.Style>
             </TextBlock>
 
-            <TextBlock Text="· trayendo…"
+            <TextBlock Text="{loc:Texto Principal.Solar.Trayendo}"
                        Foreground="{StaticResource VerdeTenue}"
                        FontSize="10"
                        VerticalAlignment="Center"

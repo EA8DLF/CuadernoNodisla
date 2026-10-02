@@ -2,6 +2,7 @@ using System.Net.Sockets;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Radio.Control.Ft710;
 
@@ -148,7 +149,7 @@ public sealed class CanalTcpCat : ICanalCat
         ArgumentException.ThrowIfNullOrWhiteSpace(orden);
 
         // Sin pedir el semaforo: esto se usa para bajar el PTT cuando no hay tiempo que perder.
-        var flujo = _flujo ?? throw new InvalidOperationException($"El canal {Descripcion} no está abierto.");
+        var flujo = _flujo ?? throw new InvalidOperationException(Textos.F("Servicios.Radio.CanalCerrado", Descripcion));
         var bytes = Encoding.ASCII.GetBytes(orden);
         flujo.Write(bytes, 0, bytes.Length);
         flujo.Flush();
@@ -183,7 +184,7 @@ public sealed class CanalTcpCat : ICanalCat
 
     private NetworkStream Flujo() => _flujo is not null && Abierto
         ? _flujo
-        : throw new InvalidOperationException($"El canal {Descripcion} no está abierto.");
+        : throw new InvalidOperationException(Textos.F("Servicios.Radio.CanalCerrado", Descripcion));
 
     private void CerrarSinCandado()
     {

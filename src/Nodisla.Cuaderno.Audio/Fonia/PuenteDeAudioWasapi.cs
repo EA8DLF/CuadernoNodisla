@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using Nodisla.Cuaderno.Audio.Captura;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Audio.Fonia;
 
@@ -196,7 +197,7 @@ public sealed class PuenteDeAudioWasapi : IPuenteDeAudio
         catch (Exception fallo)
         {
             throw new InvalidOperationException(
-                "No se encuentra alguno de los dispositivos de sonido elegidos; puede que la radio esté apagada o desenchufada.",
+                Textos.T("Servicios.Audio.SinDispositivosElegidos"),
                 fallo);
         }
 

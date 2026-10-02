@@ -258,6 +258,27 @@ public sealed class DisenadorDeDiplomasPruebas : IDisposable
         });
 
     [Fact]
+    public Task Los_colores_del_diseno_son_los_de_la_plantilla_abierta() =>
+        HiloDeVentana.Ejecutar(async () =>
+        {
+            var (servicio, _, _, _) = await MontarAsync();
+            var vm = new VistaModeloDisenadorDeDiplomas(servicio) { AbrirFichero = _ => { }, ElegirDondeGuardar = (n, _) => Path.Combine(_carpeta, n) };
+            await vm.RefrescarAsync();
+            vm.EstiloDeMarco = EstiloDeMarco.Clasico;
+            vm.ColorDeFondo = "#F5EBD7";
+            vm.ColorDelMarco = "#C2185B";
+            vm.TablaVisible = true;
+            vm.ColorDeCabeceraDeLaTabla = "#2B9348";
+            vm.ColorDelTextoDeLaTabla = "#222222";
+            vm.ColorDeLineasDeLaTabla = "#B8B8B8";
+
+            vm.Diseno!.Tabla.ColorDeCabecera.Should().Be("#2B9348", "los colores de la tabla se eligen y se guardan como siempre");
+            vm.HayCambios.Should().BeTrue();
+            var codigos = PaletaDeColores.DelDiseno(vm.ColoresEnUso()).Select(m => m.Codigo).ToList();
+            codigos.Should().StartWith(["#F5EBD7", "#C2185B"]).And.Contain(["#2B9348", "#222222", "#B8B8B8"]).And.OnlyHaveUniqueItems();
+        });
+
+    [Fact]
     public Task El_disenador_se_pinta_sin_enlaces_rotos() =>
         HiloDeVentana.Ejecutar(async () =>
         {

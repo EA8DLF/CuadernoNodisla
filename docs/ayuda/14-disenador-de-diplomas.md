@@ -22,15 +22,26 @@ que es el dibujo de verdad. Sirve para dos cosas:
 - **Fondo** — una imagen (foto, textura de papel o una orla dibujada) con su ajuste, y el color
   del papel debajo.
 - **Orla** — *Filete*, *DobleFilete*, *Clasico* (doble filete con cuadros en las esquinas) o
-  *Escuadras*, con su color, su color de adorno, margen y grosor.
+  *Escuadras*, con su color, su color de adorno (el filete interior y los cuadros), margen y
+  grosor.
 - **Numeración y firma** — la **serie** (cada serie numera por su cuenta; varias plantillas
   pueden compartirla), el prefijo (`EA8-`, `2026/`…), las cifras y el **gestor** que firma.
 - **Textos** — los mismos campos que la QSL: letra, tamaño, color, alineación y, para párrafos,
   un **ancho máximo** a partir del cual el texto pasa a la línea siguiente.
 - **Logo, firma e imágenes** — huecos preparados en las plantillas de fábrica; **Elegir
   imagen…** pone su logo o su firma escaneada. La imagen se copia a la carpeta de la plantilla.
-- **Tabla de referencias o contactos** — opcional: posición, bloques uno al lado de otro, letra
-  y columnas. Lo que no cabe sale en **hojas de anexo** del PDF con la misma orla.
+  Con *Línea de firma debajo* se elige también el color de esa línea.
+- **Tabla de referencias o contactos** — opcional: posición, bloques uno al lado de otro, letra,
+  colores (cabecera y título, texto y líneas) y columnas. Lo que no cabe sale en **hojas de
+  anexo** del PDF con la misma orla.
+
+Todos los colores —papel, orla, adorno, textos, recuadros, tabla y la línea de firma de una
+imagen— se eligen en la **paleta**, igual que en la tarjeta QSL: muestras con nombre, los
+**colores del diseño** (los que ya usa la plantilla, para repetir el azul de la orla en un
+título sin buscarlo), los **últimos usados**, un selector libre de tono y, plegado en
+*Avanzado*, el código por si lo trae apuntado. Vea [Elegir un color](13-tarjeta-qsl.md#elegir-un-color).
+
+![Selector de color desplegado: paleta, colores del diseño, últimos usados, opacidad y el selector libre de tono](../capturas/ayuda/selector-de-color.png)
 
 Plantillas de fábrica: *NODISLA clásico* (A4 apaisado), *NODISLA atlántico, con tabla*,
 *Certificado sobrio* (A4 vertical) y *Volcán* (Carta apaisado). Sobrias, en los colores de

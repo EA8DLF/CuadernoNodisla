@@ -1,7 +1,7 @@
-﻿using System.Globalization;
-using System.IO;
+﻿using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
+using Nodisla.Cuaderno.Idiomas;
 using Serilog;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
@@ -78,7 +78,7 @@ public sealed partial class VistaModeloCuadernoVacio : ObservableObject
 
         Ocupado = true;
         Aviso = string.Empty;
-        Parte = "Importando…";
+        Parte = Textos.T("Libro.Vacio.Importando");
         Rescatadas = string.Empty;
 
         try
@@ -105,23 +105,19 @@ public sealed partial class VistaModeloCuadernoVacio : ObservableObject
                 parte.NoSePierdeNada);
 
             Rescatadas = parte.ConfirmacionesRecuperadas > 0
-                ? $"Se han rescatado {parte.ConfirmacionesRecuperadas.ToString("N0", CultureInfo.CurrentCulture)} "
-                  + "confirmaciones que se habrían perdido descartando las copias repetidas. "
-                  + "Cada una cuenta para un diploma."
+                ? Textos.F("Libro.Vacio.Rescatadas", parte.ConfirmacionesRecuperadas)
                 : string.Empty;
 
             if (!parte.NoSePierdeNada)
             {
-                Aviso = "Las cuentas no cuadran: hay registros del fichero que no se pueden "
-                    + "explicar ni como nuevos, ni como fundidos, ni como ya existentes. "
-                    + "Conviene revisar el fichero antes de fiarse del cuaderno.";
+                Aviso = Textos.T("Libro.Vacio.NoCuadra");
             }
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido importar el ADIF {Ruta}.", ruta);
             Parte = string.Empty;
-            Aviso = $"No se ha podido importar: {ex.Message}";
+            Aviso = Textos.F("Libro.Vacio.NoSeHaPodido", ex.Message);
         }
         finally
         {
@@ -133,29 +129,31 @@ public sealed partial class VistaModeloCuadernoVacio : ObservableObject
     {
         var texto = new System.Text.StringBuilder();
 
-        texto.Append(CultureInfo.CurrentCulture, $"{Path.GetFileName(ruta)}: ");
-        texto.Append(CultureInfo.CurrentCulture, $"{parte.RegistrosLeidos:N0} registros leídos, ");
-        texto.Append(CultureInfo.CurrentCulture, $"{parte.Anadidos:N0} contactos nuevos en el cuaderno, ");
-        texto.Append(CultureInfo.CurrentCulture, $"{parte.FundidosEnElFichero:N0} copias fundidas dentro del propio fichero, ");
-        texto.Append(CultureInfo.CurrentCulture, $"{parte.FundidosConElCuaderno:N0} fundidas con lo que ya había y ");
-        texto.Append(CultureInfo.CurrentCulture, $"{parte.YaEstaban:N0} que ya estaban igual.");
+        texto.Append(Path.GetFileName(ruta)).Append(": ");
+        texto.Append(Textos.F(
+            "Libro.Vacio.Parte",
+            parte.RegistrosLeidos,
+            parte.Anadidos,
+            parte.FundidosEnElFichero,
+            parte.FundidosConElCuaderno,
+            parte.YaEstaban));
 
         if (parte.ProgramaOrigen is { Length: > 0 } programa)
         {
-            texto.Append(CultureInfo.CurrentCulture, $" El fichero lo generó {programa}.");
+            texto.Append(' ').Append(Textos.F("Libro.Vacio.Programa", programa));
         }
 
-        texto.Append(CultureInfo.CurrentCulture, $" Ha tardado {parte.Duracion.TotalSeconds:N1} s.");
+        texto.Append(' ').Append(Textos.F("Libro.Vacio.Duracion", parte.Duracion.TotalSeconds));
 
         if (parte.Choques.Count > 0)
         {
-            texto.Append(CultureInfo.CurrentCulture,
-                $" Hay {parte.Choques.Count:N0} dato(s) que no cuadraban entre dos copias; se pueden revisar en Configuración › Libro (ADIF).");
+            texto.Append(' ').Append(Textos.F(
+                "Libro.Vacio.Choques", parte.Choques.Count, Textos.T("Principal.Nav.Configuracion")));
         }
 
         if (parte.Avisos.Count > 0)
         {
-            texto.Append(CultureInfo.CurrentCulture, $" Con {parte.Avisos.Count:N0} aviso(s) de lectura.");
+            texto.Append(' ').Append(Textos.F("Libro.Vacio.Avisos", parte.Avisos.Count));
         }
 
         return texto.ToString();

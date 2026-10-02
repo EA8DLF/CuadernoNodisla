@@ -1,5 +1,5 @@
-using System.Globalization;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Propagacion.Solar;
 
@@ -65,22 +65,21 @@ public sealed record LecturaDeIndices(
     public string Describir(DateTimeOffset ahoraUtc, TimeSpan frescura)
     {
         var medido = Indices.MedidoUtc.ToUniversalTime()
-            .ToString("dd/MM/yyyy HH:mm", CultureInfo.GetCultureInfo("es-ES"));
+            .ToString("dd/MM/yyyy HH:mm", Textos.Cultura);
         var edad = TextoDeEdad(Antiguedad(ahoraUtc));
 
         if (Origen == OrigenDeLosIndices.Cache)
         {
-            return $"Sin red: índices guardados del {medido} UTC, hace {edad} ({Fuente}).";
+            return Textos.F("Servicios.Propagacion.IndicesSinRed", medido, edad, Fuente);
         }
 
         if (EstanFrescos(ahoraUtc, frescura))
         {
-            return $"Índices del {medido} UTC, hace {edad} ({Fuente}).";
+            return Textos.F("Servicios.Propagacion.IndicesFrescos", medido, edad, Fuente);
         }
 
         var sinRefrescar = TextoDeEdad(DesdeLaUltimaDescarga(ahoraUtc));
-        return $"Índices sin refrescar desde hace {sinRefrescar}: los últimos son del {medido} UTC, "
-               + $"hace {edad} ({Fuente}).";
+        return Textos.F("Servicios.Propagacion.IndicesSinRefrescar", sinRefrescar, medido, edad, Fuente);
     }
 
     /// <summary>Pone una duracion en palabras cortas: "35 min", "2 h 10 min", "3 días".</summary>
@@ -89,22 +88,24 @@ public sealed record LecturaDeIndices(
     {
         if (edad < TimeSpan.FromMinutes(1))
         {
-            return "menos de un minuto";
+            return Textos.T("Servicios.Propagacion.Edad.MenosDeUnMinuto");
         }
 
         if (edad < TimeSpan.FromHours(1))
         {
-            return $"{(int)edad.TotalMinutes} min";
+            return Textos.F("Servicios.Propagacion.Edad.Minutos", (int)edad.TotalMinutes);
         }
 
         if (edad < TimeSpan.FromDays(1))
         {
             var horas = (int)edad.TotalHours;
             var minutos = edad.Minutes;
-            return minutos == 0 ? $"{horas} h" : $"{horas} h {minutos} min";
+            return minutos == 0
+                ? Textos.F("Servicios.Propagacion.Edad.Horas", horas)
+                : Textos.F("Servicios.Propagacion.Edad.HorasYMinutos", horas, minutos);
         }
 
         var dias = (int)edad.TotalDays;
-        return dias == 1 ? "1 día" : $"{dias} días";
+        return dias == 1 ? Textos.T("Servicios.Propagacion.Edad.UnDia") : Textos.F("Servicios.Propagacion.Edad.Dias", dias);
     }
 }

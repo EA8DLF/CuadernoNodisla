@@ -1,0 +1,1647 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Servicios.AbrirSesion" xml:space="preserve">
+    <value>iniciar sessão no {0}</value>
+  </data>
+  <data name="Servicios.Actualizaciones.DemasiadoGrande" xml:space="preserve">
+    <value>O instalador anunciado é demasiado grande.</value>
+  </data>
+  <data name="Servicios.Actualizaciones.NoCoincide" xml:space="preserve">
+    <value>O instalador descarregado não coincide com a soma SHA-256 publicada. Foi apagado e não será instalado.</value>
+  </data>
+  <data name="Servicios.Actualizaciones.NoDescargado" xml:space="preserve">
+    <value>Não foi possível descarregar o instalador. Verifique a ligação e tente mais tarde.</value>
+  </data>
+  <data name="Servicios.Actualizaciones.ShaIlegible" xml:space="preserve">
+    <value>O ficheiro .sha256 publicado não contém uma soma SHA-256 legível.</value>
+  </data>
+  <data name="Servicios.Actualizaciones.SinContacto" xml:space="preserve">
+    <value>Não foi possível contactar o GitHub.</value>
+  </data>
+  <data name="Servicios.Actualizaciones.SinInstalador" xml:space="preserve">
+    <value>A versão publicada não traz instalador. Descarregue-a a partir da página do GitHub.</value>
+  </data>
+  <data name="Servicios.Actualizaciones.SinNumero" xml:space="preserve">
+    <value>A publicação não tem um número de versão legível.</value>
+  </data>
+  <data name="Servicios.Actualizaciones.SinSha" xml:space="preserve">
+    <value>A versão publicada não traz o ficheiro .sha256; sem ele não é possível verificar o instalador e não se instala.</value>
+  </data>
+  <data name="Servicios.Actualizaciones.SinVersiones" xml:space="preserve">
+    <value>Ainda não há versões publicadas.</value>
+  </data>
+  <data name="Servicios.Adif.AdxMalFormado" xml:space="preserve">
+    <value>O ficheiro ADX está mal formado e deixa de se ler aqui: {0}</value>
+  </data>
+  <data name="Servicios.Adif.CampoNoValido" xml:space="preserve">
+    <value>O campo «{0}» com valor «{1}» {2}; conserva-se sem interpretar.</value>
+  </data>
+  <data name="Servicios.Adif.EtiquetaSinCerrar" xml:space="preserve">
+    <value>Há uma etiqueta por fechar no fim do ficheiro; descarta-se o que restava.</value>
+  </data>
+  <data name="Servicios.Adif.FechaDeFin" xml:space="preserve">
+    <value>Não se percebe a data ou hora de fim («{0}» «{1}»); ignora-se.</value>
+  </data>
+  <data name="Servicios.Adif.FechaDeInicio" xml:space="preserve">
+    <value>Não se percebe a data ou hora de início («{0}» «{1}»); o contacto fica sem data.</value>
+  </data>
+  <data name="Servicios.Adif.FrecuenciaCorregida" xml:space="preserve">
+    <value>A frequência {0} MHz não cai na banda {1}; parece escrita noutra unidade e foi corrigida para {2} MHz.</value>
+  </data>
+  <data name="Servicios.Adif.FrecuenciaRxCorregida" xml:space="preserve">
+    <value>A frequência de receção {0} MHz não cai na banda {1}; foi corrigida para {2} MHz.</value>
+  </data>
+  <data name="Servicios.Adif.JsonConfirmaciones" xml:space="preserve">
+    <value>O JSON de confirmações não se percebe; conserva-se tal como está mas não se interpreta.</value>
+  </data>
+  <data name="Servicios.Adif.JsonReferencias" xml:space="preserve">
+    <value>O JSON de referências não se percebe; conserva-se tal como está mas não se interpreta.</value>
+  </data>
+  <data name="Servicios.Adif.Problema.Banda" xml:space="preserve">
+    <value>não é uma banda de ADIF</value>
+  </data>
+  <data name="Servicios.Adif.Problema.Coordenada" xml:space="preserve">
+    <value>não é uma coordenada em graus e minutos de ADIF</value>
+  </data>
+  <data name="Servicios.Adif.Problema.Entero" xml:space="preserve">
+    <value>não é um número inteiro</value>
+  </data>
+  <data name="Servicios.Adif.Problema.EstadoDeConfirmacion" xml:space="preserve">
+    <value>não é um estado de confirmação válido</value>
+  </data>
+  <data name="Servicios.Adif.Problema.Fecha" xml:space="preserve">
+    <value>não é uma data válida</value>
+  </data>
+  <data name="Servicios.Adif.Problema.Frecuencia" xml:space="preserve">
+    <value>não é uma frequência válida</value>
+  </data>
+  <data name="Servicios.Adif.Problema.Localizador" xml:space="preserve">
+    <value>não é um locator Maidenhead válido</value>
+  </data>
+  <data name="Servicios.Adif.Problema.Numero" xml:space="preserve">
+    <value>não é um número</value>
+  </data>
+  <data name="Servicios.Adif.Problema.SiNo" xml:space="preserve">
+    <value>não é um sim ou não de ADIF</value>
+  </data>
+  <data name="Servicios.Adif.Problema.Via" xml:space="preserve">
+    <value>não é uma via de envio válida</value>
+  </data>
+  <data name="Servicios.Adif.RegistroIlegible" xml:space="preserve">
+    <value>Não foi possível ler o registo e descarta-se: {0}</value>
+  </data>
+  <data name="Servicios.Adif.RegistroSinCerrar" xml:space="preserve">
+    <value>O ficheiro termina com um registo por fechar; importa-se mesmo assim com o que traz.</value>
+  </data>
+  <data name="Servicios.Adif.RegistroVacio" xml:space="preserve">
+    <value>Registo vazio; descarta-se.</value>
+  </data>
+  <data name="Servicios.Adif.Repetido" xml:space="preserve">
+    <value>O campo «{0}» aparece repetido no registo; prevalece o primeiro valor e o outro guarda-se à parte.</value>
+  </data>
+  <data name="Servicios.Adif.SinContactos" xml:space="preserve">
+    <value>O ficheiro não contém nenhum contacto.</value>
+  </data>
+  <data name="Servicios.Adif.SinLongitud" xml:space="preserve">
+    <value>O campo «{0}» não declara comprimento; lê-se até à etiqueta seguinte.</value>
+  </data>
+  <data name="Servicios.Adif.Sobrante" xml:space="preserve">
+    <value>O campo «{0}» traz «{1}» depois dos {2} bytes que declara; prevalece o comprimento declarado e o resto guarda-se à parte.</value>
+  </data>
+  <data name="Servicios.Adif.Truncado" xml:space="preserve">
+    <value>O campo «{0}» diz ocupar {1} bytes mas o ficheiro acaba antes.</value>
+  </data>
+  <data name="Servicios.Aplicacion.FaltaBanda" xml:space="preserve">
+    <value>Falta a banda ou a frequência.</value>
+  </data>
+  <data name="Servicios.Aplicacion.FaltaIndicativo" xml:space="preserve">
+    <value>Falta o indicativo do correspondente.</value>
+  </data>
+  <data name="Servicios.Aplicacion.FaltaIndicativoDeEstacion" xml:space="preserve">
+    <value>Falta o indicativo da estação.</value>
+  </data>
+  <data name="Servicios.Aplicacion.FaltaMiIndicativo" xml:space="preserve">
+    <value>Falta o indicativo da minha estação: escolha um perfil de estação.</value>
+  </data>
+  <data name="Servicios.Aplicacion.FaltaModo" xml:space="preserve">
+    <value>Falta o modo.</value>
+  </data>
+  <data name="Servicios.Aplicacion.FinAntesDeInicio" xml:space="preserve">
+    <value>A hora de fim é anterior à de início.</value>
+  </data>
+  <data name="Servicios.Aplicacion.FrecuenciaFueraDeBanda" xml:space="preserve">
+    <value>A frequência {0} MHz não está dentro da banda {1}.</value>
+  </data>
+  <data name="Servicios.Aplicacion.HoraEnElFuturo" xml:space="preserve">
+    <value>A hora do contacto está no futuro.</value>
+  </data>
+  <data name="Servicios.Aplicacion.IndicativoNoValido" xml:space="preserve">
+    <value>O indicativo «{0}» não tem uma forma válida.</value>
+  </data>
+  <data name="Servicios.Aplicacion.LocalizadorNoValido" xml:space="preserve">
+    <value>O locator «{0}» não é válido. Exemplo: IL18QK.</value>
+  </data>
+  <data name="Servicios.Aplicacion.NoEsIndicativoValido" xml:space="preserve">
+    <value>«{0}» não é um indicativo válido.</value>
+  </data>
+  <data name="Servicios.Aplicacion.NoHaContestado" xml:space="preserve">
+    <value>{0} não respondeu: {1}</value>
+  </data>
+  <data name="Servicios.Aplicacion.NoProcede" xml:space="preserve">
+    <value>não aplicável</value>
+  </data>
+  <data name="Servicios.Aplicacion.SinIdentificador" xml:space="preserve">
+    <value>O contacto que se tenta editar não tem identificador.</value>
+  </data>
+  <data name="Servicios.Aplicacion.TrabajadoAntes.Bandas" xml:space="preserve">
+    <value>Bandas: {0}</value>
+  </data>
+  <data name="Servicios.Aplicacion.TrabajadoAntes.Modos" xml:space="preserve">
+    <value>Modos: {0}</value>
+  </data>
+  <data name="Servicios.Aplicacion.TrabajadoAntes.Nuevo" xml:space="preserve">
+    <value>Indicativo novo, não está no logbook.</value>
+  </data>
+  <data name="Servicios.Aplicacion.TrabajadoAntes.Ultima" xml:space="preserve">
+    <value>, a última em {0} UTC</value>
+  </data>
+  <data name="Servicios.Aplicacion.TrabajadoAntes.UnaVez" xml:space="preserve">
+    <value>Trabalhado antes 1 vez</value>
+  </data>
+  <data name="Servicios.Aplicacion.TrabajadoAntes.Veces" xml:space="preserve">
+    <value>Trabalhado antes {0} vezes</value>
+  </data>
+  <data name="Servicios.Aplicacion.TrabajadoAntes.VecesOMas" xml:space="preserve">
+    <value>Trabalhado antes {0} vezes ou mais</value>
+  </data>
+  <data name="Servicios.Audio.Hora.Configurada" xml:space="preserve">
+    <value>O Windows passará a sincronizar a hora com {0}. O desvio ficou em {1}.</value>
+  </data>
+  <data name="Servicios.Audio.Hora.ConfigurarSinAdministrador" xml:space="preserve">
+    <value>Para configurar a hora do Windows é preciso executar o programa como administrador. Pode fazê-lo você mesmo com três comandos.</value>
+  </data>
+  <data name="Servicios.Audio.Hora.Consola" xml:space="preserve">
+    <value>Abra uma consola como administrador e escreva:</value>
+  </data>
+  <data name="Servicios.Audio.Hora.NoAcepta" xml:space="preserve">
+    <value>O Windows não aceitou configurar a hora com {0}. Pode tentar à mão.</value>
+  </data>
+  <data name="Servicios.Audio.Hora.Puesta" xml:space="preserve">
+    <value>Relógio acertado: estava {0} segundo {1} e ficou em {2}.</value>
+  </data>
+  <data name="Servicios.Audio.Hora.ServicioFalla" xml:space="preserve">
+    <value>Não foi possível configurar o serviço de hora do Windows. Pode fazê-lo à mão.</value>
+  </data>
+  <data name="Servicios.Audio.Hora.SinAdministrador" xml:space="preserve">
+    <value>Para mudar a hora do computador é preciso executar o programa como administrador. Sem isso, a outra forma —e a melhor, porque deixa o computador certo para sempre— é ativar a sincronização de hora do Windows com {0}.</value>
+  </data>
+  <data name="Servicios.Audio.Hora.SinMedida" xml:space="preserve">
+    <value>Não é possível acertar o relógio porque não foi possível medir o desvio: nenhum servidor de hora respondeu. Verifique a ligação à internet e tente novamente.</value>
+  </data>
+  <data name="Servicios.Audio.Hora.WindowsNoDeja" xml:space="preserve">
+    <value>O Windows não deixou mudar a hora do sistema. Pode fazê-lo à mão ou ativar a sincronização de hora do Windows com {0}.</value>
+  </data>
+  <data name="Servicios.Audio.OtraTransmision" xml:space="preserve">
+    <value>Já há outra transmissão no ar (o modem digital?). Termine-a antes de falar.</value>
+  </data>
+  <data name="Servicios.Audio.Reloj.Adelantado" xml:space="preserve">
+    <value>adiantado</value>
+  </data>
+  <data name="Servicios.Audio.Reloj.Atrasado" xml:space="preserve">
+    <value>atrasado</value>
+  </data>
+  <data name="Servicios.Audio.Reloj.Desviado" xml:space="preserve">
+    <value>O relógio está {0} {1}.</value>
+  </data>
+  <data name="Servicios.Audio.Reloj.EnHora" xml:space="preserve">
+    <value>O relógio está certo ({0} {1}).</value>
+  </data>
+  <data name="Servicios.Audio.Reloj.FueraDeVentana" xml:space="preserve">
+    <value>Com este desvio quase nada se descodifica e, sobretudo, transmite-se fora da janela, incomodando os outros sem dar por isso. É preciso sincronizar o relógio antes de transmitir.</value>
+  </data>
+  <data name="Servicios.Audio.Reloj.Regular" xml:space="preserve">
+    <value>Com este desvio o FT8 começa a descodificar pior: convém sincronizar o relógio.</value>
+  </data>
+  <data name="Servicios.Audio.Reloj.SinComprobar" xml:space="preserve">
+    <value>Relógio por verificar.</value>
+  </data>
+  <data name="Servicios.Audio.Reloj.SinComprobarTexto" xml:space="preserve">
+    <value>Não foi possível medir o desvio contra nenhum servidor de hora, por isso não se sabe se o modem está certo. Verifique a ligação à internet e volte a medir.</value>
+  </data>
+  <data name="Servicios.Audio.Reloj.SinMedir" xml:space="preserve">
+    <value>por medir</value>
+  </data>
+  <data name="Servicios.Audio.SinDispositivo" xml:space="preserve">
+    <value>Não se encontra esse dispositivo de som; o rádio pode estar desligado.</value>
+  </data>
+  <data name="Servicios.Audio.SinDispositivosElegidos" xml:space="preserve">
+    <value>Não se encontra algum dos dispositivos de som escolhidos; o rádio pode estar desligado ou desconectado.</value>
+  </data>
+  <data name="Servicios.Audio.SinSalidaAbierta" xml:space="preserve">
+    <value>Não há nenhum dispositivo de saída aberto: não é possível reproduzir.</value>
+  </data>
+  <data name="Servicios.Bandplan.FueraDelPlan" xml:space="preserve">
+    <value>{0} fica fora do plano de bandas de {1}.</value>
+  </data>
+  <data name="Servicios.Bandplan.ModoNoEncaja" xml:space="preserve">
+    <value>{0} é o segmento de {1} de {2}; vai transmitir em {3}.</value>
+  </data>
+  <data name="Servicios.Bandplan.SinLicencia" xml:space="preserve">
+    <value>{0} está no segmento de {1} de {2}, e a sua licença ({3}) não tem acesso a esse segmento.</value>
+  </data>
+  <data name="Servicios.Bandplan.Tramo" xml:space="preserve">
+    <value>{0} em {1}</value>
+  </data>
+  <data name="Servicios.Bandplan.TramoConModulacion" xml:space="preserve">
+    <value>{0} em {1} ({2})</value>
+  </data>
+  <data name="Servicios.Bandplan.Uso.Balizas" xml:space="preserve">
+    <value>balizas</value>
+  </data>
+  <data name="Servicios.Bandplan.Uso.Digital" xml:space="preserve">
+    <value>modos digitais</value>
+  </data>
+  <data name="Servicios.Bandplan.Uso.DigitalAncho" xml:space="preserve">
+    <value>modos digitais de banda larga</value>
+  </data>
+  <data name="Servicios.Bandplan.Uso.Fonia" xml:space="preserve">
+    <value>fonia</value>
+  </data>
+  <data name="Servicios.Bandplan.Uso.FoniaEImagen" xml:space="preserve">
+    <value>fonia e imagem</value>
+  </data>
+  <data name="Servicios.Bandplan.Uso.Reservado" xml:space="preserve">
+    <value>uso reservado</value>
+  </data>
+  <data name="Servicios.Bandplan.Uso.Todos" xml:space="preserve">
+    <value>todos os modos</value>
+  </data>
+  <data name="Servicios.ClubLog.Enviando" xml:space="preserve">
+    <value>A enviar {0} contactos para o Club Log…</value>
+  </data>
+  <data name="Servicios.ClubLog.Respondio" xml:space="preserve">
+    <value>O Club Log respondeu {0}: {1}</value>
+  </data>
+  <data name="Servicios.ClubLog.SinApi" xml:space="preserve">
+    <value>Não há chave de API do Club Log guardada. Pede-se ao suporte do Club Log e guarda-se cifrada em Definições › Contas e serviços.</value>
+  </data>
+  <data name="Servicios.ClubLog.SinDescarga" xml:space="preserve">
+    <value>O Club Log não permite descarregar confirmações.</value>
+  </data>
+  <data name="Servicios.ClubLog.SubirCuaderno" xml:space="preserve">
+    <value>enviar o logbook para o Club Log</value>
+  </data>
+  <data name="Servicios.ClubLog.SubirEnDirecto" xml:space="preserve">
+    <value>enviar um contacto em direto para o Club Log</value>
+  </data>
+  <data name="Servicios.ClubLog.Terminada" xml:space="preserve">
+    <value>Envio para o Club Log concluído.</value>
+  </data>
+  <data name="Servicios.Cluster.ConexionPerdida" xml:space="preserve">
+    <value>* {0}: a ligação perdeu-se ({1}).</value>
+  </data>
+  <data name="Servicios.Cluster.IndicativoRechazado" xml:space="preserve">
+    <value>* {0}: o nó rejeitou o indicativo. Não se volta a tentar.</value>
+  </data>
+  <data name="Servicios.Cluster.IndicativoRechazadoExcepcion" xml:space="preserve">
+    <value>Indicativo rejeitado pelo cluster.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Dl9gtb" xml:space="preserve">
+    <value>Nó alemão, com muitos spots da Europa.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Dxfun" xml:space="preserve">
+    <value>Nó internacional muito concorrido, com muito tráfego de DX.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Ea4rch" xml:space="preserve">
+    <value>Nó espanhol do Radio Club Henares. É o que vem predefinido.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Ea7urc" xml:space="preserve">
+    <value>Outro nó espanhol, caso o primeiro não responda.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Nc7j" xml:space="preserve">
+    <value>Nó americano, bom para ver o que se ouve do outro lado do Atlântico.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Rbn" xml:space="preserve">
+    <value>Não são pessoas: são estações de escuta automática. Muito volume; convém filtrar.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Ve7cc" xml:space="preserve">
+    <value>CC Cluster: admite comandos de filtragem muito finos (set/filter).</value>
+  </data>
+  <data name="Servicios.Cluster.OrdenSinConexion" xml:space="preserve">
+    <value>Não há ligação a {0}: o comando não foi enviado.</value>
+  </data>
+  <data name="Servicios.Cluster.Reintentando" xml:space="preserve">
+    <value>* {0}: nova tentativa dentro de {1:0} s.</value>
+  </data>
+  <data name="Servicios.Cluster.SinDatos" xml:space="preserve">
+    <value>* {0}: sem dados, a ligação é dada por perdida.</value>
+  </data>
+  <data name="Servicios.Concursos.Cabrillo.ConcursoCaracteres" xml:space="preserve">
+    <value>CONTEST só admite letras, números e hífenes: «{0}».</value>
+  </data>
+  <data name="Servicios.Concursos.Cabrillo.ConcursoLargo" xml:space="preserve">
+    <value>CONTEST passa de 32 caracteres: «{0}».</value>
+  </data>
+  <data name="Servicios.Concursos.Cabrillo.DireccionLarga" xml:space="preserve">
+    <value>A morada tem mais de seis linhas; foram escritas as seis primeiras.</value>
+  </data>
+  <data name="Servicios.Concursos.Cabrillo.FaltaTransmisor" xml:space="preserve">
+    <value>Um log de multioperador precisa de CATEGORY-TRANSMITTER e não foi declarado.</value>
+  </data>
+  <data name="Servicios.Concursos.Cabrillo.IndicativoNoAdmitido" xml:space="preserve">
+    <value>O indicativo «{0}» tem caracteres que o Cabrillo não admite.</value>
+  </data>
+  <data name="Servicios.Concursos.Cabrillo.Recortado" xml:space="preserve">
+    <value>{0} passa de {1} caracteres e foi encurtado.</value>
+  </data>
+  <data name="Servicios.Concursos.Cabrillo.SinConcurso" xml:space="preserve">
+    <value>O log não diz a que concurso pertence (CONTEST).</value>
+  </data>
+  <data name="Servicios.Concursos.Cabrillo.SinFrecuencia" xml:space="preserve">
+    <value>O contacto com {0} não tem frequência nem banda reconhecível.</value>
+  </data>
+  <data name="Servicios.Concursos.Cabrillo.SinIndicativo" xml:space="preserve">
+    <value>Há um contacto sem indicativo.</value>
+  </data>
+  <data name="Servicios.Concursos.Juego.Concurso" xml:space="preserve">
+    <value>Concurso</value>
+  </data>
+  <data name="Servicios.Concursos.Juego.Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Servicios.Concursos.Macro.Confirmar" xml:space="preserve">
+    <value>Confirmar</value>
+  </data>
+  <data name="Servicios.Concursos.Macro.Contestar" xml:space="preserve">
+    <value>Responder</value>
+  </data>
+  <data name="Servicios.Concursos.Macro.Despedida" xml:space="preserve">
+    <value>Despedida</value>
+  </data>
+  <data name="Servicios.Concursos.Macro.Informe" xml:space="preserve">
+    <value>Reporte</value>
+  </data>
+  <data name="Servicios.Concursos.Macro.Intercambio" xml:space="preserve">
+    <value>Troca</value>
+  </data>
+  <data name="Servicios.Concursos.Macro.Localizador" xml:space="preserve">
+    <value>Locator</value>
+  </data>
+  <data name="Servicios.Concursos.Macro.MiIndicativo" xml:space="preserve">
+    <value>Meu indicativo</value>
+  </data>
+  <data name="Servicios.Concursos.Macro.PedirIndicativo" xml:space="preserve">
+    <value>Pedir indicativo</value>
+  </data>
+  <data name="Servicios.Concursos.Macro.PedirIntercambio" xml:space="preserve">
+    <value>Pedir troca</value>
+  </data>
+  <data name="Servicios.Concursos.Macro.Repetir" xml:space="preserve">
+    <value>Repetir</value>
+  </data>
+  <data name="Servicios.Concursos.Macro.SuIndicativo" xml:space="preserve">
+    <value>Indicativo dele</value>
+  </data>
+  <data name="Servicios.Concursos.Multiplicador.Campo" xml:space="preserve">
+    <value>Campo</value>
+  </data>
+  <data name="Servicios.Concursos.Multiplicador.En" xml:space="preserve">
+    <value>{0} {1} em {2}</value>
+  </data>
+  <data name="Servicios.Concursos.Multiplicador.Estado" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="Servicios.Concursos.Multiplicador.Prefijo" xml:space="preserve">
+    <value>Prefixo</value>
+  </data>
+  <data name="Servicios.Concursos.Multiplicador.Provincia" xml:space="preserve">
+    <value>Província</value>
+  </data>
+  <data name="Servicios.Concursos.Multiplicador.Seccion" xml:space="preserve">
+    <value>Secção</value>
+  </data>
+  <data name="Servicios.Concursos.Multiplicador.Sociedad" xml:space="preserve">
+    <value>Associação</value>
+  </data>
+  <data name="Servicios.Concursos.Multiplicador.ZonaCq" xml:space="preserve">
+    <value>Zona CQ</value>
+  </data>
+  <data name="Servicios.Concursos.Multiplicador.ZonaItu" xml:space="preserve">
+    <value>Zona ITU</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.Banda" xml:space="preserve">
+    <value>Banda em que estou</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.Call" xml:space="preserve">
+    <value>Indicativo do correspondente</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.Concurso" xml:space="preserve">
+    <value>Concurso em curso</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.Fecha" xml:space="preserve">
+    <value>Data UTC, em aaaa-mm-dd</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.Freq" xml:space="preserve">
+    <value>Frequência em MHz</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.Hora" xml:space="preserve">
+    <value>Hora UTC, em HHMM</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.Intercambio" xml:space="preserve">
+    <value>Troca completa que envio</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.IntercambioR" xml:space="preserve">
+    <value>Troca recebida</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.Locator" xml:space="preserve">
+    <value>Locator do correspondente</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.MiCall" xml:space="preserve">
+    <value>O meu indicativo</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.MiLocator" xml:space="preserve">
+    <value>O meu locator</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.MiNombre" xml:space="preserve">
+    <value>O meu nome</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.MiQth" xml:space="preserve">
+    <value>A minha localidade</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.Modo" xml:space="preserve">
+    <value>Modo em que estou</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.Nombre" xml:space="preserve">
+    <value>Nome do correspondente</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.Qth" xml:space="preserve">
+    <value>Localidade do correspondente</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.Rst" xml:space="preserve">
+    <value>Reporte que envio</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.RstR" xml:space="preserve">
+    <value>Reporte que recebi</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.Serie" xml:space="preserve">
+    <value>Número de série a enviar</value>
+  </data>
+  <data name="Servicios.Concursos.Sustitucion.SerieR" xml:space="preserve">
+    <value>Número de série recebido</value>
+  </data>
+  <data name="Servicios.ConsultarIndicativo" xml:space="preserve">
+    <value>consultar {0} no {1}</value>
+  </data>
+  <data name="Servicios.Correo.Cortado" xml:space="preserve">
+    <value>A ligação ao servidor de e-mail foi cortada: {0}</value>
+  </data>
+  <data name="Servicios.Correo.DestinatarioNoValido" xml:space="preserve">
+    <value>O endereço do destinatário não é válido: «{0}».</value>
+  </data>
+  <data name="Servicios.Correo.DireccionNoAceptada" xml:space="preserve">
+    <value>O servidor não aceita o endereço {0}: {1}</value>
+  </data>
+  <data name="Servicios.Correo.FaltaContrasena" xml:space="preserve">
+    <value>Falta a palavra-passe do e-mail: guarde-a em Definições › E-mail das QSL.</value>
+  </data>
+  <data name="Servicios.Correo.FaltaServidor" xml:space="preserve">
+    <value>Falta o servidor de e-mail de saída (Definições › E-mail das QSL).</value>
+  </data>
+  <data name="Servicios.Correo.HaCerrado" xml:space="preserve">
+    <value>O servidor de e-mail fechou a ligação.</value>
+  </data>
+  <data name="Servicios.Correo.HaContestado" xml:space="preserve">
+    <value>O servidor respondeu {0} a {1}: {2}</value>
+  </data>
+  <data name="Servicios.Correo.Interminable" xml:space="preserve">
+    <value>O servidor envia uma resposta interminável.</value>
+  </data>
+  <data name="Servicios.Correo.LineaLarga" xml:space="preserve">
+    <value>O servidor envia uma linha demasiado longa.</value>
+  </data>
+  <data name="Servicios.Correo.NoContesta" xml:space="preserve">
+    <value>O servidor {0}:{1} não responde.</value>
+  </data>
+  <data name="Servicios.Correo.NoContestaTiempo" xml:space="preserve">
+    <value>O servidor de e-mail não responde (tempo esgotado).</value>
+  </data>
+  <data name="Servicios.Correo.NoEsSmtp" xml:space="preserve">
+    <value>Resposta do servidor que não é SMTP: «{0}». A porta e a cifra estão corretas?</value>
+  </data>
+  <data name="Servicios.Correo.NoRecibeDatos" xml:space="preserve">
+    <value>O servidor de e-mail não recebe dados (tempo esgotado).</value>
+  </data>
+  <data name="Servicios.Correo.NoSeHaPodidoCifrar" xml:space="preserve">
+    <value>Não foi possível cifrar a ligação a {0}: {1}</value>
+  </data>
+  <data name="Servicios.Correo.NoSePuedeConectar" xml:space="preserve">
+    <value>Não é possível ligar a {0}:{1}: {2}</value>
+  </data>
+  <data name="Servicios.Correo.NoTerminaDeNegociar" xml:space="preserve">
+    <value>O servidor {0} não termina de negociar a cifra. É a porta correta para essa cifra?</value>
+  </data>
+  <data name="Servicios.Correo.PuertoNoValido" xml:space="preserve">
+    <value>A porta {0} não é válida.</value>
+  </data>
+  <data name="Servicios.Correo.Rechaza535" xml:space="preserve">
+    <value>O servidor rejeita o utilizador ou a palavra-passe (535). No Gmail, Outlook ou Yahoo é preciso uma «palavra-passe de aplicação», não a habitual.</value>
+  </data>
+  <data name="Servicios.Correo.RemitenteNoValido" xml:space="preserve">
+    <value>O endereço do remetente não é válido: «{0}».</value>
+  </data>
+  <data name="Servicios.Correo.SaltosDeLinea" xml:space="preserve">
+    <value>Comando SMTP com quebras de linha: não é enviado.</value>
+  </data>
+  <data name="Servicios.Correo.Saludo" xml:space="preserve">
+    <value>saudação</value>
+  </data>
+  <data name="Servicios.Correo.SinCifrar" xml:space="preserve">
+    <value>A palavra-passe não é enviada por uma ligação sem cifra. Escolha STARTTLS ou SSL direto.</value>
+  </data>
+  <data name="Servicios.Correo.SinFormaDeIdentificarse" xml:space="preserve">
+    <value>O servidor não oferece uma forma de autenticação que o programa saiba usar (PLAIN ou LOGIN).</value>
+  </data>
+  <data name="Servicios.Correo.SinStartTls" xml:space="preserve">
+    <value>O servidor {0} não oferece STARTTLS na porta {1}. Experimente «SSL direto» na 465.</value>
+  </data>
+  <data name="Servicios.Diplomas.BandasNoCoinciden" xml:space="preserve">
+    <value>As bandas do diploma e as da variante não coincidem em nenhuma.</value>
+  </data>
+  <data name="Servicios.Diplomas.Continente" xml:space="preserve">
+    <value>continente {0}</value>
+  </data>
+  <data name="Servicios.Diplomas.DiplomaNoEsta" xml:space="preserve">
+    <value>O diploma «{0}» não está no catálogo.</value>
+  </data>
+  <data name="Servicios.Diplomas.EnBanda" xml:space="preserve">
+    <value>em {0}</value>
+  </data>
+  <data name="Servicios.Diplomas.EsNuevo" xml:space="preserve">
+    <value>{0}{1}: {2} é novo{3}.</value>
+  </data>
+  <data name="Servicios.Diplomas.FaltaColumna" xml:space="preserve">
+    <value>Não é calculado: este logbook ainda não guarda a coluna «{0}», que é de onde sai a referência deste diploma.</value>
+  </data>
+  <data name="Servicios.Diplomas.LoValidaElGestor" xml:space="preserve">
+    <value>Este diploma é validado pelo seu gestor com a sua própria base de dados, que o logbook não pode consultar: conta-se o confirmado por qualquer via, que é um limite inferior do que realmente tem.</value>
+  </data>
+  <data name="Servicios.Diplomas.NoEnCatalogo" xml:space="preserve">
+    <value>O diploma ou a variante não estão no catálogo.</value>
+  </data>
+  <data name="Servicios.Diplomas.NoSeCalcula" xml:space="preserve">
+    <value>Não é calculado: o diploma conta algo que o logbook não guarda.</value>
+  </data>
+  <data name="Servicios.Diplomas.NoSeCalculaPor" xml:space="preserve">
+    <value>Não é calculado: {0}.</value>
+  </data>
+  <data name="Servicios.Diplomas.Prefijo" xml:space="preserve">
+    <value>prefixo {0}</value>
+  </data>
+  <data name="Servicios.Diplomas.ProgresoRecalculado" xml:space="preserve">
+    <value>Progresso recalculado.</value>
+  </data>
+  <data name="Servicios.Diplomas.SinClase" xml:space="preserve">
+    <value>O diploma «{0}» não tem nenhuma classe chamada «{1}».</value>
+  </data>
+  <data name="Servicios.Diplomas.SinReferencias" xml:space="preserve">
+    <value>O catálogo não traz nenhuma referência deste diploma, por isso o progresso fica a zero mesmo que o tenha trabalhado.</value>
+  </data>
+  <data name="Servicios.Diplomas.TrabajadoSinConfirmar" xml:space="preserve">
+    <value>{0}{1}: {2} está trabalhado{3} mas sem confirmar.</value>
+  </data>
+  <data name="Servicios.Diplomas.YaNoEsta" xml:space="preserve">
+    <value>O diploma ou a classe já não estão no catálogo.</value>
+  </data>
+  <data name="Servicios.Diplomas.ZonaCq" xml:space="preserve">
+    <value>zona CQ {0}</value>
+  </data>
+  <data name="Servicios.Diplomas.ZonaItu" xml:space="preserve">
+    <value>zona ITU {0}</value>
+  </data>
+  <data name="Servicios.Emparejando" xml:space="preserve">
+    <value>A emparelhar as confirmações com o logbook…</value>
+  </data>
+  <data name="Servicios.Eqsl.Acepto" xml:space="preserve">
+    <value>O eQSL aceitou {0} de {1} contactos.</value>
+  </data>
+  <data name="Servicios.Eqsl.DescargandoBuzon" xml:space="preserve">
+    <value>A descarregar a caixa de entrada do eQSL…</value>
+  </data>
+  <data name="Servicios.Eqsl.DescargarBuzon" xml:space="preserve">
+    <value>descarregar a caixa de entrada do eQSL</value>
+  </data>
+  <data name="Servicios.Eqsl.Devolvio" xml:space="preserve">
+    <value>O eQSL devolveu {0} confirmações.</value>
+  </data>
+  <data name="Servicios.Eqsl.Enviando" xml:space="preserve">
+    <value>A enviar {0} contactos para o eQSL…</value>
+  </data>
+  <data name="Servicios.Eqsl.PedirBuzon" xml:space="preserve">
+    <value>pedir a caixa de entrada do eQSL</value>
+  </data>
+  <data name="Servicios.Eqsl.PreparandoBuzon" xml:space="preserve">
+    <value>A pedir ao eQSL que prepare a caixa de entrada…</value>
+  </data>
+  <data name="Servicios.Eqsl.RespondioAlFichero" xml:space="preserve">
+    <value>O eQSL respondeu {0} ao pedir o ficheiro.</value>
+  </data>
+  <data name="Servicios.Eqsl.SinEnlace" xml:space="preserve">
+    <value>O eQSL não devolveu a ligação para o ficheiro da caixa de entrada. Normalmente significa que o utilizador ou a palavra-passe não estão corretos, ou que não havia nada para descarregar.</value>
+  </data>
+  <data name="Servicios.Eqsl.Subir" xml:space="preserve">
+    <value>enviar para o eQSL</value>
+  </data>
+  <data name="Servicios.Impresion.Diploma.Asunto" xml:space="preserve">
+    <value>{{diploma}} n.º {{numero}} - {{indicativo}}</value>
+  </data>
+  <data name="Servicios.Impresion.Diploma.Imagen" xml:space="preserve">
+    <value>Imagem</value>
+  </data>
+  <data name="Servicios.Impresion.Diploma.MiDiploma" xml:space="preserve">
+    <value>O meu diploma</value>
+  </data>
+  <data name="Servicios.Impresion.Diploma.TextoDelCorreo" xml:space="preserve">
+    <value>Caro/a {{nombre}} ({{indicativo}}),
+
+Junto enviamos o diploma «{{diploma}}» n.º {{numero}}, categoria {{categoria}}.
+
+Parabéns e 73,
+{{gestor}}
+{{miindicativo}}</value>
+  </data>
+  <data name="Servicios.Impresion.Etiqueta.Via" xml:space="preserve">
+    <value>{0} via {1}</value>
+  </data>
+  <data name="Servicios.Impresion.Etiquetas.PorHoja" xml:space="preserve">
+    <value>Avery {0} por folha ({1:0.0} × {2:0.0} mm)</value>
+  </data>
+  <data name="Servicios.Impresion.Etiquetas.PorHojaCarta" xml:space="preserve">
+    <value>Avery {0} por folha, Carta ({1:0.0} × {2:0.0} mm)</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.Categoria" xml:space="preserve">
+    <value>Categoria</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.ConcedidoA" xml:space="preserve">
+    <value>Concedido a (alt.)</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.Emisor" xml:space="preserve">
+    <value>Emissor</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.Encabezado" xml:space="preserve">
+    <value>Cabeçalho</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.Fecha" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.Firma" xml:space="preserve">
+    <value>Assinatura</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.Gestor" xml:space="preserve">
+    <value>Gestor</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.Indicativo" xml:space="preserve">
+    <value>Indicativo</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.Logo" xml:space="preserve">
+    <value>Logótipo</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.Motivo" xml:space="preserve">
+    <value>Motivo</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.Nombre" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.NombreDelDiploma" xml:space="preserve">
+    <value>Nome do diploma</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.Numero" xml:space="preserve">
+    <value>Número</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.NumeroYFecha" xml:space="preserve">
+    <value>Número e data</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.OtorgadoA" xml:space="preserve">
+    <value>Atribuído a</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.RotuloDeLaFecha" xml:space="preserve">
+    <value>Rótulo da data</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.RotuloDelGestor" xml:space="preserve">
+    <value>Rótulo do gestor</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.SeCertifica" xml:space="preserve">
+    <value>Certifica-se</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Elemento.SeConcedeA" xml:space="preserve">
+    <value>Concedido a</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Plantilla.Atlantico" xml:space="preserve">
+    <value>NODISLA atlântico, com tabela (A4 horizontal)</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Plantilla.Clasico" xml:space="preserve">
+    <value>NODISLA clássico (A4 horizontal)</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Plantilla.Sobrio" xml:space="preserve">
+    <value>Certificado sóbrio (A4 vertical)</value>
+  </data>
+  <data name="Servicios.Impresion.Fabrica.Plantilla.Volcan" xml:space="preserve">
+    <value>Vulcão (Carta horizontal)</value>
+  </data>
+  <data name="Servicios.Impresion.ImagenNoValida" xml:space="preserve">
+    <value>A imagem tem de ser PNG, JPG, BMP, GIF ou TIFF.</value>
+  </data>
+  <data name="Servicios.Impresion.NingunContacto" xml:space="preserve">
+    <value>Nenhum QSO cumpre os critérios da seleção.</value>
+  </data>
+  <data name="Servicios.Impresion.NoCabe" xml:space="preserve">
+    <value>O modelo «{0}» não cabe na sua folha: reveja margens e espaçamentos.</value>
+  </data>
+  <data name="Servicios.Impresion.NoEsPlantilla" xml:space="preserve">
+    <value>O ficheiro não é um modelo exportado: falta-lhe plantilla.json.</value>
+  </data>
+  <data name="Servicios.Impresion.PlantillaDanada" xml:space="preserve">
+    <value>O modelo do ficheiro está danificado.</value>
+  </data>
+  <data name="Servicios.Impresion.PlantillaImportada" xml:space="preserve">
+    <value>Modelo importado</value>
+  </data>
+  <data name="Servicios.Impresion.PlantillaVacia" xml:space="preserve">
+    <value>O modelo do ficheiro está vazio.</value>
+  </data>
+  <data name="Servicios.Impresion.Qsl.Campo.BandaFrecuencia" xml:space="preserve">
+    <value>Banda / frequência</value>
+  </data>
+  <data name="Servicios.Impresion.Qsl.Campo.Fecha" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="Servicios.Impresion.Qsl.Campo.HoraUtc" xml:space="preserve">
+    <value>Hora UTC</value>
+  </data>
+  <data name="Servicios.Impresion.Qsl.Campo.MiIndicativo" xml:space="preserve">
+    <value>O meu indicativo</value>
+  </data>
+  <data name="Servicios.Impresion.Qsl.Campo.MiLocalizador" xml:space="preserve">
+    <value>O meu locator</value>
+  </data>
+  <data name="Servicios.Impresion.Qsl.Campo.MiNombreYQth" xml:space="preserve">
+    <value>O meu nome e QTH</value>
+  </data>
+  <data name="Servicios.Impresion.Qsl.Campo.Modo" xml:space="preserve">
+    <value>Modo</value>
+  </data>
+  <data name="Servicios.Impresion.Qsl.MiTarjeta" xml:space="preserve">
+    <value>O meu cartão</value>
+  </data>
+  <data name="Servicios.Impresion.Qsl.NodislaClasica" xml:space="preserve">
+    <value>NODISLA clássico</value>
+  </data>
+  <data name="Servicios.Impresion.Qsl.Texto" xml:space="preserve">
+    <value>Texto</value>
+  </data>
+  <data name="Servicios.Impresion.Tarjeta.Banda" xml:space="preserve">
+    <value>Banda</value>
+  </data>
+  <data name="Servicios.Impresion.Tarjeta.Confirmando" xml:space="preserve">
+    <value>Confirmando QSO com</value>
+  </data>
+  <data name="Servicios.Impresion.Tarjeta.Fecha" xml:space="preserve">
+    <value>Data (UTC)</value>
+  </data>
+  <data name="Servicios.Impresion.Tarjeta.Gracias" xml:space="preserve">
+    <value>Obrigado pelo QSO!  73</value>
+  </data>
+  <data name="Servicios.Impresion.Tarjeta.Hora" xml:space="preserve">
+    <value>Hora</value>
+  </data>
+  <data name="Servicios.Impresion.Tarjeta.Modo" xml:space="preserve">
+    <value>Modo</value>
+  </data>
+  <data name="Servicios.Impresion.Tarjeta.Satelite" xml:space="preserve">
+    <value>Via satélite {0}</value>
+  </data>
+  <data name="Servicios.Impresion.Tarjeta.SateliteModo" xml:space="preserve">
+    <value>Via satélite {0}, modo {1}</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.bandas" xml:space="preserve">
+    <value>Bandas dos QSO</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.categoria" xml:space="preserve">
+    <value>Categoria, nível ou variante</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.diploma" xml:space="preserve">
+    <value>Nome do diploma</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.entidad" xml:space="preserve">
+    <value>Quem concede o diploma</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.fecha" xml:space="preserve">
+    <value>Data de emissão, «30 de septiembre de 2026»</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.fechacorta" xml:space="preserve">
+    <value>Data de emissão, 30/09/2026</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.fechaiso" xml:space="preserve">
+    <value>Data de emissão, 2026-09-30</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.gestor" xml:space="preserve">
+    <value>Nome do gestor que assina</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.indicativo" xml:space="preserve">
+    <value>Indicativo de quem recebe o diploma</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.miindicativo" xml:space="preserve">
+    <value>O meu indicativo</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.milocalizador" xml:space="preserve">
+    <value>O meu locator</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.minombre" xml:space="preserve">
+    <value>O meu nome</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.miqth" xml:space="preserve">
+    <value>O meu QTH</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.modos" xml:space="preserve">
+    <value>Modos dos QSO</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.nombre" xml:space="preserve">
+    <value>O seu nome</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.numero" xml:space="preserve">
+    <value>Número do diploma, com prefixo e zeros</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.primerqso" xml:space="preserve">
+    <value>Data do primeiro QSO da lista</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.qsos" xml:space="preserve">
+    <value>Número de QSO</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.referencias" xml:space="preserve">
+    <value>Número de referências</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.serie" xml:space="preserve">
+    <value>Série da numeração</value>
+  </data>
+  <data name="Servicios.Impresion.VariableDiploma.ultimoqso" xml:space="preserve">
+    <value>Data do último QSO da lista</value>
+  </data>
+  <data name="Servicios.Impresion.VariableFila.banda" xml:space="preserve">
+    <value>Banda</value>
+  </data>
+  <data name="Servicios.Impresion.VariableFila.fecha" xml:space="preserve">
+    <value>Data AAAA-MM-DD (UTC)</value>
+  </data>
+  <data name="Servicios.Impresion.VariableFila.hora" xml:space="preserve">
+    <value>Hora HH:MM (UTC)</value>
+  </data>
+  <data name="Servicios.Impresion.VariableFila.indicativo" xml:space="preserve">
+    <value>Indicativo do QSO</value>
+  </data>
+  <data name="Servicios.Impresion.VariableFila.modo" xml:space="preserve">
+    <value>Modo</value>
+  </data>
+  <data name="Servicios.Impresion.VariableFila.n" xml:space="preserve">
+    <value>Número da linha</value>
+  </data>
+  <data name="Servicios.Impresion.VariableFila.nombrereferencia" xml:space="preserve">
+    <value>Nome da referência</value>
+  </data>
+  <data name="Servicios.Impresion.VariableFila.referencia" xml:space="preserve">
+    <value>Referência</value>
+  </data>
+  <data name="Servicios.Impresion.VariableFila.rst" xml:space="preserve">
+    <value>Reporte</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.banda" xml:space="preserve">
+    <value>Banda (20m, 2m…)</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.contactos" xml:space="preserve">
+    <value>Lista de todos os QSO do e-mail (só no e-mail)</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.fecha" xml:space="preserve">
+    <value>Data do QSO, AAAA-MM-DD (UTC)</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.frecuencia" xml:space="preserve">
+    <value>Frequência em MHz</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.hora" xml:space="preserve">
+    <value>Hora do QSO, HH:MM (UTC)</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.indicativo" xml:space="preserve">
+    <value>Indicativo do correspondente</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.mensaje" xml:space="preserve">
+    <value>Mensagem QSL do QSO</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.miantena" xml:space="preserve">
+    <value>A minha antena</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.micq" xml:space="preserve">
+    <value>A minha zona CQ</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.miequipo" xml:space="preserve">
+    <value>O meu equipamento</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.miindicativo" xml:space="preserve">
+    <value>O meu indicativo</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.miitu" xml:space="preserve">
+    <value>A minha zona ITU</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.milocalizador" xml:space="preserve">
+    <value>O meu locator</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.minombre" xml:space="preserve">
+    <value>O meu nome</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.miqth" xml:space="preserve">
+    <value>O meu QTH (localidade, distrito)</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.modo" xml:space="preserve">
+    <value>Modo (SSB, FT8…)</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.nombre" xml:space="preserve">
+    <value>Nome do correspondente</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.potencia" xml:space="preserve">
+    <value>A minha potência em W</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.pse" xml:space="preserve">
+    <value>«PSE QSL» ou «TNX QSL» conforme já tenha chegado o dele</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.rst" xml:space="preserve">
+    <value>Reporte enviado</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.rstrecibido" xml:space="preserve">
+    <value>Reporte recebido</value>
+  </data>
+  <data name="Servicios.Impresion.VariableQsl.satelite" xml:space="preserve">
+    <value>Satélite, se houve</value>
+  </data>
+  <data name="Servicios.Impresion.Via.Buro" xml:space="preserve">
+    <value>bureau</value>
+  </data>
+  <data name="Servicios.Impresion.Via.Directo" xml:space="preserve">
+    <value>direta</value>
+  </data>
+  <data name="Servicios.Impresion.Via.Electronico" xml:space="preserve">
+    <value>eletrónica</value>
+  </data>
+  <data name="Servicios.Impresion.Via.Gestor" xml:space="preserve">
+    <value>manager</value>
+  </data>
+  <data name="Servicios.Informes.AvisoDePortapapeles" xml:space="preserve">
+    <value>O relatório completo não cabia na ligação e foi copiado para a área de transferência. Apague este parágrafo e cole-o aqui (Ctrl+V).</value>
+  </data>
+  <data name="Servicios.Integraciones.Desconocido" xml:space="preserve">
+    <value>desconhecido</value>
+  </data>
+  <data name="Servicios.Integraciones.ModoEspecial" xml:space="preserve">
+    <value>modo especial {0}</value>
+  </data>
+  <data name="Servicios.Lotw.AvisoDeLaFraseDePaso" xml:space="preserve">
+    <value>Se o seu certificado do LoTW tiver frase-passe, tenha em conta que o TQSL só a aceita pela linha de comandos: enquanto dura o envio, a frase fica visível na lista de processos do computador. Aqui é guardada cifrada e nunca é escrita no registo de atividade, mas essa janela não a podemos fechar nós.</value>
+  </data>
+  <data name="Servicios.Lotw.DescargarInforme" xml:space="preserve">
+    <value>descarregar o relatório do LoTW</value>
+  </data>
+  <data name="Servicios.Lotw.Devolvio" xml:space="preserve">
+    <value>O LoTW devolveu {0} confirmações.</value>
+  </data>
+  <data name="Servicios.Lotw.Firmando" xml:space="preserve">
+    <value>A assinar e enviar com o TQSL…</value>
+  </data>
+  <data name="Servicios.Lotw.Leyendo" xml:space="preserve">
+    <value>A ler o relatório do LoTW…</value>
+  </data>
+  <data name="Servicios.Lotw.NoEsAdif" xml:space="preserve">
+    <value>O LoTW não devolveu um ficheiro ADIF. Normalmente, o utilizador ou a palavra-passe não estão corretos.</value>
+  </data>
+  <data name="Servicios.Lotw.PidiendoNuevas" xml:space="preserve">
+    <value>A pedir ao LoTW as confirmações novas…</value>
+  </data>
+  <data name="Servicios.Lotw.PidiendoTodo" xml:space="preserve">
+    <value>A pedir ao LoTW o relatório completo; pode demorar vários minutos…</value>
+  </data>
+  <data name="Servicios.Lotw.Preparando" xml:space="preserve">
+    <value>A preparar o ficheiro para o TQSL…</value>
+  </data>
+  <data name="Servicios.Lotw.SinTqsl" xml:space="preserve">
+    <value>Não é possível enviar para o LoTW porque o TQSL não está instalado neste computador. O LoTW exige assinar os contactos com o certificado da ARRL: instale o Trusted QSL ou indique onde está o tqsl.exe no cartão do LoTW (Definições › Contas e serviços).</value>
+  </data>
+  <data name="Servicios.Lotw.SinUbicacion" xml:space="preserve">
+    <value>Não é possível enviar para o LoTW porque não foi escolhida uma localização de estação do TQSL. É o nome que lhe deu no TQSL, não o seu indicativo.</value>
+  </data>
+  <data name="Servicios.Lotw.Terminada" xml:space="preserve">
+    <value>Envio para o LoTW concluído.</value>
+  </data>
+  <data name="Servicios.Mapa.Atribucion" xml:space="preserve">
+    <value>Mosaicos © contribuidores do OpenStreetMap</value>
+  </data>
+  <data name="Servicios.Mapa.SinFondo" xml:space="preserve">
+    <value>Sem mapa de fundo: não foi possível carregar os mosaicos. Os QSO e a linha cinzenta continuam visíveis.</value>
+  </data>
+  <data name="Servicios.Mapa.YMasEnLaZona" xml:space="preserve">
+    <value>{0} e mais {1} nesta zona</value>
+  </data>
+  <data name="Servicios.Modos.CodigoDePruebas" xml:space="preserve">
+    <value>código de teste</value>
+  </data>
+  <data name="Servicios.Modos.CodigoDePruebasQ65" xml:space="preserve">
+    <value>código de teste: não interopera com ninguém</value>
+  </data>
+  <data name="Servicios.Modos.Ft8.Angulos" xml:space="preserve">
+    <value>«{0}» tem entre parênteses angulares algo que não é um indicativo (ou um indicativo por resolver, «&lt;...&gt;»): não se pode transmitir porque não se sabe que indicativo é.</value>
+  </data>
+  <data name="Servicios.Modos.Ft8.IndicativoLargo" xml:space="preserve">
+    <value>O indicativo «{0}» tem {1} caracteres e o protocolo admite no máximo {2}: não se pode transmitir.</value>
+  </data>
+  <data name="Servicios.Modos.Ft8.NoCabeLargo" xml:space="preserve">
+    <value>«{0}» não é uma mensagem padrão (indicativos mais locator, reporte, RRR, RR73 ou 73) e como texto livre não cabe: o texto livre admite {1} caracteres (letras, algarismos, espaço e + - . / ?) e esta tem {2}.</value>
+  </data>
+  <data name="Servicios.Modos.Ft8.NoCabeRaros" xml:space="preserve">
+    <value>«{0}» não é uma mensagem padrão (indicativos mais locator, reporte, RRR, RR73 ou 73) e como texto livre não cabe: o texto livre admite {1} caracteres (letras, algarismos, espaço e + - . / ?) e além disso tem caracteres que não se podem transmitir ({2}).</value>
+  </data>
+  <data name="Servicios.Modos.Jt65.CaracterNoValido" xml:space="preserve">
+    <value>O caráter '{0}' não existe no alfabeto do texto livre.</value>
+  </data>
+  <data name="Servicios.Modos.Jt65.TextoLibreLargo" xml:space="preserve">
+    <value>Não é uma mensagem estruturada e como texto livre passa de {0} caracteres.</value>
+  </data>
+  <data name="Servicios.Modos.MensajeVacio" xml:space="preserve">
+    <value>A mensagem está vazia.</value>
+  </data>
+  <data name="Servicios.Modos.MensajeVacioJt" xml:space="preserve">
+    <value>A mensagem está vazia.</value>
+  </data>
+  <data name="Servicios.Modos.Msk144.DosIndicativos" xml:space="preserve">
+    <value>A mensagem curta precisa dos dois indicativos.</value>
+  </data>
+  <data name="Servicios.Modos.Msk144.InformeNoValido" xml:space="preserve">
+    <value>O reporte «{0}» não é um dos dezasseis da mensagem curta.</value>
+  </data>
+  <data name="Servicios.Modos.NoPuedeEmitir" xml:space="preserve">
+    <value>Este modem não pode transmitir: não lhe foi dada saída de áudio nem vigilante de PTT.</value>
+  </data>
+  <data name="Servicios.Modos.Wspr.Forma" xml:space="preserve">
+    <value>Uma mensagem de WSPR é «indicativo locator potência», «indicativo/sufixo potência» ou «&lt;indicativo&gt; locator6 potência».</value>
+  </data>
+  <data name="Servicios.Modos.Wspr.IndicativoTipo1" xml:space="preserve">
+    <value>O indicativo «{0}» não cabe numa mensagem de tipo 1.</value>
+  </data>
+  <data name="Servicios.Modos.Wspr.IndicativoTipo2" xml:space="preserve">
+    <value>O indicativo «{0}» não cabe numa mensagem de tipo 2: é preciso um prefixo de até três caracteres ou um sufixo de um caráter ou de dois algarismos.</value>
+  </data>
+  <data name="Servicios.Modos.Wspr.Localizador4" xml:space="preserve">
+    <value>O locator «{0}» não é válido: são precisos quatro caracteres, de AA00 a RR99.</value>
+  </data>
+  <data name="Servicios.Modos.Wspr.Localizador6" xml:space="preserve">
+    <value>O locator «{0}» não é válido: são precisos seis caracteres.</value>
+  </data>
+  <data name="Servicios.Modos.Wspr.Potencia" xml:space="preserve">
+    <value>A potência {0} dBm não é das que o WSPR admite.</value>
+  </data>
+  <data name="Servicios.Modos.Wspr.PotenciaLista" xml:space="preserve">
+    <value>A potência {0} dBm não é das que o WSPR admite (0, 3, 7, 10, 13... 60).</value>
+  </data>
+  <data name="Servicios.Modos.Wspr.PotenciaNoNumero" xml:space="preserve">
+    <value>A potência «{0}» não é um número.</value>
+  </data>
+  <data name="Servicios.Modos.Wspr.SinForma" xml:space="preserve">
+    <value>O indicativo «{0}» não tem forma de indicativo.</value>
+  </data>
+  <data name="Servicios.NoConfigurado" xml:space="preserve">
+    <value>O {0} não está configurado: falta o utilizador ou a palavra-passe.</value>
+  </data>
+  <data name="Servicios.Propagacion.Edad.Dias" xml:space="preserve">
+    <value>{0} dias</value>
+  </data>
+  <data name="Servicios.Propagacion.Edad.Horas" xml:space="preserve">
+    <value>{0} h</value>
+  </data>
+  <data name="Servicios.Propagacion.Edad.HorasYMinutos" xml:space="preserve">
+    <value>{0} h {1} min</value>
+  </data>
+  <data name="Servicios.Propagacion.Edad.MenosDeUnMinuto" xml:space="preserve">
+    <value>menos de um minuto</value>
+  </data>
+  <data name="Servicios.Propagacion.Edad.Minutos" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="Servicios.Propagacion.Edad.UnDia" xml:space="preserve">
+    <value>1 dia</value>
+  </data>
+  <data name="Servicios.Propagacion.IndicesFrescos" xml:space="preserve">
+    <value>Índices de {0} UTC, há {1} ({2}).</value>
+  </data>
+  <data name="Servicios.Propagacion.IndicesSinRed" xml:space="preserve">
+    <value>Sem rede: índices guardados de {0} UTC, há {1} ({2}).</value>
+  </data>
+  <data name="Servicios.Propagacion.IndicesSinRefrescar" xml:space="preserve">
+    <value>Índices sem atualizar há {0}: os últimos são de {1} UTC, há {2} ({3}).</value>
+  </data>
+  <data name="Servicios.Propagacion.MotorAproximacion" xml:space="preserve">
+    <value>Aproximação NODISLA (MUF/LUF, não é VOACAP)</value>
+  </data>
+  <data name="Servicios.Propagacion.MotorIturHfProp" xml:space="preserve">
+    <value>ITURHFProp (UIT-R P.533, processo externo)</value>
+  </data>
+  <data name="Servicios.Qrz.Acepto" xml:space="preserve">
+    <value>O QRZ.com aceitou {0} de {1} contactos.</value>
+  </data>
+  <data name="Servicios.Qrz.ClaveNoAceptada" xml:space="preserve">
+    <value>O QRZ.com não aceitou a chave do logbook.</value>
+  </data>
+  <data name="Servicios.Qrz.ComprobarCuaderno" xml:space="preserve">
+    <value>verificar o logbook do QRZ.com</value>
+  </data>
+  <data name="Servicios.Qrz.Descargando" xml:space="preserve">
+    <value>A descarregar do logbook do QRZ.com (página {0})…</value>
+  </data>
+  <data name="Servicios.Qrz.DescargarCuaderno" xml:space="preserve">
+    <value>descarregar do logbook do QRZ.com</value>
+  </data>
+  <data name="Servicios.Qrz.Devolvio" xml:space="preserve">
+    <value>O QRZ.com devolveu {0} confirmações.</value>
+  </data>
+  <data name="Servicios.Qrz.NoDevolvioCuaderno" xml:space="preserve">
+    <value>O QRZ.com não devolveu o logbook: {0}</value>
+  </data>
+  <data name="Servicios.Qrz.NombreDelCuaderno" xml:space="preserve">
+    <value>Logbook do QRZ.com</value>
+  </data>
+  <data name="Servicios.Qrz.NoSeEntiende" xml:space="preserve">
+    <value>O QRZ.com respondeu algo que não se entende.</value>
+  </data>
+  <data name="Servicios.Qrz.RespondioTexto" xml:space="preserve">
+    <value>O QRZ.com respondeu «{0}».</value>
+  </data>
+  <data name="Servicios.Qrz.SinClaveDeCuaderno" xml:space="preserve">
+    <value>Não há chave do logbook do QRZ.com guardada. Gera-se no site do QRZ e não é a palavra-passe da conta.</value>
+  </data>
+  <data name="Servicios.Qrz.SubiendoContacto" xml:space="preserve">
+    <value>A enviar o contacto com {0}…</value>
+  </data>
+  <data name="Servicios.Qrz.SubirContacto" xml:space="preserve">
+    <value>enviar o contacto com {0} para o QRZ.com</value>
+  </data>
+  <data name="Servicios.Radio.Analizador.Abierto" xml:space="preserve">
+    <value>Ponte FT4222 aberta em mestre SPI.</value>
+  </data>
+  <data name="Servicios.Radio.Analizador.Colgado" xml:space="preserve">
+    <value>A ponte do analisador (FT4222) não responde ao abrir: o controlador FTDI ficou à espera. Continua-se à espera; se não se resolver, desligue e volte a ligar o USB do rádio, ou desligue-o e ligue-o.</value>
+  </data>
+  <data name="Servicios.Radio.Analizador.Incompleta" xml:space="preserve">
+    <value>Biblioteca FTDI incompleta: {0}</value>
+  </data>
+  <data name="Servicios.Radio.Analizador.NoAbre" xml:space="preserve">
+    <value>Não foi possível abrir a ponte do analisador: {0}</value>
+  </data>
+  <data name="Servicios.Radio.Analizador.Ocupado" xml:space="preserve">
+    <value>A ponte do analisador não se deixa abrir (FT_STATUS {0}); está a ser usada por outro programa?</value>
+  </data>
+  <data name="Servicios.Radio.Analizador.Origen" xml:space="preserve">
+    <value>Analisador do FT-710 (USB, ponte FT4222)</value>
+  </data>
+  <data name="Servicios.Radio.Analizador.Perdido" xml:space="preserve">
+    <value>Perdeu-se a ponte do analisador.</value>
+  </data>
+  <data name="Servicios.Radio.Analizador.SinBiblioteca" xml:space="preserve">
+    <value>O {0} não está junto ao programa.</value>
+  </data>
+  <data name="Servicios.Radio.Analizador.SinD2xx" xml:space="preserve">
+    <value>Falta o ftd2xx.dll: falta o controlador D2XX da FTDI.</value>
+  </data>
+  <data name="Servicios.Radio.Analizador.SinPuente" xml:space="preserve">
+    <value>A ponte do analisador (FT4222) não aparece por USB.</value>
+  </data>
+  <data name="Servicios.Radio.Analizador.SinSpi" xml:space="preserve">
+    <value>A ponte do analisador não aceita o modo SPI.</value>
+  </data>
+  <data name="Servicios.Radio.Analizador.SinTramas" xml:space="preserve">
+    <value>O rádio não envia o seu espetro. No equipamento: MENU → OPERATION SETTING → GENERAL → SCU-LAN10 = ON.</value>
+  </data>
+  <data name="Servicios.Radio.Banda4m" xml:space="preserve">
+    <value>4 m (70 MHz, conforme a versão)</value>
+  </data>
+  <data name="Servicios.Radio.BuscandoEquipo" xml:space="preserve">
+    <value>A procurar o equipamento nas portas série… (pode demorar alguns segundos)</value>
+  </data>
+  <data name="Servicios.Radio.BuscandoModelo" xml:space="preserve">
+    <value>A procurar o {0} nas portas série… (pode demorar alguns segundos)</value>
+  </data>
+  <data name="Servicios.Radio.BuscandoProtocolo" xml:space="preserve">
+    <value>A procurar equipamentos {0} nas portas série…</value>
+  </data>
+  <data name="Servicios.Radio.CanalCerrado" xml:space="preserve">
+    <value>O canal {0} não está aberto.</value>
+  </data>
+  <data name="Servicios.Radio.CanalNoDisponible" xml:space="preserve">
+    <value>Não é possível abrir o canal {0}: não existe, está ocupado ou o equipamento não está ligado.</value>
+  </data>
+  <data name="Servicios.Radio.CatBinario" xml:space="preserve">
+    <value>O CAT do {0} é binário (blocos de 5 bytes): não admite ordens em texto.</value>
+  </data>
+  <data name="Servicios.Radio.CoberturaGeneral" xml:space="preserve">
+    <value>Cobertura geral</value>
+  </data>
+  <data name="Servicios.Radio.CoberturaGeneralLarga" xml:space="preserve">
+    <value>Cobertura geral (receção fora das bandas)</value>
+  </data>
+  <data name="Servicios.Radio.EncendidoSinRespuesta" xml:space="preserve">
+    <value>A ordem de ligar foi enviada, mas o rádio não respondeu em 20 segundos.</value>
+  </data>
+  <data name="Servicios.Radio.EquipoDesconocidoEnPuerto" xml:space="preserve">
+    <value>Equipamento {0} desconhecido ({1}) em {2} a {3} baud</value>
+  </data>
+  <data name="Servicios.Radio.EquipoEnPuerto" xml:space="preserve">
+    <value>{0} em {1} a {2} baud</value>
+  </data>
+  <data name="Servicios.Radio.EquipoModoDesconocido" xml:space="preserve">
+    <value>Não sei como pedir ao equipamento o modo {0}.</value>
+  </data>
+  <data name="Servicios.Radio.FrecuenciaDesconocida" xml:space="preserve">
+    <value>Não se sabe em que frequência está o equipamento ({0}).</value>
+  </data>
+  <data name="Servicios.Radio.FrecuenciaFueraDelPerfil" xml:space="preserve">
+    <value>O {0} não admite essa frequência (até {1} Hz, {2} algarismos).</value>
+  </data>
+  <data name="Servicios.Radio.FrecuenciaNoAdmitida" xml:space="preserve">
+    <value>O {0} não admite essa frequência.</value>
+  </data>
+  <data name="Servicios.Radio.Ft710NueveCifras" xml:space="preserve">
+    <value>O FT-710 só admite frequências de nove algarismos em hertz.</value>
+  </data>
+  <data name="Servicios.Radio.FueraDelCatalogo" xml:space="preserve">
+    <value>Respondeu um equipamento {0} que não está no catálogo.</value>
+  </data>
+  <data name="Servicios.Radio.MandoNoEnVfo" xml:space="preserve">
+    <value>Este equipamento não admite o controlo {0} no VFO {1}.</value>
+  </data>
+  <data name="Servicios.Radio.MandoSinEstado" xml:space="preserve">
+    <value>Para acionar {0} é preciso saber antes o que o equipamento tem, e responde «{1}».</value>
+  </data>
+  <data name="Servicios.Radio.MandoSoloLectura" xml:space="preserve">
+    <value>O controlo {0} pode ser lido mas não acionado.</value>
+  </data>
+  <data name="Servicios.Radio.ModoDesconocido" xml:space="preserve">
+    <value>Não sei como pedir ao {0} o modo {1}.</value>
+  </data>
+  <data name="Servicios.Radio.NoApagaDesconectada" xml:space="preserve">
+    <value>O rádio não está ligado: não pode ser desligado a partir do programa.</value>
+  </data>
+  <data name="Servicios.Radio.NoContesta" xml:space="preserve">
+    <value>Nenhum equipamento responde em {0}. Está ligado?</value>
+  </data>
+  <data name="Servicios.Radio.NoEnciendePuerto" xml:space="preserve">
+    <value>Não é possível ligar a partir do programa: com o rádio desligado, a porta {0} não está disponível. Ligue-o com a sua tecla.</value>
+  </data>
+  <data name="Servicios.Radio.NoEsHexadecimal" xml:space="preserve">
+    <value>«{0}» não são bytes em hexadecimal.</value>
+  </data>
+  <data name="Servicios.Radio.NoEsYaesu" xml:space="preserve">
+    <value>Em {0} responde algo que não é um equipamento Yaesu: «{1}».</value>
+  </data>
+  <data name="Servicios.Radio.NoIntercambiaVfos" xml:space="preserve">
+    <value>Não é possível trocar os VFO: o equipamento não deu os dois ({0}).</value>
+  </data>
+  <data name="Servicios.Radio.NoLeeLosVfos" xml:space="preserve">
+    <value>Não foi possível ler os dois VFO.</value>
+  </data>
+  <data name="Servicios.Radio.NoLeeVfoActivo" xml:space="preserve">
+    <value>Não foi possível ler o VFO ativo.</value>
+  </data>
+  <data name="Servicios.Radio.NoSeLanza" xml:space="preserve">
+    <value>Não foi possível iniciar {0}.</value>
+  </data>
+  <data name="Servicios.Radio.OmniRigModoDesconocido" xml:space="preserve">
+    <value>Não sei como pedir ao OmniRig o modo {0}.</value>
+  </data>
+  <data name="Servicios.Radio.OmniRigNoInstalado" xml:space="preserve">
+    <value>O OmniRig não está instalado ou não está registado neste computador.</value>
+  </data>
+  <data name="Servicios.Radio.OmniRigSinModo" xml:space="preserve">
+    <value>O OmniRig não gere o modo {0}.</value>
+  </data>
+  <data name="Servicios.Radio.OmniRigSinObjeto" xml:space="preserve">
+    <value>Não foi possível criar o objeto COM do OmniRig.</value>
+  </data>
+  <data name="Servicios.Radio.OrdenNoAdmitida" xml:space="preserve">
+    <value>O {0} não admite agora a ordem {1} (responde FA).</value>
+  </data>
+  <data name="Servicios.Radio.OrdenPeligrosa" xml:space="preserve">
+    <value>A ordem «{0}» não é enviada: {1}</value>
+  </data>
+  <data name="Servicios.Radio.Peligro.Apagaria" xml:space="preserve">
+    <value>desligaria o equipamento</value>
+  </data>
+  <data name="Servicios.Radio.Peligro.EscribiriaMemorias" xml:space="preserve">
+    <value>escreveria nas memórias do equipamento</value>
+  </data>
+  <data name="Servicios.Radio.Peligro.Limites" xml:space="preserve">
+    <value>alteraria os limites de transmissão do equipamento</value>
+  </data>
+  <data name="Servicios.Radio.Peligro.MemoriasIcom" xml:space="preserve">
+    <value>escreveria ou apagaria memórias do equipamento</value>
+  </data>
+  <data name="Servicios.Radio.Peligro.Menu" xml:space="preserve">
+    <value>escreveria no menu do equipamento (poderia deixá-lo sem controlo CI-V)</value>
+  </data>
+  <data name="Servicios.Radio.Peligro.PilaDeBanda" xml:space="preserve">
+    <value>escreveria memórias ou a pilha de banda do equipamento</value>
+  </data>
+  <data name="Servicios.Radio.Peligro.SinVigilante" xml:space="preserve">
+    <value>poria o equipamento em emissão sem passar pelo vigilante do PTT</value>
+  </data>
+  <data name="Servicios.Radio.Peligro.Telegrafia" xml:space="preserve">
+    <value>manipularia telegrafia e poria o equipamento em emissão</value>
+  </data>
+  <data name="Servicios.Radio.Peligro.TelegrafiaOVoz" xml:space="preserve">
+    <value>poria o equipamento em emissão (telegrafia ou memória de voz)</value>
+  </data>
+  <data name="Servicios.Radio.ProbandoModelo" xml:space="preserve">
+    <value>A testar o {0} em {1}…</value>
+  </data>
+  <data name="Servicios.Radio.ProbandoPuerto" xml:space="preserve">
+    <value>A testar {0} a {1} baud…</value>
+  </data>
+  <data name="Servicios.Radio.Ptt.EnCurso" xml:space="preserve">
+    <value>Já há uma transmissão em curso: é preciso soltar a anterior antes de pedir emissão outra vez.</value>
+  </data>
+  <data name="Servicios.Radio.Ptt.PegadoSincronas" xml:space="preserve">
+    <value>PTT PRESO! Nem as vias normais nem as síncronas conseguiram soltar o PTT. Desligue o equipamento ou o amplificador à mão agora mesmo.</value>
+  </data>
+  <data name="Servicios.Radio.Ptt.PegadoTodas" xml:space="preserve">
+    <value>PTT PRESO! Falharam todas as vias para soltar o PTT. Desligue o equipamento ou o amplificador à mão agora mesmo.</value>
+  </data>
+  <data name="Servicios.Radio.RangoDeFrecuencias" xml:space="preserve">
+    <value>O {0} vai de {1} a {2} Hz.</value>
+  </data>
+  <data name="Servicios.Radio.RigctldCerro" xml:space="preserve">
+    <value>O rigctld fechou a ligação.</value>
+  </data>
+  <data name="Servicios.Radio.RigctldDemasiadasLineas" xml:space="preserve">
+    <value>O rigctld respondeu mais linhas do que o razoável sem fechar com RPRT.</value>
+  </data>
+  <data name="Servicios.Radio.RigctldNoEsta" xml:space="preserve">
+    <value>Não se encontra o rigctld.exe. Indique o seu caminho nas definições do rádio.</value>
+  </data>
+  <data name="Servicios.Radio.RigctldRechaza" xml:space="preserve">
+    <value>O rigctld rejeitou «{0}» com o código {1}.</value>
+  </data>
+  <data name="Servicios.Radio.RigctldSeCierra" xml:space="preserve">
+    <value>O rigctld fechou logo após arrancar (código {0}). {1}</value>
+  </data>
+  <data name="Servicios.Radio.RigctldSinConexion" xml:space="preserve">
+    <value>Não há ligação aberta com o rigctld.</value>
+  </data>
+  <data name="Servicios.Radio.SinControl" xml:space="preserve">
+    <value>Não há controlo para {0}.</value>
+  </data>
+  <data name="Servicios.Radio.SinEseModo" xml:space="preserve">
+    <value>O {0} não tem o modo {1}.</value>
+  </data>
+  <data name="Servicios.Radio.SinMando" xml:space="preserve">
+    <value>O {0} não admite o controlo {1}.</value>
+  </data>
+  <data name="Servicios.Radio.SinMandoCat" xml:space="preserve">
+    <value>O {0} não admite o controlo {1} por CAT.</value>
+  </data>
+  <data name="Servicios.Radio.SinMd1" xml:space="preserve">
+    <value>O {0} não deixa mudar por CAT o modo do VFO que não está em uso (não tem MD1).</value>
+  </data>
+  <data name="Servicios.Radio.SinMemoriasCat" xml:space="preserve">
+    <value>O CAT do {0} não tem ordem para ir a uma memória.</value>
+  </data>
+  <data name="Servicios.Radio.SinProbar" xml:space="preserve">
+    <value>{0}  (segundo o manual, sem testar com rádio)</value>
+  </data>
+  <data name="Servicios.Radio.SinPtt" xml:space="preserve">
+    <value>O controlo de equipamento atual não sabe acionar o PTT.</value>
+  </data>
+  <data name="Servicios.Radio.SinTeclaCat" xml:space="preserve">
+    <value>O {0} não tem a tecla {1} por CAT.</value>
+  </data>
+  <data name="Servicios.Radio.SinTeclaCiv" xml:space="preserve">
+    <value>O {0} não tem a tecla {1} por CI-V.</value>
+  </data>
+  <data name="Servicios.Radio.YaesuIdEnPuerto" xml:space="preserve">
+    <value>Equipamento Yaesu ID{0} em {1} a {2} baud</value>
+  </data>
+  <data name="Servicios.Red.NoRespondio" xml:space="preserve">
+    <value>O serviço não respondeu a «{0}» após {1} tentativas.</value>
+  </data>
+  <data name="Servicios.Respondio" xml:space="preserve">
+    <value>O {0} respondeu {1}.</value>
+  </data>
+  <data name="Servicios.Satelites.Doppler.BajoElHorizonte" xml:space="preserve">
+    <value>o satélite está abaixo do horizonte</value>
+  </data>
+  <data name="Servicios.Satelites.Doppler.BandaMuerta" xml:space="preserve">
+    <value>a alteração não chega à banda morta</value>
+  </data>
+  <data name="Servicios.Satelites.Doppler.NadaQueSeguir" xml:space="preserve">
+    <value>não se está a seguir nada</value>
+  </data>
+  <data name="Servicios.Satelites.Doppler.NoCargado" xml:space="preserve">
+    <value>«{0}» não está carregado ou não pode ser propagado</value>
+  </data>
+  <data name="Servicios.Satelites.ElementosCaducados" xml:space="preserve">
+    <value>Elementos caducados: são de {0} UTC, há {1}. A previsão degrada-se; convém transferi-los de novo.</value>
+  </data>
+  <data name="Servicios.Satelites.ElementosDeHace" xml:space="preserve">
+    <value>. Elementos de há {0}</value>
+  </data>
+  <data name="Servicios.Satelites.ElementosDel" xml:space="preserve">
+    <value>Elementos de {0} UTC, há {1}.</value>
+  </data>
+  <data name="Servicios.Satelites.Fallo.Desconocido" xml:space="preserve">
+    <value>motivo desconhecido</value>
+  </data>
+  <data name="Servicios.Satelites.Fallo.EspacioProfundo" xml:space="preserve">
+    <value>seria preciso o modelo de espaço profundo</value>
+  </data>
+  <data name="Servicios.Satelites.Fallo.ExcentricidadMedia" xml:space="preserve">
+    <value>a excentricidade média sai da margem válida</value>
+  </data>
+  <data name="Servicios.Satelites.Fallo.ExcentricidadOsculatriz" xml:space="preserve">
+    <value>a excentricidade instantânea sai da margem válida</value>
+  </data>
+  <data name="Servicios.Satelites.Fallo.MovimientoMedioNegativo" xml:space="preserve">
+    <value>o movimento médio dá negativo</value>
+  </data>
+  <data name="Servicios.Satelites.Fallo.Ninguno" xml:space="preserve">
+    <value>sem problemas</value>
+  </data>
+  <data name="Servicios.Satelites.Fallo.Reentrado" xml:space="preserve">
+    <value>o satélite reentrou na atmosfera</value>
+  </data>
+  <data name="Servicios.Satelites.Fallo.SemiladoRectoNegativo" xml:space="preserve">
+    <value>o semilado reto dá negativo</value>
+  </data>
+  <data name="Servicios.Satelites.Fuente.AmsatDescripcion" xml:space="preserve">
+    <value>A seleção da AMSAT, com os nomes que a comunidade de satélite usa.</value>
+  </data>
+  <data name="Servicios.Satelites.Fuente.CelestrakAficionado" xml:space="preserve">
+    <value>Celestrak · satélites de amador</value>
+  </data>
+  <data name="Servicios.Satelites.Fuente.CelestrakAficionadoDescripcion" xml:space="preserve">
+    <value>O grupo de amadores do catálogo Celestrak. É a fonte principal.</value>
+  </data>
+  <data name="Servicios.Satelites.Fuente.CelestrakEstaciones" xml:space="preserve">
+    <value>Celestrak · estações espaciais</value>
+  </data>
+  <data name="Servicios.Satelites.Fuente.CelestrakEstacionesDescripcion" xml:space="preserve">
+    <value>Estações tripuladas. Aqui está a ISS, que não vem no grupo de amadores.</value>
+  </data>
+  <data name="Servicios.Satelites.LoteFresco" xml:space="preserve">
+    <value>{0} de {1}; os mais antigos são de há {2}.</value>
+  </data>
+  <data name="Servicios.Satelites.LoteViejo" xml:space="preserve">
+    <value>{0} de {1}, mas os mais antigos são de há {2}: convém transferi-los de novo.</value>
+  </data>
+  <data name="Servicios.Satelites.NSatelites" xml:space="preserve">
+    <value>{0} satélites</value>
+  </data>
+  <data name="Servicios.Satelites.OjoElementos" xml:space="preserve">
+    <value>. Atenção: elementos de há {0}</value>
+  </data>
+  <data name="Servicios.Satelites.Paso" xml:space="preserve">
+    <value>{0}: nasce {1} UTC a {2:F0}°, culmina {3} a {4:F1}° ({5:F0}°), põe-se {6} a {7:F0}°, dura {8:F1} min</value>
+  </data>
+  <data name="Servicios.Satelites.PasoRasante" xml:space="preserve">
+    <value>. Passagem rasante: perde-se atrás de qualquer obstáculo</value>
+  </data>
+  <data name="Servicios.Satelites.Posicion" xml:space="preserve">
+    <value>{0}: azimute {1:F1}°, elevação {2:F1}°, {3:N0} km</value>
+  </data>
+  <data name="Servicios.Satelites.PosicionBajo" xml:space="preserve">
+    <value>{0}: abaixo do horizonte ({1:F1}°), sobre {2}</value>
+  </data>
+  <data name="Servicios.Satelites.SinElementosDe" xml:space="preserve">
+    <value>Sem elementos orbitais ({0}).</value>
+  </data>
+  <data name="Servicios.Satelites.UnSatelite" xml:space="preserve">
+    <value>1 satélite</value>
+  </data>
+  <data name="Servicios.SinContrasena" xml:space="preserve">
+    <value>Não há palavra-passe do {0} guardada. Configure-a em Definições › Contas e serviços.</value>
+  </data>
+  <data name="Servicios.SinDetalle" xml:space="preserve">
+    <value>sem detalhe</value>
+  </data>
+  <data name="Servicios.SinSesion" xml:space="preserve">
+    <value>O {0} não abriu sessão: {1}</value>
+  </data>
+  <data name="Servicios.Subidas.AlDia" xml:space="preserve">
+    <value>{0}: em dia. Os contactos são enviados sozinhos ao registá-los.</value>
+  </data>
+  <data name="Servicios.Subidas.Desactivada" xml:space="preserve">
+    <value>{0}: envio automático desativado em Definições › Envios e QRZ.</value>
+  </data>
+  <data name="Servicios.Subidas.EnEspera" xml:space="preserve">
+    <value>{0} contacto(s) em espera.</value>
+  </data>
+  <data name="Servicios.Subidas.Fallidos" xml:space="preserve">
+    <value>{0}: não foi possível enviar {1} contacto(s). Último erro: {2}. Use «Enviar agora» em Definições › Envios e QRZ.</value>
+  </data>
+  <data name="Servicios.Subidas.FallidosYPendientes" xml:space="preserve">
+    <value>{0}: não foi possível enviar {1} contacto(s) e {2} aguardam a vez. Último erro: {3}. Use «Enviar agora» em Definições › Envios e QRZ.</value>
+  </data>
+  <data name="Servicios.Subidas.FaltanCredenciales" xml:space="preserve">
+    <value>Não é possível enviar para o {0}: falta o utilizador ou as credenciais em Definições › Contas e serviços.</value>
+  </data>
+  <data name="Servicios.Subidas.NoSeHaPodidoComprobar" xml:space="preserve">
+    <value>Não foi possível verificar o {0}: {1}</value>
+  </data>
+  <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
+    <value>{0}: {1} contacto(s) por enviar.</value>
+  </data>
+  <data name="Servicios.Subidas.PendientesYBloqueo" xml:space="preserve">
+    <value>{0}: {1} pendente(s). {2}</value>
+  </data>
+  <data name="Servicios.Subidas.SinConfigurar" xml:space="preserve">
+    <value>{0}: envio automático por configurar (falta utilizador ou credenciais em Definições › Contas e serviços).</value>
+  </data>
+  <data name="Servicios.Subidas.UltimoErrorReintenta" xml:space="preserve">
+    <value>Último erro: {0}. Tenta de novo sozinho.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo0" xml:space="preserve">
+    <value>Todos os contactos foram assinados e enviados.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo1" xml:space="preserve">
+    <value>O operador cancelou a assinatura.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo10" xml:space="preserve">
+    <value>Erro de sintaxe na chamada ao TQSL.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo11" xml:space="preserve">
+    <value>Não foi possível ligar ao LoTW.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo12" xml:space="preserve">
+    <value>Erro desconhecido do TQSL.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo13" xml:space="preserve">
+    <value>A base de dados de envios do TQSL estava bloqueada.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo14" xml:space="preserve">
+    <value>Todos os contactos do ficheiro já estavam enviados.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo15" xml:space="preserve">
+    <value>A frase-passe do certificado não é válida.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo2" xml:space="preserve">
+    <value>O LoTW rejeitou o ficheiro.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo3" xml:space="preserve">
+    <value>Resposta inesperada do servidor do TQSL.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo4" xml:space="preserve">
+    <value>Erro interno do TQSL.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo5" xml:space="preserve">
+    <value>Erro da biblioteca do TQSL.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo6" xml:space="preserve">
+    <value>O TQSL não conseguiu abrir o ficheiro de entrada.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo7" xml:space="preserve">
+    <value>O TQSL não conseguiu escrever o ficheiro de saída.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo8" xml:space="preserve">
+    <value>Não se enviou nada: tudo já estava enviado ou fora do intervalo de datas do certificado.</value>
+  </data>
+  <data name="Servicios.Tqsl.Codigo9" xml:space="preserve">
+    <value>Enviou-se o que era novo; o que já estava enviado ou fora do intervalo ficou de fora.</value>
+  </data>
+  <data name="Servicios.Tqsl.CodigoDesconocido" xml:space="preserve">
+    <value>O TQSL devolveu o código {0}.</value>
+  </data>
+  <data name="Servicios.Tqsl.NoArranca" xml:space="preserve">
+    <value>Não foi possível iniciar o TQSL a partir de «{0}».</value>
+  </data>
+  <data name="Servicios.Tqsl.NoEncontrado" xml:space="preserve">
+    <value>Não se encontrou o TQSL (tqsl.exe) neste computador. O LoTW exige assinar os contactos com o certificado da ARRL, por isso é preciso instalar o Trusted QSL a partir de https://lotw.arrl.org/lotw-help/installation/ ou indicar o seu caminho no cartão do LoTW (Definições › Contas e serviços).</value>
+  </data>
+  <data name="Servicios.Tqsl.NoTermino" xml:space="preserve">
+    <value>O TQSL não terminou em {0}. O envio foi cancelado.</value>
+  </data>
+  <data name="Servicios.Tqsl.SinUbicacion" xml:space="preserve">
+    <value>Falta o nome da localização de estação do TQSL. Sem ela, o TQSL abre uma caixa de diálogo e o envio fica à espera indefinidamente.</value>
+  </data>
+  <data name="Servicios.XmlNoValido" xml:space="preserve">
+    <value>O {0} não devolveu um XML válido: {1}</value>
+  </data>
+</root>

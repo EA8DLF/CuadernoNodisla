@@ -1,4 +1,5 @@
-﻿using Nodisla.Cuaderno.Aplicacion.Puertos;
+﻿using Nodisla.Cuaderno.Idiomas;
+using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Dxcc;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
@@ -122,9 +123,7 @@ public sealed class DiplomasDeDesarrollo : IDiplomas
 
         var (trabajadas, confirmadas, porQue) = codigo.ToUpperInvariant() is "DXCC" or "WAC" or "WAZ" or "WPX"
             ? Contar(cuentan, q => ClaveDe(codigo, q))
-            : (0, 0, "Este diploma cuenta referencias —islas, cumbres, parques— y el cuaderno "
-                + "todavía no las guarda. La cifra no es que sea baja: es que no hay de dónde "
-                + "sacarla. Llegará con la base de datos del cuaderno.");
+            : (0, 0, Textos.T("Dialogos.Simulado.SinReferencias"));
 
         return Task.FromResult(new ProgresoDeDiploma(
             codigo,
@@ -308,8 +307,7 @@ public sealed class DiplomasDeDesarrollo : IDiplomas
         // El cuaderno de demostracion no trae confirmaciones: decir «cero confirmadas» sin
         // explicarlo haria pensar que no ha llegado ninguna tarjeta en veinte mil contactos.
         var porQue = confirmadas.Count == 0 && trabajadas.Count > 0
-            ? "Todavía no hay confirmaciones en el cuaderno, así que lo confirmado sale a cero. "
-              + "Lo trabajado sí es firme."
+            ? Textos.T("Dialogos.Simulado.SinConfirmaciones")
             : null;
 
         return (trabajadas.Count, confirmadas.Count, porQue);

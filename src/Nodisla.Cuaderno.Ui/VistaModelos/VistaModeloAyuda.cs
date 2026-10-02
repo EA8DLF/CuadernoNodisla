@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.Soporte;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
@@ -27,6 +28,10 @@ public enum VistaDeLaAyuda
 /// la ayuda del programa y la de la web no pueden contar cosas distintas.
 /// </para>
 /// <para>
+/// Al cambiar de idioma se recargan los capitulos en el nuevo (el traducido, o el espanol con
+/// aviso) y se queda abierto el mismo capitulo.
+/// </para>
+/// <para>
 /// «Reportar un fallo» se monta NUEVO cada vez que se abre (es transitorio): el entorno que
 /// adjunta tiene que ser el de ese momento, no el del arranque.
 /// </para>
@@ -39,7 +44,7 @@ public sealed partial class VistaModeloAyuda : ObservableObject
     /// <summary>Correo publico de NODISLA. Nunca uno personal.</summary>
     public const string CorreoDeContacto = "nodisla@nodisla.org";
 
-    /// <summary>Licencia del programa.</summary>
+    /// <summary>Licencia del programa (en espanol; en pantalla sale traducida).</summary>
     public const string Licencia = "GPL-3.0 (Licencia Pública General de GNU, versión 3)";
 
     private readonly Func<VistaModeloReportarFallo>? _nuevoReporte;
@@ -65,6 +70,7 @@ public sealed partial class VistaModeloAyuda : ObservableObject
         Version = version ?? VersionInstalada.Actual.ToString();
         _capitulosVisibles = libro.Capitulos;
         _capituloElegido = libro.Buscar("01-primer-uso") ?? libro.Capitulos.FirstOrDefault();
+        Textos.AlCambiar(this, static vm => vm.RecargarIdioma());
 
         // Para las capturas de la ayuda: con que capitulo (o apartado) abre.
         if (Environment.GetEnvironmentVariable("CUADERNO_AYUDA") is { Length: > 0 } pedido)
@@ -105,7 +111,7 @@ public sealed partial class VistaModeloAyuda : ObservableObject
     public string Correo => CorreoDeContacto;
 
     /// <summary>Licencia, para el «Acerca de».</summary>
-    public string TextoDeLicencia => Licencia;
+    public string TextoDeLicencia => Textos.T("Ayuda.LicenciaTexto");
 
     /// <summary>Lo tecleado en el buscador.</summary>
     [ObservableProperty]
@@ -147,18 +153,38 @@ public sealed partial class VistaModeloAyuda : ObservableObject
         ? string.Empty
         : CapitulosVisibles.Count switch
         {
-            0 => "Ningún capítulo lo menciona.",
-            1 => "Lo menciona 1 capítulo.",
-            var n => $"Lo mencionan {n} capítulos.",
+            0 => Textos.T("Ayuda.Busqueda.Ninguno"),
+            1 => Textos.T("Ayuda.Busqueda.Uno"),
+            var n => Textos.F("Ayuda.Busqueda.Varios", n),
         };
 
     /// <summary>Titulo de lo que se ve a la derecha.</summary>
     public string TituloDeLaVista => Vista switch
     {
-        VistaDeLaAyuda.ReportarFallo => "Reportar un fallo",
-        VistaDeLaAyuda.AcercaDe => "Acerca de Cuaderno NODISLA",
-        _ => CapituloElegido?.Titulo ?? "Ayuda",
+        VistaDeLaAyuda.ReportarFallo => Textos.T("Ayuda.ReportarUnFallo"),
+        VistaDeLaAyuda.AcercaDe => Textos.T("Ayuda.AcercaDeCuaderno"),
+        _ => CapituloElegido?.Titulo ?? Textos.T("Ayuda.Titulo"),
     };
+
+    /// <summary>
+    /// Vuelve a montar el indice y el capitulo abierto en el idioma nuevo, sin moverse del
+    /// capitulo ni de lo que se este viendo (un informe a medias no se pierde).
+    /// </summary>
+    private void RecargarIdioma()
+    {
+        var vista = Vista;
+        var clave = CapituloElegido?.Clave;
+
+        AnclaPedida = null;
+        CapitulosVisibles = Libro.Filtrar(Busqueda);
+        var nuevo = (clave is null ? null : Libro.Buscar(clave)) ?? Libro.Capitulos.FirstOrDefault();
+
+        // Si en el idioma nuevo la busqueda ya no lo encuentra, se quita: el capitulo abierto manda.
+        if (nuevo is not null && !CapitulosVisibles.Contains(nuevo)) Busqueda = string.Empty;
+        CapituloElegido = nuevo;
+        Vista = vista;
+        OnPropertyChanged(string.Empty);
+    }
 
     partial void OnBusquedaChanged(string value)
     {
@@ -198,7 +224,7 @@ public sealed partial class VistaModeloAyuda : ObservableObject
         AnclaPedida = null;
         CapituloElegido = capitulo;
         Vista = VistaDeLaAyuda.Capitulo;
-        AnclaPedida = ancla;
+        AnclaPedida = Libro.Ancla(capitulo, ancla);
         return true;
     }
 

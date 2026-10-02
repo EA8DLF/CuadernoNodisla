@@ -1,0 +1,1473 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Cabina.Analizador.AbrirAudio" xml:space="preserve">
+    <value>Audio öffnen</value>
+  </data>
+  <data name="Cabina.Analizador.AbrirAudioMulti" xml:space="preserve">
+    <value>Empfangsaudio für MULTI öffnen</value>
+  </data>
+  <data name="Cabina.Analizador.AfFft" xml:space="preserve">
+    <value>AF-FFT des Empfangsaudios</value>
+  </data>
+  <data name="Cabina.Analizador.AfFftAyuda" xml:space="preserve">
+    <value>AF-FFT — Das Spektrum des Empfangsaudios von 0 bis 4 kHz, berechnet aus dem USB-Codec des Geräts. Am Gerät lässt sich hier ein Abschwächer setzen; dafür gibt es keinen CAT-Befehl: hier passt sich die Skala selbst an.</value>
+  </data>
+  <data name="Cabina.Analizador.AudioCerrado" xml:space="preserve">
+    <value>AUDIO GESCHLOSSEN: kein Oszilloskop und kein AF-FFT</value>
+  </data>
+  <data name="Cabina.Analizador.ConFallo" xml:space="preserve">
+    <value>SPEKTRUM GESTÖRT</value>
+  </data>
+  <data name="Cabina.Analizador.FaltaFtdi" xml:space="preserve">
+    <value>FTDI-BIBLIOTHEK FEHLT</value>
+  </data>
+  <data name="Cabina.Analizador.FaltaFtdiTexto" xml:space="preserve">
+    <value>{0} Ohne sie kann das Spektrum des Funkgeräts nicht gelesen werden.</value>
+  </data>
+  <data name="Cabina.Analizador.Nombre" xml:space="preserve">
+    <value>Spektrumanzeige des Geräts</value>
+  </data>
+  <data name="Cabina.Analizador.Osciloscopio" xml:space="preserve">
+    <value>Oszilloskop des Empfangsaudios</value>
+  </data>
+  <data name="Cabina.Analizador.OsciloscopioAyuda" xml:space="preserve">
+    <value>OSCILLOSCOPE — Die Wellenform des Empfangsaudios (USB-Codec des Geräts), mit 10 ms pro Teilung wie am Gerät. Am Gerät lassen sich hier Pegel und Ablenkung einstellen; dafür gibt es keinen CAT-Befehl: hier regelt sich der Pegel selbst.</value>
+  </data>
+  <data name="Cabina.Analizador.Parado" xml:space="preserve">
+    <value>SPEKTRUM GESTOPPT</value>
+  </data>
+  <data name="Cabina.Analizador.ParadoTexto" xml:space="preserve">
+    <value>Es startet, wenn diese Ansicht angezeigt wird.</value>
+  </data>
+  <data name="Cabina.Analizador.SinAnalizador" xml:space="preserve">
+    <value>KEIN SPEKTRUM</value>
+  </data>
+  <data name="Cabina.Analizador.SinAnalizadorTitulo" xml:space="preserve">
+    <value>KEIN GERÄTESPEKTRUM</value>
+  </data>
+  <data name="Cabina.Analizador.SinDatos" xml:space="preserve">
+    <value>SCOPE  KEINE DATEN</value>
+  </data>
+  <data name="Cabina.Analizador.SinDispositivo" xml:space="preserve">
+    <value>DAS FUNKGERÄT LIEFERT SEIN SPEKTRUM NICHT</value>
+  </data>
+  <data name="Cabina.Analizador.SinDispositivoTexto" xml:space="preserve">
+    <value>Seine USB-Brücke (FT4222) wird nicht gefunden. Ist das Funkgerät eingeschaltet und das USB-Kabel angeschlossen?</value>
+  </data>
+  <data name="Cabina.Analizador.SinRadio" xml:space="preserve">
+    <value>Ohne verbundenes Funkgerät gibt es kein Spektrum.</value>
+  </data>
+  <data name="Cabina.Analizador.SinTramas" xml:space="preserve">
+    <value>DAS FUNKGERÄT SENDET SEIN SPEKTRUM NICHT</value>
+  </data>
+  <data name="Cabina.Analizador.Vista3dss" xml:space="preserve">
+    <value>3DSS-Ansicht des Spektrums</value>
+  </data>
+  <data name="Cabina.Barra.AvisoPlan" xml:space="preserve">
+    <value>Bandplan-Hinweis</value>
+  </data>
+  <data name="Cabina.Barra.ConectarAyuda" xml:space="preserve">
+    <value>Öffnet oder schließt die Verbindung zum Gerät</value>
+  </data>
+  <data name="Cabina.Barra.Mandos" xml:space="preserve">
+    <value>Alle Regler des Geräts anzeigen</value>
+  </data>
+  <data name="Cabina.Barra.MandosAyuda" xml:space="preserve">
+    <value>Zeigt alle Regler, die das Gerät meldet, mit Wert und Bereich</value>
+  </data>
+  <data name="Cabina.Barra.Plegar" xml:space="preserve">
+    <value>Gerätefront ein- oder ausklappen</value>
+  </data>
+  <data name="Cabina.Barra.PlegarAyuda" xml:space="preserve">
+    <value>Klappt die Gerätefront ein, um Platz für den Rest zu schaffen</value>
+  </data>
+  <data name="Cabina.Barra.SoltarPtt" xml:space="preserve">
+    <value>PTT sofort loslassen</value>
+  </data>
+  <data name="Cabina.Barra.SoltarPttAyuda" xml:space="preserve">
+    <value>Lässt die PTT sofort los, egal was passiert. Fragt nicht nach.</value>
+  </data>
+  <data name="Cabina.Barra.SoltarPttBoton" xml:space="preserve">
+    <value>PTT LOSLASSEN</value>
+  </data>
+  <data name="Cabina.Botonera.BandaAyuda" xml:space="preserve">
+    <value>{0}: kehrt zur zuletzt genutzten Einstellung auf diesem Band zurück (Bandstapel, wie BAND).</value>
+  </data>
+  <data name="Cabina.Botonera.CanalAyuda" xml:space="preserve">
+    <value>Kanal {0} ({1}): {2} MHz auf dem aktiven VFO.</value>
+  </data>
+  <data name="Cabina.Botonera.Canales27" xml:space="preserve">
+    <value>27-MHz-Kanäle</value>
+  </data>
+  <data name="Cabina.Botonera.CanalesCb" xml:space="preserve">
+    <value>CB-Kanäle</value>
+  </data>
+  <data name="Cabina.Botonera.ConecteElEquipo" xml:space="preserve">
+    <value>Verbinden Sie das Gerät, um die Tastenleiste zu nutzen.</value>
+  </data>
+  <data name="Cabina.Botonera.Memoria" xml:space="preserve">
+    <value>Speicher</value>
+  </data>
+  <data name="Cabina.Botonera.MemoriaAyuda" xml:space="preserve">
+    <value>Gerätespeicher {0} (MC{0:D3}).</value>
+  </data>
+  <data name="Cabina.Botonera.Memorias" xml:space="preserve">
+    <value>Speicher 1 bis 6</value>
+  </data>
+  <data name="Cabina.Botonera.MemoriaVacia" xml:space="preserve">
+    <value>M{0}: Gerätespeicher {0} (MC{0:D3}). Leer oder noch nicht gelesen.</value>
+  </data>
+  <data name="Cabina.Botonera.ModoAm" xml:space="preserve">
+    <value>AM auf dem aktiven VFO (MD0 5).</value>
+  </data>
+  <data name="Cabina.Botonera.ModoCw" xml:space="preserve">
+    <value>Telegrafie auf dem aktiven VFO (MD0 3, CW-U).</value>
+  </data>
+  <data name="Cabina.Botonera.ModoDatos" xml:space="preserve">
+    <value>Daten auf dem aktiven VFO: DATA-L unter 10 MHz, DATA-U darüber (MD0 8 / MD0 C).</value>
+  </data>
+  <data name="Cabina.Botonera.ModoFm" xml:space="preserve">
+    <value>FM auf dem aktiven VFO (MD0 4).</value>
+  </data>
+  <data name="Cabina.Botonera.ModoLsb" xml:space="preserve">
+    <value>Unteres Seitenband auf dem aktiven VFO (MD0 1).</value>
+  </data>
+  <data name="Cabina.Botonera.ModoUsb" xml:space="preserve">
+    <value>Oberes Seitenband auf dem aktiven VFO (MD0 2).</value>
+  </data>
+  <data name="Cabina.Botonera.NoPoneModo" xml:space="preserve">
+    <value>{0} konnte nicht eingestellt werden: {1}</value>
+  </data>
+  <data name="Cabina.Botonera.NoRecuperaMemoria" xml:space="preserve">
+    <value>M{0} konnte nicht abgerufen werden: {1}</value>
+  </data>
+  <data name="Cabina.Botonera.NoVaABanda" xml:space="preserve">
+    <value>{0} konnte nicht aufgerufen werden: {1}</value>
+  </data>
+  <data name="Cabina.Botonera.NoVaACanal" xml:space="preserve">
+    <value>Kanal {0} konnte nicht aufgerufen werden: {1}</value>
+  </data>
+  <data name="Cabina.Botonera.Plan" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="Cabina.Botonera.Plan11m" xml:space="preserve">
+    <value>11 m: die 40 Kanäle der gemeinsamen Tabelle (CEPT/USA), 26,965–27,405 MHz.</value>
+  </data>
+  <data name="Cabina.Botonera.PlanCept" xml:space="preserve">
+    <value>CEPT: 26,965–27,405 MHz (Tabelle FCC 95.963 / ECC).</value>
+  </data>
+  <data name="Cabina.Botonera.PlanDeCanales" xml:space="preserve">
+    <value>Kanalplan</value>
+  </data>
+  <data name="Cabina.Botonera.PlanPl" xml:space="preserve">
+    <value>Polen: die CEPT-Tabelle 5 kHz tiefer (Kanal 1 = 26,960 MHz).</value>
+  </data>
+  <data name="Cabina.Botonera.PlanUk" xml:space="preserve">
+    <value>Vereinigtes Königreich 27/81: 27,60125–27,99125 MHz, alle 10 kHz.</value>
+  </data>
+  <data name="Cabina.Botonera.PlanUsa" xml:space="preserve">
+    <value>USA (FCC 95.963): 26,965–27,405 MHz.</value>
+  </data>
+  <data name="Cabina.Botonera.SinBotonera" xml:space="preserve">
+    <value>Dieses Gerät unterstützt die Band- und Betriebsarttasten per CAT nicht.</value>
+  </data>
+  <data name="Cabina.Botonera.TeclasDeBanda" xml:space="preserve">
+    <value>Bandtasten</value>
+  </data>
+  <data name="Cabina.Botonera.TeclasDeModo" xml:space="preserve">
+    <value>Betriebsarttasten</value>
+  </data>
+  <data name="Cabina.Botonera.TodoAlVfo" xml:space="preserve">
+    <value>Alles geht an den aktiven VFO, wie am Funkgerät. Keine Taste sendet.</value>
+  </data>
+  <data name="Cabina.Botonera.VerCb" xml:space="preserve">
+    <value>CB-Kanäle anzeigen</value>
+  </data>
+  <data name="Cabina.Botonera.VerCbAyuda" xml:space="preserve">
+    <value>27-MHz-Kanäle auf dieser Seite anzeigen</value>
+  </data>
+  <data name="Cabina.Botonera.Volver" xml:space="preserve">
+    <value>Bänder, Betriebsarten und Speicher anzeigen</value>
+  </data>
+  <data name="Cabina.Botonera.VolverAyuda" xml:space="preserve">
+    <value>Zurück zu Bändern, Betriebsarten und Speichern</value>
+  </data>
+  <data name="Cabina.Cascada.ClicAyuda" xml:space="preserve">
+    <value>Klick: setzt die Empfangsfrequenz (und die Sendefrequenz, falls nicht fixiert). Umschalt+Klick: nur Senden.</value>
+  </data>
+  <data name="Cabina.Cascada.SinCascada" xml:space="preserve">
+    <value>Kein Wasserfall. Drücken Sie „Hören“, um den Audioeingang zu öffnen.</value>
+  </data>
+  <data name="Cabina.Cw.Auto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="Cabina.Cw.Borrar" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="Cabina.Cw.Confianza" xml:space="preserve">
+    <value>Sicherheit {0} %</value>
+  </data>
+  <data name="Cabina.Cw.Escuchar" xml:space="preserve">
+    <value>Hören</value>
+  </data>
+  <data name="Cabina.Cw.EscucharAyuda" xml:space="preserve">
+    <value>Öffnet den in Einstellungen › Audio und Digital gewählten Audioeingang des Geräts. Es wird nichts gesendet.</value>
+  </data>
+  <data name="Cabina.Cw.EspectroAyuda" xml:space="preserve">
+    <value>Grün: das oben gelesene Signal; Bernstein: die anderen. Ein Klick hält den Ton dort fest.</value>
+  </data>
+  <data name="Cabina.Cw.EspectroNombre" xml:space="preserve">
+    <value>Audiospektrum der Telegrafie</value>
+  </data>
+  <data name="Cabina.Cw.Esperando" xml:space="preserve">
+    <value>Warte auf ein Telegrafiesignal … Text erscheint, sobald mehrere Zeichen hintereinander erkannt werden; Rauschen schreibt nichts.</value>
+  </data>
+  <data name="Cabina.Cw.Fijar" xml:space="preserve">
+    <value>Festhalten</value>
+  </data>
+  <data name="Cabina.Cw.FijarAlPitch" xml:space="preserve">
+    <value>Auf {0} Hz festhalten</value>
+  </data>
+  <data name="Cabina.Cw.FijarAyuda" xml:space="preserve">
+    <value>Hält den Decoder auf dem CW-Ton des Geräts (oder dem aktuellen) fest. Automatisch sucht er das stärkste Signal zwischen 300 und 1200 Hz.</value>
+  </data>
+  <data name="Cabina.Cw.FijarNombre" xml:space="preserve">
+    <value>Ton festhalten oder wieder automatisch suchen</value>
+  </data>
+  <data name="Cabina.Cw.Llave" xml:space="preserve">
+    <value>Leuchtet bei jedem empfangenen Punkt und Strich</value>
+  </data>
+  <data name="Cabina.Cw.ModoAuto" xml:space="preserve">
+    <value>AUTO</value>
+  </data>
+  <data name="Cabina.Cw.ModoFijo" xml:space="preserve">
+    <value>FEST</value>
+  </data>
+  <data name="Cabina.Cw.MostrarAyuda" xml:space="preserve">
+    <value>Telegrafie-Decoder. Erscheint von selbst, wenn das Gerät in CW ist; mit dieser Taste auch in anderen Betriebsarten.</value>
+  </data>
+  <data name="Cabina.Cw.MostrarNombre" xml:space="preserve">
+    <value>Telegrafie-Decoder anzeigen</value>
+  </data>
+  <data name="Cabina.Cw.Nivel" xml:space="preserve">
+    <value>Signal {0} dB</value>
+  </data>
+  <data name="Cabina.Cw.NivelNombre" xml:space="preserve">
+    <value>Pegel des Telegrafiesignals über dem Rauschen</value>
+  </data>
+  <data name="Cabina.Cw.NoSeAbre" xml:space="preserve">
+    <value>Der Audioeingang konnte nicht geöffnet werden: {0}</value>
+  </data>
+  <data name="Cabina.Cw.Ocultar" xml:space="preserve">
+    <value>Ausblenden</value>
+  </data>
+  <data name="Cabina.Cw.PasarAlContacto" xml:space="preserve">
+    <value>Dieses Rufzeichen in den neuen Kontakt übernehmen</value>
+  </data>
+  <data name="Cabina.Cw.Pausa" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Cabina.Cw.PausaNombre" xml:space="preserve">
+    <value>Telegrafie-Decoder anhalten oder fortsetzen</value>
+  </data>
+  <data name="Cabina.Cw.RotuloSenal" xml:space="preserve">
+    <value>{0} Hz · {1} WPM</value>
+  </data>
+  <data name="Cabina.Cw.Seguir" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="Cabina.Cw.SinEntrada" xml:space="preserve">
+    <value>Es gibt keinen Audioeingang zum Öffnen. Wählen Sie einen unter Einstellungen › Audio und Digital.</value>
+  </data>
+  <data name="Cabina.Cw.TextoNombre" xml:space="preserve">
+    <value>Dekodierter Telegrafietext</value>
+  </data>
+  <data name="Cabina.Cw.Titulo" xml:space="preserve">
+    <value>Telegrafie (CW)</value>
+  </data>
+  <data name="Cabina.Cw.Tono" xml:space="preserve">
+    <value>Ton {0} Hz</value>
+  </data>
+  <data name="Cabina.Cw.Wpm" xml:space="preserve">
+    <value>{0} WPM</value>
+  </data>
+  <data name="Cabina.Cw.WpmSinDato" xml:space="preserve">
+    <value>— WPM</value>
+  </data>
+  <data name="Cabina.Encendido.Apagada" xml:space="preserve">
+    <value>Funkgerät aus. Lang auf LOCK drücken zum Einschalten.</value>
+  </data>
+  <data name="Cabina.Encendido.ConfirmarApagar" xml:space="preserve">
+    <value>FT-710 ausschalten?</value>
+  </data>
+  <data name="Cabina.Encendido.Encendida" xml:space="preserve">
+    <value>Funkgerät eingeschaltet und verbunden.</value>
+  </data>
+  <data name="Cabina.Encendido.Encendiendo" xml:space="preserve">
+    <value>Funkgerät wird eingeschaltet …</value>
+  </data>
+  <data name="Cabina.Encendido.NoApaga" xml:space="preserve">
+    <value>Funkgerät konnte nicht ausgeschaltet werden: {0}</value>
+  </data>
+  <data name="Cabina.Encendido.NoEnciende" xml:space="preserve">
+    <value>Funkgerät konnte nicht eingeschaltet werden: {0}</value>
+  </data>
+  <data name="Cabina.Encendido.SinConfirmar" xml:space="preserve">
+    <value>Nicht ausgeschaltet: eine Bestätigung ist nötig.</value>
+  </data>
+  <data name="Cabina.Equipo.Accionado" xml:space="preserve">
+    <value>„{0}“ bei sendendem Gerät betätigt.</value>
+  </data>
+  <data name="Cabina.Equipo.ConfirmarIgualar" xml:space="preserve">
+    <value>Aktiven VFO auf den anderen kopieren (A=B). Der andere VFO geht verloren.</value>
+  </data>
+  <data name="Cabina.Equipo.ConfirmarIntercambio" xml:space="preserve">
+    <value>Inhalt von VFO A und B am Gerät tauschen (A/B).</value>
+  </data>
+  <data name="Cabina.Equipo.EnAntena" xml:space="preserve">
+    <value>AUF SENDUNG</value>
+  </data>
+  <data name="Cabina.Equipo.EnBanda" xml:space="preserve">
+    <value>AUF {0}</value>
+  </data>
+  <data name="Cabina.Equipo.EnElAire" xml:space="preserve">
+    <value>IM ÄTHER</value>
+  </data>
+  <data name="Cabina.Equipo.Fallo" xml:space="preserve">
+    <value>Fehler: {0}</value>
+  </data>
+  <data name="Cabina.Equipo.FalloAlDesconectar" xml:space="preserve">
+    <value>Fehler beim Trennen: {0}</value>
+  </data>
+  <data name="Cabina.Equipo.Generico" xml:space="preserve">
+    <value>Generisches Gerät</value>
+  </data>
+  <data name="Cabina.Equipo.NadieEnBanda" xml:space="preserve">
+    <value>IM ÄTHER · NIEMAND AUF {0}</value>
+  </data>
+  <data name="Cabina.Equipo.NoAcciona" xml:space="preserve">
+    <value>„{0}“ konnte nicht betätigt werden: {1}</value>
+  </data>
+  <data name="Cabina.Equipo.NoCambiaBanda" xml:space="preserve">
+    <value>Band konnte nicht gewechselt werden: {0}</value>
+  </data>
+  <data name="Cabina.Equipo.NoCambiaModo" xml:space="preserve">
+    <value>Betriebsart konnte nicht gewechselt werden: {0}</value>
+  </data>
+  <data name="Cabina.Equipo.NoCambiaVfo" xml:space="preserve">
+    <value>VFO konnte nicht gewechselt werden: {0}</value>
+  </data>
+  <data name="Cabina.Equipo.NoConecta" xml:space="preserve">
+    <value>Verbindung zum Gerät fehlgeschlagen: {0}</value>
+  </data>
+  <data name="Cabina.Equipo.NoIguala" xml:space="preserve">
+    <value>VFOs konnten nicht angeglichen werden: {0}</value>
+  </data>
+  <data name="Cabina.Equipo.NoIntercambia" xml:space="preserve">
+    <value>VFOs konnten nicht getauscht werden: {0}</value>
+  </data>
+  <data name="Cabina.Equipo.NoSueltaPtt" xml:space="preserve">
+    <value>Achtung! PTT konnte nicht losgelassen werden: {0}</value>
+  </data>
+  <data name="Cabina.Equipo.NoVaAMemoria" xml:space="preserve">
+    <value>Speicher {0} konnte nicht aufgerufen werden: {1}</value>
+  </data>
+  <data name="Cabina.Equipo.OrigenEquipo" xml:space="preserve">
+    <value>Frequenz und Betriebsart kommen vom Gerät</value>
+  </data>
+  <data name="Cabina.Equipo.OrigenUsted" xml:space="preserve">
+    <value>Frequenz und Betriebsart geben Sie selbst ein</value>
+  </data>
+  <data name="Cabina.Equipo.PttSoltadoOperador" xml:space="preserve">
+    <value>PTT vom Operator losgelassen.</value>
+  </data>
+  <data name="Cabina.Equipo.SinConexion" xml:space="preserve">
+    <value>Nicht verbunden</value>
+  </data>
+  <data name="Cabina.Equipo.SinConexionRotulo" xml:space="preserve">
+    <value>NICHT VERBUNDEN</value>
+  </data>
+  <data name="Cabina.Equipo.SinConfirmar" xml:space="preserve">
+    <value>Nicht ausgeführt: {0} erfordert eine Bestätigung.</value>
+  </data>
+  <data name="Cabina.Equipo.SinContestar" xml:space="preserve">
+    <value>(das Gerät hat nicht geantwortet)</value>
+  </data>
+  <data name="Cabina.Equipo.SinControl" xml:space="preserve">
+    <value>Keine Gerätesteuerung</value>
+  </data>
+  <data name="Cabina.Equipo.SueltaFallo" xml:space="preserve">
+    <value>PTT wegen eines Fehlers beim Senden losgelassen.</value>
+  </data>
+  <data name="Cabina.Equipo.SueltaSinLatido" xml:space="preserve">
+    <value>PTT losgelassen: der Sender hat aufgehört, Lebenszeichen zu geben.</value>
+  </data>
+  <data name="Cabina.Equipo.SueltaTiempo" xml:space="preserve">
+    <value>PTT losgelassen: die maximale Sendezeit ist abgelaufen.</value>
+  </data>
+  <data name="Cabina.Equipo.ViaCambiada" xml:space="preserve">
+    <value>Steuerungsweg des Geräts geändert: {0}.</value>
+  </data>
+  <data name="Cabina.Equipo.ViaCatNativo" xml:space="preserve">
+    <value>FT-710 (natives CAT)</value>
+  </data>
+  <data name="Cabina.Explica.DialB" xml:space="preserve">
+    <value>Abstimmknopf für VFO B: kein eigener Befehl im Programm (deaktiviert); verwenden Sie A/B und den MAIN-Knopf</value>
+  </data>
+  <data name="Cabina.Explica.Func" xml:space="preserve">
+    <value>Stellt die gewählte Funktion ein (SF0): Leistung, Mikrofon, VOX, Telegrafie, Spektrum …</value>
+  </data>
+  <data name="Cabina.Explica.GananciaMicro" xml:space="preserve">
+    <value>Mikrofonverstärkung</value>
+  </data>
+  <data name="Cabina.Explica.MicKeyer" xml:space="preserve">
+    <value>Mikrofonverstärkung (Ring) und Keyer-Geschwindigkeit (Mitte)</value>
+  </data>
+  <data name="Cabina.Explica.MultiAncho" xml:space="preserve">
+    <value>Multifunktionsknopf; hier die Filterbreite</value>
+  </data>
+  <data name="Cabina.Explica.MultiPotencia" xml:space="preserve">
+    <value>Multifunktionsknopf; hier die Sendeleistung</value>
+  </data>
+  <data name="Cabina.Explica.PotenciaMicro" xml:space="preserve">
+    <value>Sendeleistung (Ring) und Mikrofonverstärkung (Mitte)</value>
+  </data>
+  <data name="Cabina.Explica.ProcPitch" xml:space="preserve">
+    <value>Sprachprozessor (Ring) und CW-Tonhöhe (Mitte)</value>
+  </data>
+  <data name="Cabina.Explica.RfSilenciador" xml:space="preserve">
+    <value>HF-Verstärkung (Ring) und Rauschsperre (Mitte)</value>
+  </data>
+  <data name="Cabina.Explica.RfSql" xml:space="preserve">
+    <value>HF-Verstärkung (Ring) und Rauschsperre (Mitte)</value>
+  </data>
+  <data name="Cabina.Explica.RfSqlVolumen" xml:space="preserve">
+    <value>HF-Verstärkung und Rauschsperre (Ring) und Lautstärke (Mitte)</value>
+  </data>
+  <data name="Cabina.Explica.RfSqlVolumenMain" xml:space="preserve">
+    <value>HF-Verstärkung und Rauschsperre (Ring) und Lautstärke (Mitte) des MAIN-Empfängers</value>
+  </data>
+  <data name="Cabina.Explica.RfVolumen" xml:space="preserve">
+    <value>HF-Verstärkung (Ring) und Lautstärke (Mitte)</value>
+  </data>
+  <data name="Cabina.Explica.RfVolumenPrincipal" xml:space="preserve">
+    <value>HF-Verstärkung (Ring) und Lautstärke (Mitte) des Hauptempfängers</value>
+  </data>
+  <data name="Cabina.Explica.Rit" xml:space="preserve">
+    <value>RIT-Ablage</value>
+  </data>
+  <data name="Cabina.Explica.ShiftWidth" xml:space="preserve">
+    <value>ZF-Shift (Ring) und Filterbreite (Mitte)</value>
+  </data>
+  <data name="Cabina.Explica.Step" xml:space="preserve">
+    <value>Kanalschritte im VFO-Betrieb oder Speicherkanal im Speicherbetrieb</value>
+  </data>
+  <data name="Cabina.Explica.StepDsp" xml:space="preserve">
+    <value>Ring: Kanalschritte im VFO-Betrieb oder Speicherkanal im Speicherbetrieb. Mitte: das gewählte DSP-Filter (SF1)</value>
+  </data>
+  <data name="Cabina.Explica.SubApagado" xml:space="preserve">
+    <value>SUB-Empfänger: kein eigener Befehl im Programm (deaktiviert)</value>
+  </data>
+  <data name="Cabina.Explica.Volumen" xml:space="preserve">
+    <value>Lautstärke</value>
+  </data>
+  <data name="Cabina.Fonia.AltavocesPc" xml:space="preserve">
+    <value>PC-Lautsprecher</value>
+  </data>
+  <data name="Cabina.Fonia.ComprobarRadio" xml:space="preserve">
+    <value>Funkgerät prüfen</value>
+  </data>
+  <data name="Cabina.Fonia.ComprobarRadioAyuda" xml:space="preserve">
+    <value>Liest per CAT (nur lesend) die SSB-Modulationsquelle und warnt, wenn sie nicht USB ist</value>
+  </data>
+  <data name="Cabina.Fonia.ConecteElEquipo" xml:space="preserve">
+    <value>Verbinden Sie das Gerät, um die Sprechfunk-PTT zu nutzen.</value>
+  </data>
+  <data name="Cabina.Fonia.DelEquipo" xml:space="preserve">
+    <value>  · Gerät</value>
+  </data>
+  <data name="Cabina.Fonia.Dispositivos" xml:space="preserve">
+    <value>Geräte…</value>
+  </data>
+  <data name="Cabina.Fonia.ElegirDispositivos" xml:space="preserve">
+    <value>Mikrofon und Lautsprecher wählen</value>
+  </data>
+  <data name="Cabina.Fonia.ElijaEscucha" xml:space="preserve">
+    <value>Wählen Sie den Geräteeingang und die PC-Lautsprecher.</value>
+  </data>
+  <data name="Cabina.Fonia.ElijaTransmision" xml:space="preserve">
+    <value>Wählen Sie das PC-Mikrofon und den Ausgang zum Gerät.</value>
+  </data>
+  <data name="Cabina.Fonia.EnElAire" xml:space="preserve">
+    <value>AUF SENDUNG</value>
+  </data>
+  <data name="Cabina.Fonia.EnRecepcion" xml:space="preserve">
+    <value>EMPFANG</value>
+  </data>
+  <data name="Cabina.Fonia.EntradaEquipo" xml:space="preserve">
+    <value>Geräteeingang</value>
+  </data>
+  <data name="Cabina.Fonia.EntradaEquipoNombre" xml:space="preserve">
+    <value>Audioeingang vom Gerät</value>
+  </data>
+  <data name="Cabina.Fonia.Escucha" xml:space="preserve">
+    <value>Hören</value>
+  </data>
+  <data name="Cabina.Fonia.EscuchaCortada" xml:space="preserve">
+    <value>Das Mithören am PC wurde unterbrochen: {0}</value>
+  </data>
+  <data name="Cabina.Fonia.EscuchandoParar" xml:space="preserve">
+    <value>Hören · stoppen</value>
+  </data>
+  <data name="Cabina.Fonia.EscucharAyuda" xml:space="preserve">
+    <value>Gibt das Audio des Geräts über die PC-Lautsprecher aus. Im gemeinsamen Modus hört das Modem weiterhin mit.</value>
+  </data>
+  <data name="Cabina.Fonia.EscucharNombre" xml:space="preserve">
+    <value>Gerät über die PC-Lautsprecher hören</value>
+  </data>
+  <data name="Cabina.Fonia.EscucharPorElPc" xml:space="preserve">
+    <value>Am PC hören</value>
+  </data>
+  <data name="Cabina.Fonia.FuenteNoUsb" xml:space="preserve">
+    <value>Das Funkgerät scheint die SSB-Modulationsquelle nicht auf USB zu haben (Menü EX{0} = {1}, erwartet {2}). Mit dem Gerätemikrofon als Quelle geht das PC-Audio nicht auf Sendung.</value>
+  </data>
+  <data name="Cabina.Fonia.GananciaMicro" xml:space="preserve">
+    <value>Mikrofonverstärkung</value>
+  </data>
+  <data name="Cabina.Fonia.GananciaMicroAyuda" xml:space="preserve">
+    <value>Verstärkung vom PC-Mikrofon zum Gerät</value>
+  </data>
+  <data name="Cabina.Fonia.IndiceMal" xml:space="preserve">
+    <value>Der Menüindex der Modulationsquelle ist ungültig (sechs Ziffern).</value>
+  </data>
+  <data name="Cabina.Fonia.Micro" xml:space="preserve">
+    <value>Mikro</value>
+  </data>
+  <data name="Cabina.Fonia.MicrofonoPc" xml:space="preserve">
+    <value>PC-Mikrofon</value>
+  </data>
+  <data name="Cabina.Fonia.ModoNoVoz" xml:space="preserve">
+    <value>Das Gerät ist in {0}: die Sprechfunk-PTT geht nur in SSB, AM und FM, um dem Modem nicht in die Quere zu kommen.</value>
+  </data>
+  <data name="Cabina.Fonia.NivelEscucha" xml:space="preserve">
+    <value>Pegel des Audios vom Gerät</value>
+  </data>
+  <data name="Cabina.Fonia.NivelMicro" xml:space="preserve">
+    <value>Mikrofonpegel</value>
+  </data>
+  <data name="Cabina.Fonia.NoAbreEscucha" xml:space="preserve">
+    <value>Mithören konnte nicht geöffnet werden: {0}</value>
+  </data>
+  <data name="Cabina.Fonia.NoTransmite" xml:space="preserve">
+    <value>Senden fehlgeschlagen: {0}</value>
+  </data>
+  <data name="Cabina.Fonia.PttClic" xml:space="preserve">
+    <value>PTT · Klick zum Sprechen</value>
+  </data>
+  <data name="Cabina.Fonia.PttFinClic" xml:space="preserve">
+    <value>AUF SENDUNG · Klick zum Beenden</value>
+  </data>
+  <data name="Cabina.Fonia.PttFinSoltar" xml:space="preserve">
+    <value>AUF SENDUNG · zum Beenden loslassen</value>
+  </data>
+  <data name="Cabina.Fonia.PttMantener" xml:space="preserve">
+    <value>PTT · gedrückt halten</value>
+  </data>
+  <data name="Cabina.Fonia.PttNombre" xml:space="preserve">
+    <value>Sprechfunk-PTT: mit dem PC-Mikrofon senden</value>
+  </data>
+  <data name="Cabina.Fonia.SalidaEquipo" xml:space="preserve">
+    <value>Ausgang zum Gerät</value>
+  </data>
+  <data name="Cabina.Fonia.SalidaEquipoNombre" xml:space="preserve">
+    <value>Audioausgang zum Gerät</value>
+  </data>
+  <data name="Cabina.Fonia.Satura" xml:space="preserve">
+    <value>ÜBERSTEUERT</value>
+  </data>
+  <data name="Cabina.Fonia.Silenciar" xml:space="preserve">
+    <value>Mithören stummschalten</value>
+  </data>
+  <data name="Cabina.Fonia.Silencio" xml:space="preserve">
+    <value>Stumm</value>
+  </data>
+  <data name="Cabina.Fonia.SinAudio" xml:space="preserve">
+    <value>Seit {0} s kommt kein Audio vom Gerät: Ist das Funkgerät aus oder das USB-Kabel abgezogen?</value>
+  </data>
+  <data name="Cabina.Fonia.SinFoco" xml:space="preserve">
+    <value>PTT losgelassen: das Programm hat den Fokus verloren.</value>
+  </data>
+  <data name="Cabina.Fonia.SueltaCierre" xml:space="preserve">
+    <value>PTT losgelassen: das Programm wird beendet.</value>
+  </data>
+  <data name="Cabina.Fonia.SueltaEquipo" xml:space="preserve">
+    <value>PTT losgelassen: die Verbindung zum Gerät ist abgerissen.</value>
+  </data>
+  <data name="Cabina.Fonia.SueltaFallo" xml:space="preserve">
+    <value>PTT wegen eines Fehlers losgelassen; sehen Sie im Protokoll nach.</value>
+  </data>
+  <data name="Cabina.Fonia.SueltaModo" xml:space="preserve">
+    <value>PTT losgelassen: das Gerät hat auf {0} umgeschaltet.</value>
+  </data>
+  <data name="Cabina.Fonia.SueltaPanico" xml:space="preserve">
+    <value>PTT mit „PTT LOSLASSEN“ losgelassen.</value>
+  </data>
+  <data name="Cabina.Fonia.SueltaSinLatido" xml:space="preserve">
+    <value>PTT losgelassen: das Audio von Mikrofon oder Gerät ist ausgefallen.</value>
+  </data>
+  <data name="Cabina.Fonia.SueltaTiempo" xml:space="preserve">
+    <value>PTT losgelassen: die Höchstzeit ist abgelaufen ({0}).</value>
+  </data>
+  <data name="Cabina.Fonia.Titulo" xml:space="preserve">
+    <value>Sprechfunk</value>
+  </data>
+  <data name="Cabina.Fonia.Tope" xml:space="preserve">
+    <value>max. {0}</value>
+  </data>
+  <data name="Cabina.Fonia.Volumen" xml:space="preserve">
+    <value>Mithörlautstärke</value>
+  </data>
+  <data name="Cabina.Fonia.VolumenAyuda" xml:space="preserve">
+    <value>Lautstärke des Funkgeräts über die PC-Lautsprecher</value>
+  </data>
+  <data name="Cabina.Fonia.VolverABuscar" xml:space="preserve">
+    <value>Erneut suchen</value>
+  </data>
+  <data name="Cabina.Frontal.AB" xml:space="preserve">
+    <value>A/B — Wechselt zum anderen VFO. Rechtsklick: A=B (fragt nach).</value>
+  </data>
+  <data name="Cabina.Frontal.ABCopia" xml:space="preserve">
+    <value>A/B — Wechselt zum anderen VFO. Rechtsklick: A=B, kopiert den aktiven VFO auf den anderen (fragt nach).</value>
+  </data>
+  <data name="Cabina.Frontal.ABSolo" xml:space="preserve">
+    <value>A/B — Wechselt zum anderen VFO</value>
+  </data>
+  <data name="Cabina.Frontal.AIgualB" xml:space="preserve">
+    <value>A=B — Kopiert den aktiven VFO auf den anderen (fragt nach)</value>
+  </data>
+  <data name="Cabina.Frontal.Apf" xml:space="preserve">
+    <value>APF — Audio-Peakfilter (CW)</value>
+  </data>
+  <data name="Cabina.Frontal.Band" xml:space="preserve">
+    <value>BAND — Nächstes Band</value>
+  </data>
+  <data name="Cabina.Frontal.BkIn" xml:space="preserve">
+    <value>BK-IN — Break-in in Telegrafie</value>
+  </data>
+  <data name="Cabina.Frontal.BkInSemiPleno" xml:space="preserve">
+    <value>BK-IN — Semi- oder Voll-Break-in in Telegrafie</value>
+  </data>
+  <data name="Cabina.Frontal.Change" xml:space="preserve">
+    <value>CHANGE — Tauscht MAIN und SUB (fragt nach)</value>
+  </data>
+  <data name="Cabina.Frontal.Clar" xml:space="preserve">
+    <value>CLAR — Empfangs-Clarifier. Mausrad darüber: Ablage. Rechtsklick: auf null.</value>
+  </data>
+  <data name="Cabina.Frontal.Clear" xml:space="preserve">
+    <value>CLEAR — Setzt die RIT/ΔTX-Ablage auf null</value>
+  </data>
+  <data name="Cabina.Frontal.ConfirmarQmb" xml:space="preserve">
+    <value>Aktuelle Frequenz im Schnellspeicher (QMB) des Geräts speichern.</value>
+  </data>
+  <data name="Cabina.Frontal.ConfirmarSintonia" xml:space="preserve">
+    <value>Tuner abstimmen (sendet einen Träger)</value>
+  </data>
+  <data name="Cabina.Frontal.Cont" xml:space="preserve">
+    <value>CONT — Contour</value>
+  </data>
+  <data name="Cabina.Frontal.DeltaTx" xml:space="preserve">
+    <value>ΔTX — Sendeablage (XIT)</value>
+  </data>
+  <data name="Cabina.Frontal.DialPrincipal" xml:space="preserve">
+    <value>Hauptabstimmknopf</value>
+  </data>
+  <data name="Cabina.Frontal.DialPrincipalAyuda" xml:space="preserve">
+    <value>Hauptabstimmknopf. Mausrad (oder Pfeiltasten): jede Raste dreht den Knopf am Gerät. Mit LOCK bewegt er sich nicht.</value>
+  </data>
+  <data name="Cabina.Frontal.Dnf" xml:space="preserve">
+    <value>DNF — Digitales Auto-Notch</value>
+  </data>
+  <data name="Cabina.Frontal.Dnr" xml:space="preserve">
+    <value>DNR — Digitale Rauschminderung</value>
+  </data>
+  <data name="Cabina.Frontal.Exit" xml:space="preserve">
+    <value>EXIT — Wird am Funkgerät bedient</value>
+  </data>
+  <data name="Cabina.Frontal.Fast" xml:space="preserve">
+    <value>FAST — Schnellabstimmung</value>
+  </data>
+  <data name="Cabina.Frontal.Fine" xml:space="preserve">
+    <value>FINE — Feinabstimmung</value>
+  </data>
+  <data name="Cabina.Frontal.FineGenerico" xml:space="preserve">
+    <value>FINE — Fein- / Schnellabstimmung</value>
+  </data>
+  <data name="Cabina.Frontal.FunctionPantalla" xml:space="preserve">
+    <value>FUNCTION — Seine Funktionen liegen unter dem gezeichneten Display</value>
+  </data>
+  <data name="Cabina.Frontal.FunctionRadio" xml:space="preserve">
+    <value>FUNCTION — Wird am Funkgerät bedient</value>
+  </data>
+  <data name="Cabina.Frontal.Lock" xml:space="preserve">
+    <value>LOCK — Abstimmknopf-Sperre</value>
+  </data>
+  <data name="Cabina.Frontal.MainSub" xml:space="preserve">
+    <value>MAIN/SUB — Wechselt zum anderen Empfänger (VFO). Rechtsklick: MAIN=SUB (fragt nach).</value>
+  </data>
+  <data name="Cabina.Frontal.MaV" xml:space="preserve">
+    <value>M▶V — Kopiert den Speicher in den VFO</value>
+  </data>
+  <data name="Cabina.Frontal.MedidorDeSenal" xml:space="preserve">
+    <value>S-Meter</value>
+  </data>
+  <data name="Cabina.Frontal.Menu" xml:space="preserve">
+    <value>MENU — Wird am Funkgerät bedient: das Programm öffnet seine Menüs nicht</value>
+  </data>
+  <data name="Cabina.Frontal.Mic" xml:space="preserve">
+    <value>MIC — Mikrofonbuchse</value>
+  </data>
+  <data name="Cabina.Frontal.MicModular" xml:space="preserve">
+    <value>MIC — Modulare Mikrofonbuchse</value>
+  </data>
+  <data name="Cabina.Frontal.Mode" xml:space="preserve">
+    <value>MODE — Nächste Betriebsart</value>
+  </data>
+  <data name="Cabina.Frontal.Mox" xml:space="preserve">
+    <value>MOX — SENDET (fragt nach und läuft über die PTT-Überwachung); ein weiterer Klick beendet es.</value>
+  </data>
+  <data name="Cabina.Frontal.MoxEnAntena" xml:space="preserve">
+    <value>MOX: das Gerät sendet. Erneut drücken zum Beenden.</value>
+  </data>
+  <data name="Cabina.Frontal.MoxQuitado" xml:space="preserve">
+    <value>MOX aus: PTT losgelassen.</value>
+  </data>
+  <data name="Cabina.Frontal.MoxTransmitir" xml:space="preserve">
+    <value>MOX (senden)</value>
+  </data>
+  <data name="Cabina.Frontal.Mpvd" xml:space="preserve">
+    <value>MPVD — Multifunktionsring: Mausrad darüber, Kanalschritte (STEP/MCH).</value>
+  </data>
+  <data name="Cabina.Frontal.MScope" xml:space="preserve">
+    <value>M.SCOPE — Das Spektrum ist bereits im gezeichneten Display zu sehen</value>
+  </data>
+  <data name="Cabina.Frontal.Nar" xml:space="preserve">
+    <value>NAR — Schmales Filter</value>
+  </data>
+  <data name="Cabina.Frontal.Nb" xml:space="preserve">
+    <value>NB — Störaustaster (Impulsstörungen)</value>
+  </data>
+  <data name="Cabina.Frontal.NoGiraDial" xml:space="preserve">
+    <value>Abstimmknopf konnte nicht gedreht werden: {0}</value>
+  </data>
+  <data name="Cabina.Frontal.NoGiraStep" xml:space="preserve">
+    <value>STEP/MCH konnte nicht gedreht werden: {0}</value>
+  </data>
+  <data name="Cabina.Frontal.NoMox" xml:space="preserve">
+    <value>MOX konnte nicht eingeschaltet werden: {0}</value>
+  </data>
+  <data name="Cabina.Frontal.NoPulsa" xml:space="preserve">
+    <value>{0} konnte nicht gedrückt werden: {1}</value>
+  </data>
+  <data name="Cabina.Frontal.NoSintoniza" xml:space="preserve">
+    <value>Abstimmen fehlgeschlagen: {0}</value>
+  </data>
+  <data name="Cabina.Frontal.Notch" xml:space="preserve">
+    <value>NOTCH — Auto-Notch</value>
+  </data>
+  <data name="Cabina.Frontal.NotchFi" xml:space="preserve">
+    <value>NOTCH — Manuelles ZF-Notch</value>
+  </data>
+  <data name="Cabina.Frontal.NotchManual" xml:space="preserve">
+    <value>NOTCH — Auto-Notch. Rechtsklick: manuelles Notch.</value>
+  </data>
+  <data name="Cabina.Frontal.Nr" xml:space="preserve">
+    <value>NR — Rauschminderung</value>
+  </data>
+  <data name="Cabina.Frontal.PampAtt" xml:space="preserve">
+    <value>P.AMP/ATT — Klick: nächste Vorverstärkerstufe. Rechtsklick: Abschwächer.</value>
+  </data>
+  <data name="Cabina.Frontal.PantallaDelEquipo" xml:space="preserve">
+    <value>Display des Funkgeräts</value>
+  </data>
+  <data name="Cabina.Frontal.Phones" xml:space="preserve">
+    <value>PHONES — Kopfhörerbuchse</value>
+  </data>
+  <data name="Cabina.Frontal.PilotoEncendido" xml:space="preserve">
+    <value>Ein: leuchtet bei verbundenem Gerät</value>
+  </data>
+  <data name="Cabina.Frontal.Power" xml:space="preserve">
+    <value>POWER — Schaltet das Funkgerät ein oder aus (Ausschalten fragt nach)</value>
+  </data>
+  <data name="Cabina.Frontal.PowerGenerico" xml:space="preserve">
+    <value>POWER — Schaltet das Funkgerät ein oder aus, sofern es das kann (Ausschalten fragt nach)</value>
+  </data>
+  <data name="Cabina.Frontal.Ptt" xml:space="preserve">
+    <value>PTT — SENDET (fragt nach und läuft über die PTT-Überwachung); ein weiterer Klick beendet es.</value>
+  </data>
+  <data name="Cabina.Frontal.Qmb" xml:space="preserve">
+    <value>QMB — Ruft den Schnellspeicher ab. Rechtsklick: speichert (fragt nach).</value>
+  </data>
+  <data name="Cabina.Frontal.Quick" xml:space="preserve">
+    <value>QUICK — Wird am Funkgerät bedient</value>
+  </data>
+  <data name="Cabina.Frontal.Rit" xml:space="preserve">
+    <value>RIT — Empfangsablage. Mausrad darüber: Ablage.</value>
+  </data>
+  <data name="Cabina.Frontal.SinProbar" xml:space="preserve">
+    <value>laut Handbuch, nicht am Gerät getestet</value>
+  </data>
+  <data name="Cabina.Frontal.SinProbarAyuda" xml:space="preserve">
+    <value>Dieses Modell wurde nach dem Handbuch programmiert und nicht mit dem echten Gerät getestet.</value>
+  </data>
+  <data name="Cabina.Frontal.SintoniaCortada" xml:space="preserve">
+    <value>Der Tuner war nach {0:N0} s nicht fertig: abgebrochen.</value>
+  </data>
+  <data name="Cabina.Frontal.SintoniaSinFin" xml:space="preserve">
+    <value>Abstimmung gestartet. Der {0} meldet per CAT nicht, wann sie endet: nach {1:N0} s losgelassen. Prüfen Sie das SWR am Gerät.</value>
+  </data>
+  <data name="Cabina.Frontal.Sintonizado" xml:space="preserve">
+    <value>Tuner abgestimmt.</value>
+  </data>
+  <data name="Cabina.Frontal.Split" xml:space="preserve">
+    <value>SPLIT — Betrieb auf zwei Frequenzen</value>
+  </data>
+  <data name="Cabina.Frontal.Transmit" xml:space="preserve">
+    <value>TRANSMIT — SENDET (fragt nach und läuft über die PTT-Überwachung); ein weiterer Klick beendet es.</value>
+  </data>
+  <data name="Cabina.Frontal.Ts" xml:space="preserve">
+    <value>TS — Abstimmschritt (fein / schnell)</value>
+  </data>
+  <data name="Cabina.Frontal.Tune" xml:space="preserve">
+    <value>TUNE — Klick: Tuner ein- oder ausgeschleift (sendet nicht). Rechtsklick: abstimmen, SENDET TRÄGER (fragt nach, Abbruch nach 10 s).</value>
+  </data>
+  <data name="Cabina.Frontal.TuneFt891" xml:space="preserve">
+    <value>TUNE — Der FT-891 hat keinen internen Tuner: nur mit einem externen Tuner, den das Gerät meldet.</value>
+  </data>
+  <data name="Cabina.Frontal.Tuner" xml:space="preserve">
+    <value>TUNER — Klick: Tuner ein- oder ausgeschleift (sendet nicht). Rechtsklick: abstimmen, SENDET TRÄGER (fragt nach, Abbruch nach 10 s).</value>
+  </data>
+  <data name="Cabina.Frontal.TunerIc705" xml:space="preserve">
+    <value>TUNER — Der IC-705 hat keinen internen Tuner: nur wenn das Gerät einen externen meldet (AH-705).</value>
+  </data>
+  <data name="Cabina.Frontal.TxClar" xml:space="preserve">
+    <value>TX CLAR — Sende-Clarifier (XIT)</value>
+  </data>
+  <data name="Cabina.Frontal.TxRojo" xml:space="preserve">
+    <value>TX — Rot, solange das Gerät sendet</value>
+  </data>
+  <data name="Cabina.Frontal.VM" xml:space="preserve">
+    <value>V/M — Wechselt zwischen VFO und Speichern</value>
+  </data>
+  <data name="Cabina.Frontal.Vox" xml:space="preserve">
+    <value>VOX — Sprachgesteuertes Senden</value>
+  </data>
+  <data name="Cabina.Frontal.VoxBkIn" xml:space="preserve">
+    <value>VOX/BK-IN — Klick: VOX. Rechtsklick: Telegrafie-Break-in.</value>
+  </data>
+  <data name="Cabina.Frontal.Xfc" xml:space="preserve">
+    <value>XFC — Sendefrequenz im Split abhören: wird am Funkgerät bedient</value>
+  </data>
+  <data name="Cabina.Frontal.Xit" xml:space="preserve">
+    <value>XIT — Sendeablage</value>
+  </data>
+  <data name="Cabina.Frontal.ZinSpot" xml:space="preserve">
+    <value>ZIN/SPOT — Klick: Nullabgleich. Rechtsklick: Referenzton (SPOT).</value>
+  </data>
+  <data name="Cabina.Ft710.ABAyuda" xml:space="preserve">
+    <value>A/B — Wechselt den Betriebs-VFO wie die Taste am Gerät (SV;, das beim FT-710 VS0/VS1 umschaltet, ohne die Frequenzen zu ändern). Rechtsklick: A=B, kopiert den aktiven VFO auf den anderen (fragt nach).</value>
+  </data>
+  <data name="Cabina.Ft710.ABNombre" xml:space="preserve">
+    <value>VFO wechseln (A/B)</value>
+  </data>
+  <data name="Cabina.Ft710.BandAyuda" xml:space="preserve">
+    <value>BAND — Nächstes Band (BU0;) mit dem Bandspeicher des Geräts: kehrt zu Frequenz und Betriebsart zurück, die dort eingestellt waren. Rechtsklick: vorheriges Band (BD0;).</value>
+  </data>
+  <data name="Cabina.Ft710.BandNombre" xml:space="preserve">
+    <value>Bandwechsel (BAND)</value>
+  </data>
+  <data name="Cabina.Ft710.BusyAyuda" xml:space="preserve">
+    <value>BUSY/TX — Rot beim Senden</value>
+  </data>
+  <data name="Cabina.Ft710.BusyNombre" xml:space="preserve">
+    <value>Belegt- und Sendeanzeige (BUSY/TX)</value>
+  </data>
+  <data name="Cabina.Ft710.ClarAyuda" xml:space="preserve">
+    <value>CLAR — Klick: Empfangs-Clarifier (CF000). Mausrad darüber: Ablage ±10 Hz pro Raste (CF001). Rechtsklick: Ablage auf null. RT/XT/RC gibt es beim FT-710 nicht; der richtige Befehl ist CF.</value>
+  </data>
+  <data name="Cabina.Ft710.ClarNombre" xml:space="preserve">
+    <value>Clarifier: Empfangsablage (CLAR)</value>
+  </data>
+  <data name="Cabina.Ft710.DialAyuda" xml:space="preserve">
+    <value>Hauptabstimmknopf. Mausrad (oder Pfeiltasten): jede Raste zehn Schritte des Geräteknopfs (Menü 03-05-01/02: 20 Hz in SSB/CW); mit FINE ein Schritt, mit FAST hundert. Mit LOCK bewegt er sich nicht.</value>
+  </data>
+  <data name="Cabina.Ft710.DnrNombre" xml:space="preserve">
+    <value>Digitale Rauschminderung (DNR)</value>
+  </data>
+  <data name="Cabina.Ft710.DspAyuda" xml:space="preserve">
+    <value>Was die Knopfmitte (DSP) gerade einstellt. Klick auf den Knopf: nächste; Rechtsklick: vorherige.</value>
+  </data>
+  <data name="Cabina.Ft710.DspResetAyuda" xml:space="preserve">
+    <value>DSP RESET — Für diese Taste gibt es keinen CAT-Befehl: das Programm macht dasselbe von Hand (ZF-Shift auf 0, Standardbreite der Betriebsart, Notch, Contour und APF aus).</value>
+  </data>
+  <data name="Cabina.Ft710.DspResetNombre" xml:space="preserve">
+    <value>Störfilter zurücksetzen (DSP RESET)</value>
+  </data>
+  <data name="Cabina.Ft710.FineFastAyuda" xml:space="preserve">
+    <value>FINE/FAST — Jeder Klick: normal → FINE → FAST → normal (FN0/FN1/FN2). Bernsteinfarben bei FINE oder FAST. Ändert den Schritt des gezeichneten Knopfs genau wie am Gerät.</value>
+  </data>
+  <data name="Cabina.Ft710.FineFastNombre" xml:space="preserve">
+    <value>Fein- und Schnellabstimmung (FINE/FAST)</value>
+  </data>
+  <data name="Cabina.Ft710.FuncAyuda" xml:space="preserve">
+    <value>Was FUNC gerade einstellt. Klick auf den Knopf: nächste Funktion; Rechtsklick: vorherige.</value>
+  </data>
+  <data name="Cabina.Ft710.IndicadorVfoA" xml:space="preserve">
+    <value>Anzeige VFO A</value>
+  </data>
+  <data name="Cabina.Ft710.IndicadorVfoB" xml:space="preserve">
+    <value>Anzeige VFO B</value>
+  </data>
+  <data name="Cabina.Ft710.LockAyuda" xml:space="preserve">
+    <value>LOCK — Kurzer Druck: sperrt den Abstimmknopf. Langer Druck (1 s): schaltet das Funkgerät ein oder aus (Ausschalten fragt nach).</value>
+  </data>
+  <data name="Cabina.Ft710.LockNombre" xml:space="preserve">
+    <value>Abstimmknopf-Sperre (LOCK); langer Druck: ein- oder ausschalten</value>
+  </data>
+  <data name="Cabina.Ft710.MaVAyuda" xml:space="preserve">
+    <value>M▶V — Kopiert den gewählten Speicher in VFO A (MA;). Überschreibt den Inhalt von VFO A.</value>
+  </data>
+  <data name="Cabina.Ft710.MaVNombre" xml:space="preserve">
+    <value>Speicher in den VFO (M nach V)</value>
+  </data>
+  <data name="Cabina.Ft710.MicNombre" xml:space="preserve">
+    <value>Mikrofonbuchse (MIC)</value>
+  </data>
+  <data name="Cabina.Ft710.ModeNombre" xml:space="preserve">
+    <value>Betriebsartwahl (MODE)</value>
+  </data>
+  <data name="Cabina.Ft710.NarAyuda" xml:space="preserve">
+    <value>NAR — Schmales Filter (NA01/NA00). Die schmale Breite ist die aus dem Menü NAR WIDTH der jeweiligen Betriebsart.</value>
+  </data>
+  <data name="Cabina.Ft710.NarNombre" xml:space="preserve">
+    <value>Schmales Filter (NAR)</value>
+  </data>
+  <data name="Cabina.Ft710.NbNombre" xml:space="preserve">
+    <value>Störaustaster (NB)</value>
+  </data>
+  <data name="Cabina.Ft710.PhonesNombre" xml:space="preserve">
+    <value>Kopfhörerbuchse (PHONES)</value>
+  </data>
+  <data name="Cabina.Ft710.Piloto" xml:space="preserve">
+    <value>Betriebsanzeige</value>
+  </data>
+  <data name="Cabina.Ft710.PilotoAyuda" xml:space="preserve">
+    <value>Betriebsanzeige: blau bei verbundenem Gerät</value>
+  </data>
+  <data name="Cabina.Ft710.QmbAyuda" xml:space="preserve">
+    <value>QMB — Klick: ruft den Schnellspeicher ab (QR;). Rechtsklick = halten: speichert die Frequenz im Schnellspeicher (QI;), fragt nach, weil es den QMB-Stapel des Geräts verschiebt.</value>
+  </data>
+  <data name="Cabina.Ft710.QmbNombre" xml:space="preserve">
+    <value>Schnellspeicher (QMB)</value>
+  </data>
+  <data name="Cabina.Ft710.SplitAyuda" xml:space="preserve">
+    <value>SPLIT — Betrieb auf zwei Frequenzen (ST1/ST0)</value>
+  </data>
+  <data name="Cabina.Ft710.SplitNombre" xml:space="preserve">
+    <value>Betrieb auf zwei Frequenzen (SPLIT)</value>
+  </data>
+  <data name="Cabina.Ft710.TuneAyuda" xml:space="preserve">
+    <value>TUNE — Klick: schleift den Tuner ein oder aus (sendet nicht). Rechtsklick = TUNE halten: stimmt ab (AC003), SENDET TRÄGER; fragt nach und läuft über die PTT-Überwachung, Abbruch nach 10 s.</value>
+  </data>
+  <data name="Cabina.Ft710.TuneDescripcion" xml:space="preserve">
+    <value>Klick: Tuner ein- oder ausgeschleift (AC001/AC000), sendet nicht. Rechtsklick: abstimmen (AC003), sendet einen Träger in einer überwachten Sendung von höchstens 10 s.</value>
+  </data>
+  <data name="Cabina.Ft710.TuneNombre" xml:space="preserve">
+    <value>Antennentuner (TUNE)</value>
+  </data>
+  <data name="Cabina.Ft710.VMAyuda" xml:space="preserve">
+    <value>V/M — Wechselt zwischen VFO und Speichern (VM;). Bernsteinfarben im Speicherbetrieb; STEP/MCH wechselt dann den Kanal.</value>
+  </data>
+  <data name="Cabina.Ft710.VMNombre" xml:space="preserve">
+    <value>Zwischen VFO und Speichern wechseln (V/M)</value>
+  </data>
+  <data name="Cabina.Ft710.VoxAyuda" xml:space="preserve">
+    <value>VOX MOX — Klick: VOX ein/aus. Rechtsklick = MOX: SENDET (fragt nach, läuft über die PTT-Überwachung); ein weiterer Rechtsklick beendet es. Die Beschriftung MOX wird beim Senden rot.</value>
+  </data>
+  <data name="Cabina.Ft710.VoxDescripcion" xml:space="preserve">
+    <value>Klick: VOX (VX1/VX0). Rechtsklick: MOX, tastet das Gerät über die PTT-Überwachung auf; ein weiterer Rechtsklick beendet es.</value>
+  </data>
+  <data name="Cabina.Ft710.VoxNombre" xml:space="preserve">
+    <value>Sprachgesteuertes Senden (VOX/MOX)</value>
+  </data>
+  <data name="Cabina.Ft710.ZinAyuda" xml:space="preserve">
+    <value>ZIN/SPOT — Klick: ZIN, Nullabgleich auf das Signal (ZI0; wirkt nur in CW und mit einem Signal im Durchlassbereich). Rechtsklick: SPOT, Referenzton (CS1/CS0).</value>
+  </data>
+  <data name="Cabina.Ft710.ZinNombre" xml:space="preserve">
+    <value>Nullabgleich und Referenzton in Telegrafie (ZIN/SPOT)</value>
+  </data>
+  <data name="Cabina.Giratorio.Anillo" xml:space="preserve">
+    <value>Ring: {0} ({1}).</value>
+  </data>
+  <data name="Cabina.Giratorio.AnilloLibre" xml:space="preserve">
+    <value>Ring: bedient das Gerät.</value>
+  </data>
+  <data name="Cabina.Giratorio.Ayuda" xml:space="preserve">
+    <value>{0} — {1}. {2} Drehen Sie mit dem Mausrad oder den Pfeiltasten.</value>
+  </data>
+  <data name="Cabina.Giratorio.Centro" xml:space="preserve">
+    <value>Mitte: {0} ({1}).</value>
+  </data>
+  <data name="Cabina.Giratorio.Clic" xml:space="preserve">
+    <value>Klick: Knopf drücken.</value>
+  </data>
+  <data name="Cabina.Giratorio.ClicDerecho" xml:space="preserve">
+    <value>Rechtsklick: gedrückt halten.</value>
+  </data>
+  <data name="Cabina.Giratorio.Rango" xml:space="preserve">
+    <value>{0} bis {1}</value>
+  </data>
+  <data name="Cabina.Giratorio.SinCat" xml:space="preserve">
+    <value>Dieses Gerät bietet diesen Regler nicht per CAT an.</value>
+  </data>
+  <data name="Cabina.Giratorio.SinCatAyuda" xml:space="preserve">
+    <value>{0} — {1}. Dieses Gerät bietet ihn nicht per CAT an.</value>
+  </data>
+  <data name="Cabina.Icom.Agc" xml:space="preserve">
+    <value>Automatische Verstärkungsregelung</value>
+  </data>
+  <data name="Cabina.Icom.Banda" xml:space="preserve">
+    <value>Band (im Display antippen): nächstes Band</value>
+  </data>
+  <data name="Cabina.Icom.CentFix" xml:space="preserve">
+    <value>CENT/FIX — Spektrum zentriert oder fest</value>
+  </data>
+  <data name="Cabina.Icom.Expd" xml:space="preserve">
+    <value>EXPD — Vergrößertes Spektrum</value>
+  </data>
+  <data name="Cabina.Icom.Modo" xml:space="preserve">
+    <value>Betriebsart (im Display antippen): nächste Betriebsart</value>
+  </data>
+  <data name="Cabina.Icom.Ref" xml:space="preserve">
+    <value>REF — Referenzpegel: wird am Funkgerät eingestellt</value>
+  </data>
+  <data name="Cabina.Icom.Span" xml:space="preserve">
+    <value>SPAN — Spektrumbreite. Rechtsklick: schmaler.</value>
+  </data>
+  <data name="Cabina.Icom.Speed" xml:space="preserve">
+    <value>SPEED — Wasserfallgeschwindigkeit. Rechtsklick: langsamer.</value>
+  </data>
+  <data name="Cabina.Mando.Agc" xml:space="preserve">
+    <value>Automatische Verstärkungsregelung</value>
+  </data>
+  <data name="Cabina.Mando.AnchoDeFiltro" xml:space="preserve">
+    <value>Filterbreite</value>
+  </data>
+  <data name="Cabina.Mando.Antena" xml:space="preserve">
+    <value>Antenne</value>
+  </data>
+  <data name="Cabina.Mando.AntiVox" xml:space="preserve">
+    <value>Anti-VOX</value>
+  </data>
+  <data name="Cabina.Mando.Apagado" xml:space="preserve">
+    <value>Aus</value>
+  </data>
+  <data name="Cabina.Mando.Apf" xml:space="preserve">
+    <value>Audio-Peakfilter (APF)</value>
+  </data>
+  <data name="Cabina.Mando.Atenuador" xml:space="preserve">
+    <value>Abschwächer</value>
+  </data>
+  <data name="Cabina.Mando.Bloqueo" xml:space="preserve">
+    <value>Abstimmknopf-Sperre (LOCK)</value>
+  </data>
+  <data name="Cabina.Mando.BreakIn" xml:space="preserve">
+    <value>Break-in</value>
+  </data>
+  <data name="Cabina.Mando.BrilloPantalla" xml:space="preserve">
+    <value>Displayhelligkeit</value>
+  </data>
+  <data name="Cabina.Mando.Compresor" xml:space="preserve">
+    <value>Sprachkompressor</value>
+  </data>
+  <data name="Cabina.Mando.Contorno" xml:space="preserve">
+    <value>Contour</value>
+  </data>
+  <data name="Cabina.Mando.ContrastePantalla" xml:space="preserve">
+    <value>Displaykontrast</value>
+  </data>
+  <data name="Cabina.Mando.DesplazamientoFi" xml:space="preserve">
+    <value>ZF-Shift</value>
+  </data>
+  <data name="Cabina.Mando.DesplazamientoRit" xml:space="preserve">
+    <value>Wert der Empfangsablage</value>
+  </data>
+  <data name="Cabina.Mando.DesplazamientoXit" xml:space="preserve">
+    <value>Wert der Sendeablage</value>
+  </data>
+  <data name="Cabina.Mando.Encendido" xml:space="preserve">
+    <value>Ein</value>
+  </data>
+  <data name="Cabina.Mando.EspectroAncho" xml:space="preserve">
+    <value>Spektrumbreite (SPAN)</value>
+  </data>
+  <data name="Cabina.Mando.EspectroColor" xml:space="preserve">
+    <value>Spektrumfarbe</value>
+  </data>
+  <data name="Cabina.Mando.EspectroModo" xml:space="preserve">
+    <value>Spektrummodus (CENTER/3DSS/EXPAND)</value>
+  </data>
+  <data name="Cabina.Mando.EspectroNivel" xml:space="preserve">
+    <value>Spektrumpegel</value>
+  </data>
+  <data name="Cabina.Mando.EspectroPicos" xml:space="preserve">
+    <value>Spektrumspitzen</value>
+  </data>
+  <data name="Cabina.Mando.EspectroVelocidad" xml:space="preserve">
+    <value>Spektrumgeschwindigkeit (SPEED)</value>
+  </data>
+  <data name="Cabina.Mando.FiltroDeTejado" xml:space="preserve">
+    <value>Roofing-Filter</value>
+  </data>
+  <data name="Cabina.Mando.FiltroEstrecho" xml:space="preserve">
+    <value>Schmales Filter (NAR)</value>
+  </data>
+  <data name="Cabina.Mando.FrecuenciaApf" xml:space="preserve">
+    <value>APF-Frequenz</value>
+  </data>
+  <data name="Cabina.Mando.FrecuenciaDeContorno" xml:space="preserve">
+    <value>Contour-Frequenz</value>
+  </data>
+  <data name="Cabina.Mando.FrecuenciaDeMuesca" xml:space="preserve">
+    <value>Notch-Frequenz</value>
+  </data>
+  <data name="Cabina.Mando.FuncionDelMandoDsp" xml:space="preserve">
+    <value>Funktion des DSP-Knopfs</value>
+  </data>
+  <data name="Cabina.Mando.FuncionDelMandoFunc" xml:space="preserve">
+    <value>Funktion des FUNC-Knopfs</value>
+  </data>
+  <data name="Cabina.Mando.GananciaMicrofono" xml:space="preserve">
+    <value>Mikrofonverstärkung</value>
+  </data>
+  <data name="Cabina.Mando.GananciaRf" xml:space="preserve">
+    <value>HF-Verstärkung</value>
+  </data>
+  <data name="Cabina.Mando.GananciaVox" xml:space="preserve">
+    <value>VOX-Verstärkung</value>
+  </data>
+  <data name="Cabina.Mando.Grupo.Frecuencia" xml:space="preserve">
+    <value>Frequenz</value>
+  </data>
+  <data name="Cabina.Mando.Grupo.Frontal" xml:space="preserve">
+    <value>Frontplatte</value>
+  </data>
+  <data name="Cabina.Mando.Grupo.Nivel" xml:space="preserve">
+    <value>Pegel</value>
+  </data>
+  <data name="Cabina.Mando.Grupo.Otros" xml:space="preserve">
+    <value>Sonstige</value>
+  </data>
+  <data name="Cabina.Mando.Grupo.Pantalla" xml:space="preserve">
+    <value>Display</value>
+  </data>
+  <data name="Cabina.Mando.Grupo.Recepcion" xml:space="preserve">
+    <value>Empfang</value>
+  </data>
+  <data name="Cabina.Mando.Grupo.Telegrafia" xml:space="preserve">
+    <value>Telegrafie</value>
+  </data>
+  <data name="Cabina.Mando.Grupo.Transmision" xml:space="preserve">
+    <value>Senden</value>
+  </data>
+  <data name="Cabina.Mando.Monitor" xml:space="preserve">
+    <value>Mithören</value>
+  </data>
+  <data name="Cabina.Mando.MuescaAutomatica" xml:space="preserve">
+    <value>Auto-Notch</value>
+  </data>
+  <data name="Cabina.Mando.MuescaManual" xml:space="preserve">
+    <value>Manuelles Notch</value>
+  </data>
+  <data name="Cabina.Mando.NivelAmc" xml:space="preserve">
+    <value>AMC-Pegel</value>
+  </data>
+  <data name="Cabina.Mando.NivelReductorDeRuido" xml:space="preserve">
+    <value>Rauschminderungspegel</value>
+  </data>
+  <data name="Cabina.Mando.NivelSupresorDeRuido" xml:space="preserve">
+    <value>Störaustaster-Pegel</value>
+  </data>
+  <data name="Cabina.Mando.Potencia" xml:space="preserve">
+    <value>Leistung</value>
+  </data>
+  <data name="Cabina.Mando.Preamplificador" xml:space="preserve">
+    <value>Vorverstärker</value>
+  </data>
+  <data name="Cabina.Mando.ReductorDeRuido" xml:space="preserve">
+    <value>Rauschminderung</value>
+  </data>
+  <data name="Cabina.Mando.RetardoBreakIn" xml:space="preserve">
+    <value>Break-in-Verzögerung</value>
+  </data>
+  <data name="Cabina.Mando.RetardoVox" xml:space="preserve">
+    <value>VOX-Verzögerung</value>
+  </data>
+  <data name="Cabina.Mando.Rit" xml:space="preserve">
+    <value>Empfangsablage</value>
+  </data>
+  <data name="Cabina.Mando.Silenciador" xml:space="preserve">
+    <value>Rauschsperre</value>
+  </data>
+  <data name="Cabina.Mando.SintoniaFinaRapida" xml:space="preserve">
+    <value>Fein- oder Schnellabstimmung (FINE/FAST)</value>
+  </data>
+  <data name="Cabina.Mando.Sintonizador" xml:space="preserve">
+    <value>Antennentuner</value>
+  </data>
+  <data name="Cabina.Mando.Split" xml:space="preserve">
+    <value>Betrieb auf zwei Frequenzen</value>
+  </data>
+  <data name="Cabina.Mando.SupresorDeRuido" xml:space="preserve">
+    <value>Störaustaster</value>
+  </data>
+  <data name="Cabina.Mando.TonoCw" xml:space="preserve">
+    <value>CW-Tonhöhe</value>
+  </data>
+  <data name="Cabina.Mando.TonoDeReferenciaCw" xml:space="preserve">
+    <value>Referenzton (SPOT)</value>
+  </data>
+  <data name="Cabina.Mando.VelocidadKeyer" xml:space="preserve">
+    <value>Keyer-Geschwindigkeit</value>
+  </data>
+  <data name="Cabina.Mando.Volumen" xml:space="preserve">
+    <value>Lautstärke</value>
+  </data>
+  <data name="Cabina.Mando.Vox" xml:space="preserve">
+    <value>Sprachgesteuertes Senden</value>
+  </data>
+  <data name="Cabina.Mando.Xit" xml:space="preserve">
+    <value>Sendeablage</value>
+  </data>
+  <data name="Cabina.Mandos.EnAntena" xml:space="preserve">
+    <value>Die Betätigung schaltet das Gerät AUF SENDUNG: vorher kommt ein Hinweis.</value>
+  </data>
+  <data name="Cabina.Mandos.Encendido" xml:space="preserve">
+    <value>Ein</value>
+  </data>
+  <data name="Cabina.Posicion.Amplificador" xml:space="preserve">
+    <value>Verstärker</value>
+  </data>
+  <data name="Cabina.Posicion.Amplificador1" xml:space="preserve">
+    <value>Verstärker 1</value>
+  </data>
+  <data name="Cabina.Posicion.Amplificador2" xml:space="preserve">
+    <value>Verstärker 2</value>
+  </data>
+  <data name="Cabina.Posicion.Ancho" xml:space="preserve">
+    <value>Breit</value>
+  </data>
+  <data name="Cabina.Posicion.Apagado" xml:space="preserve">
+    <value>Aus</value>
+  </data>
+  <data name="Cabina.Posicion.AutoLento" xml:space="preserve">
+    <value>Auto langsam</value>
+  </data>
+  <data name="Cabina.Posicion.AutoMedio" xml:space="preserve">
+    <value>Auto mittel</value>
+  </data>
+  <data name="Cabina.Posicion.AutoRapido" xml:space="preserve">
+    <value>Auto schnell</value>
+  </data>
+  <data name="Cabina.Posicion.Encendido" xml:space="preserve">
+    <value>Ein</value>
+  </data>
+  <data name="Cabina.Posicion.EnLinea" xml:space="preserve">
+    <value>Eingeschleift</value>
+  </data>
+  <data name="Cabina.Posicion.Estrecho" xml:space="preserve">
+    <value>Schmal</value>
+  </data>
+  <data name="Cabina.Posicion.Fina" xml:space="preserve">
+    <value>Fein (FINE)</value>
+  </data>
+  <data name="Cabina.Posicion.Fuera" xml:space="preserve">
+    <value>Aus</value>
+  </data>
+  <data name="Cabina.Posicion.InternoYExterno" xml:space="preserve">
+    <value>Intern und extern</value>
+  </data>
+  <data name="Cabina.Posicion.Lento" xml:space="preserve">
+    <value>Langsam</value>
+  </data>
+  <data name="Cabina.Posicion.Medio" xml:space="preserve">
+    <value>Mittel</value>
+  </data>
+  <data name="Cabina.Posicion.Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="Cabina.Posicion.PorOmision" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="Cabina.Posicion.PreampExterno" xml:space="preserve">
+    <value>Externer Vorverstärker</value>
+  </data>
+  <data name="Cabina.Posicion.Preamplificador" xml:space="preserve">
+    <value>Vorverstärker</value>
+  </data>
+  <data name="Cabina.Posicion.Preamplificador1" xml:space="preserve">
+    <value>Vorverstärker 1</value>
+  </data>
+  <data name="Cabina.Posicion.Preamplificador2" xml:space="preserve">
+    <value>Vorverstärker 2</value>
+  </data>
+  <data name="Cabina.Posicion.Rapida" xml:space="preserve">
+    <value>Schnell (FAST)</value>
+  </data>
+  <data name="Cabina.Posicion.Rapido" xml:space="preserve">
+    <value>Schnell</value>
+  </data>
+  <data name="Cabina.Posicion.Semi" xml:space="preserve">
+    <value>Semi</value>
+  </data>
+  <data name="Cabina.Posicion.SinPreamp" xml:space="preserve">
+    <value>Ohne Vorverstärker</value>
+  </data>
+  <data name="Cabina.Posicion.SinPreampIpo" xml:space="preserve">
+    <value>Ohne Vorverstärker (IPO)</value>
+  </data>
+  <data name="Cabina.Posicion.Sintonizar" xml:space="preserve">
+    <value>Abstimmen</value>
+  </data>
+  <data name="Cabina.Posicion.SintonizarEmite" xml:space="preserve">
+    <value>Abstimmen (sendet Träger)</value>
+  </data>
+  <data name="Cabina.Posicion.Total" xml:space="preserve">
+    <value>Voll</value>
+  </data>
+  <data name="Cabina.Unidad.Indice" xml:space="preserve">
+    <value>Index</value>
+  </data>
+  <data name="Cabina.Unidad.Ppm" xml:space="preserve">
+    <value>WpM</value>
+  </data>
+  <data name="Cabina.Vfo.FueraDeBanda" xml:space="preserve">
+    <value>Außerhalb des Bandes</value>
+  </data>
+  <data name="Cabina.Vfo.FueraDeBandaMinus" xml:space="preserve">
+    <value>außerhalb des Bandes</value>
+  </data>
+  <data name="Cabina.Vfo.FueraDelPlan" xml:space="preserve">
+    <value>Außerhalb des Bandplans</value>
+  </data>
+  <data name="Cabina.Vfo.SinBanda" xml:space="preserve">
+    <value>Diese Frequenz liegt in keinem Amateurfunkband.</value>
+  </data>
+  <data name="Cabina.Vfo.TramoBalizas" xml:space="preserve">
+    <value>Bakenbereich</value>
+  </data>
+  <data name="Cabina.Vfo.TramoCw" xml:space="preserve">
+    <value>CW-Bereich</value>
+  </data>
+  <data name="Cabina.Vfo.TramoDigital" xml:space="preserve">
+    <value>Digitalbereich</value>
+  </data>
+  <data name="Cabina.Vfo.TramoFonia" xml:space="preserve">
+    <value>Sprechfunkbereich</value>
+  </data>
+  <data name="Cabina.Vfo.TramoReservado" xml:space="preserve">
+    <value>Reservierter Bereich</value>
+  </data>
+  <data name="Cabina.Visor.AbrirAudio" xml:space="preserve">
+    <value>Empfangsaudio öffnen</value>
+  </data>
+  <data name="Cabina.Visor.AbrirAudioAyuda" xml:space="preserve">
+    <value>Öffnet den Audioeingang des Geräts (derselbe, den das eigene Modem nutzt). Sendet nicht.</value>
+  </data>
+  <data name="Cabina.Visor.Anunciado" xml:space="preserve">
+    <value>Im Cluster auf dieser Frequenz gemeldet</value>
+  </data>
+  <data name="Cabina.Visor.AudioCerrado" xml:space="preserve">
+    <value>Das USB-Audio des Geräts ist geschlossen.</value>
+  </data>
+  <data name="Cabina.Visor.CenterAyuda" xml:space="preserve">
+    <value>CENTER — Jeder Druck: CENTER → CURSOR → FIX (SS06). Beschriftung: aktuelle Einstellung des Spektrums.</value>
+  </data>
+  <data name="Cabina.Visor.CenterNombre" xml:space="preserve">
+    <value>CENTER, CURSOR oder FIX des Spektrums</value>
+  </data>
+  <data name="Cabina.Visor.Dnf" xml:space="preserve">
+    <value>Automatisches Notchfilter (DNF)</value>
+  </data>
+  <data name="Cabina.Visor.EspectroAudio" xml:space="preserve">
+    <value>Spektrum des Empfangsaudios</value>
+  </data>
+  <data name="Cabina.Visor.EspectroSinAudio" xml:space="preserve">
+    <value>SPEKTRUM OHNE AUDIO</value>
+  </data>
+  <data name="Cabina.Visor.ExpandAyuda" xml:space="preserve">
+    <value>EXPAND — Vergrößert das Spektrum oder stellt es zurück (SS06): es wird höher und verdeckt die Zeile ATT/IPO/DNF/AGC. Der FT-710 erlaubt die Vergrößerung per CAT nur im Wasserfall: aus 3DSS wechselt er in den vergrößerten Wasserfall.</value>
+  </data>
+  <data name="Cabina.Visor.ExpandNombre" xml:space="preserve">
+    <value>Wasserfall vergrößern (EXPAND)</value>
+  </data>
+  <data name="Cabina.Visor.Filtro" xml:space="preserve">
+    <value>· Filter</value>
+  </data>
+  <data name="Cabina.Visor.FrecuenciaActiva" xml:space="preserve">
+    <value>Frequenz des aktiven VFO</value>
+  </data>
+  <data name="Cabina.Visor.FrecuenciaOtro" xml:space="preserve">
+    <value>Frequenz des anderen VFO</value>
+  </data>
+  <data name="Cabina.Visor.FuncAyuda" xml:space="preserve">
+    <value>Was der FUNC-Knopf gerade einstellt, und sein Wert</value>
+  </data>
+  <data name="Cabina.Visor.FuncNombre" xml:space="preserve">
+    <value>FUNC-Knopf</value>
+  </data>
+  <data name="Cabina.Visor.MiniaturaBanda" xml:space="preserve">
+    <value>Bandübersicht</value>
+  </data>
+  <data name="Cabina.Visor.MultiAyuda" xml:space="preserve">
+    <value>MULTI — Wie am Funkgerät: oben das Spektrum, darunter Oszilloskop und AF-FFT des Empfangsaudios. Gehört zur Anzeige des Programms (der FT-710 hat keinen CAT-Befehl für MULTI): es wird nichts ans Gerät gesendet und dessen Anzeige ändert sich nicht. Leuchtet bei der Mehrfachansicht.</value>
+  </data>
+  <data name="Cabina.Visor.MultiNombre" xml:space="preserve">
+    <value>MULTI: Oszilloskop und AF-FFT</value>
+  </data>
+  <data name="Cabina.Visor.Potencia" xml:space="preserve">
+    <value>· Leistung</value>
+  </data>
+  <data name="Cabina.Visor.Roe" xml:space="preserve">
+    <value>· SWR</value>
+  </data>
+  <data name="Cabina.Visor.Senal" xml:space="preserve">
+    <value>Signal</value>
+  </data>
+  <data name="Cabina.Visor.SpanNombre" xml:space="preserve">
+    <value>Spektrumbreite (SPAN)</value>
+  </data>
+  <data name="Cabina.Visor.SpeedNombre" xml:space="preserve">
+    <value>Spektrumgeschwindigkeit (SPEED)</value>
+  </data>
+  <data name="Cabina.Visor.TeclaTactil" xml:space="preserve">
+    <value>Touch-Taste im Display des Geräts: wird am Funkgerät bedient.</value>
+  </data>
+  <data name="Cabina.Visor.TresDssAyuda" xml:space="preserve">
+    <value>3DSS — Schaltet das Spektrum von 3DSS auf Wasserfall (W/F) und zurück (SS06). Leuchtet bei 3DSS; die Darstellung wechselt in die Perspektivansicht.</value>
+  </data>
+  <data name="Cabina.Visor.TresDssNombre" xml:space="preserve">
+    <value>3DSS- oder Wasserfallansicht</value>
+  </data>
+</root>

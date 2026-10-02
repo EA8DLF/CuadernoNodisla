@@ -2,14 +2,19 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.Ajustes;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
 
 /// <summary>Una tecla elegible para el PTT de fonia.</summary>
 /// <param name="Nombre">Nombre de <c>System.Windows.Input.Key</c>; vacio es ninguna.</param>
-/// <param name="Texto">Lo que se lee en pantalla.</param>
-public sealed record TeclaDePtt(string Nombre, string Texto);
+/// <param name="ClaveDelTexto">Clave del texto en pantalla; nula si se lee igual que el nombre (F10, Insert...).</param>
+public sealed record TeclaDePtt(string Nombre, string? ClaveDelTexto = null) : OpcionTraducida
+{
+    /// <summary>Lo que se lee en pantalla.</summary>
+    public string Texto => ClaveDelTexto is null ? Nombre : Textos.T(ClaveDelTexto);
+}
 
 /// <summary>
 /// El apartado de fonia en Ajustes: los cuatro dispositivos, los volumenes y los tiempos.
@@ -55,6 +60,9 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
         _salidas = salidas;
         _idPorOmision = idPorOmision ?? (_ => null);
 
+        // El aviso de los dispositivos se escribe en el idioma nuevo.
+        Textos.AlCambiar(this, static vm => vm.OnPropertyChanged(nameof(AvisoDeDispositivos)));
+
         Cargar();
     }
 
@@ -73,14 +81,14 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
     /// <summary>Teclas que se pueden usar para el PTT.</summary>
     public IReadOnlyList<TeclaDePtt> Teclas { get; } =
     [
-        new(string.Empty, "Ninguna"),
-        new("F10", "F10"),
-        new("F11", "F11"),
-        new("F12", "F12"),
-        new("Pause", "Pausa"),
-        new("Scroll", "Bloq Despl"),
-        new("Insert", "Insert"),
-        new("RightCtrl", "Ctrl derecho"),
+        new(string.Empty, "Ajustes.Fonia.Tecla.Ninguna"),
+        new("F10"),
+        new("F11"),
+        new("F12"),
+        new("Pause", "Ajustes.Fonia.Tecla.Pausa"),
+        new("Scroll", "Ajustes.Fonia.Tecla.BloqDespl"),
+        new("Insert"),
+        new("RightCtrl", "Ajustes.Fonia.Tecla.CtrlDerecho"),
     ];
 
     [ObservableProperty]
@@ -141,17 +149,17 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
         {
             if (SalidaAlEquipo is { EsDelEquipo: false } && Salidas.Any(s => s.EsDelEquipo))
             {
-                return "La salida al equipo no es la del codec del equipo: la voz no llegaría a la radio.";
+                return Textos.T("Ajustes.Fonia.Aviso.SalidaNoEsDelEquipo");
             }
 
             if (Microfono is { EsDelEquipo: true })
             {
-                return "El micrófono elegido es la entrada del equipo: se retransmitiría lo que se recibe.";
+                return Textos.T("Ajustes.Fonia.Aviso.MicrofonoEsEntrada");
             }
 
             if (Altavoces is { EsDelEquipo: true })
             {
-                return "Los altavoces elegidos son la salida al equipo: la escucha se transmitiría.";
+                return Textos.T("Ajustes.Fonia.Aviso.AltavocesSonSalida");
             }
 
             return string.Empty;

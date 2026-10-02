@@ -2,7 +2,8 @@
         Icon="/Nodisla.Cuaderno.Ui;component/Recursos/CuadernoNodisla.ico"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Ver / enviar QSL — Cuaderno NODISLA"
+        xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+        Title="{loc:Texto Qsl.Envio.Titulo}"
         Width="1180" Height="700" MinWidth="820" MinHeight="500"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False"
@@ -34,20 +35,20 @@
 
         <!-- ══ Destinatarios ══ -->
         <DockPanel Grid.Column="0" Grid.Row="0" Margin="0,0,10,0">
-            <TextBlock DockPanel.Dock="Top" Text="Destinatarios" Style="{StaticResource TituloDeSeccion}" />
+            <TextBlock DockPanel.Dock="Top" Text="{loc:Texto Qsl.Envio.Destinatarios}" Style="{StaticResource TituloDeSeccion}" />
             <TextBlock DockPanel.Dock="Top" Text="{Binding DesdeTexto}" Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,0,0,6" />
             <DataGrid ItemsSource="{Binding Destinatarios}" SelectedItem="{Binding Elegido}"
                       HorizontalScrollBarVisibility="Auto" VerticalAlignment="Top"
                       AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
                       HeadersVisibility="Column" SelectionMode="Single" GridLinesVisibility="Horizontal"
-                      AutomationProperties.Name="Estaciones a las que se manda la tarjeta">
+                      AutomationProperties.Name="{loc:Texto Qsl.Envio.DestinatariosNombre}">
                 <DataGrid.Columns>
-                    <DataGridCheckBoxColumn Header="Enviar" Binding="{Binding Enviar, UpdateSourceTrigger=PropertyChanged}" Width="Auto" />
-                    <DataGridTextColumn Header="Indicativo" Binding="{Binding Indicativo}" IsReadOnly="True" Width="Auto" FontWeight="SemiBold" />
-                    <DataGridTextColumn Header="Contacto(s)" Binding="{Binding ContactosTexto}" IsReadOnly="True" Width="Auto" />
-                    <DataGridTextColumn Header="Correo" Binding="{Binding Correo, UpdateSourceTrigger=PropertyChanged}" Width="*" MinWidth="170" />
-                    <DataGridTextColumn Header="De" Binding="{Binding OrigenTexto}" IsReadOnly="True" Width="Auto" />
-                    <DataGridTextColumn Header="Estado" Binding="{Binding Estado}" IsReadOnly="True" Width="*" MinWidth="170">
+                    <DataGridCheckBoxColumn Header="{loc:Texto Qsl.Envio.Enviar}" Binding="{Binding Enviar, UpdateSourceTrigger=PropertyChanged}" Width="Auto" />
+                    <DataGridTextColumn Header="{loc:Texto Comun.Indicativo}" Binding="{Binding Indicativo}" IsReadOnly="True" Width="Auto" FontWeight="SemiBold" />
+                    <DataGridTextColumn Header="{loc:Texto Qsl.Envio.Contactos}" Binding="{Binding ContactosTexto}" IsReadOnly="True" Width="Auto" />
+                    <DataGridTextColumn Header="{loc:Texto Qsl.Editor.Correo}" Binding="{Binding Correo, UpdateSourceTrigger=PropertyChanged}" Width="*" MinWidth="170" />
+                    <DataGridTextColumn Header="{loc:Texto Qsl.Envio.De}" Binding="{Binding OrigenTexto}" IsReadOnly="True" Width="Auto" />
+                    <DataGridTextColumn Header="{loc:Texto Qsl.Envio.Estado}" Binding="{Binding Estado}" IsReadOnly="True" Width="*" MinWidth="170">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextWrapping" Value="Wrap" />
@@ -61,9 +62,9 @@
         <!-- ══ Tarjeta y correo ══ -->
         <DockPanel Grid.Column="1" Grid.Row="0">
             <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                <TextBlock Text="Plantilla" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold" />
+                <TextBlock Text="{loc:Texto Qsl.Editor.Plantilla}" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold" />
                 <ComboBox ItemsSource="{Binding Disenos}" SelectedItem="{Binding Diseno}"
-                          AutomationProperties.Name="Plantilla de tarjeta">
+                          AutomationProperties.Name="{loc:Texto Qsl.Tarjeta.PlantillaDeTarjeta}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Nombre}" />
@@ -73,31 +74,31 @@
             </DockPanel>
 
             <Border DockPanel.Dock="Top" Background="{DynamicResource FondoCampo}" Padding="6" Height="250">
-                <Image Source="{Binding VistaPrevia}" Stretch="Uniform" AutomationProperties.Name="Vista previa de la tarjeta" />
+                <Image Source="{Binding VistaPrevia}" Stretch="Uniform" AutomationProperties.Name="{loc:Texto Qsl.Envio.VistaPrevia}" />
             </Border>
 
-            <TextBlock DockPanel.Dock="Top" Text="Asunto" FontWeight="SemiBold" Margin="0,8,0,2" />
-            <TextBox DockPanel.Dock="Top" Text="{Binding Asunto, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Asunto del correo" />
-            <TextBlock DockPanel.Dock="Top" Text="Texto ({indicativo}, {fecha}, {banda}, {contactos}…)" FontWeight="SemiBold" Margin="0,6,0,2" />
+            <TextBlock DockPanel.Dock="Top" Text="{loc:Texto Qsl.Editor.Asunto}" FontWeight="SemiBold" Margin="0,8,0,2" />
+            <TextBox DockPanel.Dock="Top" Text="{Binding Asunto, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{loc:Texto Qsl.Envio.AsuntoNombre}" />
+            <TextBlock DockPanel.Dock="Top" Text="{loc:Texto Qsl.Envio.Texto, Valor={Binding Tag, RelativeSource={RelativeSource Self}}}" FontWeight="SemiBold" Margin="0,6,0,2" />
             <TextBox Text="{Binding Texto, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" VerticalAlignment="Top" MinLines="9" MaxLines="14"
                      VerticalScrollBarVisibility="Auto"
-                     AutomationProperties.Name="Texto del correo" />
+                     AutomationProperties.Name="{loc:Texto Qsl.Envio.TextoNombre}" />
         </DockPanel>
 
         <!-- ══ Botones ══ -->
         <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,0">
-            <Button DockPanel.Dock="Right" Content="Cerrar" IsCancel="True" Padding="14,4" Margin="6,0,0,0" Click="AlCerrar"
-                    AutomationProperties.Name="Cerrar la ventana" />
+            <Button DockPanel.Dock="Right" Content="{loc:Texto Comun.Cerrar}" IsCancel="True" Padding="14,4" Margin="6,0,0,0" Click="AlCerrar"
+                    AutomationProperties.Name="{loc:Texto Qsl.Envio.CerrarNombre}" />
             <Button DockPanel.Dock="Right" Content="PDF…" Command="{Binding GuardarPdfCommand}" Padding="10,4" Margin="6,0,0,0"
-                    AutomationProperties.Name="Guardar todas las tarjetas en PDF" />
-            <Button DockPanel.Dock="Right" Content="Guardar imágenes…" Command="{Binding GuardarImagenesCommand}" Padding="10,4" Margin="6,0,0,0"
-                    AutomationProperties.Name="Guardar las tarjetas como imágenes" />
-            <Button DockPanel.Dock="Right" Content="Parar" Command="{Binding CancelarCommand}" Padding="10,4" Margin="6,0,0,0"
+                    AutomationProperties.Name="{loc:Texto Qsl.Envio.PdfNombre}" />
+            <Button DockPanel.Dock="Right" Content="{loc:Texto Qsl.Envio.GuardarImagenes}" Command="{Binding GuardarImagenesCommand}" Padding="10,4" Margin="6,0,0,0"
+                    AutomationProperties.Name="{loc:Texto Qsl.Envio.GuardarImagenesNombre}" />
+            <Button DockPanel.Dock="Right" Content="{loc:Texto Qsl.Envio.Parar}" Command="{Binding CancelarCommand}" Padding="10,4" Margin="6,0,0,0"
                     Visibility="{Binding Ocupado, Converter={StaticResource BooleanoAVisible}}"
-                    AutomationProperties.Name="Parar el envío" />
-            <Button DockPanel.Dock="Right" Content="Enviar por correo" Command="{Binding EnviarCommand}" Style="{StaticResource BotonPrincipal}"
+                    AutomationProperties.Name="{loc:Texto Qsl.Envio.PararNombre}" />
+            <Button DockPanel.Dock="Right" Content="{loc:Texto Qsl.Envio.EnviarPorCorreo}" Command="{Binding EnviarCommand}" Style="{StaticResource BotonPrincipal}"
                     Padding="14,4" Margin="6,0,0,0"
-                    AutomationProperties.Name="Enviar las tarjetas marcadas por correo" />
+                    AutomationProperties.Name="{loc:Texto Qsl.Envio.EnviarNombre}" />
             <TextBlock Text="{Binding Aviso}" VerticalAlignment="Center" TextWrapping="Wrap" FontWeight="SemiBold" />
         </DockPanel>
     </Grid>

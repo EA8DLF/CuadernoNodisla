@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              Foreground="{DynamicResource Texto}">
 
     <!--
@@ -22,9 +23,9 @@
 
     <Border Style="{StaticResource Tarjeta}" Padding="12,8" Margin="0,0,0,8">
         <StackPanel>
-            <TextBlock Text="Fonía por el PC (SSB, AM, FM)" Style="{StaticResource TituloDeSeccion}" />
+            <TextBlock Text="{loc:Texto Ajustes.Fonia.Titulo}" Style="{StaticResource TituloDeSeccion}" />
             <TextBlock Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,0,0,8"
-                       Text="La radio se oye por los altavoces del PC y se habla por el micrófono del PC con el PTT del panel «Fonía» de Operar. El PTT va siempre por el vigilante y tiene tiempo máximo. En la radio, la fuente de modulación de SSB tiene que estar en USB." />
+                       Text="{loc:Texto Ajustes.Fonia.Explicacion}" />
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -39,27 +40,27 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="Entrada del equipo (lo que se oye)" VerticalAlignment="Center" Margin="0,0,10,4" />
+                <TextBlock Grid.Row="0" Text="{loc:Texto Ajustes.Fonia.EntradaDelEquipo}" VerticalAlignment="Center" Margin="0,0,10,4" />
                 <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,4"
                           ItemsSource="{Binding Entradas}" SelectedItem="{Binding EntradaDelEquipo}"
-                          ItemTemplate="{StaticResource Dispositivo}" AutomationProperties.Name="Entrada de audio del equipo" />
+                          ItemTemplate="{StaticResource Dispositivo}" AutomationProperties.Name="{loc:Texto Ajustes.Fonia.EntradaDelEquipo.Accesible}" />
 
-                <TextBlock Grid.Row="1" Text="Altavoces o auriculares del PC" VerticalAlignment="Center" Margin="0,0,10,4" />
+                <TextBlock Grid.Row="1" Text="{loc:Texto Ajustes.Fonia.Altavoces}" VerticalAlignment="Center" Margin="0,0,10,4" />
                 <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,4"
                           ItemsSource="{Binding Salidas}" SelectedItem="{Binding Altavoces}"
-                          ItemTemplate="{StaticResource Dispositivo}" AutomationProperties.Name="Altavoces del PC" />
+                          ItemTemplate="{StaticResource Dispositivo}" AutomationProperties.Name="{loc:Texto Ajustes.Fonia.Altavoces.Accesible}" />
 
-                <TextBlock Grid.Row="2" Text="Micrófono del PC" VerticalAlignment="Center" Margin="0,0,10,4" />
+                <TextBlock Grid.Row="2" Text="{loc:Texto Ajustes.Fonia.Microfono}" VerticalAlignment="Center" Margin="0,0,10,4" />
                 <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,4"
                           ItemsSource="{Binding Entradas}" SelectedItem="{Binding Microfono}"
-                          ItemTemplate="{StaticResource Dispositivo}" AutomationProperties.Name="Micrófono del PC" />
+                          ItemTemplate="{StaticResource Dispositivo}" AutomationProperties.Name="{loc:Texto Ajustes.Fonia.Microfono}" />
 
-                <TextBlock Grid.Row="3" Text="Salida al equipo (lo que se transmite)" VerticalAlignment="Center" Margin="0,0,10,4" />
+                <TextBlock Grid.Row="3" Text="{loc:Texto Ajustes.Fonia.SalidaAlEquipo}" VerticalAlignment="Center" Margin="0,0,10,4" />
                 <ComboBox Grid.Row="3" Grid.Column="1" Margin="0,0,0,4"
                           ItemsSource="{Binding Salidas}" SelectedItem="{Binding SalidaAlEquipo}"
-                          ItemTemplate="{StaticResource Dispositivo}" AutomationProperties.Name="Salida de audio hacia el equipo" />
+                          ItemTemplate="{StaticResource Dispositivo}" AutomationProperties.Name="{loc:Texto Ajustes.Fonia.SalidaAlEquipo.Accesible}" />
 
-                <Button Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Content="Volver a buscar dispositivos"
+                <Button Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Content="{loc:Texto Ajustes.VolverABuscarDispositivos}"
                         Padding="8,2" Command="{Binding RefrescarDispositivosCommand}" />
             </Grid>
 
@@ -68,50 +69,50 @@
                        Visibility="{Binding AvisoDeDispositivos, Converter={StaticResource NoEsVacio}}" />
 
             <WrapPanel Margin="0,10,0,0">
-                <StackPanel Width="220" Margin="0,0,16,6">
+                <StackPanel MinWidth="220" Margin="0,0,16,6">
                     <TextBlock>
-                        <Run Text="Volumen de la escucha:" />
+                        <Run Text="{loc:Texto Ajustes.Fonia.VolumenEscucha}" />
                         <Run Text="{Binding VolumenRx, StringFormat={}{0} %, Mode=OneWay}" FontWeight="Bold" />
                     </TextBlock>
                     <Slider Minimum="0" Maximum="200" TickFrequency="5" IsSnapToTickEnabled="True" Value="{Binding VolumenRx}"
-                            AutomationProperties.Name="Volumen de la escucha" />
+                            AutomationProperties.Name="{loc:Texto Ajustes.Fonia.VolumenEscucha.Accesible}" />
                 </StackPanel>
-                <StackPanel Width="220" Margin="0,0,16,6">
+                <StackPanel MinWidth="220" Margin="0,0,16,6">
                     <TextBlock>
-                        <Run Text="Ganancia del micrófono:" />
+                        <Run Text="{loc:Texto Ajustes.Fonia.GananciaMicro}" />
                         <Run Text="{Binding GananciaTxDb, StringFormat={}{0:+0;-0;0} dB, Mode=OneWay}" FontWeight="Bold" />
                     </TextBlock>
                     <Slider Minimum="-20" Maximum="20" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding GananciaTxDb}"
-                            AutomationProperties.Name="Ganancia del micrófono" />
+                            AutomationProperties.Name="{loc:Texto Ajustes.Fonia.GananciaMicro.Accesible}" />
                 </StackPanel>
                 <StackPanel Margin="0,0,16,6">
-                    <TextBlock Text="Tiempo máximo por pasada (segundos, 10 a 600)" />
+                    <TextBlock Text="{loc:Texto Ajustes.Fonia.TiempoMaximo}" />
                     <TextBox Width="80" HorizontalAlignment="Left" Text="{Binding TiempoMaximoSegundos, UpdateSourceTrigger=LostFocus}"
-                             AutomationProperties.Name="Tiempo máximo de fonía en segundos" />
+                             AutomationProperties.Name="{loc:Texto Ajustes.Fonia.TiempoMaximo.Accesible}" />
                 </StackPanel>
             </WrapPanel>
 
             <WrapPanel Margin="0,4,0,0">
-                <CheckBox Content="PTT conmutado (clic para empezar, clic para acabar)" IsChecked="{Binding PttConmutado}" Margin="0,0,16,6" />
-                <CheckBox Content="Abrir la escucha al entrar en Operar" IsChecked="{Binding EscucharAlArrancar}" Margin="0,0,16,6" />
+                <CheckBox Content="{loc:Texto Ajustes.Fonia.PttConmutado}" IsChecked="{Binding PttConmutado}" Margin="0,0,16,6" />
+                <CheckBox Content="{loc:Texto Ajustes.Fonia.EscucharAlEntrar}" IsChecked="{Binding EscucharAlArrancar}" Margin="0,0,16,6" />
                 <StackPanel Orientation="Horizontal" Margin="0,0,16,6">
-                    <TextBlock Text="Tecla del PTT" VerticalAlignment="Center" Margin="0,0,6,0" />
-                    <ComboBox Width="130" ItemsSource="{Binding Teclas}" SelectedItem="{Binding TeclaDelPtt}" DisplayMemberPath="Texto"
-                              ToolTip="Solo con la ventana activa y nunca escribiendo en un campo de texto"
-                              AutomationProperties.Name="Tecla del PTT de fonía" />
+                    <TextBlock Text="{loc:Texto Ajustes.Fonia.TeclaDelPtt}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <ComboBox MinWidth="130" ItemsSource="{Binding Teclas}" SelectedItem="{Binding TeclaDelPtt}" DisplayMemberPath="Texto"
+                              ToolTip="{loc:Texto Ajustes.Fonia.TeclaDelPtt.Ayuda}"
+                              AutomationProperties.Name="{loc:Texto Ajustes.Fonia.TeclaDelPtt.Accesible}" />
                 </StackPanel>
             </WrapPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                <CheckBox Content="Comprobar por CAT la fuente de modulación de SSB · menú EX" IsChecked="{Binding ComprobarFuenteDeModulacion}" VerticalAlignment="Center" />
+                <CheckBox Content="{loc:Texto Ajustes.Fonia.ComprobarFuente}" IsChecked="{Binding ComprobarFuenteDeModulacion}" VerticalAlignment="Center" />
                 <TextBox Width="70" Margin="2,0,8,0" Text="{Binding IndiceDeFuenteSsb, UpdateSourceTrigger=LostFocus}"
-                         AutomationProperties.Name="Índice del menú de la fuente de modulación" />
-                <TextBlock Text="valor de USB" VerticalAlignment="Center" Margin="0,0,4,0" />
+                         AutomationProperties.Name="{loc:Texto Ajustes.Fonia.IndiceFuente.Accesible}" />
+                <TextBlock Text="{loc:Texto Ajustes.Fonia.ValorDeUsb}" VerticalAlignment="Center" Margin="0,0,4,0" />
                 <TextBox Width="40" Text="{Binding ValorDeFuenteUsb, UpdateSourceTrigger=LostFocus}"
-                         AutomationProperties.Name="Valor que significa USB" />
+                         AutomationProperties.Name="{loc:Texto Ajustes.Fonia.ValorDeUsb.Accesible}" />
             </StackPanel>
             <TextBlock Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,2,0,0"
-                       Text="Solo se LEE el menú; el programa no cambia nada en la radio. El índice sale del mapa leído del FT-710 y está sin confirmar con el manual: si el aviso no cuadra con lo que dice la radio, corríjalo aquí." />
+                       Text="{loc:Texto Ajustes.Fonia.SoloSeLee}" />
         </StackPanel>
     </Border>
 </UserControl>

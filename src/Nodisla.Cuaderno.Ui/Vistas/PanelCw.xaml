@@ -1,0 +1,218 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PanelCw"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
+             xmlns:digital="clr-namespace:Nodisla.Cuaderno.Ui.Digital"
+             x:Name="Raiz"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        TELEGRAFÍA (CW): el decodificador propio sobre el audio de recepción.
+
+        Arriba, una línea con el tono, la velocidad, el nivel y los botones. Debajo, a la
+        izquierda el texto en vivo (los indicativos se pulsan y van al contacto nuevo; CQ y el
+        indicativo propio, resaltados) y a la derecha el mini espectro, donde un clic fija el
+        tono, con las demás señales que se están leyendo a la vez debajo.
+
+        Solo escucha. Del equipo lee el modo y el pitch; no le manda nada.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+
+        <!-- Una palabra: botón si es indicativo de otro, texto si no. -->
+        <DataTemplate x:Key="Palabra">
+            <Grid Margin="0,0,6,1">
+                <Button Content="{Binding Texto}"
+                        Command="{Binding DataContext.PasarIndicativoCommand, ElementName=Raiz}"
+                        CommandParameter="{Binding Texto}"
+                        Visibility="{Binding EsIndicativo, Converter={StaticResource BooleanoAVisible}}"
+                        Cursor="Hand"
+                        Focusable="False"
+                        ToolTip="{loc:Texto Cabina.Cw.PasarAlContacto}"
+                        AutomationProperties.Name="{Binding Texto}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <TextBlock Text="{TemplateBinding Content}"
+                                       FontFamily="Consolas"
+                                       FontSize="15"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource Acento}"
+                                       TextDecorations="Underline" />
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Border Visibility="{Binding EsTexto, Converter={StaticResource BooleanoAVisible}}"
+                        CornerRadius="2"
+                        Padding="1,0">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Tipo}" Value="{x:Static digital:TipoDePalabraCw.Llamada}">
+                                    <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Tipo}" Value="{x:Static digital:TipoDePalabraCw.Propio}">
+                                    <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <TextBlock Text="{Binding Texto}" FontFamily="Consolas" FontSize="15">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Tipo}" Value="{x:Static digital:TipoDePalabraCw.Llamada}">
+                                        <Setter Property="Foreground" Value="{DynamicResource AvisoTexto}" />
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Tipo}" Value="{x:Static digital:TipoDePalabraCw.Propio}">
+                                        <Setter Property="Foreground" Value="{DynamicResource CorrectoTexto}" />
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Tipo}" Value="{x:Static digital:TipoDePalabraCw.Prosigno}">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextoTenue}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+        <ItemsPanelTemplate x:Key="EnFila">
+            <WrapPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ══ La línea de arriba ══ -->
+        <WrapPanel Grid.Row="0" Orientation="Horizontal">
+            <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
+                <TextBlock Text="{loc:Texto Cabina.Cw.Titulo}" Style="{StaticResource TituloDeSeccion}" Margin="0" />
+                <TextBlock Style="{StaticResource TextoTenueEstilo}">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} · {1}">
+                            <Binding Path="TonoTexto" />
+                            <Binding Path="RotuloDelModo" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </StackPanel>
+
+            <!-- La llave: se enciende con cada marca. -->
+            <Ellipse Width="12" Height="12" Margin="0,0,10,0" VerticalAlignment="Center"
+                     ToolTip="{loc:Texto Cabina.Cw.Llave}">
+                <Ellipse.Style>
+                    <Style TargetType="Ellipse">
+                        <Setter Property="Fill" Value="{DynamicResource FondoCampo}" />
+                        <Setter Property="Stroke" Value="{DynamicResource Borde}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Marcando}" Value="True">
+                                <Setter Property="Fill" Value="{DynamicResource CorrectoTexto}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Ellipse.Style>
+            </Ellipse>
+
+            <TextBlock Text="{Binding WpmTexto}" FontSize="15" FontWeight="Bold" MinWidth="72"
+                       VerticalAlignment="Center" Margin="0,0,12,0" />
+
+            <StackPanel VerticalAlignment="Center" Width="180" Margin="0,0,12,0">
+                <TextBlock Style="{StaticResource TextoTenueEstilo}">
+                    <Run Text="{Binding NivelTexto, Mode=OneWay}" />
+                    <Run Text=" · " />
+                    <Run Text="{Binding ConfianzaTexto, Mode=OneWay}" />
+                </TextBlock>
+                <ProgressBar Minimum="0" Maximum="100" Height="7" Value="{Binding NivelPorCiento, Mode=OneWay}"
+                             AutomationProperties.Name="{loc:Texto Cabina.Cw.NivelNombre}" />
+            </StackPanel>
+
+            <Button Content="{loc:Texto Cabina.Cw.Borrar}" Command="{Binding BorrarCommand}"
+                    Padding="10,2" Margin="0,0,6,0" VerticalAlignment="Center" />
+            <Button Content="{Binding RotuloDePausa}" Command="{Binding AlternarPausaCommand}"
+                    Padding="10,2" Margin="0,0,6,0" VerticalAlignment="Center"
+                    AutomationProperties.Name="{loc:Texto Cabina.Cw.PausaNombre}" />
+            <Button Content="{Binding RotuloDeFijar}" Command="{Binding FijarOAutoCommand}"
+                    Padding="10,2" Margin="0,0,6,0" VerticalAlignment="Center"
+                    ToolTip="{loc:Texto Cabina.Cw.FijarAyuda}"
+                    AutomationProperties.Name="{loc:Texto Cabina.Cw.FijarNombre}" />
+            <Button Content="{loc:Texto Cabina.Cw.Escuchar}" Command="{Binding EscucharCommand}"
+                    Padding="10,2" Margin="0,0,6,0" VerticalAlignment="Center"
+                    Visibility="{Binding SinAudio, Converter={StaticResource BooleanoAVisible}}"
+                    ToolTip="{loc:Texto Cabina.Cw.EscucharAyuda}" />
+            <Button Content="{loc:Texto Cabina.Cw.Ocultar}" Command="{Binding AlternarMostrarCommand}"
+                    Padding="10,2" VerticalAlignment="Center"
+                    Visibility="{Binding MostrarAMano, Converter={StaticResource BooleanoAVisible}}" />
+        </WrapPanel>
+
+        <!-- ══ Texto y espectro ══ -->
+        <Grid Grid.Row="1" Margin="0,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    Background="{DynamicResource FondoCampo}"
+                    BorderBrush="{DynamicResource BordeSuave}"
+                    BorderThickness="1"
+                    Padding="6,4"
+                    Margin="0,0,8,0">
+                <Grid>
+                    <ScrollViewer x:Name="Desplazamiento"
+                                  Height="96"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl ItemsSource="{Binding Principal.Palabras}"
+                                      ItemTemplate="{StaticResource Palabra}"
+                                      ItemsPanel="{StaticResource EnFila}"
+                                      AutomationProperties.Name="{loc:Texto Cabina.Cw.TextoNombre}" />
+                    </ScrollViewer>
+                    <TextBlock Text="{loc:Texto Cabina.Cw.Esperando}"
+                               Style="{StaticResource TextoTenueEstilo}"
+                               TextWrapping="Wrap"
+                               IsHitTestVisible="False"
+                               Visibility="{Binding SinTexto, Converter={StaticResource BooleanoAVisible}}" />
+                </Grid>
+            </Border>
+
+            <StackPanel Grid.Column="1" Width="300">
+                <vistas:EspectroCw x:Name="Espectro"
+                                   Height="56"
+                                   Estado="{Binding Estado}"
+                                   AlPulsar="{Binding FijarEnCommand}"
+                                   ToolTip="{loc:Texto Cabina.Cw.EspectroAyuda}"
+                                   AutomationProperties.Name="{loc:Texto Cabina.Cw.EspectroNombre}" />
+                <ItemsControl ItemsSource="{Binding Otras}" Margin="0,4,0,0" MaxHeight="40">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel Margin="0,0,0,1">
+                                <TextBlock DockPanel.Dock="Left" Text="{Binding Rotulo}" Width="92"
+                                           Foreground="{DynamicResource AvisoTexto}" FontSize="11" VerticalAlignment="Center" />
+                                <ItemsControl ItemsSource="{Binding Palabras}" ItemTemplate="{StaticResource Palabra}"
+                                              ItemsPanel="{StaticResource EnFila}" ClipToBounds="True" Height="20" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Grid>
+
+        <!-- ══ Avisos ══ -->
+        <TextBlock Grid.Row="2"
+                   Text="{Binding Aviso}"
+                   Foreground="{DynamicResource AvisoTexto}"
+                   TextWrapping="Wrap"
+                   Margin="0,4,0,0"
+                   Visibility="{Binding HayAviso, Converter={StaticResource BooleanoAVisible}}" />
+    </Grid>
+</UserControl>

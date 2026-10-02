@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
 
@@ -58,11 +59,19 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         VistaModeloAnalizador? analizador = null,
         VistaModeloActualizaciones? actualizaciones = null,
         VistaModeloDisenadorDeDiplomas? disenadorDeDiplomas = null,
-        VistaModeloAyuda? ayuda = null)
+        VistaModeloAyuda? ayuda = null,
+        VistaModeloCw? cw = null)
     {
+        // Los textos calculados (pliegues, perfil, contador) siguen al idioma en caliente.
+        Textos.AlCambiar(this, static vm =>
+        {
+            if (vm._avisoDelPerfilDeSiempre) vm.AvisoDelPerfil = Textos.T("Principal.Perfil.Aviso");
+            vm.OnPropertyChanged(string.Empty);
+        });
         Actualizaciones = actualizaciones;
         DisenadorDeDiplomas = disenadorDeDiplomas;
         Ayuda = ayuda;
+        Cw = cw;
         Subidas = subidas;
         Fonia = fonia;
         Analizador = analizador ?? new VistaModeloAnalizador(null);
@@ -209,6 +218,18 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         Cuaderno.CuadernoCambiado += async (_, _) => await RefrescarTodoAsync().ConfigureAwait(true);
         Mapa.MarcaElegida += (_, marca) => Entrada.Indicativo = marca.Etiqueta;
 
+        // Telegrafía: un indicativo pulsado en el texto va al contacto nuevo, y el panel sigue
+        // el modo y el pitch del equipo en cuanto cambian (y además cada segundo, en Latir).
+        if (Cw is not null)
+        {
+            Cw.IndicativoElegido += (_, indicativo) => Entrada.Indicativo = indicativo;
+            Equipo.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName is nameof(VistaModeloEquipo.Modo) or nameof(VistaModeloEquipo.Conectado)) SeguirAlEquipoEnCw();
+            };
+            if (Configuracion.Audio is { } audio) audio.AjustesDeCwGuardados += (_, _) => Cw.AplicarAjustes();
+        }
+
         RecuperarEstadoDeLosPaneles();
 
         _reloj = new DispatcherTimer(DispatcherPriority.Background)
@@ -236,6 +257,12 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
 
     /// <summary>Fonía por el PC: altavoces, micrófono y PTT de fonía. Nulo si no se registró.</summary>
     public VistaModeloFonia? Fonia { get; }
+
+    /// <summary>El decodificador de telegrafía de la cabina. Nulo si no se registró.</summary>
+    public VistaModeloCw? Cw { get; }
+
+    /// <summary>Hay decodificador de telegrafía (se ofrece el botón «CW»).</summary>
+    public bool HayCw => Cw is not null;
 
     /// <summary>El analizador de espectro de la propia radio, para la pantalla del frontal.</summary>
     public VistaModeloAnalizador Analizador { get; }
@@ -587,7 +614,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
 
     /// <summary>Texto del boton que pliega y despliega la columna de operacion.</summary>
     public string TextoDelPanelDeOperacion =>
-        PanelDeOperacionVisible ? "Ocultar operación (F10)" : "Mostrar operación (F10)";
+        Textos.T(PanelDeOperacionVisible ? "Principal.Pliegue.OcultarOperacion" : "Principal.Pliegue.MostrarOperacion");
 
     /// <summary>
     /// Se ensena el frontal del equipo dibujado.
@@ -613,10 +640,10 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     public bool FrontalPlegado => Equipo.EsAvanzado && !FrontalDesplegado;
 
     /// <summary>Texto del boton que pliega y despliega el frontal del equipo.</summary>
-    public string TextoDelPliegueDelFrontal => FrontalDesplegado ? "Ocultar equipo" : "Mostrar equipo";
+    public string TextoDelPliegueDelFrontal => Textos.T(FrontalDesplegado ? "Principal.Pliegue.OcultarEquipo" : "Principal.Operar.MostrarEquipo");
 
     /// <summary>Texto del boton que abre y cierra la lista completa de mandos.</summary>
-    public string TextoDeLaListaDeMandos => ListaDeMandosVisible ? "Ocultar todos los mandos" : "Todos los mandos";
+    public string TextoDeLaListaDeMandos => Textos.T(ListaDeMandosVisible ? "Principal.Pliegue.OcultarMandos" : "Principal.Operar.TodosLosMandos");
 
     /// <summary>Ancho de la columna de operacion en puntos, medido en letras.</summary>
     /// <remarks>
@@ -658,10 +685,10 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     private int _indiceDeLaListaDeSpots;
 
     /// <summary>Texto del boton que pliega y despliega la zona de entrada.</summary>
-    public string TextoDelPliegue => EntradaPlegada ? "Mostrar entrada (F6)" : "Ocultar entrada (F6)";
+    public string TextoDelPliegue => Textos.T(EntradaPlegada ? "Principal.Pliegue.MostrarEntrada" : "Principal.Pliegue.OcultarEntrada");
 
     /// <summary>Texto del boton que pliega y despliega la segunda fila de la entrada.</summary>
-    public string TextoDeDatosAmpliados => DatosAmpliadosVisibles ? "Menos datos (F7)" : "Más datos (F7)";
+    public string TextoDeDatosAmpliados => Textos.T(DatosAmpliadosVisibles ? "Principal.Pliegue.MenosDatos" : "Principal.Pliegue.MasDatos");
 
     /// <summary>Tamano de letra base de la ventana, calculado a partir de la escala elegida.</summary>
     public double TamanoDeLetra => Math.Round(14.0 * EscalaDeLetra / 100.0, 1);
@@ -675,12 +702,12 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// Windows y puede traer separadores personalizados. Aqui manda la cultura que fija el
     /// programa, y asi siempre se lee «20.000».
     /// </remarks>
-    public string TotalDeQsosTexto => TotalDeQsos.ToString("N0", CultureInfo.CurrentCulture);
+    public string TotalDeQsosTexto => TotalDeQsos.ToString("N0", Textos.Cultura);
 
     /// <summary>Nombre del perfil activo, para la barra de estado.</summary>
     public string PerfilActivo => EstacionActiva is { } e
         ? $"{e.NombrePerfil} · {e.StationCallsign.Valor}"
-        : "Sin perfil de estación";
+        : Textos.T("Principal.Perfil.SinPerfil");
 
     /// <summary>Carga los perfiles de estacion, la primera pagina del cuaderno y el mapa.</summary>
     public async Task InicializarAsync()
@@ -1053,9 +1080,9 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
                 "El perfil {Perfil} no tenía localizador; se ha completado con el del contacto con {Indicativo} " +
                 "del {Fecha:dd-MM-yyyy}: {Campos}.",
                 perfil.NombrePerfil, modelo.Call.Valor, modelo.InicioUtc, string.Join(", ", rellenados));
-            AvisoDelPerfil =
-                $"Al perfil «{perfil.NombrePerfil}» le faltaba el localizador: se ha puesto {perfil.MyGridsquare.Valor}, " +
-                $"el de sus últimos contactos ({string.Join(", ", rellenados)}).";
+            _avisoDelPerfilDeSiempre = false;
+            AvisoDelPerfil = Textos.F(
+                "Principal.Perfil.LocatorCompletado", perfil.NombrePerfil, perfil.MyGridsquare.Valor, string.Join(", ", rellenados));
         }
         catch (Exception ex)
         {
@@ -1065,7 +1092,10 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
 
     /// <summary>Lo que se hizo con el perfil al arrancar, para la ayuda emergente del selector.</summary>
     [ObservableProperty]
-    private string _avisoDelPerfil = "Perfil con el que se registran los contactos.";
+    private string _avisoDelPerfil = Textos.T("Principal.Perfil.Aviso");
+
+    /// <summary>El aviso del perfil es el de siempre (y se traduce al cambiar de idioma).</summary>
+    private bool _avisoDelPerfilDeSiempre = true;
 
     /// <summary>Vuelve a leer el cuaderno: la pagina visible y el contador total.</summary>
     public async Task RefrescarTodoAsync()
@@ -1108,6 +1138,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         // El módem necesita el indicativo, no sólo el identificador del perfil: con él sabe
         // cuándo un mensaje va dirigido A UNO —y no a cualquiera— y compone la respuesta.
         Modem.MiIndicativo = value?.StationCallsign ?? Dominio.Valores.Indicativo.Vacio;
+        if (Cw is not null) Cw.MiIndicativo = value?.StationCallsign.Valor;
         Modem.MiLocalizador = value?.MyGridsquare ?? Dominio.Valores.Locator.Vacio;
         Retrato.EstacionId = value?.Id;
 
@@ -1165,8 +1196,20 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
 
     partial void OnTemaOscuroChanged(bool value) => Recursos.Temas.Aplicar(value);
 
+    /// <summary>
+    /// Lleva al panel de telegrafía lo que dice el CAT: el modo y el tono de CW (pitch). Solo se
+    /// lee lo que el control del equipo ya tiene; no se manda nada a la radio.
+    /// </summary>
+    private void SeguirAlEquipoEnCw()
+    {
+        if (Cw is null) return;
+        double? pitch = Equipo.Conectado && Equipo.MandoDe(MandoDeEquipo.TonoCw) is { Disponible: true } tono ? tono.Valor : null;
+        Cw.SeguirAlEquipo(Equipo.Conectado ? Equipo.Modo : null, pitch);
+    }
+
     private void Latir()
     {
+        SeguirAlEquipoEnCw();
         var ahora = DateTimeOffset.UtcNow;
         FechaUtc = ahora.UtcDateTime.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
         HoraUtc = ahora.UtcDateTime.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
@@ -1179,7 +1222,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
             : desfase.Minutes == 0
                 ? $"UTC{signo}{Math.Abs(desfase.Hours)}"
                 : $"UTC{signo}{Math.Abs(desfase.Hours)}:{Math.Abs(desfase.Minutes):00}";
-        FechaLocal = $"{local.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture)} · local ({desfaseTexto})";
+        FechaLocal = Textos.F("Principal.Reloj.FechaLocal", local.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture), desfaseTexto);
         Entrada.ActualizarReloj(ahora);
         Mapa.ActualizarReloj(ahora);
     }

@@ -3,6 +3,8 @@ using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Radio.Control.Ft710;
 using Nodisla.Cuaderno.Radio.Modelos;
 
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Control.Yaesu;
 
 /// <summary>
@@ -86,7 +88,7 @@ public static class PerfilesYaesu
             + (vatios > 100 ? " El manual 1909-C dice PC 005-100; el MP da 200 W: confirmar el rango de PC." : string.Empty)),
         ModoPrincipalEsElActivo = false,
         TransmisionRelativaAlActivo = false,
-        Bandas = PerfilYaesu.BandasHf(con60: true, PerfilYaesu.Tecla(17, "70", "4m", "4 m (70 MHz, según versión)")),
+        Bandas = PerfilYaesu.BandasHf(con60: true, PerfilYaesu.Tecla(17, "70", "4m", Textos.T("Servicios.Radio.Banda4m"))),
         Mandos = Mandos(
             quitar: [MandoDeEquipo.Rit, MandoDeEquipo.Xit, MandoDeEquipo.DesplazamientoRit, MandoDeEquipo.AntiVox],
             poner: [Sintonizador(), RitPorRt(), XitPorXt(), Potencia(vatios), Ancho(3, 21)]),

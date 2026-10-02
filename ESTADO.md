@@ -61,7 +61,9 @@ e impresión de QSL, y la ayuda en español con capturas.
 - **Servicios**: LoTW, QRZ.com, ClubLog, eQSL, cluster DX, WSJT-X y JTDX.
 - **Modos digitales**: módem propio integrado (FT8/FT4 dentro de la app), después del núcleo.
 - **Base de datos**: SQLite, un solo fichero. MySQL/MariaDB del original no se replica.
-- **Idioma**: código en español; campos ADIF en inglés por normativos; todo lo visible, en español.
+- **Idioma**: código en español; campos ADIF en inglés por normativos. Lo visible, desde 2026-10,
+  en seis idiomas (es, en, pt, fr, it, de) con cambio en caliente; el español es la referencia y los
+  registros siguen en español. Ver `docs/03-arquitectura.md`, «Idiomas».
 - **Duplicados al importar**: fundir, nunca descartar.
 
 ## Entorno

@@ -4,6 +4,7 @@ using System.Windows.Media.Imaging;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Impresion;
 using Nodisla.Cuaderno.Impresion.Qsl;
 using Nodisla.Cuaderno.Servicios.Correo;
@@ -325,10 +326,10 @@ public sealed class ServicioDeQsl
 
     private void ComprobarEnvio(string para)
     {
-        if (!DireccionDeCorreo.EsValida(para)) throw new ErrorDeCorreo($"La dirección «{para}» no es válida.") { EsDelDestinatario = true };
+        if (!DireccionDeCorreo.EsValida(para)) throw new ErrorDeCorreo(Textos.F("Qsl.Envio.DireccionNoValida", para)) { EsDelDestinatario = true };
         if (!Ajustes.Smtp.EstaCompleta && Enviador is ClienteSmtp)
         {
-            throw new ErrorDeCorreo("Falta configurar el correo saliente: Configuración › Correo de las QSL (servidor, puerto y remitente).");
+            throw new ErrorDeCorreo(Textos.T("Qsl.Envio.FaltaConfigurar"));
         }
     }
 

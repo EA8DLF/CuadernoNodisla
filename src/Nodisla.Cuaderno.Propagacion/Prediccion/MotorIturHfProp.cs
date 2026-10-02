@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Propagacion.Prediccion;
 
@@ -29,7 +30,7 @@ namespace Nodisla.Cuaderno.Propagacion.Prediccion;
 public sealed class MotorIturHfProp : IMotorDePrediccion
 {
     /// <summary>Nombre con el que se identifica este motor en pantalla.</summary>
-    public const string NombreDelMotor = "ITURHFProp (UIT-R P.533, proceso externo)";
+    public static string NombreDelMotor => Textos.T("Servicios.Propagacion.MotorIturHfProp");
 
     /// <summary>Ruta del ejecutable dentro del proyecto, relativa a la raiz.</summary>
     /// <remarks>

@@ -6,6 +6,7 @@ using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.Conversores;
 using Serilog;
 
@@ -31,7 +32,7 @@ public sealed partial class FilaDeInstancia : ObservableObject
         DialectoDigital.Jtdx => "JTDX",
         DialectoDigital.Mshv => "MSHV",
         DialectoDigital.Js8Call => "JS8Call",
-        _ => "Desconocido",
+        _ => Textos.T("Digital.Puente.Desconocido"),
     };
 
     [ObservableProperty]
@@ -180,6 +181,9 @@ public sealed partial class VistaModeloDigital : ObservableObject
         _puente.QsoRegistrado += AlCerrarUnContacto;
         _puente.InstanciaPerdida += AlPerderInstancia;
         _puente.AdifRecibido += AlLlegarAdif;
+
+        // Estado y capacidades se escriben en el idioma en uso: siguen al cambio en caliente.
+        Textos.AlCambiar(this, static vm => vm.OnPropertyChanged(string.Empty));
     }
 
     /// <summary>Salta cuando se guarda en el cuaderno un contacto llegado de los digitales.</summary>
@@ -254,8 +258,8 @@ public sealed partial class VistaModeloDigital : ObservableObject
 
     /// <summary>Si se esta escuchando o no, en una linea.</summary>
     public string EstadoTexto => Escuchando
-        ? $"Escuchando en el puerto UDP {Puerto.ToString(CultureInfo.InvariantCulture)}"
-        : "Sin escuchar";
+        ? Textos.F("Digital.Puente.Escuchando", Puerto.ToString(CultureInfo.InvariantCulture))
+        : Textos.T("Digital.Puente.SinEscuchar");
 
     /// <summary>
     /// La instancia elegida admite que el cuaderno le diga a quien llamar.
@@ -291,19 +295,19 @@ public sealed partial class VistaModeloDigital : ObservableObject
     {
         get
         {
-            if (InstanciaElegida is not { } fila) return "Elija una instancia para poder actuar sobre ella.";
+            if (InstanciaElegida is not { } fila) return Textos.T("Digital.Puente.ElijaInstancia");
 
             var capacidades = Capacidades;
             var faltan = new List<string>(5);
-            if (!capacidades.PuedeResponder) faltan.Add("responder a una llamada");
-            if (!capacidades.PuedeResaltar) faltan.Add("resaltar indicativos");
-            if (!capacidades.PuedeLlamarCq) faltan.Add("lanzar una llamada general");
-            if (!capacidades.PuedeCambiarTonoTx) faltan.Add("cambiar el tono de transmisión");
-            if (!capacidades.PuedeCambiarConfiguracion) faltan.Add("cambiar de configuración");
+            if (!capacidades.PuedeResponder) faltan.Add(Textos.T("Digital.Puente.Falta.Responder"));
+            if (!capacidades.PuedeResaltar) faltan.Add(Textos.T("Digital.Puente.Falta.Resaltar"));
+            if (!capacidades.PuedeLlamarCq) faltan.Add(Textos.T("Digital.Puente.Falta.LlamarCq"));
+            if (!capacidades.PuedeCambiarTonoTx) faltan.Add(Textos.T("Digital.Puente.Falta.CambiarTono"));
+            if (!capacidades.PuedeCambiarConfiguracion) faltan.Add(Textos.T("Digital.Puente.Falta.CambiarConfiguracion"));
 
             return faltan.Count == 0
-                ? $"{fila.DialectoTexto} admite todo lo que ofrece este panel."
-                : $"{fila.DialectoTexto} no admite {string.Join(", ni ", faltan)}.";
+                ? Textos.F("Digital.Puente.AdmiteTodo", fila.DialectoTexto)
+                : Textos.F("Digital.Puente.NoAdmite", fila.DialectoTexto, string.Join(Textos.T("Digital.Puente.Ni"), faltan));
         }
     }
 
@@ -320,7 +324,7 @@ public sealed partial class VistaModeloDigital : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido abrir el puerto de los modos digitales.");
-            Aviso = $"No se ha podido escuchar: {ex.Message}";
+            Aviso = Textos.F("Digital.Aviso.NoSePudoEscuchar", ex.Message);
         }
     }
 
@@ -357,13 +361,13 @@ public sealed partial class VistaModeloDigital : ObservableObject
                 .ConfigureAwait(true);
 
             Aviso = hecho
-                ? $"Se le ha pedido a {instancia.DialectoTexto} que llame a {fila.Indicativo}."
-                : $"{instancia.DialectoTexto} no admite que se le diga a quién llamar.";
+                ? Textos.F("Digital.Puente.Aviso.Responder", instancia.DialectoTexto, fila.Indicativo)
+                : Textos.F("Digital.Puente.Aviso.NoAdmiteResponder", instancia.DialectoTexto);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido pedir la respuesta al programa de modos digitales.");
-            Aviso = $"No se ha podido responder: {ex.Message}";
+            Aviso = Textos.F("Digital.Puente.Aviso.NoSePudoResponder", ex.Message);
         }
     }
 
@@ -383,13 +387,13 @@ public sealed partial class VistaModeloDigital : ObservableObject
                 .ConfigureAwait(true);
 
             Aviso = hecho
-                ? $"{fila.Indicativo} resaltado en {instancia.DialectoTexto}."
-                : $"{instancia.DialectoTexto} no admite resaltar indicativos.";
+                ? Textos.F("Digital.Puente.Aviso.Resaltado", fila.Indicativo, instancia.DialectoTexto)
+                : Textos.F("Digital.Puente.Aviso.NoAdmiteResaltar", instancia.DialectoTexto);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido resaltar el indicativo.");
-            Aviso = $"No se ha podido resaltar: {ex.Message}";
+            Aviso = Textos.F("Digital.Puente.Aviso.NoSePudoResaltar", ex.Message);
         }
     }
 
@@ -414,19 +418,19 @@ public sealed partial class VistaModeloDigital : ObservableObject
 
             if (!resultado.Correcto)
             {
-                Aviso = $"No se ha podido guardar: {string.Join("; ", resultado.Errores)}";
+                Aviso = Textos.F("Digital.Aviso.NoSePudoGuardar", string.Join("; ", resultado.Errores));
                 return;
             }
 
             Cerrados.Remove(fila);
             CerradoElegido = null;
-            Aviso = $"Contacto con {qso.Call.Valor} guardado en el cuaderno.";
+            Aviso = Textos.F("Digital.Aviso.ContactoGuardado", qso.Call.Valor);
             CuadernoCambiado?.Invoke(this, EventArgs.Empty);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido guardar el contacto llegado de los modos digitales.");
-            Aviso = $"No se ha podido guardar el contacto: {ex.Message}";
+            Aviso = Textos.F("Digital.Aviso.NoSePudoGuardarElContacto", ex.Message);
         }
     }
 
@@ -447,13 +451,13 @@ public sealed partial class VistaModeloDigital : ObservableObject
         {
             var hecho = await _puente.LlamarCqAsync(instancia.Identificador).ConfigureAwait(true);
             Aviso = hecho
-                ? $"{instancia.DialectoTexto} está lanzando una llamada general."
-                : $"{instancia.DialectoTexto} no admite lanzar una llamada general.";
+                ? Textos.F("Digital.Puente.Aviso.LlamandoCq", instancia.DialectoTexto)
+                : Textos.F("Digital.Puente.Aviso.NoAdmiteLlamarCq", instancia.DialectoTexto);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido lanzar la llamada general.");
-            Aviso = $"No se ha podido llamar: {ex.Message}";
+            Aviso = Textos.F("Digital.Puente.Aviso.NoSePudoLlamar", ex.Message);
         }
     }
 
@@ -465,7 +469,7 @@ public sealed partial class VistaModeloDigital : ObservableObject
 
         if (!int.TryParse(TonoDeTransmision, NumberStyles.Integer, CultureInfo.CurrentCulture, out var tono))
         {
-            Aviso = "El tono se escribe en hercios, sólo con cifras.";
+            Aviso = Textos.T("Digital.Puente.Aviso.TonoSoloCifras");
             return;
         }
 
@@ -473,13 +477,13 @@ public sealed partial class VistaModeloDigital : ObservableObject
         {
             var hecho = await _puente.PonerTonoTxAsync(instancia.Identificador, tono).ConfigureAwait(true);
             Aviso = hecho
-                ? $"Tono de transmisión puesto en {tono.ToString("N0", CultureInfo.CurrentCulture)} Hz."
-                : $"{instancia.DialectoTexto} no admite cambiar el tono de transmisión.";
+                ? Textos.F("Digital.Puente.Aviso.TonoPuesto", tono)
+                : Textos.F("Digital.Puente.Aviso.NoAdmiteTono", instancia.DialectoTexto);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido cambiar el tono de transmisión.");
-            Aviso = $"No se ha podido cambiar el tono: {ex.Message}";
+            Aviso = Textos.F("Digital.Puente.Aviso.NoSePudoCambiarTono", ex.Message);
         }
     }
 
@@ -499,13 +503,13 @@ public sealed partial class VistaModeloDigital : ObservableObject
                 .ConfigureAwait(true);
 
             Aviso = hecho
-                ? $"{instancia.DialectoTexto} ha pasado a la configuración «{nombre}»."
-                : $"{instancia.DialectoTexto} no admite cambiar de configuración.";
+                ? Textos.F("Digital.Puente.Aviso.ConfiguracionCambiada", instancia.DialectoTexto, nombre)
+                : Textos.F("Digital.Puente.Aviso.NoAdmiteConfiguracion", instancia.DialectoTexto);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido cambiar la configuración del programa.");
-            Aviso = $"No se ha podido cambiar la configuración: {ex.Message}";
+            Aviso = Textos.F("Digital.Puente.Aviso.NoSePudoCambiarConfiguracion", ex.Message);
         }
     }
 
@@ -634,6 +638,6 @@ public sealed partial class VistaModeloDigital : ObservableObject
         Instancias.Remove(fila);
         if (ReferenceEquals(fila, InstanciaElegida)) InstanciaElegida = Instancias.FirstOrDefault();
 
-        Aviso = $"Se ha perdido la instancia «{identificador}».";
+        Aviso = Textos.F("Digital.Puente.Aviso.InstanciaPerdida", identificador);
     });
 }

@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Satelites.Orbital;
 using Nodisla.Cuaderno.Satelites.Seguimiento;
 
@@ -139,7 +140,7 @@ public sealed class SeguimientoDoppler
     {
         if (Enlace is not { } enlace)
         {
-            return new ResultadoDeAjuste(instanteUtc, default, Escrita: false, "no se está siguiendo nada");
+            return new ResultadoDeAjuste(instanteUtc, default, Escrita: false, Textos.T("Servicios.Satelites.Doppler.NadaQueSeguir"));
         }
 
         var estado = _seguidor.Donde(enlace.Satelite, instanteUtc);
@@ -147,7 +148,7 @@ public sealed class SeguimientoDoppler
         {
             return new ResultadoDeAjuste(
                 instanteUtc, default, Escrita: false,
-                $"«{enlace.Satelite}» no está cargado o no se puede propagar");
+                Textos.F("Servicios.Satelites.Doppler.NoCargado", enlace.Satelite));
         }
 
         var sintonia = enlace.Sintonia(estado.Vista);
@@ -155,7 +156,7 @@ public sealed class SeguimientoDoppler
 
         if (estado.Vista.ElevacionGrados < _opciones.ElevacionMinimaGrados)
         {
-            return new ResultadoDeAjuste(instanteUtc, sintonia, Escrita: false, "el satélite está bajo el horizonte");
+            return new ResultadoDeAjuste(instanteUtc, sintonia, Escrita: false, Textos.T("Servicios.Satelites.Doppler.BajoElHorizonte"));
         }
 
         var escribeBajada = enlace.TieneBajada && FueraDeLaBandaMuerta(sintonia.Bajada, _ultimaBajadaEscrita);
@@ -163,7 +164,7 @@ public sealed class SeguimientoDoppler
 
         if (!escribeBajada && !escribeSubida)
         {
-            return new ResultadoDeAjuste(instanteUtc, sintonia, Escrita: false, "el cambio no llega a la banda muerta");
+            return new ResultadoDeAjuste(instanteUtc, sintonia, Escrita: false, Textos.T("Servicios.Satelites.Doppler.BandaMuerta"));
         }
 
         // Primero la bajada: es la que el operador esta oyendo, y si el puerto se atasca a

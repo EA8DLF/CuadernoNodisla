@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Satelites.Catalogo;
 using Nodisla.Cuaderno.Satelites.Doppler;
 using Nodisla.Cuaderno.Satelites.Fuentes;
@@ -45,9 +46,9 @@ public sealed partial class FilaDeSatelite : ObservableObject
     /// <summary>Situacion del satelite, escrita.</summary>
     public string EstadoTexto => Satelite.Estado switch
     {
-        EstadoDelSatelite.Activo => "Activo",
-        EstadoDelSatelite.Intermitente => "Intermitente",
-        _ => "Inactivo",
+        EstadoDelSatelite.Activo => Textos.T("Principal.Satelites.Estado.Activo"),
+        EstadoDelSatelite.Intermitente => Textos.T("Principal.Satelites.Estado.Intermitente"),
+        _ => Textos.T("Principal.Satelites.Estado.Inactivo"),
     };
 
     /// <summary>Es un geoestacionario (QO-100): no tiene pasos, esta siempre arriba.</summary>
@@ -55,7 +56,7 @@ public sealed partial class FilaDeSatelite : ObservableObject
 
     /// <summary>Resumen del proximo paso, o de por que no hay uno que ensenar.</summary>
     [ObservableProperty]
-    private string _proximoPasoTexto = "Calculando…";
+    private string _proximoPasoTexto = Textos.T("Principal.Satelites.Calculando");
 
     /// <summary>Hay elementos orbitales cargados para este satelite (o es geoestacionario).</summary>
     [ObservableProperty]
@@ -81,14 +82,16 @@ public sealed partial class FilaDeSatelite : ObservableObject
     {
         ArgumentNullException.ThrowIfNull(seguidor);
 
+        // El estado escrito puede haber cambiado de idioma desde la ultima vez.
+        OnPropertyChanged(nameof(EstadoTexto));
+
         if (EsGeoestacionario)
         {
             Cargado = true;
             EsRasante = false;
             ElementosViejos = false;
             ProximoPaso = null;
-            ProximoPasoTexto =
-                "Geoestacionario: siempre por encima del horizonte, con línea de visión despejada hacia el satélite.";
+            ProximoPasoTexto = Textos.T("Principal.Satelites.GeoSiempreArriba");
             return;
         }
 
@@ -99,7 +102,7 @@ public sealed partial class FilaDeSatelite : ObservableObject
             EsRasante = false;
             ElementosViejos = false;
             ProximoPaso = null;
-            ProximoPasoTexto = "Sin elementos orbitales cargados.";
+            ProximoPasoTexto = Textos.T("Principal.Satelites.SinElementos");
             return;
         }
 
@@ -112,7 +115,7 @@ public sealed partial class FilaDeSatelite : ObservableObject
         {
             EsRasante = false;
             ProximoPaso = null;
-            ProximoPasoTexto = $"Sin pasos en las próximas {ventana.TotalHours:N0} horas.";
+            ProximoPasoTexto = Textos.F("Principal.Satelites.SinPasos", ventana.TotalHours);
             return;
         }
 
@@ -209,6 +212,14 @@ public sealed partial class VistaModeloSatelites : ObservableObject
 
         RefrescarPasos();
 
+        // Al cambiar de idioma se rehacen los pasos (sus textos) y lo calculado al leer.
+        Textos.AlCambiar(this, static vm =>
+        {
+            if (vm._avisoElementosDeFabrica) vm.AvisoElementos = Textos.T("Principal.Satelites.SinElementosPulse");
+            vm.RefrescarPasos();
+            vm.OnPropertyChanged(nameof(RepartoDeVfosTexto));
+        });
+
         // Un segundo de cadencia: sobra para orbita baja y no carga nada, porque mientras no
         // hay satelite elegido el reloj esta parado.
         _reloj = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.Background)
@@ -298,7 +309,10 @@ public sealed partial class VistaModeloSatelites : ObservableObject
     private string _avisoDoppler = string.Empty;
 
     [ObservableProperty]
-    private string _avisoElementos = "Sin elementos orbitales cargados. Pulse «Actualizar elementos orbitales».";
+    private string _avisoElementos = Textos.T("Principal.Satelites.SinElementosPulse");
+
+    /// <summary>El aviso de elementos es todavia el de fabrica (se traduce al cambiar de idioma).</summary>
+    private bool _avisoElementosDeFabrica = true;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ActualizarElementosCommand))]
@@ -317,7 +331,7 @@ public sealed partial class VistaModeloSatelites : ObservableObject
     public bool HaySateliteSeleccionado => SateliteSeleccionado is not null;
 
     /// <summary>Que VFO lleva cada sentido, en una linea.</summary>
-    public string RepartoDeVfosTexto => $"Subida por VFO {VfoDeSubida}, bajada por VFO {VfoDeBajada}.";
+    public string RepartoDeVfosTexto => Textos.F("Principal.Satelites.RepartoDeVfos", VfoDeSubida, VfoDeBajada);
 
     private IEquipoConDosVfos? EquipoConDosVfos =>
         (_equipo is IControlEquipoConmutable conmutable ? conmutable.Actual : _equipo) as IEquipoConDosVfos;
@@ -355,6 +369,7 @@ public sealed partial class VistaModeloSatelites : ObservableObject
 
         if (descripciones.Count > 0)
         {
+            _avisoElementosDeFabrica = false;
             AvisoElementos = string.Join("  ·  ", descripciones);
         }
 
@@ -377,7 +392,8 @@ public sealed partial class VistaModeloSatelites : ObservableObject
         }
 
         ActualizandoElementos = true;
-        AvisoElementos = "Descargando elementos orbitales…";
+        _avisoElementosDeFabrica = false;
+        AvisoElementos = Textos.T("Principal.Satelites.Descargando");
 
         try
         {
@@ -391,19 +407,19 @@ public sealed partial class VistaModeloSatelites : ObservableObject
                 {
                     var lectura = await descarga.TraerAsync(fuente).ConfigureAwait(true);
                     var cargados = _seguidor.CargarFichero(lectura.TextoOriginal);
-                    resumen.Add($"{fuente.Titulo}: {cargados} satélites.");
+                    resumen.Add(Textos.F("Principal.Satelites.FuenteCargados", fuente.Titulo, cargados));
 
                     await DescargaDeElementos.GuardarAsync(lectura, RutaDeCache(fuente)).ConfigureAwait(true);
                 }
                 catch (Exception ex)
                 {
-                    resumen.Add($"{fuente.Titulo}: no se ha podido descargar ({ex.Message}).");
+                    resumen.Add(Textos.F("Principal.Satelites.FuenteFallo", fuente.Titulo, ex.Message));
                     Log.Warning(ex, "No se han podido descargar los elementos de {Fuente}.", fuente.Titulo);
                 }
             }
 
             AvisoElementos =
-                $"Actualizado a las {_hora.GetUtcNow().UtcDateTime.ToString("HH:mm", CultureInfo.InvariantCulture)} UTC.  ·  "
+                Textos.F("Principal.Satelites.ActualizadoALas", _hora.GetUtcNow().UtcDateTime.ToString("HH:mm", CultureInfo.InvariantCulture))
                 + string.Join("  ·  ", resumen);
 
             RefrescarPasos();
@@ -436,7 +452,7 @@ public sealed partial class VistaModeloSatelites : ObservableObject
 
         if (EquipoConDosVfos is not { } equipoConDosVfos)
         {
-            AvisoDoppler = "El equipo conectado no informa de sus dos VFO: no se puede seguir el Doppler.";
+            AvisoDoppler = Textos.T("Principal.Satelites.SinDosVfo");
             return;
         }
 
@@ -444,7 +460,7 @@ public sealed partial class VistaModeloSatelites : ObservableObject
         // receptor se quedaria sintonizado en la frecuencia de transmision.
         if (VfoDeSubida == VfoDeBajada)
         {
-            AvisoDoppler = $"La subida y la bajada van las dos por el VFO {VfoDeSubida}: elija un VFO distinto para cada una.";
+            AvisoDoppler = Textos.F("Principal.Satelites.MismoVfo", VfoDeSubida);
             return;
         }
 
@@ -453,8 +469,8 @@ public sealed partial class VistaModeloSatelites : ObservableObject
         if (_seguidor.Donde(fila.Abreviatura, _hora.GetUtcNow()) is null)
         {
             AvisoDoppler = fila.EsGeoestacionario
-                ? $"{fila.Abreviatura} es geoestacionario: su Doppler es despreciable y no hace falta seguirlo."
-                : $"No hay elementos orbitales de {fila.Abreviatura}: pulse «Actualizar elementos orbitales» antes de seguir su Doppler.";
+                ? Textos.F("Principal.Satelites.GeoSinDoppler", fila.Abreviatura)
+                : Textos.F("Principal.Satelites.SinElementosDe", fila.Abreviatura);
             return;
         }
 
@@ -463,7 +479,7 @@ public sealed partial class VistaModeloSatelites : ObservableObject
         _seguimiento.Seguir(EnlaceDeSatelite.Centrado(transpondedor));
 
         SiguiendoDoppler = true;
-        AvisoDoppler = $"Siguiendo el Doppler de {fila.Abreviatura} · {transpondedor.NombreDelTranspondedor}.";
+        AvisoDoppler = Textos.F("Principal.Satelites.Siguiendo", fila.Abreviatura, transpondedor.NombreDelTranspondedor);
     }
 
     /// <summary>Deja de seguir el Doppler. No devuelve el equipo a ninguna frecuencia.</summary>
@@ -593,22 +609,22 @@ public sealed partial class VistaModeloSatelites : ObservableObject
             DistanciaTexto = "—";
             SobreElHorizonte = false;
             AvisoDePosicion = fila.EsGeoestacionario
-                ? "Geoestacionario: siempre a la vista, en la misma posición."
-                : "Sin elementos orbitales: no se sabe dónde está. Pulse «Actualizar elementos orbitales».";
+                ? Textos.T("Principal.Satelites.GeoALaVista")
+                : Textos.T("Principal.Satelites.SinElementosNoSeSabe");
             _mapa.PonerSatelite(null);
             return;
         }
 
-        var ci = CultureInfo.CurrentCulture;
+        var ci = Textos.Cultura;
         AzEnVivoTexto = $"{estado.Vista.AzimutGrados.ToString("F1", ci)}°";
         ElEnVivoTexto = $"{estado.Vista.ElevacionGrados.ToString("F1", ci)}°";
         DistanciaTexto = $"{estado.Vista.DistanciaKm.ToString("N0", ci)} km";
         SobreElHorizonte = estado.Vista.SobreElHorizonte;
-        AvisoDePosicion = SobreElHorizonte ? string.Empty : "Por debajo del horizonte.";
+        AvisoDePosicion = SobreElHorizonte ? string.Empty : Textos.T("Principal.Satelites.BajoElHorizonte");
 
         _mapa.PonerSatelite(new MarcaDelMapa(estado.Subpunto, fila.Abreviatura, ClaseDeMarca.Satelite)
         {
-            Detalle = $"{fila.Nombre} · subpunto a las {ahora.UtcDateTime.ToString("HH:mm:ss", CultureInfo.InvariantCulture)} UTC",
+            Detalle = Textos.F("Principal.Satelites.Subpunto", fila.Nombre, ahora.UtcDateTime.ToString("HH:mm:ss", CultureInfo.InvariantCulture)),
         });
 
         if (SiguiendoDoppler && _seguimiento is not null)
@@ -623,7 +639,7 @@ public sealed partial class VistaModeloSatelites : ObservableObject
             catch (Exception ex)
             {
                 Log.Warning(ex, "No se ha podido ajustar el Doppler.");
-                AvisoDoppler = $"No se ha podido ajustar el Doppler: {ex.Message}";
+                AvisoDoppler = Textos.F("Principal.Satelites.NoSeAjusta", ex.Message);
             }
         }
 
@@ -646,7 +662,7 @@ public sealed partial class VistaModeloSatelites : ObservableObject
     });
 
     private static string FormatoDeDesplazamiento(double hz) =>
-        $"{hz.ToString("+0;-0;0", CultureInfo.CurrentCulture)} Hz";
+        $"{hz.ToString("+0;-0;0", Textos.Cultura)} Hz";
 
     private string RutaDeCache(FuenteDeElementos fuente) =>
         Path.Combine(_carpetaDeDatos, "satelites", $"{fuente.Clave}.txt");

@@ -5,6 +5,7 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Impresion.Qsl;
 using Nodisla.Cuaderno.Servicios.Correo;
 using Nodisla.Cuaderno.Ui.Qsl;
@@ -34,7 +35,7 @@ public sealed partial class DestinatarioDeQsl : ObservableObject
     /// <summary>Resumen de los contactos.</summary>
     public string ContactosTexto => Contactos.Count == 1
         ? string.Create(CultureInfo.InvariantCulture, $"{Contactos[0].InicioUtc.UtcDateTime:yyyy-MM-dd HH:mm} {Contactos[0].Band.Nombre} {Contactos[0].Mode.NombreUsual}")
-        : $"{Contactos.Count} contactos";
+        : Textos.F("Qsl.Envio.NContactos", Contactos.Count);
 
     /// <summary>Alguno ya consta como enviado.</summary>
     public bool AlgunoYaEnviado => Contactos.Any(MarcaDeQslEnviada.YaEnviada);
@@ -67,10 +68,10 @@ public sealed partial class DestinatarioDeQsl : ObservableObject
     /// <summary>De donde sale la direccion, escrito.</summary>
     public string OrigenTexto => Origen switch
     {
-        OrigenDelCorreo.DelContacto => "del contacto",
-        OrigenDelCorreo.DeLaFicha => "de su ficha QRZ",
-        OrigenDelCorreo.Escrita => "escrita a mano",
-        _ => "sin correo",
+        OrigenDelCorreo.DelContacto => Textos.T("Qsl.Envio.Origen.DelContacto"),
+        OrigenDelCorreo.DeLaFicha => Textos.T("Qsl.Envio.Origen.DeLaFicha"),
+        OrigenDelCorreo.Escrita => Textos.T("Qsl.Envio.Origen.Escrita"),
+        _ => Textos.T("Qsl.Envio.Origen.Ninguno"),
     };
 
     partial void OnCorreoChanged(string value)
@@ -89,7 +90,7 @@ public sealed partial class DestinatarioDeQsl : ObservableObject
         Correo = correo ?? string.Empty;
         Origen = origen;
         _buscado = true;
-        if (origen == OrigenDelCorreo.Ninguno) Estado = "No publica correo: escríbalo o se saltará.";
+        if (origen == OrigenDelCorreo.Ninguno) Estado = Textos.T("Qsl.Envio.NoPublica");
     }
 }
 
@@ -113,7 +114,12 @@ public sealed partial class VistaModeloEnvioQsl : ObservableObject
         _ids = ids ?? throw new ArgumentNullException(nameof(ids));
         _idDelDiseno = idDelDiseno;
         _asunto = servicio.Ajustes.Asunto;
-        _texto = servicio.Ajustes.Texto;
+
+        // El texto de fábrica (el que no ha tocado el operador) sale en el idioma del programa:
+        // lo lee el corresponsal. El que haya escrito el operador se respeta tal cual.
+        _texto = servicio.Ajustes.Texto == Ajustes.AjustesDeCorreoQsl.TextoPorOmision
+            ? Textos.F("Qsl.Envio.TextoPorOmision")
+            : servicio.Ajustes.Texto;
         foreach (var d in servicio.Disenos.Listar()) Disenos.Add(d);
         _diseno = Disenos.FirstOrDefault(d => d.Id == (idDelDiseno ?? servicio.Disenos.IdPorOmision())) ?? Disenos.FirstOrDefault();
     }
@@ -131,7 +137,7 @@ public sealed partial class VistaModeloEnvioQsl : ObservableObject
     /// <summary>Pide una carpeta. Devuelve nula si se cancela.</summary>
     public Func<string?> ElegirCarpeta { get; set; } = () =>
     {
-        var dialogo = new Microsoft.Win32.OpenFolderDialog { Title = "Carpeta donde guardar las tarjetas" };
+        var dialogo = new Microsoft.Win32.OpenFolderDialog { Title = Textos.T("Qsl.Envio.DialogoCarpeta") };
         return dialogo.ShowDialog() == true ? dialogo.FolderName : null;
     };
 
@@ -183,8 +189,8 @@ public sealed partial class VistaModeloEnvioQsl : ObservableObject
 
     /// <summary>Resumen del correo saliente, para que se sepa desde donde sale.</summary>
     public string DesdeTexto => Servicio.Ajustes.Smtp.EstaCompleta
-        ? $"Sale de {Servicio.Ajustes.Smtp.Remitente} por {Servicio.Ajustes.Smtp.Servidor}:{Servicio.Ajustes.Smtp.Puerto}."
-        : "El correo saliente no está configurado: Configuración › Correo de las QSL.";
+        ? Textos.F("Qsl.Envio.SaleDe", Servicio.Ajustes.Smtp.Remitente, Servicio.Ajustes.Smtp.Servidor, Servicio.Ajustes.Smtp.Puerto.ToString(CultureInfo.InvariantCulture))
+        : Textos.T("Qsl.Envio.SinConfigurar");
 
     /// <summary>Carga los contactos, agrupa por estacion y busca las direcciones.</summary>
     /// <returns>Tarea.</returns>
@@ -204,11 +210,11 @@ public sealed partial class VistaModeloEnvioQsl : ObservableObject
             Elegido = Destinatarios.FirstOrDefault();
             if (Destinatarios.Count == 0)
             {
-                Aviso = "Esos contactos ya no están en el cuaderno.";
+                Aviso = Textos.T("Qsl.Envio.YaNoEstan");
                 return;
             }
 
-            Aviso = "Buscando las direcciones de correo…";
+            Aviso = Textos.T("Qsl.Envio.Buscando");
             foreach (var d in Destinatarios)
             {
                 var (correo, origen) = await Servicio.BuscarCorreoAsync(d.Contactos[0]).ConfigureAwait(true);
@@ -218,13 +224,13 @@ public sealed partial class VistaModeloEnvioQsl : ObservableObject
 
             var sin = Destinatarios.Count(d => !d.CorreoValido);
             Aviso = sin == 0
-                ? "Listo para mandar."
-                : $"{sin} estación(es) no publican correo: escriba la dirección o se saltarán.";
+                ? Textos.T("Qsl.Envio.Listo")
+                : Textos.F("Qsl.Envio.SinCorreo", sin);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido preparar el envío de QSL.");
-            Aviso = $"No se ha podido preparar: {ex.Message}";
+            Aviso = Textos.F("Qsl.Envio.NoPreparar", ex.Message);
         }
         finally
         {
@@ -245,7 +251,7 @@ public sealed partial class VistaModeloEnvioQsl : ObservableObject
         var lista = Destinatarios.Where(d => d.Enviar && !d.Enviado).ToList();
         if (lista.Count == 0)
         {
-            Aviso = "No hay ninguna estación marcada para mandar.";
+            Aviso = Textos.T("Qsl.Envio.NingunaMarcada");
             return;
         }
 
@@ -261,18 +267,18 @@ public sealed partial class VistaModeloEnvioQsl : ObservableObject
                 if (_cancelacion.IsCancellationRequested) break;
                 if (!d.CorreoValido)
                 {
-                    d.Estado = "Saltado: sin dirección de correo.";
+                    d.Estado = Textos.T("Qsl.Envio.Saltado");
                     saltados++;
                     continue;
                 }
 
-                d.Estado = "Mandando…";
+                d.Estado = Textos.T("Qsl.Envio.Mandando");
                 try
                 {
                     await Servicio.EnviarAsync(d.Correo, d.Contactos, Diseno, _yo, Asunto, Texto, _cancelacion.Token).ConfigureAwait(true);
                     d.Enviado = true;
                     d.Enviar = false;
-                    d.Estado = string.Create(CultureInfo.CurrentCulture, $"Enviada {DateTime.Now:HH:mm}.");
+                    d.Estado = Textos.F("Qsl.Envio.Enviada", DateTime.Now);
                     Apuntados.AddRange(d.Contactos.Select(q => q.Id));
                     HaEnviadoAlguna = true;
                     bien++;
@@ -286,18 +292,18 @@ public sealed partial class VistaModeloEnvioQsl : ObservableObject
                     // igual con todos: se para en vez de repetir el mismo error cincuenta veces.
                     if (!ex.EsDelDestinatario)
                     {
-                        Aviso = $"Parado: {ex.Message}";
+                        Aviso = Textos.F("Qsl.Envio.Parado", ex.Message);
                         return;
                     }
                 }
                 catch (OperationCanceledException)
                 {
-                    d.Estado = "Cancelado.";
+                    d.Estado = Textos.T("Qsl.Envio.Cancelado");
                     break;
                 }
             }
 
-            Aviso = $"Enviadas {bien}; saltadas {saltados}; con fallo {fallos}.";
+            Aviso = Textos.F("Qsl.Envio.Resumen", bien, saltados, fallos);
         }
         finally
         {
@@ -326,11 +332,11 @@ public sealed partial class VistaModeloEnvioQsl : ObservableObject
                 n++;
             }
 
-            Aviso = $"{n} tarjeta(s) guardada(s) en {carpeta}.";
+            Aviso = Textos.F("Qsl.Envio.Guardadas", n, carpeta);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            Aviso = $"No se han podido guardar: {ex.Message}";
+            Aviso = Textos.F("Qsl.Envio.NoGuardadas", ex.Message);
         }
     }
 
@@ -347,11 +353,11 @@ public sealed partial class VistaModeloEnvioQsl : ObservableObject
         {
             File.WriteAllBytes(ruta, impreso.Bytes);
             AbrirFichero(ruta);
-            Aviso = $"PDF guardado en {ruta}.";
+            Aviso = Textos.F("Qsl.Editor.PdfGuardado", ruta);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception)
         {
-            Aviso = $"No se ha podido guardar o abrir el PDF: {ex.Message}";
+            Aviso = Textos.F("Qsl.Editor.NoPdf", ex.Message);
         }
     }
 
@@ -372,7 +378,7 @@ public sealed partial class VistaModeloEnvioQsl : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido dibujar la QSL.");
-            Aviso = $"No se ha podido dibujar la tarjeta: {ex.Message}";
+            Aviso = Textos.F("Qsl.Tarjeta.NoDibujar", ex.Message);
         }
     }
 }

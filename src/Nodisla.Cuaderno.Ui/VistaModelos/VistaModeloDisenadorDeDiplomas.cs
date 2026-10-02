@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Impresion.Diplomas;
 using Nodisla.Cuaderno.Impresion.Qsl;
 using Nodisla.Cuaderno.Servicios.Correo;
@@ -57,13 +58,16 @@ public sealed partial class ImagenEditable : ObservableObject
     /// <summary>Linea de firma debajo.</summary>
     public bool LineaDeFirma { get => Imagen.LineaDeFirma; set => Poner(Imagen.LineaDeFirma, value, v => Imagen.LineaDeFirma = v); }
 
+    /// <summary>Color de la linea de firma.</summary>
+    public string ColorDeLinea { get => Imagen.ColorDeLinea; set => Poner(Imagen.ColorDeLinea, value ?? "#555555", v => Imagen.ColorDeLinea = v); }
+
     /// <summary>Se pinta.</summary>
     public bool Visible { get => Imagen.Visible; set => Poner(Imagen.Visible, value, v => Imagen.Visible = v); }
 
     /// <summary>Que imagen lleva.</summary>
     public string TextoDelFichero => string.IsNullOrWhiteSpace(Imagen.Fichero)
-        ? "Sin imagen: hueco preparado. «Elegir imagen…» para poner la suya."
-        : "Imagen: " + Imagen.Fichero;
+        ? Textos.T("Qsl.Disenador.SinImagen")
+        : Textos.F("Qsl.Disenador.ImagenFichero", Imagen.Fichero);
 
     /// <summary>Es la elegida.</summary>
     [ObservableProperty]
@@ -174,7 +178,7 @@ public sealed record FilaDelHistorialDeDiplomas(DiplomaEmitido Emitido)
     /// <summary>Si se ha mandado y a donde.</summary>
     public string Envio => Emitido.EnviadoUtc is { } cuando
         ? $"{Emitido.Correo} ({cuando.ToLocalTime().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)})"
-        : Emitido.Origen == OrigenDeDiplomaEmitido.Conseguido ? "certificado propio" : "sin enviar";
+        : Textos.T(Emitido.Origen == OrigenDeDiplomaEmitido.Conseguido ? "Qsl.Disenador.CertificadoPropio" : "Qsl.Disenador.SinEnviar");
 }
 
 /// <summary>Para que se usa el diseñador ahora.</summary>
@@ -192,7 +196,7 @@ public enum UsoDelDisenador
 /// fondo, campos que se arrastran, vista previa de verdad) mas orla, logo, firma, tabla de
 /// referencias, numeracion correlativa, correo e historial.
 /// </summary>
-public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
+public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject, IColoresDelDiseno
 {
     private DatosDeMiEstacion _yo = DatosDeMiEstacion.Vacios;
     private DatosDeDiploma _datos = new();
@@ -210,6 +214,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         Contactos.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HayContactos));
         Historial.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HistorialVacio));
         RecargarPlantillas(Servicio.Disenos.IdPorOmision());
+        Textos.AlCambiar(this, static vm => vm.AlCambiarDeIdioma());
     }
 
     /// <summary>Hay contactos que elegir.</summary>
@@ -230,8 +235,8 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
     {
         var dialogo = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "Imagen para el diploma",
-            Filter = "Imágenes|*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.tif;*.tiff",
+            Title = Textos.T("Qsl.Disenador.DialogoImagen"),
+            Filter = Textos.T("Qsl.Editor.FiltroImagenes"),
         };
         return dialogo.ShowDialog() == true ? dialogo.FileName : null;
     };
@@ -275,9 +280,9 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
     public IReadOnlyList<UsoDelDisenador> Usos { get; } = Enum.GetValues<UsoDelDisenador>();
 
     /// <summary>Variables de los textos, con su explicacion.</summary>
-    public string AyudaDeVariables { get; } =
+    public string AyudaDeVariables =>
         string.Join("\n", VariablesDeDiploma.Conocidas.Select(v => $"{{{v.Nombre}}} — {v.Descripcion}"))
-        + "\n\nEn las columnas de la tabla:\n"
+        + "\n\n" + Textos.T("Qsl.Disenador.VariablesDeLaTabla") + "\n"
         + string.Join("\n", VariablesDeDiploma.DeLaFila.Select(v => $"{{{v.Nombre}}} — {v.Descripcion}"));
 
     /// <summary>La plantilla elegida.</summary>
@@ -513,6 +518,42 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
     /// <summary>Anexar lo que no quepa.</summary>
     public bool AnexoDeLaTabla { get => Diseno?.Tabla.Anexo ?? true; set => EnPlantilla(d => d.Tabla.Anexo, (d, v) => d.Tabla.Anexo = v, value); }
 
+    /// <summary>Color del texto de la tabla.</summary>
+    public string ColorDelTextoDeLaTabla { get => Diseno?.Tabla.ColorDeTexto ?? "#222222"; set => EnPlantilla(d => d.Tabla.ColorDeTexto, (d, v) => d.Tabla.ColorDeTexto = v, value ?? "#222222"); }
+
+    /// <summary>Color de la cabecera y del título de la tabla.</summary>
+    public string ColorDeCabeceraDeLaTabla { get => Diseno?.Tabla.ColorDeCabecera ?? "#1B3A5C"; set => EnPlantilla(d => d.Tabla.ColorDeCabecera, (d, v) => d.Tabla.ColorDeCabecera = v, value ?? "#1B3A5C"); }
+
+    /// <summary>Color de las líneas de la tabla.</summary>
+    public string ColorDeLineasDeLaTabla { get => Diseno?.Tabla.ColorDeLineas ?? "#B8B8B8"; set => EnPlantilla(d => d.Tabla.ColorDeLineas, (d, v) => d.Tabla.ColorDeLineas = v, value ?? "#B8B8B8"); }
+
+    /// <inheritdoc />
+    public IEnumerable<string?> ColoresEnUso()
+    {
+        if (Diseno is not { } d) yield break;
+        yield return d.ColorDeFondo;
+        if (d.Marco.Estilo != EstiloDeMarco.Ninguno)
+        {
+            yield return d.Marco.Color;
+            yield return d.Marco.ColorSecundario;
+        }
+
+        foreach (var campo in d.Campos.Where(c => c.Visible))
+        {
+            yield return campo.Color;
+            yield return campo.ColorDeRecuadro;
+        }
+
+        if (d.Tabla.Visible)
+        {
+            yield return d.Tabla.ColorDeCabecera;
+            yield return d.Tabla.ColorDeTexto;
+            yield return d.Tabla.ColorDeLineas;
+        }
+
+        foreach (var imagen in d.ImagenesColocadas.Where(i => i.Visible && i.LineaDeFirma)) yield return imagen.ColorDeLinea;
+    }
+
     // ── Carga ──────────────────────────────────────────────────────────
 
     /// <summary>Lee mi estacion, el historial y los diplomas conseguidos.</summary>
@@ -532,7 +573,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se han podido cargar los datos del diseñador de diplomas.");
-            Aviso = $"No se han podido leer los datos: {ex.Message}";
+            Aviso = Textos.F("Qsl.Disenador.NoDatos", ex.Message);
         }
 
         if (string.IsNullOrWhiteSpace(Indicativo) && Uso == UsoDelDisenador.EmitirAOtraEstacion) RellenarDeMuestra();
@@ -547,7 +588,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(Indicativo))
         {
-            Aviso = "Escriba el indicativo de la estación que recibe el diploma.";
+            Aviso = Textos.T("Qsl.Disenador.EscribaIndicativo");
             return;
         }
 
@@ -561,13 +602,13 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
             if (!string.IsNullOrWhiteSpace(datos.Nombre)) Nombre = datos.Nombre;
             if (!string.IsNullOrWhiteSpace(datos.Correo)) Correo = datos.Correo;
             Aviso = qsos.Count == 0
-                ? $"No hay contactos con {Indicativo.ToUpperInvariant()} en el cuaderno: el diploma sale sin tabla."
-                : $"{qsos.Count} contacto(s) con {Indicativo.ToUpperInvariant()}. Desmarque los que no deban contar.";
+                ? Textos.F("Qsl.Disenador.SinContactos", Indicativo.ToUpperInvariant())
+                : Textos.F("Qsl.Disenador.ContactosCon", qsos.Count, Indicativo.ToUpperInvariant());
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se han podido buscar los contactos para el diploma.");
-            Aviso = $"No se han podido buscar los contactos: {ex.Message}";
+            Aviso = Textos.F("Qsl.Disenador.NoBuscar", ex.Message);
         }
         finally
         {
@@ -584,7 +625,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
     {
         if (Conseguido is not { } c)
         {
-            Aviso = "Elija uno de sus diplomas conseguidos.";
+            Aviso = Textos.T("Qsl.Disenador.ElijaConseguido");
             return;
         }
 
@@ -603,13 +644,13 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
             _datos = datos;
             _datos.Fecha = new DateTimeOffset(FechaDeEmision);
             _emitido = null;
-            Aviso = $"{c.Diploma.Nombre}: {datos.Filas.Count} referencia(s) confirmada(s).";
+            Aviso = Textos.F("Qsl.Disenador.ReferenciasConfirmadas", c.Diploma.Nombre, datos.Filas.Count);
         }
         catch (Exception ex)
         {
             _rellenando = false;
             Log.Error(ex, "No se ha podido cargar el diploma conseguido.");
-            Aviso = $"No se ha podido leer el diploma: {ex.Message}";
+            Aviso = Textos.F("Qsl.Disenador.NoLeerDiploma", ex.Message);
         }
 
         await ActualizarNumeroAsync().ConfigureAwait(true);
@@ -682,6 +723,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
             nameof(NombreDelGestor), nameof(Asunto), nameof(TextoDelCorreo), nameof(TablaVisible), nameof(TituloDeLaTabla),
             nameof(XDeLaTabla), nameof(YDeLaTabla), nameof(AnchoDeLaTabla), nameof(AltoDeLaTabla), nameof(BloquesDeLaTabla),
             nameof(FuenteDeLaTabla), nameof(TamanoDeLaTabla), nameof(AnexoDeLaTabla),
+            nameof(ColorDelTextoDeLaTabla), nameof(ColorDeCabeceraDeLaTabla), nameof(ColorDeLineasDeLaTabla),
         })
         {
             OnPropertyChanged(p);
@@ -708,7 +750,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
     {
         var nueva = PlantillasDeDiplomaDeFabrica.Clasico();
         nueva.Id = Servicio.Disenos.IdNuevo();
-        nueva.Nombre = "Diploma nuevo";
+        nueva.Nombre = Textos.T("Qsl.Disenador.DiplomaNuevo");
         Disenos.Add(nueva);
         Diseno = nueva;
         HayCambios = true;
@@ -721,14 +763,14 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         if (Diseno is null) return;
         try
         {
-            var copia = Servicio.Disenos.Duplicar(Diseno, Diseno.Nombre + " (copia)");
+            var copia = Servicio.Disenos.Duplicar(Diseno, Textos.F("Qsl.Editor.Copia", Diseno.Nombre));
             Disenos.Add(copia);
             Diseno = copia;
             HayCambios = true;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
         {
-            Aviso = $"No se ha podido duplicar: {ex.Message}";
+            Aviso = Textos.F("Qsl.Disenador.NoDuplicar", ex.Message);
         }
     }
 
@@ -741,12 +783,12 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         {
             Servicio.Disenos.Guardar(Diseno);
             HayCambios = false;
-            Aviso = $"Plantilla «{Diseno.Nombre}» guardada.";
+            Aviso = Textos.F("Qsl.Editor.PlantillaGuardada", Diseno.Nombre);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
         {
             Log.Error(ex, "No se ha podido guardar la plantilla de diploma.");
-            Aviso = $"No se ha podido guardar: {ex.Message}";
+            Aviso = Textos.F("Qsl.Editor.NoSeHaPodidoGuardar", ex.Message);
         }
     }
 
@@ -763,7 +805,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         var deFabrica = Servicio.Disenos.EsDeFabrica(Diseno.Id);
         Servicio.Disenos.Borrar(Diseno);
         RecargarPlantillas(deFabrica ? Diseno.Id : null);
-        Aviso = deFabrica ? $"«{nombre}» ha vuelto a como viene de fábrica." : $"Plantilla «{nombre}» borrada.";
+        Aviso = Textos.F(deFabrica ? "Qsl.Disenador.VueltaDeFabrica" : "Qsl.Editor.PlantillaBorrada", nombre);
     }
 
     /// <summary>La elegida pasa a ser la de omision.</summary>
@@ -774,7 +816,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         Guardar();
         Servicio.Disenos.PonerPorOmision(Diseno.Id);
         OnPropertyChanged(nameof(EsLaDeOmision));
-        Aviso = $"«{Diseno.Nombre}» es ahora la plantilla de diploma por omisión.";
+        Aviso = Textos.F("Qsl.Disenador.AhoraPorOmision", Diseno.Nombre);
     }
 
     /// <summary>Exporta la plantilla con sus imagenes a un fichero.</summary>
@@ -782,16 +824,16 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
     public void ExportarPlantilla()
     {
         if (Diseno is null) return;
-        var filtro = $"Plantilla de diploma|*{AlmacenDeDisenosDeDiploma.ExtensionExportada}";
+        var filtro = Textos.F("Qsl.Disenador.FiltroPlantilla", AlmacenDeDisenosDeDiploma.ExtensionExportada);
         if (ElegirDondeGuardar(Limpio(Diseno.Nombre) + AlmacenDeDisenosDeDiploma.ExtensionExportada, filtro) is not { } ruta) return;
         try
         {
             Servicio.Disenos.Exportar(Diseno, ruta);
-            Aviso = $"Plantilla exportada a {ruta}.";
+            Aviso = Textos.F("Qsl.Disenador.Exportada", ruta);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            Aviso = $"No se ha podido exportar: {ex.Message}";
+            Aviso = Textos.F("Qsl.Disenador.NoExportar", ex.Message);
         }
     }
 
@@ -799,16 +841,16 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
     [RelayCommand]
     public void ImportarPlantilla()
     {
-        if (ElegirFichero($"Plantilla de diploma|*{AlmacenDeDisenosDeDiploma.ExtensionExportada}|Todos|*.*") is not { } ruta) return;
+        if (ElegirFichero(Textos.F("Qsl.Disenador.FiltroImportar", AlmacenDeDisenosDeDiploma.ExtensionExportada)) is not { } ruta) return;
         try
         {
             var importada = Servicio.Disenos.Importar(ruta);
             RecargarPlantillas(importada.Id);
-            Aviso = $"Plantilla «{importada.Nombre}» importada.";
+            Aviso = Textos.F("Qsl.Disenador.Importada", importada.Nombre);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException)
         {
-            Aviso = $"No se ha podido importar: {ex.Message}";
+            Aviso = Textos.F("Qsl.Disenador.NoImportar", ex.Message);
         }
     }
 
@@ -825,7 +867,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
         {
-            Aviso = $"No se ha podido usar esa imagen: {ex.Message}";
+            Aviso = Textos.F("Qsl.Editor.NoImagen", ex.Message);
         }
     }
 
@@ -846,7 +888,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
     public void AnadirTexto()
     {
         if (Diseno is null) return;
-        var campo = new CampoDeQsl { Nombre = "Texto", Texto = "Texto libre", XMm = AnchoMm / 2, YMm = AltoMm / 2, Alineacion = AlineacionDeCampo.Centro, TamanoPt = 14, Fuente = "Georgia", Color = "#333333" };
+        var campo = new CampoDeQsl { Nombre = Textos.T("Qsl.Editor.Texto"), Texto = Textos.T("Qsl.Editor.TextoLibre"), XMm = AnchoMm / 2, YMm = AltoMm / 2, Alineacion = AlineacionDeCampo.Centro, TamanoPt = 14, Fuente = "Georgia", Color = "#333333" };
         Diseno.Campos.Add(campo);
         var editable = new CampoEditable(campo, Cambiado);
         Campos.Add(editable);
@@ -859,7 +901,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
     public void AnadirImagen()
     {
         if (Diseno is null) return;
-        var imagen = new ImagenDeDiploma { Nombre = "Imagen", Uso = UsoDeImagen.Adorno, XMm = (AnchoMm / 2) - 15, YMm = (AltoMm / 2) - 15 };
+        var imagen = new ImagenDeDiploma { Nombre = Textos.T("Qsl.Disenador.Imagen"), Uso = UsoDeImagen.Adorno, XMm = (AnchoMm / 2) - 15, YMm = (AltoMm / 2) - 15 };
         Diseno.ImagenesColocadas.Add(imagen);
         var editable = new ImagenEditable(imagen, Cambiado);
         Imagenes.Add(editable);
@@ -874,7 +916,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
     {
         if (Diseno is null || ElementoElegido is not ImagenEditable editable)
         {
-            Aviso = "Elija antes un logo, firma o adorno en la lista de imágenes.";
+            Aviso = Textos.T("Qsl.Disenador.ElijaHueco");
             return;
         }
 
@@ -886,7 +928,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
         {
-            Aviso = $"No se ha podido usar esa imagen: {ex.Message}";
+            Aviso = Textos.F("Qsl.Editor.NoImagen", ex.Message);
         }
     }
 
@@ -898,7 +940,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         if (ElementoElegido is CampoEditable c)
         {
             var campo = c.Campo.Copiar();
-            campo.Nombre += " (copia)";
+            campo.Nombre = Textos.F("Qsl.Editor.Copia", campo.Nombre);
             campo.YMm = Math.Min(AltoMm - 5, campo.YMm + 8);
             Diseno.Campos.Add(campo);
             var editable = new CampoEditable(campo, Cambiado);
@@ -908,7 +950,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         else if (ElementoElegido is ImagenEditable i)
         {
             var imagen = i.Imagen.Copiar();
-            imagen.Nombre += " (copia)";
+            imagen.Nombre = Textos.F("Qsl.Editor.Copia", imagen.Nombre);
             imagen.XMm = Math.Min(AnchoMm - 5, imagen.XMm + 8);
             Diseno.ImagenesColocadas.Add(imagen);
             var editable = new ImagenEditable(imagen, Cambiado);
@@ -944,7 +986,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
     public void AnadirColumna()
     {
         if (Diseno is null) return;
-        var columna = new ColumnaDeTabla { Titulo = "Columna", Texto = "{referencia}" };
+        var columna = new ColumnaDeTabla { Titulo = Textos.T("Qsl.Disenador.Columna"), Texto = "{referencia}" };
         Diseno.Tabla.Columnas.Add(columna);
         Columnas.Add(new ColumnaEditable(columna, Cambiado));
         Cambiado();
@@ -973,11 +1015,11 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         try
         {
             File.WriteAllBytes(ruta, Servicio.Png(Diseno, datos, _yo));
-            Aviso = $"Imagen guardada en {ruta}.";
+            Aviso = Textos.F("Qsl.Disenador.ImagenGuardada", ruta);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            Aviso = $"No se ha podido guardar: {ex.Message}";
+            Aviso = Textos.F("Qsl.Editor.NoSeHaPodidoGuardar", ex.Message);
         }
     }
 
@@ -998,7 +1040,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         if (await EmitirAsync().ConfigureAwait(true) is not { } emitido || Diseno is null) return;
         var impreso = Servicio.Pdf(Diseno, _datos, _yo);
         GuardarPdf(impreso, impreso.NombreSugerido);
-        Aviso = $"Diploma nº {Diseno.FormatearNumero(emitido.Numero)} emitido a {emitido.Indicativo}. " + Aviso;
+        Aviso = Textos.F("Qsl.Disenador.Emitido", Diseno.FormatearNumero(emitido.Numero), emitido.Indicativo) + " " + Aviso;
     }
 
     /// <summary>Emite el diploma y lo manda por correo en PDF.</summary>
@@ -1008,7 +1050,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
     {
         if (!DireccionDeCorreo.EsValida(Correo))
         {
-            Aviso = "Escriba una dirección de correo válida para mandar el diploma.";
+            Aviso = Textos.T("Qsl.Disenador.EscribaCorreo");
             return;
         }
 
@@ -1034,7 +1076,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         var para = !string.IsNullOrWhiteSpace(HistorialElegido.Emitido.Correo) ? HistorialElegido.Emitido.Correo! : r.Datos.Correo ?? Correo;
         if (!DireccionDeCorreo.EsValida(para))
         {
-            Aviso = "Ese diploma no tiene dirección: escríbala en «Correo» y vuelva a pulsar.";
+            Aviso = Textos.T("Qsl.Disenador.SinDireccion");
             if (DireccionDeCorreo.EsValida(Correo)) para = Correo;
             else return;
         }
@@ -1108,15 +1150,15 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
             TextoDeHojas = !t.Visible || datos.Filas.Count == 0
                 ? string.Empty
                 : datos.Filas.Count <= caben
-                    ? $"La tabla lleva {datos.Filas.Count} fila(s); caben {caben}."
+                    ? Textos.F("Qsl.Disenador.Hojas.Caben", datos.Filas.Count, caben)
                     : t.Anexo
-                        ? $"{datos.Filas.Count} filas: caben {Math.Max(0, caben - 1)} en el diploma, el resto va en hojas de anexo del PDF."
-                        : $"{datos.Filas.Count} filas: solo caben {Math.Max(0, caben - 1)}; active «Anexo» para sacarlas todas.";
+                        ? Textos.F("Qsl.Disenador.Hojas.Anexo", datos.Filas.Count, Math.Max(0, caben - 1))
+                        : Textos.F("Qsl.Disenador.Hojas.SoloCaben", datos.Filas.Count, Math.Max(0, caben - 1));
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido dibujar la vista previa del diploma.");
-            Aviso = $"No se ha podido dibujar el diploma: {ex.Message}";
+            Aviso = Textos.F("Qsl.Disenador.NoDibujar", ex.Message);
         }
     }
 
@@ -1195,13 +1237,13 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         {
             _numeroProvisional = await Servicio.SiguienteNumeroAsync(Diseno.Serie).ConfigureAwait(true);
             TextoDelNumero = _emitido is { } e
-                ? $"Emitido con el nº {Diseno.FormatearNumero(e.Numero)} (serie {e.Serie})."
-                : $"Al emitir llevará el nº {Diseno.FormatearNumero(_numeroProvisional)} de la serie «{Diseno.Serie}».";
+                ? Textos.F("Qsl.Disenador.EmitidoConNumero", Diseno.FormatearNumero(e.Numero), e.Serie)
+                : Textos.F("Qsl.Disenador.LlevaraNumero", Diseno.FormatearNumero(_numeroProvisional), Diseno.Serie);
         }
         catch (Exception ex)
         {
             Log.Warning(ex, "No se ha podido leer la numeración de los diplomas.");
-            TextoDelNumero = "No se ha podido leer la numeración.";
+            TextoDelNumero = Textos.T("Qsl.Disenador.NoNumeracion");
         }
 
         Redibujar();
@@ -1243,7 +1285,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido emitir el diploma.");
-            Aviso = $"No se ha podido emitir el diploma: {ex.Message}";
+            Aviso = Textos.F("Qsl.Disenador.NoEmitir", ex.Message);
             return null;
         }
     }
@@ -1253,16 +1295,16 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         try
         {
             await Servicio.EnviarAsync(diseno, datos, emitido, para).ConfigureAwait(true);
-            Aviso = $"Diploma nº {diseno.FormatearNumero(emitido.Numero)} enviado a {para}.";
+            Aviso = Textos.F("Qsl.Disenador.Enviado", diseno.FormatearNumero(emitido.Numero), para);
         }
         catch (ErrorDeCorreo ex)
         {
-            Aviso = $"El diploma nº {diseno.FormatearNumero(emitido.Numero)} queda emitido pero no se ha podido mandar: {ex.Message}";
+            Aviso = Textos.F("Qsl.Disenador.EmitidoSinMandar", diseno.FormatearNumero(emitido.Numero), ex.Message);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido mandar el diploma.");
-            Aviso = $"No se ha podido mandar el diploma: {ex.Message}";
+            Aviso = Textos.F("Qsl.Disenador.NoMandar", ex.Message);
         }
 
         await CargarHistorialAsync().ConfigureAwait(true);
@@ -1273,7 +1315,7 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         var datos = ServicioDeDiplomas.DatosDe(emitido);
         if (datos is null)
         {
-            Aviso = "Ese diploma no guarda sus datos y no se puede volver a sacar igual.";
+            Aviso = Textos.T("Qsl.Disenador.SinDatos");
             return null;
         }
 
@@ -1302,12 +1344,12 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         try
         {
             File.WriteAllBytes(ruta, impreso.Bytes);
-            Aviso = $"PDF guardado en {ruta} ({impreso.Paginas} hoja(s)).";
+            Aviso = Textos.F("Qsl.Disenador.PdfGuardado", ruta, impreso.Paginas);
             AbrirFichero(ruta);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception)
         {
-            Aviso = $"No se ha podido guardar o abrir el PDF: {ex.Message}";
+            Aviso = Textos.F("Qsl.Editor.NoPdf", ex.Message);
         }
     }
 
@@ -1371,6 +1413,13 @@ public sealed partial class VistaModeloDisenadorDeDiplomas : ObservableObject
         if (_cargando) return;
         HayCambios = true;
         Redibujar();
+    }
+
+    /// <summary>Al cambiar de idioma: la ayuda, el número y las hojas se vuelven a escribir.</summary>
+    private void AlCambiarDeIdioma()
+    {
+        OnPropertyChanged(nameof(AyudaDeVariables));
+        _ = ActualizarNumeroAsync();
     }
 
     private static string Limpio(string s) => new(s.Select(c => char.IsAsciiLetterOrDigit(c) ? c : '_').ToArray());

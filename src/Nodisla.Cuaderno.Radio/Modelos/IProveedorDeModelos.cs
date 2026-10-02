@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Logging;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Modelos;
 
 /// <summary>Un equipo que ha contestado por un puerto.</summary>
@@ -21,8 +23,8 @@ public sealed record EquipoIdentificado(
 {
     /// <summary>Para el operador.</summary>
     public string Descripcion => Modelo is not null
-        ? $"{Modelo.NombreCompleto} en {Puerto} a {Baudios} baudios"
-        : $"Equipo {Protocolo} desconocido ({Identificacion}) en {Puerto} a {Baudios} baudios";
+        ? Textos.F("Servicios.Radio.EquipoEnPuerto", Modelo.NombreCompleto, Puerto, Baudios)
+        : Textos.F("Servicios.Radio.EquipoDesconocidoEnPuerto", Protocolo, Identificacion, Puerto, Baudios);
 }
 
 /// <summary>

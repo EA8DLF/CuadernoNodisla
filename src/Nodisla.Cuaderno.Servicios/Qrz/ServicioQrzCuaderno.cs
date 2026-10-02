@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Servicios.Adif;
 using Nodisla.Cuaderno.Servicios.Red;
 
@@ -71,7 +72,7 @@ public sealed class ServicioQrzCuaderno : IServicioQsl
     public MedioDeConfirmacion Medio => MedioDeConfirmacion.QrzCom;
 
     /// <inheritdoc />
-    public string Nombre => "Cuaderno de QRZ.com";
+    public string Nombre => Textos.T("Servicios.Qrz.NombreDelCuaderno");
 
     /// <inheritdoc />
     public bool EstaConfigurado => _credenciales.Existe(ClavesDeCredencial.QrzClaveDeCuaderno);
@@ -90,7 +91,7 @@ public sealed class ServicioQrzCuaderno : IServicioQsl
         {
             var respuesta = await LlamarAsync(
                 new Dictionary<string, string> { ["ACTION"] = "STATUS" },
-                "comprobar el cuaderno de QRZ.com", ct).ConfigureAwait(false);
+                Textos.T("Servicios.Qrz.ComprobarCuaderno"), ct).ConfigureAwait(false);
             return EsCorrecta(respuesta);
         }
         catch (Exception ex) when (ex is RespuestaDelServicioException or ServicioNoDisponibleException)
@@ -119,7 +120,7 @@ public sealed class ServicioQrzCuaderno : IServicioQsl
 
             // QRZ solo admite un contacto por llamada, asi que aqui el progreso es de verdad
             // util: en un lote grande son cientos de peticiones seguidas.
-            Avisar(progreso, hechos, qsos.Count, $"Subiendo el contacto con {qso.Call.Valor}…");
+            Avisar(progreso, hechos, qsos.Count, Textos.F("Servicios.Qrz.SubiendoContacto", qso.Call.Valor));
 
             var registro = ConversorDeQso.Proyectar(qso, CamposAdmitidos);
             var adif = AdifLigero.EscribirRegistros([registro]);
@@ -137,7 +138,7 @@ public sealed class ServicioQrzCuaderno : IServicioQsl
                         ["OPTION"] = "REPLACE",
                         ["ADIF"] = adif,
                     },
-                    $"subir el contacto con {qso.Call.Valor} a QRZ.com", ct).ConfigureAwait(false);
+                    Textos.F("Servicios.Qrz.SubirContacto", qso.Call.Valor), ct).ConfigureAwait(false);
 
                 if (EsCorrecta(respuesta)) enviados++;
                 else motivos[qso.ClaveNatural] = Motivo(respuesta);
@@ -150,7 +151,7 @@ public sealed class ServicioQrzCuaderno : IServicioQsl
             hechos++;
         }
 
-        Avisar(progreso, hechos, qsos.Count, $"QRZ.com aceptó {enviados} de {qsos.Count} contactos.");
+        Avisar(progreso, hechos, qsos.Count, Textos.F("Servicios.Qrz.Acepto", enviados, qsos.Count));
         reloj.Stop();
         var rechazados = qsos.Count - enviados;
         if (rechazados > 0)
@@ -180,7 +181,7 @@ public sealed class ServicioQrzCuaderno : IServicioQsl
             ct.ThrowIfCancellationRequested();
             pagina++;
             Avisar(progreso, confirmaciones.Count, null,
-                $"Descargando del cuaderno de QRZ.com (página {pagina})…");
+                Textos.F("Servicios.Qrz.Descargando", pagina));
 
             var opciones = new List<string>
             {
@@ -199,12 +200,12 @@ public sealed class ServicioQrzCuaderno : IServicioQsl
                     ["ACTION"] = "FETCH",
                     ["OPTION"] = string.Join(',', opciones),
                 },
-                "descargar del cuaderno de QRZ.com", ct).ConfigureAwait(false);
+                Textos.T("Servicios.Qrz.DescargarCuaderno"), ct).ConfigureAwait(false);
 
             if (!EsCorrecta(respuesta))
             {
                 throw new RespuestaDelServicioException(
-                    $"QRZ.com no devolvió el cuaderno: {Motivo(respuesta)}");
+                    Textos.F("Servicios.Qrz.NoDevolvioCuaderno", Motivo(respuesta)));
             }
 
             if (!respuesta.TryGetValue("ADIF", out var adif) || string.IsNullOrWhiteSpace(adif)) break;
@@ -245,7 +246,7 @@ public sealed class ServicioQrzCuaderno : IServicioQsl
         _log.LogInformation(
             "QRZ.com devolvió {Cuantas} confirmaciones.", confirmaciones.Count);
         Avisar(progreso, confirmaciones.Count, confirmaciones.Count,
-            $"QRZ.com devolvió {confirmaciones.Count} confirmaciones.");
+            Textos.F("Servicios.Qrz.Devolvio", confirmaciones.Count));
         return confirmaciones;
     }
 
@@ -301,19 +302,17 @@ public sealed class ServicioQrzCuaderno : IServicioQsl
         if (respuesta.TryGetValue("RESULT", out var resultado))
         {
             return resultado.Equals("AUTH", StringComparison.OrdinalIgnoreCase)
-                ? "QRZ.com no aceptó la clave del cuaderno."
-                : $"QRZ.com respondió «{resultado}».";
+                ? Textos.T("Servicios.Qrz.ClaveNoAceptada")
+                : Textos.F("Servicios.Qrz.RespondioTexto", resultado);
         }
-        return "QRZ.com respondió algo que no se entiende.";
+        return Textos.T("Servicios.Qrz.NoSeEntiende");
     }
 
     private async Task<IReadOnlyDictionary<string, string>> LlamarAsync(
         IReadOnlyDictionary<string, string> parametros, string descripcion, CancellationToken ct)
     {
         var clave = _credenciales.Leer(ClavesDeCredencial.QrzClaveDeCuaderno)
-            ?? throw new InvalidOperationException(
-                "No hay clave del cuaderno de QRZ.com guardada. Se genera en la web de QRZ y no "
-                + "es la contraseña de la cuenta.");
+            ?? throw new InvalidOperationException(Textos.T("Servicios.Qrz.SinClaveDeCuaderno"));
 
         var campos = new Dictionary<string, string>(parametros, StringComparer.OrdinalIgnoreCase)
         {
@@ -330,7 +329,7 @@ public sealed class ServicioQrzCuaderno : IServicioQsl
             if (!http.IsSuccessStatusCode)
             {
                 throw new RespuestaDelServicioException(
-                    $"QRZ.com respondió {(int)http.StatusCode}.", http.StatusCode);
+                    Textos.F("Servicios.Respondio", "QRZ.com", (int)http.StatusCode), http.StatusCode);
             }
             return Interpretar(cuerpo);
         }, ct).ConfigureAwait(false);

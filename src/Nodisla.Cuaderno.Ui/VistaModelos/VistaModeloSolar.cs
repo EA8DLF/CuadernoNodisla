@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Serilog;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
@@ -41,6 +42,9 @@ public sealed partial class VistaModeloSolar : ObservableObject, IDisposable
         _propagacion.IndicesActualizados += AlLlegarIndices;
 
         Recoger(_propagacion.Indices);
+
+        // La calificacion del K y la procedencia se rehacen en el idioma nuevo.
+        Textos.AlCambiar(this, static vm => vm.Recoger(vm._propagacion.Indices));
 
         _reloj = new System.Windows.Threading.DispatcherTimer { Interval = CadaCuanto };
         _reloj.Tick += (_, _) => ActualizarCommand.Execute(null);
@@ -83,7 +87,7 @@ public sealed partial class VistaModeloSolar : ObservableObject, IDisposable
 
     /// <summary>De donde salen los datos y de cuando son, para la ayuda emergente.</summary>
     [ObservableProperty]
-    private string _procedencia = "Todavía no se han podido traer los índices solares.";
+    private string _procedencia = Textos.T("Principal.Solar.SinIndices");
 
     /// <summary>Se estan trayendo los indices ahora mismo.</summary>
     [ObservableProperty]
@@ -141,7 +145,7 @@ public sealed partial class VistaModeloSolar : ObservableObject, IDisposable
         if (indices is null)
         {
             DatosViejos = true;
-            Procedencia = "Todavía no se han podido traer los índices solares.";
+            Procedencia = Textos.T("Principal.Solar.SinIndices");
             return;
         }
 
@@ -154,7 +158,7 @@ public sealed partial class VistaModeloSolar : ObservableObject, IDisposable
 
         Procedencia = indices.Descripcion.Length > 0
             ? indices.Descripcion
-            : $"Medido el {indices.MedidoUtc.UtcDateTime.ToString("dd-MM-yyyy HH:mm", CultureInfo.CurrentCulture)} UTC.";
+            : Textos.F("Principal.Solar.MedidoEl", indices.MedidoUtc.UtcDateTime.ToString("dd-MM-yyyy HH:mm", CultureInfo.InvariantCulture));
 
         RecogerElSol();
     }
@@ -175,7 +179,7 @@ public sealed partial class VistaModeloSolar : ObservableObject, IDisposable
     }
 
     private static string? Numero(double? valor) =>
-        valor is { } v ? v.ToString("0.#", CultureInfo.CurrentCulture) : null;
+        valor is { } v ? v.ToString("0.#", Textos.Cultura) : null;
 
     /// <summary>
     /// Pone en palabras el indice K, que es como se lee de verdad.
@@ -187,13 +191,13 @@ public sealed partial class VistaModeloSolar : ObservableObject, IDisposable
     /// </remarks>
     private static string CalificarK(double? k) => k switch
     {
-        null => "sin dato",
-        < 1 => "en calma",
-        < 3 => "tranquilo",
-        < 4 => "movido",
-        < 5 => "inquieto",
-        < 6 => "tormenta menor",
-        < 7 => "tormenta",
-        _ => "tormenta fuerte",
+        null => Textos.T("Principal.Solar.K.SinDato"),
+        < 1 => Textos.T("Principal.Solar.K.EnCalma"),
+        < 3 => Textos.T("Principal.Solar.K.Tranquilo"),
+        < 4 => Textos.T("Principal.Solar.K.Movido"),
+        < 5 => Textos.T("Principal.Solar.K.Inquieto"),
+        < 6 => Textos.T("Principal.Solar.K.TormentaMenor"),
+        < 7 => Textos.T("Principal.Solar.K.Tormenta"),
+        _ => Textos.T("Principal.Solar.K.TormentaFuerte"),
     };
 }

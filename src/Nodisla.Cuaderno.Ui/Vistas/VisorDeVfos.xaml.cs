@@ -22,7 +22,7 @@ public partial class VisorDeVfos : UserControl
 {
     /// <summary>Lo que se pinta en el analizador. Nulo: la cascada del audio.</summary>
     public static readonly DependencyProperty ContenidoDelAnalizadorProperty = DependencyProperty.Register(
-        nameof(ContenidoDelAnalizador), typeof(object), typeof(VisorDeVfos), new PropertyMetadata(null));
+        nameof(ContenidoDelAnalizador), typeof(object), typeof(VisorDeVfos), new PropertyMetadata(null, AlCambiarElContenido));
 
     /// <summary>Linea de encima del analizador (p. ej. «CENTER FAST1 SPAN 200kHz»). Vacia: la del audio.</summary>
     public static readonly DependencyProperty RotuloDelAnalizadorProperty = DependencyProperty.Register(
@@ -48,6 +48,36 @@ public partial class VisorDeVfos : UserControl
     {
         get => GetValue(ContenidoDelAnalizadorProperty);
         set => SetValue(ContenidoDelAnalizadorProperty, value);
+    }
+
+    /// <inheritdoc />
+    /// <remarks>Ademas del contenido del control, lo que se pinta en el analizador.</remarks>
+    protected override System.Collections.IEnumerator LogicalChildren =>
+        ContenidoDelAnalizador is { } contenido
+            ? Enumerable.Repeat(contenido, 1).Concat(EnumerarHijos(base.LogicalChildren)).GetEnumerator()
+            : base.LogicalChildren;
+
+    /// <summary>
+    /// El contenido del analizador es HIJO LOGICO del visor.
+    /// </summary>
+    /// <remarks>
+    /// Se pinta con un ContentPresenter suelto, que no lo cuelga del arbol logico. Sin padre
+    /// logico, sus enlaces <c>RelativeSource AncestorType=Window</c> (el modelo del analizador,
+    /// «Abrir el audio» de MULTI) no se enteran de que el frontal ha entrado en la ventana: al
+    /// conectar en la cabina, la pagina Digital pone el frontal del modelo fuera de la ventana y
+    /// en Digital el analizador salia sin modelo, parado y sin espectro (01-10-2026).
+    /// </remarks>
+    private static void AlCambiarElContenido(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var visor = (VisorDeVfos)d;
+        if (e.OldValue is not null) visor.RemoveLogicalChild(e.OldValue);
+        if (e.NewValue is not null) visor.AddLogicalChild(e.NewValue);
+    }
+
+    private static IEnumerable<object> EnumerarHijos(System.Collections.IEnumerator? hijos)
+    {
+        if (hijos is null) yield break;
+        while (hijos.MoveNext()) yield return hijos.Current!;
     }
 
     /// <summary>Linea de encima del analizador. Vacia: la del audio.</summary>

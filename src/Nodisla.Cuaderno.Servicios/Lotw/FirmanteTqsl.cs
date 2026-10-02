@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Servicios.Lotw;
 
@@ -102,16 +103,11 @@ public sealed class FirmanteTqsl : IFirmanteTqsl
         ArgumentException.ThrowIfNullOrWhiteSpace(rutaDelAdif);
 
         var ejecutable = Ruta
-            ?? throw new TqslNoInstaladoException(
-                "No se encontró TQSL (tqsl.exe) en este equipo. LoTW exige firmar los contactos "
-                + "con el certificado de la ARRL, así que hay que instalar Trusted QSL desde "
-                + "https://lotw.arrl.org/lotw-help/installation/ o indicar su ruta en la tarjeta de LoTW (Configuración › Cuentas y servicios).");
+            ?? throw new TqslNoInstaladoException(Textos.T("Servicios.Tqsl.NoEncontrado"));
 
         if (string.IsNullOrWhiteSpace(_opciones.UbicacionDeEstacion))
         {
-            throw new InvalidOperationException(
-                "Falta el nombre de la ubicación de estación de TQSL. Sin ella, TQSL abre un "
-                + "diálogo y la subida se queda esperando indefinidamente.");
+            throw new InvalidOperationException(Textos.T("Servicios.Tqsl.SinUbicacion"));
         }
 
         var arranque = new ProcessStartInfo(ejecutable)
@@ -140,7 +136,7 @@ public sealed class FirmanteTqsl : IFirmanteTqsl
 
         if (!proceso.Start())
         {
-            throw new TqslNoInstaladoException($"No se pudo arrancar TQSL desde «{ejecutable}».");
+            throw new TqslNoInstaladoException(Textos.F("Servicios.Tqsl.NoArranca", ejecutable));
         }
         proceso.BeginErrorReadLine();
         _ = await proceso.StandardOutput.ReadToEndAsync(ct).ConfigureAwait(false);
@@ -154,8 +150,7 @@ public sealed class FirmanteTqsl : IFirmanteTqsl
         catch (OperationCanceledException) when (!ct.IsCancellationRequested)
         {
             MatarConCuidado(proceso);
-            throw new TimeoutException(
-                $"TQSL no terminó en {_opciones.EsperaDeTqsl}. Se ha cancelado la subida.");
+            throw new TimeoutException(Textos.F("Servicios.Tqsl.NoTermino", _opciones.EsperaDeTqsl));
         }
 
         var salida = errores.ToString();
@@ -205,27 +200,27 @@ public sealed class FirmanteTqsl : IFirmanteTqsl
         return (codigoDeSalida, DescripcionDe(codigoDeSalida));
     }
 
-    /// <summary>Traduce al español el codigo de estado de TQSL.</summary>
+    /// <summary>Traduce al idioma del programa el codigo de estado de TQSL.</summary>
     /// <param name="codigo">Codigo devuelto por TQSL.</param>
     public static string DescripcionDe(int codigo) => codigo switch
     {
-        0 => "Todos los contactos se firmaron y se subieron.",
-        1 => "El operador canceló la firma.",
-        2 => "LoTW rechazó el fichero.",
-        3 => "Respuesta inesperada del servidor de TQSL.",
-        4 => "Error interno de TQSL.",
-        5 => "Error de la biblioteca de TQSL.",
-        6 => "TQSL no pudo abrir el fichero de entrada.",
-        7 => "TQSL no pudo escribir el fichero de salida.",
-        8 => "No se subió nada: todo estaba ya subido o fuera del rango de fechas del certificado.",
-        9 => "Se subió lo nuevo; lo ya subido o fuera de rango se dejó fuera.",
-        10 => "Error de sintaxis en la llamada a TQSL.",
-        11 => "No se pudo conectar con LoTW.",
-        12 => "Error desconocido de TQSL.",
-        13 => "La base de datos de subidas de TQSL estaba bloqueada.",
-        14 => "Todos los contactos del fichero estaban ya subidos.",
-        15 => "La frase de paso del certificado no es válida.",
-        _ => $"TQSL devolvió el código {codigo}.",
+        0 => Textos.T("Servicios.Tqsl.Codigo0"),
+        1 => Textos.T("Servicios.Tqsl.Codigo1"),
+        2 => Textos.T("Servicios.Tqsl.Codigo2"),
+        3 => Textos.T("Servicios.Tqsl.Codigo3"),
+        4 => Textos.T("Servicios.Tqsl.Codigo4"),
+        5 => Textos.T("Servicios.Tqsl.Codigo5"),
+        6 => Textos.T("Servicios.Tqsl.Codigo6"),
+        7 => Textos.T("Servicios.Tqsl.Codigo7"),
+        8 => Textos.T("Servicios.Tqsl.Codigo8"),
+        9 => Textos.T("Servicios.Tqsl.Codigo9"),
+        10 => Textos.T("Servicios.Tqsl.Codigo10"),
+        11 => Textos.T("Servicios.Tqsl.Codigo11"),
+        12 => Textos.T("Servicios.Tqsl.Codigo12"),
+        13 => Textos.T("Servicios.Tqsl.Codigo13"),
+        14 => Textos.T("Servicios.Tqsl.Codigo14"),
+        15 => Textos.T("Servicios.Tqsl.Codigo15"),
+        _ => Textos.F("Servicios.Tqsl.CodigoDesconocido", codigo),
     };
 
     private static void MatarConCuidado(Process proceso)

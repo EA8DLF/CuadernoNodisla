@@ -1,6 +1,7 @@
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Servicios.Correo;
 using Nodisla.Cuaderno.Ui.Qsl;
 using Serilog;
@@ -23,6 +24,13 @@ public sealed partial class VistaModeloCorreoQsl : ObservableObject
     public VistaModeloCorreoQsl(ServicioDeQsl servicio)
     {
         _servicio = servicio ?? throw new ArgumentNullException(nameof(servicio));
+
+        // El estado de la contraseña se escribe en el idioma nuevo.
+        Textos.AlCambiar(this, static vm =>
+        {
+            vm.OnPropertyChanged(nameof(EstadoDeLaContrasena));
+            vm.OnPropertyChanged(nameof(Texto));
+        });
     }
 
     /// <summary>Formas de cifrar.</summary>
@@ -67,7 +75,19 @@ public sealed partial class VistaModeloCorreoQsl : ObservableObject
     public string Asunto { get => _servicio.Ajustes.Asunto; set => Poner(value ?? string.Empty, v => _servicio.Ajustes.Asunto = v); }
 
     /// <summary>Texto con variables.</summary>
-    public string Texto { get => _servicio.Ajustes.Texto; set => Poner(value ?? string.Empty, v => _servicio.Ajustes.Texto = v); }
+    /// <remarks>
+    /// El de fábrica (el que el operador no ha tocado) se enseña en el idioma del programa, igual
+    /// que en la ventana de envío, y se sigue guardando como el de fábrica para que siga al idioma.
+    /// </remarks>
+    public string Texto
+    {
+        get => _servicio.Ajustes.Texto == Ajustes.AjustesDeCorreoQsl.TextoPorOmision ? TextoDeFabricaTraducido : _servicio.Ajustes.Texto;
+        set => Poner(
+            value == TextoDeFabricaTraducido ? Ajustes.AjustesDeCorreoQsl.TextoPorOmision : value ?? string.Empty,
+            v => _servicio.Ajustes.Texto = v);
+    }
+
+    private static string TextoDeFabricaTraducido => Textos.F("Qsl.Envio.TextoPorOmision");
 
     /// <summary>Formato de la tarjeta adjunta.</summary>
     public FormatoDeImagen Formato { get => _servicio.Ajustes.Formato; set => Poner(value, v => _servicio.Ajustes.Formato = v); }
@@ -87,7 +107,7 @@ public sealed partial class VistaModeloCorreoQsl : ObservableObject
     private bool _probando;
 
     /// <summary>Si hay contraseña guardada.</summary>
-    public string EstadoDeLaContrasena => _servicio.HayContrasena ? "Guardada y cifrada" : "Sin guardar";
+    public string EstadoDeLaContrasena => Textos.T(_servicio.HayContrasena ? "Ajustes.Secreto.Guardada" : "Ajustes.Secreto.SinGuardar");
 
     /// <summary>Hay contraseña guardada.</summary>
     public bool ContrasenaGuardada => _servicio.HayContrasena;
@@ -100,7 +120,7 @@ public sealed partial class VistaModeloCorreoQsl : ObservableObject
         _servicio.GuardarContrasena(ContrasenaNueva);
         ContrasenaNueva = string.Empty;
         AvisarDeLaContrasena();
-        Aviso = "Contraseña guardada cifrada.";
+        Aviso = Textos.T("Ajustes.Correo.ContrasenaGuardada");
     }
 
     /// <summary>Borra la contraseña guardada.</summary>
@@ -109,7 +129,7 @@ public sealed partial class VistaModeloCorreoQsl : ObservableObject
     {
         _servicio.BorrarContrasena();
         AvisarDeLaContrasena();
-        Aviso = "Contraseña borrada.";
+        Aviso = Textos.T("Ajustes.Correo.ContrasenaBorrada");
     }
 
     /// <summary>Conecta con el servidor y se identifica, sin mandar ningun correo.</summary>
@@ -118,11 +138,11 @@ public sealed partial class VistaModeloCorreoQsl : ObservableObject
     public async Task ProbarAsync()
     {
         Probando = true;
-        Aviso = "Probando…";
+        Aviso = Textos.T("Ajustes.Equipo.Probando");
         try
         {
             await _servicio.ProbarAsync().ConfigureAwait(true);
-            Aviso = "Conexión correcta: el servidor acepta la cuenta. No se ha mandado ningún correo.";
+            Aviso = Textos.T("Ajustes.Correo.ConexionCorrecta");
         }
         catch (ErrorDeCorreo ex)
         {
@@ -130,7 +150,7 @@ public sealed partial class VistaModeloCorreoQsl : ObservableObject
         }
         catch (Exception ex) when (ex is IOException or OperationCanceledException)
         {
-            Aviso = $"No se ha podido probar: {ex.Message}";
+            Aviso = Textos.F("Ajustes.Correo.NoSeHaPodidoProbar", ex.Message);
         }
         finally
         {
@@ -143,7 +163,7 @@ public sealed partial class VistaModeloCorreoQsl : ObservableObject
     public void TextoPorOmision()
     {
         Asunto = Ajustes.AjustesDeCorreoQsl.AsuntoPorOmision;
-        Texto = Ajustes.AjustesDeCorreoQsl.TextoPorOmision;
+        Texto = TextoDeFabricaTraducido;
         OnPropertyChanged(nameof(Asunto));
         OnPropertyChanged(nameof(Texto));
     }
@@ -170,7 +190,7 @@ public sealed partial class VistaModeloCorreoQsl : ObservableObject
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
             Log.Error(ex, "No se han podido guardar los ajustes de correo de las QSL.");
-            Aviso = $"No se han podido guardar: {ex.Message}";
+            Aviso = Textos.F("Ajustes.NoSeHanPodidoGuardar", ex.Message);
         }
     }
 }

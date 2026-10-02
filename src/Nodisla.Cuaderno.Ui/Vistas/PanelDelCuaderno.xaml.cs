@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 using Serilog;
 
@@ -110,7 +111,7 @@ public partial class PanelDelCuaderno : UserControl
             if (DataContext is not VistaModeloPrincipal modelo) return;
             if (modelo.Impresion.Qsl is not { } qsl)
             {
-                MessageBox.Show(Window.GetWindow(this), "El editor de QSL no está disponible.", "Cuaderno NODISLA");
+                MessageBox.Show(Window.GetWindow(this), Textos.T("Libro.QslNoDisponible"), Textos.T("Comun.NombreDelPrograma"));
                 return;
             }
 
@@ -118,7 +119,7 @@ public partial class PanelDelCuaderno : UserControl
             if (ids.Count == 0 && modelo.Cuaderno.FilaSeleccionada is { } fila) ids.Add(fila.Id);
             if (ids.Count == 0)
             {
-                MessageBox.Show(Window.GetWindow(this), "Elija antes uno o varios contactos del cuaderno.", "Cuaderno NODISLA");
+                MessageBox.Show(Window.GetWindow(this), Textos.T("Libro.ElijaContactos"), Textos.T("Comun.NombreDelPrograma"));
                 return;
             }
 

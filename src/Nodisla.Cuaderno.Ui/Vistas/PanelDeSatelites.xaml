@@ -1,6 +1,7 @@
 <UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PanelDeSatelites"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
              Foreground="{DynamicResource Texto}">
 
@@ -33,17 +34,17 @@
         <!-- ══ Catálogo con el próximo paso ══ -->
         <Border Grid.Column="0" Style="{StaticResource Tarjeta}" Margin="0,0,5,0" Padding="8,6">
             <DockPanel>
-                <TextBlock DockPanel.Dock="Top" Text="Satélites" Style="{StaticResource TituloDeSeccion}" />
+                <TextBlock DockPanel.Dock="Top" Text="{loc:Texto Principal.Nav.Satelites}" Style="{StaticResource TituloDeSeccion}" />
 
                 <WrapPanel DockPanel.Dock="Top" Margin="0,2,0,8">
-                    <Button Content="Actualizar elementos orbitales…"
+                    <Button Content="{loc:Texto Principal.Satelites.ActualizarElementos}"
                             Command="{Binding ActualizarElementosCommand}"
                             Margin="0,0,6,4"
-                            AutomationProperties.Name="Descargar los elementos orbitales de las fuentes conocidas" />
-                    <Button Content="Actualizar pasos"
+                            AutomationProperties.Name="{loc:Texto Principal.Satelites.ActualizarElementosNombre}" />
+                    <Button Content="{loc:Texto Principal.Satelites.ActualizarPasos}"
                             Command="{Binding RefrescarPasosCommand}"
                             Margin="0,0,6,4"
-                            AutomationProperties.Name="Recalcular el próximo paso de todos los satélites" />
+                            AutomationProperties.Name="{loc:Texto Principal.Satelites.ActualizarPasosNombre}" />
                 </WrapPanel>
 
                 <TextBlock DockPanel.Dock="Top"
@@ -108,7 +109,7 @@
         <!-- ══ El satélite elegido: en vivo y Doppler ══ -->
         <Border Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6">
             <Grid>
-            <TextBlock Text="Elija un satélite de la lista para ver su próximo paso en vivo y seguir su Doppler."
+            <TextBlock Text="{loc:Texto Principal.Satelites.EligeUno}"
                        Style="{StaticResource TextoTenueEstilo}"
                        TextWrapping="Wrap"
                        Visibility="{Binding HaySateliteSeleccionado, Converter={StaticResource VisibleSiEsFalso}}" />
@@ -119,10 +120,10 @@
                     <TextBlock Text="{Binding NombreDelSateliteElegido}" Style="{StaticResource TituloDeSeccion}" />
 
                     <StackPanel Style="{StaticResource BloqueDeCampo}" Margin="0,0,0,8">
-                        <TextBlock Text="Transpondedor" Style="{StaticResource EtiquetaDeCampo}" />
+                        <TextBlock Text="{loc:Texto Principal.Satelites.Transpondedor}" Style="{StaticResource EtiquetaDeCampo}" />
                         <ComboBox ItemsSource="{Binding Transpondedores}"
                                   SelectedItem="{Binding TranspondedorSeleccionado}"
-                                  ToolTip="Transpondedor con el que se trabaja">
+                                  ToolTip="{loc:Texto Principal.Satelites.TranspondedorConsejo}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding NombreDelTranspondedor}" />
@@ -132,7 +133,7 @@
                     </StackPanel>
 
                     <!-- ── En vivo ── -->
-                    <TextBlock Text="En vivo" Style="{StaticResource TituloDeSeccion}" />
+                    <TextBlock Text="{loc:Texto Principal.Satelites.EnVivo}" Style="{StaticResource TituloDeSeccion}" />
                     <Grid Margin="0,0,0,8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -141,15 +142,15 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Style="{StaticResource BloqueDeCampo}">
-                            <TextBlock Text="Azimut" Style="{StaticResource EtiquetaDeCampo}" />
+                            <TextBlock Text="{loc:Texto Principal.Satelites.Azimut}" Style="{StaticResource EtiquetaDeCampo}" />
                             <TextBlock Text="{Binding AzEnVivoTexto}" FontWeight="Bold" FontSize="16" />
                         </StackPanel>
                         <StackPanel Grid.Column="1" Style="{StaticResource BloqueDeCampo}">
-                            <TextBlock Text="Elevación" Style="{StaticResource EtiquetaDeCampo}" />
+                            <TextBlock Text="{loc:Texto Principal.Satelites.Elevacion}" Style="{StaticResource EtiquetaDeCampo}" />
                             <TextBlock Text="{Binding ElEnVivoTexto}" FontWeight="Bold" FontSize="16" />
                         </StackPanel>
                         <StackPanel Grid.Column="2" Style="{StaticResource BloqueDeCampo}">
-                            <TextBlock Text="Distancia" Style="{StaticResource EtiquetaDeCampo}" />
+                            <TextBlock Text="{loc:Texto Principal.Satelites.Distancia}" Style="{StaticResource EtiquetaDeCampo}" />
                             <TextBlock Text="{Binding DistanciaTexto}" FontWeight="Bold" FontSize="16" />
                         </StackPanel>
                     </Grid>
@@ -176,7 +177,7 @@
                             BorderBrush="{DynamicResource ErrorBorde}"
                             BorderThickness="1"
                             Visibility="{Binding HayEquipoConDosVfos, Converter={StaticResource VisibleSiEsFalso}}">
-                        <TextBlock Text="El equipo conectado no informa de sus dos VFO: no se puede seguir el Doppler."
+                        <TextBlock Text="{loc:Texto Principal.Satelites.SinDosVfo}"
                                    Foreground="{DynamicResource ErrorTexto}"
                                    TextWrapping="Wrap" />
                     </Border>
@@ -188,13 +189,13 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Style="{StaticResource BloqueDeCampo}">
-                            <TextBlock Text="VFO de subida" Style="{StaticResource EtiquetaDeCampo}" />
+                            <TextBlock Text="{loc:Texto Principal.Satelites.VfoSubida}" Style="{StaticResource EtiquetaDeCampo}" />
                             <ComboBox ItemsSource="{Binding VfosDisponibles}"
                                       SelectedItem="{Binding VfoDeSubida}"
                                       IsEnabled="{Binding SiguiendoDoppler, Converter={StaticResource Negacion}}" />
                         </StackPanel>
                         <StackPanel Grid.Column="1" Style="{StaticResource BloqueDeCampo}">
-                            <TextBlock Text="VFO de bajada" Style="{StaticResource EtiquetaDeCampo}" />
+                            <TextBlock Text="{loc:Texto Principal.Satelites.VfoBajada}" Style="{StaticResource EtiquetaDeCampo}" />
                             <ComboBox ItemsSource="{Binding VfosDisponibles}"
                                       SelectedItem="{Binding VfoDeBajada}"
                                       IsEnabled="{Binding SiguiendoDoppler, Converter={StaticResource Negacion}}" />
@@ -206,13 +207,13 @@
                                Margin="0,0,0,8" />
 
                     <WrapPanel Margin="0,0,0,8">
-                        <Button Content="Seguir"
+                        <Button Content="{loc:Texto Principal.Satelites.Seguir}"
                                 Command="{Binding SeguirDopplerCommand}"
                                 Margin="0,0,6,0"
-                                AutomationProperties.Name="Empezar a seguir el Doppler de este transpondedor" />
-                        <Button Content="Soltar"
+                                AutomationProperties.Name="{loc:Texto Principal.Satelites.SeguirNombre}" />
+                        <Button Content="{loc:Texto Principal.Satelites.Soltar}"
                                 Command="{Binding SoltarDopplerCommand}"
-                                AutomationProperties.Name="Dejar de seguir el Doppler" />
+                                AutomationProperties.Name="{loc:Texto Principal.Satelites.SoltarNombre}" />
                     </WrapPanel>
 
                     <Grid Visibility="{Binding SiguiendoDoppler, Converter={StaticResource BooleanoAVisible}}" Margin="0,0,0,8">
@@ -222,11 +223,11 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Style="{StaticResource BloqueDeCampo}">
-                            <TextBlock Text="Desplazamiento de subida" Style="{StaticResource EtiquetaDeCampo}" />
+                            <TextBlock Text="{loc:Texto Principal.Satelites.DesplazamientoSubida}" Style="{StaticResource EtiquetaDeCampo}" />
                             <TextBlock Text="{Binding DesplazamientoSubidaTexto}" FontWeight="Bold" />
                         </StackPanel>
                         <StackPanel Grid.Column="1" Style="{StaticResource BloqueDeCampo}">
-                            <TextBlock Text="Desplazamiento de bajada" Style="{StaticResource EtiquetaDeCampo}" />
+                            <TextBlock Text="{loc:Texto Principal.Satelites.DesplazamientoBajada}" Style="{StaticResource EtiquetaDeCampo}" />
                             <TextBlock Text="{Binding DesplazamientoBajadaTexto}" FontWeight="Bold" />
                         </StackPanel>
                     </Grid>
@@ -236,7 +237,7 @@
                                TextWrapping="Wrap"
                                Visibility="{Binding AvisoDoppler, Converter={StaticResource NoEsVacio}}" />
 
-                    <TextBlock Text="El subpunto del satélite se ve en la pestaña Mapa."
+                    <TextBlock Text="{loc:Texto Principal.Satelites.SubpuntoEnMapa}"
                                Style="{StaticResource TextoTenueEstilo}"
                                Margin="0,10,0,0" />
                 </StackPanel>

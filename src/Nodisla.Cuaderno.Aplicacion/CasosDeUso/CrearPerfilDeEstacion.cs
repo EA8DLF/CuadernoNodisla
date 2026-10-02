@@ -1,6 +1,7 @@
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using DominioIndicativo = Nodisla.Cuaderno.Dominio.Valores.Indicativo;
 
 namespace Nodisla.Cuaderno.Aplicacion.CasosDeUso;
@@ -63,15 +64,15 @@ public sealed class CrearPerfilDeEstacion(IRepositorioEstacion repositorio)
         if (!DominioIndicativo.TryParse(peticion.Indicativo, out var indicativo))
         {
             errores.Add(string.IsNullOrWhiteSpace(peticion.Indicativo)
-                ? "Falta el indicativo de la estación."
-                : $"El indicativo «{peticion.Indicativo}» no tiene una forma válida.");
+                ? Textos.T("Servicios.Aplicacion.FaltaIndicativoDeEstacion")
+                : Textos.F("Servicios.Aplicacion.IndicativoNoValido", peticion.Indicativo));
         }
 
         var localizador = Locator.Vacio;
         if (!string.IsNullOrWhiteSpace(peticion.Localizador)
             && !Locator.TryParse(peticion.Localizador, out localizador))
         {
-            errores.Add($"El localizador «{peticion.Localizador}» no es válido. Ejemplo: IL18QK.");
+            errores.Add(Textos.F("Servicios.Aplicacion.LocalizadorNoValido", peticion.Localizador));
         }
 
         if (errores.Count > 0) return new ResultadoDePerfil { Errores = errores };
