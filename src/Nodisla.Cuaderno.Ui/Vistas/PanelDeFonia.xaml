@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
              Foreground="{DynamicResource Texto}">
 
     <!--
@@ -183,6 +184,73 @@
                           AutomationProperties.Name="{loc:Texto Cabina.Fonia.ElegirDispositivos}" />
         </WrapPanel>
 
+        <!-- Procesado de la escucha, mensajes de voz y grabador de la recepción -->
+        <WrapPanel x:Name="Extras" Margin="0,6,0,0">
+            <StackPanel Orientation="Horizontal" Margin="0,0,16,4" VerticalAlignment="Center">
+                <CheckBox Content="{loc:Texto Cabina.Fonia.Nr}" IsChecked="{Binding Ajustes.ReductorActivo}" VerticalAlignment="Center"
+                          ToolTip="{loc:Texto Ajustes.Fonia.Reductor.Ayuda}" />
+                <Slider Width="80" Margin="4,0,8,0" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" VerticalAlignment="Center"
+                        Value="{Binding Ajustes.NivelDeReduccion}" IsEnabled="{Binding Ajustes.ReductorActivo}"
+                        ToolTip="{loc:Texto Ajustes.Fonia.Reductor.Nivel}"
+                        AutomationProperties.Name="{loc:Texto Ajustes.Fonia.Reductor.Nivel}" />
+                <CheckBox Content="{loc:Texto Cabina.Fonia.Notch}" IsChecked="{Binding Ajustes.NotchActivo}" VerticalAlignment="Center" Margin="0,0,8,0"
+                          ToolTip="{loc:Texto Ajustes.Fonia.Notch.Ayuda}" />
+                <CheckBox Content="{loc:Texto Cabina.Fonia.Limitador}" IsChecked="{Binding Ajustes.LimitadorActivo}" VerticalAlignment="Center" Margin="0,0,8,0"
+                          ToolTip="{loc:Texto Ajustes.Fonia.Limitador.Ayuda}" />
+                <TextBlock Text="{Binding LatenciaDelProcesado}" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="0,0,8,0"
+                           ToolTip="{loc:Texto Cabina.Fonia.Latencia.Ayuda}" />
+                <ToggleButton x:Name="DesplegarProcesado" Padding="8,2" VerticalAlignment="Center"
+                              Content="{loc:Texto Cabina.Fonia.Procesado}"
+                              AutomationProperties.Name="{loc:Texto Cabina.Fonia.Procesado.Accesible}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,16,4" VerticalAlignment="Center">
+                <TextBlock Text="{loc:Texto Cabina.Fonia.Voz.Titulo}" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                <ItemsControl ItemsSource="{Binding Mensajes.Mensajes}" VerticalAlignment="Center" Focusable="False">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding Rotulo}" Padding="6,2" Margin="0,0,3,0" Focusable="False"
+                                    Style="{StaticResource BotonQueTransmite}"
+                                    IsEnabled="{Binding Grabado}"
+                                    Command="{Binding DataContext.Mensajes.EmitirCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}"
+                                    ToolTip="{Binding Duracion}"
+                                    ToolTipService.ShowOnDisabled="True" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ProgressBar Width="60" Height="7" Minimum="0" Maximum="1" Margin="4,0" VerticalAlignment="Center"
+                             Value="{Binding AvanceDelMensaje, Mode=OneWay}"
+                             Visibility="{Binding EnviandoMensaje, Converter={StaticResource BooleanoAVisible}}"
+                             AutomationProperties.Name="{loc:Texto Cabina.Fonia.Voz.Avance}" />
+                <Button Content="{loc:Texto Cabina.Fonia.Voz.Parar}" Padding="8,2" Margin="0,0,4,0" VerticalAlignment="Center"
+                        Command="{Binding Mensajes.PararCommand}"
+                        Visibility="{Binding EnviandoMensaje, Converter={StaticResource BooleanoAVisible}}" />
+                <CheckBox Content="{loc:Texto Digital.Modem.PermitirTransmitir}" IsChecked="{Binding Mensajes.PermitirTransmitir}"
+                          VerticalAlignment="Center" Margin="4,0,6,0"
+                          ToolTip="{loc:Texto Cabina.Fonia.Voz.Pestillo.Ayuda}" />
+                <ToggleButton x:Name="DesplegarMensajes" Padding="8,2" VerticalAlignment="Center"
+                              Content="{loc:Texto Cabina.Fonia.Voz.Editar}"
+                              AutomationProperties.Name="{loc:Texto Cabina.Fonia.Voz.Editar.Accesible}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,4" VerticalAlignment="Center">
+                <Button Content="{Binding Grabacion.TextoDelBoton}" Padding="8,2" VerticalAlignment="Center"
+                        Command="{Binding Grabacion.GuardarCommand}"
+                        IsEnabled="{Binding Ajustes.GrabarRecepcion}"
+                        ToolTip="{loc:Texto Cabina.Fonia.Grabador.Ayuda}" />
+                <TextBlock Text="{Binding Grabacion.Grabado}" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="6,0,8,0"
+                           ToolTip="{loc:Texto Cabina.Fonia.Grabador.EnMemoria}" />
+                <CheckBox Content="{loc:Texto Cabina.Fonia.Grabador.Adjuntar}" IsChecked="{Binding Ajustes.AdjuntarAlQso}" VerticalAlignment="Center"
+                          ToolTip="{loc:Texto Ajustes.Fonia.Grabacion.Adjuntar.Ayuda}" />
+            </StackPanel>
+        </WrapPanel>
+
         <!-- Avisos -->
         <TextBlock Margin="0,4,0,0" TextWrapping="Wrap" Style="{StaticResource TextoTenueEstilo}"
                    Text="{Binding MotivoDeNoPoder}"
@@ -199,6 +267,81 @@
         <TextBlock Margin="0,2,0,0" TextWrapping="Wrap" Foreground="{DynamicResource AvisoTexto}"
                    Text="{Binding Aviso}"
                    Visibility="{Binding Aviso, Converter={StaticResource NoEsVacio}}" />
+        <TextBlock Margin="0,2,0,0" TextWrapping="Wrap" Foreground="{DynamicResource AvisoTexto}"
+                   Text="{Binding Mensajes.Aviso}"
+                   Visibility="{Binding Mensajes.Aviso, Converter={StaticResource NoEsVacio}}" />
+        <TextBlock Margin="0,2,0,0" TextWrapping="Wrap" Style="{StaticResource TextoTenueEstilo}"
+                   Text="{Binding Grabacion.Aviso}"
+                   Visibility="{Binding Grabacion.Aviso, Converter={StaticResource NoEsVacio}}" />
+
+        <!-- Procesado: en una ventanita, lo mismo que Configuración › Fonía -->
+        <Popup x:Name="PopupProcesado" PlacementTarget="{Binding ElementName=DesplegarProcesado}"
+               Placement="Bottom"
+               StaysOpen="False"
+               AllowsTransparency="True"
+               IsOpen="{Binding IsChecked, ElementName=DesplegarProcesado, Mode=TwoWay}">
+            <Border Style="{StaticResource Tarjeta}" Padding="12,8" MaxWidth="640">
+                <vistas:ProcesadoDeFonia DataContext="{Binding Ajustes}" />
+            </Border>
+        </Popup>
+
+        <!-- Mensajes de voz: grabar, escuchar, nombrar y borrar, en local -->
+        <Popup x:Name="PopupMensajes" PlacementTarget="{Binding ElementName=DesplegarMensajes}"
+               Placement="Bottom"
+               StaysOpen="False"
+               AllowsTransparency="True"
+               IsOpen="{Binding IsChecked, ElementName=DesplegarMensajes, Mode=TwoWay}">
+            <Border Style="{StaticResource Tarjeta}" Padding="12,8" MinWidth="520">
+                <StackPanel x:Name="EditorDeMensajes">
+                    <TextBlock Text="{loc:Texto Cabina.Fonia.Voz.Editar.Titulo}" FontWeight="Bold" Margin="0,0,0,2" />
+                    <TextBlock Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" MaxWidth="560" HorizontalAlignment="Left" Margin="0,0,0,6"
+                               Text="{loc:Texto Cabina.Fonia.Voz.Editar.Explicacion}" />
+                    <ItemsControl ItemsSource="{Binding Mensajes.Mensajes}" Focusable="False">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                    <TextBlock Text="{Binding Tecla}" Width="28" FontWeight="Bold" VerticalAlignment="Center" />
+                                    <TextBox Text="{Binding Nombre, UpdateSourceTrigger=LostFocus}" Width="130" Margin="0,0,6,0" VerticalAlignment="Center"
+                                             AutomationProperties.Name="{loc:Texto Cabina.Fonia.Voz.Nombre}" />
+                                    <Button Padding="8,1" Margin="0,0,4,0" MinWidth="92"
+                                            Command="{Binding DataContext.Mensajes.GrabarCommand, ElementName=EditorDeMensajes}"
+                                            CommandParameter="{Binding}">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                <Setter Property="Content" Value="{loc:Texto Cabina.Fonia.Voz.Grabar}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding GrabandoAhora}" Value="True">
+                                                        <Setter Property="Content" Value="{loc:Texto Cabina.Fonia.Voz.TerminarGrabacion}" />
+                                                        <Setter Property="Background" Value="{DynamicResource ErrorBorde}" />
+                                                        <Setter Property="Foreground" Value="White" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                    <Button Content="{loc:Texto Cabina.Fonia.Voz.Escuchar}" Padding="8,1" Margin="0,0,4,0"
+                                            IsEnabled="{Binding Grabado}"
+                                            Command="{Binding DataContext.Mensajes.EscucharCommand, ElementName=EditorDeMensajes}"
+                                            CommandParameter="{Binding}" />
+                                    <Button Content="{loc:Texto Cabina.Fonia.Voz.Borrar}" Padding="8,1" Margin="0,0,8,0"
+                                            IsEnabled="{Binding Grabado}"
+                                            Command="{Binding DataContext.Mensajes.BorrarCommand, ElementName=EditorDeMensajes}"
+                                            CommandParameter="{Binding}" />
+                                    <TextBlock Text="{Binding Duracion}" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ProgressBar Minimum="0" Maximum="1" Height="6" Margin="0,4,0,0"
+                                 Value="{Binding Mensajes.NivelDeGrabacion, Mode=OneWay}"
+                                 Visibility="{Binding Mensajes.Grabando, Converter={StaticResource BooleanoAVisible}}"
+                                 AutomationProperties.Name="{loc:Texto Cabina.Fonia.NivelMicro}" />
+                </StackPanel>
+            </Border>
+        </Popup>
+
+        <!-- Solo en las capturas de la ayuda: las ventanitas no salen en el retrato, se ponen aqui. -->
+        <StackPanel x:Name="EnLineaParaCaptura" Orientation="Horizontal" />
 
         <!-- Dispositivos: en una ventana emergente, para no quitar sitio a nadie -->
         <Popup PlacementTarget="{Binding ElementName=Desplegar}"

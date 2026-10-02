@@ -68,6 +68,85 @@ El botón se apaga, y dice por qué, cuando:
 - no están elegidos el micrófono del PC y la salida hacia el equipo;
 - ya hay otra transmisión en el aire (por ejemplo, del módem).
 
+## Limpiar la escucha: reductor, notch y limitador
+
+Bajo el PTT hay una segunda fila. **NR**, **Notch** y **Limitador** se encienden y apagan en
+vivo, mientras escucha; «Procesado…» abre todos los ajustes (los mismos de Configuración ›
+Fonía).
+
+![El procesado de la escucha y del micrófono, con los mensajes de voz grabados](../capturas/ayuda/fonia-procesado.png)
+
+- **Reductor de ruido (NR)**: quita el soplido de fondo. Hay dos:
+  - **Espectral (NR2)**, el que más quita. Añade unos **11 ms** de retraso, que el panel enseña
+    al lado («+11 ms»). Medido con voz y ruido: la relación señal-ruido mejora unos **8 dB** y el
+    ruido en las pausas baja unos **28 dB** con el nivel al 100 %.
+  - **Adaptativo (NR1)**, más suave; va bien con tonos y vocales sostenidas y **no retrasa nada**.
+  - **Cuánto quita** gradúa el espectral: al 30 % apenas toca la voz; al 100 % quita todo lo que
+    puede.
+- **Notch automático**: busca y quita las **portadoras y pitidos fijos** (alguien afinando
+  encima). Una portadora de 1 kHz baja más de **40 dB**; la voz pasa. No retrasa.
+- **Limitador**: ningún golpe de audio pasa del **techo** (−3 dBFS por omisión, de −20 a −1):
+  protege altavoces y oídos de los chasquidos de estática.
+
+Todo esto **solo cambia lo que suena por los altavoces del PC**. El módem digital y el
+decodificador de CW leen el audio de la radio por su cuenta y lo reciben **sin tocar**.
+
+## Procesar el micrófono
+
+En «Procesado…», **Procesar el micrófono** (apagado por omisión) pasa la voz por:
+
+- una **puerta de ruido**, que baja el fondo (ventilador, teclado) cuando no habla;
+- un **corte de graves** (100 Hz por omisión) y un ecualizador de **graves, medios y agudos**;
+- un **compresor** que iguala la voz bajando los picos;
+- y un **techo** final (−1 dBFS como mucho; no se puede subir más).
+
+**Nunca sube el nivel**: lo que sale hacia el equipo no pasa de lo que entra del micrófono (con
+su ganancia) ni del techo, aunque realce una banda del ecualizador. Ajuste el nivel con la
+**ganancia del micro** y la ALC de la radio, como siempre.
+
+## Mensajes de voz (voice keyer)
+
+Seis mensajes grabados con el micrófono del PC —CQ, indicativo, informe…— que salen al aire
+con un botón o con **F1 a F6**.
+
+![Grabar, escuchar, nombrar y borrar los mensajes de voz](../capturas/ayuda/fonia-mensajes.png)
+
+- **Grabar mensajes…** abre la lista: **Grabar** empieza, **Terminar** acaba (como mucho
+  60 s; el silencio del principio y del final se recorta solo). **Escuchar** lo suena por los
+  **altavoces del PC**, sin transmitir. El nombre se cambia escribiendo encima.
+- Se guardan en la carpeta de datos, en `voz\mensaje-1.wav` … `mensaje-6.wav`.
+- **Para transmitirlos** tienen que cumplirse, por este orden:
+  1. el pestillo **«Permitir transmitir en esta sesión»** marcado (es el mismo del módem y de la
+     CW, y no se guarda: cada vez que abre el programa está quitado);
+  2. lo mismo que el PTT de fonía: equipo conectado, modo de voz, micrófono y salida elegidos;
+  3. la **pregunta de confirmación**, si no la ha quitado;
+  4. que el mensaje **quepa en el tiempo máximo** de la pasada.
+- Sale por el mismo camino que su voz: el **vigilante del PTT**, el tiempo máximo, el procesado
+  del micrófono y su techo. Al acabar el mensaje, el PTT **baja solo**.
+- Se corta con **Parar**, con **Esc**, pulsando el **PTT**, con **SOLTAR PTT**, quitando el
+  pestillo, moviendo el **dial** o cambiando a un modo que no es de voz.
+- **F1–F6** solo lanzan mensajes con el panel de fonía a la vista, en modo de voz, si la tecla
+  tiene mensaje y el cursor no está en un campo de texto; si no, F1 sigue abriendo la ayuda. Se
+  puede desactivar en «Procesado…».
+
+## Grabar lo que acaba de pasar
+
+Mientras la escucha por el PC está abierta, el programa guarda **en memoria** los últimos
+minutos de lo que llega de la radio (5 por omisión, de 1 a 10; el contador al lado del botón
+dice cuánto hay). Nada se escribe en disco hasta que lo pide.
+
+- **Guardar lo último** escribe un WAV en la carpeta de datos, en `audio\`, con la fecha y el
+  indicativo del contacto: `rx-20261002-183005-EA8XYZ.wav`. Se guarda el audio **tal como
+  llega** de la radio, sin volumen ni reductor.
+- Con **Adjuntar al QSO** marcado, el audio se **adjunta al contacto** que está escribiendo (o
+  modificando) y se guarda con él al registrarlo.
+
+![El audio adjunto en el contacto, con Escuchar y Quitar](../capturas/ayuda/fonia-audio-qso.png)
+
+En el contacto aparece **Audio** con **Escuchar** (suena por los altavoces del PC) y **Quitar**
+(lo desliga del contacto; el fichero se queda en la carpeta). Al abrir un contacto del Libro
+para modificarlo, si tiene audio, se escucha igual. El audio es del cuaderno: no va al ADIF.
+
 ## Dispositivos
 
 «Dispositivos…» abre los cuatro selectores (también están en **Configuración › Fonía**):

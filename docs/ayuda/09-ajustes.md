@@ -14,10 +14,11 @@ Va por apartados, con la lista a la izquierda:
 | **Equipo (CAT)** | Por dónde habla el cuaderno con la radio y el PTT |
 | **Audio y digitales** | Entrada y salida de sonido del equipo y cómo transmite y apunta el módem |
 | **Fonía** | Altavoces, micrófono y PTT de fonía por el PC |
-| **Cluster** | El nodo, el guion de arranque y la consola cruda |
+| **Cluster** | Los nodos (varios a la vez), su estado en vivo, el guion de arranque de cada uno y la consola cruda |
 | **Correo de las QSL** | La cuenta con la que se mandan las tarjetas |
 | **Libro (ADIF)** | Importar y exportar el cuaderno |
 | **Actualizaciones** | Versión instalada, buscar versiones nuevas al arrancar o a mano |
+| **Servidor para otros programas** | Servidores rigctld y TCI para que WSJT-X, JTDX, GridTracker… usen la radio a través del Cuaderno |
 
 ![Configuración: cuentas y servicios en tarjetas](../capturas/ayuda/primer-uso-cuentas.png)
 
@@ -38,8 +39,8 @@ configurar**—.
 - **eQSL.cc** — usuario, apodo del QTH (si tiene varios) y contraseña.
 - **Club Log** — correo de la cuenta, indicativo del cuaderno, contraseña y clave de API.
 - **HamQTH** — usuario y contraseña; hace de reserva cuando QRZ.com no contesta.
-- **Cluster de DX** — su estado (nodo e indicativo de entrada); **Configurar…** lleva al apartado
-  Cluster.
+- **Cluster de DX** — su estado: cuántos nodos hay y cuántos están conectados, cuáles están
+  activos y con qué indicativo se entra; **Configurar…** lleva al apartado Cluster.
 - **Correo (SMTP)** — su estado, **Probar la conexión** (se identifica sin mandar nada) y
   **Configurar…**, que lleva al apartado Correo de las QSL.
 
@@ -145,14 +146,52 @@ Altavoces, micrófono y el PTT de fonía por el PC. Ver [Fonía por el PC](12-fo
 
 ## Cluster
 
+![Configuración › Cluster con cinco nodos: conectados, uno de escucha automática, uno caído con su motivo y uno desactivado (datos de prueba)](../capturas/ayuda/configuracion-cluster.png)
 
-El nodo al que se conecta, el indicativo con el que se entra (con sufijo si hace falta tener dos
-sesiones abiertas), la contraseña — cifrada igual que las demás credenciales — y el **guion de
-arranque**: las órdenes que se mandan nada más conectar, una por línea, con `<CALLSIGN>` y
-`<PASSWORD>` como comodines. Los tiempos de reconexión y de silencio máximo antes de dar la
-conexión por muerta también se ajustan aquí. La **consola cruda** del nodo — todo lo que manda y
-no es un anuncio — vive en este mismo apartado, no en Operar: mientras se opera se leen los
-anuncios, no los `set/` del nodo; la consola es para configurar y para diagnosticar.
+El cuaderno puede estar en **varios nodos a la vez**. Arriba está la **lista de nodos**, con su
+estado **en vivo**:
+
+- La casilla de la izquierda es **Activo**: los activos entran todos a la vez al pulsar
+  **Conectar** en el panel del cluster; uno sin marcar se queda en la lista sin conectar.
+- La pastilla dice cómo va: **Conectado** (verde), **Conectando** o **Reintentando** (ámbar),
+  **Conexión fallida** (rojo, por ejemplo un indicativo rechazado, que no se reintenta) o **Desactivado**.
+  Debajo, en rojo, el **motivo** del último fallo. Al lado, cuántos **anuncios por minuto** trae.
+- Cada fila tiene sus botones: **Conectar/Desconectar** ese nodo sin tocar los demás,
+  **Probar** (abre el puerto y lee el saludo del nodo **sin entrar con su indicativo**) y
+  **Quitar**.
+- **SKIMMER** marca los nodos de escucha automática (Reverse Beacon Network): todo lo que traen
+  sale como de máquina y se puede esconder en el panel del cluster.
+
+Para **añadir** un nodo, elíjalo en **Nodos conocidos** y pulse **Añadir**, o pulse **Nodo en
+blanco** para escribir uno que no esté. La lista trae nodos DXSpider, AR-Cluster y CC Cluster de
+Europa y América y las dos redes de escucha automática de la RBN (telegrafía/RTTY en el puerto
+7000 y FT8/FT4 en el 7001). Los que no contestaban cuando se comprobó la lista salen marcados
+**«sin comprobar»**.
+
+Al elegir un nodo de la lista se edita debajo: nombre, servidor, puerto, **indicativo y sufijo
+propios** (vacíos, los comunes; útil para entrar como `EA8DLF-2` en un segundo nodo de la misma
+red), escucha automática, reconexión, el **guion de arranque** — las órdenes que se mandan nada
+más entrar, una por línea, con `<CALLSIGN>` y `<PASSWORD>` como comodines (los `set/` y
+`filter` de ese nodo) — y su **contraseña**, si la pide: cada nodo tiene la suya, cifrada igual
+que las demás credenciales.
+
+Más abajo, lo **común**: el indicativo con el que se entra (vacío, el del perfil de estación
+activo) y el sufijo; cómo se juntan los **anuncios repetidos** (tolerancia en kHz, 1 por omisión,
+y ventana en minutos, 10 por omisión); y los tiempos de reconexión — la espera crece en cada
+intento hasta el tope — y de silencio máximo antes de dar la conexión por muerta.
+
+**Aplicar** pone la lista en marcha sin cerrar el programa: los nodos que no han
+cambiado **siguen conectados**, los cambiados se reconectan y los quitados se cierran (y su
+contraseña se borra del almacén).
+
+El nodo que se tenía configurado antes de poder tener varios **pasa a ser el primero de la
+lista**, con todo lo que tenía, también la contraseña guardada.
+
+La **consola cruda** — todo lo que mandan los nodos y no es un anuncio — vive en este mismo
+apartado, no en Operar. Con varios nodos cada línea lleva delante el nombre de su nodo, y el
+desplegable junto a la orden dice **a qué nodo se manda**: las órdenes y los spots propios
+(`DX 14025 …`) van **solo a ese nodo**, nunca a todos, para que no salgan repetidos en toda la
+red.
 
 ## Correo de las QSL
 
@@ -176,3 +215,10 @@ con el cuaderno vacío, disponible aquí en cualquier momento.
 La **versión instalada**, la casilla **Buscar versiones nuevas al arrancar** (como mucho una vez
 al día) y el botón **Buscar actualizaciones**. Es el mismo aviso que la barra de arriba y que
 **Ayuda › Buscar actualizaciones**. Ver [Ayuda, actualizaciones y fallos](16-ayuda-actualizaciones-y-fallos.md).
+
+## Servidor para otros programas
+
+Los servidores **rigctld compatible** (puerto 4532) y **TCI** (puerto 40001), apagados de
+fábrica y solo para este PC; la red local con su lista de IP; los permisos (cambiar la radio y
+**Permitir TX a clientes externos**); los programas conectados en vivo, con **Desconectar**; y
+quién pidió transmitir. Ver [Conectar otros programas](20-conectar-otros-programas.md).

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conectar otros programas · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+<li><a href="17-cw.html">Telegraf&#237;a (CW)</a></li>
+<li><a href="18-transmitir-cw.html">Transmitir en CW</a></li>
+<li><a href="19-seguridad-de-transmision.html">Salvaguardas de transmisi&#243;n</a></li>
+<li><a href="20-conectar-otros-programas.html" class="actual" aria-current="page">Conectar otros programas</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="conectar-otros-programas">Conectar otros programas</h1>
+<p>El Cuaderno abre el equipo en exclusiva: mientras est&#225; abierto, ning&#250;n otro programa puede usar el puerto CAT. Para que WSJT-X, JTDX, GridTracker o un logger puedan <strong>usar la radio a trav&#233;s del Cuaderno</strong>, el Cuaderno lleva un <strong>servidor para otros programas</strong>. El Cuaderno sigue siendo el due&#241;o de la radio: todo lo que pidan esos programas pasa por &#233;l y por sus salvaguardas.</p>
+<p>Hay dos servidores, y los dos <strong>arrancan apagados</strong>:</p>
+<div class="tabla"><table>
+<thead><tr><th>Servidor</th><th>Para qu&#233; programas</th><th>Direcci&#243;n por omisi&#243;n</th></tr></thead>
+<tbody>
+<tr><td><strong>rigctld compatible</strong> (protocolo de red de Hamlib)</td><td>WSJT-X, JTDX, fldigi, GridTracker y casi cualquier programa con &#171;Hamlib NET rigctl&#187;</td><td><code>127.0.0.1:4532</code></td></tr>
+<tr><td><strong>TCI</strong> (Expert Electronics, por WebSocket)</td><td>Programas que hablan TCI</td><td><code>ws://127.0.0.1:40001</code></td></tr>
+</tbody></table></div>
+<figure><a href="capturas/servidor-otros-programas.png"><img src="capturas/servidor-otros-programas.png" alt="El apartado Servidor para otros programas" loading="lazy"></a><figcaption>El apartado Servidor para otros programas</figcaption></figure>
+<h2 id="encenderlo">Encenderlo</h2>
+<ol>
+<li>Abra <strong>Configuraci&#243;n › Servidor para otros programas</strong>.</li>
+<li>Marque <strong>Servidor compatible con rigctld</strong> (o <strong>Servidor TCI</strong>) y deje el puerto que trae.</li>
+<li>Pulse <strong>Guardar y aplicar</strong>. Al lado de cada servidor se ve si est&#225; escuchando y d&#243;nde.</li>
+</ol>
+<p>En la barra de estado aparece <strong>Programas externos: N</strong>, con el n&#250;mero de programas conectados. Al pasar el rat&#243;n por encima se ve qui&#233;nes son.</p>
+<p>La lista <strong>Programas conectados</strong> se actualiza en vivo: protocolo, direcci&#243;n, hora de conexi&#243;n, &#243;rdenes atendidas y rechazadas, y <strong>TX</strong> si ese programa tiene el PTT. <strong>Desconectar</strong> lo echa; si estaba transmitiendo, primero se baja el PTT.</p>
+<h2 id="dejar-transmitir-a-otros-programas">Dejar transmitir a otros programas</h2>
+<p>Leer la radio y cambiar frecuencia, modo, VFO, split y potencia no pone nada en el aire. Para que un programa pueda <strong>transmitir</strong> hacen falta <strong>las dos</strong> cosas:</p>
+<ul>
+<li><strong>Permitir TX a clientes externos</strong>, en este apartado. Es el interruptor general, est&#225; apagado de f&#225;brica y pide confirmaci&#243;n al encenderlo.</li>
+<li><strong>Permitir transmitir en esta sesi&#243;n</strong>, el mismo pestillo del m&#243;dem y de la telegraf&#237;a, que empieza cerrado en cada arranque.</li>
+</ul>
+<p>El PTT de un programa es <strong>una fuente de PTT m&#225;s</strong>, con su nombre (&#171;rigctld 127.0.0.1:50311&#187; o &#171;TCI 127.0.0.1:50320&#187;), y pasa por el vigilante igual que el MOX, el m&#243;dem o la fon&#237;a (ver <a href="19-seguridad-de-transmision.html">Salvaguardas de transmisi&#243;n</a>):</p>
+<ul>
+<li>fuera del <strong>plan de banda</strong> no se transmite;</li>
+<li>se corta por <strong>ROE</strong> alta o antena abierta, y tras un corte <strong>no se rearma</strong> hasta que el programa mande soltar;</li>
+<li>la <strong>potencia</strong> se baja al m&#225;ximo de la banda antes de salir;</li>
+<li>si <strong>otra fuente</strong> ya est&#225; en el aire, el programa no puede ni subir ni soltar ese PTT;</li>
+<li>vale el <strong>tiempo m&#225;ximo</strong> de transmisi&#243;n de siempre.</li>
+</ul>
+<p>Adem&#225;s, el PTT de un programa <strong>se baja en el acto</strong> si el programa se desconecta, si deja de hablar m&#225;s de 10 segundos, si se cierra el pestillo de la sesi&#243;n o si se apaga la TX externa. Mientras el equipo est&#225; en el aire, los programas no pueden cambiar la frecuencia ni el modo.</p>
+<p>Cada petici&#243;n de transmitir queda en <strong>Qui&#233;n pidi&#243; transmitir</strong>, con la hora, el programa, la frecuencia, el modo y si se concedi&#243; o por qu&#233; no. Tambi&#233;n se escribe en el registro del programa.</p>
+<h2 id="wsjt-x-y-jtdx-hamlib-net-rigctl">WSJT-X y JTDX (Hamlib NET rigctl)</h2>
+<p>En WSJT-X: <strong>File › Settings › Radio</strong>.</p>
+<div class="tabla"><table>
+<thead><tr><th>Campo</th><th>Valor</th></tr></thead>
+<tbody>
+<tr><td><strong>Rig</strong></td><td><code>Hamlib NET rigctl</code></td></tr>
+<tr><td><strong>Network Server</strong></td><td><code>127.0.0.1:4532</code></td></tr>
+<tr><td><strong>PTT Method</strong></td><td><code>CAT</code></td></tr>
+<tr><td><strong>Mode</strong></td><td><code>Data/Pkt</code> (o <code>None</code> si prefiere poner el modo a mano)</td></tr>
+<tr><td><strong>Split Operation</strong></td><td><code>Rig</code> o <code>Fake It</code></td></tr>
+<tr><td><strong>Poll Interval</strong></td><td><code>1</code> s</td></tr>
+</tbody></table></div>
+<p>Pulse <strong>Test CAT</strong> (debe ponerse verde) y <strong>Test PTT</strong>. Para que Test PTT transmita tienen que estar marcados los dos permisos de arriba; si no, el Cuaderno lo rechaza y WSJT-X avisa de un error de PTT. JTDX se configura igual.</p>
+<p>El <strong>audio</strong> no pasa por el servidor: en WSJT-X elija como entrada y salida el &#171;USB Audio CODEC&#187; del FT-710, como siempre.</p>
+<h2 id="gridtracker-fldigi-y-otros-con-hamlib">GridTracker, fldigi y otros con Hamlib</h2>
+<p>Cualquier programa que ofrezca <strong>Hamlib</strong> con el modelo <strong>NET rigctl</strong> (n&#250;mero 2) se conecta igual: direcci&#243;n <code>127.0.0.1</code> y puerto <code>4532</code>. GridTracker y los loggers suelen limitarse a leer la frecuencia y el modo.</p>
+<h2 id="n1mm-logger">N1MM Logger+</h2>
+<p>N1MM Logger+ <strong>no</strong> habla Hamlib ni TCI: solo sabe manejar la radio por un puerto serie con el CAT del propio equipo. Por eso no puede usar todav&#237;a este servidor. Lo que s&#237; funciona hoy:</p>
+<ul>
+<li>el Cuaderno ya recibe por <strong>UDP</strong> los contactos que reparte N1MM, sin tocar la radio;</li>
+<li>para que N1MM mueva la radio a trav&#233;s del Cuaderno har&#237;a falta una emulaci&#243;n CAT por un puerto COM virtual, que queda para una fase posterior.</li>
+</ul>
+<h2 id="programas-tci">Programas TCI</h2>
+<p>En el programa, elija como radio <strong>TCI</strong> con la direcci&#243;n <code>127.0.0.1</code> y el puerto <code>40001</code>. El servidor TCI atiende una <strong>lista blanca</strong> de &#243;rdenes:</p>
+<div class="tabla"><table>
+<thead><tr><th>Orden TCI</th><th>Qu&#233; hace</th></tr></thead>
+<tbody>
+<tr><td><code>vfo</code>, <code>dds</code></td><td>Leer y cambiar la frecuencia (canal 0 = VFO A, canal 1 = VFO B)</td></tr>
+<tr><td><code>modulation</code></td><td>Leer y cambiar el modo (<code>usb</code>, <code>lsb</code>, <code>cw</code>, <code>am</code>, <code>nfm</code>, <code>digu</code>, <code>digl</code>)</td></tr>
+<tr><td><code>trx</code></td><td>PTT, con las mismas salvaguardas que arriba</td></tr>
+<tr><td><code>split_enable</code></td><td>Split</td></tr>
+<tr><td><code>drive</code></td><td>Potencia de 0 a 100 %, <strong>recortada a la potencia m&#225;xima de la banda</strong></td></tr>
+<tr><td><code>tx_enable</code>, <code>rx_smeter</code>, <code>trx_count</code>, <code>vfo_limits</code>, <code>modulations_list</code></td><td>Estado</td></tr>
+<tr><td><code>spot</code>, <code>spot_delete</code>, <code>spot_clear</code></td><td>Spots del programa, que se pintan en el bandmap</td></tr>
+</tbody></table></div>
+<p>El Cuaderno manda tambi&#233;n sus spots del cluster a los programas TCI (se puede quitar).</p>
+<p>Todo lo dem&#225;s <strong>se rechaza</strong> y queda anotado: no hay <code>tune</code>, ni manipulaci&#243;n CW, ni nada parecido a <code>run_cat_ex</code> o CAT en bruto. <strong>No hay audio por TCI</strong>: <code>trx:0,true,tci</code> se rechaza. El audio por TCI queda para una fase posterior, porque meter audio de transmisi&#243;n que llega por la red exige el mismo orden &#171;camino en silencio → PTT → audio&#187; que la fon&#237;a y el m&#243;dem.</p>
+<h2 id="seguridad">Seguridad</h2>
+<ul>
+<li><strong>Solo este PC.</strong> De f&#225;brica los servidores escuchan en <code>127.0.0.1</code>: desde otro ordenador ni se ve el puerto.</li>
+<li><strong>Red local, con lista.</strong> <strong>Abrir tambi&#233;n a la red local</strong> pide confirmaci&#243;n y, aun abierto, solo entran este PC y las <strong>IP permitidas</strong> (una IP como <code>192.168.1.20</code> o una red como <code>192.168.1.0/24</code>). No se aceptan redes enormes como <code>0.0.0.0/0</code>. No lo abra nunca a Internet.</li>
+<li><strong>Navegadores fuera.</strong> Una p&#225;gina web podr&#237;a intentar hablar con <code>127.0.0.1</code>. El servidor rigctld corta cualquier conexi&#243;n que parezca HTTP, y el TCI rechaza toda conexi&#243;n que traiga cabecera <code>Origin</code>, que es lo que mandan los navegadores.</li>
+<li><strong>Contrase&#241;a del TCI (opcional).</strong> Si la pone, el programa debe conectar a <code>ws://127.0.0.1:40001/?token=…</code> o mandar <code>Authorization: Bearer …</code>. La mayor&#237;a de programas TCI no saben hacerlo, as&#237; que solo sirve con programas propios.</li>
+<li><strong>Nada de CAT en bruto.</strong> Las &#243;rdenes rigctld <code>w</code>, <code>W</code>, <code>\send_cmd</code>, <code>b</code> (CW), <code>\set_powerstat</code>, memorias, antenas y parecidas se contestan con <code>RPRT -19</code> y se anotan.</li>
+</ul>
+<h2 id="&#243;rdenes-rigctld-que-se-atienden">&#211;rdenes rigctld que se atienden</h2>
+<div class="tabla"><table>
+<thead><tr><th>Corta</th><th>Larga</th><th>Qu&#233; hace</th></tr></thead>
+<tbody>
+<tr><td><code>f</code> / <code>F</code></td><td><code>\get_freq</code> / <code>\set_freq</code></td><td>Frecuencia en Hz</td></tr>
+<tr><td><code>m</code> / <code>M</code></td><td><code>\get_mode</code> / <code>\set_mode</code></td><td>Modo y ancho (<code>USB</code>, <code>LSB</code>, <code>CW</code>, <code>PKTUSB</code>…)</td></tr>
+<tr><td><code>v</code> / <code>V</code></td><td><code>\get_vfo</code> / <code>\set_vfo</code></td><td>VFO (<code>VFOA</code>, <code>VFOB</code>)</td></tr>
+<tr><td><code>t</code> / <code>T</code></td><td><code>\get_ptt</code> / <code>\set_ptt</code></td><td>PTT, por el vigilante</td></tr>
+<tr><td><code>s</code> / <code>S</code></td><td><code>\get_split_vfo</code> / <code>\set_split_vfo</code></td><td>Split y VFO de transmisi&#243;n</td></tr>
+<tr><td><code>i</code> / <code>I</code></td><td><code>\get_split_freq</code> / <code>\set_split_freq</code></td><td>Frecuencia de transmisi&#243;n en split</td></tr>
+<tr><td><code>x</code> / <code>X</code></td><td><code>\get_split_mode</code> / <code>\set_split_mode</code></td><td>Modo de transmisi&#243;n en split</td></tr>
+<tr><td><code>l</code> / <code>L</code></td><td><code>\get_level</code> / <code>\set_level</code></td><td><code>RFPOWER</code> (0 a 1, recortada al m&#225;ximo de la banda) y <code>STRENGTH</code></td></tr>
+<tr><td></td><td><code>\dump_state</code>, <code>\chk_vfo</code>, <code>\get_powerstat</code>, <code>\get_vfo_info</code>, <code>\get_lock_mode</code></td><td>Lo que preguntan los clientes al conectar</td></tr>
+<tr><td><code>q</code></td><td><code>\quit</code></td><td>Cerrar la conexi&#243;n</td></tr>
+</tbody></table></div>
+<p>Tambi&#233;n entiende la respuesta extendida (<code>+f</code>, <code>+\get_freq</code>). <code>PKTUSB</code> es el modo de datos: el Cuaderno lo pone como modo digital (DATA-U en el FT-710).</p>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

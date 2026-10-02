@@ -76,6 +76,46 @@ el audio no está abierto, el aviso de MULTI ofrece abrirlo.
 
 ![MULTI: el analizador arriba y el osciloscopio y el AF-FFT del audio de recepción debajo](../capturas/ayuda/analizador-multi.png)
 
+### Spots, clic y rueda sobre el analizador
+
+- **Spots del cluster encima**: cada anuncio de la lista que cae en lo que se ve sale con su
+  indicativo en su frecuencia, en filas para que no se pisen. **Magenta**: entidad nueva;
+  **verde**: banda o modo nuevos; **gris**: ya trabajado. Con el ratón encima, el detalle del
+  anuncio. **Clic en el rótulo** = el doble clic de la lista: frecuencia y modo al equipo e
+  indicativo al contacto nuevo.
+- **Clic en el espectro**: lleva el **VFO activo** (el A o el B, el que esté elegido en la radio
+  en ese momento) a ese punto, **ajustado al paso**. Mientras el ratón está encima, una línea
+  fina y una cifra dicen a qué frecuencia iría.
+- **Rueda del ratón** encima: mueve el VFO activo **un paso por muesca**. Con **Mayús**, paso fino
+  (la décima parte) en el clic y en la rueda.
+- El **paso** es automático según el ancho que se ve (500 Hz con 200 kHz de span, 50 Hz con
+  20 kHz), o el que se elija.
+- **Nada de esto funciona transmitiendo** ni sin equipo conectado: el analizador no cambia la
+  frecuencia con la portadora puesta.
+
+### Suelo de ruido, colores y picos
+
+La radio manda niveles relativos (0-255) que cambian con la banda, el span, el preamplificador y
+el atenuador. Con el **suelo de ruido automático** (AGC de la cascada) el cuaderno sigue el ruido
+y pone el negro justo debajo: la cascada sale con buen contraste **sin tocar la radio**, y al
+volver a una banda ya vista sale bien desde la primera fila (se recuerda el suelo de cada banda y
+span). Al resintonizar en CENTER, la **cascada se corre** con la frecuencia: cada señal sigue en
+su sitio en vez de emborronarse en diagonal.
+
+![Tras subir el VFO 25 kHz, lo ya pintado se ha corrido a la izquierda y cada señal sigue en su raya; a la derecha, lo recién descubierto empieza en negro (tramas reales)](../capturas/ayuda/analizador-resintonizado.png)
+
+![El analizador en el frontal del FT-710 con los spots encima (equipo y cluster simulados)](../capturas/ayuda/analizador-en-el-frontal.png)
+
+Todo se ajusta en **Configuración › Equipo › Analizador de la radio**: spots encima y filas de
+rótulos, clic para sintonizar y paso, suelo automático, **contraste**, **brillo del ruido**,
+**colores de la cascada** (rojos como la radio, NODISLA, arcoíris, fuego, hielo o grises),
+**marcar los picos** (las cinco señales más altas con una marca ámbar y lo que asoman sobre el
+ruido) y correr la cascada al resintonizar. Nada de esto cambia ajustes de la radio.
+
+![Paleta arcoíris con los picos marcados y la frecuencia del ratón (tramas reales de la radio)](../capturas/ayuda/analizador-arcoiris-picos.png)
+
+![Configuración › Equipo › Analizador de la radio](../capturas/ayuda/ajustes-analizador.png)
+
 ## La botonera: bandas, modos, memorias y canales CB
 
 A los lados del frontal (en **Cabina** y en **Digital**):
@@ -95,5 +135,6 @@ botonera transmite.** Sin equipo conectado, las teclas se apagan y dicen por qu�
 - Transmitir sin una acción del operador (y, en el módem, sin abrir antes el pestillo).
 - Cambiar menús de la radio. Solo **lee** los que necesita para avisar (por ejemplo, la fuente
   de modulación para la fonía).
+- Cambiar la frecuencia desde el analizador mientras se transmite.
 - Dejar un PTT subido: el **vigilante de PTT** lo baja al agotarse el tiempo máximo, si se pierde
   la comunicación, si salta un fallo o al cerrar el programa.

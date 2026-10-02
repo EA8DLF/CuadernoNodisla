@@ -53,7 +53,8 @@
         </Grid.RowDefinitions>
 
         <!-- ══ Conexión y resumen ══ -->
-        <DockPanel Grid.Row="0" Margin="0,0,0,8">
+        <StackPanel Grid.Row="0" Margin="0,0,0,8">
+        <DockPanel>
             <Button DockPanel.Dock="Right"
                     Content="{Binding TextoDelBotonDeConexion}"
                     Margin="8,0,0,0">
@@ -75,6 +76,23 @@
                 </Button.Style>
             </Button>
 
+            <!--
+                Con varios nodos, «3 nodos · 2 conectados» y, al pulsarlo, el estado de cada uno
+                aquí debajo (no en una ventana emergente: así se ve también en las capturas).
+            -->
+            <ToggleButton DockPanel.Dock="Right"
+                          IsChecked="{Binding VerEstadoDeNodos}"
+                          Margin="8,0,0,0"
+                          Padding="8,2"
+                          VerticalAlignment="Center"
+                          ToolTip="{loc:Texto Principal.Cluster.EstadoDeNodosConsejo}"
+                          Visibility="{Binding HayVariosNodos, Converter={StaticResource BooleanoAVisible}}">
+                <TextBlock>
+                    <Run Text="{Binding ResumenDeNodos, Mode=OneWay}" />
+                    <Run Text="▾" />
+                </TextBlock>
+            </ToggleButton>
+
             <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="{Binding Nombre}" FontWeight="Bold" />
                 <TextBlock Style="{StaticResource TextoTenueEstilo}">
@@ -84,6 +102,77 @@
                 </TextBlock>
             </StackPanel>
         </DockPanel>
+
+        <!-- ══ El estado de cada nodo, desplegado ══ -->
+        <Border Margin="0,6,0,0"
+                Padding="8,4"
+                CornerRadius="4"
+                BorderThickness="1"
+                BorderBrush="{DynamicResource Borde}"
+                Background="{DynamicResource FondoCampo}"
+                Visibility="{Binding VerEstadoDeNodos, Converter={StaticResource BooleanoAVisible}}">
+            <ItemsControl ItemsSource="{Binding EstadosDeNodos}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:EstadoDeNodoEnPantalla}">
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Column="0" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
+                                <Run Text="{Binding Nombre, Mode=OneWay}" FontWeight="SemiBold" />
+                                <Run Text="{Binding Direccion, Mode=OneWay}" Foreground="{DynamicResource TextoTenue}" />
+                            </TextBlock>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding Ritmo}"
+                                       Style="{StaticResource TextoTenueEstilo}"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0" />
+                            <Border Grid.Column="2" CornerRadius="8" Padding="7,1" BorderThickness="1" VerticalAlignment="Center">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Estado}" Value="Conectado">
+                                                <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Estado}" Value="Conectando">
+                                                <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Estado}" Value="Reintentando">
+                                                <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Estado}" Value="Fallido">
+                                                <Setter Property="Background" Value="{DynamicResource ErrorFondo}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorde}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="{Binding EstadoTexto}" FontSize="10" />
+                            </Border>
+
+                            <TextBlock Grid.Row="1" Grid.ColumnSpan="3"
+                                       Text="{Binding Motivo}"
+                                       Foreground="{DynamicResource ErrorTexto}"
+                                       TextWrapping="Wrap"
+                                       Visibility="{Binding HayMotivo, Converter={StaticResource BooleanoAVisible}}" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+        </StackPanel>
 
         <!-- ══ Filtros ══ -->
         <Expander Grid.Row="1" Header="{loc:Texto Principal.Cluster.Filtros}" IsExpanded="False" Margin="0,0,0,6">
@@ -103,6 +192,13 @@
                     <ComboBox ItemsSource="{Binding Continentes}" SelectedItem="{Binding ContinenteFiltro}" ItemTemplate="{StaticResource OpcionDelFiltro}" />
                 </StackPanel>
 
+                <!-- Solo lo que ha llegado por un nodo concreto. -->
+                <StackPanel Margin="0,0,8,6" MinWidth="120"
+                            Visibility="{Binding HayVariosNodos, Converter={StaticResource BooleanoAVisible}}">
+                    <TextBlock Text="{loc:Texto Principal.Cluster.Nodo}" Style="{StaticResource EtiquetaDeCampo}" />
+                    <ComboBox ItemsSource="{Binding NodosParaFiltrar}" SelectedItem="{Binding NodoFiltro}" ItemTemplate="{StaticResource OpcionDelFiltro}" />
+                </StackPanel>
+
                 <CheckBox Content="{loc:Texto Principal.Cluster.SoloLoNuevo}"
                           IsChecked="{Binding SoloNuevos}"
                           VerticalAlignment="Bottom"
@@ -118,6 +214,12 @@
                           VerticalAlignment="Bottom"
                           Margin="0,0,12,10"
                           ToolTip="{loc:Texto Principal.Cluster.SinSkimmerConsejo}" />
+                <CheckBox Content="{loc:Texto Principal.Cluster.VerNodos}"
+                          IsChecked="{Binding VerNodosDeOrigen}"
+                          VerticalAlignment="Bottom"
+                          Margin="0,0,12,10"
+                          ToolTip="{loc:Texto Principal.Cluster.VerNodosConsejo}"
+                          Visibility="{Binding HayVariosNodos, Converter={StaticResource BooleanoAVisible}}" />
 
                 <Button Content="{loc:Texto Principal.Cluster.QuitarFiltros}"
                         Command="{Binding QuitarFiltroCommand}"
@@ -322,6 +424,20 @@
                                     ElementStyle="{StaticResource CeldaNumerica}"
                                     HeaderStyle="{StaticResource CabeceraNumerica}"
                                     Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=5.2}" />
+
+                <!--
+                    Por qué nodos llegó: optativa, se enciende en los filtros. El mismo anuncio
+                    llegado por dos nodos es UNA fila con los dos aquí.
+                -->
+                <DataGridTextColumn Header="{loc:Texto Principal.Columna.Nodos}" Binding="{Binding NodosCortos}" SortMemberPath="NumeroDeNodos"
+                                    Visibility="{Binding Datos.DataContext.VerNodosDeOrigen, Source={StaticResource PuenteDelPanel}, Converter={StaticResource BooleanoAVisible}}"
+                                    Width="{Binding Datos.FontSize, Source={StaticResource PuenteDelPanel}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=9}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource CeldaDeTexto}">
+                            <Setter Property="ToolTip" Value="{Binding Nodos}" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
 
                 <DataGridTextColumn Header="{loc:Texto Principal.Columna.Comentario}" Binding="{Binding Comentario}"
                                     ElementStyle="{StaticResource CeldaDeTexto}"

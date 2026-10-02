@@ -51,6 +51,18 @@ public sealed record AnuncioDelCluster(
 
     /// <summary>El ultimo que lo anuncio era una estacion automatica.</summary>
     public bool ElUltimoEsAutomatico => Spot.EsDeEscuchaAutomatica;
+
+    /// <summary>
+    /// Nodos de cluster por los que ha llegado este anuncio, en orden de llegada.
+    /// </summary>
+    /// <remarks>
+    /// Con varios nodos conectados a la vez, el mismo anuncio llega por todos los que estan
+    /// en la misma red. No se pinta dos veces: se pinta una y se apunta por donde vino.
+    /// </remarks>
+    public IReadOnlyList<string> Nodos { get; init; } = [];
+
+    /// <summary>Por cuantos nodos distintos ha llegado.</summary>
+    public int NumeroDeNodos => Nodos.Count;
 }
 
 /// <summary>Lo que identifica a una estacion anunciada, para saber si un anuncio se repite.</summary>
@@ -105,11 +117,12 @@ public sealed class JuntaDeRepetidos
     /// </summary>
     /// <remarks>
     /// Dos estaciones que oyen a la misma no leen el mismo dial al hercio: cada receptor tiene
-    /// su calibracion y cada operador redondea a su manera. Medio kilohercio cubre esa
-    /// dispersion y sigue distinguiendo a dos estaciones distintas, que nunca se ponen tan
-    /// cerca ni en telegrafia.
+    /// su calibracion y cada operador redondea a su manera. Un kilohercio cubre esa
+    /// dispersion —tambien la de los nodos que redondean a la decena de hercios— y sigue
+    /// distinguiendo a dos estaciones distintas en la practica. Se puede cambiar en los
+    /// ajustes del cluster.
     /// </remarks>
-    public const decimal ToleranciaEnKilohercios = 0.5m;
+    public const decimal ToleranciaEnKilohercios = 1.0m;
 
     /// <summary>Estaciones que se recuerdan como mucho, para que la memoria no crezca sin fin.</summary>
     public const int AnunciosVivos = 2_000;
@@ -117,13 +130,22 @@ public sealed class JuntaDeRepetidos
     private readonly Dictionary<ClaveDeAnuncio, Vivo> _vivos = [];
     private readonly object _cerrojo = new();
 
-    /// <summary>Monta la junta con una ventana concreta.</summary>
+    /// <summary>Monta la junta con una ventana y una tolerancia concretas.</summary>
     /// <param name="ventana">Cuanto tiempo se considera repetido un anuncio.</param>
-    public JuntaDeRepetidos(TimeSpan? ventana = null) =>
+    /// <param name="toleranciaEnKilohercios">
+    /// Diferencia de frecuencia que aun se considera la misma estacion. Uno por omision.
+    /// </param>
+    public JuntaDeRepetidos(TimeSpan? ventana = null, decimal? toleranciaEnKilohercios = null)
+    {
         Ventana = ventana is { Ticks: > 0 } v ? v : VentanaPorOmision;
+        Tolerancia = toleranciaEnKilohercios is { } t && t > 0m ? t : ToleranciaEnKilohercios;
+    }
 
     /// <summary>Cuanto tiempo se considera repetido el mismo anuncio.</summary>
     public TimeSpan Ventana { get; }
+
+    /// <summary>Diferencia de frecuencia, en kilohercios, que aun es la misma estacion.</summary>
+    public decimal Tolerancia { get; }
 
     /// <summary>Anuncios que se estan siguiendo ahora mismo.</summary>
     public int Siguiendo
@@ -155,6 +177,7 @@ public sealed class JuntaDeRepetidos
             if (_vivos.TryGetValue(clave, out var vivo) && EsElMismo(vivo, spot))
             {
                 vivo.Ultimo = spot;
+                ApuntarNodo(vivo, spot);
 
                 // Un mismo anunciante que repite no cuenta dos veces: lo que interesa es
                 // cuantas estaciones distintas la estan oyendo, no cuantos mensajes llegaron.
@@ -164,13 +187,15 @@ public sealed class JuntaDeRepetidos
                 if (yaEstaba >= 0) vivo.Quienes[yaEstaba] = quien;
                 else vivo.Quienes.Add(quien);
 
-                return new AnuncioDelCluster(spot, [.. vivo.Quienes], vivo.PrimeroUtc);
+                return new AnuncioDelCluster(spot, [.. vivo.Quienes], vivo.PrimeroUtc) { Nodos = [.. vivo.Nodos] };
             }
 
             // O es nuevo, o la estacion se ha movido de frecuencia: en los dos casos empieza
             // de cero y lo anterior se olvida.
-            _vivos[clave] = new Vivo(spot, spot.RecibidoUtc) { Quienes = { quien } };
-            return new AnuncioDelCluster(spot, [quien], spot.RecibidoUtc);
+            var nuevo = new Vivo(spot, spot.RecibidoUtc) { Quienes = { quien } };
+            ApuntarNodo(nuevo, spot);
+            _vivos[clave] = nuevo;
+            return new AnuncioDelCluster(spot, [quien], spot.RecibidoUtc) { Nodos = [.. nuevo.Nodos] };
         }
     }
 
@@ -193,7 +218,15 @@ public sealed class JuntaDeRepetidos
         if (spot.RecibidoUtc - vivo.Ultimo.RecibidoUtc > Ventana) return false;
 
         var salto = Math.Abs(spot.Frecuencia.Kilohercios - vivo.Ultimo.Frecuencia.Kilohercios);
-        return salto <= ToleranciaEnKilohercios;
+        return salto <= Tolerancia;
+    }
+
+    /// <summary>Apunta el nodo por el que ha llegado el anuncio, si no estaba ya.</summary>
+    private static void ApuntarNodo(Vivo vivo, Spot spot)
+    {
+        if (string.IsNullOrWhiteSpace(spot.Fuente)) return;
+        if (vivo.Nodos.Exists(n => string.Equals(n, spot.Fuente, StringComparison.OrdinalIgnoreCase))) return;
+        vivo.Nodos.Add(spot.Fuente);
     }
 
     /// <summary>Tira lo que ya se ha salido de la ventana.</summary>
@@ -230,5 +263,7 @@ public sealed class JuntaDeRepetidos
         public DateTimeOffset PrimeroUtc { get; } = primeroUtc;
 
         public List<QuienLoOye> Quienes { get; } = [];
+
+        public List<string> Nodos { get; } = [];
     }
 }

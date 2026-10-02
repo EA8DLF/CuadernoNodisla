@@ -122,7 +122,7 @@ public sealed class SeguirElCluster : IAsyncDisposable
     private readonly IFuenteSpots _fuente;
     private readonly IConsultasDeInforme _consultas;
     private readonly IResolutorDxcc _dxcc;
-    private readonly JuntaDeRepetidos _repetidos;
+    private volatile JuntaDeRepetidos _repetidos;
 
     /// <summary>Monta el seguimiento sobre una fuente concreta.</summary>
     /// <param name="fuente">De donde llegan los anuncios.</param>
@@ -131,11 +131,15 @@ public sealed class SeguirElCluster : IAsyncDisposable
     /// <param name="ventanaDeRepetidos">
     /// Cuanto tiempo se considera repetido el mismo anuncio. Diez minutos por omision.
     /// </param>
+    /// <param name="toleranciaEnKilohercios">
+    /// Diferencia de frecuencia que aun es la misma estacion. Un kilohercio por omision.
+    /// </param>
     public SeguirElCluster(
         IFuenteSpots fuente,
         IConsultasDeInforme consultas,
         IResolutorDxcc dxcc,
-        TimeSpan? ventanaDeRepetidos = null)
+        TimeSpan? ventanaDeRepetidos = null,
+        decimal? toleranciaEnKilohercios = null)
     {
         ArgumentNullException.ThrowIfNull(fuente);
         ArgumentNullException.ThrowIfNull(consultas);
@@ -144,12 +148,54 @@ public sealed class SeguirElCluster : IAsyncDisposable
         _fuente = fuente;
         _consultas = consultas;
         _dxcc = dxcc;
-        _repetidos = new JuntaDeRepetidos(ventanaDeRepetidos);
+        _repetidos = new JuntaDeRepetidos(ventanaDeRepetidos, toleranciaEnKilohercios);
 
         _fuente.SpotRecibido += AlLlegarUnSpot;
         _fuente.LineaRecibida += AlLlegarUnaLinea;
         _fuente.EstadoCambiado += AlCambiarElEstado;
+        if (_fuente is IFuenteDeVariosNodos varios) varios.NodosCambiaron += AlCambiarLosNodos;
     }
+
+    /// <summary>Salta cuando cambia algo de algun nodo, si la fuente es de varios nodos.</summary>
+    public event EventHandler? NodosCambiaron;
+
+    /// <summary>Estado de cada nodo; con una fuente de un solo nodo, la lista va vacia.</summary>
+    public IReadOnlyList<EstadoDeNodo> Nodos =>
+        _fuente is IFuenteDeVariosNodos varios ? varios.Nodos : [];
+
+    /// <summary>La fuente junta varios nodos y se pueden manejar uno a uno.</summary>
+    public bool EsDeVariosNodos => _fuente is IFuenteDeVariosNodos;
+
+    /// <summary>Diferencia de frecuencia, en kilohercios, que aun es la misma estacion.</summary>
+    public decimal ToleranciaDeRepetidos => _repetidos.Tolerancia;
+
+    /// <summary>
+    /// Cambia la ventana y la tolerancia con las que se juntan los repetidos.
+    /// </summary>
+    /// <remarks>Se empieza de cero: lo que se estaba siguiendo se olvida.</remarks>
+    /// <param name="ventana">Cuanto tiempo se considera repetido un anuncio.</param>
+    /// <param name="toleranciaEnKilohercios">Diferencia de frecuencia que aun es la misma estacion.</param>
+    public void CambiarCriterioDeRepetidos(TimeSpan ventana, decimal toleranciaEnKilohercios) =>
+        _repetidos = new JuntaDeRepetidos(ventana, toleranciaEnKilohercios);
+
+    /// <summary>Conecta un nodo concreto.</summary>
+    /// <param name="id">Identificador del nodo.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    public Task ConectarNodoAsync(string id, CancellationToken ct = default) =>
+        _fuente is IFuenteDeVariosNodos varios ? varios.ConectarNodoAsync(id, ct) : _fuente.ConectarAsync(ct);
+
+    /// <summary>Desconecta un nodo concreto sin tocar los demas.</summary>
+    /// <param name="id">Identificador del nodo.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    public Task DesconectarNodoAsync(string id, CancellationToken ct = default) =>
+        _fuente is IFuenteDeVariosNodos varios ? varios.DesconectarNodoAsync(id, ct) : _fuente.DesconectarAsync(ct);
+
+    /// <summary>Manda una orden a un solo nodo, nunca a todos.</summary>
+    /// <param name="id">Identificador del nodo.</param>
+    /// <param name="orden">Lo que se escribe en la consola del nodo.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    public Task EnviarANodoAsync(string id, string orden, CancellationToken ct = default) =>
+        _fuente is IFuenteDeVariosNodos varios ? varios.EnviarANodoAsync(id, orden, ct) : _fuente.EnviarAsync(orden, ct);
 
     /// <summary>
     /// Salta con cada anuncio ya enriquecido con lo que sabe el cuaderno y con sus
@@ -231,6 +277,7 @@ public sealed class SeguirElCluster : IAsyncDisposable
         _fuente.SpotRecibido -= AlLlegarUnSpot;
         _fuente.LineaRecibida -= AlLlegarUnaLinea;
         _fuente.EstadoCambiado -= AlCambiarElEstado;
+        if (_fuente is IFuenteDeVariosNodos varios) varios.NodosCambiaron -= AlCambiarLosNodos;
         await _fuente.DisposeAsync().ConfigureAwait(false);
     }
 
@@ -264,4 +311,6 @@ public sealed class SeguirElCluster : IAsyncDisposable
 
     private void AlCambiarElEstado(object? origen, EstadoDeConexion estado) =>
         EstadoCambiado?.Invoke(this, estado);
+
+    private void AlCambiarLosNodos(object? origen, EventArgs e) => NodosCambiaron?.Invoke(this, e);
 }

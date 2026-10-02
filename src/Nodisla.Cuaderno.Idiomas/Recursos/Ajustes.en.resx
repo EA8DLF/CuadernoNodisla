@@ -89,6 +89,96 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   <data name="Ajustes.Actualizaciones.VersionInstalada" xml:space="preserve">
     <value>Installed version:</value>
   </data>
+  <data name="Ajustes.Analizador.Brillo" xml:space="preserve">
+    <value>Noise brightness:</value>
+  </data>
+  <data name="Ajustes.Analizador.BrilloAyuda" xml:space="preserve">
+    <value>Raises or lowers black: higher shows some noise; lower makes it fully black.</value>
+  </data>
+  <data name="Ajustes.Analizador.Carriles" xml:space="preserve">
+    <value>Label rows</value>
+  </data>
+  <data name="Ajustes.Analizador.ClicParaSintonizar" xml:space="preserve">
+    <value>Click to tune and wheel to move the VFO</value>
+  </data>
+  <data name="Ajustes.Analizador.ClicParaSintonizarAyuda" xml:space="preserve">
+    <value>Always goes to the active VFO and never while transmitting. With Shift, fine step (one tenth).</value>
+  </data>
+  <data name="Ajustes.Analizador.Contraste" xml:space="preserve">
+    <value>Contrast:</value>
+  </data>
+  <data name="Ajustes.Analizador.ContrasteAyuda" xml:space="preserve">
+    <value>Radio scale units between black and the brightest colour. Lower: weak signals stand out more.</value>
+  </data>
+  <data name="Ajustes.Analizador.DeFabrica" xml:space="preserve">
+    <value>Factory values</value>
+  </data>
+  <data name="Ajustes.Analizador.Desplazar" xml:space="preserve">
+    <value>Shift the waterfall when retuning</value>
+  </data>
+  <data name="Ajustes.Analizador.DesplazarAyuda" xml:space="preserve">
+    <value>In CENTER, moving the VFO shifts what is already drawn with the frequency: each signal stays in place instead of smearing diagonally.</value>
+  </data>
+  <data name="Ajustes.Analizador.Explicacion" xml:space="preserve">
+    <value>The spectrum and waterfall sent by the radio itself (FT-710 over its USB port). Choose how it is drawn and what the mouse does over it. None of this changes any radio setting.</value>
+  </data>
+  <data name="Ajustes.Analizador.NivelBajo" xml:space="preserve">
+    <value>Black without AGC:</value>
+  </data>
+  <data name="Ajustes.Analizador.NivelBajoAyuda" xml:space="preserve">
+    <value>With the automatic floor off, the radio level (0-255) shown as black.</value>
+  </data>
+  <data name="Ajustes.Analizador.Paleta" xml:space="preserve">
+    <value>Waterfall colours</value>
+  </data>
+  <data name="Ajustes.Analizador.PaletaArcoiris" xml:space="preserve">
+    <value>Rainbow (the classic SDR one)</value>
+  </data>
+  <data name="Ajustes.Analizador.PaletaFuego" xml:space="preserve">
+    <value>Fire</value>
+  </data>
+  <data name="Ajustes.Analizador.PaletaGris" xml:space="preserve">
+    <value>Greys</value>
+  </data>
+  <data name="Ajustes.Analizador.PaletaHielo" xml:space="preserve">
+    <value>Ice</value>
+  </data>
+  <data name="Ajustes.Analizador.PaletaNodisla" xml:space="preserve">
+    <value>NODISLA (blue, green, amber)</value>
+  </data>
+  <data name="Ajustes.Analizador.PaletaRadio" xml:space="preserve">
+    <value>Reds, like the radio</value>
+  </data>
+  <data name="Ajustes.Analizador.Paso" xml:space="preserve">
+    <value>Step</value>
+  </data>
+  <data name="Ajustes.Analizador.PasoAutomatico" xml:space="preserve">
+    <value>Automatic</value>
+  </data>
+  <data name="Ajustes.Analizador.PasoAyuda" xml:space="preserve">
+    <value>Multiple the clicked frequency snaps to, and how far each wheel notch moves. Automatic: according to the visible span (500 Hz at 200 kHz, 50 Hz at 20 kHz).</value>
+  </data>
+  <data name="Ajustes.Analizador.Picos" xml:space="preserve">
+    <value>Mark peaks</value>
+  </data>
+  <data name="Ajustes.Analizador.PicosAyuda" xml:space="preserve">
+    <value>The five strongest signals get an amber mark and how far they rise above the noise, in radio scale units.</value>
+  </data>
+  <data name="Ajustes.Analizador.SpotsEncima" xml:space="preserve">
+    <value>Cluster spots on top</value>
+  </data>
+  <data name="Ajustes.Analizador.SpotsEncimaAyuda" xml:space="preserve">
+    <value>Callsigns from the cluster list (all nodes, with its filter) at their frequency. Magenta: new entity; green: new band or mode; grey: already worked.</value>
+  </data>
+  <data name="Ajustes.Analizador.SueloAutomatico" xml:space="preserve">
+    <value>Automatic noise floor (waterfall AGC)</value>
+  </data>
+  <data name="Ajustes.Analizador.SueloAutomaticoAyuda" xml:space="preserve">
+    <value>Noise stays dark and signals keep good contrast even when band, preamp or attenuator change, without touching the radio. Remembers each band's floor.</value>
+  </data>
+  <data name="Ajustes.Analizador.Titulo" xml:space="preserve">
+    <value>Radio's spectrum scope</value>
+  </data>
   <data name="Ajustes.Apartado.Actualizaciones" xml:space="preserve">
     <value>Updates</value>
   </data>
@@ -115,6 +205,9 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   </data>
   <data name="Ajustes.Apartado.Libro" xml:space="preserve">
     <value>Log (ADIF)</value>
+  </data>
+  <data name="Ajustes.Apartado.Servidor" xml:space="preserve">
+    <value>Server for other programs</value>
   </data>
   <data name="Ajustes.Apartado.Subidas" xml:space="preserve">
     <value>Uploads &amp; QRZ</value>
@@ -215,8 +308,11 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   <data name="Ajustes.Audio.TransmitirYApuntar" xml:space="preserve">
     <value>Transmitting and logging</value>
   </data>
-  <data name="Ajustes.Cluster.Aplicado" xml:space="preserve">
-    <value>Saved and applied: {0} ({1}:{2}) as {3}. Press Connect to log in.</value>
+  <data name="Ajustes.Cluster.AplicadoVarios" xml:space="preserve">
+    <value>Saved and applied: {0} nodes, {1} active, logging in as {2}. Unchanged nodes stay connected.</value>
+  </data>
+  <data name="Ajustes.Cluster.AplicaPrimero" xml:space="preserve">
+    <value>Save and apply before connecting “{0}”.</value>
   </data>
   <data name="Ajustes.Cluster.Conexion.Ayuda" xml:space="preserve">
     <value>Opens or closes the connection to the node</value>
@@ -224,20 +320,47 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   <data name="Ajustes.Cluster.Enviar" xml:space="preserve">
     <value>Send</value>
   </data>
-  <data name="Ajustes.Cluster.FaltaServidor" xml:space="preserve">
-    <value>The node server is missing.</value>
-  </data>
   <data name="Ajustes.Cluster.IndicativoNoVale" xml:space="preserve">
     <value>The call sign “{0}” is not valid: {1}</value>
   </data>
+  <data name="Ajustes.Cluster.NodoDeEnvio" xml:space="preserve">
+    <value>Node to send to</value>
+  </data>
+  <data name="Ajustes.Cluster.NodoDeEnvioConsejo" xml:space="preserve">
+    <value>Commands and your own spots (DX …) go only to this node, never to all of them: otherwise they would be repeated across the whole network.</value>
+  </data>
+  <data name="Ajustes.Cluster.NodoNuevo" xml:space="preserve">
+    <value>New node</value>
+  </data>
+  <data name="Ajustes.Cluster.NodoSinServidor" xml:space="preserve">
+    <value>Node “{0}” has no server.</value>
+  </data>
+  <data name="Ajustes.Cluster.NoResponde" xml:space="preserve">
+    <value>No answer: {0}</value>
+  </data>
   <data name="Ajustes.Cluster.Orden.Ayuda" xml:space="preserve">
     <value>Command for the node, for example sh/dx</value>
+  </data>
+  <data name="Ajustes.Cluster.Probando" xml:space="preserve">
+    <value>Testing…</value>
+  </data>
+  <data name="Ajustes.Cluster.PuertoNoVale" xml:space="preserve">
+    <value>The port of “{0}” is not valid: it must be between 1 and 65535.</value>
+  </data>
+  <data name="Ajustes.Cluster.Responde" xml:space="preserve">
+    <value>Answers in {0} ms (without logging in).</value>
+  </data>
+  <data name="Ajustes.Cluster.RespondeConSaludo" xml:space="preserve">
+    <value>Answers in {0} ms (without logging in): “{1}”</value>
   </data>
   <data name="Ajustes.Cluster.Simulado" xml:space="preserve">
     <value>With simulated ports the cluster is fake, so there is no node to configure. Close the program and open it again without CUADERNO_SIMULADO to choose the node, call sign and password.</value>
   </data>
   <data name="Ajustes.Cluster.SinIndicativo" xml:space="preserve">
     <value>There is no call sign to log in with: type it here or create a station profile.</value>
+  </data>
+  <data name="Ajustes.Cluster.YaEnLaLista" xml:space="preserve">
+    <value>“{0}” is already in the list.</value>
   </data>
   <data name="Ajustes.Correo.Asunto" xml:space="preserve">
     <value>Subject</value>
@@ -406,6 +529,12 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   </data>
   <data name="Ajustes.Cw.Sensibilidad.Ayuda" xml:space="preserve">
     <value>Higher reads weaker signals; lower needs more signal before writing. Noise writes nothing at any setting.</value>
+  </data>
+  <data name="Ajustes.Cw.SinSenal" xml:space="preserve">
+    <value>Search again after</value>
+  </data>
+  <data name="Ajustes.Cw.SinSenal.Ayuda" xml:space="preserve">
+    <value>In automatic, seconds without the locked signal before searching for another (1 to 60).</value>
   </data>
   <data name="Ajustes.Cw.Titulo" xml:space="preserve">
     <value>Telegraphy (CW)</value>
@@ -704,6 +833,9 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   <data name="Ajustes.Estado.SinNodoDeVerdad" xml:space="preserve">
     <value>No real node</value>
   </data>
+  <data name="Ajustes.Fonia.Agudos" xml:space="preserve">
+    <value>Treble</value>
+  </data>
   <data name="Ajustes.Fonia.Altavoces" xml:space="preserve">
     <value>PC speakers or headphones</value>
   </data>
@@ -719,14 +851,38 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   <data name="Ajustes.Fonia.Aviso.SalidaNoEsDelEquipo" xml:space="preserve">
     <value>The output to the radio is not the radio's codec: your voice would not reach the radio.</value>
   </data>
+  <data name="Ajustes.Fonia.Compresor" xml:space="preserve">
+    <value>Compressor</value>
+  </data>
+  <data name="Ajustes.Fonia.Compresor.Ayuda" xml:space="preserve">
+    <value>Evens out your voice by lowering the peaks. It raises nothing: there is no make-up gain.</value>
+  </data>
+  <data name="Ajustes.Fonia.Compresor.Relacion" xml:space="preserve">
+    <value>Ratio</value>
+  </data>
+  <data name="Ajustes.Fonia.Compresor.Umbral" xml:space="preserve">
+    <value>Threshold</value>
+  </data>
   <data name="Ajustes.Fonia.ComprobarFuente" xml:space="preserve">
     <value>Check the SSB modulation source via CAT · menu EX</value>
+  </data>
+  <data name="Ajustes.Fonia.CorteDeGraves" xml:space="preserve">
+    <value>Low cut</value>
+  </data>
+  <data name="Ajustes.Fonia.CorteHz" xml:space="preserve">
+    <value>{0} Hz</value>
   </data>
   <data name="Ajustes.Fonia.EntradaDelEquipo" xml:space="preserve">
     <value>Radio input (what you hear)</value>
   </data>
   <data name="Ajustes.Fonia.EntradaDelEquipo.Accesible" xml:space="preserve">
     <value>Audio input from the radio</value>
+  </data>
+  <data name="Ajustes.Fonia.Escucha.Explicacion" xml:space="preserve">
+    <value>It only changes what you hear on the PC speakers. The digital modem and the CW decoder get the radio audio untouched.</value>
+  </data>
+  <data name="Ajustes.Fonia.Escucha.Titulo" xml:space="preserve">
+    <value>Listening on the speakers</value>
   </data>
   <data name="Ajustes.Fonia.EscucharAlEntrar" xml:space="preserve">
     <value>Start listening when entering Operate</value>
@@ -740,8 +896,47 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   <data name="Ajustes.Fonia.GananciaMicro.Accesible" xml:space="preserve">
     <value>Microphone gain</value>
   </data>
+  <data name="Ajustes.Fonia.Grabacion.Adjuntar" xml:space="preserve">
+    <value>Attach to the contact when saving</value>
+  </data>
+  <data name="Ajustes.Fonia.Grabacion.Adjuntar.Ayuda" xml:space="preserve">
+    <value>The saved audio is attached to the contact you are typing or editing, and stored with it.</value>
+  </data>
+  <data name="Ajustes.Fonia.Grabacion.Grabar" xml:space="preserve">
+    <value>Keep the received audio in memory</value>
+  </data>
+  <data name="Ajustes.Fonia.Grabacion.Grabar.Ayuda" xml:space="preserve">
+    <value>While listening is open, it keeps the last minutes of radio audio in memory. Nothing is written to disk until you press “Save the last”.</value>
+  </data>
+  <data name="Ajustes.Fonia.Grabacion.Minutos" xml:space="preserve">
+    <value>Minutes in memory:</value>
+  </data>
+  <data name="Ajustes.Fonia.Grabacion.Titulo" xml:space="preserve">
+    <value>Recording and voice messages</value>
+  </data>
+  <data name="Ajustes.Fonia.Graves" xml:space="preserve">
+    <value>Bass</value>
+  </data>
   <data name="Ajustes.Fonia.IndiceFuente.Accesible" xml:space="preserve">
     <value>Modulation source menu index</value>
+  </data>
+  <data name="Ajustes.Fonia.Limitador" xml:space="preserve">
+    <value>Limiter</value>
+  </data>
+  <data name="Ajustes.Fonia.Limitador.Ayuda" xml:space="preserve">
+    <value>No audio burst goes above the ceiling: it protects speakers and ears.</value>
+  </data>
+  <data name="Ajustes.Fonia.Medios" xml:space="preserve">
+    <value>Mids</value>
+  </data>
+  <data name="Ajustes.Fonia.Micro.Explicacion" xml:space="preserve">
+    <value>Applied to your voice and to recorded messages before they reach the radio. It never raises the level above the input or above the ceiling.</value>
+  </data>
+  <data name="Ajustes.Fonia.Micro.Procesar" xml:space="preserve">
+    <value>Process the microphone</value>
+  </data>
+  <data name="Ajustes.Fonia.Micro.Titulo" xml:space="preserve">
+    <value>PC microphone when transmitting</value>
   </data>
   <data name="Ajustes.Fonia.Microfono" xml:space="preserve">
     <value>PC microphone</value>
@@ -749,8 +944,41 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   <data name="Ajustes.Fonia.NoMontada" xml:space="preserve">
     <value>Phone through the PC is not available in this session.</value>
   </data>
+  <data name="Ajustes.Fonia.Notch" xml:space="preserve">
+    <value>Automatic notch</value>
+  </data>
+  <data name="Ajustes.Fonia.Notch.Ayuda" xml:space="preserve">
+    <value>Finds and removes only steady carriers and whistles. It adds no delay.</value>
+  </data>
   <data name="Ajustes.Fonia.PttConmutado" xml:space="preserve">
     <value>Toggle PTT (click to start, click to stop)</value>
+  </data>
+  <data name="Ajustes.Fonia.Puerta" xml:space="preserve">
+    <value>Noise gate</value>
+  </data>
+  <data name="Ajustes.Fonia.Puerta.Ayuda" xml:space="preserve">
+    <value>Lowers the background when you are not speaking: fan, keyboard...</value>
+  </data>
+  <data name="Ajustes.Fonia.Puerta.Umbral" xml:space="preserve">
+    <value>Opens above</value>
+  </data>
+  <data name="Ajustes.Fonia.Reductor" xml:space="preserve">
+    <value>Noise reduction</value>
+  </data>
+  <data name="Ajustes.Fonia.Reductor.Adaptativo" xml:space="preserve">
+    <value>Adaptive (NR1), no delay</value>
+  </data>
+  <data name="Ajustes.Fonia.Reductor.Ayuda" xml:space="preserve">
+    <value>Removes background hiss. Spectral (NR2) removes the most and adds about 11 ms; adaptive (NR1) is gentler and adds no delay.</value>
+  </data>
+  <data name="Ajustes.Fonia.Reductor.Espectral" xml:space="preserve">
+    <value>Spectral (NR2), the strongest</value>
+  </data>
+  <data name="Ajustes.Fonia.Reductor.Nivel" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="Ajustes.Fonia.Reductor.Tipo" xml:space="preserve">
+    <value>Noise reduction type</value>
   </data>
   <data name="Ajustes.Fonia.SalidaAlEquipo" xml:space="preserve">
     <value>Output to the radio (what is transmitted)</value>
@@ -758,8 +986,23 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   <data name="Ajustes.Fonia.SalidaAlEquipo.Accesible" xml:space="preserve">
     <value>Audio output to the radio</value>
   </data>
+  <data name="Ajustes.Fonia.SinCorte" xml:space="preserve">
+    <value>No cut</value>
+  </data>
   <data name="Ajustes.Fonia.SoloSeLee" xml:space="preserve">
     <value>The menu is only READ; the program changes nothing on the radio. The index comes from the map read from the FT-710 and has not been confirmed against the manual: if the warning does not match what the radio says, correct it here.</value>
+  </data>
+  <data name="Ajustes.Fonia.Techo" xml:space="preserve">
+    <value>Ceiling</value>
+  </data>
+  <data name="Ajustes.Fonia.Techo.Escucha" xml:space="preserve">
+    <value>Listening ceiling</value>
+  </data>
+  <data name="Ajustes.Fonia.Techo.Micro" xml:space="preserve">
+    <value>Microphone ceiling</value>
+  </data>
+  <data name="Ajustes.Fonia.Techo.Micro.Ayuda" xml:space="preserve">
+    <value>The highest level that can go to the radio. It cannot be set above −1 dBFS.</value>
   </data>
   <data name="Ajustes.Fonia.Tecla.BloqDespl" xml:space="preserve">
     <value>Scroll Lock</value>
@@ -781,6 +1024,12 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   </data>
   <data name="Ajustes.Fonia.TeclaDelPtt.Ayuda" xml:space="preserve">
     <value>Only while the window is active and never while typing in a text field</value>
+  </data>
+  <data name="Ajustes.Fonia.TeclasDeMensajes" xml:space="preserve">
+    <value>F1–F6 send the voice messages</value>
+  </data>
+  <data name="Ajustes.Fonia.TeclasDeMensajes.Ayuda" xml:space="preserve">
+    <value>Only in a voice mode, with the phone panel visible and if the key has a recorded message. Otherwise F1 still opens the help.</value>
   </data>
   <data name="Ajustes.Fonia.TiempoMaximo" xml:space="preserve">
     <value>Maximum time per over (seconds, 10 to 600)</value>
@@ -959,6 +1208,207 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   <data name="Ajustes.Secreto.TqslFrase.Ayuda" xml:space="preserve">
     <value>Only if your certificate has one. Read the notice below before typing it.</value>
   </data>
+  <data name="Ajustes.SeguridadTx.Banda" xml:space="preserve">
+    <value>Band</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Bloquear" xml:space="preserve">
+    <value>Do not transmit outside the band plan</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Bloquear.Ayuda" xml:space="preserve">
+    <value>The whole channel occupied by the emission is checked (in CW, carrier plus or minus half the filter), not just the carrier.</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.ConfirmarLiberar" xml:space="preserve">
+    <value>You are about to allow transmitting OUTSIDE the band plan on {0}. Do it only if your licence allows it (for example, a special authorisation). The program will stop preventing it on that band.</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.ConfirmarLiberar.Aceptar" xml:space="preserve">
+    <value>Yes, my licence allows it</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.ConfirmarLiberar.Titulo" xml:space="preserve">
+    <value>Transmit outside the band plan?</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Explicacion" xml:space="preserve">
+    <value>The PTT watchdog applies them to everything that transmits: MOX, tune, modem, phone and CW.</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.FueraDelPlan" xml:space="preserve">
+    <value>Outside the plan</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Guardado" xml:space="preserve">
+    <value>Saved and applied.</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Guardar" xml:space="preserve">
+    <value>Save safeguards</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Lecturas" xml:space="preserve">
+    <value>Consecutive readings</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Liberar" xml:space="preserve">
+    <value>Allow</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Liberar.Ayuda" xml:space="preserve">
+    <value>Allows transmitting outside the plan on this band, for special licences. Asks for confirmation.</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.NoGuarda" xml:space="preserve">
+    <value>Could not save: {0}</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.PotenciaMaxima" xml:space="preserve">
+    <value>Maximum power (W)</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.PotenciaMaxima.Ayuda" xml:space="preserve">
+    <value>The radio's power is lowered to this before transmitting on this band. Empty: no limit.</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.RoeMaxima" xml:space="preserve">
+    <value>Maximum SWR</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Titulo" xml:space="preserve">
+    <value>Transmit safeguards</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.VigilarRoe" xml:space="preserve">
+    <value>Cut on high SWR or open antenna</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.VigilarRoe.Ayuda" xml:space="preserve">
+    <value>Reads the radio's SWR four times a second while transmitting (RM6 and the Hi-SWR alarm on the FT-710; 15 12 on ICOM).</value>
+  </data>
+  <data name="Ajustes.Servidor.AbrirRed" xml:space="preserve">
+    <value>Also open to the local network (otherwise, this PC only)</value>
+  </data>
+  <data name="Ajustes.Servidor.AbrirRed.Ayuda" xml:space="preserve">
+    <value>Even when open, only this PC and the listed IPs get in.</value>
+  </data>
+  <data name="Ajustes.Servidor.Apagado" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="Ajustes.Servidor.Clientes" xml:space="preserve">
+    <value>Connected programs</value>
+  </data>
+  <data name="Ajustes.Servidor.Confirmar.Aceptar" xml:space="preserve">
+    <value>Yes, enable</value>
+  </data>
+  <data name="Ajustes.Servidor.ConfirmarRed" xml:space="preserve">
+    <value>Other computers on your network will be able to control the radio (and transmit, if allowed). Only the listed IPs will get in. Never open it to the Internet.</value>
+  </data>
+  <data name="Ajustes.Servidor.ConfirmarRed.Titulo" xml:space="preserve">
+    <value>Open the server to the local network?</value>
+  </data>
+  <data name="Ajustes.Servidor.ConfirmarTx" xml:space="preserve">
+    <value>A connected program will be able to put the radio on the air. The session latch, band plan, SWR, maximum power and time still apply, and every request is logged.</value>
+  </data>
+  <data name="Ajustes.Servidor.ConfirmarTx.Titulo" xml:space="preserve">
+    <value>Let external programs transmit?</value>
+  </data>
+  <data name="Ajustes.Servidor.Control" xml:space="preserve">
+    <value>They may change frequency, mode, VFO, split and power</value>
+  </data>
+  <data name="Ajustes.Servidor.Control.Ayuda" xml:space="preserve">
+    <value>Without this they can only read. Nothing changes while on the air.</value>
+  </data>
+  <data name="Ajustes.Servidor.Desconectar" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
+  <data name="Ajustes.Servidor.EnTx" xml:space="preserve">
+    <value>TX</value>
+  </data>
+  <data name="Ajustes.Servidor.EnviarSpots" xml:space="preserve">
+    <value>Send the Logbook's spots to TCI clients</value>
+  </data>
+  <data name="Ajustes.Servidor.Escuchando" xml:space="preserve">
+    <value>Listening on {0}</value>
+  </data>
+  <data name="Ajustes.Servidor.Explicacion" xml:space="preserve">
+    <value>Other programs (WSJT-X, JTDX, GridTracker, loggers…) can use the radio through the Logbook, which remains its owner. Everything they request goes through the same safeguards as the Logbook.</value>
+  </data>
+  <data name="Ajustes.Servidor.Guardado" xml:space="preserve">
+    <value>Saved and applied.</value>
+  </data>
+  <data name="Ajustes.Servidor.Guardar" xml:space="preserve">
+    <value>Save and apply</value>
+  </data>
+  <data name="Ajustes.Servidor.Indicador" xml:space="preserve">
+    <value>External programs: {0}</value>
+  </data>
+  <data name="Ajustes.Servidor.Indicador.Nadie" xml:space="preserve">
+    <value>Server on; no program connected.</value>
+  </data>
+  <data name="Ajustes.Servidor.IpMala" xml:space="preserve">
+    <value>These entries are not valid IPs or networks: {0}</value>
+  </data>
+  <data name="Ajustes.Servidor.Ips" xml:space="preserve">
+    <value>Allowed IPs</value>
+  </data>
+  <data name="Ajustes.Servidor.Ips.Ayuda" xml:space="preserve">
+    <value>Comma-separated. An IP (192.168.1.20) or a network (192.168.1.0/24).</value>
+  </data>
+  <data name="Ajustes.Servidor.NoGuarda" xml:space="preserve">
+    <value>Could not save: {0}</value>
+  </data>
+  <data name="Ajustes.Servidor.Ordenes" xml:space="preserve">
+    <value>commands: {0} · rejected: {1}</value>
+  </data>
+  <data name="Ajustes.Servidor.Permisos" xml:space="preserve">
+    <value>Permissions</value>
+  </data>
+  <data name="Ajustes.Servidor.Peticion.Concedida" xml:space="preserve">
+    <value>{0}  {1}  {2} kHz {3}  ✔ {4}</value>
+  </data>
+  <data name="Ajustes.Servidor.Peticion.Denegada" xml:space="preserve">
+    <value>{0}  {1}  {2} kHz {3}  ✖ {4}</value>
+  </data>
+  <data name="Ajustes.Servidor.Puerto" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="Ajustes.Servidor.PuertoMalo" xml:space="preserve">
+    <value>Ports must be numbers between 1024 and 65535, and different.</value>
+  </data>
+  <data name="Ajustes.Servidor.PuertoRigctld" xml:space="preserve">
+    <value>rigctld server port</value>
+  </data>
+  <data name="Ajustes.Servidor.PuertoTci" xml:space="preserve">
+    <value>TCI server port</value>
+  </data>
+  <data name="Ajustes.Servidor.RecibirSpots" xml:space="preserve">
+    <value>Show on the bandmap the spots sent by TCI clients</value>
+  </data>
+  <data name="Ajustes.Servidor.Red" xml:space="preserve">
+    <value>Network</value>
+  </data>
+  <data name="Ajustes.Servidor.Registro" xml:space="preserve">
+    <value>Who asked to transmit</value>
+  </data>
+  <data name="Ajustes.Servidor.Rigctld" xml:space="preserve">
+    <value>rigctld-compatible server (Hamlib)</value>
+  </data>
+  <data name="Ajustes.Servidor.Rigctld.Ayuda" xml:space="preserve">
+    <value>For WSJT-X, JTDX, fldigi or GridTracker: radio "Hamlib NET rigctl", address 127.0.0.1:4532.</value>
+  </data>
+  <data name="Ajustes.Servidor.SinClientes" xml:space="preserve">
+    <value>None right now.</value>
+  </data>
+  <data name="Ajustes.Servidor.SinPeticiones" xml:space="preserve">
+    <value>No transmit requests in this session.</value>
+  </data>
+  <data name="Ajustes.Servidor.Tci" xml:space="preserve">
+    <value>TCI server (WebSocket)</value>
+  </data>
+  <data name="Ajustes.Servidor.Tci.Ayuda" xml:space="preserve">
+    <value>For programs that speak TCI (Expert Electronics): frequency, mode, PTT, power and spots. No audio for now.</value>
+  </data>
+  <data name="Ajustes.Servidor.Titulo" xml:space="preserve">
+    <value>Server for other programs</value>
+  </data>
+  <data name="Ajustes.Servidor.Token" xml:space="preserve">
+    <value>TCI password (optional)</value>
+  </data>
+  <data name="Ajustes.Servidor.Token.Ayuda" xml:space="preserve">
+    <value>If set, the program must connect to ws://host:port/?token=… Most TCI programs cannot, so it only makes sense with your own programs.</value>
+  </data>
+  <data name="Ajustes.Servidor.Tx" xml:space="preserve">
+    <value>Allow TX to external clients</value>
+  </data>
+  <data name="Ajustes.Servidor.Tx.Ayuda" xml:space="preserve">
+    <value>Master switch. Off from the factory.</value>
+  </data>
+  <data name="Ajustes.Servidor.Tx.Nota" xml:space="preserve">
+    <value>"Allow transmitting in this session" must also be ticked. A program's PTT goes through the band plan, SWR, maximum power, maximum time and PTT owner checks, and is dropped if the program disconnects or stops talking.</value>
+  </data>
   <data name="Ajustes.Subidas.Cola" xml:space="preserve">
     <value>Upload queue</value>
   </data>
@@ -1061,8 +1511,8 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   <data name="Ajustes.Tarjeta.ClubLog.Descripcion" xml:space="preserve">
     <value>Log upload and most wanted DXCC.</value>
   </data>
-  <data name="Ajustes.Tarjeta.Cluster.Aviso" xml:space="preserve">
-    <value>{0} · {1}:{2} as {3}</value>
+  <data name="Ajustes.Tarjeta.Cluster.AvisoVarios" xml:space="preserve">
+    <value>{0}: {1}. Logs in as {2}.</value>
   </data>
   <data name="Ajustes.Tarjeta.Cluster.Descripcion" xml:space="preserve">
     <value>Node, login call sign and password (if required).</value>

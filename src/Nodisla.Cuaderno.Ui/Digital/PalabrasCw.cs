@@ -20,6 +20,9 @@ public enum TipoDePalabraCw
 
     /// <summary>Un prosigno («&lt;AR&gt;», «&lt;SK&gt;»...).</summary>
     Prosigno,
+
+    /// <summary>Una abreviatura o código Q del glosario (con su significado).</summary>
+    Abreviatura,
 }
 
 /// <summary>

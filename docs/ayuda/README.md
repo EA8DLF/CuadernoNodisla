@@ -19,7 +19,7 @@ volver a ella se vuelve a la página que se vio la última vez.
 
 | Entrada | Páginas |
 |---|---|
-| **Operar** | Cabina (`Ctrl` `1`) · Digital (`Ctrl` `2`) · Satélites (`Ctrl` `7`) · Ronda de control (`Ctrl` `9`) |
+| **Operar** | Cabina (`Ctrl` `1`) · Digital (`Ctrl` `2`) · CW (`Ctrl` `Mayús` `1`) · Satélites (`Ctrl` `7`) · Ronda de control (`Ctrl` `9`) |
 | **Libro** | Contactos (`Ctrl` `3`) · Mapa (`Ctrl` `4`) |
 | **QSL** | Tarjeta QSL (`Ctrl` `8`) · Etiquetas · Diplomas (`Ctrl` `Mayús` `5`) |
 | **Diplomas** | El seguimiento de diplomas (`Ctrl` `5`) |
@@ -51,8 +51,16 @@ volver a ella se vuelve a la página que se vio la última vez.
     MULTI.
 16. [Ayuda, actualizaciones y fallos](16-ayuda-actualizaciones-y-fallos.md) — la ayuda, el aviso
     de versión nueva, reportar un fallo y «Acerca de».
-17. [Telegrafía (CW)](17-cw.md) — el decodificador de CW de la cabina: texto en vivo, velocidad,
-    tono, indicativos con un clic y varias señales a la vez.
+17. [Telegrafía (CW)](17-cw.md) — la página CW: el decodificador propio con texto en vivo,
+    velocidad, enganche en AUTO, tono a mano, indicativos con un clic, el significado de cada
+    abreviatura y el glosario CW.
+18. [Transmitir en CW](18-transmitir-cw.md) — macros F1–F12, escritura libre y la secuencia del
+    contacto (CQ → respuesta → informe → confirmación → 73), con el manipulador de la radio.
+19. [Salvaguardas de transmisión](19-seguridad-de-transmision.md) — plan de banda con los bordes
+    del filtro, corte por ROE, no rearmar tras un corte y potencia máxima por banda.
+20. [Conectar otros programas](20-conectar-otros-programas.md) — los servidores rigctld y TCI:
+    WSJT-X, JTDX, GridTracker y otros usan la radio a través del Cuaderno, con las mismas
+    salvaguardas de transmisión.
 
 ## Antes de nada
 

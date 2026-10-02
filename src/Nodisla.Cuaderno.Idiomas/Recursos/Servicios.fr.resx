@@ -213,6 +213,12 @@
   <data name="Servicios.Audio.Hora.WindowsNoDeja" xml:space="preserve">
     <value>Windows n'a pas autorisé le changement de l'heure système. Vous pouvez le faire à la main ou activer la synchronisation de l'heure de Windows avec {0}.</value>
   </data>
+  <data name="Servicios.Audio.MensajeLargo" xml:space="preserve">
+    <value>Le message dure {0} s et la limite d'émission est de {1} s : il n'est pas émis.</value>
+  </data>
+  <data name="Servicios.Audio.MensajeVacio" xml:space="preserve">
+    <value>Le message vocal est vide.</value>
+  </data>
   <data name="Servicios.Audio.OtraTransmision" xml:space="preserve">
     <value>Une autre émission est déjà en cours (le modem numérique ?). Terminez-la avant de parler.</value>
   </data>
@@ -251,6 +257,9 @@
   </data>
   <data name="Servicios.Audio.SinSalidaAbierta" xml:space="preserve">
     <value>Aucun périphérique de sortie ouvert : lecture impossible.</value>
+  </data>
+  <data name="Servicios.Audio.SinVoiceKeyer" xml:space="preserve">
+    <value>Le chemin d'émission n'accepte pas les messages enregistrés : rien n'est émis.</value>
   </data>
   <data name="Servicios.Bandplan.FueraDelPlan" xml:space="preserve">
     <value>{0} est hors du plan de bandes {1}.</value>
@@ -318,26 +327,59 @@
   <data name="Servicios.Cluster.IndicativoRechazadoExcepcion" xml:space="preserve">
     <value>Indicatif refusé par le cluster.</value>
   </data>
+  <data name="Servicios.Cluster.NingunNodoConectado" xml:space="preserve">
+    <value>Aucun nœud n'est connecté : la commande n'a pas été envoyée.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Ae5e" xml:space="preserve">
+    <value>CC Cluster américain : accepte des commandes de filtrage très fines (set/filter).</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Db0sue" xml:space="preserve">
+    <value>Nœud allemand, avec beaucoup d'annonces d'Europe.</value>
+  </data>
   <data name="Servicios.Cluster.Nodo.Dl9gtb" xml:space="preserve">
-    <value>Nœud allemand, avec beaucoup de spots européens.</value>
+    <value>Nœud allemand, avec beaucoup d'annonces d'Europe. Le 2-10-2026 il ne répondait pas : non vérifié.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Dxfun" xml:space="preserve">
     <value>Nœud international très fréquenté, avec beaucoup de trafic DX.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Ea4rch" xml:space="preserve">
-    <value>Nœud espagnol du Radio Club Henares. C’est celui par défaut.</value>
+    <value>Nœud espagnol du Radio Club Henares. Le 2-10-2026 son nom ne se résolvait pas dans le DNS : non vérifié.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Ea7urc" xml:space="preserve">
-    <value>Un autre nœud espagnol, au cas où le premier ne répond pas.</value>
+    <value>Un autre nœud espagnol. Le 2-10-2026 son nom ne se résolvait pas dans le DNS : non vérifié.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Gb7tlh" xml:space="preserve">
+    <value>Nœud DXSpider britannique : gb7djk.dxcluster.net répond comme GB7TLH.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Hamqth" xml:space="preserve">
+    <value>Le nœud de HamQTH, avec beaucoup de trafic international.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.K3lr" xml:space="preserve">
+    <value>Nœud américain de K3LR, du réseau de concours.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Nc7j" xml:space="preserve">
     <value>Nœud américain, utile pour voir ce qu’on entend de l’autre côté de l’Atlantique.</value>
   </data>
+  <data name="Servicios.Cluster.Nodo.On0dxk" xml:space="preserve">
+    <value>Nœud belge vétéran (depuis 1991), bonne couverture européenne.</value>
+  </data>
   <data name="Servicios.Cluster.Nodo.Rbn" xml:space="preserve">
-    <value>Ce ne sont pas des personnes : ce sont des stations d’écoute automatique. Gros volume ; mieux vaut filtrer.</value>
+    <value>Reverse Beacon Network, CW et RTTY. Ce ne sont pas des personnes : ce sont des stations d'écoute automatique. Beaucoup de volume ; leurs annonces sont marquées « skimmer » et peuvent être masquées.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.RbnDigital" xml:space="preserve">
+    <value>Reverse Beacon Network, FT8 et FT4 : écoute automatique des modes numériques. Énormément de volume ; ses annonces sont marquées « skimmer ».</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Ve7cc" xml:space="preserve">
     <value>CC Cluster : accepte des commandes de filtrage très fines (set/filter).</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.W1nr" xml:space="preserve">
+    <value>Nœud DXSpider du Yankee Clipper Contest Club.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.W3lpl" xml:space="preserve">
+    <value>Nœud américain de concours, très rapide pour les annonces d'Amérique du Nord.</value>
+  </data>
+  <data name="Servicios.Cluster.NodoDesconocido" xml:space="preserve">
+    <value>Il n'y a aucun nœud « {0} » dans la liste.</value>
   </data>
   <data name="Servicios.Cluster.OrdenSinConexion" xml:space="preserve">
     <value>Pas de connexion à {0} : la commande n’a pas été envoyée.</value>
@@ -345,8 +387,14 @@
   <data name="Servicios.Cluster.Reintentando" xml:space="preserve">
     <value>* {0} : nouvel essai dans {1:0} s.</value>
   </data>
+  <data name="Servicios.Cluster.SinComprobar" xml:space="preserve">
+    <value>non vérifié</value>
+  </data>
   <data name="Servicios.Cluster.SinDatos" xml:space="preserve">
     <value>* {0} : aucune donnée, la connexion est considérée comme perdue.</value>
+  </data>
+  <data name="Servicios.Cluster.VariosNodos" xml:space="preserve">
+    <value>Cluster DX</value>
   </data>
   <data name="Servicios.Concursos.Cabrillo.ConcursoCaracteres" xml:space="preserve">
     <value>CONTEST n’accepte que des lettres, des chiffres et des tirets : « {0} ».</value>
@@ -1260,6 +1308,21 @@ Félicitations et 73,
   <data name="Servicios.Radio.CoberturaGeneralLarga" xml:space="preserve">
     <value>Couverture générale (réception hors des bandes)</value>
   </data>
+  <data name="Servicios.Radio.Cw.Desconectado" xml:space="preserve">
+    <value>La radio n'est pas connectée : impossible d'envoyer de la CW.</value>
+  </data>
+  <data name="Servicios.Radio.Cw.ModeloSinManipulador" xml:space="preserve">
+    <value>Le {0} n'envoie pas de CW par CAT dans ce programme : sa commande de manipulateur n'a pas été vérifiée dans le manuel.</value>
+  </data>
+  <data name="Servicios.Radio.Cw.SinAntena" xml:space="preserve">
+    <value>Pour manipuler, il faut demander l'antenne au surveillant du PTT.</value>
+  </data>
+  <data name="Servicios.Radio.Cw.SinManipuladorPorCat" xml:space="preserve">
+    <value>Cette radio ne sait pas envoyer de CW par CAT (FT-710, ICOM en CI-V ou Hamlib/rigctld oui).</value>
+  </data>
+  <data name="Servicios.Radio.Cw.YaEnviando" xml:space="preserve">
+    <value>Une émission CW est déjà en cours.</value>
+  </data>
   <data name="Servicios.Radio.EncendidoSinRespuesta" xml:space="preserve">
     <value>La commande d'allumage a été envoyée mais le poste n'a pas répondu en 20 secondes.</value>
   </data>
@@ -1407,6 +1470,27 @@ Félicitations et 73,
   <data name="Servicios.Radio.RigctldSinConexion" xml:space="preserve">
     <value>Aucune connexion ouverte avec rigctld.</value>
   </data>
+  <data name="Servicios.Radio.Seguridad.Bloqueo.AntenaAbierta" xml:space="preserve">
+    <value>Coupé : antenne ouverte ou en court-circuit, ou alarme ROS de la radio (ROS {0}). Plus d'émission tant que toutes les sources ne sont pas relâchées.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.Bloqueo.RoeAlta" xml:space="preserve">
+    <value>Coupé pour ROS élevé ({0}). Vérifiez l'antenne et la boîte d'accord. Plus d'émission tant que toutes les sources ne sont pas relâchées.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.Bloqueo.SinLatido" xml:space="preserve">
+    <value>Coupé car l'émetteur ne répondait plus. Plus d'émission tant que toutes les sources de PTT ne sont pas relâchées.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.Bloqueo.TiempoAgotado" xml:space="preserve">
+    <value>Coupé par la durée maximale d'émission. Plus d'émission tant que toutes les sources de PTT ne sont pas relâchées (MOX, modem, phonie, CW).</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.FueraDelPlan" xml:space="preserve">
+    <value>Émission bloquée : sur {0} MHz ({3}) l'émission occupe de {1} à {2} MHz et sort du plan de bande.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.PotenciaSinControl" xml:space="preserve">
+    <value>Émission bloquée : la puissance maximale de {0} est {1} W et elle n'a pu être réglée ni vérifiée sur la radio.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.SoloLaFuente" xml:space="preserve">
+    <value>Seule la source qui a levé le PTT peut le relâcher normalement ; pour couper, utilisez le relâchement d'urgence.</value>
+  </data>
   <data name="Servicios.Radio.SinControl" xml:space="preserve">
     <value>Aucun contrôle pour {0}.</value>
   </data>
@@ -1535,6 +1619,54 @@ Félicitations et 73,
   </data>
   <data name="Servicios.Satelites.UnSatelite" xml:space="preserve">
     <value>1 satellite</value>
+  </data>
+  <data name="Servicios.Servidor.Concedida" xml:space="preserve">
+    <value>Accordée</value>
+  </data>
+  <data name="Servicios.Servidor.ControlApagado" xml:space="preserve">
+    <value>Les programmes externes peuvent seulement lire la radio, pas la modifier.</value>
+  </data>
+  <data name="Servicios.Servidor.EnElAire" xml:space="preserve">
+    <value>La radio n'est pas modifiée pendant l'émission.</value>
+  </data>
+  <data name="Servicios.Servidor.Fuente" xml:space="preserve">
+    <value>Programmes externes</value>
+  </data>
+  <data name="Servicios.Servidor.NoDisponible" xml:space="preserve">
+    <value>Cette radio ne le permet pas.</value>
+  </data>
+  <data name="Servicios.Servidor.OtraFuente" xml:space="preserve">
+    <value>« {0} » émet déjà : le PTT lui appartient.</value>
+  </data>
+  <data name="Servicios.Servidor.PestilloCerrado" xml:space="preserve">
+    <value>Le verrou « Autoriser l'émission dans cette session » est fermé.</value>
+  </data>
+  <data name="Servicios.Servidor.PuertoOcupado" xml:space="preserve">
+    <value>Impossible d'ouvrir le port {0} : {1}</value>
+  </data>
+  <data name="Servicios.Servidor.SinEquipo" xml:space="preserve">
+    <value>Aucune radio n'est connectée.</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Desconexion" xml:space="preserve">
+    <value>le programme s'est déconnecté</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Expulsado" xml:space="preserve">
+    <value>déconnecté depuis les Réglages</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Normal" xml:space="preserve">
+    <value>relâché par le programme</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Permiso" xml:space="preserve">
+    <value>le verrou a été fermé ou l'émission externe désactivée</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Silencio" xml:space="preserve">
+    <value>le programme ne répond plus</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Vigilante" xml:space="preserve">
+    <value>coupée par le surveillant du PTT</value>
+  </data>
+  <data name="Servicios.Servidor.TxApagada" xml:space="preserve">
+    <value>L'émission pour les programmes externes est désactivée dans les Réglages.</value>
   </data>
   <data name="Servicios.SinContrasena" xml:space="preserve">
     <value>Aucun mot de passe {0} n'est enregistré. Configurez-le dans Paramètres › Comptes et services.</value>

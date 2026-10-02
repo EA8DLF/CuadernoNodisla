@@ -94,20 +94,36 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
     /// </remarks>
     private int _pttPuedeEstarArriba;
 
+    // ── Salvaguardas de transmision (02-10-2026, del analisis de Thetis) ────────────────────
+
+    private readonly IBandplan? _bandplan;
+    private readonly List<(string Nombre, Func<bool> Pulsada)> _fuentes = [];
+    private OpcionesDeSeguridadDeTx _seguridad;
+    private string? _motivoDeBloqueo;
+    private long _marcaDelCorte;
+    private string _detalleDelCorte = string.Empty;
+
     /// <summary>Crea el vigilante sobre un control de equipo.</summary>
     /// <param name="control">Control por el que se habla con el equipo.</param>
     /// <param name="opciones">Tiempos y manias; si es nulo, se usan los de partida.</param>
     /// <param name="registro">Donde se anota lo que pasa; si es nulo, no se anota nada.</param>
+    /// <param name="bandplan">
+    /// El plan de banda del programa (region IARU). Nulo: se usan los limites de banda de ADIF,
+    /// que son mas anchos pero siguen dejando fuera lo que no es de aficionado.
+    /// </param>
     public VigilantePtt(
         IControlEquipo control,
         OpcionesDelVigilante? opciones = null,
-        ILogger? registro = null)
+        ILogger? registro = null,
+        IBandplan? bandplan = null)
     {
         ArgumentNullException.ThrowIfNull(control);
 
         _control = control;
         _opciones = (opciones ?? new OpcionesDelVigilante()).Copiar();
         _registro = registro ?? NullLogger.Instance;
+        _bandplan = bandplan;
+        _seguridad = _opciones.Seguridad;
 
         _alCerrarseElProceso = (_, _) => SoltarEnElCierre(MotivoDeSuelta.Cierre, "cierre del proceso");
         _alFallarSinAtender = (_, _) => SoltarEnElCierre(MotivoDeSuelta.Cierre, "excepción no atendida");
@@ -195,6 +211,28 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
         // Nunca se sube el PTT encima de una bajada a medio hacer.
         await EsperarSueltaPendienteAsync().ConfigureAwait(false);
 
+        if (Volatile.Read(ref _estado) != Libre)
+        {
+            throw new InvalidOperationException(Textos.T("Servicios.Radio.Ptt.EnCurso"));
+        }
+
+        // Las salvaguardas, antes de tocar nada: tras un corte de seguridad no se rearma hasta
+        // soltar todas las fuentes; fuera del plan de banda no se sube; y la potencia se baja
+        // al maximo de la banda ANTES de salir al aire.
+        if (MotivoDeBloqueo is { } bloqueo)
+        {
+            _registro.LogWarning("Antena denegada ({Razon}): {Bloqueo}", razon, bloqueo);
+            throw new TransmisionBloqueadaException(bloqueo);
+        }
+
+        if (MotivoPorPlanDeBanda() is { } fueraDelPlan)
+        {
+            _registro.LogWarning("Antena denegada ({Razon}): {Motivo}", razon, fueraDelPlan);
+            throw new TransmisionBloqueadaException(fueraDelPlan);
+        }
+
+        await AplicarPotenciaMaximaAsync(ct).ConfigureAwait(false);
+
         if (Interlocked.CompareExchange(ref _estado, EnAntenaEstado, Libre) != Libre)
         {
             throw new InvalidOperationException(
@@ -248,12 +286,290 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
             _opciones.TiempoMaximo,
             _opciones.TiempoSinLatido);
 
+        // La ROE se vigila mientras dure esta transmision, en una tarea aparte: leerla es CAT y
+        // no puede ir en el hilo vigilante, que no espera a nadie.
+        if (Seguridad.VigilarRoe && Real() is IMedidorDeRoe medidor)
+        {
+            _ = Task.Run(() => VigilarRoeAsync(transmision, medidor, cts.Token), CancellationToken.None);
+        }
+
         return transmision;
     }
 
     /// <inheritdoc />
-    public Task SoltarYaAsync(MotivoDeSuelta motivo = MotivoDeSuelta.Panico) =>
-        SoltarNucleoAsync(null, motivo);
+    /// <remarks>
+    /// Es la bajada de emergencia: la puede pedir cualquiera, siempre. La bajada normal la hace
+    /// solo la fuente que tiene la antena, liberando su <see cref="ITransmisionEnCurso"/>; por
+    /// eso aqui no se admite <see cref="MotivoDeSuelta.Normal"/>.
+    /// </remarks>
+    /// <exception cref="ArgumentException">Si se pide como bajada normal.</exception>
+    public Task SoltarYaAsync(MotivoDeSuelta motivo = MotivoDeSuelta.Panico)
+    {
+        if (motivo == MotivoDeSuelta.Normal)
+        {
+            throw new ArgumentException(Textos.T("Servicios.Radio.Seguridad.SoloLaFuente"), nameof(motivo));
+        }
+
+        return SoltarNucleoAsync(null, motivo);
+    }
+
+    // ── Salvaguardas ─────────────────────────────────────────────────────────────────────────
+
+    /// <summary>Salta cuando se pone o se levanta el bloqueo tras un corte de seguridad.</summary>
+    public event EventHandler<string?>? BloqueoCambiado;
+
+    /// <summary>Las salvaguardas en uso.</summary>
+    public OpcionesDeSeguridadDeTx Seguridad => Volatile.Read(ref _seguridad);
+
+    /// <inheritdoc />
+    public string? MotivoDeBloqueo
+    {
+        get
+        {
+            lock (_candado) return _motivoDeBloqueo;
+        }
+    }
+
+    /// <inheritdoc />
+    public string? FuenteEnAntena => Volatile.Read(ref _transmision)?.Motivo;
+
+    /// <summary>Cambia las salvaguardas en marcha (por ejemplo, al guardar los ajustes).</summary>
+    /// <param name="seguridad">Las nuevas.</param>
+    public void CambiarSeguridad(OpcionesDeSeguridadDeTx seguridad)
+    {
+        ArgumentNullException.ThrowIfNull(seguridad);
+        Volatile.Write(ref _seguridad, seguridad);
+        _registro.LogInformation(
+            "Salvaguardas de TX: plan de banda {Plan}, liberadas {Liberadas}, ROE {Roe} ({Vigilar}), potencias {Potencias}.",
+            seguridad.BloquearFueraDeBanda,
+            string.Join(", ", seguridad.BandasLiberadas),
+            seguridad.RoeMaxima,
+            seguridad.VigilarRoe,
+            string.Join(", ", seguridad.PotenciaMaximaPorBanda.Select(p => $"{p.Key}={p.Value} W")));
+    }
+
+    /// <inheritdoc />
+    public IDisposable RegistrarFuente(string nombre, Func<bool> pulsada)
+    {
+        ArgumentNullException.ThrowIfNull(pulsada);
+        var fuente = (string.IsNullOrWhiteSpace(nombre) ? "fuente" : nombre, pulsada);
+        lock (_candado) _fuentes.Add(fuente);
+        return new BajaDeFuente(this, fuente);
+    }
+
+    /// <summary>Las fuentes que siguen pidiendo transmitir, por su nombre.</summary>
+    /// <returns>Los nombres.</returns>
+    public IReadOnlyList<string> FuentesPulsadas()
+    {
+        List<(string Nombre, Func<bool> Pulsada)> fuentes;
+        lock (_candado) fuentes = [.. _fuentes];
+        var pulsadas = new List<string>();
+        foreach (var (nombre, pulsada) in fuentes)
+        {
+            try
+            {
+                if (pulsada()) pulsadas.Add(nombre);
+            }
+            catch (Exception ex)
+            {
+                // Una fuente que no sabe decir si esta suelta cuenta como pulsada: lo prudente.
+                _registro.LogWarning(ex, "La fuente de PTT «{Fuente}» no ha podido decir si está suelta.", nombre);
+                pulsadas.Add(nombre);
+            }
+        }
+
+        return pulsadas;
+    }
+
+    private sealed class BajaDeFuente(VigilantePtt vigilante, (string, Func<bool>) fuente) : IDisposable
+    {
+        public void Dispose()
+        {
+            lock (vigilante._candado) vigilante._fuentes.Remove(fuente);
+        }
+    }
+
+    /// <summary>El control de verdad, aunque venga dentro del conmutable.</summary>
+    private IControlEquipo Real() => _control is ControlEquipoConmutable conmutable ? conmutable.Actual : _control;
+
+    /// <summary>Por que el canal de la emision se sale del plan de banda, o nulo.</summary>
+    private string? MotivoPorPlanDeBanda()
+    {
+        var seguridad = Seguridad;
+        if (!seguridad.BloquearFueraDeBanda) return null;
+
+        var real = Real();
+        var estado = real.Estado;
+        var frecuencia = estado.Frecuencia;
+        var modo = estado.Modo;
+        int? ancho = null;
+        if (real is IEquipoConDosVfos dos && dos.Vfos is { } vfos && !vfos.DeTransmision.Frecuencia.EsCero)
+        {
+            frecuencia = vfos.DeTransmision.Frecuencia;
+            modo = vfos.DeTransmision.Modo.EsVacio ? modo : vfos.DeTransmision.Modo;
+            ancho = vfos.DeTransmision.AnchoDeFiltroHz;
+        }
+
+        if (frecuencia.EsCero)
+        {
+            _registro.LogWarning("Se pide antena sin saber la frecuencia del equipo: no se puede mirar el plan de banda.");
+            return null;
+        }
+
+        return PlanDeBandaDeTransmision.MotivoParaNoTransmitir(frecuencia, modo, ancho, _bandplan, seguridad);
+    }
+
+    /// <summary>Baja la potencia al maximo de la banda, si hay uno, antes de subir el PTT.</summary>
+    /// <exception cref="TransmisionBloqueadaException">Si hay limite y no se puede aplicar o comprobar.</exception>
+    private async Task AplicarPotenciaMaximaAsync(CancellationToken ct)
+    {
+        var real = Real();
+        var clave = OpcionesDeSeguridadDeTx.ClaveDeBanda(real.Estado.Frecuencia);
+        if (!Seguridad.PotenciaMaximaPorBanda.TryGetValue(clave, out var maximo)) return;
+
+        if (real is not IEquipoAvanzado avanzado)
+        {
+            throw new TransmisionBloqueadaException(Textos.F("Servicios.Radio.Seguridad.PotenciaSinControl", clave, maximo));
+        }
+
+        double? actual;
+        try
+        {
+            actual = await avanzado.LeerMandoAsync(MandoDeEquipo.Potencia, ct).ConfigureAwait(false);
+            if (actual is > 0 && actual > maximo)
+            {
+                await avanzado.EscribirMandoAsync(MandoDeEquipo.Potencia, maximo, ct).ConfigureAwait(false);
+                _registro.LogInformation("Potencia bajada de {Antes} W a {Maximo} W (máximo de {Banda}).", actual, maximo, clave);
+                actual = await avanzado.LeerMandoAsync(MandoDeEquipo.Potencia, ct).ConfigureAwait(false);
+            }
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _registro.LogWarning(ex, "No se ha podido aplicar la potencia máxima de {Banda}.", clave);
+            throw new TransmisionBloqueadaException(Textos.F("Servicios.Radio.Seguridad.PotenciaSinControl", clave, maximo));
+        }
+
+        if (actual is not { } leida || leida > maximo)
+        {
+            throw new TransmisionBloqueadaException(Textos.F("Servicios.Radio.Seguridad.PotenciaSinControl", clave, maximo));
+        }
+    }
+
+    /// <summary>Lee la ROE mientras dure la transmision y corta si sube.</summary>
+    private async Task VigilarRoeAsync(Transmision transmision, IMedidorDeRoe medidor, CancellationToken ct)
+    {
+        var seguidas = 0;
+        try
+        {
+            while (SigueEnAntena(transmision))
+            {
+                var seguridad = Seguridad;
+                await Task.Delay(seguridad.PasoDeRoe, ct).ConfigureAwait(false);
+                if (!SigueEnAntena(transmision)) return;
+
+                LecturaDeRoe? lectura;
+                try
+                {
+                    using var tope = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                    tope.CancelAfter(TimeSpan.FromSeconds(1));
+                    lectura = await medidor.LeerRoeAsync(tope.Token).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+                {
+                    continue;
+                }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    _registro.LogDebug(ex, "No se ha podido leer la ROE.");
+                    continue;
+                }
+
+                if (lectura is null || !lectura.HayPotencia)
+                {
+                    // Sin potencia (CW con la llave arriba, pausa de la voz) la ROE no dice nada.
+                    seguidas = 0;
+                    continue;
+                }
+
+                if (lectura.AlarmaDelEquipo || lectura.Roe >= seguridad.RoeDeAntenaAbierta)
+                {
+                    await CortarPorRoeAsync(transmision, MotivoDeSuelta.AntenaAbierta, lectura).ConfigureAwait(false);
+                    return;
+                }
+
+                if (lectura.Roe > seguridad.RoeMaxima)
+                {
+                    if (++seguidas >= Math.Max(1, seguridad.LecturasSeguidas))
+                    {
+                        await CortarPorRoeAsync(transmision, MotivoDeSuelta.RoeAlta, lectura).ConfigureAwait(false);
+                        return;
+                    }
+                }
+                else
+                {
+                    seguidas = 0;
+                }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // La transmision termino.
+        }
+        catch (Exception ex)
+        {
+            _registro.LogError(ex, "La vigilancia de la ROE ha fallado.");
+        }
+    }
+
+    private async Task CortarPorRoeAsync(Transmision transmision, MotivoDeSuelta motivo, LecturaDeRoe lectura)
+    {
+        var roe = lectura.Roe is { } r ? r.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) : "?";
+        lock (_candado) _detalleDelCorte = roe;
+        _registro.LogError("Corte por ROE ({Motivo}): ROE {Roe}, alarma del equipo {Alarma}.", motivo, roe, lectura.AlarmaDelEquipo);
+        try
+        {
+            await SoltarNucleoAsync(transmision, motivo).ConfigureAwait(false);
+        }
+        catch (PttPegadoException pegado)
+        {
+            _registro.LogError(pegado, "PTT pegado al cortar por ROE.");
+        }
+    }
+
+    /// <summary>Pone el bloqueo tras un corte de seguridad. Se llama con el candado tomado.</summary>
+    private void BloquearSinCandado(MotivoDeSuelta motivo)
+    {
+        var texto = motivo switch
+        {
+            MotivoDeSuelta.TiempoAgotado => Textos.T("Servicios.Radio.Seguridad.Bloqueo.TiempoAgotado"),
+            MotivoDeSuelta.SinLatido => Textos.T("Servicios.Radio.Seguridad.Bloqueo.SinLatido"),
+            MotivoDeSuelta.RoeAlta => Textos.F("Servicios.Radio.Seguridad.Bloqueo.RoeAlta", _detalleDelCorte),
+            MotivoDeSuelta.AntenaAbierta => Textos.F("Servicios.Radio.Seguridad.Bloqueo.AntenaAbierta", _detalleDelCorte),
+            _ => null,
+        };
+        if (texto is null) return;
+        _motivoDeBloqueo = texto;
+        Volatile.Write(ref _marcaDelCorte, Stopwatch.GetTimestamp());
+    }
+
+    /// <summary>
+    /// Levanta el bloqueo si ya paso la pausa y todas las fuentes estan sueltas. Lo llama el hilo
+    /// vigilante cuando no hay nada en antena.
+    /// </summary>
+    private void IntentarLevantarElBloqueo()
+    {
+        lock (_candado)
+        {
+            if (_motivoDeBloqueo is null) return;
+        }
+
+        if (Stopwatch.GetElapsedTime(Volatile.Read(ref _marcaDelCorte)) < Seguridad.PausaTrasUnCorte) return;
+        if (FuentesPulsadas().Count > 0) return;
+
+        lock (_candado) _motivoDeBloqueo = null;
+        _registro.LogInformation("Bloqueo de transmisión levantado: todas las fuentes de PTT están sueltas.");
+        Avisar(BloqueoCambiado, (string?)null);
+    }
 
     /// <summary>
     /// Transmite ejecutando un bloque y garantiza la suelta tambien cuando el bloque falla o
@@ -386,6 +702,7 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
     private Task SoltarNucleoAsync(Transmision? quien, MotivoDeSuelta motivo)
     {
         Task tarea;
+        string? bloqueo = null;
 
         lock (_candado)
         {
@@ -402,6 +719,16 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
                 return Task.CompletedTask;
             }
 
+            // Un corte de seguridad con algo en antena deja la transmision bloqueada hasta que se
+            // suelten todas las fuentes (el fallo de Thetis #518: un PTT de fuera volvia a
+            // transmitir en bucle tras el corte).
+            if (_transmision is not null && motivo is MotivoDeSuelta.TiempoAgotado or MotivoDeSuelta.SinLatido
+                or MotivoDeSuelta.RoeAlta or MotivoDeSuelta.AntenaAbierta)
+            {
+                BloquearSinCandado(motivo);
+                bloqueo = _motivoDeBloqueo;
+            }
+
             var cts = _ctsTransmision;
             _ctsTransmision = null;
             _transmision = null;
@@ -411,6 +738,12 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
             // puede depender ni de quien la pide ni de que haya un hilo libre en el pool.
             tarea = EnHiloPropio("Suelta de PTT", () => SoltarConPlazo(motivo, cts));
             _sueltaEnCurso = tarea;
+        }
+
+        if (bloqueo is not null)
+        {
+            _registro.LogWarning("Transmisión bloqueada hasta soltar todas las fuentes de PTT: {Bloqueo}", bloqueo);
+            Avisar(BloqueoCambiado, bloqueo);
         }
 
         return tarea;
@@ -695,7 +1028,9 @@ public sealed class VigilantePtt : IVigilantePtt, IAsyncDisposable, IDisposable
                 var transmision = Volatile.Read(ref _transmision);
                 if (transmision is null || Volatile.Read(ref _estado) != EnAntenaEstado)
                 {
-                    // Nada en antena: a dormir hasta que alguien pida la antena.
+                    // Nada en antena: se mira si se puede levantar un bloqueo de seguridad y a
+                    // dormir hasta que alguien pida la antena.
+                    IntentarLevantarElBloqueo();
                     _hayQueMirar.Wait(SiestaSinTransmision);
                     _hayQueMirar.Reset();
                     continue;

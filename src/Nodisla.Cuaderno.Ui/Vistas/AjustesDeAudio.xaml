@@ -280,6 +280,15 @@
                         AutomationProperties.Name="{loc:Texto Ajustes.Cw.Senales}"
                         ToolTip="{loc:Texto Ajustes.Cw.Senales.Ayuda}" />
             </DockPanel>
+            <DockPanel Margin="0,4,0,0">
+                <TextBlock Text="{loc:Texto Ajustes.Cw.SinSenal}" Style="{StaticResource Rotulo}" />
+                <TextBlock DockPanel.Dock="Right" Width="64" Margin="8,0,0,0" VerticalAlignment="Center"
+                           Text="{Binding CwSinSenal, StringFormat={}{0} s}" />
+                <Slider Minimum="1" Maximum="60" SmallChange="1" LargeChange="5" TickFrequency="1" IsSnapToTickEnabled="True"
+                        Value="{Binding CwSinSenal}"
+                        AutomationProperties.Name="{loc:Texto Ajustes.Cw.SinSenal}"
+                        ToolTip="{loc:Texto Ajustes.Cw.SinSenal.Ayuda}" />
+            </DockPanel>
         </StackPanel>
 
         <!-- ══ Guardar ══ -->

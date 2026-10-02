@@ -18,7 +18,7 @@ namespace Nodisla.Cuaderno.Radio.Control.Rigctld;
 /// propia tarea, no hace cola detras de las ordenes del operador y se salta las pasadas en las
 /// que el canal esta ocupado, para no inundar el puerto serie.
 /// </remarks>
-public sealed class ControlRigctld : IControlEquipo, IPttDirecto, ISueltaDeEmergenciaPtt, IAvisaDePerdidaDeComunicacion
+public sealed class ControlRigctld : IControlEquipo, IPttDirecto, ISueltaDeEmergenciaPtt, IAvisaDePerdidaDeComunicacion, IManipuladorCw
 {
     private readonly OpcionesRigctld _opciones;
     private readonly ILogger _registro;
@@ -175,9 +175,81 @@ public sealed class ControlRigctld : IControlEquipo, IPttDirecto, ISueltaDeEmerg
             return;
         }
 
+        // Telegrafia en marcha: se para el manipulador antes de bajar el PTT.
+        if (!transmitir) await PararElManipuladorSiHaceFaltaAsync(ct).ConfigureAwait(false);
+
         await MandarAsync(transmitir ? "\\set_ptt 1" : "\\set_ptt 0", ct).ConfigureAwait(false);
         Volatile.Write(ref _pttPedido, transmitir);
         Actualizar(estado => estado with { Transmitiendo = transmitir });
+    }
+
+    // ── Telegrafia por el manipulador del equipo, a traves de Hamlib (IManipuladorCw) ────────
+    //
+    // «\send_morse TEXTO» (el resto de la linea es el texto), «\stop_morse» (Hamlib 4) y
+    // «\set_level KEYSPD n». Que el equipo de detras sepa hacerlo depende de su controlador en
+    // Hamlib: si no, rigctld contesta con un RPRT negativo y se dice.
+
+    /// <summary>Caracteres por orden <c>send_morse</c>: trozos cortos para que parar corte pronto.</summary>
+    public const int LetrasPorOrdenDeMorse = 30;
+
+    private int _manipulando;
+
+    /// <inheritdoc />
+    public string? PorQueNoManipula => !Estado.Conectado ? Textos.T("Servicios.Radio.Cw.Desconectado") : null;
+
+    /// <inheritdoc />
+    public int LetrasPorOrden => LetrasPorOrdenDeMorse;
+
+    /// <inheritdoc />
+    public int WpmMinima => 5;
+
+    /// <inheritdoc />
+    public int WpmMaxima => 60;
+
+    /// <inheritdoc />
+    public async Task PonerVelocidadAsync(int wpm, CancellationToken ct = default)
+    {
+        if (PorQueNoManipula is { } porque) throw new InvalidOperationException(porque);
+        await MandarAsync(string.Create(CultureInfo.InvariantCulture, $"\\set_level KEYSPD {Math.Clamp(wpm, WpmMinima, WpmMaxima)}"), ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task ManipularAsync(string texto, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(texto);
+        if (PorQueNoManipula is { } porque) throw new InvalidOperationException(porque);
+        if (!Volatile.Read(ref _pttPedido))
+        {
+            throw new InvalidOperationException(Textos.T("Servicios.Radio.Cw.SinAntena"));
+        }
+
+        // Lo mismo que entiende el FT-710: letras, cifras y poca puntuacion. Nada de saltos de
+        // linea, que cortarian la orden y mandarian el resto como otra.
+        var limpio = Ft710.OrdenesFt710.TextoParaElManipulador(texto);
+        if (limpio.Length == 0) return;
+        Volatile.Write(ref _manipulando, 1);
+        await MandarAsync("\\send_morse " + limpio, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task PararManipuladorAsync(CancellationToken ct = default)
+    {
+        if (_cliente.Conectado) await MandarAsync("\\stop_morse", ct).ConfigureAwait(false);
+        Volatile.Write(ref _manipulando, 0);
+    }
+
+    private async Task PararElManipuladorSiHaceFaltaAsync(CancellationToken ct)
+    {
+        if (Volatile.Read(ref _manipulando) == 0 || !_cliente.Conectado) return;
+        try
+        {
+            await MandarAsync("\\stop_morse", ct).ConfigureAwait(false);
+            Volatile.Write(ref _manipulando, 0);
+        }
+        catch (Exception ex)
+        {
+            _registro.LogWarning(ex, "rigctld no ha parado el manipulador (stop_morse) antes de bajar el PTT.");
+        }
     }
 
     /// <summary>

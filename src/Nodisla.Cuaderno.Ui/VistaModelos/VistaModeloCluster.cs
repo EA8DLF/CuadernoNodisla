@@ -51,6 +51,8 @@ public sealed partial class VistaModeloCluster : ObservableObject
     private readonly HashSet<string> _buscandoEnElCuaderno = new(StringComparer.OrdinalIgnoreCase);
     private readonly ITimer? _cadaCuartoDeHora;
     private Coordenada? _miPosicion;
+    private bool _envioElegidoAMano;
+    private bool _poniendoElNodoDeEnvio;
 
     /// <summary>Monta el panel sobre el seguimiento del cluster.</summary>
     /// <param name="cluster">Seguimiento que marca los spots con lo que sabe el cuaderno.</param>
@@ -88,16 +90,28 @@ public sealed partial class VistaModeloCluster : ObservableObject
         _cluster.AnuncioRecibido += AlLlegarUnAnuncio;
         _cluster.LineaRecibida += AlLlegarUnaLinea;
         _cluster.EstadoCambiado += AlCambiarElEstado;
+        _cluster.NodosCambiaron += AlCambiarLosNodos;
 
         Bandas = [Cualquiera, .. DominioBanda.Todas.Select(b => b.Nombre)];
         Modos = [Cualquiera, "CW", "SSB", "FT8", "FT4", "RTTY", "PSK31", "FM", "JS8", "SSTV"];
         Continentes = [Cualquiera, "EU", "NA", "SA", "AS", "AF", "OC", "AN"];
+        NodosParaFiltrar.Add(Cualquiera);
+        RefrescarNodos();
+
+        // Para capturar la ayuda sin tocar la ventana del operador: el estado de cada nodo
+        // desplegado y la columna de nodos de origen a la vista.
+        if (Environment.GetEnvironmentVariable("CUADERNO_NODOS_DEL_CLUSTER") is { Length: > 0 })
+        {
+            VerEstadoDeNodos = true;
+            VerNodosDeOrigen = true;
+        }
 
         // Estado, resumen y motivos de la columna de propagacion, en el idioma nuevo.
         Textos.AlCambiar(this, static vm =>
         {
             vm.OnPropertyChanged(string.Empty);
             vm.RecalcularPropagacion();
+            vm.RefrescarNodos();
         });
     }
 
@@ -124,6 +138,43 @@ public sealed partial class VistaModeloCluster : ObservableObject
 
     /// <summary>Nombre de la fuente de anuncios.</summary>
     public string Nombre => _cluster.Nombre;
+
+    /// <summary>Como esta cada nodo, para el desplegable de estado de la cabecera.</summary>
+    public ObservableCollection<EstadoDeNodoEnPantalla> EstadosDeNodos { get; } = [];
+
+    /// <summary>Nodos por los que se puede filtrar, con «(todas)» delante.</summary>
+    public ObservableCollection<string> NodosParaFiltrar { get; } = [];
+
+    /// <summary>Nodos a los que se puede mandar una orden desde la consola.</summary>
+    public ObservableCollection<EstadoDeNodoEnPantalla> NodosParaEnviar { get; } = [];
+
+    /// <summary>Hay mas de un nodo: se ensena el resumen y lo de cada uno.</summary>
+    public bool HayVariosNodos => EstadosDeNodos.Count > 1;
+
+    /// <summary>«3 nodos · 2 conectados».</summary>
+    public string ResumenDeNodos => Textos.F(
+        "Principal.Cluster.ResumenNodos",
+        EstadosDeNodos.Count,
+        EstadosDeNodos.Count(n => n.Estado == EstadoDeConexion.Conectado));
+
+    /// <summary>Esta abierto el desplegable con el estado de cada nodo.</summary>
+    [ObservableProperty]
+    private bool _verEstadoDeNodos;
+
+    /// <summary>Se ensena la columna con los nodos por los que llego cada anuncio.</summary>
+    [ObservableProperty]
+    private bool _verNodosDeOrigen;
+
+    /// <summary>Nodo por el que se filtra; «(todas)» para no filtrar.</summary>
+    [ObservableProperty]
+    private string _nodoFiltro = Cualquiera;
+
+    /// <summary>
+    /// Nodo al que van las ordenes de la consola. Solo a ese: un «DX» mandado a todos saldria
+    /// repetido en toda la red.
+    /// </summary>
+    [ObservableProperty]
+    private EstadoDeNodoEnPantalla? _nodoDeEnvio;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EstadoTexto))]
@@ -221,7 +272,16 @@ public sealed partial class VistaModeloCluster : ObservableObject
         try
         {
             Orden = string.Empty;
-            await _cluster.EnviarAsync(orden).ConfigureAwait(true);
+
+            // A un solo nodo, el elegido: nunca a todos.
+            if (_cluster.EsDeVariosNodos && NodoDeEnvio is { } nodo)
+            {
+                await _cluster.EnviarANodoAsync(nodo.Id, orden).ConfigureAwait(true);
+            }
+            else
+            {
+                await _cluster.EnviarAsync(orden).ConfigureAwait(true);
+            }
         }
         catch (Exception ex)
         {
@@ -242,7 +302,60 @@ public sealed partial class VistaModeloCluster : ObservableObject
     {
         OnPropertyChanged(nameof(Nombre));
         Estado = _cluster.Estado;
+        RefrescarNodos();
         AnadirALaConsola(Textos.F("Principal.Cluster.NodoCambiado", _cluster.Nombre));
+    }
+
+    /// <summary>Vuelve a leer como esta cada nodo.</summary>
+    public void RefrescarNodos()
+    {
+        var nodos = _cluster.Nodos;
+
+        // Las filas se actualizan en su sitio: rehacerlas cerraria el desplegable que el
+        // operador tenga abierto cada vez que llega un anuncio.
+        var mismos = EstadosDeNodos.Select(n => n.Id).SequenceEqual(nodos.Select(n => n.Id));
+        if (mismos)
+        {
+            for (var i = 0; i < nodos.Count; i++) EstadosDeNodos[i].Actualizar(nodos[i]);
+        }
+        else
+        {
+            EstadosDeNodos.Clear();
+            foreach (var nodo in nodos) EstadosDeNodos.Add(new EstadoDeNodoEnPantalla(nodo));
+        }
+
+        // El filtro por nodo: los nombres de ahora, sin perder el elegido si sigue estando.
+        var filtro = NodoFiltro;
+        var nombres = nodos.Select(n => n.Nombre).ToList();
+        if (!NodosParaFiltrar.Skip(1).SequenceEqual(nombres))
+        {
+            while (NodosParaFiltrar.Count > 1) NodosParaFiltrar.RemoveAt(1);
+            foreach (var nombre in nombres) NodosParaFiltrar.Add(nombre);
+        }
+        NodoFiltro = nombres.Contains(filtro) ? filtro : Cualquiera;
+
+        // A donde van las ordenes: se respeta el que eligio el operador mientras siga en la
+        // lista; si no ha elegido ninguno, el primero conectado.
+        var elegido = _envioElegidoAMano ? NodoDeEnvio?.Id : null;
+        if (!mismos)
+        {
+            NodosParaEnviar.Clear();
+            foreach (var nodo in EstadosDeNodos) NodosParaEnviar.Add(nodo);
+        }
+        _poniendoElNodoDeEnvio = true;
+        try
+        {
+            NodoDeEnvio = NodosParaEnviar.FirstOrDefault(n => n.Id == elegido)
+                ?? NodosParaEnviar.FirstOrDefault(n => n.Estado == EstadoDeConexion.Conectado)
+                ?? NodosParaEnviar.FirstOrDefault();
+        }
+        finally
+        {
+            _poniendoElNodoDeEnvio = false;
+        }
+
+        OnPropertyChanged(nameof(HayVariosNodos));
+        OnPropertyChanged(nameof(ResumenDeNodos));
     }
 
     /// <summary>Vacia la lista de anuncios y la consola.</summary>
@@ -265,6 +378,7 @@ public sealed partial class VistaModeloCluster : ObservableObject
         BandaFiltro = Cualquiera;
         ModoFiltro = Cualquiera;
         ContinenteFiltro = Cualquiera;
+        NodoFiltro = Cualquiera;
         SoloNuevos = false;
         SinEscuchaAutomatica = false;
         SoloConPropagacion = false;
@@ -306,6 +420,7 @@ public sealed partial class VistaModeloCluster : ObservableObject
         _cluster.AnuncioRecibido -= AlLlegarUnAnuncio;
         _cluster.LineaRecibida -= AlLlegarUnaLinea;
         _cluster.EstadoCambiado -= AlCambiarElEstado;
+        _cluster.NodosCambiaron -= AlCambiarLosNodos;
         if (_propagacion is not null) _propagacion.IndicesActualizados -= AlLlegarIndices;
         _cadaCuartoDeHora?.Dispose();
     }
@@ -321,6 +436,15 @@ public sealed partial class VistaModeloCluster : ObservableObject
 
     /// <inheritdoc cref="ObservableObject" />
     partial void OnSoloNuevosChanged(bool value) => RehacerLaLista();
+
+    /// <inheritdoc cref="ObservableObject" />
+    partial void OnNodoFiltroChanged(string value) => RehacerLaLista();
+
+    /// <inheritdoc cref="ObservableObject" />
+    partial void OnNodoDeEnvioChanged(EstadoDeNodoEnPantalla? value)
+    {
+        if (!_poniendoElNodoDeEnvio) _envioElegidoAMano = value is not null;
+    }
 
     /// <inheritdoc cref="ObservableObject" />
     partial void OnSinEscuchaAutomaticaChanged(bool value) => RehacerLaLista();
@@ -401,6 +525,8 @@ public sealed partial class VistaModeloCluster : ObservableObject
     private void AlCambiarElEstado(object? origen, EstadoDeConexion estado) =>
         Hilo.EnLaVentana(() => Estado = estado);
 
+    private void AlCambiarLosNodos(object? origen, EventArgs e) => Hilo.EnLaVentana(RefrescarNodos);
+
     private void AnadirALaConsola(string linea)
     {
         Consola.Add(linea);
@@ -422,7 +548,9 @@ public sealed partial class VistaModeloCluster : ObservableObject
     }
 
     private bool Pasa(FiltroDeSpots filtro, FilaDeSpot fila) =>
-        filtro.Admite(fila.Spot) && (!SoloConPropagacion || fila.ConPropagacion);
+        filtro.Admite(fila.Spot)
+        && (!SoloConPropagacion || fila.ConPropagacion)
+        && (NodoFiltro is null || NodoFiltro == Cualquiera || fila.LlegoPor(NodoFiltro));
 
     private void AlLlegarIndices(object? origen, IndicesSolares indices) =>
         Hilo.EnLaVentana(RecalcularPropagacion);

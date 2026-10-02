@@ -15,6 +15,23 @@ public sealed record OpcionesCluster
     /// <summary>Nombre del cluster, el que se ve en pantalla.</summary>
     public required string Nombre { get; init; }
 
+    /// <summary>
+    /// Identificador del nodo dentro de la lista, el mismo que en los ajustes. Vacio, el nombre.
+    /// </summary>
+    public string? Id { get; init; }
+
+    /// <summary>Identificador con el que se maneja el nodo: el <see cref="Id"/> o, si no hay, el nombre.</summary>
+    public string Clave => string.IsNullOrWhiteSpace(Id) ? Nombre : Id;
+
+    /// <summary>
+    /// Es una red de escucha automatica (Reverse Beacon Network): todo lo que trae se marca
+    /// como de maquina, aunque la linea no lo diga.
+    /// </summary>
+    public bool EsSkimmer { get; init; }
+
+    /// <summary>Se conecta al conectar el cluster. Uno inactivo se queda en la lista sin conectar.</summary>
+    public bool Activo { get; init; } = true;
+
     /// <summary>Maquina a la que conectarse.</summary>
     public required string Servidor { get; init; }
 
@@ -84,6 +101,30 @@ public sealed record OpcionesCluster
 
     /// <summary>Reconectar solo cuando se cae la conexion.</summary>
     public bool ReconectarSolo { get; init; } = true;
+
+    /// <summary>
+    /// Resume lo que obliga a reconectar si cambia: maquina, puerto, acceso, guion y tiempos.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="Activo"/> no entra: activar o desactivar un nodo no es motivo para tirar la
+    /// conexion de los demas ni la suya propia.
+    /// </remarks>
+    public string Firma => string.Join(
+        "\u001f",
+        Nombre,
+        Servidor,
+        Puerto,
+        IndicativoDeAcceso,
+        Contrasena ?? string.Empty,
+        string.Join("\u001e", GuionDeArranque),
+        EsSkimmer,
+        ReconectarSolo,
+        EsperaDeConexion.Ticks,
+        EsperaDelAviso.Ticks,
+        SilencioMaximo.Ticks,
+        EsperaPrimerReintento.Ticks,
+        EsperaMaximaReintento.Ticks,
+        FactorDeReintento);
 
     /// <summary>Indicativo completo con el que hay que identificarse, sufijo incluido.</summary>
     public string IndicativoDeAcceso =>

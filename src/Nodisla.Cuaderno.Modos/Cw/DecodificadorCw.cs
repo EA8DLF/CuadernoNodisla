@@ -39,6 +39,12 @@ public sealed record EstadoCw(
     double HzPorCasilla,
     double? TonoFijoHz)
 {
+    /// <summary>En automático, la principal está anclada a una señal (no busca otra).</summary>
+    public bool Anclado { get; init; }
+
+    /// <summary>Segundos que lleva la principal sin una marca.</summary>
+    public double SegundosSinSenal { get; init; }
+
     /// <summary>Sin audio todavía.</summary>
     public static EstadoCw Vacio { get; } = new([], [], 0, 1, null);
 
@@ -94,6 +100,8 @@ public sealed class DecodificadorCw
     private int _siguienteId;
     private double _silencioDelPrincipalParaSaltar;
     private EstadoCw _estado = EstadoCw.Vacio;
+    private double? _anclado;
+    private bool _buscarPendiente;
 
     /// <summary>Monta el decodificador.</summary>
     public DecodificadorCw(OpcionesCw? opciones = null) => _opciones = (opciones ?? new OpcionesCw()).Acotada();
@@ -136,6 +144,12 @@ public sealed class DecodificadorCw
             _tonoFijo = hz is { } h ? Math.Clamp(h, 100, 3000) : null;
             _tonoPendiente = true;
         }
+    }
+
+    /// <summary>En automático: suelta el tono anclado y vuelve a buscar la señal más fuerte.</summary>
+    public void Buscar()
+    {
+        lock (_cerrojo) _buscarPendiente = true;
     }
 
     /// <summary>Cambia las opciones (en el siguiente bloque).</summary>
@@ -200,6 +214,7 @@ public sealed class DecodificadorCw
             _buscador = new BuscadorDeTonos(_diezmador.FrecuenciaDeSalida);
             _canales.Clear();
             _principal = Nuevo(fijo ?? _opciones.TonoPorOmisionHz);
+            _anclado = null;
             _silencioDelPrincipalParaSaltar = 0;
             return;
         }
@@ -253,10 +268,30 @@ public sealed class DecodificadorCw
         }
         else
         {
+            bool buscar;
+            lock (_cerrojo)
+            {
+                buscar = _buscarPendiente;
+                _buscarPendiente = false;
+            }
+
+            // AUTO con enganche: en cuanto la principal escribe, se ancla a ese tono. Anclada no
+            // salta a otro pico aunque suba más, ni en las pausas ni en los bajones de QSB; solo
+            // vuelve a buscar tras SegundosSinSenalParaBuscar sin una marca, o si se pide.
+            if (buscar) principal.Soltar();
+            if (principal.Enganchado) _anclado = principal.TonoHz;
+            if (buscar || (_anclado is not null && !principal.Enganchado && principal.SinSenalMs > o.SegundosSinSenalParaBuscar * 1000))
+            {
+                _anclado = null;
+                _silencioDelPrincipalParaSaltar = 1;
+            }
+
             var cerca = MasCercano(picos, principal.TonoHz, tolerancia);
             if (cerca is { } p)
             {
-                principal.Afinar(principal.TonoHz + (0.25 * (p.Hz - principal.TonoHz)));
+                // Anclada solo se deja derivar un poco (±tolerancia del tono de enganche).
+                var nuevo = principal.TonoHz + (0.25 * (p.Hz - principal.TonoHz));
+                if (_anclado is not { } a || Math.Abs(nuevo - a) <= tolerancia) principal.Afinar(nuevo);
                 _silencioDelPrincipalParaSaltar = 0;
             }
             else if (!principal.Enganchado)
@@ -264,8 +299,8 @@ public sealed class DecodificadorCw
                 _silencioDelPrincipalParaSaltar += periodo;
             }
 
-            // Sin señal en su tono y sin escribir: al pico más fuerte.
-            if (!principal.Enganchado && picos.Count > 0
+            // Sin anclar, sin señal en su tono y sin escribir: al pico más fuerte.
+            if (_anclado is null && !principal.Enganchado && picos.Count > 0
                 && (cerca is null ? _silencioDelPrincipalParaSaltar > 0.5 : Math.Abs(picos[0].Hz - principal.TonoHz) > separacion && principal.SilencioMs > 1500))
             {
                 var mejor = picos[0];
@@ -321,7 +356,11 @@ public sealed class DecodificadorCw
             .Select(c => new CanalEnVivo(c.Id, c.TonoHz, c.Wpm, c.SeparacionDb, c.Confianza, c.Enganchado, c.Marcando, c == principal))
             .ToArray();
         var espectro = buscador.EspectroDb(Math.Max(100, o.BandaDesdeHz - 100), o.BandaHastaHz + 100, out var primera);
-        var estado = new EstadoCw(vivos, espectro, primera, buscador.HzPorCasilla, fijo);
+        var estado = new EstadoCw(vivos, espectro, primera, buscador.HzPorCasilla, fijo)
+        {
+            Anclado = fijo is null && _anclado is not null,
+            SegundosSinSenal = principal.SinSenalMs / 1000,
+        };
         lock (_cerrojo) _estado = estado;
     }
 

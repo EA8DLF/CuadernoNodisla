@@ -283,6 +283,7 @@ public static class FusionDeQso
         Texto(c, "NOTES", d, o, q => q.Notas, (q, v) => q.Notas = v);
         Texto(c, "QSLMSG", d, o, q => q.QslMsg, (q, v) => q.QslMsg = v);
         Texto(c, "Origen", d, o, q => q.Origen, (q, v) => q.Origen = v);
+        Texto(c, "AudioAdjunto", d, o, q => q.AudioAdjunto, (q, v) => q.AudioAdjunto = v);
     }
 
     // ── Colecciones ──────────────────────────────────────────────────────────

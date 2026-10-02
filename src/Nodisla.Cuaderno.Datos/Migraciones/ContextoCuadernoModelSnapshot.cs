@@ -333,6 +333,10 @@ namespace Nodisla.Cuaderno.Datos.Migraciones
                         .HasColumnType("REAL")
                         .HasColumnName("ant_el");
 
+                    b.Property<string>("AudioAdjunto")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("audio_adjunto");
+
                     b.Property<string>("Band")
                         .IsRequired()
                         .HasColumnType("TEXT")

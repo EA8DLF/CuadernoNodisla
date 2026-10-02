@@ -80,6 +80,38 @@ public sealed class FilaDeSpot : ObservableObject
         Decibelios = spot.Decibelios is { } db
             ? db.ToString("+00;-00;+00", CultureInfo.InvariantCulture)
             : string.Empty;
+
+        Nodos = string.Join(", ", anuncio.Nodos);
+        NodosCortos = string.Join(" ", anuncio.Nodos.Select(NombreCorto));
+    }
+
+    /// <summary>Nodos por los que llego el anuncio, con su nombre entero.</summary>
+    public string Nodos { get; }
+
+    /// <summary>Nodos por los que llego, con el nombre corto: «EA4RCH DXFun RBN».</summary>
+    public string NodosCortos { get; }
+
+    /// <summary>Por cuantos nodos llego.</summary>
+    public int NumeroDeNodos => Anuncio.NumeroDeNodos;
+
+    /// <summary>El anuncio llego por ese nodo.</summary>
+    /// <param name="nodo">Nombre del nodo.</param>
+    /// <returns>Cierto si llego por el.</returns>
+    public bool LlegoPor(string nodo) =>
+        Anuncio.Nodos.Any(n => string.Equals(n, nodo, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    /// Nombre corto de un nodo para la columna: lo de antes del primer parentesis o punto
+    /// medio. «DXFun (internacional)» queda en «DXFun» y «RBN · CW y RTTY» en «RBN».
+    /// </summary>
+    /// <param name="nombre">Nombre del nodo.</param>
+    /// <returns>El nombre corto.</returns>
+    public static string NombreCorto(string nombre)
+    {
+        ArgumentNullException.ThrowIfNull(nombre);
+        var corte = nombre.IndexOfAny(['(', '·']);
+        var corto = (corte > 0 ? nombre[..corte] : nombre).Trim();
+        return corto.Length > 0 ? corto : nombre.Trim();
     }
 
     /// <summary>Anuncio del que sale la fila, con sus repeticiones juntas.</summary>
@@ -175,6 +207,7 @@ public sealed class FilaDeSpot : ObservableObject
             if (PalabrasPorMinuto.Length > 0) partes.Add(PalabrasPorMinuto);
             if (QuienesLoOyen.Length > 0) partes.Add(QuienesLoOyen);
             if (DesdeDonde.Length > 0) partes.Add(Textos.F("Principal.Spot.Desde", DesdeDonde));
+            if (Anuncio.NumeroDeNodos > 1) partes.Add(Textos.F("Principal.Spot.PorNodos", Anuncio.NumeroDeNodos, Nodos));
             if (Novedad.Length > 0) partes.Add(Novedad);
             if (Comentario.Length > 0) partes.Add($"«{Comentario}»");
             partes.Add(EsDeEscuchaAutomatica

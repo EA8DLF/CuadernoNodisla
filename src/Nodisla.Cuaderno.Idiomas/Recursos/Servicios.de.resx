@@ -213,6 +213,12 @@
   <data name="Servicios.Audio.Hora.WindowsNoDeja" xml:space="preserve">
     <value>Windows hat das Ändern der Systemzeit nicht erlaubt. Sie können es von Hand tun oder die Windows-Zeitsynchronisierung mit {0} einschalten.</value>
   </data>
+  <data name="Servicios.Audio.MensajeLargo" xml:space="preserve">
+    <value>Die Nachricht dauert {0} s, die Sendegrenze liegt bei {1} s: sie wird nicht gesendet.</value>
+  </data>
+  <data name="Servicios.Audio.MensajeVacio" xml:space="preserve">
+    <value>Die Sprachnachricht ist leer.</value>
+  </data>
   <data name="Servicios.Audio.OtraTransmision" xml:space="preserve">
     <value>Es läuft bereits eine andere Sendung (das Digitalmodem?). Beenden Sie diese, bevor Sie sprechen.</value>
   </data>
@@ -251,6 +257,9 @@
   </data>
   <data name="Servicios.Audio.SinSalidaAbierta" xml:space="preserve">
     <value>Kein Ausgabegerät geöffnet: Wiedergabe nicht möglich.</value>
+  </data>
+  <data name="Servicios.Audio.SinVoiceKeyer" xml:space="preserve">
+    <value>Der Sendeweg nimmt keine aufgenommenen Nachrichten an: es wird nicht gesendet.</value>
   </data>
   <data name="Servicios.Bandplan.FueraDelPlan" xml:space="preserve">
     <value>{0} liegt außerhalb des Bandplans von {1}.</value>
@@ -318,26 +327,59 @@
   <data name="Servicios.Cluster.IndicativoRechazadoExcepcion" xml:space="preserve">
     <value>Rufzeichen vom Cluster abgelehnt.</value>
   </data>
-  <data name="Servicios.Cluster.Nodo.Dl9gtb" xml:space="preserve">
+  <data name="Servicios.Cluster.NingunNodoConectado" xml:space="preserve">
+    <value>Kein Knoten ist verbunden: Der Befehl wurde nicht gesendet.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Ae5e" xml:space="preserve">
+    <value>US-CC-Cluster: unterstützt sehr feine Filterbefehle (set/filter).</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Db0sue" xml:space="preserve">
     <value>Deutscher Knoten mit vielen Spots aus Europa.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Dl9gtb" xml:space="preserve">
+    <value>Deutscher Knoten mit vielen Spots aus Europa. Am 2.10.2026 antwortete er nicht: ungeprüft.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Dxfun" xml:space="preserve">
     <value>Sehr belebter internationaler Knoten mit viel DX-Verkehr.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Ea4rch" xml:space="preserve">
-    <value>Spanischer Knoten des Radio Club Henares. Er ist voreingestellt.</value>
+    <value>Spanischer Knoten des Radio Club Henares. Am 2.10.2026 ließ sich sein Name im DNS nicht auflösen: ungeprüft.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Ea7urc" xml:space="preserve">
-    <value>Ein weiterer spanischer Knoten, falls der erste nicht antwortet.</value>
+    <value>Ein weiterer spanischer Knoten. Am 2.10.2026 ließ sich sein Name im DNS nicht auflösen: ungeprüft.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Gb7tlh" xml:space="preserve">
+    <value>Britischer DXSpider-Knoten: gb7djk.dxcluster.net meldet sich als GB7TLH.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Hamqth" xml:space="preserve">
+    <value>Der Knoten von HamQTH mit viel internationalem Verkehr.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.K3lr" xml:space="preserve">
+    <value>US-Knoten von K3LR aus dem Contest-Netz.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Nc7j" xml:space="preserve">
     <value>Amerikanischer Knoten, gut um zu sehen, was jenseits des großen Teichs zu hören ist.</value>
   </data>
+  <data name="Servicios.Cluster.Nodo.On0dxk" xml:space="preserve">
+    <value>Altgedienter belgischer Knoten (seit 1991), gute Abdeckung Europas.</value>
+  </data>
   <data name="Servicios.Cluster.Nodo.Rbn" xml:space="preserve">
-    <value>Das sind keine Menschen, sondern automatische Skimmer-Stationen. Hohes Aufkommen; Filtern empfohlen.</value>
+    <value>Reverse Beacon Network, CW und RTTY. Keine Menschen, sondern automatische Empfangsstationen. Viel Volumen; ihre Spots werden als „Skimmer“ markiert und lassen sich ausblenden.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.RbnDigital" xml:space="preserve">
+    <value>Reverse Beacon Network, FT8 und FT4: automatischer Empfang digitaler Betriebsarten. Sehr viel Volumen; die Spots werden als „Skimmer“ markiert.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Ve7cc" xml:space="preserve">
     <value>CC Cluster: unterstützt sehr feine Filterbefehle (set/filter).</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.W1nr" xml:space="preserve">
+    <value>DXSpider-Knoten des Yankee Clipper Contest Club.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.W3lpl" xml:space="preserve">
+    <value>US-Contest-Knoten, sehr schnell bei nordamerikanischen Spots.</value>
+  </data>
+  <data name="Servicios.Cluster.NodoDesconocido" xml:space="preserve">
+    <value>Es gibt keinen Knoten „{0}“ in der Liste.</value>
   </data>
   <data name="Servicios.Cluster.OrdenSinConexion" xml:space="preserve">
     <value>Keine Verbindung zu {0}: Der Befehl wurde nicht gesendet.</value>
@@ -345,8 +387,14 @@
   <data name="Servicios.Cluster.Reintentando" xml:space="preserve">
     <value>* {0}: neuer Versuch in {1:0} s.</value>
   </data>
+  <data name="Servicios.Cluster.SinComprobar" xml:space="preserve">
+    <value>ungeprüft</value>
+  </data>
   <data name="Servicios.Cluster.SinDatos" xml:space="preserve">
     <value>* {0}: keine Daten, die Verbindung gilt als verloren.</value>
+  </data>
+  <data name="Servicios.Cluster.VariosNodos" xml:space="preserve">
+    <value>DX-Cluster</value>
   </data>
   <data name="Servicios.Concursos.Cabrillo.ConcursoCaracteres" xml:space="preserve">
     <value>CONTEST erlaubt nur Buchstaben, Ziffern und Bindestriche: „{0}“.</value>
@@ -1260,6 +1308,21 @@ Herzlichen Glückwunsch und 73,
   <data name="Servicios.Radio.CoberturaGeneralLarga" xml:space="preserve">
     <value>Allgemeinempfang (Empfang außerhalb der Bänder)</value>
   </data>
+  <data name="Servicios.Radio.Cw.Desconectado" xml:space="preserve">
+    <value>Das Funkgerät ist nicht verbunden: CW kann nicht gesendet werden.</value>
+  </data>
+  <data name="Servicios.Radio.Cw.ModeloSinManipulador" xml:space="preserve">
+    <value>Das {0} sendet in diesem Programm kein CW per CAT: sein Keyer-Befehl wurde im Handbuch nicht geprüft.</value>
+  </data>
+  <data name="Servicios.Radio.Cw.SinAntena" xml:space="preserve">
+    <value>Zum Tasten muss die Antenne beim PTT-Wächter angefordert werden.</value>
+  </data>
+  <data name="Servicios.Radio.Cw.SinManipuladorPorCat" xml:space="preserve">
+    <value>Dieses Gerät kann kein CW per CAT senden (FT-710, ICOM mit CI-V oder Hamlib/rigctld schon).</value>
+  </data>
+  <data name="Servicios.Radio.Cw.YaEnviando" xml:space="preserve">
+    <value>Es läuft bereits eine CW-Aussendung.</value>
+  </data>
   <data name="Servicios.Radio.EncendidoSinRespuesta" xml:space="preserve">
     <value>Der Einschaltbefehl wurde gesendet, aber das Funkgerät hat innerhalb von 20 Sekunden nicht geantwortet.</value>
   </data>
@@ -1407,6 +1470,27 @@ Herzlichen Glückwunsch und 73,
   <data name="Servicios.Radio.RigctldSinConexion" xml:space="preserve">
     <value>Keine offene Verbindung zu rigctld.</value>
   </data>
+  <data name="Servicios.Radio.Seguridad.Bloqueo.AntenaAbierta" xml:space="preserve">
+    <value>Abgebrochen: Antenne offen oder kurzgeschlossen, oder SWR-Alarm des Geräts (SWR {0}). Kein Senden, bis alle PTT-Quellen gelöst sind.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.Bloqueo.RoeAlta" xml:space="preserve">
+    <value>Wegen hohem SWR ({0}) abgebrochen. Antenne und Tuner prüfen. Kein Senden, bis alle PTT-Quellen gelöst sind.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.Bloqueo.SinLatido" xml:space="preserve">
+    <value>Abgebrochen, weil der Sender nicht mehr antwortete. Kein Senden, bis alle PTT-Quellen gelöst sind.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.Bloqueo.TiempoAgotado" xml:space="preserve">
+    <value>Durch die maximale Sendezeit abgebrochen. Kein Senden, bis alle PTT-Quellen gelöst sind (MOX, Modem, Fonie, CW).</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.FueraDelPlan" xml:space="preserve">
+    <value>Senden gesperrt: auf {0} MHz ({3}) belegt die Aussendung {1} bis {2} MHz und verlässt den Bandplan.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.PotenciaSinControl" xml:space="preserve">
+    <value>Senden gesperrt: die Höchstleistung für {0} ist {1} W und konnte am Gerät weder gesetzt noch geprüft werden.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.SoloLaFuente" xml:space="preserve">
+    <value>Nur die Quelle, die PTT gesetzt hat, darf es normal lösen; zum Abbrechen die Notfreigabe benutzen.</value>
+  </data>
   <data name="Servicios.Radio.SinControl" xml:space="preserve">
     <value>Für {0} gibt es keine Steuerung.</value>
   </data>
@@ -1535,6 +1619,54 @@ Herzlichen Glückwunsch und 73,
   </data>
   <data name="Servicios.Satelites.UnSatelite" xml:space="preserve">
     <value>1 Satellit</value>
+  </data>
+  <data name="Servicios.Servidor.Concedida" xml:space="preserve">
+    <value>Erteilt</value>
+  </data>
+  <data name="Servicios.Servidor.ControlApagado" xml:space="preserve">
+    <value>Externe Programme dürfen das Funkgerät nur lesen, nicht ändern.</value>
+  </data>
+  <data name="Servicios.Servidor.EnElAire" xml:space="preserve">
+    <value>Während des Sendens wird das Funkgerät nicht verändert.</value>
+  </data>
+  <data name="Servicios.Servidor.Fuente" xml:space="preserve">
+    <value>Externe Programme</value>
+  </data>
+  <data name="Servicios.Servidor.NoDisponible" xml:space="preserve">
+    <value>Dieses Funkgerät unterstützt das nicht.</value>
+  </data>
+  <data name="Servicios.Servidor.OtraFuente" xml:space="preserve">
+    <value>„{0}“ sendet bereits: die PTT gehört ihm.</value>
+  </data>
+  <data name="Servicios.Servidor.PestilloCerrado" xml:space="preserve">
+    <value>Die Sperre „Senden in dieser Sitzung erlauben“ ist geschlossen.</value>
+  </data>
+  <data name="Servicios.Servidor.PuertoOcupado" xml:space="preserve">
+    <value>Port {0} konnte nicht geöffnet werden: {1}</value>
+  </data>
+  <data name="Servicios.Servidor.SinEquipo" xml:space="preserve">
+    <value>Kein Funkgerät verbunden.</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Desconexion" xml:space="preserve">
+    <value>das Programm hat die Verbindung getrennt</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Expulsado" xml:space="preserve">
+    <value>in den Einstellungen getrennt</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Normal" xml:space="preserve">
+    <value>vom Programm losgelassen</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Permiso" xml:space="preserve">
+    <value>Sperre geschlossen oder externes Senden ausgeschaltet</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Silencio" xml:space="preserve">
+    <value>das Programm antwortet nicht mehr</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Vigilante" xml:space="preserve">
+    <value>vom PTT-Wächter abgebrochen</value>
+  </data>
+  <data name="Servicios.Servidor.TxApagada" xml:space="preserve">
+    <value>Senden für externe Programme ist in den Einstellungen ausgeschaltet.</value>
   </data>
   <data name="Servicios.SinContrasena" xml:space="preserve">
     <value>Es ist kein {0}-Passwort gespeichert. Richten Sie es unter Einstellungen › Konten und Dienste ein.</value>

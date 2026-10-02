@@ -61,6 +61,7 @@ public static class PerfilesYaesu
         PosicionDeSintoniaEnRi = 7,
         CodecDelFt710 = true,
         AnalizadorFt4222 = true,
+        ManipulaPorMemoriaDeTexto = true,
     };
 
     /// <summary>FTDX10 (ID0761).</summary>

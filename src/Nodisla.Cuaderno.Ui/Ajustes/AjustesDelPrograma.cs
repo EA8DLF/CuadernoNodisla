@@ -128,38 +128,112 @@ public sealed class AjustesDeEquipo
 }
 
 /// <summary>
-/// Como se entra al cluster de DX.
+/// Un nodo de cluster de la lista: a que maquina se entra y como.
 /// </summary>
 /// <remarks>
-/// <b>Aqui no hay contrasena, y no es un olvido.</b> La contrasena del nodo va al almacen
-/// cifrado con la proteccion de datos de la cuenta de Windows, con la clave
-/// <see cref="ClavesDeCredencial.ClusterContrasena"/>. Este fichero es texto plano en la
-/// carpeta del usuario: lo que se escriba aqui lo lee cualquiera que abra el bloc de notas.
+/// La contrasena, si el nodo la pide, no esta aqui: va al almacen cifrado con la clave que
+/// da <see cref="ClaveDeContrasena"/>.
 /// </remarks>
-public sealed class AjustesDeCluster
+public sealed class AjustesDeNodoDeCluster
 {
-    /// <summary>Nombre del nodo, el que se ve en pantalla.</summary>
-    public string Nombre { get; set; } = "Cluster de DX";
+    /// <summary>Identificador del nodo. No cambia aunque se cambie el nombre o el servidor.</summary>
+    public string Id { get; set; } = NuevoId();
+
+    /// <summary>Nombre del nodo, el que se ve en pantalla y en la columna de origen.</summary>
+    public string Nombre { get; set; } = string.Empty;
 
     /// <summary>Maquina a la que conectarse.</summary>
-    public string Servidor { get; set; } = "cluster.ea4rch.es";
+    public string Servidor { get; set; } = string.Empty;
 
     /// <summary>Puerto de Telnet.</summary>
     public int Puerto { get; set; } = 7300;
 
+    /// <summary>Se conecta al conectar el cluster.</summary>
+    public bool Activo { get; set; } = true;
+
+    /// <summary>Red de escucha automatica (RBN): todo lo que trae se marca como «skimmer».</summary>
+    public bool EsSkimmer { get; set; }
+
+    /// <summary>Indicativo propio de este nodo. Vacio, el comun de todos los nodos.</summary>
+    public string? Indicativo { get; set; }
+
+    /// <summary>Sufijo propio de este nodo (<c>2</c> se manda como <c>EA8DLF-2</c>). Vacio, el comun.</summary>
+    public string? Sufijo { get; set; }
+
+    /// <summary>Ordenes que se mandan al conectar: los <c>set/</c> y <c>filter</c> de este nodo.</summary>
+    public IList<string> GuionDeArranque { get; set; } = [.. OpcionesCluster.GuionPredeterminado];
+
+    /// <summary>Volver a conectar solo cuando se cae la conexion, con espera creciente.</summary>
+    public bool ReconectarSolo { get; set; } = true;
+
+    /// <summary>Clave de la contrasena de este nodo en el almacen cifrado.</summary>
+    [JsonIgnore]
+    public string ClaveDeContrasena => ClavesDeCredencial.ContrasenaDeNodoDeCluster(Id);
+
+    /// <summary>Un identificador nuevo, corto y que no se repite.</summary>
+    /// <returns>Ocho cifras hexadecimales.</returns>
+    public static string NuevoId() => Guid.NewGuid().ToString("N")[..8];
+
+    /// <summary>Copia del nodo, para editar sin tocar el guardado.</summary>
+    /// <returns>Otro objeto con los mismos datos.</returns>
+    public AjustesDeNodoDeCluster Copiar() => new()
+    {
+        Id = Id,
+        Nombre = Nombre,
+        Servidor = Servidor,
+        Puerto = Puerto,
+        Activo = Activo,
+        EsSkimmer = EsSkimmer,
+        Indicativo = Indicativo,
+        Sufijo = Sufijo,
+        GuionDeArranque = [.. GuionDeArranque],
+        ReconectarSolo = ReconectarSolo,
+    };
+}
+
+/// <summary>
+/// Como se entra al cluster de DX: la lista de nodos y lo que comparten.
+/// </summary>
+/// <remarks>
+/// <para>
+/// <b>Aqui no hay contrasenas, y no es un olvido.</b> Cada una va al almacen cifrado con la
+/// proteccion de datos de la cuenta de Windows (ver
+/// <see cref="AjustesDeNodoDeCluster.ClaveDeContrasena"/>). Este fichero es texto plano en la
+/// carpeta del usuario: lo que se escriba aqui lo lee cualquiera que abra el bloc de notas.
+/// </para>
+/// <para>
+/// <b>Migracion.</b> Antes habia un solo nodo, con su nombre, servidor, puerto, guion y
+/// reconexion sueltos en este mismo objeto. Un fichero de entonces se lee igual: ese nodo pasa
+/// a ser el primero de la lista, con el identificador
+/// <see cref="ClavesDeCredencial.NodoDeClusterPrincipal"/> para que su contrasena guardada
+/// siga valiendo, y los campos sueltos dejan de escribirse.
+/// </para>
+/// </remarks>
+public sealed class AjustesDeCluster
+{
+    /// <summary>Nodo con el que se arranca la primera vez.</summary>
+    public const string ServidorDeFabrica = "cluster.ea4rch.es";
+
+    private List<AjustesDeNodoDeCluster>? _nodos;
+
     /// <summary>
-    /// Indicativo con el que se accede. Vacio quiere decir «el del perfil de estacion activo».
+    /// Nodos a los que se conecta, en el orden en que se ensenan. El primero conectado es el
+    /// que recibe las ordenes si no se elige otro.
+    /// </summary>
+    public List<AjustesDeNodoDeCluster> Nodos
+    {
+        get => _nodos ??= Migrados();
+        set => _nodos = value;
+    }
+
+    /// <summary>
+    /// Indicativo con el que se accede a todos los nodos que no digan otro. Vacio quiere
+    /// decir «el del perfil de estacion activo».
     /// </summary>
     public string? Indicativo { get; set; }
 
-    /// <summary>Sufijo del indicativo, para tener varias sesiones abiertas: <c>1</c>, <c>2</c>.</summary>
+    /// <summary>Sufijo comun del indicativo, para tener varias sesiones abiertas: <c>1</c>, <c>2</c>.</summary>
     public string? Sufijo { get; set; }
-
-    /// <summary>Ordenes que se mandan al conectar.</summary>
-    public IList<string> GuionDeArranque { get; set; } = [.. OpcionesCluster.GuionPredeterminado];
-
-    /// <summary>Volver a conectar solo cuando se cae la conexion.</summary>
-    public bool ReconectarSolo { get; set; } = true;
 
     /// <summary>Lo que se espera a que el socket abra, en segundos.</summary>
     public int EsperaDeConexionSegundos { get; set; } = 20;
@@ -173,30 +247,134 @@ public sealed class AjustesDeCluster
     /// <summary>Tiempo sin recibir nada tras el cual se da la conexion por muerta, en minutos.</summary>
     public int SilencioMaximoMinutos { get; set; } = 15;
 
-    /// <summary>Pasa estos ajustes a lo que entiende la integracion del cluster.</summary>
-    /// <param name="indicativo">
-    /// Indicativo con el que se entra. Se pasa de fuera porque sale del perfil de estacion
-    /// activo, que este fichero no conoce.
+    /// <summary>
+    /// Diferencia de frecuencia, en kilohercios, por debajo de la cual dos anuncios de la
+    /// misma estacion son el mismo.
+    /// </summary>
+    public decimal ToleranciaDeRepetidosKhz { get; set; } = 1.0m;
+
+    /// <summary>Minutos durante los que un anuncio repetido se junta con el anterior.</summary>
+    public int VentanaDeRepetidosMinutos { get; set; } = 10;
+
+    // ── Lo de antes de tener varios nodos: se lee para migrar y no se vuelve a escribir ──
+
+    /// <summary>Nombre del nodo unico de antes. Solo para migrar.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Nombre { get; set; }
+
+    /// <summary>Servidor del nodo unico de antes. Solo para migrar.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Servidor { get; set; }
+
+    /// <summary>Puerto del nodo unico de antes. Solo para migrar.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? Puerto { get; set; }
+
+    /// <summary>Guion del nodo unico de antes. Solo para migrar.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IList<string>? GuionDeArranque { get; set; }
+
+    /// <summary>Reconexion del nodo unico de antes. Solo para migrar.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public bool? ReconectarSolo { get; set; }
+
+    /// <summary>Tolerancia de repetidos ya acotada a algo razonable.</summary>
+    [JsonIgnore]
+    public decimal ToleranciaAcotada => Math.Clamp(ToleranciaDeRepetidosKhz, 0.1m, 10m);
+
+    /// <summary>Ventana de repetidos ya acotada a algo razonable.</summary>
+    [JsonIgnore]
+    public TimeSpan VentanaAcotada => TimeSpan.FromMinutes(Math.Clamp(VentanaDeRepetidosMinutos, 1, 60));
+
+    /// <summary>Pasa lo de antes a la lista de nodos, si no se habia hecho ya.</summary>
+    /// <remarks>
+    /// Si el fichero traia la lista nueva <b>y</b> los campos de antes (editado a mano, o una
+    /// version que escribio los dos), manda la lista y lo de antes se tira.
+    /// </remarks>
+    public void Migrar()
+    {
+        _ = Nodos;
+        LimpiarLoDeAntes();
+    }
+
+    /// <summary>
+    /// Pasa un nodo a lo que entiende la integracion del cluster.
+    /// </summary>
+    /// <param name="nodo">Nodo de la lista.</param>
+    /// <param name="indicativoComun">
+    /// Indicativo comun ya resuelto (el escrito o el del perfil activo). Se usa si el nodo no
+    /// dice otro.
     /// </param>
     /// <param name="contrasena">Contrasena sacada del almacen cifrado, o nula si no hay.</param>
-    /// <returns>Las opciones del cluster.</returns>
-    public OpcionesCluster AOpcionesDeCluster(Indicativo indicativo, string? contrasena) => new()
+    /// <returns>Las opciones del nodo.</returns>
+    public OpcionesCluster AOpcionesDeNodo(AjustesDeNodoDeCluster nodo, Indicativo indicativoComun, string? contrasena)
     {
-        Nombre = string.IsNullOrWhiteSpace(Nombre) ? Servidor : Nombre,
-        Servidor = Servidor,
-        Puerto = Puerto,
-        Indicativo = indicativo,
-        Sufijo = string.IsNullOrWhiteSpace(Sufijo) ? null : Sufijo.Trim().TrimStart('-'),
-        Contrasena = string.IsNullOrWhiteSpace(contrasena) ? null : contrasena,
-        GuionDeArranque = GuionDeArranque.Count > 0
-            ? [.. GuionDeArranque]
-            : OpcionesCluster.GuionPredeterminado,
-        ReconectarSolo = ReconectarSolo,
-        EsperaDeConexion = TimeSpan.FromSeconds(Math.Max(1, EsperaDeConexionSegundos)),
-        EsperaPrimerReintento = TimeSpan.FromSeconds(Math.Max(1, PrimerReintentoSegundos)),
-        EsperaMaximaReintento = TimeSpan.FromSeconds(Math.Max(5, ReintentoMaximoSegundos)),
-        SilencioMaximo = TimeSpan.FromMinutes(Math.Max(1, SilencioMaximoMinutos)),
-    };
+        ArgumentNullException.ThrowIfNull(nodo);
+
+        var indicativo = !string.IsNullOrWhiteSpace(nodo.Indicativo)
+            && Dominio.Valores.Indicativo.TryParse(nodo.Indicativo.Trim(), out var propio)
+                ? propio
+                : indicativoComun;
+        var sufijo = string.IsNullOrWhiteSpace(nodo.Sufijo) ? Sufijo : nodo.Sufijo;
+
+        return new OpcionesCluster
+        {
+            Id = nodo.Id,
+            Nombre = string.IsNullOrWhiteSpace(nodo.Nombre) ? nodo.Servidor.Trim() : nodo.Nombre.Trim(),
+            Servidor = nodo.Servidor.Trim(),
+            Puerto = nodo.Puerto,
+            Activo = nodo.Activo,
+            EsSkimmer = nodo.EsSkimmer,
+            Indicativo = indicativo,
+            Sufijo = string.IsNullOrWhiteSpace(sufijo) ? null : sufijo.Trim().TrimStart('-'),
+            Contrasena = string.IsNullOrWhiteSpace(contrasena) ? null : contrasena,
+            GuionDeArranque = nodo.GuionDeArranque.Count > 0
+                ? [.. nodo.GuionDeArranque]
+                : OpcionesCluster.GuionPredeterminado,
+            ReconectarSolo = nodo.ReconectarSolo,
+            EsperaDeConexion = TimeSpan.FromSeconds(Math.Max(1, EsperaDeConexionSegundos)),
+            EsperaPrimerReintento = TimeSpan.FromSeconds(Math.Max(1, PrimerReintentoSegundos)),
+            EsperaMaximaReintento = TimeSpan.FromSeconds(Math.Max(5, ReintentoMaximoSegundos)),
+            SilencioMaximo = TimeSpan.FromMinutes(Math.Max(1, SilencioMaximoMinutos)),
+        };
+    }
+
+    /// <summary>
+    /// Saca la lista de nodos de lo que hubiera de antes, o la de fabrica si no habia nada.
+    /// </summary>
+    private List<AjustesDeNodoDeCluster> Migrados()
+    {
+        var servidor = string.IsNullOrWhiteSpace(Servidor) ? ServidorDeFabrica : Servidor.Trim();
+        var puerto = Puerto is > 0 and <= 65535 ? Puerto.Value : 7300;
+        var conocido = NodosConocidos.Buscar(servidor, puerto);
+        var nombre = !string.IsNullOrWhiteSpace(Nombre) ? Nombre.Trim() : conocido?.Nombre ?? servidor;
+
+        var principal = new AjustesDeNodoDeCluster
+        {
+            Id = ClavesDeCredencial.NodoDeClusterPrincipal,
+            Nombre = nombre,
+            Servidor = servidor,
+            Puerto = puerto,
+            Activo = true,
+            EsSkimmer = conocido?.EsSkimmer ?? false,
+            GuionDeArranque = GuionDeArranque is { Count: > 0 } guion
+                ? [.. guion]
+                : [.. OpcionesCluster.GuionPredeterminado],
+            ReconectarSolo = ReconectarSolo ?? true,
+        };
+
+        LimpiarLoDeAntes();
+        return [principal];
+    }
+
+    private void LimpiarLoDeAntes()
+    {
+        Nombre = null;
+        Servidor = null;
+        Puerto = null;
+        GuionDeArranque = null;
+        ReconectarSolo = null;
+    }
 }
 
 
@@ -500,6 +678,9 @@ public sealed class AjustesDelPrograma
     /// <summary>El decodificador de telegrafía.</summary>
     public AjustesDeCw Cw { get; set; } = new();
 
+    /// <summary>El analizador de la propia radio: spots encima, clic, suelo de ruido y colores.</summary>
+    public AjustesDelAnalizador Analizador { get; set; } = new();
+
     /// <summary>
     /// Idioma del programa: «es», «en», «pt», «fr», «it» o «de». Nulo, el del sistema si es uno
     /// de esos seis; si no, inglés.
@@ -523,6 +704,7 @@ public sealed class AjustesDelPrograma
             // nulas. Se rellenan con las de fabrica en vez de reventar al primer uso.
             leidos.Equipo ??= new AjustesDeEquipo();
             leidos.Cluster ??= new AjustesDeCluster();
+            leidos.Cluster.Migrar();
             leidos.Digital ??= new AjustesDeDigital();
             leidos.Digital.Acotar();
             leidos.Satelites ??= new AjustesDeSatelites();
@@ -532,6 +714,8 @@ public sealed class AjustesDelPrograma
             leidos.Fonia.Acotar();
             leidos.Cw ??= new AjustesDeCw();
             leidos.Cw.Acotar();
+            leidos.Analizador ??= new AjustesDelAnalizador();
+            leidos.Analizador.Acotar();
             return leidos;
         }
         catch (Exception ex)
@@ -555,6 +739,7 @@ public sealed class AjustesDelPrograma
         try
         {
             Directory.CreateDirectory(carpeta);
+            Cluster.Migrar();
 
             var ruta = Path.Combine(carpeta, NombreDelFichero);
             var temporal = ruta + ".nuevo";

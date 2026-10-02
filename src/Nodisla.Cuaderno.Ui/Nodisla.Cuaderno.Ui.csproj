@@ -26,6 +26,7 @@
     <ProjectReference Include="..\Nodisla.Cuaderno.Modos\Nodisla.Cuaderno.Modos.csproj" />
     <ProjectReference Include="..\Nodisla.Cuaderno.Satelites\Nodisla.Cuaderno.Satelites.csproj" />
     <ProjectReference Include="..\Nodisla.Cuaderno.Impresion\Nodisla.Cuaderno.Impresion.csproj" />
+    <ProjectReference Include="..\Nodisla.Cuaderno.Servidores\Nodisla.Cuaderno.Servidores.csproj" />
   </ItemGroup>
 
   <ItemGroup>

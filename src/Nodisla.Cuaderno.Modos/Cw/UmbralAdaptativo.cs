@@ -54,12 +54,26 @@ public sealed class UmbralAdaptativo
     private double _encimaMs;
     private double _pico = double.NaN;
 
+    // El ruido de corto plazo (los últimos 0,6 s): con él decide el silenciador. El de largo
+    // plazo tarda segundo y pico en seguir un salto del nivel (se toca la ganancia de RF, el
+    // AGC de la radio se recupera, se abre la tarjeta…) y mientras tanto el ruido nuevo parecía
+    // una señal de 60 dB: el silenciador se abría y se escribía ruido.
+    private const int CuadrosCortos = 300;
+    private readonly double[] _cortos = new double[CuadrosCortos];
+    private readonly double[] _ordenados = new double[CuadrosCortos];
+    private int _iCortos;
+    private int _nCortos;
+    private double _ruidoCorto = double.NaN;
+
     /// <summary>Monta el umbral.</summary>
     /// <param name="umbralDb">Lo que tiene que destacar la señal para abrir el silenciador.</param>
     public UmbralAdaptativo(double umbralDb) => UmbralDb = umbralDb;
 
     /// <summary>Lo que tiene que destacar la señal sobre el ruido para abrir (dB).</summary>
     public double UmbralDb { get; set; }
+
+    /// <summary>dB que se suman a <see cref="UmbralDb"/> según lo poco suavizada que llega la envolvente.</summary>
+    public double Exigencia { get; set; }
 
     /// <summary>Nivel de ruido (dB relativos).</summary>
     public double RuidoDb { get; private set; } = double.NaN;
@@ -81,7 +95,16 @@ public sealed class UmbralAdaptativo
     /// <returns>Si la llave está abajo y el silenciador abierto.</returns>
     public bool Paso(double potencia)
     {
-        var db = 10 * Math.Log10(potencia + 1e-22);
+        // Silencio digital (la tarjeta entrega ceros al abrirse, o la radio calla del todo): no
+        // es ruido ni señal y no se apunta. Si se apuntara, el percentil del ruido caería a
+        // −220 dB y cualquier ruido de verdad parecería una señal enorme al llegar.
+        if (potencia < 1e-15)
+        {
+            MarcaCruda = false;
+            return false;
+        }
+
+        var db = 10 * Math.Log10(potencia);
         Apuntar(db);
         _cuadros++;
 
@@ -97,6 +120,23 @@ public sealed class UmbralAdaptativo
         }
 
         Percentiles(out var ruido, out var p90);
+
+        // Ruido de corto plazo: percentil 10 de los últimos 0,6 s (cada 20 ms). En régimen queda
+        // por debajo del de largo plazo y no cuenta; tras un salto de nivel manda él.
+        _cortos[_iCortos] = db;
+        _iCortos = (_iCortos + 1) % CuadrosCortos;
+        if (_nCortos < CuadrosCortos) _nCortos++;
+        if (_cuadros % 10 == 0 || double.IsNaN(_ruidoCorto))
+        {
+            Array.Copy(_cortos, _ordenados, _nCortos);
+            Array.Sort(_ordenados, 0, _nCortos);
+            _ruidoCorto = _ordenados[(int)(0.1 * (_nCortos - 1))];
+        }
+
+        // Solo cuenta si de verdad ha habido un salto (más de 6 dB por encima): en régimen, con una
+        // señal débil, subir el suelo unos dB le quitaba la sensibilidad.
+        if (_ruidoCorto > ruido + 6) ruido = _ruidoCorto;
+
         // Pico con caída de 10 dB/s: en un desvanecimiento la media de las marcas va por detrás,
         // y el pico, que se rehace con cada marca, la frena.
         _pico = double.IsNaN(_pico) ? db : Math.Max(db, _pico - (CaidaDelPicoDbPorSegundo * Ms / 1000));
@@ -123,24 +163,15 @@ public sealed class UmbralAdaptativo
         }
 
         // El silenciador no puede temblar con cada cuadro (partiría las marcas de una señal que
-        // anda justo en el umbral): abre en cuanto se pasa, y cierra tras segundo y medio seguido
-        // por debajo, con 3 dB de histéresis.
-        if (separacion >= UmbralDb)
-        {
-            // Para abrir hay que pasar el umbral 150 ms seguidos: un pico suelto de ruido no abre.
-            _encimaMs += Ms;
-            if (_encimaMs >= 150) Abierto = true;
-            _bajoMs = 0;
-        }
-        else
-        {
-            _encimaMs = 0;
-            if (Abierto)
-            {
-                _bajoMs = separacion < UmbralDb - 3 ? _bajoMs + Ms : 0;
-                if (_bajoMs > 1500) Abierto = false;
-            }
-        }
+        // anda justo en el umbral): abre tras pasar el umbral 150 ms seguidos (un pico suelto de
+        // ruido no abre) y cierra tras 0,8 s seguidos más de 1,5 dB por debajo. Antes la
+        // histéresis era de 3 dB y bastaba con que el ruido rondara el umbral para dejarlo
+        // abierto para siempre: es lo que escribía chorros de E, I, T con la ganancia de RF alta.
+        var exigido = UmbralDb + Exigencia;
+        _encimaMs = separacion >= exigido ? _encimaMs + Ms : 0;
+        if (_encimaMs >= 150) Abierto = true;
+        _bajoMs = separacion < exigido - 3 ? _bajoMs + Ms : 0;
+        if (_bajoMs > 1500) Abierto = false;
 
         return MarcaCruda && Abierto;
     }
@@ -154,6 +185,8 @@ public sealed class UmbralAdaptativo
         _cuadros = 0;
         _marcas = double.NaN;
         _pico = double.NaN;
+        _iCortos = _nCortos = 0;
+        _ruidoCorto = double.NaN;
         RuidoDb = SenalDb = double.NaN;
         MarcaCruda = false;
         Abierto = false;

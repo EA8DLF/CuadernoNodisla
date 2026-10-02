@@ -66,6 +66,9 @@
   <data name="Principal.Cluster.Estado.Conectando" xml:space="preserve">
     <value>Connessione…</value>
   </data>
+  <data name="Principal.Cluster.Estado.Desactivado" xml:space="preserve">
+    <value>Disattivato</value>
+  </data>
   <data name="Principal.Cluster.Estado.Fallida" xml:space="preserve">
     <value>Connessione non riuscita</value>
   </data>
@@ -74,6 +77,9 @@
   </data>
   <data name="Principal.Cluster.Estado.SinConexion" xml:space="preserve">
     <value>Non connesso</value>
+  </data>
+  <data name="Principal.Cluster.EstadoDeNodosConsejo" xml:space="preserve">
+    <value>Come va ogni nodo: connesso, nuovo tentativo e perché, e quanti spot porta al minuto.</value>
   </data>
   <data name="Principal.Cluster.FalloAlDesconectar" xml:space="preserve">
     <value>Errore durante la disconnessione: {0}</value>
@@ -86,6 +92,9 @@
   </data>
   <data name="Principal.Cluster.IrAlSpotConsejo" xml:space="preserve">
     <value>Porta l’apparato su quella frequenza e mette il nominativo nel modulo. Il doppio clic fa lo stesso.</value>
+  </data>
+  <data name="Principal.Cluster.Nodo" xml:space="preserve">
+    <value>Nodo</value>
   </data>
   <data name="Principal.Cluster.NodoCambiado" xml:space="preserve">
     <value>Il nodo del cluster è stato cambiato: {0}.</value>
@@ -107,6 +116,9 @@
   </data>
   <data name="Principal.Cluster.Resumen" xml:space="preserve">
     <value>{0:N0} stazioni · {1:N0} spot ricevuti</value>
+  </data>
+  <data name="Principal.Cluster.ResumenNodos" xml:space="preserve">
+    <value>{0} nodi · {1} connessi</value>
   </data>
   <data name="Principal.Cluster.SinProp.FueraDeHf" xml:space="preserve">
     <value>Nessuna propagazione: fuori HF o troppo vicino per un tragitto ionosferico.</value>
@@ -138,11 +150,20 @@
   <data name="Principal.Cluster.SoloLoNuevoConsejo" xml:space="preserve">
     <value>Lascia solo le entità nuove e le caselle di banda e modo mancanti</value>
   </data>
+  <data name="Principal.Cluster.SpotsPorMinuto" xml:space="preserve">
+    <value>{0}/min</value>
+  </data>
   <data name="Principal.Cluster.Todas" xml:space="preserve">
     <value>(tutte)</value>
   </data>
   <data name="Principal.Cluster.Vaciar" xml:space="preserve">
     <value>Svuota</value>
+  </data>
+  <data name="Principal.Cluster.VerNodos" xml:space="preserve">
+    <value>Vedi nodi di origine</value>
+  </data>
+  <data name="Principal.Cluster.VerNodosConsejo" xml:space="preserve">
+    <value>Aggiunge una colonna con i nodi da cui è arrivato ogni spot.</value>
   </data>
   <data name="Principal.Columna.Anuncia" xml:space="preserve">
     <value>SPOTTER</value>
@@ -180,6 +201,9 @@
   <data name="Principal.Columna.Modo" xml:space="preserve">
     <value>MODO</value>
   </data>
+  <data name="Principal.Columna.Nodos" xml:space="preserve">
+    <value>NODI</value>
+  </data>
   <data name="Principal.Columna.Nombre" xml:space="preserve">
     <value>NOME</value>
   </data>
@@ -207,6 +231,18 @@
   <data name="Principal.Columna.Trabajados" xml:space="preserve">
     <value>COLLEGATI</value>
   </data>
+  <data name="Principal.ConexionCluster.Activo" xml:space="preserve">
+    <value>Attivo</value>
+  </data>
+  <data name="Principal.ConexionCluster.ActivoConsejo" xml:space="preserve">
+    <value>Attivo: entra quando si connette il cluster. Senza spunta resta nell'elenco senza connettersi.</value>
+  </data>
+  <data name="Principal.ConexionCluster.Anadir" xml:space="preserve">
+    <value>Aggiungi</value>
+  </data>
+  <data name="Principal.ConexionCluster.AnadirConsejo" xml:space="preserve">
+    <value>Aggiunge il nodo scelto all'elenco. Si connette salvando e applicando.</value>
+  </data>
   <data name="Principal.ConexionCluster.Aplicar" xml:space="preserve">
     <value>Applica</value>
   </data>
@@ -219,11 +255,14 @@
   <data name="Principal.ConexionCluster.BorrarContrasena" xml:space="preserve">
     <value>Elimina la password salvata del cluster</value>
   </data>
+  <data name="Principal.ConexionCluster.Comun" xml:space="preserve">
+    <value>Accesso comune a tutti i nodi</value>
+  </data>
   <data name="Principal.ConexionCluster.Contrasena" xml:space="preserve">
     <value>Password</value>
   </data>
   <data name="Principal.ConexionCluster.ContrasenaAyuda" xml:space="preserve">
-    <value>Viene cifrata con la protezione dati del Suo account Windows e non viene più mostrata. Non viene mai scritta nel file delle impostazioni.</value>
+    <value>Solo se il nodo scelto la chiede. Viene cifrata con la protezione dati del suo account Windows, una per nodo, e non viene più mostrata. Nel file delle impostazioni non si scrive mai.</value>
   </data>
   <data name="Principal.ConexionCluster.ContrasenaNombre" xml:space="preserve">
     <value>Password del nodo cluster</value>
@@ -234,6 +273,9 @@
   <data name="Principal.ConexionCluster.DescartarNombre" xml:space="preserve">
     <value>Scarta le modifiche del cluster</value>
   </data>
+  <data name="Principal.ConexionCluster.EnBlanco" xml:space="preserve">
+    <value>Nodo vuoto</value>
+  </data>
   <data name="Principal.ConexionCluster.EsperaConexion" xml:space="preserve">
     <value>Attesa di connessione (s)</value>
   </data>
@@ -241,7 +283,7 @@
     <value>Attesa di connessione, in secondi</value>
   </data>
   <data name="Principal.ConexionCluster.Explicacion" xml:space="preserve">
-    <value>A quale nodo si accede e con quale nominativo. La maggior parte dei nodi non chiede password: basta il nominativo.</value>
+    <value>Può stare su più nodi contemporaneamente: ognuno porta ciò che passa nella sua rete, e lo stesso spot arrivato da più nodi appare in una sola riga. La maggior parte dei nodi non chiede password: basta il nominativo.</value>
   </data>
   <data name="Principal.ConexionCluster.GuardarContrasena" xml:space="preserve">
     <value>Salva cifrata la password del cluster</value>
@@ -251,6 +293,21 @@
   </data>
   <data name="Principal.ConexionCluster.IndicativoNombre" xml:space="preserve">
     <value>Nominativo con cui si accede al cluster</value>
+  </data>
+  <data name="Principal.ConexionCluster.IndicativoPropio" xml:space="preserve">
+    <value>Nominativo su questo nodo</value>
+  </data>
+  <data name="Principal.ConexionCluster.IndicativoPropioAyuda" xml:space="preserve">
+    <value>Vuoti: quelli comuni.</value>
+  </data>
+  <data name="Principal.ConexionCluster.NodoElegido" xml:space="preserve">
+    <value>Nodo scelto:</value>
+  </data>
+  <data name="Principal.ConexionCluster.Nodos" xml:space="preserve">
+    <value>Nodi</value>
+  </data>
+  <data name="Principal.ConexionCluster.NodosAyuda" xml:space="preserve">
+    <value>Connettendo il cluster entrano tutti i nodi attivi insieme. Se uno cade, si riconnette da solo con attesa crescente e gli altri continuano.</value>
   </data>
   <data name="Principal.ConexionCluster.NodosConocidos" xml:space="preserve">
     <value>Nodi conosciuti</value>
@@ -279,6 +336,12 @@
   <data name="Principal.ConexionCluster.PrimerReintentoNombre" xml:space="preserve">
     <value>Attesa prima del primo nuovo tentativo, in secondi</value>
   </data>
+  <data name="Principal.ConexionCluster.Probar" xml:space="preserve">
+    <value>Prova</value>
+  </data>
+  <data name="Principal.ConexionCluster.ProbarConsejo" xml:space="preserve">
+    <value>Apre la porta e legge il saluto del nodo, senza accedere con il suo nominativo.</value>
+  </data>
   <data name="Principal.ConexionCluster.Puerto" xml:space="preserve">
     <value>Porta</value>
   </data>
@@ -288,6 +351,9 @@
   <data name="Principal.ConexionCluster.PuertoDelNodo" xml:space="preserve">
     <value>Porta Telnet del nodo</value>
   </data>
+  <data name="Principal.ConexionCluster.Quitar" xml:space="preserve">
+    <value>Rimuovi</value>
+  </data>
   <data name="Principal.ConexionCluster.Reconectar" xml:space="preserve">
     <value>Riconnetti da solo quando il nodo cade</value>
   </data>
@@ -296,6 +362,15 @@
   </data>
   <data name="Principal.ConexionCluster.ReintentoMaximoNombre" xml:space="preserve">
     <value>Attesa massima tra i tentativi, in secondi</value>
+  </data>
+  <data name="Principal.ConexionCluster.Repetidos" xml:space="preserve">
+    <value>Spot ripetuti</value>
+  </data>
+  <data name="Principal.ConexionCluster.RepetidosAyuda" xml:space="preserve">
+    <value>Lo stesso nominativo, entro questa distanza in frequenza e in questa finestra, è una sola riga: si sommano i nodi da cui arriva e chi lo ascolta.</value>
+  </data>
+  <data name="Principal.ConexionCluster.RitmoConsejo" xml:space="preserve">
+    <value>Spot ricevuti da questo nodo nell'ultimo minuto.</value>
   </data>
   <data name="Principal.ConexionCluster.Servidor" xml:space="preserve">
     <value>Server</value>
@@ -312,6 +387,15 @@
   <data name="Principal.ConexionCluster.SilencioMaximoNombre" xml:space="preserve">
     <value>Silenzio massimo prima di considerare morta la connessione, in minuti</value>
   </data>
+  <data name="Principal.ConexionCluster.Skimmer" xml:space="preserve">
+    <value>Ascolto automatico (RBN)</value>
+  </data>
+  <data name="Principal.ConexionCluster.SkimmerConsejo" xml:space="preserve">
+    <value>Tutto ciò che porta questo nodo viene da stazioni di ascolto automatico: esce marcato «skimmer» e si nasconde con «Senza skimmer».</value>
+  </data>
+  <data name="Principal.ConexionCluster.SkimmerPastilla" xml:space="preserve">
+    <value>SKIMMER</value>
+  </data>
   <data name="Principal.ConexionCluster.Sufijo" xml:space="preserve">
     <value>Suffisso</value>
   </data>
@@ -321,11 +405,20 @@
   <data name="Principal.ConexionCluster.SufijoNombre" xml:space="preserve">
     <value>Suffisso del nominativo</value>
   </data>
+  <data name="Principal.ConexionCluster.SufijoPropio" xml:space="preserve">
+    <value>Suffisso</value>
+  </data>
   <data name="Principal.ConexionCluster.Tiempos" xml:space="preserve">
     <value>Tempi</value>
   </data>
   <data name="Principal.ConexionCluster.Titulo" xml:space="preserve">
     <value>Cluster · connessione</value>
+  </data>
+  <data name="Principal.ConexionCluster.Tolerancia" xml:space="preserve">
+    <value>Tolleranza (kHz)</value>
+  </data>
+  <data name="Principal.ConexionCluster.Ventana" xml:space="preserve">
+    <value>Finestra (min)</value>
   </data>
   <data name="Principal.Confirmar.ApagarAceptar" xml:space="preserve">
     <value>Sì, spegni</value>
@@ -490,6 +583,12 @@ Non viene trasmesso nulla, ma il contenuto dell’altro VFO può andare perso.</
   </data>
   <data name="Principal.Nav.ContactosConsejo" xml:space="preserve">
     <value>I QSO del log (Ctrl 3, F3 per cercare)</value>
+  </data>
+  <data name="Principal.Nav.Cw" xml:space="preserve">
+    <value>CW</value>
+  </data>
+  <data name="Principal.Nav.CwConsejo" xml:space="preserve">
+    <value>Telegrafia: il decodificatore CW grande e il glossario (Ctrl+Maiusc+1)</value>
   </data>
   <data name="Principal.Nav.Digital" xml:space="preserve">
     <value>Digitale</value>
@@ -1042,6 +1141,9 @@ Non viene trasmesso nulla, ma il contenuto dell’altro VFO può andare perso.</
   </data>
   <data name="Principal.Spot.NuevaEnBandaYModo" xml:space="preserve">
     <value>Nuova su banda e modo</value>
+  </data>
+  <data name="Principal.Spot.PorNodos" xml:space="preserve">
+    <value>arrivato da {0} nodi ({1})</value>
   </data>
   <data name="Principal.Spot.PrefijoDelIndicativo" xml:space="preserve">
     <value>prefisso del nominativo ({0})</value>

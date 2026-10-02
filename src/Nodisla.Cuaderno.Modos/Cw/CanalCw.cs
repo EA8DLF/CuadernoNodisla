@@ -70,6 +70,9 @@ public sealed class CanalCw
     /// <summary>Milisegundos desde la última marca.</summary>
     public double SilencioMs => _lecturas.Min(l => l.Lector.SilencioMs);
 
+    /// <summary>Milisegundos sin una marca con el silenciador abierto: lo que lleva la señal sin aparecer.</summary>
+    public double SinSenalMs { get; private set; }
+
     /// <summary>Milisegundos de vida sin engancharse ni oír nada que se parezca a una señal.</summary>
     public double AbandonoMs { get; private set; }
 
@@ -81,6 +84,10 @@ public sealed class CanalCw
 
     /// <summary>La lectura que escribe, o la que mejor va si todavía no se ha enganchado ninguna.</summary>
     private LecturaCw Referencia => _activa ?? _lecturas.MaxBy(l => l.Lector.Confianza)!;
+
+    /// <summary>Cómo va cada lectura, en una línea (para diagnosticar con grabaciones).</summary>
+    public string Diagnostico => string.Join(" | ", _lecturas.Select(l =>
+        $"{l.Franja.Minima:0}-{l.Franja.Maxima:0}: sep {l.Umbral.SeparacionDb:0.0} ex {l.Umbral.Exigencia:0.0} ab {(l.Umbral.Abierto ? 1 : 0)} conf {l.Lector.Confianza:0.00} val {l.Lector.ValidosSeguidos} wpm {l.Lector.Wpm:0}{(l == _activa ? " *" : string.Empty)}"));
 
     /// <summary>Mueve el canal a otro tono sin perder lo que lleva.</summary>
     public void Afinar(double tonoHz) => _envolvente.Afinar(tonoHz);
@@ -106,11 +113,14 @@ public sealed class CanalCw
         if (!_envolvente.Anadir(x, out var potencia)) return;
 
         var algunaAbierta = false;
+        var algunaMarca = false;
         foreach (var l in _lecturas)
         {
-            l.Paso(potencia);
+            algunaMarca |= l.Paso(potencia);
             algunaAbierta |= l.Umbral.Abierto;
         }
+
+        SinSenalMs = algunaMarca ? 0 : SinSenalMs + Ms;
 
         AbandonoMs = Enganchado || algunaAbierta ? 0 : AbandonoMs + Ms;
         if (_activa is not { } activa) return;
@@ -118,8 +128,8 @@ public sealed class CanalCw
         if (activa.Lector.SilencioMs > Math.Max(6000, 25 * activa.Lector.PuntoMs) || activa.CerradoMs > 3000 || activa.Lector.Confianza < 0.5)
         {
             activa.Lector.Vaciar();
-            _activa = null;
-            foreach (var l in _lecturas) l.Guardados.Clear();
+            CerrarPalabra();
+            Desenganchar();
             return;
         }
 
@@ -142,10 +152,19 @@ public sealed class CanalCw
         }
     }
 
+    /// <summary>Suelta la señal (lo pide «Buscar»): escribe lo que tenga a medias y deja de escribir hasta volver a engancharse.</summary>
+    public void Soltar()
+    {
+        if (_activa is null) return;
+        CerrarPalabra();
+        Desenganchar();
+    }
+
     /// <summary>Cierra lo que haya a medias.</summary>
     public void Vaciar()
     {
         foreach (var l in _lecturas) l.Lector.Vaciar();
+        if (_activa is not null) CerrarPalabra();
     }
 
     /// <summary>
@@ -193,19 +212,140 @@ public sealed class CanalCw
         if (simbolo == " " && lectura.Guardados.Count == 0) return;
         lectura.Guardar(simbolo);
 
-        if (_activa is null && lectura.ListaParaEngancharse)
+        if (_activa is null && lectura.ListaParaEngancharse && !PareceRuido(Palabras(lectura.Guardados)))
         {
             _activa = lectura;
-            foreach (var s in lectura.Guardados) Escribir(s);
+            _ventana.Clear();
+            _palabra.Clear();
+            var guardados = lectura.Guardados.ToList();
             foreach (var l in _lecturas) l.Guardados.Clear();
+            foreach (var s in guardados)
+            {
+                if (_activa is null) break; // lo desenganchó la vigilancia de ruido
+                Escribir(s);
+            }
         }
     }
 
+    /// <summary>
+    /// Lo enganchado se escribe palabra a palabra: cada palabra cerrada se mira junto con las
+    /// anteriores y, si el conjunto tiene la pinta del ruido, no sale y el canal se desengancha.
+    /// </summary>
     private void Escribir(string s)
     {
-        if (s != " ") Escritos++;
-        Texto?.Invoke(this, s);
+        if (s != " ")
+        {
+            _palabra.Add(s);
+            return;
+        }
+
+        CerrarPalabra();
     }
+
+    private void CerrarPalabra()
+    {
+        if (_palabra.Count == 0) return;
+        _ventana.Add([.. _palabra]);
+        if (_ventana.Count > PalabrasVigiladas) _ventana.RemoveAt(0);
+
+        if (PareceRuido(_ventana))
+        {
+            Desenganchar();
+            return;
+        }
+
+        foreach (var c in _palabra)
+        {
+            Escritos++;
+            Texto?.Invoke(this, c);
+        }
+
+        Texto?.Invoke(this, " ");
+        _palabra.Clear();
+    }
+
+    private void Desenganchar()
+    {
+        _activa?.Lector.Reiniciar();
+        _activa = null;
+        _palabra.Clear();
+        _ventana.Clear();
+        foreach (var l in _lecturas) l.Guardados.Clear();
+    }
+
+    private static List<List<string>> Palabras(IEnumerable<string> simbolos)
+    {
+        var palabras = new List<List<string>>();
+        var actual = new List<string>();
+        foreach (var s in simbolos)
+        {
+            if (s == " ")
+            {
+                if (actual.Count > 0) palabras.Add(actual);
+                actual = [];
+            }
+            else
+            {
+                actual.Add(s);
+            }
+        }
+
+        if (actual.Count > 0) palabras.Add(actual);
+        return palabras;
+    }
+
+    /// <summary>
+    /// El texto tiene la pinta de ruido o de QRN troceado: casi todo E, I, S, H, 5 y T (los
+    /// caracteres de uno a cinco elementos iguales, que es lo que arma el ruido) y en palabras
+    /// cortas («E E ET IEI»).
+    /// </summary>
+    /// <remarks>
+    /// En un contacto de verdad esos caracteres son algo menos de la mitad y las palabras miden
+    /// tres o más; en el ruido pasan de dos tercios y la mitad de las palabras son de una letra.
+    /// Hace falta un mínimo de diez caracteres para juzgar.
+    /// </remarks>
+    public static bool PareceRuido(IReadOnlyList<IReadOnlyList<string>> palabras)
+    {
+        var caracteres = 0;
+        var triviales = 0;
+        var sueltas = 0;
+        var raros = 0;
+        foreach (var p in palabras)
+        {
+            caracteres += p.Count;
+            if (p.Count == 1 && p[0] is "E" or "I" or "T" or "S" or "H" or "A" or "N" or "M" or "5") sueltas++;
+            foreach (var c in p)
+            {
+                if (c is "E" or "I" or "S" or "H" or "5" or "T") triviales++;
+                if (c is "<SN>" or "<AS>" or "<HH>" or "<KA>" or "<SOS>" || (c.Length == 1 && c[0] > 127 && c != "Ñ")) raros++;
+            }
+        }
+
+        if (caracteres < 6 || palabras.Count == 0) return false;
+
+        if (raros / (double)caracteres > 0.12) return true;
+
+        // Palabras de una letra sueltas una tras otra («E T N E T»): ruido.
+        if (sueltas / (double)palabras.Count > 0.5 && palabras.Count >= 4) return true;
+        // Elementos por carácter: un texto de verdad anda por tres; el ruido, que arma sobre todo
+        // E, I, T, A y N, no pasa de dos y poco.
+        var elementos = 0;
+        foreach (var p in palabras)
+            foreach (var c in p)
+                elementos += TablaMorse.Codificar(c)?.Length ?? 3;
+        if (elementos / (double)caracteres < 2.3) return true;
+        if (caracteres < 10) return false;
+        var fraccion = triviales / (double)caracteres;
+        var largoMedio = caracteres / (double)palabras.Count;
+        var fraccionSueltas = sueltas / (double)palabras.Count;
+        if (raros / (double)caracteres > 0.15) return true;
+        return fraccion > 0.6 && (largoMedio < 2.6 || fraccionSueltas > 0.3);
+    }
+
+    private const int PalabrasVigiladas = 8;
+
+    private readonly List<string> _palabra = [];
+    private readonly List<IReadOnlyList<string>> _ventana = [];
 
     /// <summary>Una lectura: suavizado, umbral y lector para una franja de velocidad.</summary>
     private sealed class LecturaCw
@@ -238,7 +378,7 @@ public sealed class CanalCw
         public double CerradoMs { get; private set; } = 1e9;
 
         public bool ListaParaEngancharse =>
-            Lector.ValidosSeguidos >= 5 && Lector.Confianza >= 0.75 && (Umbral.Abierto || CerradoMs < 500)
+            Lector.ValidosSeguidos >= 6 && Lector.Confianza >= 0.75 && (Umbral.Abierto || CerradoMs < 500)
             && Lector.PuntoMedidoMs is not null && EnSuFranja && Mezclados() >= 3;
 
         /// <summary>
@@ -285,7 +425,8 @@ public sealed class CanalCw
             if (Guardados.Count > GuardadosMaximos) Guardados.RemoveAt(0);
         }
 
-        public void Paso(double potencia)
+        /// <returns>Si este cuadro es marca con el silenciador abierto.</returns>
+        public bool Paso(double potencia)
         {
             // Media móvil de la potencia: el filtro adaptado a la velocidad que cabe después de la
             // envolvente. Con el umbral a mitad de altura no cambia la duración de las marcas. Con
@@ -298,10 +439,14 @@ public sealed class CanalCw
             double suma = 0;
             for (var j = 1; j <= k; j++) suma += _suavizado[(_i - j + _suavizado.Length) % _suavizado.Length];
 
+            // Con poco suavizado la envolvente del ruido salta mucho más (cada cuadro es casi
+            // independiente) y parece telegrafía rápida: se le exige más separación.
+            Umbral.Exigencia = 4 / Math.Sqrt(k);
             var marca = Umbral.Paso(suma / k);
             Lector.SenalFuerte = Umbral.SeparacionDb >= 20;
             Lector.Paso(marca);
             CerradoMs = Umbral.Abierto ? 0 : CerradoMs + Ms;
+            return marca;
         }
     }
 }

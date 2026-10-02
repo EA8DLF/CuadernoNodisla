@@ -88,6 +88,14 @@ public sealed class PerfilYaesu
     /// <summary>Analizador de espectro por el puente FT4222 (solo el FT-710).</summary>
     public bool AnalizadorFt4222 { get; init; }
 
+    /// <summary>
+    /// Manda telegrafia con su manipulador interno escribiendo una memoria de texto (<c>KM</c>) y
+    /// reproduciendola (<c>KY0n</c>). Comprobado en el manual CAT del FT-710 (pag. 14). En los
+    /// demas modelos <c>KY</c> no es igual y su manual no se ha comprobado: se quedan sin
+    /// telegrafia por CAT hasta que alguien lo mire.
+    /// </summary>
+    public bool ManipulaPorMemoriaDeTexto { get; init; }
+
     /// <summary>Nombre corto para los mensajes (<c>FT-710</c>).</summary>
     public string Nombre => Modelo.Nombre;
 

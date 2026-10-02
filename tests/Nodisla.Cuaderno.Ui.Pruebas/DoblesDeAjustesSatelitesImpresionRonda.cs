@@ -203,13 +203,24 @@ internal sealed class BancoDeAjustes : IDisposable
             montador ?? ((_, _, _) => Task.FromResult(new MontajeDeEquipo(new ControlDePapel(ViaDeControl.CatNativo), " en COM99 a 38400 baudios"))),
             TimeSpan.FromSeconds(5));
 
+    /// <summary>Nodos de cluster de mentira: nunca salen a la red.</summary>
+    public Integraciones.Cluster.FuenteDeVariosNodos FuenteDelCluster { get; } =
+        new(opciones => new FuenteSpotsSimulada(opciones));
+
+    /// <summary>Lo que se ha pedido probar, servidor y puerto.</summary>
+    public List<string> Probados { get; } = [];
+
     public VistaModeloAjustesCluster Cluster() =>
         new(Ajustes,
             Carpeta,
             Almacen,
             Estaciones,
-            Dxcc,
-            new Integraciones.Cluster.FuenteSpotsConmutable(new FuenteSpotsSimulada()));
+            FuenteDelCluster,
+            probar: (servidor, puerto, _) =>
+            {
+                Probados.Add($"{servidor}:{puerto}");
+                return Task.FromResult(new Integraciones.Cluster.PruebaDeNodo(true, TimeSpan.FromMilliseconds(42), "login:", null));
+            });
 
     public VistaModeloAjustesAudio Audio() =>
         new(Ajustes, Carpeta, new EntradaDeAudioSimulada(), new SalidaDeAudioSimulada());

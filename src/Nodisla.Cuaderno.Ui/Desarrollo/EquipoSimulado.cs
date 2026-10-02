@@ -27,7 +27,7 @@ namespace Nodisla.Cuaderno.Ui.Desarrollo;
 /// Cuando llegue el control de verdad, esta clase se queda para las pruebas y en
 /// <c>ConfiguracionDeServicios</c> solo cambia la linea que dice quien cubre el puerto.
 /// </remarks>
-public sealed class EquipoSimulado : IEquipoAvanzado, IEquipoConDosVfos, IEquipoConBotonera, Radio.Modelos.IEquipoDeModelo, IAsyncDisposable
+public sealed class EquipoSimulado : IEquipoAvanzado, IEquipoConDosVfos, IEquipoConBotonera, Radio.Modelos.IEquipoDeModelo, IManipuladorCw, IAsyncDisposable
 {
     /// <summary>Frecuencia sin banda de aficionado, la del dia de la captura del FT-710.</summary>
     public const decimal FrecuenciaSinBanda = 27.555m;
@@ -368,6 +368,37 @@ public sealed class EquipoSimulado : IEquipoAvanzado, IEquipoConDosVfos, IEquipo
         Publicar(Estado.Conectado, transmitir);
         return Task.CompletedTask;
     }
+
+    // ── Telegrafia de mentira: solo apunta lo que mandaria el manipulador ──────────────────
+
+    /// <summary>Lo que se ha «manipulado», para las pruebas y el registro.</summary>
+    public List<string> Manipulado { get; } = [];
+
+    /// <inheritdoc />
+    public string? PorQueNoManipula => null;
+
+    /// <inheritdoc />
+    public int LetrasPorOrden => 50;
+
+    /// <inheritdoc />
+    public int WpmMinima => 4;
+
+    /// <inheritdoc />
+    public int WpmMaxima => 60;
+
+    /// <inheritdoc />
+    public Task PonerVelocidadAsync(int wpm, CancellationToken ct = default) => Task.CompletedTask;
+
+    /// <inheritdoc />
+    public Task ManipularAsync(string texto, CancellationToken ct = default)
+    {
+        if (!Estado.Transmitiendo) throw new InvalidOperationException("El manipulador simulado solo manipula con el PTT pedido.");
+        lock (Manipulado) Manipulado.Add(texto);
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    public Task PararManipuladorAsync(CancellationToken ct = default) => Task.CompletedTask;
 
     /// <inheritdoc />
     public Task<double?> LeerMandoAsync(MandoDeEquipo mando, CancellationToken ct = default)

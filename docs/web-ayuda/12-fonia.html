@@ -31,6 +31,9 @@
 <li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
 <li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
 <li><a href="17-cw.html">Telegraf&#237;a (CW)</a></li>
+<li><a href="18-transmitir-cw.html">Transmitir en CW</a></li>
+<li><a href="19-seguridad-de-transmision.html">Salvaguardas de transmisi&#243;n</a></li>
+<li><a href="20-conectar-otros-programas.html">Conectar otros programas</a></li>
 </ul>
 </nav>
 <main class="capitulo">
@@ -77,6 +80,54 @@
 <li>no est&#225;n elegidos el micr&#243;fono del PC y la salida hacia el equipo;</li>
 <li>ya hay otra transmisi&#243;n en el aire (por ejemplo, del m&#243;dem).</li>
 </ul>
+<h2 id="limpiar-la-escucha-reductor-notch-y-limitador">Limpiar la escucha: reductor, notch y limitador</h2>
+<p>Bajo el PTT hay una segunda fila. <strong>NR</strong>, <strong>Notch</strong> y <strong>Limitador</strong> se encienden y apagan en vivo, mientras escucha; &#171;Procesado…&#187; abre todos los ajustes (los mismos de Configuraci&#243;n › Fon&#237;a).</p>
+<figure><a href="capturas/fonia-procesado.png"><img src="capturas/fonia-procesado.png" alt="El procesado de la escucha y del micr&#243;fono, con los mensajes de voz grabados" loading="lazy"></a><figcaption>El procesado de la escucha y del micr&#243;fono, con los mensajes de voz grabados</figcaption></figure>
+<ul>
+<li><strong>Reductor de ruido (NR)</strong>: quita el soplido de fondo. Hay dos:<ul>
+<li><strong>Espectral (NR2)</strong>, el que m&#225;s quita. A&#241;ade unos <strong>11 ms</strong> de retraso, que el panel ense&#241;a al lado (&#171;+11 ms&#187;). Medido con voz y ruido: la relaci&#243;n se&#241;al-ruido mejora unos <strong>8 dB</strong> y el ruido en las pausas baja unos <strong>28 dB</strong> con el nivel al 100 %.</li>
+<li><strong>Adaptativo (NR1)</strong>, m&#225;s suave; va bien con tonos y vocales sostenidas y <strong>no retrasa nada</strong>.</li>
+<li><strong>Cu&#225;nto quita</strong> grad&#250;a el espectral: al 30 % apenas toca la voz; al 100 % quita todo lo que puede.</li>
+</ul>
+</li>
+<li><strong>Notch autom&#225;tico</strong>: busca y quita las <strong>portadoras y pitidos fijos</strong> (alguien afinando encima). Una portadora de 1 kHz baja m&#225;s de <strong>40 dB</strong>; la voz pasa. No retrasa.</li>
+<li><strong>Limitador</strong>: ning&#250;n golpe de audio pasa del <strong>techo</strong> (−3 dBFS por omisi&#243;n, de −20 a −1): protege altavoces y o&#237;dos de los chasquidos de est&#225;tica.</li>
+</ul>
+<p>Todo esto <strong>solo cambia lo que suena por los altavoces del PC</strong>. El m&#243;dem digital y el decodificador de CW leen el audio de la radio por su cuenta y lo reciben <strong>sin tocar</strong>.</p>
+<h2 id="procesar-el-micr&#243;fono">Procesar el micr&#243;fono</h2>
+<p>En &#171;Procesado…&#187;, <strong>Procesar el micr&#243;fono</strong> (apagado por omisi&#243;n) pasa la voz por:</p>
+<ul>
+<li>una <strong>puerta de ruido</strong>, que baja el fondo (ventilador, teclado) cuando no habla;</li>
+<li>un <strong>corte de graves</strong> (100 Hz por omisi&#243;n) y un ecualizador de <strong>graves, medios y agudos</strong>;</li>
+<li>un <strong>compresor</strong> que iguala la voz bajando los picos;</li>
+<li>y un <strong>techo</strong> final (−1 dBFS como mucho; no se puede subir m&#225;s).</li>
+</ul>
+<p><strong>Nunca sube el nivel</strong>: lo que sale hacia el equipo no pasa de lo que entra del micr&#243;fono (con su ganancia) ni del techo, aunque realce una banda del ecualizador. Ajuste el nivel con la <strong>ganancia del micro</strong> y la ALC de la radio, como siempre.</p>
+<h2 id="mensajes-de-voz-voice-keyer">Mensajes de voz (voice keyer)</h2>
+<p>Seis mensajes grabados con el micr&#243;fono del PC —CQ, indicativo, informe…— que salen al aire con un bot&#243;n o con <strong>F1 a F6</strong>.</p>
+<figure><a href="capturas/fonia-mensajes.png"><img src="capturas/fonia-mensajes.png" alt="Grabar, escuchar, nombrar y borrar los mensajes de voz" loading="lazy"></a><figcaption>Grabar, escuchar, nombrar y borrar los mensajes de voz</figcaption></figure>
+<ul>
+<li><strong>Grabar mensajes…</strong> abre la lista: <strong>Grabar</strong> empieza, <strong>Terminar</strong> acaba (como mucho 60 s; el silencio del principio y del final se recorta solo). <strong>Escuchar</strong> lo suena por los <strong>altavoces del PC</strong>, sin transmitir. El nombre se cambia escribiendo encima.</li>
+<li>Se guardan en la carpeta de datos, en <code>voz\mensaje-1.wav</code> … <code>mensaje-6.wav</code>.</li>
+<li><strong>Para transmitirlos</strong> tienen que cumplirse, por este orden:<ol>
+<li>el pestillo <strong>&#171;Permitir transmitir en esta sesi&#243;n&#187;</strong> marcado (es el mismo del m&#243;dem y de la CW, y no se guarda: cada vez que abre el programa est&#225; quitado);</li>
+<li>lo mismo que el PTT de fon&#237;a: equipo conectado, modo de voz, micr&#243;fono y salida elegidos;</li>
+<li>la <strong>pregunta de confirmaci&#243;n</strong>, si no la ha quitado;</li>
+<li>que el mensaje <strong>quepa en el tiempo m&#225;ximo</strong> de la pasada.</li>
+</ol>
+</li>
+<li>Sale por el mismo camino que su voz: el <strong>vigilante del PTT</strong>, el tiempo m&#225;ximo, el procesado del micr&#243;fono y su techo. Al acabar el mensaje, el PTT <strong>baja solo</strong>.</li>
+<li>Se corta con <strong>Parar</strong>, con <strong>Esc</strong>, pulsando el <strong>PTT</strong>, con <strong>SOLTAR PTT</strong>, quitando el pestillo, moviendo el <strong>dial</strong> o cambiando a un modo que no es de voz.</li>
+<li><strong>F1–F6</strong> solo lanzan mensajes con el panel de fon&#237;a a la vista, en modo de voz, si la tecla tiene mensaje y el cursor no est&#225; en un campo de texto; si no, F1 sigue abriendo la ayuda. Se puede desactivar en &#171;Procesado…&#187;.</li>
+</ul>
+<h2 id="grabar-lo-que-acaba-de-pasar">Grabar lo que acaba de pasar</h2>
+<p>Mientras la escucha por el PC est&#225; abierta, el programa guarda <strong>en memoria</strong> los &#250;ltimos minutos de lo que llega de la radio (5 por omisi&#243;n, de 1 a 10; el contador al lado del bot&#243;n dice cu&#225;nto hay). Nada se escribe en disco hasta que lo pide.</p>
+<ul>
+<li><strong>Guardar lo &#250;ltimo</strong> escribe un WAV en la carpeta de datos, en <code>audio\</code>, con la fecha y el indicativo del contacto: <code>rx-20261002-183005-EA8XYZ.wav</code>. Se guarda el audio <strong>tal como llega</strong> de la radio, sin volumen ni reductor.</li>
+<li>Con <strong>Adjuntar al QSO</strong> marcado, el audio se <strong>adjunta al contacto</strong> que est&#225; escribiendo (o modificando) y se guarda con &#233;l al registrarlo.</li>
+</ul>
+<figure><a href="capturas/fonia-audio-qso.png"><img src="capturas/fonia-audio-qso.png" alt="El audio adjunto en el contacto, con Escuchar y Quitar" loading="lazy"></a><figcaption>El audio adjunto en el contacto, con Escuchar y Quitar</figcaption></figure>
+<p>En el contacto aparece <strong>Audio</strong> con <strong>Escuchar</strong> (suena por los altavoces del PC) y <strong>Quitar</strong> (lo desliga del contacto; el fichero se queda en la carpeta). Al abrir un contacto del Libro para modificarlo, si tiene audio, se escucha igual. El audio es del cuaderno: no va al ADIF.</p>
 <h2 id="dispositivos">Dispositivos</h2>
 <p>&#171;Dispositivos…&#187; abre los cuatro selectores (tambi&#233;n est&#225;n en <strong>Configuraci&#243;n › Fon&#237;a</strong>):</p>
 <div class="tabla"><table>

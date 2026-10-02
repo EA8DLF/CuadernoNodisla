@@ -16,6 +16,25 @@ public sealed record TeclaDePtt(string Nombre, string? ClaveDelTexto = null) : O
     public string Texto => ClaveDelTexto is null ? Nombre : Textos.T(ClaveDelTexto);
 }
 
+/// <summary>Un reductor de ruido elegible.</summary>
+/// <param name="Valor">Lo que se guarda: «Espectral» o «Adaptativo».</param>
+/// <param name="ClaveDelTexto">Clave del texto en pantalla.</param>
+public sealed record ReductorElegible(string Valor, string ClaveDelTexto) : OpcionTraducida
+{
+    /// <summary>Lo que se lee en pantalla.</summary>
+    public string Texto => Textos.T(ClaveDelTexto);
+}
+
+/// <summary>Un corte de graves elegible para el microfono.</summary>
+/// <param name="Hercios">Frecuencia de corte; cero es sin corte.</param>
+public sealed record CorteDeGraves(int Hercios) : OpcionTraducida
+{
+    /// <summary>Lo que se lee en pantalla.</summary>
+    public string Texto => Hercios == 0
+        ? Textos.T("Ajustes.Fonia.SinCorte")
+        : Textos.F("Ajustes.Fonia.CorteHz", Hercios);
+}
+
 /// <summary>
 /// El apartado de fonia en Ajustes: los cuatro dispositivos, los volumenes y los tiempos.
 /// </summary>
@@ -133,6 +152,79 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
     [ObservableProperty]
     private string _valorDeFuenteUsb = string.Empty;
 
+    /// <summary>Los dos reductores de la escucha.</summary>
+    public IReadOnlyList<ReductorElegible> Reductores { get; } =
+    [
+        new("Espectral", "Ajustes.Fonia.Reductor.Espectral"),
+        new("Adaptativo", "Ajustes.Fonia.Reductor.Adaptativo"),
+    ];
+
+    /// <summary>Cortes de graves del microfono.</summary>
+    public IReadOnlyList<CorteDeGraves> Cortes { get; } = [new(0), new(100), new(150), new(200), new(300)];
+
+    [ObservableProperty]
+    private bool _reductorActivo;
+
+    [ObservableProperty]
+    private ReductorElegible? _reductor;
+
+    [ObservableProperty]
+    private int _nivelDeReduccion;
+
+    [ObservableProperty]
+    private bool _notchActivo;
+
+    [ObservableProperty]
+    private bool _limitadorActivo;
+
+    [ObservableProperty]
+    private double _techoEscuchaDb;
+
+    [ObservableProperty]
+    private bool _procesarMicro;
+
+    [ObservableProperty]
+    private bool _puertaActiva;
+
+    [ObservableProperty]
+    private double _umbralPuertaDb;
+
+    [ObservableProperty]
+    private CorteDeGraves? _corteDeGraves;
+
+    [ObservableProperty]
+    private double _gravesDb;
+
+    [ObservableProperty]
+    private double _mediosDb;
+
+    [ObservableProperty]
+    private double _agudosDb;
+
+    [ObservableProperty]
+    private bool _compresorActivo;
+
+    [ObservableProperty]
+    private double _umbralCompresorDb;
+
+    [ObservableProperty]
+    private double _relacionCompresor;
+
+    [ObservableProperty]
+    private double _techoMicroDb;
+
+    [ObservableProperty]
+    private bool _grabarRecepcion;
+
+    [ObservableProperty]
+    private int _minutosDeGrabacion;
+
+    [ObservableProperty]
+    private bool _adjuntarAlQso;
+
+    [ObservableProperty]
+    private bool _teclasDeMensajes;
+
     /// <summary>Estan elegidos los dos dispositivos de la escucha.</summary>
     public bool EscuchaConfigurada => EntradaDelEquipo is not null && Altavoces is not null;
 
@@ -214,6 +306,28 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
             ComprobarFuenteDeModulacion = f.ComprobarFuenteDeModulacion;
             IndiceDeFuenteSsb = f.IndiceDeFuenteSsb;
             ValorDeFuenteUsb = f.ValorDeFuenteUsb;
+
+            ReductorActivo = f.ReductorActivo;
+            Reductor = Reductores.FirstOrDefault(r => r.Valor == f.TipoDeReductor) ?? Reductores[0];
+            NivelDeReduccion = f.NivelDeReduccion;
+            NotchActivo = f.NotchActivo;
+            LimitadorActivo = f.LimitadorActivo;
+            TechoEscuchaDb = f.TechoEscuchaDb;
+            ProcesarMicro = f.ProcesarMicro;
+            PuertaActiva = f.PuertaActiva;
+            UmbralPuertaDb = f.UmbralPuertaDb;
+            CorteDeGraves = Cortes.FirstOrDefault(c => c.Hercios == f.CorteDeGravesHz) ?? Cortes[1];
+            GravesDb = f.GravesDb;
+            MediosDb = f.MediosDb;
+            AgudosDb = f.AgudosDb;
+            CompresorActivo = f.CompresorActivo;
+            UmbralCompresorDb = f.UmbralCompresorDb;
+            RelacionCompresor = f.RelacionCompresor;
+            TechoMicroDb = f.TechoMicroDb;
+            GrabarRecepcion = f.GrabarRecepcion;
+            MinutosDeGrabacion = f.MinutosDeGrabacion;
+            AdjuntarAlQso = f.AdjuntarAlQso;
+            TeclasDeMensajes = f.TeclasDeMensajes;
         }
         finally
         {
@@ -250,6 +364,48 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
     partial void OnIndiceDeFuenteSsbChanged(string value) => AlCambiar(nameof(IndiceDeFuenteSsb));
 
     partial void OnValorDeFuenteUsbChanged(string value) => AlCambiar(nameof(ValorDeFuenteUsb));
+
+    partial void OnReductorActivoChanged(bool value) => AlCambiar(nameof(ReductorActivo));
+
+    partial void OnReductorChanged(ReductorElegible? value) => AlCambiar(nameof(Reductor));
+
+    partial void OnNivelDeReduccionChanged(int value) => AlCambiar(nameof(NivelDeReduccion));
+
+    partial void OnNotchActivoChanged(bool value) => AlCambiar(nameof(NotchActivo));
+
+    partial void OnLimitadorActivoChanged(bool value) => AlCambiar(nameof(LimitadorActivo));
+
+    partial void OnTechoEscuchaDbChanged(double value) => AlCambiar(nameof(TechoEscuchaDb));
+
+    partial void OnProcesarMicroChanged(bool value) => AlCambiar(nameof(ProcesarMicro));
+
+    partial void OnPuertaActivaChanged(bool value) => AlCambiar(nameof(PuertaActiva));
+
+    partial void OnUmbralPuertaDbChanged(double value) => AlCambiar(nameof(UmbralPuertaDb));
+
+    partial void OnCorteDeGravesChanged(CorteDeGraves? value) => AlCambiar(nameof(CorteDeGraves));
+
+    partial void OnGravesDbChanged(double value) => AlCambiar(nameof(GravesDb));
+
+    partial void OnMediosDbChanged(double value) => AlCambiar(nameof(MediosDb));
+
+    partial void OnAgudosDbChanged(double value) => AlCambiar(nameof(AgudosDb));
+
+    partial void OnCompresorActivoChanged(bool value) => AlCambiar(nameof(CompresorActivo));
+
+    partial void OnUmbralCompresorDbChanged(double value) => AlCambiar(nameof(UmbralCompresorDb));
+
+    partial void OnRelacionCompresorChanged(double value) => AlCambiar(nameof(RelacionCompresor));
+
+    partial void OnTechoMicroDbChanged(double value) => AlCambiar(nameof(TechoMicroDb));
+
+    partial void OnGrabarRecepcionChanged(bool value) => AlCambiar(nameof(GrabarRecepcion));
+
+    partial void OnMinutosDeGrabacionChanged(int value) => AlCambiar(nameof(MinutosDeGrabacion));
+
+    partial void OnAdjuntarAlQsoChanged(bool value) => AlCambiar(nameof(AdjuntarAlQso));
+
+    partial void OnTeclasDeMensajesChanged(bool value) => AlCambiar(nameof(TeclasDeMensajes));
 
     private void AlCambiarDispositivo(string que)
     {
@@ -291,6 +447,27 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
         f.ComprobarFuenteDeModulacion = ComprobarFuenteDeModulacion;
         f.IndiceDeFuenteSsb = (IndiceDeFuenteSsb ?? string.Empty).Trim();
         f.ValorDeFuenteUsb = (ValorDeFuenteUsb ?? string.Empty).Trim();
+        f.ReductorActivo = ReductorActivo;
+        f.TipoDeReductor = Reductor?.Valor ?? "Espectral";
+        f.NivelDeReduccion = NivelDeReduccion;
+        f.NotchActivo = NotchActivo;
+        f.LimitadorActivo = LimitadorActivo;
+        f.TechoEscuchaDb = TechoEscuchaDb;
+        f.ProcesarMicro = ProcesarMicro;
+        f.PuertaActiva = PuertaActiva;
+        f.UmbralPuertaDb = UmbralPuertaDb;
+        f.CorteDeGravesHz = CorteDeGraves?.Hercios ?? 100;
+        f.GravesDb = GravesDb;
+        f.MediosDb = MediosDb;
+        f.AgudosDb = AgudosDb;
+        f.CompresorActivo = CompresorActivo;
+        f.UmbralCompresorDb = UmbralCompresorDb;
+        f.RelacionCompresor = RelacionCompresor;
+        f.TechoMicroDb = TechoMicroDb;
+        f.GrabarRecepcion = GrabarRecepcion;
+        f.MinutosDeGrabacion = MinutosDeGrabacion;
+        f.AdjuntarAlQso = AdjuntarAlQso;
+        f.TeclasDeMensajes = TeclasDeMensajes;
         f.Acotar();
 
         if (_carpeta is not null) _ajustes.Guardar(_carpeta);

@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
@@ -40,6 +40,7 @@ public class CierreSinFalsaAlarmaPruebas
         PasoDeVigilancia = TimeSpan.FromMilliseconds(5),
         EsperaDeSuelta = TimeSpan.FromMilliseconds(500),
         EngancharseAlCierreDelProceso = false,
+        Seguridad = Dobles.SeguridadDePrueba.SinPlanNiRoe,
     };
 
     private static OpcionesFt710 OpcionesDelEquipo() => new()

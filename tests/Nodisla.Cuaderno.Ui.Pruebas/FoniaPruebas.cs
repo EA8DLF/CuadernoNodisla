@@ -334,6 +334,10 @@ public sealed class FoniaPruebas
 
         public DateTimeOffset? UltimoAvanceUtc { get; set; }
 
+        public Nodisla.Cuaderno.Audio.Procesado.IProcesadorDeAudio? AntesDeLaGanancia { get; set; }
+
+        public Nodisla.Cuaderno.Audio.Procesado.IProcesadorDeAudio? TrasLaGanancia { get; set; }
+
         public event EventHandler<Exception>? Fallo;
 
         /// <summary>Como el de verdad: al romperse se cierra y avisa.</summary>

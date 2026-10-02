@@ -126,6 +126,21 @@
   <data name="Libro.Entrada.Ahora" xml:space="preserve">
     <value>Now (F8)</value>
   </data>
+  <data name="Libro.Entrada.Audio" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Escuchar" xml:space="preserve">
+    <value>Listen</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Escuchar.Ayuda" xml:space="preserve">
+    <value>Plays the attached recording on the PC speakers.</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Quitar" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Quitar.Ayuda" xml:space="preserve">
+    <value>Removes the audio from the contact. The file stays in the audio folder.</value>
+  </data>
   <data name="Libro.Entrada.CambiosGuardados" xml:space="preserve">
     <value>Changes saved to the QSO with {0}.</value>
   </data>

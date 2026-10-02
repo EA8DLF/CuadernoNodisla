@@ -17,9 +17,18 @@ namespace Nodisla.Cuaderno.Ui.Desarrollo;
 public sealed class AnalizadorSimulado : IAnalizadorDeEspectro
 {
     private readonly EquipoSimulado _equipo;
+    /// <summary>Estaciones fijas donde anuncia <see cref="FuenteSpotsSimulada"/>: hercios, ancho y fuerza.</summary>
+    private static readonly (long Hz, double Ancho, double Alto)[] SenalesDeLosHuecos =
+    [
+        (7_005_000, 300, 45), (7_074_000, 1_500, 38), (7_145_000, 1_200, 50),
+        (14_018_000, 300, 50), (14_074_000, 1_500, 40), (14_080_000, 500, 35), (14_195_000, 1_300, 58),
+        (21_023_000, 300, 42), (21_074_000, 1_500, 36), (21_295_000, 1_200, 48),
+    ];
+
     private readonly Random _azar = new(7_10);
     private Timer? _reloj;
     private int _pasada;
+    private long? _base;
 
     /// <summary>Monta el analizador simulado.</summary>
     /// <param name="equipo">El equipo simulado del que toma lo que tiene puesto.</param>
@@ -84,15 +93,25 @@ public sealed class AnalizadorSimulado : IAnalizadorDeEspectro
         if (vfo <= 0) vfo = 14_210_000;
         var inicio = posicion == ModoDelAnalizador.Fijo ? vfo / 100_000 * 100_000 - span / 4 : vfo - span / 2;
 
+        // Las señales estan quietas en su frecuencia (no pegadas al VFO): al resintonizar se
+        // ve correr la cascada, como con la radio. Unas alrededor de donde arranco el VFO y
+        // otras en los huecos donde anuncia el cluster simulado.
+        _base ??= vfo;
+        var b = _base.Value;
         _pasada++;
         var niveles = new byte[TramaDelAnalizadorFt710.Puntos];
         for (var i = 0; i < niveles.Length; i++)
         {
             var hz = inicio + ((long)i * span / niveles.Length);
             double nivel = 40 + _azar.Next(0, 14);
-            nivel += Senal(hz, vfo + 1_500, 900, 70);
-            nivel += Senal(hz, vfo - 23_000, 1_500, 55);
-            nivel += Senal(hz, vfo + 41_000 + ((_pasada % 200) * 60), 1_200, 60);
+            nivel += Senal(hz, b + 1_500, 900, 70);
+            nivel += Senal(hz, b - 23_000, 1_500, 55);
+            nivel += Senal(hz, b + 41_000 + ((_pasada % 200) * 60), 1_200, 60);
+            foreach (var (centro, ancho, alto) in SenalesDeLosHuecos)
+            {
+                if (Math.Abs(hz - centro) < ancho * 4) nivel += Senal(hz, centro, ancho, alto);
+            }
+
             niveles[i] = (byte)Math.Clamp(nivel, 0, 255);
         }
 

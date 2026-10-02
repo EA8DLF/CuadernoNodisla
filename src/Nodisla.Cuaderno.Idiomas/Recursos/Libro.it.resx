@@ -126,6 +126,21 @@
   <data name="Libro.Entrada.Ahora" xml:space="preserve">
     <value>Adesso (F8)</value>
   </data>
+  <data name="Libro.Entrada.Audio" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Escuchar" xml:space="preserve">
+    <value>Ascolta</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Escuchar.Ayuda" xml:space="preserve">
+    <value>Ascolta dagli altoparlanti del PC la registrazione allegata.</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Quitar" xml:space="preserve">
+    <value>Togli</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Quitar.Ayuda" xml:space="preserve">
+    <value>Toglie l'audio dal contatto. Il file resta nella cartella audio.</value>
+  </data>
   <data name="Libro.Entrada.CambiosGuardados" xml:space="preserve">
     <value>Modifiche salvate nel collegamento con {0}.</value>
   </data>

@@ -76,6 +76,9 @@ Le carnet de trafic se trouve dans {1}. Si le fichier est endommagé, ce même d
   <data name="Dialogos.Simulado.ModemNoTransmite" xml:space="preserve">
     <value>Le modem simulé n'émet pas. Fermez le programme et rouvrez-le sans CUADERNO_SIMULADO.</value>
   </data>
+  <data name="Dialogos.Simulado.NodoCaido" xml:space="preserve">
+    <value>Nœud en panne (test)</value>
+  </data>
   <data name="Dialogos.Simulado.QsoDuplicado" xml:space="preserve">
     <value>Le QSO avec {0} est déjà dans le carnet de trafic.</value>
   </data>

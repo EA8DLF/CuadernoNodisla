@@ -95,7 +95,7 @@ public sealed class OpcionesFt710
 /// </remarks>
 public sealed class ControlFt710
     : IEquipoAvanzado, IEquipoConDosVfos, IEquipoConTeclas, IEquipoConBotonera, IEquipoConEncendido, IPttDirecto, ISueltaDeEmergenciaPtt, IAvisaDePerdidaDeComunicacion,
-      Modelos.IEquipoDeModelo, IEquipoConSintonia
+      Modelos.IEquipoDeModelo, IEquipoConSintonia, IManipuladorCw, IMedidorDeRoe
 {
     /// <summary>
     /// Diferencias del modelo respecto del FT-710 (ver <see cref="Yaesu.PerfilYaesu"/>). Con el
@@ -219,17 +219,28 @@ public sealed class ControlFt710
                 () => _canal.PonerLineaDePttSincrono(false)));
         }
 
+        // Con el manipulador en marcha, cada via para antes la telegrafia (KY00;): con el
+        // break-in puesto, el equipo manipularia solo aunque el PTT ya estuviera abajo.
         vias.AddRange(
         [
             new ViaDeSuelta(
                 "FT-710: TX0 por el canal abierto",
-                async ct => await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false),
-                () => _canal.MandarSincrono("TX0;")),
+                async ct =>
+                {
+                    await PararElManipuladorSiHaceFaltaAsync(ct).ConfigureAwait(false);
+                    await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false);
+                },
+                () =>
+                {
+                    PararElManipuladorSincronoSiHaceFalta();
+                    _canal.MandarSincrono("TX0;");
+                }),
             new ViaDeSuelta(
                 "FT-710: reabrir el puerto y TX0",
                 async ct =>
                 {
                     await _canal.AbrirAsync(ct).ConfigureAwait(false);
+                    await PararElManipuladorSiHaceFaltaAsync(ct).ConfigureAwait(false);
                     await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false);
                 }),
         ]);
@@ -1004,6 +1015,13 @@ public sealed class ControlFt710
             await _canal.MandarAsync(_perfil.OrdenDeSintonia, ct).ConfigureAwait(false);
             Actualizar(estado => estado with { Transmitiendo = true });
             return;
+        }
+
+        if (!transmitir)
+        {
+            // Telegrafia en marcha: se para el manipulador ANTES de bajar el PTT, y por
+            // cualquier camino que baje el PTT (fin normal, tope, latido, panico, cierre).
+            await PararElManipuladorSiHaceFaltaAsync(ct).ConfigureAwait(false);
         }
 
         if (!transmitir && Volatile.Read(ref _sintonizando))
@@ -2193,6 +2211,7 @@ public sealed class ControlFt710
         {
             if (_canal.Abierto)
             {
+                await PararElManipuladorSiHaceFaltaAsync(ct).ConfigureAwait(false);
                 await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false);
                 return;
             }
@@ -2218,6 +2237,199 @@ public sealed class ControlFt710
         }
 
         _registro.LogError("No se ha podido bajar el PTT antes de desconectar por ninguna vía.");
+    }
+
+    // ── ROE durante la transmision (IMedidorDeRoe) ───────────────────────────────────────────
+
+    /// <summary>
+    /// RM6 (0-255) a ROE. El manual CAT (pag. 19) da la escala cruda sin curva; esta es la de
+    /// Hamlib para FTDX10/FTDX101, de la misma familia. <b>Sin calibrar en el FT-710</b>: hay que
+    /// comprobarla con una carga artificial y el operador delante.
+    /// </summary>
+    public static IReadOnlyList<(int Crudo, double Valor)> EscalaRoe { get; } =
+        [(0, 1.0), (26, 1.2), (52, 1.5), (89, 2.0), (126, 3.0), (173, 4.0), (236, 5.0), (255, 10.0)];
+
+    /// <summary>Lectura de RM5 (potencia, 0-255) por encima de la cual se considera que hay portadora.</summary>
+    public const int PotenciaCrudaConPortadora = 10;
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// <c>RM5;</c> (potencia) y <c>RM6;</c> (ROE), las dos «RM P1 P2P2P2 P3P3P3», y
+    /// <c>RI0;</c>, cuyo P2 (cuarto caracter) es 1 con «Hi-SWR»: la alarma de ROE del propio
+    /// equipo (manual CAT, pag. 19). La alarma corta aunque la escala de RM6 no este calibrada.
+    /// </remarks>
+    public async Task<LecturaDeRoe?> LeerRoeAsync(CancellationToken ct = default)
+    {
+        if (!_canal.Abierto) return null;
+        var po = Medidor(await PreguntarAsync("RM5;", ct).ConfigureAwait(false), "RM5");
+        var swr = Medidor(await PreguntarAsync("RM6;", ct).ConfigureAwait(false), "RM6");
+        var ri = await PreguntarAsync("RI0;", ct).ConfigureAwait(false);
+        var alarma = ri is { Length: > 3 } r && r.StartsWith("RI0", StringComparison.Ordinal) && r[3] == '1';
+        if (po is null && swr is null && !alarma) return null;
+        return new LecturaDeRoe(
+            swr is { } s ? Icom.ControlIcom.Interpolar(s, [.. EscalaRoe]) : null,
+            HayPotencia: po is >= PotenciaCrudaConPortadora || alarma,
+            AlarmaDelEquipo: alarma);
+
+        static int? Medidor(string? respuesta, string prefijo) =>
+            respuesta is { Length: >= 6 } t && t.StartsWith(prefijo, StringComparison.Ordinal)
+            && int.TryParse(t.AsSpan(3, 3), NumberStyles.Integer, CultureInfo.InvariantCulture, out var v)
+                ? v
+                : null;
+    }
+
+    // ── Telegrafia por el manipulador interno (IManipuladorCw) ───────────────────────────────
+
+    /// <summary>
+    /// Memoria de texto del manipulador que usa el programa para la telegrafia. Su contenido se
+    /// lee antes de usarla y se vuelve a escribir al terminar cada transmision.
+    /// </summary>
+    public const int MemoriaDelManipulador = 5;
+
+    /// <summary>Uno mientras el manipulador puede estar manipulando algo mandado por el programa.</summary>
+    private int _manipulando;
+
+    /// <summary>Lo que tenia la memoria del manipulador antes de usarla, o nulo si no se pudo leer.</summary>
+    private string? _textoOriginalDeLaMemoria;
+
+    /// <summary>Ya se leyo la memoria en esta transmision.</summary>
+    private bool _memoriaLeida;
+
+    /// <inheritdoc />
+    public string? PorQueNoManipula =>
+        !_perfil.ManipulaPorMemoriaDeTexto
+            ? Textos.F("Servicios.Radio.Cw.ModeloSinManipulador", _perfil.Nombre)
+            : !Estado.Conectado
+                ? Textos.T("Servicios.Radio.Cw.Desconectado")
+                : null;
+
+    /// <inheritdoc />
+    public int LetrasPorOrden => OrdenesFt710.LetrasPorMemoriaDelManipulador;
+
+    /// <inheritdoc />
+    public int WpmMinima => OrdenesFt710.WpmMinima;
+
+    /// <inheritdoc />
+    public int WpmMaxima => OrdenesFt710.WpmMaxima;
+
+    /// <inheritdoc />
+    public async Task PonerVelocidadAsync(int wpm, CancellationToken ct = default)
+    {
+        ComprobarQuePuedeManipular();
+        await MandarAsync(OrdenesFt710.OrdenDeVelocidad(wpm), ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Escribe el texto en la memoria de texto <see cref="MemoriaDelManipulador"/> (<c>KM5…;</c>)
+    /// y la reproduce (<c>KY05;</c>). Solo con el PTT pedido al vigilante: sin eso, se rechaza.
+    /// </remarks>
+    public async Task ManipularAsync(string texto, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(texto);
+        ComprobarQuePuedeManipular();
+        if (!Volatile.Read(ref _pttPedido) || Volatile.Read(ref _sintonizando))
+        {
+            throw new InvalidOperationException(Textos.T("Servicios.Radio.Cw.SinAntena"));
+        }
+
+        var limpio = OrdenesFt710.TextoParaElManipulador(texto);
+        if (limpio.Length == 0) return;
+        if (limpio.Length > LetrasPorOrden)
+        {
+            throw new ArgumentOutOfRangeException(nameof(texto), limpio.Length, $"El manipulador del FT-710 admite {LetrasPorOrden} caracteres por orden.");
+        }
+
+        await LeerLaMemoriaSiHaceFaltaAsync(ct).ConfigureAwait(false);
+        Volatile.Write(ref _manipulando, 1);
+        await OrdenesFt710.ConManipulacionAutorizadaAsync(async () =>
+        {
+            await MandarAsync(OrdenesFt710.OrdenDeEscribirTexto(MemoriaDelManipulador, limpio), ct).ConfigureAwait(false);
+            await MandarAsync(OrdenesFt710.OrdenDeReproducirTexto(MemoriaDelManipulador), ct).ConfigureAwait(false);
+        }).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task PararManipuladorAsync(CancellationToken ct = default)
+    {
+        if (_canal.Abierto) await MandarAsync(OrdenesFt710.PararElManipulador, ct).ConfigureAwait(false);
+        Volatile.Write(ref _manipulando, 0);
+    }
+
+    /// <inheritdoc />
+    /// <remarks>Vuelve a dejar en la memoria del manipulador lo que tenia antes de usarla.</remarks>
+    public async Task TerminarAsync(CancellationToken ct = default)
+    {
+        Volatile.Write(ref _manipulando, 0);
+        if (!_memoriaLeida) return;
+        _memoriaLeida = false;
+        var original = _textoOriginalDeLaMemoria;
+        _textoOriginalDeLaMemoria = null;
+        if (string.IsNullOrEmpty(original) || original.Length > OrdenesFt710.LetrasPorMemoriaDelManipulador
+            || original.Contains(Cat.Fin) || !_canal.Abierto)
+        {
+            return;
+        }
+
+        try
+        {
+            await OrdenesFt710.ConManipulacionAutorizadaAsync(
+                () => MandarAsync(OrdenesFt710.OrdenDeEscribirTexto(MemoriaDelManipulador, original), ct)).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _registro.LogWarning(ex, "No se ha podido devolver su texto a la memoria {Memoria} del manipulador.", MemoriaDelManipulador);
+        }
+    }
+
+    private void ComprobarQuePuedeManipular()
+    {
+        ObjectDisposedException.ThrowIf(_desechado, this);
+        if (PorQueNoManipula is { } porque) throw new InvalidOperationException(porque);
+    }
+
+    /// <summary>Lee la memoria del manipulador antes de escribirla, para devolverla al terminar.</summary>
+    private async Task LeerLaMemoriaSiHaceFaltaAsync(CancellationToken ct)
+    {
+        if (_memoriaLeida) return;
+        _memoriaLeida = true;
+        var consulta = string.Create(CultureInfo.InvariantCulture, $"KM{MemoriaDelManipulador};");
+        var respuesta = await PreguntarAsync(consulta, ct).ConfigureAwait(false);
+        var prefijo = consulta[..^1];
+        _textoOriginalDeLaMemoria = respuesta is not null && respuesta.StartsWith(prefijo, StringComparison.Ordinal) && respuesta.Length > prefijo.Length
+            ? respuesta[prefijo.Length..]
+            : null;
+    }
+
+    /// <summary>Si el manipulador puede estar en marcha, lo para. Nunca lanza: lo que sigue es bajar el PTT.</summary>
+    private async Task PararElManipuladorSiHaceFaltaAsync(CancellationToken ct)
+    {
+        if (Volatile.Read(ref _manipulando) == 0) return;
+        try
+        {
+            await _canal.MandarAsync(OrdenesFt710.PararElManipulador, ct).ConfigureAwait(false);
+            Volatile.Write(ref _manipulando, 0);
+            _registro.LogInformation("FT-710: manipulador parado (KY00) antes de bajar el PTT.");
+        }
+        catch (Exception ex)
+        {
+            _registro.LogWarning(ex, "No se ha podido parar el manipulador (KY00) antes de bajar el PTT.");
+        }
+    }
+
+    /// <summary>Lo mismo, bloqueando, para las vias sincronas de suelta.</summary>
+    private void PararElManipuladorSincronoSiHaceFalta()
+    {
+        if (Volatile.Read(ref _manipulando) == 0) return;
+        try
+        {
+            _canal.MandarSincrono(OrdenesFt710.PararElManipulador);
+            Volatile.Write(ref _manipulando, 0);
+        }
+        catch (Exception ex)
+        {
+            _registro.LogWarning(ex, "No se ha podido parar el manipulador (KY00) por la vía síncrona.");
+        }
     }
 
     private async Task<string?> PreguntarAsync(string orden, CancellationToken ct)

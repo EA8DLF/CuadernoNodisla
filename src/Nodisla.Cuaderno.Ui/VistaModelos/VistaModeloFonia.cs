@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Audio.Fonia;
+using Nodisla.Cuaderno.Audio.Procesado;
 using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Radio.Control.Ft710;
 using Nodisla.Cuaderno.Ui.Conversores;
@@ -130,6 +131,23 @@ public sealed partial class VistaModeloFonia : ObservableObject
 
     private DateTimeOffset _escuchaAbiertaUtc;
 
+    /// <summary>El voice keyer; lo pone el registro de la fonia.</summary>
+    public VistaModeloMensajesDeVoz? Mensajes { get; set; }
+
+    /// <summary>El grabador de la recepcion; lo pone el registro de la fonia.</summary>
+    public VistaModeloGrabacionRx? Grabacion { get; set; }
+
+    /// <summary>La pasada en curso es un mensaje grabado.</summary>
+    [ObservableProperty]
+    private bool _enviandoMensaje;
+
+    [ObservableProperty]
+    private double _avanceDelMensaje;
+
+    /// <summary>Retraso que anade el procesado de la escucha, escrito («+11 ms»), o vacio.</summary>
+    [ObservableProperty]
+    private string _latenciaDelProcesado = string.Empty;
+
     /// <summary>Rotulo del boton grande.</summary>
     public string TextoDelPtt => Transmitiendo
         ? (Ajustes.PttConmutado ? Textos.T("Cabina.Fonia.PttFinClic") : Textos.T("Cabina.Fonia.PttFinSoltar"))
@@ -143,6 +161,13 @@ public sealed partial class VistaModeloFonia : ObservableObject
     /// </summary>
     public async Task PttAbajoAsync()
     {
+        // Con un mensaje grabado en el aire, el PTT lo corta: el operador quiere hablar o parar.
+        if (_control.EnviandoMensaje)
+        {
+            await TerminarAsync(MotivoDeSuelta.Cancelado).ConfigureAwait(true);
+            return;
+        }
+
         if (Ajustes.PttConmutado && (Transmitiendo || _control.Transmitiendo))
         {
             await TerminarAsync(MotivoDeSuelta.Normal).ConfigureAwait(true);
@@ -155,7 +180,7 @@ public sealed partial class VistaModeloFonia : ObservableObject
     /// <summary>Boton o tecla del PTT, hacia arriba. Solo cuenta en mantener.</summary>
     public async Task PttArribaAsync()
     {
-        if (Ajustes.PttConmutado) return;
+        if (Ajustes.PttConmutado || _control.EnviandoMensaje) return;
         await TerminarAsync(MotivoDeSuelta.Normal).ConfigureAwait(true);
     }
 
@@ -220,6 +245,14 @@ public sealed partial class VistaModeloFonia : ObservableObject
 
         if (Transmitiendo != _control.Transmitiendo) Transmitiendo = _control.Transmitiendo;
         if (Escuchando != _control.Escuchando && !CambiandoLaEscucha) Escuchando = _control.Escuchando;
+        EnviandoMensaje = _control.EnviandoMensaje;
+        AvanceDelMensaje = EnviandoMensaje ? _control.AvanceDelMensaje : 0;
+        var latencia = _control.Escucha.LatenciaAnadida();
+        LatenciaDelProcesado = latencia > TimeSpan.Zero
+            ? string.Create(CultureInfo.InvariantCulture, $"+{latencia.TotalMilliseconds:0} ms")
+            : string.Empty;
+        Mensajes?.Refrescar();
+        Grabacion?.Refrescar();
 
         AvisoDeEscucha = AvisoSiNoLlegaAudio(DateTimeOffset.UtcNow);
 
@@ -344,6 +377,32 @@ public sealed partial class VistaModeloFonia : ObservableObject
         _control.SilenciarEscucha(Ajustes.SilencioRx);
         _control.Transmision.Ganancia = (float)Math.Pow(10, Ajustes.GananciaTxDb / 20.0);
         _control.Opciones.TiempoMaximo = TimeSpan.FromSeconds(Math.Clamp(Ajustes.TiempoMaximoSegundos, 10, 600));
+
+        // Procesado: todo en vivo, el hilo de audio lo lee al principio de cada bloque.
+        var escucha = _control.Escucha;
+        escucha.ReductorActivo = Ajustes.ReductorActivo;
+        escucha.Tipo = Ajustes.Reductor?.Valor == "Adaptativo" ? TipoDeReductor.Adaptativo : TipoDeReductor.Espectral;
+        escucha.Nivel = Ajustes.NivelDeReduccion / 100.0;
+        escucha.NotchActivo = Ajustes.NotchActivo;
+        escucha.LimitadorActivo = Ajustes.LimitadorActivo;
+        escucha.TechoDb = Ajustes.TechoEscuchaDb;
+
+        var micro = _control.Microfono;
+        micro.PuertaActiva = Ajustes.PuertaActiva;
+        micro.UmbralPuertaDb = Ajustes.UmbralPuertaDb;
+        micro.CorteDeGravesHz = Ajustes.CorteDeGraves?.Hercios ?? 100;
+        micro.GravesDb = Ajustes.GravesDb;
+        micro.MediosDb = Ajustes.MediosDb;
+        micro.AgudosDb = Ajustes.AgudosDb;
+        micro.CompresorActivo = Ajustes.CompresorActivo;
+        micro.UmbralCompresorDb = Ajustes.UmbralCompresorDb;
+        micro.Relacion = Ajustes.RelacionCompresor;
+        micro.TechoDb = Ajustes.TechoMicroDb;
+        micro.Activo = Ajustes.ProcesarMicro;
+
+        _control.Grabador.Minutos = Ajustes.MinutosDeGrabacion;
+        _control.Grabador.Activo = Ajustes.GrabarRecepcion;
+
         OnPropertyChanged(nameof(TextoDelTope));
         OnPropertyChanged(nameof(TextoDelPtt));
     }
@@ -370,6 +429,21 @@ public sealed partial class VistaModeloFonia : ObservableObject
 
     private void AlCambiarElEquipo(object? origen, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName == nameof(VistaModeloEquipo.Frecuencia))
+        {
+            // Mover el dial con un mensaje grabado en el aire lo corta: el CQ era para otra frecuencia.
+            if (_control.EnviandoMensaje)
+            {
+                Hilo.EnLaVentana(() =>
+                {
+                    _ = TerminarAsync(MotivoDeSuelta.Cancelado);
+                    Aviso = Textos.T("Cabina.Fonia.Voz.CortadoPorDial");
+                });
+            }
+
+            return;
+        }
+
         if (e.PropertyName is not (nameof(VistaModeloEquipo.Modo) or nameof(VistaModeloEquipo.Conectado))) return;
 
         Hilo.EnLaVentana(() =>

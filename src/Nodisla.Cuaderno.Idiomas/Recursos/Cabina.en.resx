@@ -72,8 +72,14 @@
   <data name="Cabina.Analizador.SinTramas" xml:space="preserve">
     <value>THE RADIO IS NOT SENDING ITS SPECTRUM</value>
   </data>
+  <data name="Cabina.Analizador.SpotClic" xml:space="preserve">
+    <value>Click: go to this spot (like double-clicking it in the list)</value>
+  </data>
   <data name="Cabina.Analizador.Vista3dss" xml:space="preserve">
     <value>Scope 3DSS view</value>
+  </data>
+  <data name="Cabina.Analizador.ZonaDeSintonia" xml:space="preserve">
+    <value>Scope: click to tune, wheel to move the VFO</value>
   </data>
   <data name="Cabina.Barra.AvisoPlan" xml:space="preserve">
     <value>Band plan warning</value>
@@ -210,14 +216,38 @@
   <data name="Cabina.Cascada.SinCascada" xml:space="preserve">
     <value>No waterfall. Press “Listen” to open the audio input.</value>
   </data>
+  <data name="Cabina.Cw.AbrirCw" xml:space="preserve">
+    <value>Open CW</value>
+  </data>
+  <data name="Cabina.Cw.AbrirCwAyuda" xml:space="preserve">
+    <value>Opens the CW page, with the full-size decoder and the glossary.</value>
+  </data>
   <data name="Cabina.Cw.Auto" xml:space="preserve">
     <value>Auto</value>
   </data>
   <data name="Cabina.Cw.Borrar" xml:space="preserve">
     <value>Clear</value>
   </data>
+  <data name="Cabina.Cw.Buscar" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Cabina.Cw.BuscarAyuda" xml:space="preserve">
+    <value>Releases the locked signal and looks for the strongest between 300 and 1200 Hz.</value>
+  </data>
   <data name="Cabina.Cw.Confianza" xml:space="preserve">
     <value>confidence {0} %</value>
+  </data>
+  <data name="Cabina.Cw.EntradaBaja" xml:space="preserve">
+    <value>Input low ({0} dBFS): raise the codec level</value>
+  </data>
+  <data name="Cabina.Cw.EntradaBien" xml:space="preserve">
+    <value>Input good ({0} dBFS)</value>
+  </data>
+  <data name="Cabina.Cw.EntradaSaturada" xml:space="preserve">
+    <value>Input CLIPPING: lower the codec level or the AF gain</value>
+  </data>
+  <data name="Cabina.Cw.EntradaSinAudio" xml:space="preserve">
+    <value>Input: no audio</value>
   </data>
   <data name="Cabina.Cw.Escuchar" xml:space="preserve">
     <value>Listen</value>
@@ -234,6 +264,15 @@
   <data name="Cabina.Cw.Esperando" xml:space="preserve">
     <value>Waiting for a telegraphy signal… Text appears once several characters in a row are recognised; noise writes nothing.</value>
   </data>
+  <data name="Cabina.Cw.EstadoBuscando" xml:space="preserve">
+    <value>Searching…</value>
+  </data>
+  <data name="Cabina.Cw.EstadoEnganchado" xml:space="preserve">
+    <value>Locked on {0} Hz</value>
+  </data>
+  <data name="Cabina.Cw.EstadoFijo" xml:space="preserve">
+    <value>Fixed on {0} Hz</value>
+  </data>
   <data name="Cabina.Cw.Fijar" xml:space="preserve">
     <value>Lock</value>
   </data>
@@ -245,6 +284,33 @@
   </data>
   <data name="Cabina.Cw.FijarNombre" xml:space="preserve">
     <value>Lock the pitch or go back to finding it automatically</value>
+  </data>
+  <data name="Cabina.Cw.Glosario" xml:space="preserve">
+    <value>CW glossary</value>
+  </data>
+  <data name="Cabina.Cw.GlosarioGrupo" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Cabina.Cw.GlosarioSignificado" xml:space="preserve">
+    <value>Meaning</value>
+  </data>
+  <data name="Cabina.Cw.GlosarioTexto" xml:space="preserve">
+    <value>Sent as</value>
+  </data>
+  <data name="Cabina.Cw.Grabado" xml:space="preserve">
+    <value>Audio saved to {0}</value>
+  </data>
+  <data name="Cabina.Cw.Grabando" xml:space="preserve">
+    <value>Recording… {0} s</value>
+  </data>
+  <data name="Cabina.Cw.Grabar" xml:space="preserve">
+    <value>Record 60 s</value>
+  </data>
+  <data name="Cabina.Cw.GrabarAyuda" xml:space="preserve">
+    <value>Saves 60 seconds of audio exactly as it comes from the rig, to send us a difficult case. Nothing is transmitted.</value>
+  </data>
+  <data name="Cabina.Cw.HuecoTransmision" xml:space="preserve">
+    <value>CW transmission (macros and free text) will go here.</value>
   </data>
   <data name="Cabina.Cw.Llave" xml:space="preserve">
     <value>Lights up with every dot and dash received</value>
@@ -270,8 +336,14 @@
   <data name="Cabina.Cw.NoSeAbre" xml:space="preserve">
     <value>The audio input could not be opened: {0}</value>
   </data>
+  <data name="Cabina.Cw.NoSeGraba" xml:space="preserve">
+    <value>The recording could not be saved: {0}</value>
+  </data>
   <data name="Cabina.Cw.Ocultar" xml:space="preserve">
     <value>Hide</value>
+  </data>
+  <data name="Cabina.Cw.Pais" xml:space="preserve">
+    <value>Country: {0}</value>
   </data>
   <data name="Cabina.Cw.PasarAlContacto" xml:space="preserve">
     <value>Put this callsign in the new contact</value>
@@ -291,6 +363,9 @@
   <data name="Cabina.Cw.SinEntrada" xml:space="preserve">
     <value>There is no audio input to open. Choose one in Settings › Audio and digital.</value>
   </data>
+  <data name="Cabina.Cw.SinSenal" xml:space="preserve">
+    <value>no signal {0} s</value>
+  </data>
   <data name="Cabina.Cw.TextoNombre" xml:space="preserve">
     <value>Decoded telegraphy text</value>
   </data>
@@ -299,6 +374,21 @@
   </data>
   <data name="Cabina.Cw.Tono" xml:space="preserve">
     <value>Pitch {0} Hz</value>
+  </data>
+  <data name="Cabina.Cw.TonoEscrito" xml:space="preserve">
+    <value>Pitch</value>
+  </data>
+  <data name="Cabina.Cw.TonoEscritoAyuda" xml:space="preserve">
+    <value>Type the pitch (300 to 1200 Hz) and press Enter to lock it. Arrows or wheel: ±10 Hz.</value>
+  </data>
+  <data name="Cabina.Cw.TonoFueraDeRango" xml:space="preserve">
+    <value>The pitch must be between 300 and 1200 Hz; {0} Hz has been set.</value>
+  </data>
+  <data name="Cabina.Cw.Traduccion" xml:space="preserve">
+    <value>Translation</value>
+  </data>
+  <data name="Cabina.Cw.TraduccionAyuda" xml:space="preserve">
+    <value>Under the text, the meaning of the recognised abbreviations and Q codes.</value>
   </data>
   <data name="Cabina.Cw.Wpm" xml:space="preserve">
     <value>{0} WPM</value>
@@ -549,8 +639,41 @@
   <data name="Cabina.Fonia.GananciaMicroAyuda" xml:space="preserve">
     <value>Gain from the PC microphone to the rig</value>
   </data>
+  <data name="Cabina.Fonia.Grabador.Adjuntado" xml:space="preserve">
+    <value>Saved {0} to {1} and attached to the contact.</value>
+  </data>
+  <data name="Cabina.Fonia.Grabador.Adjuntar" xml:space="preserve">
+    <value>Attach to QSO</value>
+  </data>
+  <data name="Cabina.Fonia.Grabador.Ayuda" xml:space="preserve">
+    <value>Saves the received audio in memory to a WAV file (without noise reduction or volume) and, if ticked, attaches it to the contact.</value>
+  </data>
+  <data name="Cabina.Fonia.Grabador.EnMemoria" xml:space="preserve">
+    <value>What is in memory now</value>
+  </data>
+  <data name="Cabina.Fonia.Grabador.Guardado" xml:space="preserve">
+    <value>Saved {0} to {1}.</value>
+  </data>
+  <data name="Cabina.Fonia.Grabador.Guardar" xml:space="preserve">
+    <value>Save the last ({0} min)</value>
+  </data>
+  <data name="Cabina.Fonia.Grabador.Nada" xml:space="preserve">
+    <value>Nothing recorded: open listening on the PC.</value>
+  </data>
+  <data name="Cabina.Fonia.Grabador.NoEsta" xml:space="preserve">
+    <value>Audio {0} not found.</value>
+  </data>
+  <data name="Cabina.Fonia.Grabador.SinCarpeta" xml:space="preserve">
+    <value>There is no data folder to save to.</value>
+  </data>
   <data name="Cabina.Fonia.IndiceMal" xml:space="preserve">
     <value>The modulation source menu index is not valid (six digits).</value>
+  </data>
+  <data name="Cabina.Fonia.Latencia.Ayuda" xml:space="preserve">
+    <value>Delay the spectral noise reduction adds to listening.</value>
+  </data>
+  <data name="Cabina.Fonia.Limitador" xml:space="preserve">
+    <value>Limiter</value>
   </data>
   <data name="Cabina.Fonia.Micro" xml:space="preserve">
     <value>Mic</value>
@@ -570,8 +693,20 @@
   <data name="Cabina.Fonia.NoAbreEscucha" xml:space="preserve">
     <value>Could not open monitoring: {0}</value>
   </data>
+  <data name="Cabina.Fonia.Notch" xml:space="preserve">
+    <value>Notch</value>
+  </data>
   <data name="Cabina.Fonia.NoTransmite" xml:space="preserve">
     <value>Could not transmit: {0}</value>
+  </data>
+  <data name="Cabina.Fonia.Nr" xml:space="preserve">
+    <value>NR</value>
+  </data>
+  <data name="Cabina.Fonia.Procesado" xml:space="preserve">
+    <value>Processing…</value>
+  </data>
+  <data name="Cabina.Fonia.Procesado.Accesible" xml:space="preserve">
+    <value>Phone audio processing settings</value>
   </data>
   <data name="Cabina.Fonia.PttClic" xml:space="preserve">
     <value>PTT · click to talk</value>
@@ -644,6 +779,93 @@
   </data>
   <data name="Cabina.Fonia.VolverABuscar" xml:space="preserve">
     <value>Search again</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Avance" xml:space="preserve">
+    <value>Message progress</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Borrar" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Confirmar" xml:space="preserve">
+    <value>You are about to transmit message {0} “{1}” ({2}) on phone.</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Confirmar.Titulo" xml:space="preserve">
+    <value>Transmit the voice message?</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.CortadoPorDial" xml:space="preserve">
+    <value>Voice message stopped: the dial moved.</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Corto" xml:space="preserve">
+    <value>The recording is too short or silent; it is not saved.</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Editar" xml:space="preserve">
+    <value>Record messages…</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Editar.Accesible" xml:space="preserve">
+    <value>Record, listen to and name the voice messages</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Editar.Explicacion" xml:space="preserve">
+    <value>They are recorded with the PC microphone and played on the speakers, without transmitting. When sent they go through the phone path with the latch, the confirmation, the PTT watchdog and the time limit.</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Editar.Titulo" xml:space="preserve">
+    <value>Voice messages (F1–F6)</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Escuchar" xml:space="preserve">
+    <value>Listen</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Grabando" xml:space="preserve">
+    <value>Recording {0}: speak and press “Finish”.</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Grabar" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Gracias" xml:space="preserve">
+    <value>Thanks</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Guardado" xml:space="preserve">
+    <value>Message {0} saved ({1}).</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Indicativo" xml:space="preserve">
+    <value>Callsign</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Informe" xml:space="preserve">
+    <value>Report</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.NoGraba" xml:space="preserve">
+    <value>Could not record from the microphone: {0}</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.NoGrabarEnElAire" xml:space="preserve">
+    <value>You cannot record while transmitting.</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.NoGuarda" xml:space="preserve">
+    <value>Could not save: {0}</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Nombre" xml:space="preserve">
+    <value>Message name</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.NoSuena" xml:space="preserve">
+    <value>Could not play: {0}</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Parar" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Pestillo.Ayuda" xml:space="preserve">
+    <value>The same latch as the modem and CW: without it, voice messages do not go on the air.</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Repetir" xml:space="preserve">
+    <value>Again</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.TerminarGrabacion" xml:space="preserve">
+    <value>Finish</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Titulo" xml:space="preserve">
+    <value>Voice:</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.Vacio" xml:space="preserve">
+    <value>not recorded</value>
+  </data>
+  <data name="Cabina.Fonia.Voz.YaEnElAire" xml:space="preserve">
+    <value>There is already a transmission on the air.</value>
   </data>
   <data name="Cabina.Frontal.AB" xml:space="preserve">
     <value>A/B — Switches to the other VFO. Right-click: A=B (asks for confirmation).</value>
@@ -1355,6 +1577,255 @@
   </data>
   <data name="Cabina.Posicion.Total" xml:space="preserve">
     <value>Full</value>
+  </data>
+  <data name="Cabina.Spot.NoTransmitiendo" xml:space="preserve">
+    <value>Not going to the spot: the radio is transmitting.</value>
+  </data>
+  <data name="Cabina.Spot.SinEquipo" xml:space="preserve">
+    <value>No radio: only the contact is filled in.</value>
+  </data>
+  <data name="Cabina.TxCw.Automatico" xml:space="preserve">
+    <value>Automatic</value>
+  </data>
+  <data name="Cabina.TxCw.Automatico.Ayuda" xml:space="preserve">
+    <value>Answers by itself to what the decoder reads, like the FT8 sequence. It switches off when stopping, when nobody answers or when the latch is closed.</value>
+  </data>
+  <data name="Cabina.TxCw.Busco" xml:space="preserve">
+    <value>Search and pounce</value>
+  </data>
+  <data name="Cabina.TxCw.Busco.Ayuda" xml:space="preserve">
+    <value>Answer someone else's CQ instead of calling yourself.</value>
+  </data>
+  <data name="Cabina.TxCw.CambiarACw" xml:space="preserve">
+    <value>The radio is in {0}. Switch it to CW to send?</value>
+  </data>
+  <data name="Cabina.TxCw.CambiarACw.Aceptar" xml:space="preserve">
+    <value>Switch to CW</value>
+  </data>
+  <data name="Cabina.TxCw.CambiarACw.Titulo" xml:space="preserve">
+    <value>Switch the radio to CW?</value>
+  </data>
+  <data name="Cabina.TxCw.CerrarAviso" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Cabina.TxCw.Concurso" xml:space="preserve">
+    <value>Contest</value>
+  </data>
+  <data name="Cabina.TxCw.Concurso.Ayuda" xml:space="preserve">
+    <value>Contest macro set: CQ TEST, 5NN and serial number, TU.</value>
+  </data>
+  <data name="Cabina.TxCw.Confirmar.Detalle" xml:space="preserve">
+    <value>The radio is going on air to key: «{0}». Esc or «STOP CW» cut it at once.</value>
+  </data>
+  <data name="Cabina.TxCw.Confirmar.Titulo" xml:space="preserve">
+    <value>Transmit in CW?</value>
+  </data>
+  <data name="Cabina.TxCw.Corresponsal" xml:space="preserve">
+    <value>Station:</value>
+  </data>
+  <data name="Cabina.TxCw.EditarMacros" xml:space="preserve">
+    <value>Edit macros</value>
+  </data>
+  <data name="Cabina.TxCw.EditarMacros.Ayuda" xml:space="preserve">
+    <value>Opens or closes the editor of the twelve macros.</value>
+  </data>
+  <data name="Cabina.TxCw.Editor.Exportar" xml:space="preserve">
+    <value>Export…</value>
+  </data>
+  <data name="Cabina.TxCw.Editor.Fabrica" xml:space="preserve">
+    <value>Restore defaults</value>
+  </data>
+  <data name="Cabina.TxCw.Editor.Guardar" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Cabina.TxCw.Editor.Importar" xml:space="preserve">
+    <value>Import…</value>
+  </data>
+  <data name="Cabina.TxCw.Editor.MiNombre" xml:space="preserve">
+    <value>My name</value>
+  </data>
+  <data name="Cabina.TxCw.Editor.MiQth" xml:space="preserve">
+    <value>My QTH</value>
+  </data>
+  <data name="Cabina.TxCw.Editor.Numero" xml:space="preserve">
+    <value>Next NR</value>
+  </data>
+  <data name="Cabina.TxCw.Editor.Rotulo" xml:space="preserve">
+    <value>Macro label</value>
+  </data>
+  <data name="Cabina.TxCw.Editor.Texto" xml:space="preserve">
+    <value>Macro text</value>
+  </data>
+  <data name="Cabina.TxCw.Editor.TiempoMaximo" xml:space="preserve">
+    <value>Transmit limit (s)</value>
+  </data>
+  <data name="Cabina.TxCw.Editor.Titulo" xml:space="preserve">
+    <value>CW macros</value>
+  </data>
+  <data name="Cabina.TxCw.EnAntena" xml:space="preserve">
+    <value>ON AIR · {0} · {1} WPM</value>
+  </data>
+  <data name="Cabina.TxCw.EnEscucha" xml:space="preserve">
+    <value>Receiving</value>
+  </data>
+  <data name="Cabina.TxCw.Enviar" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="Cabina.TxCw.Enviar.Ayuda" xml:space="preserve">
+    <value>Sends the typed text (Enter).</value>
+  </data>
+  <data name="Cabina.TxCw.EscribirMientras" xml:space="preserve">
+    <value>Type while sending</value>
+  </data>
+  <data name="Cabina.TxCw.EscribirMientras.Ayuda" xml:space="preserve">
+    <value>Each word goes out as soon as its space is typed, after whatever is being sent.</value>
+  </data>
+  <data name="Cabina.TxCw.Exportado" xml:space="preserve">
+    <value>Macros exported to {0}.</value>
+  </data>
+  <data name="Cabina.TxCw.Exportar.Titulo" xml:space="preserve">
+    <value>Export the CW macros</value>
+  </data>
+  <data name="Cabina.TxCw.Fallo" xml:space="preserve">
+    <value>Could not transmit: {0}</value>
+  </data>
+  <data name="Cabina.TxCw.FalloAlParar" xml:space="preserve">
+    <value>Failed to stop: {0}. If the radio is still transmitting, switch it off by hand.</value>
+  </data>
+  <data name="Cabina.TxCw.FaltaIndicativo" xml:space="preserve">
+    <value>The macro uses {CALL} and the new contact has no callsign.</value>
+  </data>
+  <data name="Cabina.TxCw.FaltaMiIndicativo" xml:space="preserve">
+    <value>The macro uses {MICALL} and the active station profile has no callsign.</value>
+  </data>
+  <data name="Cabina.TxCw.Fichero.Filtro" xml:space="preserve">
+    <value>CW macros (*.json)|*.json|All files (*.*)|*.*</value>
+  </data>
+  <data name="Cabina.TxCw.Guardado" xml:space="preserve">
+    <value>Macros saved.</value>
+  </data>
+  <data name="Cabina.TxCw.Importado" xml:space="preserve">
+    <value>Macros imported from {0}.</value>
+  </data>
+  <data name="Cabina.TxCw.Importar.Titulo" xml:space="preserve">
+    <value>Import CW macros</value>
+  </data>
+  <data name="Cabina.TxCw.Intro" xml:space="preserve">
+    <value>Next step</value>
+  </data>
+  <data name="Cabina.TxCw.Intro.Ayuda" xml:space="preserve">
+    <value>Sends the macros of the next step, like N1MM's Enter (ESM).</value>
+  </data>
+  <data name="Cabina.TxCw.ListoParaRegistrar" xml:space="preserve">
+    <value>Contact with {0} complete: it is ready in «New contact» to be logged.</value>
+  </data>
+  <data name="Cabina.TxCw.MasDespacio" xml:space="preserve">
+    <value>−</value>
+  </data>
+  <data name="Cabina.TxCw.MasDespacio.Ayuda" xml:space="preserve">
+    <value>Slower (2 WPM less)</value>
+  </data>
+  <data name="Cabina.TxCw.MasRapido" xml:space="preserve">
+    <value>+</value>
+  </data>
+  <data name="Cabina.TxCw.MasRapido.Ayuda" xml:space="preserve">
+    <value>Faster (2 WPM more)</value>
+  </data>
+  <data name="Cabina.TxCw.NoCambiaACw" xml:space="preserve">
+    <value>Could not switch the radio to CW: {0}</value>
+  </data>
+  <data name="Cabina.TxCw.NoConfirmado" xml:space="preserve">
+    <value>Not confirmed: nothing was transmitted.</value>
+  </data>
+  <data name="Cabina.TxCw.NoEstaEnCw" xml:space="preserve">
+    <value>The radio is not in CW: nothing was transmitted.</value>
+  </data>
+  <data name="Cabina.TxCw.NoExporta" xml:space="preserve">
+    <value>The macros could not be exported: {0}</value>
+  </data>
+  <data name="Cabina.TxCw.NoGuarda" xml:space="preserve">
+    <value>The macros could not be saved: {0}</value>
+  </data>
+  <data name="Cabina.TxCw.NoImporta" xml:space="preserve">
+    <value>The macros could not be imported: {0}</value>
+  </data>
+  <data name="Cabina.TxCw.NoRegistra" xml:space="preserve">
+    <value>The contact could not be logged: {0}</value>
+  </data>
+  <data name="Cabina.TxCw.NotaConcurso" xml:space="preserve">
+    <value>NR sent {0}, received {1}</value>
+  </data>
+  <data name="Cabina.TxCw.NuevoContacto" xml:space="preserve">
+    <value>New contact</value>
+  </data>
+  <data name="Cabina.TxCw.NuevoContacto.Ayuda" xml:space="preserve">
+    <value>Restarts the sequence (does not clear the form).</value>
+  </data>
+  <data name="Cabina.TxCw.Numero" xml:space="preserve">
+    <value>NR:</value>
+  </data>
+  <data name="Cabina.TxCw.Parado" xml:space="preserve">
+    <value>CW stopped.</value>
+  </data>
+  <data name="Cabina.TxCw.Parar" xml:space="preserve">
+    <value>STOP CW</value>
+  </data>
+  <data name="Cabina.TxCw.Parar.Ayuda" xml:space="preserve">
+    <value>Stops the radio's keyer and drops PTT at once (also with Esc).</value>
+  </data>
+  <data name="Cabina.TxCw.Paso.Confirmacion" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
+  <data name="Cabina.TxCw.Paso.Cq" xml:space="preserve">
+    <value>CQ</value>
+  </data>
+  <data name="Cabina.TxCw.Paso.Informe" xml:space="preserve">
+    <value>Report</value>
+  </data>
+  <data name="Cabina.TxCw.Paso.Respuesta" xml:space="preserve">
+    <value>Answer</value>
+  </data>
+  <data name="Cabina.TxCw.Paso.SetentaYTres" xml:space="preserve">
+    <value>73</value>
+  </data>
+  <data name="Cabina.TxCw.PasoSinMacro" xml:space="preserve">
+    <value>This step has no macro assigned in the current set.</value>
+  </data>
+  <data name="Cabina.TxCw.Pestillo.Ayuda" xml:space="preserve">
+    <value>The same latch as the digital modem: it starts closed on every launch. Without it nothing goes out.</value>
+  </data>
+  <data name="Cabina.TxCw.PestilloCerrado" xml:space="preserve">
+    <value>Tick «Allow transmitting this session» to be able to send CW.</value>
+  </data>
+  <data name="Cabina.TxCw.Registrado" xml:space="preserve">
+    <value>Contact with {0} complete and logged.</value>
+  </data>
+  <data name="Cabina.TxCw.RstRecibido" xml:space="preserve">
+    <value>RST received:</value>
+  </data>
+  <data name="Cabina.TxCw.Secuencia.AutoBusco" xml:space="preserve">
+    <value>Automatic: answering</value>
+  </data>
+  <data name="Cabina.TxCw.Secuencia.AutoLlamo" xml:space="preserve">
+    <value>Automatic: calling CQ</value>
+  </data>
+  <data name="Cabina.TxCw.Secuencia.Manual" xml:space="preserve">
+    <value>Manual sequence</value>
+  </data>
+  <data name="Cabina.TxCw.SinRespuesta" xml:space="preserve">
+    <value>No answer: automatic mode has been switched off.</value>
+  </data>
+  <data name="Cabina.TxCw.TextoLibre" xml:space="preserve">
+    <value>Free CW text</value>
+  </data>
+  <data name="Cabina.TxCw.TextoLibre.Ayuda" xml:space="preserve">
+    <value>Enter with text sends it; Enter when empty sends the next step of the sequence. Variables like {CALL} work.</value>
+  </data>
+  <data name="Cabina.TxCw.TiempoAgotado" xml:space="preserve">
+    <value>Cut: the maximum transmit time ({0} s) was reached.</value>
+  </data>
+  <data name="Cabina.TxCw.Wpm" xml:space="preserve">
+    <value>{0} WPM</value>
   </data>
   <data name="Cabina.Unidad.Indice" xml:space="preserve">
     <value>index</value>

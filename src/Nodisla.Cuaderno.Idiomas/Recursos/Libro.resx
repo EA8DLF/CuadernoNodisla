@@ -130,6 +130,21 @@
   <data name="Libro.Entrada.Ahora" xml:space="preserve">
     <value>Ahora (F8)</value>
   </data>
+  <data name="Libro.Entrada.Audio" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Escuchar" xml:space="preserve">
+    <value>Escuchar</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Escuchar.Ayuda" xml:space="preserve">
+    <value>Escucha por los altavoces del PC la grabación adjunta.</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Quitar" xml:space="preserve">
+    <value>Quitar</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Quitar.Ayuda" xml:space="preserve">
+    <value>Quita el audio del contacto. El fichero se queda en la carpeta de audio.</value>
+  </data>
   <data name="Libro.Entrada.CambiosGuardados" xml:space="preserve">
     <value>Cambios guardados en el contacto con {0}.</value>
   </data>

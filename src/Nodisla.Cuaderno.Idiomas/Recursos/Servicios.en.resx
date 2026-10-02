@@ -213,6 +213,12 @@
   <data name="Servicios.Audio.Hora.WindowsNoDeja" xml:space="preserve">
     <value>Windows did not allow changing the system time. You can do it by hand or enable Windows time synchronisation against {0}.</value>
   </data>
+  <data name="Servicios.Audio.MensajeLargo" xml:space="preserve">
+    <value>The message lasts {0} s and the transmission limit is {1} s: it is not sent.</value>
+  </data>
+  <data name="Servicios.Audio.MensajeVacio" xml:space="preserve">
+    <value>The voice message is empty.</value>
+  </data>
   <data name="Servicios.Audio.OtraTransmision" xml:space="preserve">
     <value>Another transmission is already on air (the digital modem?). Finish it before talking.</value>
   </data>
@@ -251,6 +257,9 @@
   </data>
   <data name="Servicios.Audio.SinSalidaAbierta" xml:space="preserve">
     <value>No output device is open: nothing can be played.</value>
+  </data>
+  <data name="Servicios.Audio.SinVoiceKeyer" xml:space="preserve">
+    <value>The transmit audio path does not accept recorded messages: nothing is sent.</value>
   </data>
   <data name="Servicios.Bandplan.FueraDelPlan" xml:space="preserve">
     <value>{0} is outside the {1} band plan.</value>
@@ -318,26 +327,59 @@
   <data name="Servicios.Cluster.IndicativoRechazadoExcepcion" xml:space="preserve">
     <value>Call sign rejected by the cluster.</value>
   </data>
+  <data name="Servicios.Cluster.NingunNodoConectado" xml:space="preserve">
+    <value>No node is connected: the command was not sent.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Ae5e" xml:space="preserve">
+    <value>US CC Cluster: supports very fine filtering commands (set/filter).</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Db0sue" xml:space="preserve">
+    <value>German node with plenty of European spots.</value>
+  </data>
   <data name="Servicios.Cluster.Nodo.Dl9gtb" xml:space="preserve">
-    <value>German node, with lots of European spots.</value>
+    <value>German node with plenty of European spots. On 2 Oct 2026 it did not answer: unverified.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Dxfun" xml:space="preserve">
     <value>Very busy international node, with lots of DX traffic.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Ea4rch" xml:space="preserve">
-    <value>Spanish node of Radio Club Henares. It is the default one.</value>
+    <value>Spanish node of Radio Club Henares. On 2 Oct 2026 its name did not resolve in DNS: unverified.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Ea7urc" xml:space="preserve">
-    <value>Another Spanish node, in case the first one does not answer.</value>
+    <value>Another Spanish node. On 2 Oct 2026 its name did not resolve in DNS: unverified.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Gb7tlh" xml:space="preserve">
+    <value>British DXSpider node: gb7djk.dxcluster.net answers as GB7TLH.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.Hamqth" xml:space="preserve">
+    <value>HamQTH's node, with plenty of international traffic.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.K3lr" xml:space="preserve">
+    <value>K3LR's US node, part of the contest network.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Nc7j" xml:space="preserve">
     <value>American node, good for seeing what is heard across the pond.</value>
   </data>
+  <data name="Servicios.Cluster.Nodo.On0dxk" xml:space="preserve">
+    <value>Veteran Belgian node (since 1991), good European coverage.</value>
+  </data>
   <data name="Servicios.Cluster.Nodo.Rbn" xml:space="preserve">
-    <value>These are not people: they are automatic skimmer stations. High volume; filtering is advisable.</value>
+    <value>Reverse Beacon Network, CW and RTTY. Not people: automatic listening stations. High volume; their spots are marked “skimmer” and can be hidden.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.RbnDigital" xml:space="preserve">
+    <value>Reverse Beacon Network, FT8 and FT4: automatic listening on digital modes. Very high volume; its spots are marked “skimmer”.</value>
   </data>
   <data name="Servicios.Cluster.Nodo.Ve7cc" xml:space="preserve">
     <value>CC Cluster: supports very fine filter commands (set/filter).</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.W1nr" xml:space="preserve">
+    <value>DXSpider node of the Yankee Clipper Contest Club.</value>
+  </data>
+  <data name="Servicios.Cluster.Nodo.W3lpl" xml:space="preserve">
+    <value>US contest node, very fast with North American spots.</value>
+  </data>
+  <data name="Servicios.Cluster.NodoDesconocido" xml:space="preserve">
+    <value>There is no node “{0}” in the list.</value>
   </data>
   <data name="Servicios.Cluster.OrdenSinConexion" xml:space="preserve">
     <value>No connection to {0}: the command was not sent.</value>
@@ -345,8 +387,14 @@
   <data name="Servicios.Cluster.Reintentando" xml:space="preserve">
     <value>* {0}: retrying in {1:0} s.</value>
   </data>
+  <data name="Servicios.Cluster.SinComprobar" xml:space="preserve">
+    <value>unverified</value>
+  </data>
   <data name="Servicios.Cluster.SinDatos" xml:space="preserve">
     <value>* {0}: no data, the connection is considered lost.</value>
+  </data>
+  <data name="Servicios.Cluster.VariosNodos" xml:space="preserve">
+    <value>DX cluster</value>
   </data>
   <data name="Servicios.Concursos.Cabrillo.ConcursoCaracteres" xml:space="preserve">
     <value>CONTEST only accepts letters, digits and hyphens: “{0}”.</value>
@@ -1260,6 +1308,21 @@ Congratulations and 73,
   <data name="Servicios.Radio.CoberturaGeneralLarga" xml:space="preserve">
     <value>General coverage (receive outside the bands)</value>
   </data>
+  <data name="Servicios.Radio.Cw.Desconectado" xml:space="preserve">
+    <value>The radio is not connected: CW cannot be sent.</value>
+  </data>
+  <data name="Servicios.Radio.Cw.ModeloSinManipulador" xml:space="preserve">
+    <value>The {0} does not send CW over CAT in this program: its keyer command has not been checked against the manual.</value>
+  </data>
+  <data name="Servicios.Radio.Cw.SinAntena" xml:space="preserve">
+    <value>To key CW, the antenna must be requested from the PTT watchdog.</value>
+  </data>
+  <data name="Servicios.Radio.Cw.SinManipuladorPorCat" xml:space="preserve">
+    <value>This radio cannot send CW over CAT (FT-710, ICOM with CI-V or Hamlib/rigctld can).</value>
+  </data>
+  <data name="Servicios.Radio.Cw.YaEnviando" xml:space="preserve">
+    <value>A CW transmission is already running.</value>
+  </data>
   <data name="Servicios.Radio.EncendidoSinRespuesta" xml:space="preserve">
     <value>The power-on command was sent but the radio did not answer within 20 seconds.</value>
   </data>
@@ -1407,6 +1470,27 @@ Congratulations and 73,
   <data name="Servicios.Radio.RigctldSinConexion" xml:space="preserve">
     <value>There is no open connection to rigctld.</value>
   </data>
+  <data name="Servicios.Radio.Seguridad.Bloqueo.AntenaAbierta" xml:space="preserve">
+    <value>Cut: open or shorted antenna, or the radio's SWR alarm (SWR {0}). No transmitting until every PTT source is released.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.Bloqueo.RoeAlta" xml:space="preserve">
+    <value>Cut by high SWR ({0}). Check the antenna and the tuner. No transmitting until every PTT source is released.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.Bloqueo.SinLatido" xml:space="preserve">
+    <value>Cut because the transmitting part stopped responding. No transmitting until every PTT source is released.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.Bloqueo.TiempoAgotado" xml:space="preserve">
+    <value>Cut by the maximum transmit time. No transmitting until every PTT source is released (MOX, modem, phone, CW).</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.FueraDelPlan" xml:space="preserve">
+    <value>Transmission blocked: at {0} MHz ({3}) the emission spans {1} to {2} MHz and leaves the band plan.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.PotenciaSinControl" xml:space="preserve">
+    <value>Transmission blocked: the maximum power for {0} is {1} W and it could not be set or checked on the radio.</value>
+  </data>
+  <data name="Servicios.Radio.Seguridad.SoloLaFuente" xml:space="preserve">
+    <value>Only the source that raised PTT can drop it normally; to cut, use the emergency release.</value>
+  </data>
   <data name="Servicios.Radio.SinControl" xml:space="preserve">
     <value>There is no control for {0}.</value>
   </data>
@@ -1535,6 +1619,54 @@ Congratulations and 73,
   </data>
   <data name="Servicios.Satelites.UnSatelite" xml:space="preserve">
     <value>1 satellite</value>
+  </data>
+  <data name="Servicios.Servidor.Concedida" xml:space="preserve">
+    <value>Granted</value>
+  </data>
+  <data name="Servicios.Servidor.ControlApagado" xml:space="preserve">
+    <value>External programs can only read the radio, not change it.</value>
+  </data>
+  <data name="Servicios.Servidor.EnElAire" xml:space="preserve">
+    <value>The radio is not changed while on the air.</value>
+  </data>
+  <data name="Servicios.Servidor.Fuente" xml:space="preserve">
+    <value>External programs</value>
+  </data>
+  <data name="Servicios.Servidor.NoDisponible" xml:space="preserve">
+    <value>This radio does not support it.</value>
+  </data>
+  <data name="Servicios.Servidor.OtraFuente" xml:space="preserve">
+    <value>"{0}" is already transmitting: the PTT is theirs.</value>
+  </data>
+  <data name="Servicios.Servidor.PestilloCerrado" xml:space="preserve">
+    <value>The "Allow transmitting in this session" latch is closed.</value>
+  </data>
+  <data name="Servicios.Servidor.PuertoOcupado" xml:space="preserve">
+    <value>Could not open port {0}: {1}</value>
+  </data>
+  <data name="Servicios.Servidor.SinEquipo" xml:space="preserve">
+    <value>No radio is connected.</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Desconexion" xml:space="preserve">
+    <value>the program disconnected</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Expulsado" xml:space="preserve">
+    <value>disconnected from Settings</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Normal" xml:space="preserve">
+    <value>released by the program</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Permiso" xml:space="preserve">
+    <value>the latch was closed or external TX was turned off</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Silencio" xml:space="preserve">
+    <value>the program stopped talking</value>
+  </data>
+  <data name="Servicios.Servidor.Suelta.Vigilante" xml:space="preserve">
+    <value>cut by the PTT watchdog</value>
+  </data>
+  <data name="Servicios.Servidor.TxApagada" xml:space="preserve">
+    <value>Transmitting for external programs is turned off in Settings.</value>
   </data>
   <data name="Servicios.SinContrasena" xml:space="preserve">
     <value>No {0} password is saved. Set it in Settings › Accounts &amp; services.</value>

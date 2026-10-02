@@ -216,7 +216,11 @@
             <vistas:PanelDeFonia DataContext="{Binding Fonia}" />
         </Border>
 
-        <!-- ══ Telegrafía: con el equipo en CW o pedida con el botón «CW» de la barra ══ -->
+        <!--
+            ══ Telegrafía: una línea, con el equipo en CW o pedida con el botón «CW» de la barra ══
+            El decodificador entero (texto, skimmer, espectro, glosario) está en Operar › CW; aquí
+            solo lo último que se ha leído y «Abrir CW», para no quitarle alto al contacto.
+        -->
         <Border Grid.Row="4"
                 x:Name="TarjetaCw"
                 SizeChanged="AlCambiarElReparto"
@@ -224,7 +228,7 @@
                 Margin="0,0,0,5"
                 Padding="8,4"
                 Visibility="{Binding Cw.Visible, Converter={StaticResource BooleanoAVisible}, FallbackValue=Collapsed}">
-            <vistas:PanelCw DataContext="{Binding Cw}" />
+            <vistas:PanelCwReducido DataContext="{Binding Cw}" />
         </Border>
 
         <!-- ══ Contacto nuevo a la izquierda; cluster a la derecha ══ -->

@@ -48,6 +48,7 @@
         <KeyBinding Key="D8" Modifiers="Control" Command="{Binding VerLaQslCommand}" />
         <KeyBinding Key="D9" Modifiers="Control" Command="{Binding VerLaRondaCommand}" />
         <KeyBinding Key="D5" Modifiers="Control+Shift" Command="{Binding VerElDisenadorDeDiplomasCommand}" />
+        <KeyBinding Key="D1" Modifiers="Control+Shift" Command="{Binding VerLaCwCommand}" />
         <KeyBinding Key="F1" Command="{Binding VerLaAyudaDeEstaPaginaCommand}" />
     </Window.InputBindings>
 
@@ -283,6 +284,8 @@
                                 Command="{Binding VerOperarCommand}" ToolTip="{loc:Texto Principal.Nav.CabinaConsejo}" />
                         <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="1" Content="{loc:Texto Principal.Nav.Digital}"
                                 Command="{Binding VerLoDigitalCommand}" ToolTip="{loc:Texto Principal.Nav.DigitalConsejo}" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="12" Content="{loc:Texto Principal.Nav.Cw}"
+                                Command="{Binding VerLaCwCommand}" ToolTip="{loc:Texto Principal.Nav.CwConsejo}" />
                         <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="6" Content="{loc:Texto Principal.Nav.Satelites}"
                                 Command="{Binding VerLosSatelitesCommand}" ToolTip="{loc:Texto Principal.Nav.SatelitesConsejo}" />
                         <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="8" Content="{loc:Texto Principal.Nav.Ronda}"
@@ -394,6 +397,11 @@
             <TabItem Header="{loc:Texto Principal.Nav.Ayuda}">
                 <vistas:PanelDeAyuda x:Name="PaginaDeAyuda" DataContext="{Binding Ayuda}" />
             </TabItem>
+
+            <!-- 12 · Operar → CW (telegrafía: decodificador, glosario y hueco de transmisión) -->
+            <TabItem Header="{loc:Texto Principal.Nav.Cw}">
+                <vistas:PestanaCw x:Name="PaginaCw" />
+            </TabItem>
         </TabControl>
 
         <!-- ══ Barra de estado ══ -->
@@ -493,6 +501,16 @@
 
                 <!-- Los testigos de los servicios, lo primero de la barra. -->
                 <vistas:PastillasDeServicio Margin="0,0,16,0" />
+
+                <!-- Programas externos conectados por rigctld o TCI; solo con algún servidor encendido. -->
+                <TextBlock Margin="0,0,20,0"
+                           VerticalAlignment="Center"
+                           DataContext="{Binding Servidores}"
+                           Text="{Binding IndicadorTexto, FallbackValue={x:Null}}"
+                           ToolTip="{Binding IndicadorConsejo, FallbackValue={x:Null}}"
+                           FontWeight="Bold"
+                           AutomationProperties.Name="{loc:Texto Ajustes.Apartado.Servidor}"
+                           Visibility="{Binding HayAlgunoActivo, Converter={StaticResource BooleanoAVisible}, FallbackValue=Collapsed}" />
 
                 <TextBlock Margin="0,0,20,0" VerticalAlignment="Center">
                     <Run Text="{loc:Texto Principal.Estado.Estacion}" Foreground="{DynamicResource TextoTenue}" />

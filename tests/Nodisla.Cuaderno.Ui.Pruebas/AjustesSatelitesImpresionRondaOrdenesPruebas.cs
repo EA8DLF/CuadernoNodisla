@@ -202,28 +202,120 @@ public sealed class AjustesSatelitesImpresionRondaOrdenesPruebas : IDisposable
     public async Task Aplicar_el_cluster_sin_servidor_lo_dice_y_con_el_lo_guarda()
     {
         var cluster = _banco.Cluster();
-        cluster.Servidor = string.Empty;
+        cluster.NodoSeleccionado!.Servidor = string.Empty;
         cluster.Indicativo = "EA8DLF";
 
         await cluster.AplicarCommand.ExecuteAsync(null);
         cluster.Fallo.Should().BeTrue();
         cluster.HayParte.Should().BeTrue();
-        cluster.Parte.Should().Contain("Falta el servidor");
+        cluster.Parte.Should().Contain("le falta el servidor");
 
-        cluster.Nodo.Should().BeNull("con el servidor borrado ya no es ningún nodo conocido");
-        cluster.Nodo = cluster.Nodos[0];
-        cluster.Servidor.Should().Be(cluster.Nodos[0].Servidor, "elegir un nodo conocido rellena el servidor");
-        cluster.Puerto.Should().Be(cluster.Nodos[0].Puerto);
+        cluster.NodoSeleccionado.Servidor = cluster.NodosConocidos[2].Servidor;
+        cluster.NodoSeleccionado.Puerto = cluster.NodosConocidos[2].Puerto;
 
         await cluster.AplicarCommand.ExecuteAsync(null);
         cluster.Fallo.Should().BeFalse();
         cluster.Parte.Should().StartWith("Guardado y aplicado");
-        AjustesDelPrograma.Leer(_banco.Carpeta).Cluster.Servidor.Should().Be(cluster.Nodos[0].Servidor);
+        AjustesDelPrograma.Leer(_banco.Carpeta).Cluster.Nodos[0].Servidor.Should().Be(cluster.NodosConocidos[2].Servidor);
 
-        cluster.Servidor = "otro.ejemplo";
+        cluster.NodoSeleccionado.Servidor = "otro.ejemplo";
         cluster.DescartarCommand.Execute(null);
-        cluster.Servidor.Should().Be(cluster.Nodos[0].Servidor, "Descartar vuelve a lo guardado");
+        cluster.NodoSeleccionado!.Servidor.Should().Be(cluster.NodosConocidos[2].Servidor, "Descartar vuelve a lo guardado");
         cluster.HayParte.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Se_anaden_nodos_conocidos_con_un_clic_y_se_aplican_todos()
+    {
+        var cluster = _banco.Cluster();
+        cluster.Indicativo = "EA8DLF";
+
+        var rbn = cluster.NodosConocidos.First(n => n.EsSkimmer);
+        cluster.NodoConocido = rbn;
+        cluster.AnadirConocidoCommand.Execute(null);
+        cluster.NodoConocido = cluster.NodosConocidos.First(n => n.Servidor == "dxfun.com");
+        cluster.AnadirConocidoCommand.Execute(null);
+
+        cluster.Nodos.Should().HaveCount(3);
+        cluster.Nodos[1].EsSkimmer.Should().BeTrue("el RBN viene marcado como escucha automática");
+        cluster.Nodos[1].GuionDeArranque.Should().NotContain("SH/DX", "al RBN no se le piden anuncios guardados");
+        cluster.NodoSeleccionado.Should().BeSameAs(cluster.Nodos[2]);
+
+        // El mismo otra vez no se duplica.
+        cluster.AnadirConocidoCommand.Execute(null);
+        cluster.Nodos.Should().HaveCount(3);
+        cluster.Fallo.Should().BeTrue();
+
+        await cluster.AplicarCommand.ExecuteAsync(null);
+
+        cluster.Fallo.Should().BeFalse(cluster.Parte);
+        _banco.FuenteDelCluster.Nodos.Select(n => n.Servidor)
+            .Should().Equal(cluster.Nodos.Select(n => n.Servidor));
+        _banco.FuenteDelCluster.Nodos[1].EsSkimmer.Should().BeTrue();
+        AjustesDelPrograma.Leer(_banco.Carpeta).Cluster.Nodos.Should().HaveCount(3);
+        cluster.ResumenDeNodos.Should().Be("3 nodos · 0 conectados");
+    }
+
+    [Fact]
+    public async Task Quitar_un_nodo_lo_saca_de_la_fuente_y_borra_su_contrasena()
+    {
+        var cluster = _banco.Cluster();
+        cluster.Indicativo = "EA8DLF";
+        cluster.AnadirNodoCommand.Execute(null);
+        var nuevo = cluster.NodoSeleccionado!;
+        nuevo.Servidor = "nodo.ejemplo";
+        cluster.ContrasenaNueva = "solo-de-este";
+        cluster.GuardarLaContrasenaCommand.Execute(null);
+        await cluster.AplicarCommand.ExecuteAsync(null);
+
+        _banco.Almacen.Guardadas[nuevo.ClaveDeContrasena].Should().Be("solo-de-este");
+        nuevo.ClaveDeContrasena.Should().NotBe(ClavesDeCredencial.ClusterContrasena, "cada nodo guarda la suya");
+        _banco.FuenteDelCluster.Nodos.Should().HaveCount(2);
+
+        cluster.QuitarNodoCommand.Execute(nuevo);
+        cluster.Nodos.Should().ContainSingle();
+        await cluster.AplicarCommand.ExecuteAsync(null);
+
+        _banco.FuenteDelCluster.Nodos.Should().ContainSingle();
+        _banco.Almacen.Existe(nuevo.ClaveDeContrasena).Should().BeFalse("no se quedan contraseñas huérfanas");
+    }
+
+    [Fact]
+    public async Task Probar_un_nodo_no_entra_y_dice_lo_que_ha_pasado()
+    {
+        var cluster = _banco.Cluster();
+        var nodo = cluster.Nodos[0];
+
+        await cluster.ProbarNodoCommand.ExecuteAsync(nodo);
+
+        _banco.Probados.Should().Equal($"{nodo.Servidor}:{nodo.Puerto}");
+        nodo.PruebaBien.Should().BeTrue();
+        nodo.Prueba.Should().Contain("42 ms").And.Contain("login:");
+    }
+
+    [Fact]
+    public async Task Conectar_y_desconectar_un_nodo_no_toca_los_demas()
+    {
+        var cluster = _banco.Cluster();
+        cluster.Indicativo = "EA8DLF";
+        cluster.NodoConocido = cluster.NodosConocidos.First(n => n.Servidor == "dxfun.com");
+        cluster.AnadirConocidoCommand.Execute(null);
+
+        // Sin aplicar, el nodo nuevo aun no existe en la fuente: se dice, no se hace nada.
+        await cluster.ConectarNodoCommand.ExecuteAsync(cluster.Nodos[1]);
+        cluster.Parte.Should().Contain("antes de conectar");
+
+        await cluster.AplicarCommand.ExecuteAsync(null);
+        await cluster.ConectarNodoCommand.ExecuteAsync(cluster.Nodos[0]);
+        await cluster.ConectarNodoCommand.ExecuteAsync(cluster.Nodos[1]);
+        cluster.Nodos.Should().OnlyContain(n => n.Estado == Aplicacion.Puertos.EstadoDeConexion.Conectado);
+
+        await cluster.DesconectarNodoCommand.ExecuteAsync(cluster.Nodos[0]);
+
+        cluster.Nodos[0].Estado.Should().Be(Aplicacion.Puertos.EstadoDeConexion.Desconectado);
+        cluster.Nodos[1].Estado.Should().Be(Aplicacion.Puertos.EstadoDeConexion.Conectado);
+        cluster.ResumenDeNodos.Should().Be("2 nodos · 1 conectados");
+        await _banco.FuenteDelCluster.DesconectarAsync();
     }
 
     // ── Ajustes · CAT ──────────────────────────────────────────────────────

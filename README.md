@@ -29,9 +29,17 @@ Autor: **EA8DLF** · Proyecto NODISLA · Contacto: nodisla@nodisla.org · Licenc
   Todo lo que no es el FT-710 está programado según el manual de cada modelo y **sin probar con
   la radio real**; el programa lo dice en pantalla. Un vigilante de PTT suelta la transmisión ante
   cualquier fallo.
-- **Decodificador de CW** en la cabina: lee la telegrafía del audio del equipo (tono automático,
-  velocidad en WPM, varias señales a la vez) y nunca transmite.
-- **Cluster de DX** por Telnet, con bandmap, filtros y aviso de entidad, banda o modo nuevos.
+- **Telegrafía (CW)**: página propia con decodificador (tono automático, velocidad en WPM, varias
+  señales a la vez, traducción de abreviaturas y glosario de códigos Q) y **transmisión por macros**
+  F1–F12 con secuencia de QSO, por CAT y siempre tras el pestillo «Permitir transmitir».
+- **Seguridad de transmisión**: el vigilante del PTT corta fuera del plan de banda, con ROE alta o
+  por encima de la potencia máxima por banda, sea cual sea quien transmite.
+- **Espectro con spots**: el analizador del FT-710 pinta los anuncios del cluster encima, marca
+  los picos y sintoniza con un clic o con la rueda.
+- **Audio y voz**: reductor de ruido espectral y notch automático (portados de WDSP), limitador,
+  procesado del micrófono, mensajes de voz F1–F6 y grabación de la recepción adjunta al contacto.
+- **Cluster de DX** por Telnet, con **varios nodos a la vez** (el mismo anuncio llegado por varios
+  sale una sola vez) y reconexión automática de cada uno, con bandmap, filtros y aviso de entidad, banda o modo nuevos.
 - **Módem digital propio**: FT8, FT4, FST4/FST4W, JT65, JT9, Q65, MSK144 y WSPR, sin depender de
   WSJT-X. También puede escuchar a WSJT-X/JTDX por UDP si se prefiere.
 - **Fonía por el PC**: PTT desde el programa, con el micrófono y los altavoces del ordenador.
@@ -46,6 +54,9 @@ Autor: **EA8DLF** · Proyecto NODISLA · Contacto: nodisla@nodisla.org · Licenc
 - **Diseñador de diplomas**: plantillas propias para emitir diplomas a otras estaciones (con
   numeración, firma y envío por correo) o certificados de los diplomas conseguidos.
 - **Ronda de control** para redes y net control.
+- **Servidor para otros programas**: WSJT-X, JTDX, GridTracker o cualquier logger pueden usar la
+  radio a través del Cuaderno con un servidor compatible con `rigctld` (Hamlib) o con TCI, con las
+  mismas salvaguardas de transmisión.
 - **Navegación por grupos** (Operar, Libro, QSL, Diplomas) y **Configuración por apartados**
   (cuentas, subidas, equipo, audio, fonía, cluster, correo, libro y actualizaciones).
 - **Ayuda integrada** (F1) con capturas y buscador, y la misma ayuda en HTML en `docs/web-ayuda/`.

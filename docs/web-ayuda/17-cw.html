@@ -31,73 +31,88 @@
 <li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
 <li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
 <li><a href="17-cw.html" class="actual" aria-current="page">Telegraf&#237;a (CW)</a></li>
+<li><a href="18-transmitir-cw.html">Transmitir en CW</a></li>
+<li><a href="19-seguridad-de-transmision.html">Salvaguardas de transmisi&#243;n</a></li>
+<li><a href="20-conectar-otros-programas.html">Conectar otros programas</a></li>
 </ul>
 </nav>
 <main class="capitulo">
 <h1 id="telegraf&#237;a-cw">Telegraf&#237;a (CW)</h1>
-<p>El panel <strong>Telegraf&#237;a (CW)</strong> de <strong>Operar › Cabina</strong> lee la telegraf&#237;a que se oye por el equipo y la escribe en pantalla, con su velocidad y su tono. El decodificador es del propio programa: no hace falta fldigi, CW Skimmer ni ning&#250;n otro programa.</p>
-<figure><a href="capturas/cw-cabina.png"><img src="capturas/cw-cabina.png" alt="Operar › Cabina: el panel de telegraf&#237;a con el texto en vivo y el mini espectro" loading="lazy"></a><figcaption>Operar › Cabina: el panel de telegraf&#237;a con el texto en vivo y el mini espectro</figcaption></figure>
-<p><strong>Solo escucha.</strong> El panel no transmite ni manda nada al equipo: del CAT lee el modo y el tono de telegraf&#237;a (<em>pitch</em>), y nada m&#225;s.</p>
-<h2 id="cu&#225;ndo-sale">Cu&#225;ndo sale</h2>
+<p>La p&#225;gina <strong>Operar › CW</strong> (<code>Ctrl</code> <code>May&#250;s</code> <code>1</code>) lee la telegraf&#237;a que se oye por el equipo y la escribe en pantalla, con su velocidad, su tono y lo que significa cada abreviatura. El decodificador es del propio programa: no hace falta fldigi, CW Skimmer ni ning&#250;n otro programa.</p>
+<figure><a href="capturas/cw-pagina.png"><img src="capturas/cw-pagina.png" alt="Operar › CW: el frontal arriba, el decodificador a lo grande, el glosario a la derecha y el hueco de la transmisi&#243;n abajo" loading="lazy"></a><figcaption>Operar › CW: el frontal arriba, el decodificador a lo grande, el glosario a la derecha y el hueco de la transmisi&#243;n abajo</figcaption></figure>
+<p><strong>Solo escucha.</strong> El decodificador no transmite ni manda nada al equipo: del CAT lee el modo y el tono de telegraf&#237;a (<em>pitch</em>), y nada m&#225;s.</p>
+<h2 id="d&#243;nde-est&#225;">D&#243;nde est&#225;</h2>
 <ul>
-<li><strong>Solo</strong>, en cuanto el equipo pasa a <strong>CW</strong> (lo dice el CAT).</li>
-<li><strong>A mano</strong>, con el bot&#243;n <strong>CW</strong> de la derecha de la barra del equipo, en cualquier modo: sirve para leer telegraf&#237;a en un receptor que no habla CAT o con el equipo en otro modo. <strong>Ocultar</strong> lo vuelve a quitar.</li>
+<li><strong>Operar › CW</strong>: la p&#225;gina entera. Arriba, la barra y el frontal del equipo (el mismo que en la cabina y en Digital); debajo, el decodificador a lo grande; a la derecha, el <strong>glosario CW</strong>; y abajo, el sitio de la <strong>transmisi&#243;n en CW</strong> (macros y escritura libre).</li>
+<li><strong>En la cabina</strong>, una sola l&#237;nea con lo &#250;ltimo que se ha le&#237;do, la velocidad, el estado y <strong>Abrir CW</strong>. Sale sola cuando el equipo pasa a <strong>CW</strong>; con el bot&#243;n <strong>CW</strong> de la derecha de la barra del equipo sale tambi&#233;n en otros modos, y <strong>Ocultar</strong> la quita. La cabina es para el contacto y el cluster: por eso ah&#237; va solo esa l&#237;nea.</li>
 </ul>
-<p>Mientras se ve y no est&#225; en pausa, escucha el audio de la entrada elegida en <strong>Configuraci&#243;n › Audio y digitales</strong> (el codec USB del FT-710). Si esa entrada est&#225; cerrada, el panel ofrece <strong>Escuchar</strong>, que la abre sin tocar la radio. El audio se comparte: el m&#243;dem digital y la fon&#237;a pueden estar escuchando a la vez.</p>
+<figure><a href="capturas/cw-cabina.png"><img src="capturas/cw-cabina.png" alt="Operar › Cabina: la l&#237;nea de telegraf&#237;a, con &#171;Abrir CW&#187;" loading="lazy"></a><figcaption>Operar › Cabina: la l&#237;nea de telegraf&#237;a, con &#171;Abrir CW&#187;</figcaption></figure>
+<p>Escucha mientras se ve (la p&#225;gina, o la l&#237;nea de la cabina) y no est&#225; en pausa, por la entrada elegida en <strong>Configuraci&#243;n › Audio y digitales</strong> (el codec USB del FT-710). Si esa entrada est&#225; cerrada, ofrece <strong>Escuchar</strong>, que la abre sin tocar la radio. El audio se comparte con el m&#243;dem digital y la fon&#237;a.</p>
 <h2 id="qu&#233;-ense&#241;a">Qu&#233; ense&#241;a</h2>
 <ul>
-<li><strong>Tono</strong> de la se&#241;al que se lee y si est&#225; en <strong>AUTO</strong> (lo busca solo) o <strong>FIJO</strong>.</li>
+<li><strong>El estado</strong>: <em>Buscando se&#241;al…</em>, <em>Enganchado en 700 Hz</em> o <em>Fijo en 700 Hz</em>, y cu&#225;nto lleva sin se&#241;al.</li>
 <li>La <strong>luz</strong> que se enciende con cada punto y raya: si parpadea al ritmo de lo que se oye, el decodificador est&#225; bien enganchado.</li>
-<li><strong>WPM</strong>: la velocidad, en palabras por minuto. Sigue los cambios y la mano de quien manipula (rayas largas, espacios cortos…), de 5 a 60 WPM.</li>
-<li><strong>Se&#241;al</strong> en dB sobre el ruido y <strong>fiable</strong>: cu&#225;nto se parecen los tiempos a los de la telegraf&#237;a. Por debajo de unos 10 dB de se&#241;al el texto empieza a tener errores.</li>
-<li>El <strong>texto</strong> en vivo. Se desplaza solo mientras se est&#225; abajo; si sube para releer algo, se queda donde est&#225;.</li>
+<li><strong>WPM</strong>: la velocidad, de 5 a 60 palabras por minuto. Sigue los cambios y la mano de quien manipula.</li>
+<li><strong>Se&#241;al</strong> en dB sobre el ruido y <strong>fiable</strong>: cu&#225;nto se parecen los tiempos a los de la telegraf&#237;a.</li>
+<li><strong>La entrada</strong>: <em>Entrada bien</em>, <em>Entrada baja</em> (suba el volumen del codec) o <em>Entrada SATURADA</em> (baje el volumen del codec o la ganancia de AF). El decodificador <strong>no depende del nivel</strong>: lee igual de −40 a +10 dB de diferencia; el indicador es para que la tarjeta no recorte ni se quede sin bits.</li>
+<li>El <strong>texto</strong> en vivo, <strong>palabra a palabra</strong>. Se desplaza solo mientras se est&#225; abajo.</li>
 </ul>
-<h3 id="indicativos-cq-y-el-indicativo-propio">Indicativos, CQ y el indicativo propio</h3>
+<h3 id="indicativos-abreviaturas-y-prosignos">Indicativos, abreviaturas y prosignos</h3>
 <ul>
-<li>Los <strong>indicativos</strong> salen subrayados: <strong>un clic lo pasa al &#171;Contacto nuevo&#187;</strong>, igual que un anuncio del cluster.</li>
-<li><strong>CQ</strong> (y <strong>QRZ?</strong>) sale resaltado en &#225;mbar: alguien est&#225; llamando.</li>
-<li><strong>Su indicativo</strong> (el del perfil de estaci&#243;n activo) sale resaltado en verde: le est&#225;n llamando a usted.</li>
-<li>Los <strong>prosignos</strong> salen entre &#225;ngulos: <code>&lt;AR&gt;</code>, <code>&lt;SK&gt;</code>, <code>&lt;BT&gt;</code>, <code>&lt;KN&gt;</code>, <code>&lt;AS&gt;</code>…</li>
+<li>Los <strong>indicativos</strong> salen subrayados: <strong>un clic lo pasa al &#171;Contacto nuevo&#187;</strong>. Al pasar el rat&#243;n, el <strong>pa&#237;s</strong>.</li>
+<li><strong>CQ</strong> y <strong>QRZ?</strong> salen en &#225;mbar: alguien est&#225; llamando.</li>
+<li><strong>Su indicativo</strong> sale en verde: le est&#225;n llamando a usted.</li>
+<li>Las <strong>abreviaturas</strong> y los <strong>c&#243;digos Q</strong> conocidos (TU, FB, 73, QTH, QRZ, 5NN…) salen en otro color, con un subrayado fino: <strong>al pasar el rat&#243;n dicen qu&#233; significan</strong>.</li>
+<li><strong>Traducci&#243;n</strong> (casilla de los mandos): una l&#237;nea debajo del texto con el significado de las &#250;ltimas abreviaturas: &#171;TU = Gracias &#183; 73 = Saludos cordiales&#187;.</li>
+<li>Los <strong>prosignos</strong> salen entre &#225;ngulos (<code>&lt;AR&gt;</code>, <code>&lt;SK&gt;</code>, <code>&lt;BT&gt;</code>, <code>&lt;KN&gt;</code>, <code>&lt;AS&gt;</code>…), tambi&#233;n con su significado.</li>
 </ul>
-<p>El decodificador conoce las letras, los n&#250;meros, la puntuaci&#243;n, los prosignos y los caracteres europeos (&#209;, &#192;, &#196;, &#201;, &#214;, &#220;, CH…).</p>
-<h2 id="el-mini-espectro">El mini espectro</h2>
-<p>A la derecha, el audio de 200 a 1300 Hz:</p>
+<h3 id="el-glosario-cw">El glosario CW</h3>
+<p>A la derecha de la p&#225;gina, la lista entera: los <strong>c&#243;digos Q</strong> (QRA a QTR), las <strong>abreviaturas</strong> (CQ, DE, K, R, TU, TNX, FB, OM, YL, ES, HR, UR, RST, 5NN, AGN, PSE, GM/GA/GE/GN, 73, 88…), los <strong>prosignos</strong> y los <strong>n&#250;meros cortos de concurso</strong> (T = 0, A = 1, U = 2, V = 3, E = 5, B = 7, D = 8, N = 9). Todo en el idioma del programa.</p>
+<h2 id="el-tono-auto-buscar-y-fijar">El tono: AUTO, buscar y fijar</h2>
 <ul>
-<li>la <strong>raya verde</strong> es la se&#241;al que se est&#225; leyendo arriba;</li>
-<li>las <strong>rayas &#225;mbar</strong>, las dem&#225;s se&#241;ales que se leen a la vez, cada una con su l&#237;nea debajo (tono, velocidad y lo &#250;ltimo que ha dicho);</li>
-<li><strong>un clic</strong> en el espectro <strong>fija el tono</strong> en ese punto. Es la forma de elegir una se&#241;al d&#233;bil que tiene otra m&#225;s fuerte al lado.</li>
+<li><strong>AUTO</strong> (de f&#225;brica): busca la se&#241;al <strong>m&#225;s fuerte</strong> entre 300 y 1200 Hz. En cuanto empieza a leerla, <strong>se engancha a ella</strong>: ya no salta a otra aunque suba m&#225;s, ni en las pausas entre palabras, ni en los bajones de QSB. Solo vuelve a buscar cuando la se&#241;al lleva <strong>5 segundos</strong> sin aparecer (se cambia en los ajustes) o al pulsar <strong>Buscar</strong>.</li>
+<li><strong>Fijar a … Hz</strong> fija el tono al <em>pitch</em> del equipo (en el FT-710, <strong>CW PITCH</strong>). Sin CAT, al tono que tenga ahora. Con el tono fijo, el bot&#243;n pasa a <strong>Auto</strong>.</li>
+<li><strong>Tono</strong> (la casilla): escriba los hercios (300 a 1200) y pulse <code>Intro</code>; las flechas <code>↑</code> <code>↓</code> y la rueda del rat&#243;n lo mueven de 10 en 10 Hz.</li>
+<li><strong>Un clic en el mini espectro</strong> fija el tono en ese punto: es la forma de elegir una se&#241;al d&#233;bil que tiene otra m&#225;s fuerte al lado.</li>
 </ul>
-<h2 id="los-botones">Los botones</h2>
+<h2 id="el-mini-espectro-y-las-dem&#225;s-se&#241;ales">El mini espectro y las dem&#225;s se&#241;ales</h2>
+<p>El audio de 200 a 1300 Hz: la <strong>raya verde</strong> es la se&#241;al que se lee; las <strong>rayas &#225;mbar</strong>, las dem&#225;s que se leen a la vez (el &#171;skimmer&#187;), cada una con su l&#237;nea debajo.</p>
+<h2 id="los-dem&#225;s-botones">Los dem&#225;s botones</h2>
 <ul>
-<li><strong>Borrar</strong> limpia el texto.</li>
-<li><strong>Pausa</strong> deja de escuchar sin cerrar el panel; <strong>Seguir</strong> vuelve.</li>
-<li><strong>Fijar a … Hz</strong> fija el tono al <em>pitch</em> del equipo (el tono de CW que tiene puesto la radio; en el FT-710, <strong>CW PITCH</strong>). Si el CAT no lo da, se fija al tono que tenga ahora. Con el tono fijo, el bot&#243;n pasa a <strong>Auto</strong>, que vuelve a buscarlo solo.</li>
+<li><strong>Borrar</strong> limpia el texto. <strong>Pausa</strong> deja de escuchar; <strong>Seguir</strong> vuelve.</li>
+<li><strong>Grabar 60 s</strong> guarda un minuto del audio tal como llega del equipo en <code>%AppData%\CuadernoNodisla\grabaciones-cw\</code>. Sirve para mandarnos un caso que no se lee bien (a nodisla@nodisla.org). No transmite nada.</li>
 </ul>
-<p>En autom&#225;tico, el panel se va a la se&#241;al <strong>m&#225;s fuerte</strong> entre 300 y 1200 Hz y la sigue si deriva; solo cambia a otra cuando la que ten&#237;a lleva un rato callada.</p>
 <h2 id="el-ruido-no-escribe">El ruido no escribe</h2>
-<p>El texto no sale hasta que se reconocen varios caracteres seguidos con tiempos de telegraf&#237;a. As&#237; el ruido de la banda, los pitidos y las portadoras no escriben basura. Lo que se ley&#243; mientras tanto no se pierde: sale de golpe en cuanto se engancha.</p>
+<p>El ruido de la banda, el QRN y las se&#241;ales troceadas no escriben basura:</p>
+<ul>
+<li>el texto no sale hasta que se reconocen varios caracteres seguidos con tiempos de telegraf&#237;a y con letras de verdad (no solo E, I, T y S);</li>
+<li>lo enganchado se vigila palabra a palabra: si el texto empieza a tener la pinta del ruido (&#171;E E ET IEI TTEA…&#187;), deja de escribir y se desengancha;</li>
+<li>el silenciador mide el ruido en el momento: tocar la ganancia de RF o el AGC del equipo no lo enga&#241;a.</li>
+</ul>
+<p>Lo que se ley&#243; antes de engancharse no se pierde: sale de golpe en cuanto se engancha.</p>
 <h2 id="ajustes">Ajustes</h2>
 <p>En <strong>Configuraci&#243;n › Audio y digitales</strong>, apartado <strong>Telegraf&#237;a (CW)</strong>:</p>
 <figure><a href="capturas/configuracion-cw.png"><img src="capturas/configuracion-cw.png" alt="Configuraci&#243;n › Audio y digitales: los ajustes de la telegraf&#237;a" loading="lazy"></a><figcaption>Configuraci&#243;n › Audio y digitales: los ajustes de la telegraf&#237;a</figcaption></figure>
 <ul>
-<li><strong>Tono por omisi&#243;n</strong>: con el que arranca antes de encontrar una se&#241;al (700 Hz de f&#225;brica).</li>
-<li><strong>Ancho del filtro</strong>: 100 Hz va bien casi siempre. M&#225;s estrecho saca se&#241;ales m&#225;s d&#233;biles y aparta mejor a los vecinos, pero sigue peor las velocidades altas.</li>
+<li><strong>Tono por omisi&#243;n</strong>: con el que arranca (700 Hz de f&#225;brica).</li>
+<li><strong>Ancho del filtro</strong>: 100 Hz va bien casi siempre.</li>
 <li><strong>Sensibilidad</strong> (1 a 10): m&#225;s alta lee se&#241;ales m&#225;s d&#233;biles. El ruido no escribe con ninguna.</li>
-<li><strong>Velocidad</strong>: las que se siguen, de 5 a 60 WPM. Acotarlas evita confundir una se&#241;al lenta con otra r&#225;pida.</li>
-<li><strong>Se&#241;ales a la vez</strong>: adem&#225;s de la principal, cu&#225;ntas m&#225;s se leen (el &#171;skimmer&#187;). Con 1, solo la principal.</li>
+<li><strong>Velocidad</strong>: las que se siguen, de 5 a 60 WPM.</li>
+<li><strong>Se&#241;ales a la vez</strong>: adem&#225;s de la principal, cu&#225;ntas m&#225;s se leen. Con 1, solo la principal.</li>
+<li><strong>Volver a buscar tras</strong>: segundos sin la se&#241;al enganchada antes de buscar otra (5 de f&#225;brica).</li>
 </ul>
-<p>Pulse <strong>Guardar</strong>: el panel toma los ajustes nuevos en el acto.</p>
+<p>Pulse <strong>Guardar</strong>: el decodificador toma los ajustes nuevos en el acto.</p>
 <h2 id="cu&#225;nto-lee">Cu&#225;nto lee</h2>
-<p>Medido con telegraf&#237;a sint&#233;tica sobre ruido blanco (las cifras completas est&#225;n en <code>tests/Nodisla.Cuaderno.Modos.Pruebas/Banco/resultados-cw.md</code>), con la relaci&#243;n se&#241;al-ruido en 500 Hz, que es la habitual en telegraf&#237;a:</p>
+<p>Medido con telegraf&#237;a sint&#233;tica sobre ruido blanco (las cifras completas est&#225;n en <code>tests/Nodisla.Cuaderno.Modos.Pruebas/Banco/resultados-cw.md</code>), con la relaci&#243;n se&#241;al-ruido en 500 Hz, la habitual en telegraf&#237;a (errores de car&#225;cter):</p>
 <div class="tabla"><table>
 <thead><tr><th>Se&#241;al (S/R en 500 Hz)</th><th>12 WPM</th><th>20 WPM</th><th>30 WPM</th><th>40 WPM</th></tr></thead>
 <tbody>
-<tr><td>+17 dB</td><td>3 %</td><td>2 %</td><td>2 %</td><td>3 %</td></tr>
-<tr><td>+7 dB</td><td>2 %</td><td>2 %</td><td>2 %</td><td>4 %</td></tr>
-<tr><td>+3 dB</td><td>2 %</td><td>4 %</td><td>7 %</td><td>29 %</td></tr>
-<tr><td>+1 dB</td><td>5 %</td><td>32 %</td><td>34 %</td><td>49 %</td></tr>
+<tr><td>+17 dB</td><td>6 %</td><td>6 %</td><td>2 %</td><td>3 %</td></tr>
+<tr><td>+7 dB</td><td>6 %</td><td>2 %</td><td>2 %</td><td>8 %</td></tr>
+<tr><td>+3 dB</td><td>3 %</td><td>4 %</td><td>8 %</td><td>29 %</td></tr>
+<tr><td>+1 dB</td><td>86 %</td><td>89 %</td><td>90 %</td><td>85 %</td></tr>
 </tbody></table></div>
-<p>(Errores de car&#225;cter.) Con una mano humana irregular, a +7 dB, uno de cada diez caracteres sale mal; con otra se&#241;al m&#225;s fuerte a 150 Hz, el tono fijado la aparta y sale el 98 % bien. Con desvanecimientos profundos (QSB de 15 dB) se pierde lo que cae en el fondo de cada baj&#243;n.</p>
+<p>A +1 dB y por debajo casi no escribe: prefiere <strong>callarse</strong> a escribir basura. Con el ruido real del FT-710, de −40 a +10 dB de nivel de entrada, se copia igual (2 % de errores con la se&#241;al 6 dB sobre el ruido del filtro).</p>
 
 </main>
 </div>

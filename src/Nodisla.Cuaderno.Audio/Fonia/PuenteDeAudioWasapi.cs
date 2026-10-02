@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using Nodisla.Cuaderno.Audio.Captura;
+using Nodisla.Cuaderno.Audio.Procesado;
 using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Audio.Fonia;
@@ -52,6 +53,8 @@ public sealed class PuenteDeAudioWasapi : IPuenteDeAudio
     private double _nivel;
     private float _ganancia = 1f;
     private volatile bool _silenciado;
+    private IProcesadorDeAudio? _antes;
+    private IProcesadorDeAudio? _tras;
 
     /// <summary>Monta el camino, sin abrir nada.</summary>
     /// <param name="latenciaMs">Latencia pedida a WASAPI en cada extremo.</param>
@@ -114,6 +117,20 @@ public sealed class PuenteDeAudioWasapi : IPuenteDeAudio
             if (captura == 0 || lectura == 0) return null;
             return new DateTimeOffset(Math.Min(captura, lectura), TimeSpan.Zero);
         }
+    }
+
+    /// <inheritdoc />
+    public IProcesadorDeAudio? AntesDeLaGanancia
+    {
+        get => Volatile.Read(ref _antes);
+        set => Volatile.Write(ref _antes, value);
+    }
+
+    /// <inheritdoc />
+    public IProcesadorDeAudio? TrasLaGanancia
+    {
+        get => Volatile.Read(ref _tras);
+        set => Volatile.Write(ref _tras, value);
     }
 
     /// <inheritdoc />
@@ -291,14 +308,19 @@ public sealed class PuenteDeAudioWasapi : IPuenteDeAudio
             var mono = _mono.AsSpan(0, cuadros);
             ConversorDeMuestras.AMono(datos.Buffer.AsSpan(0, datos.BytesRecorded), entrada.Canales, entrada.Bits, entrada.Flotante, mono);
 
+            var frecuencia = remuestreador.FrecuenciaDeOrigen;
+            Intentar(AntesDeLaGanancia, mono, frecuencia);
+
             var ganancia = Ganancia;
+            for (var i = 0; i < mono.Length; i++) mono[i] *= ganancia;
+
+            Intentar(TrasLaGanancia, mono, frecuencia);
+
             var pico = 0f;
             for (var i = 0; i < mono.Length; i++)
             {
-                var valor = mono[i] * ganancia;
-                var absoluto = Math.Abs(valor);
+                var absoluto = Math.Abs(mono[i]);
                 if (absoluto > pico) pico = absoluto;
-                mono[i] = valor;
             }
 
             // Medidor con caida suave: sube de golpe y baja poco a poco.
@@ -332,6 +354,24 @@ public sealed class PuenteDeAudioWasapi : IPuenteDeAudio
         {
             // Es el hilo de Windows: no se deja salir nada.
             _registro.LogError(fallo, "Fallo al pasar audio por el camino de fonía.");
+        }
+    }
+
+    /// <summary>
+    /// Pasa el bloque por un paso de procesado. Si el paso falla, el bloque sale en silencio
+    /// —nunca a medio procesar— y el camino sigue: un fallo del reductor no corta la escucha.
+    /// </summary>
+    private void Intentar(IProcesadorDeAudio? paso, Span<float> mono, int frecuencia)
+    {
+        if (paso is null) return;
+        try
+        {
+            paso.Procesar(mono, frecuencia);
+        }
+        catch (Exception fallo)
+        {
+            mono.Clear();
+            _registro.LogError(fallo, "Fallo en el procesado del camino de fonía; el bloque sale en silencio.");
         }
     }
 

@@ -152,6 +152,38 @@ internal sealed class SesionDeMentira
         return linea;
     }
 
+    /// <summary>
+    /// Lee una linea y la apunta, o devuelve nulo si el programa ha cerrado la conexion.
+    /// </summary>
+    public async Task<string?> LeerLineaONadaAsync(CancellationToken ct = default)
+    {
+        var acumulado = new StringBuilder();
+        var buffer = new byte[1];
+        while (true)
+        {
+            var leidos = await Flujo.ReadAsync(buffer, ct);
+            if (leidos == 0) return acumulado.Length > 0 ? Apuntar(acumulado.ToString()) : null;
+            var c = (char)buffer[0];
+            if (c == '\n') return Apuntar(acumulado.ToString());
+            if (c != '\r') acumulado.Append(c);
+        }
+    }
+
+    /// <summary>Atiende al programa hasta que cierre: apunta todo lo que mande.</summary>
+    public async Task EscucharHastaQueCierreAsync(CancellationToken ct = default)
+    {
+        while (await LeerLineaONadaAsync(ct) is not null)
+        {
+            // Solo se apunta.
+        }
+    }
+
+    private string Apuntar(string linea)
+    {
+        _recibido.Enqueue(linea);
+        return linea;
+    }
+
     /// <summary>Cierra la conexion de golpe, como cuando se cae un nodo.</summary>
     public void Cortar() => _cliente.Close();
 }

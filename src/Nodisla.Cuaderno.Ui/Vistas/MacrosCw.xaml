@@ -1,0 +1,311 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.MacrosCw"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+             x:Name="Raiz"
+             Loaded="AlCargar"
+             Unloaded="AlDescargar"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        TRANSMITIR EN CW: macros F1-F12, escritura libre y la secuencia del contacto.
+
+        Pensada para ir a todo lo ancho bajo el decodificador. Arriba, el estado de la
+        transmision, el pestillo, la velocidad y el boton grande de PARAR (tambien Esc). Debajo,
+        las doce macros; luego el texto libre; luego la tira de la secuencia y, plegado, el
+        editor de macros.
+
+        La telegrafia la manipula la radio (KM/KY en el FT-710, 17 en ICOM, send_morse con
+        Hamlib). El PC no genera audio.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+    </UserControl.Resources>
+
+    <StackPanel>
+        <!-- ══ Estado de la transmision, pestillo, velocidad y PARAR ══ -->
+        <DockPanel Margin="0,0,0,6" LastChildFill="True">
+            <Button DockPanel.Dock="Right"
+                    x:Name="BotonParar"
+                    Content="{loc:Texto Cabina.TxCw.Parar}"
+                    Command="{Binding PararCommand}"
+                    Style="{StaticResource BotonDePanico}"
+                    MinWidth="150"
+                    Height="40"
+                    FontSize="15"
+                    FontWeight="Bold"
+                    Margin="8,0,0,0"
+                    AutomationProperties.Name="{loc:Texto Cabina.TxCw.Parar}"
+                    ToolTip="{loc:Texto Cabina.TxCw.Parar.Ayuda}" />
+
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0">
+                <Button Content="{loc:Texto Cabina.TxCw.MasDespacio}"
+                        Command="{Binding MasDespacioCommand}"
+                        MinWidth="34"
+                        AutomationProperties.Name="{loc:Texto Cabina.TxCw.MasDespacio.Ayuda}"
+                        ToolTip="{loc:Texto Cabina.TxCw.MasDespacio.Ayuda}" />
+                <TextBlock Text="{Binding WpmTexto}"
+                           FontFamily="Consolas"
+                           FontSize="15"
+                           FontWeight="Bold"
+                           MinWidth="70"
+                           TextAlignment="Center"
+                           VerticalAlignment="Center" />
+                <Button Content="{loc:Texto Cabina.TxCw.MasRapido}"
+                        Command="{Binding MasRapidoCommand}"
+                        MinWidth="34"
+                        AutomationProperties.Name="{loc:Texto Cabina.TxCw.MasRapido.Ayuda}"
+                        ToolTip="{loc:Texto Cabina.TxCw.MasRapido.Ayuda}" />
+            </StackPanel>
+
+            <CheckBox DockPanel.Dock="Right"
+                      Content="{loc:Texto Digital.Modem.PermitirTransmitir}"
+                      IsChecked="{Binding PermitirTransmitir}"
+                      VerticalAlignment="Center"
+                      Margin="8,0,0,0"
+                      ToolTip="{loc:Texto Cabina.TxCw.Pestillo.Ayuda}" />
+
+            <Border CornerRadius="3" Padding="10,6" VerticalAlignment="Center">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="{DynamicResource FondoAlterno}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding EnAntena}" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ErrorFondo}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="{Binding EstadoTx}"
+                           FontFamily="Consolas"
+                           FontSize="14"
+                           FontWeight="Bold"
+                           TextTrimming="CharacterEllipsis">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{DynamicResource TextoTenue}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding EnAntena}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource ErrorTexto}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Border>
+        </DockPanel>
+
+        <!-- Por que no se puede transmitir (equipo sin manipulador por CAT, pestillo cerrado…) -->
+        <TextBlock Text="{Binding Motivo}"
+                   Foreground="{DynamicResource AvisoTexto}"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,4">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SePuedeTransmitir}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <!-- ══ F1-F12 ══ -->
+        <ItemsControl ItemsSource="{Binding Macros}" Margin="0,0,0,6" IsEnabled="{Binding SePuedeTransmitir}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="12" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Command="{Binding DataContext.EnviarMacroCommand, ElementName=Raiz}"
+                            CommandParameter="{Binding}"
+                            Margin="0,0,4,0"
+                            Padding="2,4"
+                            Focusable="False"
+                            AutomationProperties.Name="{Binding Tecla}"
+                            ToolTip="{Binding Texto}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding EsLaQueToca}" Value="True">
+                                        <Setter Property="BorderBrush" Value="{DynamicResource Acento}" />
+                                        <Setter Property="BorderThickness" Value="2" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Tecla}" FontSize="10" Foreground="{DynamicResource TextoTenue}" HorizontalAlignment="Center" />
+                            <TextBlock Text="{Binding Rotulo}" FontWeight="Bold" HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- ══ Texto libre ══ -->
+        <DockPanel Margin="0,0,0,6">
+            <CheckBox DockPanel.Dock="Right"
+                      Content="{loc:Texto Cabina.TxCw.EscribirMientras}"
+                      IsChecked="{Binding EscribirMientrasSeEnvia}"
+                      VerticalAlignment="Center"
+                      Margin="8,0,0,0"
+                      ToolTip="{loc:Texto Cabina.TxCw.EscribirMientras.Ayuda}" />
+            <Button DockPanel.Dock="Right"
+                    Content="{loc:Texto Cabina.TxCw.Enviar}"
+                    Command="{Binding EnviarTextoLibreCommand}"
+                    Style="{StaticResource BotonQueTransmite}"
+                    IsEnabled="{Binding SePuedeTransmitir}"
+                    Margin="6,0,0,0"
+                    ToolTip="{loc:Texto Cabina.TxCw.Enviar.Ayuda}" />
+            <TextBox x:Name="CajaLibre"
+                     Text="{Binding TextoLibre, UpdateSourceTrigger=PropertyChanged}"
+                     CharacterCasing="Upper"
+                     FontFamily="Consolas"
+                     FontSize="15"
+                     VerticalContentAlignment="Center"
+                     KeyDown="AlTeclearElTextoLibre"
+                     AutomationProperties.Name="{loc:Texto Cabina.TxCw.TextoLibre}"
+                     ToolTip="{loc:Texto Cabina.TxCw.TextoLibre.Ayuda}" />
+        </DockPanel>
+
+        <!-- Lo que falta por salir -->
+        <TextBlock Text="{Binding Pendiente}"
+                   FontFamily="Consolas"
+                   Foreground="{DynamicResource TextoTenue}"
+                   TextTrimming="CharacterEllipsis"
+                   Margin="0,0,0,4" />
+
+        <!-- ══ La secuencia ══ -->
+        <WrapPanel Margin="0,0,0,4">
+            <ItemsControl ItemsSource="{Binding Pasos}" VerticalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border CornerRadius="10" Padding="9,3" Margin="0,0,4,0" BorderThickness="1">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="BorderBrush" Value="{DynamicResource BordeSuave}" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Hecho}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Toca}" Value="True">
+                                            <Setter Property="BorderBrush" Value="{DynamicResource Acento}" />
+                                            <Setter Property="BorderThickness" Value="2" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding Nombre}" />
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Button Content="{loc:Texto Cabina.TxCw.Intro}"
+                    Command="{Binding IntroCommand}"
+                    Style="{StaticResource BotonQueTransmite}"
+                    IsEnabled="{Binding SePuedeTransmitir}"
+                    Margin="8,0,0,0"
+                    ToolTip="{loc:Texto Cabina.TxCw.Intro.Ayuda}" />
+            <CheckBox Content="{loc:Texto Cabina.TxCw.Automatico}"
+                      IsChecked="{Binding Automatico}"
+                      VerticalAlignment="Center"
+                      Margin="12,0,0,0"
+                      ToolTip="{loc:Texto Cabina.TxCw.Automatico.Ayuda}" />
+            <CheckBox Content="{loc:Texto Cabina.TxCw.Busco}"
+                      IsChecked="{Binding Busco}"
+                      VerticalAlignment="Center"
+                      Margin="12,0,0,0"
+                      ToolTip="{loc:Texto Cabina.TxCw.Busco.Ayuda}" />
+            <CheckBox Content="{loc:Texto Cabina.TxCw.Concurso}"
+                      IsChecked="{Binding UsarConcurso}"
+                      VerticalAlignment="Center"
+                      Margin="12,0,0,0"
+                      ToolTip="{loc:Texto Cabina.TxCw.Concurso.Ayuda}" />
+            <Button Content="{loc:Texto Cabina.TxCw.NuevoContacto}"
+                    Command="{Binding NuevoContactoCommand}"
+                    Margin="12,0,0,0"
+                    ToolTip="{loc:Texto Cabina.TxCw.NuevoContacto.Ayuda}" />
+            <Button Content="{loc:Texto Cabina.TxCw.EditarMacros}"
+                    Command="{Binding AlternarEditorCommand}"
+                    Margin="6,0,0,0"
+                    ToolTip="{loc:Texto Cabina.TxCw.EditarMacros.Ayuda}" />
+        </WrapPanel>
+
+        <WrapPanel Margin="0,0,0,4">
+            <TextBlock Text="{Binding EstadoDeLaSecuencia}" Foreground="{DynamicResource TextoTenue}" Margin="0,0,14,0" />
+            <TextBlock Text="{loc:Texto Cabina.TxCw.Corresponsal}" Foreground="{DynamicResource TextoTenue}" Margin="0,0,4,0" />
+            <TextBlock Text="{Binding Corresponsal}" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,14,0" />
+            <TextBlock Text="{loc:Texto Cabina.TxCw.RstRecibido}" Foreground="{DynamicResource TextoTenue}" Margin="0,0,4,0" />
+            <TextBlock Text="{Binding RstRecibido}" FontFamily="Consolas" FontWeight="Bold" Margin="0,0,14,0" />
+            <TextBlock Text="{loc:Texto Cabina.TxCw.Numero}" Foreground="{DynamicResource TextoTenue}" Margin="0,0,4,0" />
+            <TextBlock Text="{Binding Numero}" FontFamily="Consolas" FontWeight="Bold" />
+        </WrapPanel>
+
+        <!-- Aviso -->
+        <DockPanel Visibility="{Binding HayAviso, Converter={StaticResource BooleanoAVisible}}" Margin="0,2,0,4">
+            <Button DockPanel.Dock="Right"
+                    Content="{loc:Texto Cabina.TxCw.CerrarAviso}"
+                    Command="{Binding CerrarAvisoCommand}"
+                    ToolTip="{loc:Texto Cabina.TxCw.CerrarAviso}" />
+            <TextBlock Text="{Binding Aviso}" TextWrapping="Wrap" Foreground="{DynamicResource AvisoTexto}" VerticalAlignment="Center" />
+        </DockPanel>
+
+        <!-- ══ Editor de macros (plegado) ══ -->
+        <Border Visibility="{Binding EditandoMacros, Converter={StaticResource BooleanoAVisible}}"
+                BorderBrush="{DynamicResource BordeSuave}"
+                BorderThickness="1"
+                CornerRadius="3"
+                Padding="8"
+                Margin="0,4,0,0">
+            <StackPanel>
+                <TextBlock Text="{loc:Texto Cabina.TxCw.Editor.Titulo}" Style="{StaticResource TituloDeSeccion}" />
+                <TextBlock Text="{Binding VariablesTexto}" FontFamily="Consolas" Foreground="{DynamicResource TextoTenue}" TextWrapping="Wrap" Margin="0,2,0,6" />
+                <ItemsControl ItemsSource="{Binding Macros}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel Margin="0,0,0,3">
+                                <TextBlock DockPanel.Dock="Left" Text="{Binding Tecla}" Width="34" VerticalAlignment="Center" />
+                                <TextBox DockPanel.Dock="Left"
+                                         Text="{Binding Rotulo, UpdateSourceTrigger=PropertyChanged}"
+                                         Width="80"
+                                         Margin="0,0,6,0"
+                                         AutomationProperties.Name="{loc:Texto Cabina.TxCw.Editor.Rotulo}" />
+                                <TextBox Text="{Binding Texto, UpdateSourceTrigger=PropertyChanged}"
+                                         FontFamily="Consolas"
+                                         AutomationProperties.Name="{loc:Texto Cabina.TxCw.Editor.Texto}" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <WrapPanel Margin="0,6,0,0">
+                    <TextBlock Text="{loc:Texto Cabina.TxCw.Editor.MiNombre}" VerticalAlignment="Center" Margin="0,0,4,0" />
+                    <TextBox Text="{Binding MiNombre, UpdateSourceTrigger=PropertyChanged}" Width="110" CharacterCasing="Upper" Margin="0,0,12,0" />
+                    <TextBlock Text="{loc:Texto Cabina.TxCw.Editor.MiQth}" VerticalAlignment="Center" Margin="0,0,4,0" />
+                    <TextBox Text="{Binding MiQth, UpdateSourceTrigger=PropertyChanged}" Width="130" CharacterCasing="Upper" Margin="0,0,12,0" />
+                    <TextBlock Text="{loc:Texto Cabina.TxCw.Editor.Numero}" VerticalAlignment="Center" Margin="0,0,4,0" />
+                    <TextBox Text="{Binding Numero, UpdateSourceTrigger=PropertyChanged}" Width="60" Margin="0,0,12,0" />
+                    <TextBlock Text="{loc:Texto Cabina.TxCw.Editor.TiempoMaximo}" VerticalAlignment="Center" Margin="0,0,4,0" />
+                    <TextBox Text="{Binding TiempoMaximoSegundos, UpdateSourceTrigger=PropertyChanged}" Width="50" />
+                </WrapPanel>
+                <WrapPanel Margin="0,8,0,0">
+                    <Button Content="{loc:Texto Cabina.TxCw.Editor.Guardar}" Command="{Binding GuardarMacrosCommand}" Style="{StaticResource BotonPrincipal}" Margin="0,0,6,0" />
+                    <Button Content="{loc:Texto Cabina.TxCw.Editor.Fabrica}" Command="{Binding RestaurarFabricaCommand}" Margin="0,0,6,0" />
+                    <Button Content="{loc:Texto Cabina.TxCw.Editor.Exportar}" Command="{Binding ExportarCommand}" Margin="0,0,6,0" />
+                    <Button Content="{loc:Texto Cabina.TxCw.Editor.Importar}" Command="{Binding ImportarCommand}" />
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

@@ -267,6 +267,12 @@ public sealed class Qso
     /// <summary>De donde vino el contacto: teclado, WSJT-X, importacion ADIF, cluster…</summary>
     public string? Origen { get; set; }
 
+    /// <summary>
+    /// Grabacion de la recepcion adjunta al contacto: nombre del fichero dentro de la carpeta de
+    /// audio de los datos. Es propio del cuaderno: no va al ADIF.
+    /// </summary>
+    public string? AudioAdjunto { get; set; }
+
     public DateTimeOffset CreadoUtc { get; set; } = DateTimeOffset.UtcNow;
 
     public DateTimeOffset ModificadoUtc { get; set; } = DateTimeOffset.UtcNow;

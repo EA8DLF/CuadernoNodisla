@@ -27,6 +27,12 @@ public sealed record OpcionesCw
     /// <summary>Límite superior de la ventana donde se buscan tonos (Hz).</summary>
     public double BandaHastaHz { get; init; } = 1200;
 
+    /// <summary>
+    /// En automático, segundos sin señal tras los que la principal suelta el tono al que se había
+    /// enganchado y vuelve a buscar.
+    /// </summary>
+    public double SegundosSinSenalParaBuscar { get; init; } = 5;
+
     /// <summary>Cuántas señales se decodifican a la vez (1 = solo la principal).</summary>
     public int CanalesMaximos { get; init; } = 4;
 
@@ -53,6 +59,7 @@ public sealed record OpcionesCw
             BandaDesdeHz = desde,
             BandaHastaHz = hasta,
             CanalesMaximos = Math.Clamp(CanalesMaximos, 1, 8),
+            SegundosSinSenalParaBuscar = Math.Clamp(SegundosSinSenalParaBuscar, 1, 60),
         };
     }
 }

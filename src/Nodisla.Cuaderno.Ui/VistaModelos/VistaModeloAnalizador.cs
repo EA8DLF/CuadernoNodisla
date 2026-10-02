@@ -151,12 +151,21 @@ public sealed partial class VistaModeloAnalizador : ObservableObject
     public void Pintar(TrazaDeEspectro traza)
     {
         ArgumentNullException.ThrowIfNull(traza);
+        var empieza = System.Diagnostics.Stopwatch.GetTimestamp();
         UltimaTraza = traza;
         if (!MandaElCat()) AplicarLaTraza(traza);
 
         _pintor.Velocidad = Velocidad;
         _pintor.TresD = EnTresD;
-        _pintor.Pintar(traza.Niveles);
+
+        // La cascada solo se corre en CENTER: en FIX la escala no se mueve con el VFO.
+        _pintor.Desplazar = _desplazarCascada && Posicion == ModoDelAnalizador.Centro;
+        var escala = EscalaActual();
+        _pintor.Pintar(
+            traza.Niveles,
+            escala.Valida ? escala.InicioHz : double.NaN,
+            escala.Valida ? escala.FinHz : double.NaN,
+            _milisegundos());
 
         if (ImagenDeLaTraza is null || ImagenDeLaCascada is null || ImagenTresD is null)
         {
@@ -185,6 +194,7 @@ public sealed partial class VistaModeloAnalizador : ObservableObject
         ColocarElVfo();
         Recibiendo = true;
         MirarElAudio();
+        DespuesDePintar(empieza);
     }
 
     /// <summary>
@@ -286,6 +296,7 @@ public sealed partial class VistaModeloAnalizador : ObservableObject
         var posicion = (traza.VfoHz - inicio) / SpanHz;
         VfoVisible = posicion is >= 0 and <= 1;
         PosicionDelVfo = Math.Clamp(posicion, 0, 1);
+        RevisarLaEscala();
     }
 
     private void AlRecibirTraza(object? remitente, TrazaDeEspectro traza)

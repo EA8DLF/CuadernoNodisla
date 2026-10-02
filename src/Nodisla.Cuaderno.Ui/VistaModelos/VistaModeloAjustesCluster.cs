@@ -1,28 +1,30 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
-using Nodisla.Cuaderno.Dominio.Dxcc;
-using Nodisla.Cuaderno.Dominio.Valores;
 using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Integraciones.Cluster;
 using Nodisla.Cuaderno.Ui.Ajustes;
+using Nodisla.Cuaderno.Ui.Conversores;
 using Serilog;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
 
 /// <summary>
-/// El apartado del cluster en la pantalla de ajustes: a que nodo se entra y con que indicativo.
+/// El apartado del cluster en la pantalla de ajustes: a que nodos se entra, con que
+/// indicativo y como van ahora mismo.
 /// </summary>
 /// <remarks>
 /// <para>
-/// Antes de esto, el nodo y el indicativo estaban <b>escritos en el codigo</b> del registro de
-/// servicios, sin contrasena y sin pantalla donde cambiarlos. Aqui se eligen, se guardan y se
-/// aplican sin cerrar el programa.
+/// Se puede estar en <b>varios nodos a la vez</b>: cada uno trae lo que le llega por su red, y
+/// juntos traen mas. Los anuncios repetidos se juntan en una sola fila (lo hace
+/// <see cref="SeguirElCluster"/>), y por eso aqui se ajustan tambien la tolerancia y la
+/// ventana con las que se juntan.
 /// </para>
 /// <para>
-/// <b>La contrasena no se guarda con lo demas.</b> Va al almacen cifrado, igual que las de los
-/// servicios de confirmacion, y una vez escrita no se vuelve a enseñar. En el fichero de
-/// ajustes no aparece nunca.
+/// <b>Las contrasenas no se guardan con lo demas.</b> Cada nodo tiene la suya en el almacen
+/// cifrado, y una vez escrita no se vuelve a ensenar. En el fichero de ajustes no aparece nunca.
 /// </para>
 /// <para>
 /// El indicativo de partida sale del <b>perfil de estacion activo</b>, no de una constante:
@@ -31,82 +33,100 @@ namespace Nodisla.Cuaderno.Ui.VistaModelos;
 /// </remarks>
 public sealed partial class VistaModeloAjustesCluster : ObservableObject
 {
+    /// <summary>Cada cuanto se repasa el ritmo de anuncios aunque no avise la fuente.</summary>
+    private static readonly TimeSpan Repaso = TimeSpan.FromSeconds(5);
+
     private readonly AjustesDelPrograma _ajustes;
-    private readonly string _carpetaDeDatos;
+    private readonly string? _carpetaDeDatos;
     private readonly IAlmacenDeCredenciales _credenciales;
     private readonly IRepositorioEstacion _estaciones;
-    private readonly IResolutorDxcc _dxcc;
-    private readonly FuenteSpotsConmutable _conmutable;
+    private readonly FuenteDeVariosNodos _fuente;
+    private readonly SeguirElCluster? _seguimiento;
+    private readonly Func<string, int, CancellationToken, Task<PruebaDeNodo>> _probar;
     private readonly Action? _alCambiarLaFuente;
+    private readonly HashSet<string> _quitados = new(StringComparer.Ordinal);
+    private readonly ITimer _repaso;
 
     /// <summary>Monta el apartado.</summary>
     /// <param name="ajustes">Ajustes del programa, ya leidos del disco.</param>
-    /// <param name="carpetaDeDatos">Carpeta donde se guardan.</param>
-    /// <param name="credenciales">Almacen cifrado, donde va la contrasena del nodo.</param>
+    /// <param name="carpetaDeDatos">Carpeta donde se guardan; nula, no se guardan (simulado).</param>
+    /// <param name="credenciales">Almacen cifrado, donde va la contrasena de cada nodo.</param>
     /// <param name="estaciones">Perfiles de estacion, de donde sale el indicativo de partida.</param>
-    /// <param name="dxcc">Resolutor de entidades, que necesita la fuente de anuncios.</param>
-    /// <param name="conmutable">Intermediario que sabe cambiar la fuente de anuncios.</param>
+    /// <param name="fuente">Fuente de varios nodos que se reconfigura al aplicar.</param>
+    /// <param name="seguimiento">Seguimiento del cluster, para cambiarle la junta de repetidos.</param>
+    /// <param name="probar">
+    /// Como se prueba un nodo. Por omision se abre el puerto sin entrar; con los simulados, nada.
+    /// </param>
     /// <param name="alCambiarLaFuente">
-    /// Que hacer cuando se cambia de nodo, para que el panel del cluster se entere del nombre
-    /// nuevo. Puede ser nulo en pruebas.
+    /// Que hacer al aplicar, para que el panel del cluster se entere. Puede ser nulo en pruebas.
     /// </param>
     public VistaModeloAjustesCluster(
         AjustesDelPrograma ajustes,
-        string carpetaDeDatos,
+        string? carpetaDeDatos,
         IAlmacenDeCredenciales credenciales,
         IRepositorioEstacion estaciones,
-        IResolutorDxcc dxcc,
-        FuenteSpotsConmutable conmutable,
+        FuenteDeVariosNodos fuente,
+        SeguirElCluster? seguimiento = null,
+        Func<string, int, CancellationToken, Task<PruebaDeNodo>>? probar = null,
         Action? alCambiarLaFuente = null)
     {
         ArgumentNullException.ThrowIfNull(ajustes);
-        ArgumentException.ThrowIfNullOrWhiteSpace(carpetaDeDatos);
 
         _ajustes = ajustes;
-        _carpetaDeDatos = carpetaDeDatos;
+        _carpetaDeDatos = string.IsNullOrWhiteSpace(carpetaDeDatos) ? null : carpetaDeDatos;
         _credenciales = credenciales ?? throw new ArgumentNullException(nameof(credenciales));
         _estaciones = estaciones ?? throw new ArgumentNullException(nameof(estaciones));
-        _dxcc = dxcc ?? throw new ArgumentNullException(nameof(dxcc));
-        _conmutable = conmutable ?? throw new ArgumentNullException(nameof(conmutable));
+        _fuente = fuente ?? throw new ArgumentNullException(nameof(fuente));
+        _seguimiento = seguimiento;
+        _probar = probar ?? ((servidor, puerto, ct) => ProbadorDeNodo.ProbarAsync(servidor, puerto, null, ct));
         _alCambiarLaFuente = alCambiarLaFuente;
 
-        Nodos = NodosConocidos.Todos;
+        NodosConocidos = Integraciones.Cluster.NodosConocidos.Todos;
 
         RecogerDeLosAjustes();
-        RefrescarLaContrasena();
+        RefrescarEstados();
 
-        // El estado de la contraseña se escribe en el idioma nuevo.
-        Textos.AlCambiar(this, static vm => vm.OnPropertyChanged(nameof(EstadoDeLaContrasena)));
+        _fuente.NodosCambiaron += AlCambiarLosNodos;
+        _repaso = TimeProvider.System.CreateTimer(_ => Hilo.EnLaVentana(RefrescarEstados), null, Repaso, Repaso);
+
+        // Los estados y el resumen se escriben en el idioma nuevo.
+        Textos.AlCambiar(this, static vm =>
+        {
+            vm.OnPropertyChanged(nameof(EstadoDeLaContrasena));
+            vm.OnPropertyChanged(nameof(ResumenDeNodos));
+            foreach (var nodo in vm.Nodos) nodo.RefrescarTextos();
+        });
     }
 
-    /// <summary>Nodos que se ofrecen hechos.</summary>
-    public IReadOnlyList<NodoConocido> Nodos { get; }
+    /// <summary>Nodos que se ofrecen hechos, para anadir con un clic.</summary>
+    public IReadOnlyList<NodoConocido> NodosConocidos { get; }
 
-    /// <summary>Nodo elegido de la lista. Elegir uno rellena servidor y puerto.</summary>
+    /// <summary>Nodos de la lista, en el orden en que se ensenan.</summary>
+    public ObservableCollection<NodoDeClusterEnAjustes> Nodos { get; } = [];
+
+    /// <summary>Nodo conocido elegido en el desplegable para anadirlo.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(NotaDelNodo))]
-    private NodoConocido? _nodo;
+    [NotifyCanExecuteChangedFor(nameof(AnadirConocidoCommand))]
+    private NodoConocido? _nodoConocido;
 
-    /// <summary>Nombre del nodo, el que se ve en pantalla.</summary>
+    /// <summary>Nodo de la lista que se esta editando.</summary>
     [ObservableProperty]
-    private string _nombre = "Cluster de DX";
-
-    /// <summary>Maquina a la que conectarse.</summary>
-    [ObservableProperty]
-    private string _servidor = string.Empty;
-
-    /// <summary>Puerto de Telnet.</summary>
-    [ObservableProperty]
-    private int _puerto = 7300;
+    [NotifyPropertyChangedFor(nameof(HayNodoSeleccionado))]
+    [NotifyPropertyChangedFor(nameof(ContrasenaGuardada))]
+    [NotifyPropertyChangedFor(nameof(EstadoDeLaContrasena))]
+    [NotifyCanExecuteChangedFor(nameof(GuardarLaContrasenaCommand))]
+    [NotifyCanExecuteChangedFor(nameof(BorrarLaContrasenaCommand))]
+    private NodoDeClusterEnAjustes? _nodoSeleccionado;
 
     /// <summary>
-    /// Indicativo con el que se entra. Vacio quiere decir «el del perfil de estacion activo».
+    /// Indicativo comun con el que se entra. Vacio quiere decir «el del perfil de estacion activo».
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IndicativoDeAcceso))]
     private string _indicativo = string.Empty;
 
-    /// <summary>Sufijo del indicativo: <c>1</c> se manda como <c>EA8DLF-1</c>.</summary>
+    /// <summary>Sufijo comun del indicativo: <c>1</c> se manda como <c>EA8DLF-1</c>.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IndicativoDeAcceso))]
     private string _sufijo = string.Empty;
@@ -115,14 +135,6 @@ public sealed partial class VistaModeloAjustesCluster : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IndicativoDeAcceso))]
     private string _indicativoDelPerfil = string.Empty;
-
-    /// <summary>Ordenes que se mandan al conectar, una por linea.</summary>
-    [ObservableProperty]
-    private string _guionDeArranque = string.Empty;
-
-    /// <summary>Volver a conectar solo cuando se cae la conexion.</summary>
-    [ObservableProperty]
-    private bool _reconectarSolo = true;
 
     /// <summary>Lo que se espera a que el socket abra, en segundos.</summary>
     [ObservableProperty]
@@ -140,23 +152,25 @@ public sealed partial class VistaModeloAjustesCluster : ObservableObject
     [ObservableProperty]
     private int _silencioMaximoMinutos = 15;
 
-    /// <summary>Lo que el operador acaba de teclear como contrasena. Se vacia al guardar.</summary>
+    /// <summary>Diferencia de frecuencia que aun es la misma estacion, en kilohercios.</summary>
+    [ObservableProperty]
+    private decimal _toleranciaDeRepetidosKhz = 1.0m;
+
+    /// <summary>Minutos durante los que se juntan los repetidos.</summary>
+    [ObservableProperty]
+    private int _ventanaDeRepetidosMinutos = 10;
+
+    /// <summary>Lo que el operador acaba de teclear como contrasena del nodo elegido.</summary>
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(GuardarLaContrasenaCommand))]
     private string _contrasenaNueva = string.Empty;
 
-    /// <summary>Hay una contrasena guardada para el cluster.</summary>
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(EstadoDeLaContrasena))]
-    [NotifyCanExecuteChangedFor(nameof(BorrarLaContrasenaCommand))]
-    private bool _contrasenaGuardada;
-
-    /// <summary>Lo que ha pasado con la ultima aplicacion.</summary>
+    /// <summary>Lo que ha pasado con la ultima accion.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HayParte))]
     private string _parte = string.Empty;
 
-    /// <summary>La ultima aplicacion fallo.</summary>
+    /// <summary>La ultima accion fallo.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HayParte))]
     private bool _fallo;
@@ -166,16 +180,35 @@ public sealed partial class VistaModeloAjustesCluster : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(AplicarCommand))]
     private bool _ocupado;
 
-    /// <summary>Hay algo que contar de la ultima aplicacion.</summary>
+    /// <summary>Hay algo que contar de la ultima accion.</summary>
     public bool HayParte => Parte.Length > 0;
 
-    /// <summary>Estado de la contrasena, escrito para el operador.</summary>
-    public string EstadoDeLaContrasena => Textos.T(ContrasenaGuardada ? "Ajustes.Secreto.Guardada" : "Ajustes.Secreto.SinGuardar");
+    /// <summary>Hay un nodo elegido para editar.</summary>
+    public bool HayNodoSeleccionado => NodoSeleccionado is not null;
 
-    /// <summary>Que tiene de particular el nodo elegido.</summary>
-    public string NotaDelNodo => Nodo?.Nota ?? string.Empty;
+    /// <summary>Que tiene de particular el nodo conocido elegido.</summary>
+    public string NotaDelNodo => NodoConocido?.Nota ?? string.Empty;
 
-    /// <summary>Con que indicativo se va a entrar de verdad, sufijo incluido.</summary>
+    /// <summary>Hay una contrasena guardada para el nodo elegido.</summary>
+    public bool ContrasenaGuardada => NodoSeleccionado?.ContrasenaGuardada ?? false;
+
+    /// <summary>Estado de la contrasena del nodo elegido, escrito para el operador.</summary>
+    public string EstadoDeLaContrasena =>
+        Textos.T(ContrasenaGuardada ? "Ajustes.Secreto.Guardada" : "Ajustes.Secreto.SinGuardar");
+
+    /// <summary>Algun nodo tiene contrasena guardada.</summary>
+    public bool HayContrasenas => Nodos.Any(n => n.ContrasenaGuardada);
+
+    /// <summary>Cuantos nodos estan activos.</summary>
+    public int NodosActivos => Nodos.Count(n => n.Activo);
+
+    /// <summary>Cuantos nodos estan conectados ahora mismo.</summary>
+    public int NodosConectados => Nodos.Count(n => n.Estado == EstadoDeConexion.Conectado);
+
+    /// <summary>«5 nodos · 3 conectados».</summary>
+    public string ResumenDeNodos => Textos.F("Principal.Cluster.ResumenNodos", Nodos.Count, NodosConectados);
+
+    /// <summary>Con que indicativo se entra de verdad, sufijo incluido.</summary>
     public string IndicativoDeAcceso
     {
         get
@@ -203,72 +236,167 @@ public sealed partial class VistaModeloAjustesCluster : ObservableObject
         }
     }
 
-    private bool _rellenandoDesdeElNodo;
-
-    /// <summary>Rellena servidor, puerto y nombre con los del nodo elegido.</summary>
-    partial void OnNodoChanged(NodoConocido? value)
+    /// <summary>Anade a la lista el nodo conocido elegido, listo para aplicar.</summary>
+    [RelayCommand(CanExecute = nameof(HayNodoConocido))]
+    public void AnadirConocido()
     {
-        if (value is null) return;
+        if (NodoConocido is not { } conocido) return;
 
-        _rellenandoDesdeElNodo = true;
+        var repetido = Nodos.FirstOrDefault(n =>
+            string.Equals(n.Servidor.Trim(), conocido.Servidor, StringComparison.OrdinalIgnoreCase)
+            && n.Puerto == conocido.Puerto);
+        if (repetido is not null)
+        {
+            NodoSeleccionado = repetido;
+            Avisar(Textos.F("Ajustes.Cluster.YaEnLaLista", repetido.Nombre), fallo: true);
+            return;
+        }
+
+        var nodo = new NodoDeClusterEnAjustes(new AjustesDeNodoDeCluster
+        {
+            Nombre = NombreLibre(conocido.Nombre),
+            Servidor = conocido.Servidor,
+            Puerto = conocido.Puerto,
+            EsSkimmer = conocido.EsSkimmer,
+            GuionDeArranque = [.. conocido.GuionRecomendado],
+        });
+        Anadir(nodo);
+    }
+
+    /// <summary>Anade un nodo en blanco, para escribir uno que no esta en la lista.</summary>
+    [RelayCommand]
+    public void AnadirNodo()
+    {
+        var nodo = new NodoDeClusterEnAjustes(new AjustesDeNodoDeCluster
+        {
+            Nombre = NombreLibre(Textos.T("Ajustes.Cluster.NodoNuevo")),
+        });
+        Anadir(nodo);
+    }
+
+    /// <summary>Quita un nodo de la lista. Se cierra al aplicar.</summary>
+    /// <param name="nodo">Nodo que se quita; si es nulo, el elegido.</param>
+    [RelayCommand]
+    public void QuitarNodo(NodoDeClusterEnAjustes? nodo)
+    {
+        var cual = nodo ?? NodoSeleccionado;
+        if (cual is null) return;
+
+        var indice = Nodos.IndexOf(cual);
+        cual.PropertyChanged -= AlCambiarUnNodo;
+        Nodos.Remove(cual);
+        _quitados.Add(cual.Id);
+        NodoSeleccionado = Nodos.Count == 0 ? null : Nodos[Math.Clamp(indice, 0, Nodos.Count - 1)];
+        AvisarDeLaLista();
+    }
+
+    /// <summary>Conecta un nodo, sin tocar los demas.</summary>
+    /// <param name="nodo">Nodo que se conecta.</param>
+    [RelayCommand]
+    public async Task ConectarNodoAsync(NodoDeClusterEnAjustes? nodo)
+    {
+        if (nodo is null) return;
+        if (!nodo.Aplicado)
+        {
+            Avisar(Textos.F("Ajustes.Cluster.AplicaPrimero", nodo.Nombre), fallo: true);
+            return;
+        }
+
         try
         {
-            Nombre = value.Nombre;
-            Servidor = value.Servidor;
-            Puerto = value.Puerto;
+            await _fuente.ConectarNodoAsync(nodo.Id).ConfigureAwait(true);
         }
-        finally
+        catch (Exception ex)
         {
-            _rellenandoDesdeElNodo = false;
+            Log.Warning(ex, "No se ha podido conectar el nodo {Nodo}.", nodo.Nombre);
+            Avisar(Textos.F("Principal.Cluster.NoSePudoConectar", ex.Message), fallo: true);
         }
+        RefrescarEstados();
     }
 
-    partial void OnServidorChanged(string value) => SoltarElNodoSiYaNoEs();
+    /// <summary>Desconecta un nodo, sin tocar los demas.</summary>
+    /// <param name="nodo">Nodo que se desconecta.</param>
+    [RelayCommand]
+    public async Task DesconectarNodoAsync(NodoDeClusterEnAjustes? nodo)
+    {
+        if (nodo is null || !nodo.Aplicado) return;
 
-    partial void OnPuertoChanged(int value) => SoltarElNodoSiYaNoEs();
+        try
+        {
+            await _fuente.DesconectarNodoAsync(nodo.Id).ConfigureAwait(true);
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Fallo al desconectar el nodo {Nodo}.", nodo.Nombre);
+            Avisar(Textos.F("Principal.Cluster.FalloAlDesconectar", ex.Message), fallo: true);
+        }
+        RefrescarEstados();
+    }
 
     /// <summary>
-    /// Si se teclea otro servidor u otro puerto, el desplegable deja de decir que es un nodo
-    /// conocido.
+    /// Comprueba si el nodo contesta, sin entrar: abre el puerto, lee el saludo y cierra.
     /// </summary>
-    /// <remarks>
-    /// Antes el desplegable se quedaba en el nodo de antes aunque se hubiera borrado el servidor,
-    /// y volver a elegir ese mismo nodo no hacia nada: no cambiaba la eleccion y no rellenaba.
-    /// </remarks>
-    private void SoltarElNodoSiYaNoEs()
+    /// <param name="nodo">Nodo que se prueba.</param>
+    [RelayCommand]
+    public async Task ProbarNodoAsync(NodoDeClusterEnAjustes? nodo)
     {
-        if (_rellenandoDesdeElNodo || Nodo is null) return;
-
-        if (!string.Equals(Nodo.Servidor, Servidor?.Trim(), StringComparison.OrdinalIgnoreCase) || Nodo.Puerto != Puerto)
+        if (nodo is null) return;
+        if (string.IsNullOrWhiteSpace(nodo.Servidor) || nodo.Puerto is < 1 or > 65535)
         {
-            Nodo = Nodos.FirstOrDefault(n =>
-                string.Equals(n.Servidor, Servidor?.Trim(), StringComparison.OrdinalIgnoreCase) && n.Puerto == Puerto);
+            nodo.PruebaBien = false;
+            nodo.Prueba = Textos.F("Ajustes.Cluster.NodoSinServidor", nodo.Nombre);
+            return;
+        }
+
+        nodo.PruebaBien = false;
+        nodo.Prueba = Textos.T("Ajustes.Cluster.Probando");
+        try
+        {
+            var prueba = await _probar(nodo.Servidor.Trim(), nodo.Puerto, CancellationToken.None).ConfigureAwait(true);
+            var milisegundos = Math.Round(prueba.Tiempo.TotalMilliseconds);
+            nodo.PruebaBien = prueba.Responde;
+            nodo.Prueba = !prueba.Responde
+                ? Textos.F("Ajustes.Cluster.NoResponde", prueba.Error ?? string.Empty)
+                : prueba.Saludo is { Length: > 0 } saludo
+                    ? Textos.F("Ajustes.Cluster.RespondeConSaludo", milisegundos, saludo)
+                    : Textos.F("Ajustes.Cluster.Responde", milisegundos);
+        }
+        catch (Exception ex)
+        {
+            nodo.PruebaBien = false;
+            nodo.Prueba = Textos.F("Ajustes.Cluster.NoResponde", ex.Message);
         }
     }
 
-    /// <summary>Guarda la contrasena del nodo en el almacen cifrado.</summary>
-    [RelayCommand(CanExecute = nameof(HayContrasenaTecleada))]
+    /// <summary>Guarda la contrasena del nodo elegido en el almacen cifrado.</summary>
+    [RelayCommand(CanExecute = nameof(SePuedeGuardarLaContrasena))]
     public void GuardarLaContrasena()
     {
-        if (string.IsNullOrWhiteSpace(ContrasenaNueva)) return;
+        if (NodoSeleccionado is null || string.IsNullOrWhiteSpace(ContrasenaNueva)) return;
 
-        _credenciales.Guardar(ClavesDeCredencial.ClusterContrasena, ContrasenaNueva);
+        _credenciales.Guardar(NodoSeleccionado.ClaveDeContrasena, ContrasenaNueva);
         ContrasenaNueva = string.Empty;
-        RefrescarLaContrasena();
+        RefrescarLasContrasenas();
     }
 
-    /// <summary>Borra la contrasena guardada.</summary>
+    /// <summary>Borra la contrasena guardada del nodo elegido.</summary>
     [RelayCommand(CanExecute = nameof(ContrasenaGuardada))]
     public void BorrarLaContrasena()
     {
-        _credenciales.Borrar(ClavesDeCredencial.ClusterContrasena);
+        if (NodoSeleccionado is null) return;
+
+        _credenciales.Borrar(NodoSeleccionado.ClaveDeContrasena);
         ContrasenaNueva = string.Empty;
-        RefrescarLaContrasena();
+        RefrescarLasContrasenas();
     }
 
     /// <summary>
-    /// Guarda los ajustes y cambia la fuente de anuncios sin cerrar el programa.
+    /// Guarda los ajustes y pone la lista nueva en marcha sin cerrar el programa.
     /// </summary>
+    /// <remarks>
+    /// Los nodos que no han cambiado siguen conectados; solo se cierran y se abren los que
+    /// han cambiado de maquina, de acceso o de guion, y se cierran los quitados.
+    /// </remarks>
     [RelayCommand(CanExecute = nameof(SePuedeTrabajar))]
     public async Task AplicarAsync()
     {
@@ -276,18 +404,27 @@ public sealed partial class VistaModeloAjustesCluster : ObservableObject
 
         try
         {
-            if (string.IsNullOrWhiteSpace(Servidor))
+            foreach (var nodo in Nodos)
             {
-                Fallo = true;
-                Parte = Textos.T("Ajustes.Cluster.FaltaServidor");
-                return;
+                if (string.IsNullOrWhiteSpace(nodo.Servidor))
+                {
+                    NodoSeleccionado = nodo;
+                    Avisar(Textos.F("Ajustes.Cluster.NodoSinServidor", nodo.Nombre), fallo: true);
+                    return;
+                }
+
+                if (nodo.Puerto is < 1 or > 65535)
+                {
+                    NodoSeleccionado = nodo;
+                    Avisar(Textos.F("Ajustes.Cluster.PuertoNoVale", nodo.Nombre), fallo: true);
+                    return;
+                }
             }
 
             var texto = string.IsNullOrWhiteSpace(Indicativo) ? IndicativoDelPerfil : Indicativo.Trim();
             if (string.IsNullOrWhiteSpace(texto))
             {
-                Fallo = true;
-                Parte = Textos.T("Ajustes.Cluster.SinIndicativo");
+                Avisar(Textos.T("Ajustes.Cluster.SinIndicativo"), fallo: true);
                 return;
             }
 
@@ -298,34 +435,41 @@ public sealed partial class VistaModeloAjustesCluster : ObservableObject
             }
             catch (Exception ex)
             {
-                Fallo = true;
-                Parte = Textos.F("Ajustes.Cluster.IndicativoNoVale", texto, ex.Message);
+                Avisar(Textos.F("Ajustes.Cluster.IndicativoNoVale", texto, ex.Message), fallo: true);
                 return;
             }
 
             var cluster = Recoger();
             _ajustes.Cluster = cluster;
-            _ajustes.Guardar(_carpetaDeDatos);
+            if (_carpetaDeDatos is not null) _ajustes.Guardar(_carpetaDeDatos);
 
-            var contrasena = _credenciales.Leer(ClavesDeCredencial.ClusterContrasena);
-            var opciones = cluster.AOpcionesDeCluster(indicativo, contrasena);
+            // Las contrasenas de los nodos quitados no se quedan huerfanas en el almacen.
+            foreach (var id in _quitados.Where(id => cluster.Nodos.TrueForAll(n => n.Id != id)))
+            {
+                _credenciales.Borrar(ClavesDeCredencial.ContrasenaDeNodoDeCluster(id));
+            }
+            _quitados.Clear();
 
-            await _conmutable.SustituirAsync(new ClusterTelnet(opciones, _dxcc)).ConfigureAwait(true);
+            var opciones = cluster.Nodos
+                .Select(n => cluster.AOpcionesDeNodo(n, indicativo, _credenciales.Leer(n.ClaveDeContrasena)))
+                .ToList();
+            await _fuente.AplicarAsync(opciones).ConfigureAwait(true);
+            _seguimiento?.CambiarCriterioDeRepetidos(cluster.VentanaAcotada, cluster.ToleranciaAcotada);
             _alCambiarLaFuente?.Invoke();
 
-            Fallo = false;
-            Parte = Textos.F("Ajustes.Cluster.Aplicado", opciones.Nombre, opciones.Servidor, opciones.Puerto, opciones.IndicativoDeAcceso);
+            RefrescarEstados();
+            Avisar(
+                Textos.F("Ajustes.Cluster.AplicadoVarios", cluster.Nodos.Count, NodosActivos, IndicativoDeAcceso),
+                fallo: false);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se han podido aplicar los ajustes del cluster.");
-            Fallo = true;
-            Parte = Textos.F("Ajustes.NoSeHanPodidoAplicar", ex.Message);
+            Avisar(Textos.F("Ajustes.NoSeHanPodidoAplicar", ex.Message), fallo: true);
         }
         finally
         {
             Ocupado = false;
-            OnPropertyChanged(nameof(HayParte));
         }
     }
 
@@ -333,55 +477,134 @@ public sealed partial class VistaModeloAjustesCluster : ObservableObject
     [RelayCommand]
     public void Descartar()
     {
+        _quitados.Clear();
         RecogerDeLosAjustes();
+        RefrescarEstados();
         Parte = string.Empty;
         Fallo = false;
-        OnPropertyChanged(nameof(HayParte));
     }
+
+    /// <summary>Repasa el estado en vivo de cada nodo.</summary>
+    public void RefrescarEstados()
+    {
+        var vivos = _fuente.Nodos;
+        foreach (var nodo in Nodos)
+        {
+            nodo.PonerEstado(vivos.FirstOrDefault(v => v.Id == nodo.Id));
+        }
+
+        OnPropertyChanged(nameof(NodosConectados));
+        OnPropertyChanged(nameof(ResumenDeNodos));
+    }
+
+    /// <summary>Deja de escuchar a la fuente. Lo llama la ventana al cerrarse.</summary>
+    public void Detener()
+    {
+        _fuente.NodosCambiaron -= AlCambiarLosNodos;
+        _repaso.Dispose();
+    }
+
+    partial void OnNodoSeleccionadoChanged(NodoDeClusterEnAjustes? value) => ContrasenaNueva = string.Empty;
+
+    private bool HayNodoConocido() => NodoConocido is not null;
 
     private bool SePuedeTrabajar() => !Ocupado;
 
-    private bool HayContrasenaTecleada() => !string.IsNullOrWhiteSpace(ContrasenaNueva);
+    private bool SePuedeGuardarLaContrasena() =>
+        NodoSeleccionado is not null && !string.IsNullOrWhiteSpace(ContrasenaNueva);
 
-    private void RefrescarLaContrasena() =>
-        ContrasenaGuardada = _credenciales.Existe(ClavesDeCredencial.ClusterContrasena);
+    private void AlCambiarLosNodos(object? origen, EventArgs e) => Hilo.EnLaVentana(RefrescarEstados);
+
+    private void Anadir(NodoDeClusterEnAjustes nodo)
+    {
+        nodo.ContrasenaGuardada = _credenciales.Existe(nodo.ClaveDeContrasena);
+        nodo.PropertyChanged += AlCambiarUnNodo;
+        Nodos.Add(nodo);
+        NodoSeleccionado = nodo;
+        AvisarDeLaLista();
+    }
+
+    private void AlCambiarUnNodo(object? origen, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(NodoDeClusterEnAjustes.Activo) or nameof(NodoDeClusterEnAjustes.ContrasenaGuardada))
+        {
+            AvisarDeLaLista();
+        }
+    }
+
+    private void AvisarDeLaLista()
+    {
+        OnPropertyChanged(nameof(NodosActivos));
+        OnPropertyChanged(nameof(NodosConectados));
+        OnPropertyChanged(nameof(ResumenDeNodos));
+        OnPropertyChanged(nameof(HayContrasenas));
+    }
+
+    private void Avisar(string texto, bool fallo)
+    {
+        Fallo = fallo;
+        Parte = texto;
+    }
+
+    /// <summary>Un nombre que no este ya en la lista: «DXFun», «DXFun (2)»...</summary>
+    private string NombreLibre(string nombre)
+    {
+        var candidato = nombre;
+        for (var n = 2; Nodos.Any(x => string.Equals(x.Nombre, candidato, StringComparison.OrdinalIgnoreCase)); n++)
+        {
+            candidato = $"{nombre} ({n})";
+        }
+        return candidato;
+    }
+
+    private void RefrescarLasContrasenas()
+    {
+        foreach (var nodo in Nodos) nodo.ContrasenaGuardada = _credenciales.Existe(nodo.ClaveDeContrasena);
+
+        OnPropertyChanged(nameof(ContrasenaGuardada));
+        OnPropertyChanged(nameof(EstadoDeLaContrasena));
+        BorrarLaContrasenaCommand.NotifyCanExecuteChanged();
+    }
 
     private AjustesDeCluster Recoger() => new()
     {
-        Nombre = Nombre,
-        Servidor = Servidor.Trim(),
-        Puerto = Puerto,
+        Nodos = [.. Nodos.Select(n => n.AGuardar())],
         Indicativo = string.IsNullOrWhiteSpace(Indicativo) ? null : Indicativo.Trim().ToUpperInvariant(),
         Sufijo = string.IsNullOrWhiteSpace(Sufijo) ? null : Sufijo.Trim().TrimStart('-'),
-        GuionDeArranque = [.. GuionDeArranque
-            .Split('\n')
-            .Select(linea => linea.Trim())
-            .Where(linea => linea.Length > 0)],
-        ReconectarSolo = ReconectarSolo,
         EsperaDeConexionSegundos = EsperaDeConexionSegundos,
         PrimerReintentoSegundos = PrimerReintentoSegundos,
         ReintentoMaximoSegundos = ReintentoMaximoSegundos,
         SilencioMaximoMinutos = SilencioMaximoMinutos,
+        ToleranciaDeRepetidosKhz = ToleranciaDeRepetidosKhz,
+        VentanaDeRepetidosMinutos = VentanaDeRepetidosMinutos,
     };
 
     private void RecogerDeLosAjustes()
     {
         var cluster = _ajustes.Cluster;
 
-        Nombre = cluster.Nombre;
-        Servidor = cluster.Servidor;
-        Puerto = cluster.Puerto;
+        foreach (var nodo in Nodos) nodo.PropertyChanged -= AlCambiarUnNodo;
+        Nodos.Clear();
+        foreach (var guardado in cluster.Nodos)
+        {
+            var nodo = new NodoDeClusterEnAjustes(guardado)
+            {
+                ContrasenaGuardada = _credenciales.Existe(guardado.ClaveDeContrasena),
+            };
+            nodo.PropertyChanged += AlCambiarUnNodo;
+            Nodos.Add(nodo);
+        }
+
         Indicativo = cluster.Indicativo ?? string.Empty;
         Sufijo = cluster.Sufijo ?? string.Empty;
-        GuionDeArranque = string.Join(Environment.NewLine, cluster.GuionDeArranque);
-        ReconectarSolo = cluster.ReconectarSolo;
         EsperaDeConexionSegundos = cluster.EsperaDeConexionSegundos;
         PrimerReintentoSegundos = cluster.PrimerReintentoSegundos;
         ReintentoMaximoSegundos = cluster.ReintentoMaximoSegundos;
         SilencioMaximoMinutos = cluster.SilencioMaximoMinutos;
+        ToleranciaDeRepetidosKhz = cluster.ToleranciaDeRepetidosKhz;
+        VentanaDeRepetidosMinutos = cluster.VentanaDeRepetidosMinutos;
 
-        Nodo = Nodos.FirstOrDefault(n =>
-            string.Equals(n.Servidor, cluster.Servidor, StringComparison.OrdinalIgnoreCase)
-            && n.Puerto == cluster.Puerto);
+        NodoSeleccionado = Nodos.FirstOrDefault();
+        AvisarDeLaLista();
     }
 }

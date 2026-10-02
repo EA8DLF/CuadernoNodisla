@@ -290,6 +290,10 @@ public sealed class ControlDeFoniaPruebas
 
         public DateTimeOffset? UltimoAvanceUtc { get; set; }
 
+        public Nodisla.Cuaderno.Audio.Procesado.IProcesadorDeAudio? AntesDeLaGanancia { get; set; }
+
+        public Nodisla.Cuaderno.Audio.Procesado.IProcesadorDeAudio? TrasLaGanancia { get; set; }
+
         public event EventHandler<Exception>? Fallo;
 
         public Task AbrirAsync(string idEntrada, string idSalida, CancellationToken ct = default)
