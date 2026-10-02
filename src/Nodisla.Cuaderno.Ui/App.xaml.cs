@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using System.IO;
 using System.Windows;
-using System.Windows.Markup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nodisla.Cuaderno.Ui.Vistas;
@@ -75,11 +74,8 @@ public partial class App : Application
             Log.Fatal(ex, "No se ha podido preparar el cuaderno.");
 
             MessageBox.Show(
-                "No se ha podido abrir el cuaderno.\n\n"
-                + $"{ex.Message}\n\n"
-                + $"El cuaderno vive en {CarpetaDeDatos}. Si el fichero está dañado, ahí mismo "
-                + "hay una carpeta «copias» con las copias de seguridad anteriores.",
-                "Cuaderno NODISLA",
+                Nodisla.Cuaderno.Idiomas.Textos.F("Dialogos.NoSeAbreElCuaderno", ex.Message, CarpetaDeDatos),
+                Nodisla.Cuaderno.Idiomas.Textos.T("Comun.NombreDelPrograma"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
 
@@ -90,7 +86,8 @@ public partial class App : Application
     /// <inheritdoc />
     protected override void OnStartup(StartupEventArgs e)
     {
-        FijarCulturaEspanola();
+        // El idioma va lo primero: hasta el cartel de «no se puede abrir el cuaderno» lo usa.
+        Idiomas.IdiomaDeLaInterfaz.Arrancar(Ajustes.AjustesDelPrograma.Leer(CarpetaDeDatos).Idioma);
 
         var carpetaDeRegistros = Path.Combine(CarpetaDeDatos, "registros");
         Directory.CreateDirectory(carpetaDeRegistros);
@@ -188,35 +185,6 @@ public partial class App : Application
             ventana.ActualHeight,
             Resources.MergedDictionaries.Count,
             TryFindResource("FondoVentana")?.ToString() ?? "no encontrado");
-    }
-
-    /// <summary>
-    /// Deja el programa hablando espanol: miles con punto, decimales con coma y fechas
-    /// dia-mes-ano. Hay que fijar las tres cosas —la cultura del hilo, la de los hilos que
-    /// nazcan despues y el idioma de WPF— porque cada una la mira un sitio distinto: los
-    /// <c>ToString</c> del codigo miran la del hilo, y los <c>StringFormat</c> de los enlaces
-    /// de XAML miran el <c>Language</c> del elemento, que por omision es ingles.
-    /// </summary>
-    /// <remarks>
-    /// Ojo: la frecuencia y los informes en decibelios NO siguen esta cultura. Van siempre con
-    /// punto decimal, que es lo que manda ADIF; de eso se encarga
-    /// <see cref="Nodisla.Cuaderno.Aplicacion.CasosDeUso.TextoDeFrecuencia"/>.
-    /// </remarks>
-    private static void FijarCulturaEspanola()
-    {
-        // useUserOverride en falso a proposito: si no, se heredan las personalizaciones de
-        // «Region» de Windows, y en un equipo donde alguien puso el punto como separador
-        // decimal el cuaderno escribiria «20,000 contactos» en vez de «20.000».
-        var espanol = new CultureInfo("es-ES", useUserOverride: false);
-
-        Thread.CurrentThread.CurrentCulture = espanol;
-        Thread.CurrentThread.CurrentUICulture = espanol;
-        CultureInfo.DefaultThreadCurrentCulture = espanol;
-        CultureInfo.DefaultThreadCurrentUICulture = espanol;
-
-        FrameworkElement.LanguageProperty.OverrideMetadata(
-            typeof(FrameworkElement),
-            new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(espanol.IetfLanguageTag)));
     }
 
     /// <summary>

@@ -44,13 +44,25 @@ ArchitecturesInstallIn64BitMode=x64compatible
 ; Setup anade automaticamente en la pagina de la carpeta de destino.
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-ShowLanguageDialog=no
+; El asistente habla el idioma de Windows si es uno de los del programa; si no, pregunta,
+; con el ingles marcado (el mismo criterio que el programa).
+ShowLanguageDialog=auto
+LanguageDetectionMethod=uilanguage
 
 [Languages]
+; Los seis idiomas del programa, con los textos que trae Inno Setup. El ingles va primero:
+; es el que se ofrece si Windows no habla ninguno de los otros.
+Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
+Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
+Name: "french"; MessagesFile: "compiler:Languages\French.isl"
+Name: "italian"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"
 
 [Tasks]
-Name: "escritorio"; Description: "Crear un acceso directo en el escritorio"; GroupDescription: "Accesos directos:"; Flags: unchecked
+; Textos de serie de Inno Setup ({cm:...}): ya vienen traducidos a cada idioma.
+Name: "escritorio"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
 ; Copia todo lo publicado (self-contained, win-x64). No incluye nada de
@@ -61,10 +73,10 @@ Source: "..\src\Nodisla.Cuaderno.Ui\Recursos\CuadernoNodisla.ico"; DestDir: "{ap
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\CuadernoNodisla.ico"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\CuadernoNodisla.ico"; Tasks: escritorio
-Name: "{group}\Desinstalar {#MyAppName}"; Filename: "{uninstallexe}"; IconFilename: "{app}\CuadernoNodisla.ico"
+Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"; IconFilename: "{app}\CuadernoNodisla.ico"
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "Ejecutar {#MyAppName}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#MyAppName}}"; Flags: nowait postinstall skipifsilent
 
 ; No hay seccion [UninstallDelete] ni [Dirs] que apunten a {userappdata}:
 ; el desinstalador solo retira lo que el instalador copio en {app} y los

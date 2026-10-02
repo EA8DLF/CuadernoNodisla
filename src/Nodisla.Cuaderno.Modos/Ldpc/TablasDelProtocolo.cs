@@ -1,6 +1,7 @@
 using System.Globalization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Modos.Ldpc;
 
@@ -109,7 +110,7 @@ public sealed class TablasDelProtocolo
 
     /// <summary>Tablas de pruebas, con el codigo sustituto de las mismas dimensiones.</summary>
     public static TablasDelProtocolo DePruebas() =>
-        new(CodigoLdpc.ConstruirDePrueba(), esElCodigoReal: false, new byte[10], "código de pruebas");
+        new(CodigoLdpc.ConstruirDePrueba(), esElCodigoReal: false, new byte[10], Textos.T("Servicios.Modos.CodigoDePruebas"));
 
     /// <summary>
     /// Formato del fichero de tablas.

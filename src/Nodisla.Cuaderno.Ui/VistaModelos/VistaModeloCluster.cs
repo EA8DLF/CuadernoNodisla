@@ -6,6 +6,7 @@ using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Dxcc;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Propagacion.Prediccion;
 using Nodisla.Cuaderno.Ui.Conversores;
 using Serilog;
@@ -91,6 +92,13 @@ public sealed partial class VistaModeloCluster : ObservableObject
         Bandas = [Cualquiera, .. DominioBanda.Todas.Select(b => b.Nombre)];
         Modos = [Cualquiera, "CW", "SSB", "FT8", "FT4", "RTTY", "PSK31", "FM", "JS8", "SSTV"];
         Continentes = [Cualquiera, "EU", "NA", "SA", "AS", "AF", "OC", "AN"];
+
+        // Estado, resumen y motivos de la columna de propagacion, en el idioma nuevo.
+        Textos.AlCambiar(this, static vm =>
+        {
+            vm.OnPropertyChanged(string.Empty);
+            vm.RecalcularPropagacion();
+        });
     }
 
     /// <summary>Salta cuando el operador elige un spot para ir a el.</summary>
@@ -156,23 +164,22 @@ public sealed partial class VistaModeloCluster : ObservableObject
     /// <summary>Como esta la conexion, en una linea.</summary>
     public string EstadoTexto => Estado switch
     {
-        EstadoDeConexion.Conectado => "Conectado",
-        EstadoDeConexion.Conectando => "Conectando…",
-        EstadoDeConexion.Reintentando => "Reintentando…",
-        EstadoDeConexion.Fallido => "Conexión fallida",
-        _ => "Sin conexión",
+        EstadoDeConexion.Conectado => Textos.T("Comun.Conectado"),
+        EstadoDeConexion.Conectando => Textos.T("Principal.Cluster.Estado.Conectando"),
+        EstadoDeConexion.Reintentando => Textos.T("Principal.Cluster.Estado.Reintentando"),
+        EstadoDeConexion.Fallido => Textos.T("Principal.Cluster.Estado.Fallida"),
+        _ => Textos.T("Principal.Cluster.Estado.SinConexion"),
     };
 
     /// <summary>Texto del boton que conecta o desconecta.</summary>
     public string TextoDelBotonDeConexion =>
         Estado is EstadoDeConexion.Conectado or EstadoDeConexion.Conectando or EstadoDeConexion.Reintentando
-            ? "Desconectar"
-            : "Conectar";
+            ? Textos.T("Comun.Desconectar")
+            : Textos.T("Comun.Conectar");
 
     /// <summary>Cuantos anuncios se ven y cuantos han llegado.</summary>
     public string Resumen =>
-        $"{Spots.Count.ToString("N0", CultureInfo.CurrentCulture)} estaciones · " +
-        $"{Recibidos.ToString("N0", CultureInfo.CurrentCulture)} anuncios recibidos";
+        Textos.F("Principal.Cluster.Resumen", Spots.Count, Recibidos);
 
     /// <summary>Conecta con el cluster.</summary>
     [RelayCommand(CanExecute = nameof(SePuedeConectar))]
@@ -185,7 +192,7 @@ public sealed partial class VistaModeloCluster : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido conectar con el cluster.");
-            AnadirALaConsola($"No se ha podido conectar: {ex.Message}");
+            AnadirALaConsola(Textos.F("Principal.Cluster.NoSePudoConectar", ex.Message));
         }
     }
 
@@ -200,7 +207,7 @@ public sealed partial class VistaModeloCluster : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "Fallo al desconectar del cluster.");
-            AnadirALaConsola($"Fallo al desconectar: {ex.Message}");
+            AnadirALaConsola(Textos.F("Principal.Cluster.FalloAlDesconectar", ex.Message));
         }
     }
 
@@ -219,7 +226,7 @@ public sealed partial class VistaModeloCluster : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido enviar la orden al cluster.");
-            AnadirALaConsola($"No se ha podido enviar «{orden}»: {ex.Message}");
+            AnadirALaConsola(Textos.F("Principal.Cluster.NoSePudoEnviar", orden, ex.Message));
         }
     }
 
@@ -235,7 +242,7 @@ public sealed partial class VistaModeloCluster : ObservableObject
     {
         OnPropertyChanged(nameof(Nombre));
         Estado = _cluster.Estado;
-        AnadirALaConsola($"Se ha cambiado el nodo del cluster: {_cluster.Nombre}.");
+        AnadirALaConsola(Textos.F("Principal.Cluster.NodoCambiado", _cluster.Nombre));
     }
 
     /// <summary>Vacia la lista de anuncios y la consola.</summary>
@@ -436,10 +443,10 @@ public sealed partial class VistaModeloCluster : ObservableObject
         var indices = _propagacion.Indices;
 
         var porQueNo =
-            _miPosicion is null ? "Sin propagación: el perfil activo no tiene localizador."
-            : donde is null ? "Sin propagación: no se sabe dónde está esta estación."
-            : indices is null ? "Sin propagación: todavía no hay índices solares."
-            : "Sin propagación: fuera de HF o demasiado cerca para un trayecto ionosférico.";
+            _miPosicion is null ? Textos.T("Principal.Cluster.SinProp.SinLocator")
+            : donde is null ? Textos.T("Principal.Cluster.SinProp.SinPosicion")
+            : indices is null ? Textos.T("Principal.Cluster.SinProp.SinIndices")
+            : Textos.T("Principal.Cluster.SinProp.FueraDeHf");
 
         var prevision = _prevision.Prever(
             _miPosicion,

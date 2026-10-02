@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Radio.Control.Ft710;
 using Nodisla.Cuaderno.Radio.Modelos;
 using Nodisla.Cuaderno.Radio.Ptt;
@@ -234,7 +235,7 @@ public sealed class ControlIcom
     public async Task ApagarAsync(CancellationToken ct = default)
     {
         ObjectDisposedException.ThrowIf(_desechado, this);
-        if (!_canal.Abierto) throw new InvalidOperationException("La radio no está conectada: no se puede apagar desde el programa.");
+        if (!_canal.Abierto) throw new InvalidOperationException(Textos.T("Servicios.Radio.NoApagaDesconectada"));
         await BajarElPttComoSeaAsync(ct).ConfigureAwait(false);
         await OrdenesIcom.ConApagadoAutorizadoAsync(
             async () => await _canal.PreguntarAsync([.. OrdenesIcom.Apagar], ct).ConfigureAwait(false)).ConfigureAwait(false);
@@ -265,8 +266,7 @@ public sealed class ControlIcom
         }
         catch (CanalNoDisponibleException)
         {
-            return $"No se puede encender desde el programa: con la radio apagada el puerto {_canal.Descripcion} "
-                   + "no está disponible. Enciéndela con su tecla.";
+            return Textos.F("Servicios.Radio.NoEnciendePuerto", _canal.Descripcion);
         }
 
         await _canal.DespertarAsync(PreambulosDeEncendido(_baudios), ct).ConfigureAwait(false);
@@ -285,7 +285,7 @@ public sealed class ControlIcom
             }
         }
 
-        return "Se ha mandado la orden de encendido pero la radio no ha contestado en 20 segundos.";
+        return Textos.T("Servicios.Radio.EncendidoSinRespuesta");
     }
 
     // ── Frecuencia y modo ────────────────────────────────────────────────────
@@ -315,9 +315,9 @@ public sealed class ControlIcom
     private (byte Codigo, bool Datos) ModoAlEquipo(Modo modo, Frecuencia frecuencia)
     {
         var nombre = _opciones.Traductor.AlEquipo(modo, frecuencia)
-                     ?? throw new ArgumentException($"No sé cómo pedirle al {_perfil.Modelo.Nombre} el modo {modo}.", nameof(modo));
+                     ?? throw new ArgumentException(Textos.F("Servicios.Radio.ModoDesconocido", _perfil.Modelo.Nombre, modo), nameof(modo));
         return ModosIcom.AlEquipo(nombre)
-               ?? throw new ArgumentException($"El {_perfil.Modelo.Nombre} no tiene el modo {nombre}.", nameof(modo));
+               ?? throw new ArgumentException(Textos.F("Servicios.Radio.SinEseModo", _perfil.Modelo.Nombre, nombre), nameof(modo));
     }
 
     private async Task PonerDatosAsync(bool datos, CancellationToken ct)
@@ -333,7 +333,7 @@ public sealed class ControlIcom
         if (hz < capacidades.HerciosMinimo || hz > capacidades.HerciosMaximo)
         {
             throw new ArgumentOutOfRangeException(nameof(frecuencia), frecuencia,
-                $"El {_perfil.Modelo.Nombre} va de {capacidades.HerciosMinimo} a {capacidades.HerciosMaximo} Hz.");
+                Textos.F("Servicios.Radio.RangoDeFrecuencias", _perfil.Modelo.Nombre, capacidades.HerciosMinimo, capacidades.HerciosMaximo));
         }
 
         return BcdCiv.Frecuencia(hz);
@@ -375,7 +375,7 @@ public sealed class ControlIcom
             {
                 var elegido = await LeerFrecuenciaYModoAsync(0x00, ct).ConfigureAwait(false);
                 var otro = await LeerFrecuenciaYModoAsync(0x01, ct).ConfigureAwait(false);
-                if (elegido is null || otro is null) throw new InvalidOperationException("No se pudieron leer los dos VFO.");
+                if (elegido is null || otro is null) throw new InvalidOperationException(Textos.T("Servicios.Radio.NoLeeLosVfos"));
                 await EscribirFrecuenciaYModoAsync(0x00, otro.Value, ct).ConfigureAwait(false);
                 await EscribirFrecuenciaYModoAsync(0x01, elegido.Value, ct).ConfigureAwait(false);
             }
@@ -400,7 +400,7 @@ public sealed class ControlIcom
                 var activoEsSub = await ElSecundarioEsElActivoAsync(ct).ConfigureAwait(false);
                 byte de = activoEsSub ? (byte)0x01 : (byte)0x00;
                 var datos = await LeerFrecuenciaYModoAsync(de, ct).ConfigureAwait(false)
-                            ?? throw new InvalidOperationException("No se pudo leer el VFO activo.");
+                            ?? throw new InvalidOperationException(Textos.T("Servicios.Radio.NoLeeVfoActivo"));
                 await EscribirFrecuenciaYModoAsync((byte)(de ^ 0x01), datos, ct).ConfigureAwait(false);
             }
             else
@@ -504,7 +504,7 @@ public sealed class ControlIcom
     /// <inheritdoc />
     public Task PulsarAsync(TeclaDelEquipo tecla, CancellationToken ct = default)
     {
-        if (!Teclas.Contains(tecla)) throw new NotSupportedException($"El {_perfil.Modelo.Nombre} no tiene la tecla {tecla} por CI-V.");
+        if (!Teclas.Contains(tecla)) throw new NotSupportedException(Textos.F("Servicios.Radio.SinTeclaCiv", _perfil.Modelo.Nombre, tecla));
 
         return tecla switch
         {
@@ -704,7 +704,7 @@ public sealed class ControlIcom
         var rango = Rango(mando);
         if (rango is null || !_todos.TryGetValue(mando, out var descripcion))
         {
-            throw new NotSupportedException($"El {_perfil.Modelo.Nombre} no admite el mando {mando}.");
+            throw new NotSupportedException(Textos.F("Servicios.Radio.SinMando", _perfil.Modelo.Nombre, mando));
         }
 
         var ajustado = rango.Ajustar(valor);
@@ -903,6 +903,14 @@ public sealed class ControlIcom
     /// <inheritdoc />
     async Task IPttDirecto.PonerPttDirectoAsync(bool transmitir, CancellationToken ct)
     {
+        if (!transmitir && NoHayNadaQueBajar())
+        {
+            _registro.LogDebug(
+                "{Canal} está cerrado y no hay PTT pedido: no hay nada que bajar.",
+                _canal.Descripcion);
+            return;
+        }
+
         if (transmitir && Interlocked.Exchange(ref _sintoniaPedida, 0) == 1)
         {
             // TUNE vigilado: emite el acoplador (1C 01 02). Tope, latido y suelta como cualquier transmision.
@@ -978,9 +986,21 @@ public sealed class ControlIcom
 
     private async Task BajarPorCivAsync(CancellationToken ct)
     {
-        if (!_canal.Abierto) throw new InvalidOperationException($"El canal {_canal.Descripcion} no está abierto.");
+        if (!_canal.Abierto) throw new InvalidOperationException(Textos.F("Servicios.Radio.CanalCerrado", _canal.Descripcion));
         await _canal.PreguntarAsync([.. OrdenesIcom.BajarPtt], ct).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Dice si una orden de bajar el PTT no tiene a quien llegar ni nada que bajar: canal
+    /// cerrado, sin PTT pedido y, o nunca abierto, o el control ya desechado (que al desecharse
+    /// ya bajo el PTT por todas sus vias). Evita el «¡PTT PEGADO!» falso del vigilante que se
+    /// cierra despues del control (01-10-2026). Con PTT pedido no se cumple nunca.
+    /// </summary>
+    private bool NoHayNadaQueBajar() =>
+        !_canal.Abierto
+        && !Volatile.Read(ref _pttPedido)
+        && !Volatile.Read(ref _sintonizando)
+        && (Volatile.Read(ref _desechado) || !Volatile.Read(ref _canalAbiertoAlgunaVez));
 
     private async Task BajarElPttComoSeaAsync(CancellationToken ct)
     {
@@ -1258,7 +1278,7 @@ public sealed class ControlIcom
         if (r is null) throw new EquipoNoContestaException(_canal.Descripcion);
         if (r.EsNoAdmitido && !tolerarNo)
         {
-            throw new InvalidOperationException($"El {_perfil.Modelo.Nombre} no admite ahora la orden {Hex.De(cuerpo)} (contesta FA).");
+            throw new InvalidOperationException(Textos.F("Servicios.Radio.OrdenNoAdmitida", _perfil.Modelo.Nombre, Hex.De(cuerpo)));
         }
     }
 

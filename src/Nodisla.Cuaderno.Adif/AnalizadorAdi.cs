@@ -1,4 +1,5 @@
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Adif;
 
@@ -43,7 +44,7 @@ internal sealed class AnalizadorAdi(Stream origen, Action<string, string?, Nivel
             if (cierra < 0)
             {
                 avisar(
-                    "Hay una etiqueta sin cerrar al final del fichero; se descarta lo que quedaba.",
+                    Textos.T("Servicios.Adif.EtiquetaSinCerrar"),
                     null,
                     NivelDeAviso.Advertencia);
                 _ventana.Avanzar(_ventana.Disponible);
@@ -73,7 +74,7 @@ internal sealed class AnalizadorAdi(Stream origen, Action<string, string?, Nivel
             if (longitud < 0)
             {
                 avisar(
-                    $"El campo «{nombre}» no declara longitud; se lee hasta la etiqueta siguiente.",
+                    Textos.F("Servicios.Adif.SinLongitud", nombre),
                     nombre,
                     NivelDeAviso.Advertencia);
             }
@@ -172,15 +173,14 @@ internal sealed class AnalizadorAdi(Stream origen, Action<string, string?, Nivel
                 // Informativo y no advertencia: el dato bueno sale entero, el rotulo se
                 // conserva aparte y el fichero se reescribe igual. No hay nada que revisar.
                 avisar(
-                    $"El campo «{nombre}» lleva «{sobrante}» detras de los {longitud} bytes que declara; "
-                    + "manda la longitud declarada y el resto se conserva aparte.",
+                    Textos.F("Servicios.Adif.Sobrante", nombre, sobrante, longitud),
                     nombre,
                     NivelDeAviso.Informativo);
                 return (longitud, hasta);
             }
 
             avisar(
-                $"El campo «{nombre}» dice ocupar {longitud} bytes pero el fichero se acaba antes.",
+                Textos.F("Servicios.Adif.Truncado", nombre, longitud),
                 nombre,
                 NivelDeAviso.Advertencia);
         }

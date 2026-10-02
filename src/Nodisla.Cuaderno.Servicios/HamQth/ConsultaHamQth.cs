@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Servicios.Red;
 using Nodisla.Cuaderno.Servicios.Xml;
 
@@ -87,8 +88,7 @@ public sealed class ConsultaHamQth : IConsultaIndicativo
         if (indicativo.EsVacio) return null;
         if (!EstaDisponible)
         {
-            throw new InvalidOperationException(
-                "HamQTH no está configurado: faltan el usuario o la contraseña.");
+            throw new InvalidOperationException(Textos.F("Servicios.NoConfigurado", "HamQTH"));
         }
 
         var sesion = await ObtenerSesionAsync(renovar: false, ct).ConfigureAwait(false);
@@ -170,7 +170,7 @@ public sealed class ConsultaHamQth : IConsultaIndicativo
             $"id={Uri.EscapeDataString(sesion)}"
             + $"&callsign={Uri.EscapeDataString(indicativo.Valor)}"
             + $"&prg={Uri.EscapeDataString(_opciones.Programa)}";
-        return await PedirAsync(consulta, $"consultar {indicativo.Valor} en HamQTH", ct)
+        return await PedirAsync(consulta, Textos.F("Servicios.ConsultarIndicativo", indicativo.Valor, "HamQTH"), ct)
             .ConfigureAwait(false);
     }
 
@@ -186,20 +186,19 @@ public sealed class ConsultaHamQth : IConsultaIndicativo
             if (!renovar && _sesion is { } yaHecha && ahora < _caduca) return yaHecha;
 
             var contrasena = _credenciales.Leer(ClavesDeCredencial.HamQthContrasena)
-                ?? throw new InvalidOperationException(
-                    "No hay contraseña de HamQTH guardada. Configúrela en Configuración › Cuentas y servicios.");
+                ?? throw new InvalidOperationException(Textos.F("Servicios.SinContrasena", "HamQTH"));
 
             var consulta =
                 $"u={Uri.EscapeDataString(_opciones.Usuario)}"
                 + $"&p={Uri.EscapeDataString(contrasena)}";
 
-            var documento = await PedirAsync(consulta, "abrir sesión en HamQTH", ct).ConfigureAwait(false);
+            var documento = await PedirAsync(consulta, Textos.F("Servicios.AbrirSesion", "HamQTH"), ct).ConfigureAwait(false);
             var sesion = LecturaXml.Hijo(documento.Root, "session");
             var id = LecturaXml.Texto(sesion, "session_id");
             if (id is null)
             {
-                var error = LecturaXml.Texto(sesion, "error") ?? "sin detalle";
-                throw new RespuestaDelServicioException($"HamQTH no dio sesión: {error}");
+                var error = LecturaXml.Texto(sesion, "error") ?? Textos.T("Servicios.SinDetalle");
+                throw new RespuestaDelServicioException(Textos.F("Servicios.SinSesion", "HamQTH", error));
             }
 
             _sesion = id;
@@ -224,7 +223,7 @@ public sealed class ConsultaHamQth : IConsultaIndicativo
             if (!http.IsSuccessStatusCode)
             {
                 throw new RespuestaDelServicioException(
-                    $"HamQTH respondió {(int)http.StatusCode}.", http.StatusCode);
+                    Textos.F("Servicios.Respondio", "HamQTH", (int)http.StatusCode), http.StatusCode);
             }
             try
             {
@@ -233,7 +232,7 @@ public sealed class ConsultaHamQth : IConsultaIndicativo
             catch (System.Xml.XmlException ex)
             {
                 throw new RespuestaDelServicioException(
-                    $"HamQTH no devolvió un XML válido: {ex.Message}");
+                    Textos.F("Servicios.XmlNoValido", "HamQTH", ex.Message));
             }
         }, ct).ConfigureAwait(false);
     }

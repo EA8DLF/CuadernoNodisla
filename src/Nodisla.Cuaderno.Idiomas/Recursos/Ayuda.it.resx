@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Ayuda.AcercaDe" xml:space="preserve">
+    <value>Informazioni</value>
+  </data>
+  <data name="Ayuda.AcercaDeCuaderno" xml:space="preserve">
+    <value>Informazioni su Cuaderno NODISLA</value>
+  </data>
+  <data name="Ayuda.AcercaDeTooltip" xml:space="preserve">
+    <value>Versione, licenza, repository e contatti</value>
+  </data>
+  <data name="Ayuda.BuscarActualizaciones" xml:space="preserve">
+    <value>Cerca aggiornamenti</value>
+  </data>
+  <data name="Ayuda.BuscarActualizacionesTooltip" xml:space="preserve">
+    <value>Controlla ora se c'è una nuova versione; se c'è, l'avviso compare in alto</value>
+  </data>
+  <data name="Ayuda.BuscarEnLaAyuda" xml:space="preserve">
+    <value>Cerca nella guida</value>
+  </data>
+  <data name="Ayuda.BuscarTooltip" xml:space="preserve">
+    <value>Una o più parole; maiuscole e accenti non contano</value>
+  </data>
+  <data name="Ayuda.Busqueda.Ninguno" xml:space="preserve">
+    <value>Nessun capitolo lo menziona.</value>
+  </data>
+  <data name="Ayuda.Busqueda.Uno" xml:space="preserve">
+    <value>Menzionato in 1 capitolo.</value>
+  </data>
+  <data name="Ayuda.Busqueda.Varios" xml:space="preserve">
+    <value>Menzionato in {0} capitoli.</value>
+  </data>
+  <data name="Ayuda.CapituloDeLaAyuda" xml:space="preserve">
+    <value>Capitolo della guida</value>
+  </data>
+  <data name="Ayuda.Capitulos" xml:space="preserve">
+    <value>Capitoli</value>
+  </data>
+  <data name="Ayuda.CapituloSinTraducir" xml:space="preserve">
+    <value>Questo capitolo non è ancora tradotto in italiano; viene mostrato in spagnolo.</value>
+  </data>
+  <data name="Ayuda.CodigoFuente" xml:space="preserve">
+    <value>Codice sorgente e segnalazioni</value>
+  </data>
+  <data name="Ayuda.Contacto" xml:space="preserve">
+    <value>Contatti</value>
+  </data>
+  <data name="Ayuda.Descripcion" xml:space="preserve">
+    <value>Log per radioamatori: controllo dell'apparato via CAT, modi digitali con modem proprio, DX cluster, diplomi, QSL e mappa. È un progetto della suite NODISLA.</value>
+  </data>
+  <data name="Ayuda.Fallo.AbrirEnGitHub" xml:space="preserve">
+    <value>Apri in GitHub per inviare</value>
+  </data>
+  <data name="Ayuda.Fallo.AbrirEnGitHubNombre" xml:space="preserve">
+    <value>Apri la segnalazione in GitHub per inviarla</value>
+  </data>
+  <data name="Ayuda.Fallo.AdjuntarRegistro" xml:space="preserve">
+    <value>Allega le ultime righe del registro eventi</value>
+  </data>
+  <data name="Ayuda.Fallo.EntornoNombre" xml:space="preserve">
+    <value>Dati dell'ambiente allegati</value>
+  </data>
+  <data name="Ayuda.Fallo.EstadoAbierto" xml:space="preserve">
+    <value>Si è aperto GitHub con la segnalazione compilata. La controlli e prema «Submit new issue» (serve un account GitHub).</value>
+  </data>
+  <data name="Ayuda.Fallo.EstadoPortapapeles" xml:space="preserve">
+    <value>La segnalazione era troppo lunga per il collegamento: è stata copiata negli appunti. Nella pagina di GitHub cancelli l'avviso nel corpo e incolli con Ctrl+V.</value>
+  </data>
+  <data name="Ayuda.Fallo.EstadoSinNada" xml:space="preserve">
+    <value>Non è stato possibile aprire il browser né copiare la segnalazione. Apra {0} e copi l'anteprima.</value>
+  </data>
+  <data name="Ayuda.Fallo.EstadoSinNavegador" xml:space="preserve">
+    <value>Non è stato possibile aprire il browser. La segnalazione è negli appunti; la incolli in {0}</value>
+  </data>
+  <data name="Ayuda.Fallo.Explicacion" xml:space="preserve">
+    <value>La segnalazione si apre su GitHub, dove è pubblica. Prima dell'invio vengono tolte password, chiavi negli indirizzi, indirizzi e-mail, locatore e coordinate; controlli comunque l'anteprima. Serve un account GitHub per inviarla. Può scrivere in italiano; le intestazioni della segnalazione restano in spagnolo per lo sviluppatore.</value>
+  </data>
+  <data name="Ayuda.Fallo.Pasos" xml:space="preserve">
+    <value>Passi per riprodurlo</value>
+  </data>
+  <data name="Ayuda.Fallo.PasosNombre" xml:space="preserve">
+    <value>Passi per riprodurre l'errore</value>
+  </data>
+  <data name="Ayuda.Fallo.QueEsperaba" xml:space="preserve">
+    <value>Che cosa si aspettava che succedesse?</value>
+  </data>
+  <data name="Ayuda.Fallo.QueEsperabaNombre" xml:space="preserve">
+    <value>Che cosa si aspettava</value>
+  </data>
+  <data name="Ayuda.Fallo.QuePaso" xml:space="preserve">
+    <value>Che cosa è successo?</value>
+  </data>
+  <data name="Ayuda.Fallo.QuePasoNombre" xml:space="preserve">
+    <value>Che cosa è successo</value>
+  </data>
+  <data name="Ayuda.Fallo.Recargar" xml:space="preserve">
+    <value>Ricompila gli allegati</value>
+  </data>
+  <data name="Ayuda.Fallo.RegistroNombre" xml:space="preserve">
+    <value>Righe del registro eventi allegate</value>
+  </data>
+  <data name="Ayuda.Fallo.SeAdjunta" xml:space="preserve">
+    <value>Allegato (può modificarlo)</value>
+  </data>
+  <data name="Ayuda.Fallo.Titulo" xml:space="preserve">
+    <value>Titolo</value>
+  </data>
+  <data name="Ayuda.Fallo.TituloNombre" xml:space="preserve">
+    <value>Titolo dell'errore</value>
+  </data>
+  <data name="Ayuda.Fallo.Vaciar" xml:space="preserve">
+    <value>Svuota</value>
+  </data>
+  <data name="Ayuda.Fallo.VaciarNombre" xml:space="preserve">
+    <value>Svuota il modulo</value>
+  </data>
+  <data name="Ayuda.Fallo.VistaPrevia" xml:space="preserve">
+    <value>Anteprima: questo è esattamente ciò che verrà inviato</value>
+  </data>
+  <data name="Ayuda.Fallo.VistaPreviaNombre" xml:space="preserve">
+    <value>Anteprima della segnalazione</value>
+  </data>
+  <data name="Ayuda.FaltaCaptura" xml:space="preserve">
+    <value>[Manca la schermata «{0}»: {1}]</value>
+  </data>
+  <data name="Ayuda.IndiceDeCapitulos" xml:space="preserve">
+    <value>Indice dei capitoli della guida</value>
+  </data>
+  <data name="Ayuda.Licencia" xml:space="preserve">
+    <value>Licenza</value>
+  </data>
+  <data name="Ayuda.LicenciaTexto" xml:space="preserve">
+    <value>GPL-3.0 (Licenza Pubblica Generica GNU, versione 3)</value>
+  </data>
+  <data name="Ayuda.MejorReportar" xml:space="preserve">
+    <value>Per segnalare un errore è meglio usare «Segnala un errore»: prepara la segnalazione con la versione e l'apparato, e Lei vede tutto ciò che viene inviato prima di inviarlo.</value>
+  </data>
+  <data name="Ayuda.ReportarTooltip" xml:space="preserve">
+    <value>Prepara una segnalazione dell'errore, che può vedere prima di inviarla</value>
+  </data>
+  <data name="Ayuda.ReportarUnFallo" xml:space="preserve">
+    <value>Segnala un errore</value>
+  </data>
+  <data name="Ayuda.SoftwareLibre" xml:space="preserve">
+    <value>È software libero: può usarlo, studiarlo, condividerlo e modificarlo secondo tale licenza. È fornito senza alcuna garanzia.</value>
+  </data>
+  <data name="Ayuda.Titulo" xml:space="preserve">
+    <value>Guida</value>
+  </data>
+  <data name="Ayuda.Version" xml:space="preserve">
+    <value>Versione</value>
+  </data>
+  <data name="Ayuda.VolverALaAyuda" xml:space="preserve">
+    <value>Torna alla guida</value>
+  </data>
+</root>

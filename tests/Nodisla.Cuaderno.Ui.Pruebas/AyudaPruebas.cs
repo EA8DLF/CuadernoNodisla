@@ -1,6 +1,8 @@
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using FluentAssertions;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.Soporte;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 
@@ -121,7 +123,7 @@ public sealed class AyudaPruebas
     public void Cada_captura_que_cita_un_capitulo_va_incrustada()
     {
         var faltan = new List<string>();
-        foreach (var capitulo in Libro.Capitulos)
+        foreach (var capitulo in Textos.Idiomas.SelectMany(i => Libro.CapitulosEn(i.Codigo)))
         {
             foreach (var imagen in Todos(DocumentoMarkdown.Leer(capitulo.Texto)).OfType<ImagenMd>())
             {
@@ -137,36 +139,91 @@ public sealed class AyudaPruebas
     [Fact]
     public void Cada_enlace_entre_capitulos_lleva_a_un_capitulo_y_apartado_que_existen()
     {
+        EnlacesRotos(LibroDeAyuda.IdiomaOriginal).Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData("en")]
+    [InlineData("pt")]
+    [InlineData("fr")]
+    [InlineData("it")]
+    [InlineData("de")]
+    public void En_cada_idioma_cada_enlace_lleva_a_un_capitulo_y_apartado_que_existen(string idioma)
+    {
+        // Los capitulos traducidos enlazan a los que no lo estan con sus anclas espanolas, y los
+        // espanoles (sin traducir) a los traducidos tambien: el libro las lleva al mismo apartado.
+        EnlacesRotos(idioma).Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Hay_capitulos_traducidos_al_ingles_empezando_por_la_presentacion_y_el_primer_uso()
+    {
+        Libro.TraducidosA("en").Should().Contain(["README", "01-primer-uso"]);
+        Libro.IdiomasTraducidos.Should().OnlyContain(i => i != LibroDeAyuda.IdiomaOriginal && Textos.Idiomas.Any(x => x.Codigo == i));
+    }
+
+    [Fact]
+    public void Cada_traduccion_conserva_los_titulos_del_original_en_el_mismo_orden_y_nivel()
+    {
+        // Es lo que permite llevar un ancla espanola al mismo apartado del capitulo traducido.
+        foreach (var idioma in Libro.IdiomasTraducidos)
+        {
+            foreach (var clave in Libro.TraducidosA(idioma))
+            {
+                var original = Libro.Buscar(clave, LibroDeAyuda.IdiomaOriginal)!;
+                var traducido = Libro.Buscar(clave, idioma)!;
+                traducido.Idioma.Should().Be(idioma);
+                traducido.SinTraducir.Should().BeFalse();
+                Niveles(traducido).Should().Equal(Niveles(original), $"{idioma}/{clave} tiene que tener los mismos titulos que el original");
+            }
+        }
+
+        static IEnumerable<int> Niveles(CapituloDeAyuda c) => DocumentoMarkdown.Leer(c.Texto).OfType<TituloMd>().Select(t => t.Nivel);
+    }
+
+    [Fact]
+    public void El_aviso_de_sin_traducir_va_debajo_del_titulo_y_no_lo_cambia()
+    {
+        var con = LibroDeAyuda.ConAviso("# Operar\n\nTexto.\n", "Aviso.");
+        var bloques = DocumentoMarkdown.Leer(con);
+        DocumentoMarkdown.TituloPrincipal(bloques).Should().Be("Operar");
+        bloques[1].Should().BeOfType<CitaMd>();
+        con.Should().EndWith("Texto.\n");
+    }
+
+    private static List<string> EnlacesRotos(string idioma)
+    {
         var rotos = new List<string>();
-        foreach (var capitulo in Libro.Capitulos)
+        foreach (var capitulo in Libro.CapitulosEn(idioma))
         {
             foreach (var enlace in Enlaces(DocumentoMarkdown.Leer(capitulo.Texto)))
             {
                 if (enlace.StartsWith("http", StringComparison.Ordinal) || enlace.StartsWith("mailto:", StringComparison.Ordinal)) continue;
 
                 var partes = enlace.Split('#', 2);
-                var destino = partes[0].Length == 0 ? capitulo : Libro.Buscar(partes[0]);
+                var destino = partes[0].Length == 0 ? capitulo : Libro.Buscar(partes[0], idioma);
                 if (destino is null)
                 {
-                    rotos.Add($"{capitulo.Clave} → {enlace}");
+                    rotos.Add($"{idioma}/{capitulo.Clave} → {enlace}");
                     continue;
                 }
 
-                if (partes.Length == 2 && !Todos(DocumentoMarkdown.Leer(destino.Texto)).OfType<TituloMd>().Any(t => t.Ancla == partes[1]))
+                var ancla = partes.Length == 2 ? Libro.Ancla(destino, partes[1]) : null;
+                if (ancla is not null && !Todos(DocumentoMarkdown.Leer(destino.Texto)).OfType<TituloMd>().Any(t => t.Ancla == ancla))
                 {
-                    rotos.Add($"{capitulo.Clave} → {enlace} (no hay ese apartado)");
+                    rotos.Add($"{idioma}/{capitulo.Clave} → {enlace} (no hay ese apartado)");
                 }
             }
         }
 
-        rotos.Should().BeEmpty();
+        return rotos;
     }
 
     [Fact]
     public void Ningun_capitulo_lleva_un_correo_que_no_sea_el_publico()
     {
         var correo = new Regex(@"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}");
-        foreach (var capitulo in Libro.Capitulos)
+        foreach (var capitulo in Textos.Idiomas.SelectMany(i => Libro.CapitulosEn(i.Codigo)))
         {
             correo.Matches(capitulo.Texto).Select(m => m.Value)
                 .Where(c => !c.EndsWith("@ejemplo.org", StringComparison.OrdinalIgnoreCase))
@@ -308,6 +365,137 @@ public sealed class AyudaPruebas
             {
                 if (t.Enlace is { } e) yield return e;
             }
+        }
+    }
+}
+
+/// <summary>
+/// La ayuda en otro idioma: el capitulo traducido si lo hay, el espanol con aviso si no, y la
+/// recarga en caliente. Cambian el idioma de todo el programa, asi que van en la coleccion que
+/// corre sola y lo dejan en espanol al acabar.
+/// </summary>
+[Collection(nameof(ColeccionDeLaVentana))]
+public sealed class AyudaEnOtrosIdiomasPruebas
+{
+    private static readonly LibroDeAyuda Libro = LibroDeAyuda.DelEnsamblado(typeof(VistaModeloAyuda).Assembly);
+
+    [Fact]
+    public void En_ingles_se_carga_el_capitulo_ingles()
+    {
+        try
+        {
+            Textos.Cambiar(new CultureInfo("en-GB", useUserOverride: false));
+            var ayuda = new VistaModeloAyuda(Libro, version: "0.3.0");
+
+            var capitulo = ayuda.CapituloElegido!;
+            capitulo.Clave.Should().Be("01-primer-uso");
+            capitulo.Idioma.Should().Be("en");
+            capitulo.SinTraducir.Should().BeFalse();
+            capitulo.Titulo.Should().Be("Getting started, step by step");
+            capitulo.Texto.Should().NotContain(Textos.T("Ayuda.CapituloSinTraducir"));
+            ayuda.CapitulosVisibles[0].Titulo.Should().Be("Cuaderno NODISLA Help");
+
+            // Uno sin traducir sale en espanol, con el aviso en ingles al principio.
+            var operar = Libro.Buscar("02-operar")!;
+            operar.SinTraducir.Should().BeTrue();
+            operar.Texto.Should().Contain("This chapter has not been translated into English yet");
+        }
+        finally
+        {
+            Textos.Cambiar(new CultureInfo("es-ES", useUserOverride: false));
+        }
+    }
+
+    [Fact]
+    public void En_aleman_sin_traduccion_sale_el_espanol_con_el_aviso()
+    {
+        try
+        {
+            Textos.Cambiar(new CultureInfo("de-DE", useUserOverride: false));
+            var ayuda = new VistaModeloAyuda(Libro, version: "0.3.0");
+
+            var capitulo = ayuda.CapituloElegido!;
+            capitulo.Clave.Should().Be("01-primer-uso");
+            capitulo.SinTraducir.Should().BeTrue();
+            capitulo.Idioma.Should().Be("es");
+            capitulo.Titulo.Should().Be("Primer uso, paso a paso");
+            capitulo.Texto.Should().Contain(Textos.T("Ayuda.CapituloSinTraducir"))
+                .And.Contain("Dieses Kapitel ist noch nicht ins Deutsche übersetzt");
+            ayuda.CapitulosVisibles.Should().OnlyContain(c => c.SinTraducir);
+        }
+        finally
+        {
+            Textos.Cambiar(new CultureInfo("es-ES", useUserOverride: false));
+        }
+    }
+
+    [Fact]
+    public void En_espanol_no_hay_aviso()
+    {
+        Textos.Cambiar(new CultureInfo("es-ES", useUserOverride: false));
+        var aviso = Textos.T("Ayuda.CapituloSinTraducir");
+
+        Libro.Capitulos.Should().OnlyContain(c => !c.SinTraducir && c.Idioma == "es");
+        Libro.Capitulos.Should().OnlyContain(c => !c.Texto.Contains(aviso, StringComparison.Ordinal));
+        new VistaModeloAyuda(Libro, version: "0.3.0").CapituloElegido!.Titulo.Should().Be("Primer uso, paso a paso");
+    }
+
+    [Fact]
+    public void Al_cambiar_de_idioma_la_ayuda_se_recarga_y_conserva_el_capitulo_abierto()
+    {
+        try
+        {
+            Textos.Cambiar(new CultureInfo("es-ES", useUserOverride: false));
+            var ayuda = new VistaModeloAyuda(Libro, version: "0.3.0");
+            ayuda.AbrirCapitulo("README").Should().BeTrue();
+
+            Textos.Cambiar(new CultureInfo("en-GB", useUserOverride: false));
+            ayuda.CapituloElegido!.Clave.Should().Be("README");
+            ayuda.CapituloElegido.Idioma.Should().Be("en");
+            ayuda.CapitulosVisibles.Should().Contain(ayuda.CapituloElegido);
+
+            ayuda.AbrirCapitulo("13-tarjeta-qsl");
+            Textos.Cambiar(new CultureInfo("de-DE", useUserOverride: false));
+            ayuda.CapituloElegido!.Clave.Should().Be("13-tarjeta-qsl");
+            ayuda.CapituloElegido.Texto.Should().Contain("Dieses Kapitel");
+
+            // Lo que se esta viendo tampoco se pierde.
+            ayuda.VerAcercaDe();
+            Textos.Cambiar(new CultureInfo("en-GB", useUserOverride: false));
+            ayuda.Vista.Should().Be(VistaDeLaAyuda.AcercaDe);
+            ayuda.TituloDeLaVista.Should().Be("About Cuaderno NODISLA");
+            ayuda.TextoDeLicencia.Should().Contain("GPL-3.0").And.Contain("GNU General Public License");
+
+            Textos.Cambiar(new CultureInfo("es-ES", useUserOverride: false));
+            ayuda.CapituloElegido!.Clave.Should().Be("13-tarjeta-qsl");
+            ayuda.CapituloElegido.SinTraducir.Should().BeFalse();
+            ayuda.TituloDeLaVista.Should().Be("Acerca de Cuaderno NODISLA");
+        }
+        finally
+        {
+            Textos.Cambiar(new CultureInfo("es-ES", useUserOverride: false));
+        }
+    }
+
+    [Fact]
+    public void Un_ancla_espanola_lleva_al_mismo_apartado_del_capitulo_traducido()
+    {
+        try
+        {
+            Textos.Cambiar(new CultureInfo("en-GB", useUserOverride: false));
+            var ayuda = new VistaModeloAyuda(Libro, version: "0.3.0");
+
+            // Asi enlaza el capitulo de equipos (sin traducir) al paso 4 del primer uso.
+            ayuda.SeguirEnlace("01-primer-uso.md#paso-4--configuración--equipo-cat-con-el-ft-710");
+
+            ayuda.CapituloElegido!.Idioma.Should().Be("en");
+            var titulos = DocumentoMarkdown.Leer(ayuda.CapituloElegido.Texto).OfType<TituloMd>().ToList();
+            var paso4 = titulos.Single(t => DocumentoMarkdown.TextoPlano(t.Trozos).StartsWith("Step 4", StringComparison.Ordinal));
+            ayuda.AnclaPedida.Should().Be(paso4.Ancla);
+        }
+        finally
+        {
+            Textos.Cambiar(new CultureInfo("es-ES", useUserOverride: false));
         }
     }
 }

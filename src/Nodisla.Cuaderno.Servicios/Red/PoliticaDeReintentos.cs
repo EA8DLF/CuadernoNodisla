@@ -1,6 +1,7 @@
 using System.Net;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Servicios.Red;
 
@@ -104,7 +105,7 @@ public sealed class PoliticaDeReintentos
         }
 
         throw new ServicioNoDisponibleException(
-            $"El servicio no respondió a «{descripcion}» tras {Intentos} intentos.", ultimo);
+            Textos.F("Servicios.Red.NoRespondio", descripcion, Intentos), ultimo);
     }
 
     /// <summary>Indica si un fallo merece otro intento.</summary>

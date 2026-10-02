@@ -207,6 +207,58 @@ public class AnalizadorFt710Pruebas
         analizador.Estado.Should().Be(EstadoDelAnalizador.Parado);
     }
 
+    /// <summary>
+    /// 01-10-2026: con el puente FT4222 presente, la apertura se quedo colgada dentro del
+    /// controlador de FTDI y el analizador no dijo nada nunca: ni en el registro ni en pantalla
+    /// (Parado → Parado no se apunta). Ahora lo dice, no apila otra apertura colgada encima al
+    /// ocultar y volver a mostrar, y si la apertura termina tarde se aprovecha.
+    /// </summary>
+    [Fact]
+    public async Task Si_la_apertura_se_cuelga_lo_dice_y_no_apila_otra()
+    {
+        using var suelta = new ManualResetEventSlim(false);
+        var aperturas = 0;
+        var sincronia = Enumerable.Repeat(TramaDelAnalizadorFt710.Cola.ToArray(), 4).SelectMany(b => b).ToArray();
+        var puente = new PuenteEnMemoria([.. sincronia, .. TramaDeMentira()]);
+        var colgada = new TaskCompletionSource();
+        var traza = new TaskCompletionSource();
+
+        await using var analizador = new AnalizadorFt710(
+            () =>
+            {
+                Interlocked.Increment(ref aperturas);
+                suelta.Wait();
+                return (AperturaDelPuente.Abierto, puente, "en memoria");
+            },
+            TimeSpan.FromHours(1),
+            plazoDeApertura: TimeSpan.FromMilliseconds(50));
+        analizador.EstadoCambiado += (_, _) =>
+        {
+            if (analizador.Estado == EstadoDelAnalizador.Fallo) colgada.TrySetResult();
+        };
+        analizador.TrazaRecibida += (_, _) => traza.TrySetResult();
+
+        analizador.Iniciar();
+        await colgada.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        analizador.Motivo.Should().Contain("no contesta");
+
+        // Ocultar no se queda esperando a la apertura colgada.
+        await analizador.DetenerAsync().WaitAsync(TimeSpan.FromSeconds(3));
+        analizador.Estado.Should().Be(EstadoDelAnalizador.Parado);
+
+        // Volver a mostrar espera a la misma apertura, no abre otra encima.
+        colgada = new TaskCompletionSource();
+        analizador.Iniciar();
+        await colgada.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        Volatile.Read(ref aperturas).Should().Be(1);
+
+        // Si al final abre, se lee.
+        suelta.Set();
+        await traza.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        analizador.Estado.Should().Be(EstadoDelAnalizador.Recibiendo);
+        Volatile.Read(ref aperturas).Should().Be(1);
+    }
+
     private sealed class PuenteEnMemoria(byte[] datos) : IPuenteDelAnalizador
     {
         private int _posicion;

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Propagacion.Prediccion;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
@@ -48,11 +49,7 @@ public sealed class FilaDeSpot : ObservableObject
         Clave = ClaveDeAnuncio.De(spot);
 
         Oyen = anuncio.Veces > 1
-            ? $"×{anuncio.Veces.ToString(CultureInfo.CurrentCulture)}"
-            : string.Empty;
-
-        QuienesLoOyen = anuncio.Veces > 1
-            ? $"{anuncio.Veces.ToString(CultureInfo.CurrentCulture)} lo oyen"
+            ? $"×{anuncio.Veces.ToString(Textos.Cultura)}"
             : string.Empty;
 
         DesdeDonde = anuncio.Continentes.Count > 1
@@ -73,7 +70,7 @@ public sealed class FilaDeSpot : ObservableObject
             " · ",
             spot.Referencias.Select(r => $"{r.Tipo.ToString().ToUpperInvariant()} {r.Codigo}"));
         PalabrasPorMinuto = spot.PalabrasPorMinuto is { } ppm
-            ? $"{ppm.ToString(CultureInfo.CurrentCulture)} ppm"
+            ? $"{ppm.ToString(Textos.Cultura)} ppm"
             : string.Empty;
         Pais = spot.Pais ?? string.Empty;
         Continente = spot.Continente ?? string.Empty;
@@ -83,13 +80,6 @@ public sealed class FilaDeSpot : ObservableObject
         Decibelios = spot.Decibelios is { } db
             ? db.ToString("+00;-00;+00", CultureInfo.InvariantCulture)
             : string.Empty;
-
-        Novedad = spot switch
-        {
-            { EsEntidadNueva: true } => "Entidad nueva",
-            { EsNuevoEnBandaYModo: true } => "Nueva en banda y modo",
-            _ => string.Empty,
-        };
     }
 
     /// <summary>Anuncio del que sale la fila, con sus repeticiones juntas.</summary>
@@ -105,7 +95,7 @@ public sealed class FilaDeSpot : ObservableObject
     public string Oyen { get; } = string.Empty;
 
     /// <summary>Cuantas estaciones la estan oyendo, cuando es mas de una.</summary>
-    public string QuienesLoOyen { get; } = string.Empty;
+    public string QuienesLoOyen => Anuncio.Veces > 1 ? Textos.F("Principal.Spot.LoOyen", Anuncio.Veces) : string.Empty;
 
     /// <summary>Continentes desde los que se la oye, cuando es mas de uno.</summary>
     public string DesdeDonde { get; } = string.Empty;
@@ -156,7 +146,12 @@ public sealed class FilaDeSpot : ObservableObject
     public bool EsDeEscuchaAutomatica => Spot.EsDeEscuchaAutomatica;
 
     /// <summary>Por que este spot merece atencion, o vacio si no la merece.</summary>
-    public string Novedad { get; }
+    public string Novedad => Spot switch
+    {
+        { EsEntidadNueva: true } => Textos.T("Principal.Cluster.NovedadEntidad"),
+        { EsNuevoEnBandaYModo: true } => Textos.T("Principal.Spot.NuevaEnBandaYModo"),
+        _ => string.Empty,
+    };
 
     /// <summary>La entidad no esta en el cuaderno en ninguna banda.</summary>
     public bool EsEntidadNueva => Spot.EsEntidadNueva;
@@ -172,19 +167,19 @@ public sealed class FilaDeSpot : ObservableObject
     {
         get
         {
-            var partes = new List<string> { $"{Indicativo} en {Frecuencia} MHz" };
+            var partes = new List<string> { Textos.F("Principal.Spot.EnFrecuencia", Indicativo, Frecuencia) };
             if (Banda.Length > 0 || Modo.Length > 0) partes.Add($"{Banda} {Modo}".Trim());
             if (Pais.Length > 0) partes.Add(Pais);
             if (Localizador.Length > 0) partes.Add(Localizador);
             if (Referencias.Length > 0) partes.Add(Referencias);
             if (PalabrasPorMinuto.Length > 0) partes.Add(PalabrasPorMinuto);
             if (QuienesLoOyen.Length > 0) partes.Add(QuienesLoOyen);
-            if (DesdeDonde.Length > 0) partes.Add($"desde {DesdeDonde}");
+            if (DesdeDonde.Length > 0) partes.Add(Textos.F("Principal.Spot.Desde", DesdeDonde));
             if (Novedad.Length > 0) partes.Add(Novedad);
             if (Comentario.Length > 0) partes.Add($"«{Comentario}»");
             partes.Add(EsDeEscuchaAutomatica
-                ? $"escucha automática {Anunciante} a las {Hora} UTC"
-                : $"anunciado por {Anunciante} a las {Hora} UTC");
+                ? Textos.F("Principal.Spot.EscuchaAutomatica", Anunciante, Hora)
+                : Textos.F("Principal.Spot.AnunciadoPor", Anunciante, Hora));
             return string.Join(" · ", partes);
         }
     }
@@ -206,7 +201,7 @@ public sealed class FilaDeSpot : ObservableObject
 
     /// <summary>La cifra que se lee en la celda, o vacio.</summary>
     public string Propagacion => Prevision is { } p
-        ? $"{Math.Round(p.Fiabilidad * 100.0).ToString("0", CultureInfo.CurrentCulture)} %"
+        ? $"{Math.Round(p.Fiabilidad * 100.0).ToString("0", Textos.Cultura)} %"
         : string.Empty;
 
     /// <summary>Verde, ambar o gris; o nada.</summary>
@@ -228,22 +223,23 @@ public sealed class FilaDeSpot : ObservableObject
         {
             if (Prevision is not { } p)
             {
-                return PorQueSinPropagacion.Length > 0 ? PorQueSinPropagacion : "Sin previsión.";
+                return PorQueSinPropagacion.Length > 0 ? PorQueSinPropagacion : Textos.T("Principal.Spot.SinPrevision");
             }
 
-            var cultura = CultureInfo.CurrentCulture;
-            var saltos = p.Saltos == 1 ? "1 salto" : $"{p.Saltos.ToString(cultura)} saltos";
+            var cultura = Textos.Cultura;
+            var saltos = p.Saltos == 1 ? Textos.T("Principal.Prevision.UnSalto") : Textos.F("Principal.Prevision.Saltos", p.Saltos);
             var lineas = new List<string>
             {
-                $"Fiabilidad {Math.Round(p.Fiabilidad * 100.0).ToString("0", cultura)} % hacia {Indicativo} en {Frecuencia.Trim()} MHz",
+                Textos.F("Principal.Prevision.Fiabilidad", Math.Round(p.Fiabilidad * 100.0).ToString("0", cultura), Indicativo, Frecuencia.Trim()),
                 p.RelacionSenalRuido is { } sr
-                    ? $"S/R prevista {sr.ToString("+0;-0;0", cultura)} dB ({Modo})"
-                    : "S/R prevista: no llega",
+                    ? Textos.F("Principal.Prevision.SenalRuido", sr.ToString("+0;-0;0", cultura), Modo)
+                    : Textos.T("Principal.Prevision.SenalRuidoNoLlega"),
                 $"MUF {p.MufMhz.ToString("0.0", cultura)} MHz · {saltos}",
-                $"{p.DistanciaKm.ToString("N0", cultura)} km · rumbo {p.RumboGrados.ToString("000", cultura)}°",
-                $"Posición: {OrigenDeLaPosicion}",
-                $"Calculado para las {p.CalculadaUtc.UtcDateTime.ToString("HH:mm", CultureInfo.InvariantCulture)} UTC con 100 W"
-                    + (p.IndicesDeCopia ? " e índices solares de la copia guardada" : string.Empty),
+                Textos.F("Principal.Prevision.DistanciaYRumbo", p.DistanciaKm.ToString("N0", cultura), p.RumboGrados.ToString("000", cultura)),
+                Textos.F("Principal.Prevision.Posicion", OrigenDeLaPosicion),
+                Textos.F(
+                    p.IndicesDeCopia ? "Principal.Prevision.CalculadoConCopia" : "Principal.Prevision.Calculado",
+                    p.CalculadaUtc.UtcDateTime.ToString("HH:mm", CultureInfo.InvariantCulture)),
                 p.Motor,
             };
             return string.Join(Environment.NewLine, lineas);
@@ -296,18 +292,18 @@ public sealed class FilaDeSpot : ObservableObject
 
         if (!Spot.Locator.EsVacio)
         {
-            return (Coordenada.Desde(Spot.Locator), $"localizador del anuncio {Spot.Locator.Valor}");
+            return (Coordenada.Desde(Spot.Locator), Textos.F("Principal.Spot.LocatorDelAnuncio", Spot.Locator.Valor));
         }
 
         if (!delCuaderno.EsVacio)
         {
-            return (Coordenada.Desde(delCuaderno), $"localizador del cuaderno {delCuaderno.Valor}");
+            return (Coordenada.Desde(delCuaderno), Textos.F("Principal.Spot.LocatorDelCuaderno", delCuaderno.Valor));
         }
 
         var resuelto = resolutor.Resolver(Spot.Indicativo, DateOnly.FromDateTime(Spot.RecibidoUtc.UtcDateTime));
         var nombre = resuelto.Entidad?.NombreParaMostrar ?? Pais;
-        if (resuelto.Coordenada is { } porPrefijo) return (porPrefijo, $"prefijo del indicativo ({nombre})");
-        if (resuelto.Entidad?.Coordenada is { } centro) return (centro, $"centro de la entidad ({nombre})");
+        if (resuelto.Coordenada is { } porPrefijo) return (porPrefijo, Textos.F("Principal.Spot.PrefijoDelIndicativo", nombre));
+        if (resuelto.Entidad?.Coordenada is { } centro) return (centro, Textos.F("Principal.Spot.CentroDeLaEntidad", nombre));
         return (null, string.Empty);
     }
 

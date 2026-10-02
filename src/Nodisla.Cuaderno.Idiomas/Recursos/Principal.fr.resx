@@ -1,0 +1,1103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Principal.Bandmap.Dial" xml:space="preserve">
+    <value>Le cadran est ici</value>
+  </data>
+  <data name="Principal.Bandmap.DialNombre" xml:space="preserve">
+    <value>Fréquence du cadran</value>
+  </data>
+  <data name="Principal.Bandmap.Dibujados" xml:space="preserve">
+    <value>{0:N0} sur {1}</value>
+  </data>
+  <data name="Principal.Bandmap.FueraDeBanda" xml:space="preserve">
+    <value>Le cadran est hors des bandes amateur ; aucune bande à dessiner.</value>
+  </data>
+  <data name="Principal.Bandmap.Nadie" xml:space="preserve">
+    <value>Personne n’est annoncé sur {0} en ce moment.</value>
+  </data>
+  <data name="Principal.Bandmap.SinFrecuencia" xml:space="preserve">
+    <value>Aucune fréquence du poste.</value>
+  </data>
+  <data name="Principal.Bandmap.SinSkimmers" xml:space="preserve">
+    <value>Sans skimmers</value>
+  </data>
+  <data name="Principal.Bandmap.SinSkimmersConsejo" xml:space="preserve">
+    <value>Masque les spots des récepteurs automatiques, pas ceux des personnes</value>
+  </data>
+  <data name="Principal.Bandmap.SinSkimmersNombre" xml:space="preserve">
+    <value>Masquer les spots des skimmers</value>
+  </data>
+  <data name="Principal.Bandmap.SoloLoQueAporta" xml:space="preserve">
+    <value>Utiles seuls</value>
+  </data>
+  <data name="Principal.Bandmap.SoloLoQueAportaConsejo" xml:space="preserve">
+    <value>Ne garde que les entités et les cases qui seraient nouvelles</value>
+  </data>
+  <data name="Principal.Bandmap.SoloLoQueAportaNombre" xml:space="preserve">
+    <value>Afficher seulement les spots qui apportent quelque chose</value>
+  </data>
+  <data name="Principal.Bandmap.SoloMiModo" xml:space="preserve">
+    <value>Mon mode seul</value>
+  </data>
+  <data name="Principal.Bandmap.SoloMiModoConsejo" xml:space="preserve">
+    <value>Ne garde que les spots dans le mode réglé sur le poste</value>
+  </data>
+  <data name="Principal.Bandmap.SoloMiModoNombre" xml:space="preserve">
+    <value>Afficher seulement les spots du mode du poste</value>
+  </data>
+  <data name="Principal.Cluster.Continente" xml:space="preserve">
+    <value>Continent</value>
+  </data>
+  <data name="Principal.Cluster.DobleClic" xml:space="preserve">
+    <value>Un double-clic sur un spot fait la même chose.</value>
+  </data>
+  <data name="Principal.Cluster.Estado.Conectando" xml:space="preserve">
+    <value>Connexion…</value>
+  </data>
+  <data name="Principal.Cluster.Estado.Fallida" xml:space="preserve">
+    <value>Échec de la connexion</value>
+  </data>
+  <data name="Principal.Cluster.Estado.Reintentando" xml:space="preserve">
+    <value>Nouvel essai…</value>
+  </data>
+  <data name="Principal.Cluster.Estado.SinConexion" xml:space="preserve">
+    <value>Non connecté</value>
+  </data>
+  <data name="Principal.Cluster.FalloAlDesconectar" xml:space="preserve">
+    <value>Erreur lors de la déconnexion : {0}</value>
+  </data>
+  <data name="Principal.Cluster.Filtros" xml:space="preserve">
+    <value>Filtres</value>
+  </data>
+  <data name="Principal.Cluster.IrAlSpot" xml:space="preserve">
+    <value>Aller à ce spot</value>
+  </data>
+  <data name="Principal.Cluster.IrAlSpotConsejo" xml:space="preserve">
+    <value>Règle le poste sur cette fréquence et met l’indicatif dans le formulaire. Un double-clic fait la même chose.</value>
+  </data>
+  <data name="Principal.Cluster.NodoCambiado" xml:space="preserve">
+    <value>Le nœud du cluster a été changé : {0}.</value>
+  </data>
+  <data name="Principal.Cluster.NoSePudoConectar" xml:space="preserve">
+    <value>Connexion impossible : {0}</value>
+  </data>
+  <data name="Principal.Cluster.NoSePudoEnviar" xml:space="preserve">
+    <value>Impossible d’envoyer « {0} » : {1}</value>
+  </data>
+  <data name="Principal.Cluster.NovedadBandaModo" xml:space="preserve">
+    <value>Bande/mode</value>
+  </data>
+  <data name="Principal.Cluster.NovedadEntidad" xml:space="preserve">
+    <value>Nouvelle entité</value>
+  </data>
+  <data name="Principal.Cluster.QuitarFiltros" xml:space="preserve">
+    <value>Effacer les filtres</value>
+  </data>
+  <data name="Principal.Cluster.Resumen" xml:space="preserve">
+    <value>{0:N0} stations · {1:N0} spots reçus</value>
+  </data>
+  <data name="Principal.Cluster.SinProp.FueraDeHf" xml:space="preserve">
+    <value>Pas de propagation : hors HF ou trop près pour un trajet ionosphérique.</value>
+  </data>
+  <data name="Principal.Cluster.SinProp.SinIndices" xml:space="preserve">
+    <value>Pas de propagation : pas encore d’indices solaires.</value>
+  </data>
+  <data name="Principal.Cluster.SinProp.SinLocator" xml:space="preserve">
+    <value>Pas de propagation : le profil actif n’a pas de locator.</value>
+  </data>
+  <data name="Principal.Cluster.SinProp.SinPosicion" xml:space="preserve">
+    <value>Pas de propagation : on ne sait pas où se trouve cette station.</value>
+  </data>
+  <data name="Principal.Cluster.SinSkimmer" xml:space="preserve">
+    <value>Sans skimmers</value>
+  </data>
+  <data name="Principal.Cluster.SinSkimmerConsejo" xml:space="preserve">
+    <value>Masque les spots des réseaux d’écoute automatique, qui répètent la même station des dizaines de fois par minute</value>
+  </data>
+  <data name="Principal.Cluster.SoloConPropagacion" xml:space="preserve">
+    <value>Propagation ouverte seule</value>
+  </data>
+  <data name="Principal.Cluster.SoloConPropagacionConsejo" xml:space="preserve">
+    <value>Ne garde que les stations vers lesquelles la bande devrait être ouverte ou incertaine en ce moment (20 % ou plus). Celles sans prévision sont masquées.</value>
+  </data>
+  <data name="Principal.Cluster.SoloLoNuevo" xml:space="preserve">
+    <value>Nouveautés seules</value>
+  </data>
+  <data name="Principal.Cluster.SoloLoNuevoConsejo" xml:space="preserve">
+    <value>Ne garde que les nouvelles entités et les cases de bande et de mode manquantes</value>
+  </data>
+  <data name="Principal.Cluster.Todas" xml:space="preserve">
+    <value>(toutes)</value>
+  </data>
+  <data name="Principal.Cluster.Vaciar" xml:space="preserve">
+    <value>Vider</value>
+  </data>
+  <data name="Principal.Columna.Anuncia" xml:space="preserve">
+    <value>SPOTTER</value>
+  </data>
+  <data name="Principal.Columna.Banda" xml:space="preserve">
+    <value>BANDE</value>
+  </data>
+  <data name="Principal.Columna.ClubOEvento" xml:space="preserve">
+    <value>CLUB/ÉVÉNEMENT</value>
+  </data>
+  <data name="Principal.Columna.Comentario" xml:space="preserve">
+    <value>COMMENTAIRE</value>
+  </data>
+  <data name="Principal.Columna.Continente" xml:space="preserve">
+    <value>CONT.</value>
+  </data>
+  <data name="Principal.Columna.EntradaUtc" xml:space="preserve">
+    <value>ENTRÉE UTC</value>
+  </data>
+  <data name="Principal.Columna.FinUtc" xml:space="preserve">
+    <value>FIN UTC</value>
+  </data>
+  <data name="Principal.Columna.Frecuencia" xml:space="preserve">
+    <value>FRÉQUENCE</value>
+  </data>
+  <data name="Principal.Columna.Hora" xml:space="preserve">
+    <value>HEURE</value>
+  </data>
+  <data name="Principal.Columna.Indicativo" xml:space="preserve">
+    <value>INDICATIF</value>
+  </data>
+  <data name="Principal.Columna.InicioUtc" xml:space="preserve">
+    <value>DÉBUT UTC</value>
+  </data>
+  <data name="Principal.Columna.Modo" xml:space="preserve">
+    <value>MODE</value>
+  </data>
+  <data name="Principal.Columna.Nombre" xml:space="preserve">
+    <value>NOM</value>
+  </data>
+  <data name="Principal.Columna.Novedad" xml:space="preserve">
+    <value>NOUVEAU</value>
+  </data>
+  <data name="Principal.Columna.Oyen" xml:space="preserve">
+    <value>REÇU</value>
+  </data>
+  <data name="Principal.Columna.Pais" xml:space="preserve">
+    <value>PAYS</value>
+  </data>
+  <data name="Principal.Columna.PaisSinTilde" xml:space="preserve">
+    <value>PAYS</value>
+  </data>
+  <data name="Principal.Columna.Participantes" xml:space="preserve">
+    <value>PARTICIPANTS</value>
+  </data>
+  <data name="Principal.Columna.Propagacion" xml:space="preserve">
+    <value>PROP.</value>
+  </data>
+  <data name="Principal.Columna.Trabajado" xml:space="preserve">
+    <value>CONTACTÉ</value>
+  </data>
+  <data name="Principal.Columna.Trabajados" xml:space="preserve">
+    <value>CONTACTÉS</value>
+  </data>
+  <data name="Principal.ConexionCluster.Aplicar" xml:space="preserve">
+    <value>Appliquer</value>
+  </data>
+  <data name="Principal.ConexionCluster.AplicarConsejo" xml:space="preserve">
+    <value>Enregistre et change de nœud sans fermer le log</value>
+  </data>
+  <data name="Principal.ConexionCluster.AplicarNombre" xml:space="preserve">
+    <value>Enregistrer et appliquer les paramètres du cluster</value>
+  </data>
+  <data name="Principal.ConexionCluster.BorrarContrasena" xml:space="preserve">
+    <value>Supprimer le mot de passe enregistré du cluster</value>
+  </data>
+  <data name="Principal.ConexionCluster.Contrasena" xml:space="preserve">
+    <value>Mot de passe</value>
+  </data>
+  <data name="Principal.ConexionCluster.ContrasenaAyuda" xml:space="preserve">
+    <value>Il est chiffré avec la protection des données de votre compte Windows et n’est plus jamais affiché. Il n’est jamais écrit dans le fichier de paramètres.</value>
+  </data>
+  <data name="Principal.ConexionCluster.ContrasenaNombre" xml:space="preserve">
+    <value>Mot de passe du nœud de cluster</value>
+  </data>
+  <data name="Principal.ConexionCluster.Descartar" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Principal.ConexionCluster.DescartarNombre" xml:space="preserve">
+    <value>Annuler les modifications du cluster</value>
+  </data>
+  <data name="Principal.ConexionCluster.EsperaConexion" xml:space="preserve">
+    <value>Délai de connexion (s)</value>
+  </data>
+  <data name="Principal.ConexionCluster.EsperaConexionNombre" xml:space="preserve">
+    <value>Délai de connexion, en secondes</value>
+  </data>
+  <data name="Principal.ConexionCluster.Explicacion" xml:space="preserve">
+    <value>À quel nœud se connecter et avec quel indicatif. La plupart des nœuds ne demandent pas de mot de passe : l’indicatif suffit.</value>
+  </data>
+  <data name="Principal.ConexionCluster.GuardarContrasena" xml:space="preserve">
+    <value>Enregistrer le mot de passe du cluster chiffré</value>
+  </data>
+  <data name="Principal.ConexionCluster.IndicativoEnBlanco" xml:space="preserve">
+    <value>si vide, celui du profil actif :</value>
+  </data>
+  <data name="Principal.ConexionCluster.IndicativoNombre" xml:space="preserve">
+    <value>Indicatif utilisé pour se connecter au cluster</value>
+  </data>
+  <data name="Principal.ConexionCluster.NodosConocidos" xml:space="preserve">
+    <value>Nœuds connus</value>
+  </data>
+  <data name="Principal.ConexionCluster.NodosConocidosConsejo" xml:space="preserve">
+    <value>En choisir un remplit le serveur et le port ; vous pourrez les modifier ensuite</value>
+  </data>
+  <data name="Principal.ConexionCluster.NodosConocidosNombre" xml:space="preserve">
+    <value>Nœuds de cluster connus</value>
+  </data>
+  <data name="Principal.ConexionCluster.NombreDelNodo" xml:space="preserve">
+    <value>Nom du nœud</value>
+  </data>
+  <data name="Principal.ConexionCluster.Ordenes" xml:space="preserve">
+    <value>Commandes à la connexion</value>
+  </data>
+  <data name="Principal.ConexionCluster.OrdenesAyuda" xml:space="preserve">
+    <value>Une par ligne. &lt;CALLSIGN&gt; est remplacé par l’indicatif et &lt;PASSWORD&gt; par le mot de passe ; le reste est envoyé tel quel.</value>
+  </data>
+  <data name="Principal.ConexionCluster.OrdenesNombre" xml:space="preserve">
+    <value>Commandes envoyées à la connexion</value>
+  </data>
+  <data name="Principal.ConexionCluster.PrimerReintento" xml:space="preserve">
+    <value>Premier nouvel essai (s)</value>
+  </data>
+  <data name="Principal.ConexionCluster.PrimerReintentoNombre" xml:space="preserve">
+    <value>Attente avant le premier nouvel essai, en secondes</value>
+  </data>
+  <data name="Principal.ConexionCluster.Puerto" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="Principal.ConexionCluster.PuertoAyuda" xml:space="preserve">
+    <value>en général 7300 ; certains nœuds sont sur 23 ou 8000</value>
+  </data>
+  <data name="Principal.ConexionCluster.PuertoDelNodo" xml:space="preserve">
+    <value>Port Telnet du nœud</value>
+  </data>
+  <data name="Principal.ConexionCluster.Reconectar" xml:space="preserve">
+    <value>Se reconnecter automatiquement si le nœud tombe</value>
+  </data>
+  <data name="Principal.ConexionCluster.ReintentoMaximo" xml:space="preserve">
+    <value>Essai max. (s)</value>
+  </data>
+  <data name="Principal.ConexionCluster.ReintentoMaximoNombre" xml:space="preserve">
+    <value>Attente maximale entre les essais, en secondes</value>
+  </data>
+  <data name="Principal.ConexionCluster.Servidor" xml:space="preserve">
+    <value>Serveur</value>
+  </data>
+  <data name="Principal.ConexionCluster.ServidorDelNodo" xml:space="preserve">
+    <value>Serveur du nœud</value>
+  </data>
+  <data name="Principal.ConexionCluster.SilencioAyuda" xml:space="preserve">
+    <value>Un cluster actif envoie quelque chose toutes les quelques minutes. Passé le silence maximal, la connexion est considérée comme perdue et on réessaie.</value>
+  </data>
+  <data name="Principal.ConexionCluster.SilencioMaximo" xml:space="preserve">
+    <value>Silence max. (min)</value>
+  </data>
+  <data name="Principal.ConexionCluster.SilencioMaximoNombre" xml:space="preserve">
+    <value>Silence maximal avant de considérer la connexion comme perdue, en minutes</value>
+  </data>
+  <data name="Principal.ConexionCluster.Sufijo" xml:space="preserve">
+    <value>Suffixe</value>
+  </data>
+  <data name="Principal.ConexionCluster.SufijoAyuda" xml:space="preserve">
+    <value>pour avoir deux sessions ouvertes : 1 est envoyé comme « -1 »</value>
+  </data>
+  <data name="Principal.ConexionCluster.SufijoNombre" xml:space="preserve">
+    <value>Suffixe de l’indicatif</value>
+  </data>
+  <data name="Principal.ConexionCluster.Tiempos" xml:space="preserve">
+    <value>Délais</value>
+  </data>
+  <data name="Principal.ConexionCluster.Titulo" xml:space="preserve">
+    <value>Cluster · connexion</value>
+  </data>
+  <data name="Principal.Confirmar.ApagarAceptar" xml:space="preserve">
+    <value>Oui, éteindre</value>
+  </data>
+  <data name="Principal.Confirmar.ApagarDetalle" xml:space="preserve">
+    <value>Le PTT sera relâché et le poste éteint. Pour le rallumer, appui long sur LOCK (si le port USB reste disponible poste éteint) ou sa touche marche/arrêt.</value>
+  </data>
+  <data name="Principal.Confirmar.BorrarAceptar" xml:space="preserve">
+    <value>Oui, supprimer le QSO</value>
+  </data>
+  <data name="Principal.Confirmar.BorrarDetalle" xml:space="preserve">
+    <value>Le QSO avec {0} du {1} à {2} UTC sur {3} {4} va être supprimé.
+
+Cette opération est irréversible.</value>
+  </data>
+  <data name="Principal.Confirmar.BorrarTitulo" xml:space="preserve">
+    <value>Supprimer le QSO</value>
+  </data>
+  <data name="Principal.Confirmar.ModemDetalle" xml:space="preserve">
+    <value>« {0} » va être émis.
+
+Une période FT8 représente TREIZE SECONDES d’émission continue.
+
+Vérifiez qu’une antenne ou une charge fictive est branchée et que l’horloge est à l’heure : avec une horloge décalée, on émet hors fenêtre et on gêne les autres stations sans s’en rendre compte.
+
+L’émission est surveillée : elle se coupe seule en cas de problème, et le bouton « RELÂCHER PTT » l’interrompt à tout moment.</value>
+  </data>
+  <data name="Principal.Confirmar.ModemTitulo" xml:space="preserve">
+    <value>Le modem va émettre</value>
+  </data>
+  <data name="Principal.Confirmar.TransmitirAceptar" xml:space="preserve">
+    <value>Oui, émettre</value>
+  </data>
+  <data name="Principal.Confirmar.TransmitirDetalle" xml:space="preserve">
+    <value>Actionner « {0} » met le poste EN ÉMISSION : une porteuse est émise.
+
+Vérifiez qu’une antenne ou une charge fictive est branchée avant de continuer.
+
+L’émission est surveillée : elle se coupe seule en cas de problème, et le bouton « RELÂCHER PTT » l’interrompt à tout moment.</value>
+  </data>
+  <data name="Principal.Confirmar.TransmitirTitulo" xml:space="preserve">
+    <value>Émission imminente</value>
+  </data>
+  <data name="Principal.Confirmar.VfosAceptar" xml:space="preserve">
+    <value>Oui, continuer</value>
+  </data>
+  <data name="Principal.Confirmar.VfosDetalle" xml:space="preserve">
+    <value>{0}
+
+Rien n’est émis, mais le contenu de l’autre VFO peut être perdu.</value>
+  </data>
+  <data name="Principal.Confirmar.VfosTitulo" xml:space="preserve">
+    <value>Les VFO du poste vont être modifiés</value>
+  </data>
+  <data name="Principal.Estado.Atajos" xml:space="preserve">
+    <value>Raccourcis clavier</value>
+  </data>
+  <data name="Principal.Estado.Contactos" xml:space="preserve">
+    <value>QSO dans le log :</value>
+  </data>
+  <data name="Principal.Estado.Estacion" xml:space="preserve">
+    <value>Station :</value>
+  </data>
+  <data name="Principal.Estado.HoraUtc" xml:space="preserve">
+    <value>Heure UTC :</value>
+  </data>
+  <data name="Principal.Estado.Leyenda" xml:space="preserve">
+    <value>F1 aide · Entrée enregistre · Échap efface · F2 modifie · F3 rechercher · F4 indicatif · F5 actualise · F7 plus de données · F8 heure · F9 thème · Suppr supprime · Ctrl1…Ctrl9 pages (voir la barre) · Ctrl+ et Ctrl− échelle</value>
+  </data>
+  <data name="Principal.Fallo.Entendido" xml:space="preserve">
+    <value>Compris</value>
+  </data>
+  <data name="Principal.Fallo.Titulo" xml:space="preserve">
+    <value>Une erreur s’est produite</value>
+  </data>
+  <data name="Principal.Letra.Aumentar" xml:space="preserve">
+    <value>Augmenter la taille du texte</value>
+  </data>
+  <data name="Principal.Letra.Mayor" xml:space="preserve">
+    <value>Texte plus grand (Ctrl +)</value>
+  </data>
+  <data name="Principal.Letra.Menor" xml:space="preserve">
+    <value>Texte plus petit (Ctrl −)</value>
+  </data>
+  <data name="Principal.Letra.Normal" xml:space="preserve">
+    <value>Revenir à la taille de texte normale</value>
+  </data>
+  <data name="Principal.Letra.NormalConsejo" xml:space="preserve">
+    <value>Revenir à la taille normale (Ctrl 0)</value>
+  </data>
+  <data name="Principal.Letra.Reducir" xml:space="preserve">
+    <value>Réduire la taille du texte</value>
+  </data>
+  <data name="Principal.Letra.Rotulo" xml:space="preserve">
+    <value>Texte</value>
+  </data>
+  <data name="Principal.Letra.Tamano" xml:space="preserve">
+    <value>Taille du texte de la fenêtre</value>
+  </data>
+  <data name="Principal.Mapa.Cargando" xml:space="preserve">
+    <value>Chargement du log sur la carte…</value>
+  </data>
+  <data name="Principal.Mapa.CentroDelPais" xml:space="preserve">
+    <value>placé au centre du pays</value>
+  </data>
+  <data name="Principal.Mapa.LineaGrisConsejo" xml:space="preserve">
+    <value>La ligne jour/nuit, qui se déplace avec l’horloge</value>
+  </data>
+  <data name="Principal.Mapa.MapaDeFondo" xml:space="preserve">
+    <value>Fond de carte</value>
+  </data>
+  <data name="Principal.Mapa.MapaDeFondoConsejo" xml:space="preserve">
+    <value>Télécharge les tuiles. Sans connexion, la carte reste sur un fond uni et continue de fonctionner.</value>
+  </data>
+  <data name="Principal.Mapa.NoSeCargan" xml:space="preserve">
+    <value>Impossible de charger les QSO de la carte : {0}</value>
+  </data>
+  <data name="Principal.Mapa.PasoGris" xml:space="preserve">
+    <value>Ligne grise ({0} UTC)</value>
+  </data>
+  <data name="Principal.Mapa.PorLocator" xml:space="preserve">
+    <value>par locator</value>
+  </data>
+  <data name="Principal.Mapa.QuitarTrayecto" xml:space="preserve">
+    <value>Effacer le trajet</value>
+  </data>
+  <data name="Principal.Mapa.ResumenContactos" xml:space="preserve">
+    <value>{0:N0} QSO</value>
+  </data>
+  <data name="Principal.Mapa.ResumenSpots" xml:space="preserve">
+    <value>{0:N0} spots</value>
+  </data>
+  <data name="Principal.Mapa.Spots" xml:space="preserve">
+    <value>Spots</value>
+  </data>
+  <data name="Principal.Mapa.Vacio" xml:space="preserve">
+    <value>Carte vide</value>
+  </data>
+  <data name="Principal.Mapa.VerElMundo" xml:space="preserve">
+    <value>Voir le monde</value>
+  </data>
+  <data name="Principal.Nav.Ayuda" xml:space="preserve">
+    <value>Aide</value>
+  </data>
+  <data name="Principal.Nav.AyudaConsejo" xml:space="preserve">
+    <value>Aide : chapitres, première utilisation, signaler un bug, rechercher des mises à jour et à propos (F1 ouvre l’aide de la page en cours)</value>
+  </data>
+  <data name="Principal.Nav.Cabina" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="Principal.Nav.CabinaConsejo" xml:space="preserve">
+    <value>La station : poste, saisie, cluster et bandmap (Ctrl 1)</value>
+  </data>
+  <data name="Principal.Nav.Configuracion" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="Principal.Nav.ConfiguracionConsejo" xml:space="preserve">
+    <value>Paramètres : comptes, poste, audio, cluster, courriel… (Ctrl 6)</value>
+  </data>
+  <data name="Principal.Nav.Contactos" xml:space="preserve">
+    <value>QSO</value>
+  </data>
+  <data name="Principal.Nav.ContactosConsejo" xml:space="preserve">
+    <value>Les QSO du log (Ctrl 3, F3 pour rechercher)</value>
+  </data>
+  <data name="Principal.Nav.Digital" xml:space="preserve">
+    <value>Numérique</value>
+  </data>
+  <data name="Principal.Nav.DigitalConsejo" xml:space="preserve">
+    <value>Modes numériques : FT8, FT4… (Ctrl 2)</value>
+  </data>
+  <data name="Principal.Nav.Diplomas" xml:space="preserve">
+    <value>Diplômes</value>
+  </data>
+  <data name="Principal.Nav.DiplomasConsejo" xml:space="preserve">
+    <value>Diplômes (Ctrl 5)</value>
+  </data>
+  <data name="Principal.Nav.Disenador" xml:space="preserve">
+    <value>Éditeur de diplômes</value>
+  </data>
+  <data name="Principal.Nav.DisenadorConsejo" xml:space="preserve">
+    <value>Concevoir et délivrer vos propres diplômes et certificats (Ctrl Maj 5)</value>
+  </data>
+  <data name="Principal.Nav.Etiquetas" xml:space="preserve">
+    <value>Étiquettes</value>
+  </data>
+  <data name="Principal.Nav.EtiquetasConsejo" xml:space="preserve">
+    <value>Étiquettes des QSL pour le bureau</value>
+  </data>
+  <data name="Principal.Nav.Libro" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="Principal.Nav.LibroConsejo" xml:space="preserve">
+    <value>Log : les QSO (Ctrl 3) et leur carte (Ctrl 4)</value>
+  </data>
+  <data name="Principal.Nav.Mapa" xml:space="preserve">
+    <value>Carte</value>
+  </data>
+  <data name="Principal.Nav.MapaConsejo" xml:space="preserve">
+    <value>La carte des QSO, des spots et de la ligne grise (Ctrl 4)</value>
+  </data>
+  <data name="Principal.Nav.Operar" xml:space="preserve">
+    <value>Trafic</value>
+  </data>
+  <data name="Principal.Nav.OperarConsejo" xml:space="preserve">
+    <value>Trafic : station (Ctrl 1), numérique (Ctrl 2), satellites (Ctrl 7) et réseau dirigé (Ctrl 9)</value>
+  </data>
+  <data name="Principal.Nav.QslConsejo" xml:space="preserve">
+    <value>QSL : la carte et son envoi par courriel (Ctrl 8), les étiquettes du bureau et l’éditeur de diplômes (Ctrl Maj 5)</value>
+  </data>
+  <data name="Principal.Nav.Ronda" xml:space="preserve">
+    <value>Réseau dirigé</value>
+  </data>
+  <data name="Principal.Nav.RondaConsejo" xml:space="preserve">
+    <value>Réseau dirigé (Ctrl 9)</value>
+  </data>
+  <data name="Principal.Nav.Satelites" xml:space="preserve">
+    <value>Satellites</value>
+  </data>
+  <data name="Principal.Nav.SatelitesConsejo" xml:space="preserve">
+    <value>Passages et Doppler des satellites (Ctrl 7)</value>
+  </data>
+  <data name="Principal.Nav.TarjetaQsl" xml:space="preserve">
+    <value>Carte QSL</value>
+  </data>
+  <data name="Principal.Nav.TarjetaQslConsejo" xml:space="preserve">
+    <value>Concevoir la carte et l’envoyer par courriel (Ctrl 8)</value>
+  </data>
+  <data name="Principal.Operar.Bandmap" xml:space="preserve">
+    <value>Bandmap</value>
+  </data>
+  <data name="Principal.Operar.Cluster" xml:space="preserve">
+    <value>DX cluster</value>
+  </data>
+  <data name="Principal.Operar.EquipoPlegado" xml:space="preserve">
+    <value>Poste replié</value>
+  </data>
+  <data name="Principal.Operar.MostrarEquipo" xml:space="preserve">
+    <value>Afficher le poste</value>
+  </data>
+  <data name="Principal.Operar.MostrarFrontal" xml:space="preserve">
+    <value>Afficher la façade du poste</value>
+  </data>
+  <data name="Principal.Operar.PlegadoPorSitio" xml:space="preserve">
+    <value> — toujours connecté ; la façade est masquée pour faire de la place.</value>
+  </data>
+  <data name="Principal.Operar.PlegadoPorTamano" xml:space="preserve">
+    <value> — toujours connecté ; à cette taille de fenêtre, la façade ne tient pas sans écraser le cluster.</value>
+  </data>
+  <data name="Principal.Operar.SinEquipo" xml:space="preserve">
+    <value>Aucun poste connecté pour l’instant</value>
+  </data>
+  <data name="Principal.Operar.SinEquipoExplicacion" xml:space="preserve">
+    <value>Quand le poste communique en CAT, sa façade apparaît ici avec les commandes à leur place. Choisissez le mode de contrôle dans Paramètres › Poste (CAT) et cliquez sur « Connecter » : ouvrir le programme ne touche pas au poste.</value>
+  </data>
+  <data name="Principal.Operar.TodosLosMandos" xml:space="preserve">
+    <value>Toutes les commandes</value>
+  </data>
+  <data name="Principal.Operar.TodosLosMandosExplicacion" xml:space="preserve">
+    <value>La même chose que le dessin, en liste : tournez ici et la commande de la façade bouge.</value>
+  </data>
+  <data name="Principal.Pastillas.Cluster" xml:space="preserve">
+    <value>Cluster</value>
+  </data>
+  <data name="Principal.Pastillas.ClusterNombre" xml:space="preserve">
+    <value>État de la connexion au DX cluster</value>
+  </data>
+  <data name="Principal.Pastillas.DigitalNombre" xml:space="preserve">
+    <value>État de la passerelle des modes numériques</value>
+  </data>
+  <data name="Principal.Pastillas.Equipo" xml:space="preserve">
+    <value>Poste</value>
+  </data>
+  <data name="Principal.Pastillas.EquipoNombre" xml:space="preserve">
+    <value>État de la connexion au poste</value>
+  </data>
+  <data name="Principal.Perfil.Aviso" xml:space="preserve">
+    <value>Profil avec lequel les QSO sont enregistrés.</value>
+  </data>
+  <data name="Principal.Perfil.LocatorCompletado" xml:space="preserve">
+    <value>Le profil « {0} » n’avait pas de locator : {1} a été défini, celui de ses derniers QSO ({2}).</value>
+  </data>
+  <data name="Principal.Perfil.SinPerfil" xml:space="preserve">
+    <value>Aucun profil de station</value>
+  </data>
+  <data name="Principal.Pliegue.MasDatos" xml:space="preserve">
+    <value>Plus de données (F7)</value>
+  </data>
+  <data name="Principal.Pliegue.MenosDatos" xml:space="preserve">
+    <value>Moins de données (F7)</value>
+  </data>
+  <data name="Principal.Pliegue.MostrarEntrada" xml:space="preserve">
+    <value>Afficher la saisie (F6)</value>
+  </data>
+  <data name="Principal.Pliegue.MostrarOperacion" xml:space="preserve">
+    <value>Afficher le trafic (F10)</value>
+  </data>
+  <data name="Principal.Pliegue.OcultarEntrada" xml:space="preserve">
+    <value>Masquer la saisie (F6)</value>
+  </data>
+  <data name="Principal.Pliegue.OcultarEquipo" xml:space="preserve">
+    <value>Masquer le poste</value>
+  </data>
+  <data name="Principal.Pliegue.OcultarMandos" xml:space="preserve">
+    <value>Masquer toutes les commandes</value>
+  </data>
+  <data name="Principal.Pliegue.OcultarOperacion" xml:space="preserve">
+    <value>Masquer le trafic (F10)</value>
+  </data>
+  <data name="Principal.Prevision.Calculado" xml:space="preserve">
+    <value>Calculé pour {0} UTC avec 100 W</value>
+  </data>
+  <data name="Principal.Prevision.CalculadoConCopia" xml:space="preserve">
+    <value>Calculé pour {0} UTC avec 100 W et les indices solaires de la copie enregistrée</value>
+  </data>
+  <data name="Principal.Prevision.DistanciaYRumbo" xml:space="preserve">
+    <value>{0} km · azimut {1}°</value>
+  </data>
+  <data name="Principal.Prevision.Fiabilidad" xml:space="preserve">
+    <value>Fiabilité {0} % vers {1} sur {2} MHz</value>
+  </data>
+  <data name="Principal.Prevision.Posicion" xml:space="preserve">
+    <value>Position : {0}</value>
+  </data>
+  <data name="Principal.Prevision.Saltos" xml:space="preserve">
+    <value>{0} bonds</value>
+  </data>
+  <data name="Principal.Prevision.SenalRuido" xml:space="preserve">
+    <value>S/B prévu {0} dB ({1})</value>
+  </data>
+  <data name="Principal.Prevision.SenalRuidoNoLlega" xml:space="preserve">
+    <value>S/B prévu : insuffisant</value>
+  </data>
+  <data name="Principal.Prevision.UnSalto" xml:space="preserve">
+    <value>1 bond</value>
+  </data>
+  <data name="Principal.Pruebas.Consejo" xml:space="preserve">
+    <value>Les données sont fictives : le log n’est pas enregistré, le poste n’existe pas et les spots du cluster sont faux.</value>
+  </data>
+  <data name="Principal.Pruebas.Nombre" xml:space="preserve">
+    <value>Mode test : les données sont fictives et ne sont pas enregistrées</value>
+  </data>
+  <data name="Principal.Pruebas.Rotulo" xml:space="preserve">
+    <value>DONNÉES DE TEST</value>
+  </data>
+  <data name="Principal.Reloj.ConfigurarServicio" xml:space="preserve">
+    <value>Configurer le service de temps</value>
+  </data>
+  <data name="Principal.Reloj.ConfigurarServicioConsejo" xml:space="preserve">
+    <value>Fait pointer le service de temps de Windows vers un bon serveur. Cela règle le problème pour de bon, pas seulement aujourd’hui.</value>
+  </data>
+  <data name="Principal.Reloj.Desvio" xml:space="preserve">
+    <value>Écart de l’horloge de l’ordinateur</value>
+  </data>
+  <data name="Principal.Reloj.DesvioConsejo" xml:space="preserve">
+    <value>De combien l’horloge de l’ordinateur avance ou retarde par rapport à l’heure exacte</value>
+  </data>
+  <data name="Principal.Reloj.FechaLocal" xml:space="preserve">
+    <value>{0} · locale ({1})</value>
+  </data>
+  <data name="Principal.Reloj.Medir" xml:space="preserve">
+    <value>Mesurer</value>
+  </data>
+  <data name="Principal.Reloj.MedirConsejo" xml:space="preserve">
+    <value>Interroge les serveurs de temps et recalcule l’écart</value>
+  </data>
+  <data name="Principal.Reloj.PonerEnHora" xml:space="preserve">
+    <value>Mettre l’horloge à l’heure</value>
+  </data>
+  <data name="Principal.Reloj.PonerEnHoraConsejo" xml:space="preserve">
+    <value>Mesure et écrit l’heure du système. Cela ne se fait jamais tout seul : c’est l’horloge de votre machine.</value>
+  </data>
+  <data name="Principal.Reloj.RelojDelModem" xml:space="preserve">
+    <value>Horloge du modem</value>
+  </data>
+  <data name="Principal.Ronda.Abierta" xml:space="preserve">
+    <value>ouvert</value>
+  </data>
+  <data name="Principal.Ronda.Abierta.Mensaje" xml:space="preserve">
+    <value>Réseau « {0} » ouvert.</value>
+  </data>
+  <data name="Principal.Ronda.Abrir" xml:space="preserve">
+    <value>Ouvrir le réseau</value>
+  </data>
+  <data name="Principal.Ronda.AbrirConsejo" xml:space="preserve">
+    <value>Il faut au moins le nom du réseau</value>
+  </data>
+  <data name="Principal.Ronda.AbrirTitulo" xml:space="preserve">
+    <value>Ouvrir un réseau dirigé</value>
+  </data>
+  <data name="Principal.Ronda.AnadidoAlCuaderno" xml:space="preserve">
+    <value>{0} ajouté au log.</value>
+  </data>
+  <data name="Principal.Ronda.Anadir" xml:space="preserve">
+    <value>Ajouter au réseau</value>
+  </data>
+  <data name="Principal.Ronda.AnadirConsejo" xml:space="preserve">
+    <value>Aussi avec Entrée dans la case de l’indicatif</value>
+  </data>
+  <data name="Principal.Ronda.BandaNombre" xml:space="preserve">
+    <value>Bande du réseau</value>
+  </data>
+  <data name="Principal.Ronda.Cerrada" xml:space="preserve">
+    <value>Réseau « {0} » fermé.</value>
+  </data>
+  <data name="Principal.Ronda.Cerrar" xml:space="preserve">
+    <value>Fermer le réseau</value>
+  </data>
+  <data name="Principal.Ronda.ClubOEvento" xml:space="preserve">
+    <value>Club ou événement (facultatif)</value>
+  </data>
+  <data name="Principal.Ronda.ClubOEventoValor" xml:space="preserve">
+    <value>Club ou événement : {0}</value>
+  </data>
+  <data name="Principal.Ronda.Confirmar" xml:space="preserve">
+    <value>Confirmer contacté</value>
+  </data>
+  <data name="Principal.Ronda.ConfirmarConsejo" xml:space="preserve">
+    <value>Inscrit la station choisie dans le log avec la bande, le mode et la fréquence du réseau</value>
+  </data>
+  <data name="Principal.Ronda.Duplicado" xml:space="preserve">
+    <value>{0} est déjà dans le log avec cette heure, bande et mode.</value>
+  </data>
+  <data name="Principal.Ronda.EligeParticipante" xml:space="preserve">
+    <value>Choisissez un participant dans la liste et saisissez son RST et son commentaire directement dans les colonnes.</value>
+  </data>
+  <data name="Principal.Ronda.Entra" xml:space="preserve">
+    <value>{0} rejoint le réseau.</value>
+  </data>
+  <data name="Principal.Ronda.EntraConPais" xml:space="preserve">
+    <value>{0} ({1}) rejoint le réseau.</value>
+  </data>
+  <data name="Principal.Ronda.FaltaNombre" xml:space="preserve">
+    <value>Le nom du réseau est manquant.</value>
+  </data>
+  <data name="Principal.Ronda.FrecuenciaConsejo" xml:space="preserve">
+    <value>En MHz, par exemple 7.150. Vide si inconnue.</value>
+  </data>
+  <data name="Principal.Ronda.FrecuenciaIlegible" xml:space="preserve">
+    <value>La fréquence « {0} » est incompréhensible. Saisissez-la en MHz, par exemple 7.150.</value>
+  </data>
+  <data name="Principal.Ronda.FrecuenciaMhz" xml:space="preserve">
+    <value>Fréquence MHz</value>
+  </data>
+  <data name="Principal.Ronda.GuardarRst" xml:space="preserve">
+    <value>Enregistrer RST/commentaire</value>
+  </data>
+  <data name="Principal.Ronda.GuardarRstConsejo" xml:space="preserve">
+    <value>Enregistre le RST et le commentaire saisis dans la liste pour la station choisie</value>
+  </data>
+  <data name="Principal.Ronda.Historial" xml:space="preserve">
+    <value>Historique des réseaux</value>
+  </data>
+  <data name="Principal.Ronda.IndicativoNombre" xml:space="preserve">
+    <value>Indicatif du nouveau participant</value>
+  </data>
+  <data name="Principal.Ronda.ModoDesconocido" xml:space="preserve">
+    <value>Le mode « {0} » n’est pas dans la table ADIF.</value>
+  </data>
+  <data name="Principal.Ronda.ModoNombre" xml:space="preserve">
+    <value>Mode du réseau</value>
+  </data>
+  <data name="Principal.Ronda.Nombre" xml:space="preserve">
+    <value>Nom du réseau</value>
+  </data>
+  <data name="Principal.Ronda.NoSeAbre" xml:space="preserve">
+    <value>Impossible d’ouvrir le réseau : {0}</value>
+  </data>
+  <data name="Principal.Ronda.NoSeAnade" xml:space="preserve">
+    <value>Impossible d’ajouter le participant.</value>
+  </data>
+  <data name="Principal.Ronda.NoSeAnadeMotivo" xml:space="preserve">
+    <value>Impossible d’ajouter le participant : {0}</value>
+  </data>
+  <data name="Principal.Ronda.NoSeCarga" xml:space="preserve">
+    <value>Impossible de charger le réseau : {0}</value>
+  </data>
+  <data name="Principal.Ronda.NoSeCierra" xml:space="preserve">
+    <value>Impossible de fermer le réseau : {0}</value>
+  </data>
+  <data name="Principal.Ronda.NoSeConfirma" xml:space="preserve">
+    <value>Impossible de confirmer le QSO : {0}</value>
+  </data>
+  <data name="Principal.Ronda.NoSeGuarda" xml:space="preserve">
+    <value>Enregistrement impossible : {0}</value>
+  </data>
+  <data name="Principal.Ronda.NoSeQuita" xml:space="preserve">
+    <value>Impossible de retirer le participant : {0}</value>
+  </data>
+  <data name="Principal.Ronda.Quitado" xml:space="preserve">
+    <value>{0} retiré du réseau.</value>
+  </data>
+  <data name="Principal.Ronda.QuitadoConContacto" xml:space="preserve">
+    <value>{0} retiré du réseau. Son QSO reste dans le log.</value>
+  </data>
+  <data name="Principal.Ronda.Quitar" xml:space="preserve">
+    <value>Retirer</value>
+  </data>
+  <data name="Principal.Ronda.QuitarConsejo" xml:space="preserve">
+    <value>Retire la station choisie du réseau ; si elle était déjà confirmée, son QSO reste dans le log</value>
+  </data>
+  <data name="Principal.Ronda.RstGuardado" xml:space="preserve">
+    <value>RST et commentaire de {0} enregistrés.</value>
+  </data>
+  <data name="Principal.Ronda.SinRonda" xml:space="preserve">
+    <value>Aucun réseau ouvert</value>
+  </data>
+  <data name="Principal.Satelites.ActualizadoALas" xml:space="preserve">
+    <value>Mis à jour à {0} UTC.  ·  </value>
+  </data>
+  <data name="Principal.Satelites.ActualizarElementos" xml:space="preserve">
+    <value>Mettre à jour les éléments orbitaux…</value>
+  </data>
+  <data name="Principal.Satelites.ActualizarElementosNombre" xml:space="preserve">
+    <value>Télécharger les éléments orbitaux depuis les sources connues</value>
+  </data>
+  <data name="Principal.Satelites.ActualizarPasos" xml:space="preserve">
+    <value>Mettre à jour les passages</value>
+  </data>
+  <data name="Principal.Satelites.ActualizarPasosNombre" xml:space="preserve">
+    <value>Recalculer le prochain passage de tous les satellites</value>
+  </data>
+  <data name="Principal.Satelites.Azimut" xml:space="preserve">
+    <value>Azimut</value>
+  </data>
+  <data name="Principal.Satelites.BajoElHorizonte" xml:space="preserve">
+    <value>Sous l’horizon.</value>
+  </data>
+  <data name="Principal.Satelites.Calculando" xml:space="preserve">
+    <value>Calcul…</value>
+  </data>
+  <data name="Principal.Satelites.Descargando" xml:space="preserve">
+    <value>Téléchargement des éléments orbitaux…</value>
+  </data>
+  <data name="Principal.Satelites.DesplazamientoBajada" xml:space="preserve">
+    <value>Décalage descendant</value>
+  </data>
+  <data name="Principal.Satelites.DesplazamientoSubida" xml:space="preserve">
+    <value>Décalage montant</value>
+  </data>
+  <data name="Principal.Satelites.Distancia" xml:space="preserve">
+    <value>Distance</value>
+  </data>
+  <data name="Principal.Satelites.Elevacion" xml:space="preserve">
+    <value>Élévation</value>
+  </data>
+  <data name="Principal.Satelites.EligeUno" xml:space="preserve">
+    <value>Choisissez un satellite dans la liste pour voir son prochain passage en direct et suivre son Doppler.</value>
+  </data>
+  <data name="Principal.Satelites.EnVivo" xml:space="preserve">
+    <value>En direct</value>
+  </data>
+  <data name="Principal.Satelites.Estado.Activo" xml:space="preserve">
+    <value>Actif</value>
+  </data>
+  <data name="Principal.Satelites.Estado.Inactivo" xml:space="preserve">
+    <value>Inactif</value>
+  </data>
+  <data name="Principal.Satelites.Estado.Intermitente" xml:space="preserve">
+    <value>Intermittent</value>
+  </data>
+  <data name="Principal.Satelites.FuenteCargados" xml:space="preserve">
+    <value>{0} : {1} satellites.</value>
+  </data>
+  <data name="Principal.Satelites.FuenteFallo" xml:space="preserve">
+    <value>{0} : téléchargement impossible ({1}).</value>
+  </data>
+  <data name="Principal.Satelites.GeoALaVista" xml:space="preserve">
+    <value>Géostationnaire : toujours visible, à la même position.</value>
+  </data>
+  <data name="Principal.Satelites.GeoSiempreArriba" xml:space="preserve">
+    <value>Géostationnaire : toujours au-dessus de l’horizon, avec une vue dégagée vers le satellite.</value>
+  </data>
+  <data name="Principal.Satelites.GeoSinDoppler" xml:space="preserve">
+    <value>{0} est géostationnaire : son Doppler est négligeable et n’a pas besoin d’être suivi.</value>
+  </data>
+  <data name="Principal.Satelites.MismoVfo" xml:space="preserve">
+    <value>La montée et la descente passent toutes deux par le VFO {0} : choisissez un VFO différent pour chacune.</value>
+  </data>
+  <data name="Principal.Satelites.NoSeAjusta" xml:space="preserve">
+    <value>Impossible d’ajuster le Doppler : {0}</value>
+  </data>
+  <data name="Principal.Satelites.RepartoDeVfos" xml:space="preserve">
+    <value>Montée par le VFO {0}, descente par le VFO {1}.</value>
+  </data>
+  <data name="Principal.Satelites.Seguir" xml:space="preserve">
+    <value>Suivre</value>
+  </data>
+  <data name="Principal.Satelites.SeguirNombre" xml:space="preserve">
+    <value>Commencer à suivre le Doppler de ce transpondeur</value>
+  </data>
+  <data name="Principal.Satelites.Siguiendo" xml:space="preserve">
+    <value>Suivi du Doppler de {0} · {1}.</value>
+  </data>
+  <data name="Principal.Satelites.SinDosVfo" xml:space="preserve">
+    <value>Le poste connecté n’indique pas ses deux VFO : impossible de suivre le Doppler.</value>
+  </data>
+  <data name="Principal.Satelites.SinElementos" xml:space="preserve">
+    <value>Aucun élément orbital chargé.</value>
+  </data>
+  <data name="Principal.Satelites.SinElementosDe" xml:space="preserve">
+    <value>Aucun élément orbital pour {0} : cliquez sur « Mettre à jour les éléments orbitaux » avant de suivre son Doppler.</value>
+  </data>
+  <data name="Principal.Satelites.SinElementosNoSeSabe" xml:space="preserve">
+    <value>Aucun élément orbital : sa position est inconnue. Cliquez sur « Mettre à jour les éléments orbitaux ».</value>
+  </data>
+  <data name="Principal.Satelites.SinElementosPulse" xml:space="preserve">
+    <value>Aucun élément orbital chargé. Cliquez sur « Mettre à jour les éléments orbitaux ».</value>
+  </data>
+  <data name="Principal.Satelites.SinPasos" xml:space="preserve">
+    <value>Aucun passage dans les {0:N0} prochaines heures.</value>
+  </data>
+  <data name="Principal.Satelites.Soltar" xml:space="preserve">
+    <value>Relâcher</value>
+  </data>
+  <data name="Principal.Satelites.SoltarNombre" xml:space="preserve">
+    <value>Arrêter de suivre le Doppler</value>
+  </data>
+  <data name="Principal.Satelites.Subpunto" xml:space="preserve">
+    <value>{0} · point sous-satellite à {1} UTC</value>
+  </data>
+  <data name="Principal.Satelites.SubpuntoEnMapa" xml:space="preserve">
+    <value>Le point sous-satellite s’affiche dans l’onglet Carte.</value>
+  </data>
+  <data name="Principal.Satelites.Transpondedor" xml:space="preserve">
+    <value>Transpondeur</value>
+  </data>
+  <data name="Principal.Satelites.TranspondedorConsejo" xml:space="preserve">
+    <value>Transpondeur utilisé</value>
+  </data>
+  <data name="Principal.Satelites.VfoBajada" xml:space="preserve">
+    <value>VFO descendant</value>
+  </data>
+  <data name="Principal.Satelites.VfoSubida" xml:space="preserve">
+    <value>VFO montant</value>
+  </data>
+  <data name="Principal.Solar.CopiaGuardada" xml:space="preserve">
+    <value>· copie enregistrée</value>
+  </data>
+  <data name="Principal.Solar.CopiaGuardadaNombre" xml:space="preserve">
+    <value>Les indices proviennent de la copie enregistrée, pas d’un téléchargement récent</value>
+  </data>
+  <data name="Principal.Solar.Flujo" xml:space="preserve">
+    <value>Flux</value>
+  </data>
+  <data name="Principal.Solar.K.EnCalma" xml:space="preserve">
+    <value>calme</value>
+  </data>
+  <data name="Principal.Solar.K.Inquieto" xml:space="preserve">
+    <value>actif</value>
+  </data>
+  <data name="Principal.Solar.K.Movido" xml:space="preserve">
+    <value>agité</value>
+  </data>
+  <data name="Principal.Solar.K.SinDato" xml:space="preserve">
+    <value>pas de données</value>
+  </data>
+  <data name="Principal.Solar.K.Tormenta" xml:space="preserve">
+    <value>tempête</value>
+  </data>
+  <data name="Principal.Solar.K.TormentaFuerte" xml:space="preserve">
+    <value>forte tempête</value>
+  </data>
+  <data name="Principal.Solar.K.TormentaMenor" xml:space="preserve">
+    <value>tempête mineure</value>
+  </data>
+  <data name="Principal.Solar.K.Tranquilo" xml:space="preserve">
+    <value>tranquille</value>
+  </data>
+  <data name="Principal.Solar.Manchas" xml:space="preserve">
+    <value>Taches</value>
+  </data>
+  <data name="Principal.Solar.MedidoEl" xml:space="preserve">
+    <value>Mesuré le {0} UTC.</value>
+  </data>
+  <data name="Principal.Solar.Nombre" xml:space="preserve">
+    <value>État du Soleil et du champ magnétique</value>
+  </data>
+  <data name="Principal.Solar.Ocaso" xml:space="preserve">
+    <value>Coucher</value>
+  </data>
+  <data name="Principal.Solar.Orto" xml:space="preserve">
+    <value>Lever</value>
+  </data>
+  <data name="Principal.Solar.SinIndices" xml:space="preserve">
+    <value>Les indices solaires n’ont pas encore pu être récupérés.</value>
+  </data>
+  <data name="Principal.Solar.Trayendo" xml:space="preserve">
+    <value>· récupération…</value>
+  </data>
+  <data name="Principal.Spot.AnunciadoPor" xml:space="preserve">
+    <value>annoncé par {0} à {1} UTC</value>
+  </data>
+  <data name="Principal.Spot.CentroDeLaEntidad" xml:space="preserve">
+    <value>centre de l’entité ({0})</value>
+  </data>
+  <data name="Principal.Spot.Desde" xml:space="preserve">
+    <value>depuis {0}</value>
+  </data>
+  <data name="Principal.Spot.EnFrecuencia" xml:space="preserve">
+    <value>{0} sur {1} MHz</value>
+  </data>
+  <data name="Principal.Spot.EscuchaAutomatica" xml:space="preserve">
+    <value>skimmer {0} à {1} UTC</value>
+  </data>
+  <data name="Principal.Spot.LocatorDelAnuncio" xml:space="preserve">
+    <value>locator du spot {0}</value>
+  </data>
+  <data name="Principal.Spot.LocatorDelCuaderno" xml:space="preserve">
+    <value>locator du log {0}</value>
+  </data>
+  <data name="Principal.Spot.LoOyen" xml:space="preserve">
+    <value>{0} l’entendent</value>
+  </data>
+  <data name="Principal.Spot.NuevaEnBandaYModo" xml:space="preserve">
+    <value>Nouveau sur bande et mode</value>
+  </data>
+  <data name="Principal.Spot.PrefijoDelIndicativo" xml:space="preserve">
+    <value>préfixe de l’indicatif ({0})</value>
+  </data>
+  <data name="Principal.Spot.SinPrevision" xml:space="preserve">
+    <value>Aucune prévision.</value>
+  </data>
+  <data name="Principal.Ventana.Marca" xml:space="preserve">
+    <value>Logo de Cuaderno NODISLA</value>
+  </data>
+  <data name="Principal.Ventana.PerfilDeEstacion" xml:space="preserve">
+    <value>Profil de station</value>
+  </data>
+  <data name="Principal.Ventana.Subtitulo" xml:space="preserve">
+    <value>Carnet de trafic de EA8DLF</value>
+  </data>
+  <data name="Principal.Ventana.TemaOscuro" xml:space="preserve">
+    <value>Thème sombre (F9)</value>
+  </data>
+  <data name="Principal.Version.CancelarDescarga" xml:space="preserve">
+    <value>Annuler le téléchargement</value>
+  </data>
+  <data name="Principal.Version.CancelarDescargaNombre" xml:space="preserve">
+    <value>Annuler le téléchargement</value>
+  </data>
+  <data name="Principal.Version.Descargar" xml:space="preserve">
+    <value>Télécharger et installer</value>
+  </data>
+  <data name="Principal.Version.DescargarNombre" xml:space="preserve">
+    <value>Télécharger et installer la nouvelle version</value>
+  </data>
+  <data name="Principal.Version.Notas" xml:space="preserve">
+    <value>Notes de la nouvelle version</value>
+  </data>
+  <data name="Principal.Version.Novedades" xml:space="preserve">
+    <value>Nouveautés de cette version</value>
+  </data>
+  <data name="Principal.Version.OcultarConsejo" xml:space="preserve">
+    <value>Masquer cet avis. Cette version ne sera plus signalée au démarrage.</value>
+  </data>
+  <data name="Principal.Version.OcultarNombre" xml:space="preserve">
+    <value>Masquer l’avis de nouvelle version</value>
+  </data>
+  <data name="Principal.Version.Progreso" xml:space="preserve">
+    <value>Progression du téléchargement</value>
+  </data>
+  <data name="Principal.Version.VerEnGithub" xml:space="preserve">
+    <value>Voir sur GitHub</value>
+  </data>
+  <data name="Principal.Version.VerEnGithubNombre" xml:space="preserve">
+    <value>Voir la nouvelle version sur GitHub</value>
+  </data>
+  <data name="Principal.Wav.Filtro" xml:space="preserve">
+    <value>Audio WAV (*.wav)|*.wav|Tous les fichiers (*.*)|*.*</value>
+  </data>
+  <data name="Principal.Wav.Titulo" xml:space="preserve">
+    <value>Décoder un fichier audio</value>
+  </data>
+</root>

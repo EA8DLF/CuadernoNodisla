@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PanelDeMapa"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              xmlns:mapa="clr-namespace:Nodisla.Cuaderno.Ui.Mapa;assembly=Nodisla.Cuaderno.Ui.Mapa"
              xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
              Foreground="{DynamicResource Texto}">
@@ -27,16 +28,16 @@
 
         <!-- ══ Qué se ve ══ -->
         <WrapPanel Grid.Row="0" Margin="0,0,0,8">
-            <CheckBox Content="Contactos" IsChecked="{Binding MostrarContactos}" Margin="0,0,14,4" />
-            <CheckBox Content="Spots" IsChecked="{Binding MostrarSpots}" Margin="0,0,14,4" />
+            <CheckBox Content="{loc:Texto Principal.Nav.Contactos}" IsChecked="{Binding MostrarContactos}" Margin="0,0,14,4" />
+            <CheckBox Content="{loc:Texto Principal.Mapa.Spots}" IsChecked="{Binding MostrarSpots}" Margin="0,0,14,4" />
             <CheckBox Content="{Binding TextoDelPasoGris}"
                       IsChecked="{Binding MostrarPasoGris}"
                       Margin="0,0,14,4"
-                      ToolTip="La línea de día y noche, que se mueve con el reloj" />
-            <CheckBox Content="Mapa de fondo"
+                      ToolTip="{loc:Texto Principal.Mapa.LineaGrisConsejo}" />
+            <CheckBox Content="{loc:Texto Principal.Mapa.MapaDeFondo}"
                       IsChecked="{Binding MostrarFondo}"
                       Margin="0,0,14,4"
-                      ToolTip="Descarga los mosaicos. Sin conexión, el mapa se queda en fondo liso y sigue funcionando." />
+                      ToolTip="{loc:Texto Principal.Mapa.MapaDeFondoConsejo}" />
         </WrapPanel>
 
         <!-- ══ El mapa ══ -->
@@ -60,17 +61,17 @@
         <!-- ══ Resumen y botones ══ -->
         <DockPanel Grid.Row="2" Margin="0,8,0,0">
             <Button DockPanel.Dock="Right"
-                    Content="Ver el mundo"
+                    Content="{loc:Texto Principal.Mapa.VerElMundo}"
                     Click="AlPedirElMundo"
                     Margin="8,0,0,0" />
             <Button DockPanel.Dock="Right"
-                    Content="Quitar trayecto"
+                    Content="{loc:Texto Principal.Mapa.QuitarTrayecto}"
                     Command="{Binding QuitarTrayectoCommand}"
                     Margin="8,0,0,0" />
 
             <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="{Binding Resumen}" Style="{StaticResource TextoTenueEstilo}" />
-                <TextBlock Text="Cargando el cuaderno en el mapa…"
+                <TextBlock Text="{loc:Texto Principal.Mapa.Cargando}"
                            Style="{StaticResource TextoTenueEstilo}"
                            Visibility="{Binding Cargando, Converter={StaticResource BooleanoAVisible}}" />
                 <TextBlock Text="{Binding Aviso}"

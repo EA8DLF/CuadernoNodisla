@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Radio;
 using Nodisla.Cuaderno.Radio.Control;
 using Nodisla.Cuaderno.Radio.Control.Ft710;
@@ -15,16 +17,55 @@ using Nodisla.Cuaderno.Ui.Ajustes;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
 
+/// <summary>
+/// Una opcion de desplegable cuyo texto sale de los textos del programa: avisa al cambiar de
+/// idioma para que el desplegable (y la opcion elegida) se vuelvan a escribir.
+/// </summary>
+/// <remarks>
+/// La igualdad sigue siendo la de los datos de la opcion: el aviso no cuenta, para que el
+/// desplegable siga reconociendo la opcion elegida.
+/// </remarks>
+public abstract record OpcionTraducida : INotifyPropertyChanged
+{
+    /// <summary>Engancha la opcion al cambio de idioma.</summary>
+    protected OpcionTraducida()
+    {
+        Textos.AlCambiar(this, static o => o.PropertyChanged?.Invoke(o, new PropertyChangedEventArgs(string.Empty)));
+    }
+
+    /// <inheritdoc />
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    /// <summary>Iguales si son del mismo tipo: los datos los compara cada opcion.</summary>
+    /// <param name="other">La otra opcion.</param>
+    /// <returns>Si son del mismo tipo.</returns>
+    public virtual bool Equals(OpcionTraducida? other) => other is not null && EqualityContract == other.EqualityContract;
+
+    /// <inheritdoc />
+    public override int GetHashCode() => EqualityContract.GetHashCode();
+}
+
 /// <summary>Una via de control, escrita para el desplegable.</summary>
 /// <param name="Via">Via de control.</param>
-/// <param name="Titulo">Como se llama en pantalla.</param>
-/// <param name="Explicacion">Que hace falta para usarla.</param>
-public sealed record ViaDeControlElegible(ViaDeControl Via, string Titulo, string Explicacion);
+/// <param name="ClaveDelTitulo">Clave del nombre en pantalla.</param>
+/// <param name="ClaveDeLaExplicacion">Clave de lo que hace falta para usarla.</param>
+public sealed record ViaDeControlElegible(ViaDeControl Via, string ClaveDelTitulo, string ClaveDeLaExplicacion) : OpcionTraducida
+{
+    /// <summary>Como se llama en pantalla.</summary>
+    public string Titulo => Textos.T(ClaveDelTitulo);
+
+    /// <summary>Que hace falta para usarla.</summary>
+    public string Explicacion => Textos.T(ClaveDeLaExplicacion);
+}
 
 /// <summary>Un fabricante del desplegable, o la deteccion automatica (nulo).</summary>
 /// <param name="Fabricante">Fabricante, o nulo para buscar el equipo solo.</param>
-/// <param name="Titulo">Como se llama en pantalla.</param>
-public sealed record FabricanteElegible(Fabricante? Fabricante, string Titulo);
+/// <param name="Nombre">Nombre de la marca (no se traduce).</param>
+public sealed record FabricanteElegible(Fabricante? Fabricante, string Nombre) : OpcionTraducida
+{
+    /// <summary>Como se llama en pantalla.</summary>
+    public string Titulo => Fabricante is null ? Textos.T("Ajustes.Equipo.DeteccionAutomatica") : Nombre;
+}
 
 /// <summary>Un modelo del catalogo, para el desplegable.</summary>
 /// <param name="Modelo">Modelo.</param>
@@ -37,12 +78,12 @@ public sealed record ModeloElegible(ModeloDeEquipo Modelo)
 /// <summary>Una velocidad de puerto serie, con aviso de si es de las habituales.</summary>
 /// <param name="Baudios">Velocidad.</param>
 /// <param name="EsHabitual">Es una de las dos que usa el FT-710.</param>
-public sealed record VelocidadElegible(int Baudios, bool EsHabitual)
+public sealed record VelocidadElegible(int Baudios, bool EsHabitual) : OpcionTraducida
 {
     /// <summary>Como se escribe en el desplegable.</summary>
     public string Titulo => EsHabitual
-        ? $"{Baudios.ToString("N0", CultureInfo.CurrentCulture)}  (habitual)"
-        : Baudios.ToString("N0", CultureInfo.CurrentCulture);
+        ? Textos.F("Ajustes.Equipo.VelocidadHabitual", Baudios)
+        : Baudios.ToString("N0", Textos.Cultura);
 }
 
 /// <summary>Un control de equipo recien montado, con el rastro de donde ha aparecido.</summary>
@@ -155,14 +196,10 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
 
         Vias =
         [
-            new(ViaDeControl.Ninguna, "Ninguna",
-                "Sin equipo: la frecuencia y el modo los escribe usted a mano."),
-            new(ViaDeControl.CatNativo, "CAT nativo (Yaesu e ICOM)",
-                "Por el puerto serie del equipo. Es la única vía que da filtros, ruido, contorno, medidores y memorias."),
-            new(ViaDeControl.Rigctld, "Hamlib (rigctld)",
-                "Para cualquier otro equipo, o para compartir la radio con WSJT-X. Hay que tener rigctld arrancado."),
-            new(ViaDeControl.OmniRig, "OmniRig",
-                "Para quien ya tenga OmniRig montado con su equipo configurado."),
+            new(ViaDeControl.Ninguna, "Ajustes.Equipo.Via.Ninguna", "Ajustes.Equipo.Via.Ninguna.Explicacion"),
+            new(ViaDeControl.CatNativo, "Ajustes.Equipo.Via.CatNativo", "Ajustes.Equipo.Via.CatNativo.Explicacion"),
+            new(ViaDeControl.Rigctld, "Ajustes.Equipo.Via.Rigctld", "Ajustes.Equipo.Via.Rigctld.Explicacion"),
+            new(ViaDeControl.OmniRig, "Ajustes.Equipo.Via.OmniRig", "Ajustes.Equipo.Via.OmniRig.Explicacion"),
         ];
 
         Velocidades =
@@ -176,19 +213,26 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
 
         ViasDePtt =
         [
-            new(ViaDePtt.Cat, "Por CAT", "El equipo pasa a transmitir con la orden del fabricante. Es lo normal."),
-            new(ViaDePtt.Rts, "Por RTS", "Levantando la línea RTS del puerto serie: interfaces de audio con optoacoplador."),
-            new(ViaDePtt.Dtr, "Por DTR", "Igual que RTS, pero por la otra línea."),
+            new(ViaDePtt.Cat, "Ajustes.Equipo.Ptt.Cat", "Ajustes.Equipo.Ptt.Cat.Explicacion"),
+            new(ViaDePtt.Rts, "Ajustes.Equipo.Ptt.Rts", "Ajustes.Equipo.Ptt.Rts.Explicacion"),
+            new(ViaDePtt.Dtr, "Ajustes.Equipo.Ptt.Dtr", "Ajustes.Equipo.Ptt.Dtr.Explicacion"),
         ];
 
         Fabricantes =
         [
-            new(null, "Detección automática"),
+            new(null, string.Empty),
             .. CatalogoDeModelos.Fabricantes.Select(f => new FabricanteElegible(f, f == Radio.Modelos.Fabricante.Icom ? "ICOM" : f.ToString())),
         ];
 
         RecogerDeLosAjustes();
         RefrescarPuertos();
+
+        // La pastilla de la via puesta y el aviso del modelo se escriben en el idioma nuevo.
+        Textos.AlCambiar(this, static vm =>
+        {
+            vm.RefrescarViaPuesta();
+            vm.OnPropertyChanged(nameof(AvisoDelModelo));
+        });
     }
 
     /// <summary>Fabricantes del desplegable, con la deteccion automatica la primera.</summary>
@@ -220,7 +264,7 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
 
     /// <summary>Aviso honesto del modelo elegido: si esta sin probar con radio, y lo que falta confirmar.</summary>
     public string AvisoDelModelo => Modelo?.Modelo is { ProbadoConRadio: false } m
-        ? "Programado según el manual, sin probar con la radio. " + (m.Notas ?? string.Empty)
+        ? Textos.T("Ajustes.Equipo.SinProbarConRadio") + " " + (m.Notas ?? string.Empty)
         : string.Empty;
 
     partial void OnFabricanteChanged(FabricanteElegible? value)
@@ -372,7 +416,7 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
         if (equipo.Via == ViaDeControl.Ninguna)
         {
             Resultado = ResultadoDePrueba.Correcto;
-            Parte = "Sin equipo: no hay nada que probar. La frecuencia y el modo los escribe usted.";
+            Parte = Textos.T("Ajustes.Equipo.NadaQueProbar");
             return;
         }
 
@@ -418,7 +462,7 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
     {
         Ocupado = true;
         Resultado = ResultadoDePrueba.Probando;
-        Parte = aplicar ? "Aplicando…" : "Probando…";
+        Parte = Textos.T(aplicar ? "Ajustes.Equipo.Aplicando" : "Ajustes.Equipo.Probando");
 
         using var corte = new CancellationTokenSource(_topeDeBusqueda);
         var aviso = new Progress<string>(texto => Parte = texto);
@@ -454,14 +498,13 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
         {
             _registro.LogWarning("Se ha agotado el tiempo buscando el equipo ({Tope}).", _topeDeBusqueda);
             Resultado = ResultadoDePrueba.Fallido;
-            Parte = $"Se ha agotado el tiempo ({_topeDeBusqueda.TotalSeconds:N0} s) buscando el equipo. "
-                    + "Compruebe que la radio está encendida y que ningún otro programa tiene cogido el puerto.";
+            Parte = Textos.F("Ajustes.Equipo.TiempoAgotado", _topeDeBusqueda.TotalSeconds);
         }
         catch (Exception ex)
         {
             _registro.LogError(ex, "Ha fallado la conexión con el equipo.");
             Resultado = ResultadoDePrueba.Fallido;
-            Parte = $"No se ha podido conectar: {ex.Message}";
+            Parte = Textos.F("Ajustes.Equipo.NoSeHaPodidoConectar", ex.Message);
         }
         finally
         {
@@ -482,18 +525,21 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
             return;
         }
 
-        Parte = "Abriendo la conexión…";
+        Parte = Textos.T("Ajustes.Equipo.Abriendo");
         await control.ConectarAsync().ConfigureAwait(true);
 
         var estado = control.Estado;
-        var nombre = control is IEquipoAvanzado avanzado ? avanzado.NombreDelEquipo : "equipo genérico";
+        var nombre = control is IEquipoAvanzado avanzado ? avanzado.NombreDelEquipo : Textos.T("Ajustes.Equipo.Generico");
 
         Resultado = estado.Conectado ? ResultadoDePrueba.Correcto : ResultadoDePrueba.Fallido;
         Parte = estado.Conectado
-            ? $"Contesta {nombre}{montaje.Donde}. Frecuencia {TextoDeFrecuencia.Escribir(estado.Frecuencia)} MHz, "
-              + $"modo {(estado.Modo.EsVacio ? "—" : estado.Modo.NombreUsual)}."
-            : "Se ha abierto la conexión pero el equipo no contesta. Compruebe la velocidad "
-              + "(la manda el menú CAT RATE del equipo).";
+            ? Textos.F(
+                "Ajustes.Equipo.Contesta",
+                nombre,
+                montaje.Donde,
+                TextoDeFrecuencia.Escribir(estado.Frecuencia),
+                estado.Modo.EsVacio ? "—" : estado.Modo.NombreUsual)
+            : Textos.T("Ajustes.Equipo.NoContesta");
 
         _registro.LogInformation("Prueba de conexión: {Parte}", Parte);
         await control.DesconectarAsync().ConfigureAwait(true);
@@ -515,11 +561,9 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
 
         Parte = equipo.Via switch
         {
-            ViaDeControl.Ninguna =>
-                "Guardado. El cuaderno queda sin equipo: la frecuencia y el modo los escribe usted.",
-            _ when sinEquipo => "Guardado, pero " + NoApareceElEquipo,
-            _ => $"Guardado y aplicado: {Titulo(_conmutable.Actual.Via)}{montaje.Donde}. "
-                 + "Pulse Conectar en el panel del equipo para abrir la comunicación.",
+            ViaDeControl.Ninguna => Textos.T("Ajustes.Equipo.GuardadoSinEquipo"),
+            _ when sinEquipo => Textos.F("Ajustes.Equipo.GuardadoPero", NoApareceElEquipo),
+            _ => Textos.F("Ajustes.Equipo.GuardadoYAplicado", Titulo(_conmutable.Actual.Via), montaje.Donde),
         };
 
         _registro.LogInformation("Ajustes del equipo aplicados: {Parte}", Parte);
@@ -533,9 +577,7 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
     /// registro va detras de «Prueba de conexión:», y ahi una mayuscula no molesta a nadie; al
     /// reves si: una frase que empieza en minuscula dentro de un recuadro rojo parece cortada.
     /// </remarks>
-    private const string NoApareceElEquipo =
-        "No se ha encontrado el equipo por los puertos serie. Compruebe que está encendido, que el "
-        + "cable USB está puesto, que el modelo elegido es el suyo y que ningún otro programa tiene cogido el puerto.";
+    private static string NoApareceElEquipo => Textos.T("Ajustes.Equipo.NoAparece");
 
     /// <summary>Lleva a los desplegables el puerto y la velocidad donde ha aparecido el equipo.</summary>
     private void LlevarALaPantalla(string puerto, int baudios)
@@ -601,7 +643,7 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
             opciones.Ft710.Baudios = visto.Baudios;
             return new MontajeDeEquipo(
                 FabricaDeControlEquipo.CrearPara(visto, opciones, _registro),
-                $" en {visto.Puerto} a {visto.Baudios} baudios")
+                " " + Textos.F("Ajustes.Equipo.EnPuerto", visto.Puerto, visto.Baudios))
             {
                 Puerto = visto.Puerto,
                 Baudios = visto.Baudios,
@@ -666,4 +708,11 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
 /// <param name="Via">Forma de subir el PTT.</param>
 /// <param name="Titulo">Como se llama en pantalla.</param>
 /// <param name="Explicacion">Cuando se usa.</param>
-public sealed record ViaDePttElegible(ViaDePtt Via, string Titulo, string Explicacion);
+public sealed record ViaDePttElegible(ViaDePtt Via, string ClaveDelTitulo, string ClaveDeLaExplicacion) : OpcionTraducida
+{
+    /// <summary>Como se llama en pantalla.</summary>
+    public string Titulo => Textos.T(ClaveDelTitulo);
+
+    /// <summary>Cuando se usa.</summary>
+    public string Explicacion => Textos.T(ClaveDeLaExplicacion);
+}

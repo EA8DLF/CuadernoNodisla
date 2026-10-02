@@ -1,6 +1,7 @@
 ﻿using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Adif;
 
@@ -60,8 +61,7 @@ public static class MapeoAdif
                 });
                 avisos.Add(new AvisoAdif(
                     numeroDeRegistro, c.Nombre,
-                    $"El campo «{c.Nombre}» aparece repetido en el registro; manda el primer valor y "
-                    + "el otro se conserva aparte.",
+                    Textos.F("Servicios.Adif.Repetido", c.Nombre),
                     NivelDeAviso.Advertencia));
                 continue;
             }
@@ -108,8 +108,7 @@ public static class MapeoAdif
         if (Corregida(qso.Band, qso.Freq) is { } buena)
         {
             avisos.Add(new AvisoAdif(numero, "FREQ",
-                $"La frecuencia {qso.Freq.AAdif()} MHz no cae en la banda {qso.Band}; parece escrita en "
-                + $"otra unidad y se ha corregido a {buena.AAdif()} MHz.",
+                Textos.F("Servicios.Adif.FrecuenciaCorregida", qso.Freq.AAdif(), qso.Band, buena.AAdif()),
                 NivelDeAviso.Advertencia));
             qso.Freq = buena;
         }
@@ -117,8 +116,7 @@ public static class MapeoAdif
         if (qso.FreqRx is { } rx && Corregida(qso.BandRx, rx) is { } buenaRx)
         {
             avisos.Add(new AvisoAdif(numero, "FREQ_RX",
-                $"La frecuencia de recepción {rx.AAdif()} MHz no cae en la banda {qso.BandRx}; se ha "
-                + $"corregido a {buenaRx.AAdif()} MHz.",
+                Textos.F("Servicios.Adif.FrecuenciaRxCorregida", rx.AAdif(), qso.BandRx, buenaRx.AAdif()),
                 NivelDeAviso.Advertencia));
             qso.FreqRx = buenaRx;
         }
@@ -161,7 +159,7 @@ public static class MapeoAdif
         {
             avisos.Add(new AvisoAdif(
                 numero, "QSO_DATE",
-                $"No se entiende la fecha u hora de inicio («{fecha}» «{hora}»); el contacto queda sin fecha.",
+                Textos.F("Servicios.Adif.FechaDeInicio", fecha, hora),
                 NivelDeAviso.Advertencia));
         }
 
@@ -179,7 +177,7 @@ public static class MapeoAdif
             {
                 avisos.Add(new AvisoAdif(
                     numero, "TIME_OFF",
-                    $"No se entiende la fecha u hora de fin («{fechaFin}» «{horaFin}»); se ignora.",
+                    Textos.F("Servicios.Adif.FechaDeFin", fechaFin, horaFin),
                     NivelDeAviso.Advertencia));
             }
         }
@@ -229,7 +227,7 @@ public static class MapeoAdif
         {
             avisos.Add(new AvisoAdif(
                 numero, JsonLog4Om.CampoConfirmaciones,
-                "El JSON de confirmaciones no se entiende; se conserva tal cual pero no se interpreta.",
+                Textos.T("Servicios.Adif.JsonConfirmaciones"),
                 NivelDeAviso.Advertencia));
         }
 
@@ -238,7 +236,7 @@ public static class MapeoAdif
         {
             avisos.Add(new AvisoAdif(
                 numero, JsonLog4Om.CampoReferencias,
-                "El JSON de referencias no se entiende; se conserva tal cual pero no se interpreta.",
+                Textos.T("Servicios.Adif.JsonReferencias"),
                 NivelDeAviso.Advertencia));
         }
 
@@ -365,13 +363,13 @@ public static class MapeoAdif
             // ── Naturaleza del contacto ──────────────────────────────────────
             case "SWL":
                 if (ConversionesAdif.TryLeerLogico(valor, out var swl)) qso.Swl = swl;
-                else if (!vacio) Aviso(avisos, numero, campo, "no es un si o un no de ADIF");
+                else if (!vacio) Aviso(avisos, numero, campo, "Servicios.Adif.Problema.SiNo");
                 return true;
             // Se queda como texto: ADIF admite Y, N, NIL y ?, que no es un si o un no.
             case "QSO_COMPLETE": qso.QsoComplete = Texto(valor); return true;
             case "QSO_RANDOM":
                 if (ConversionesAdif.TryLeerLogico(valor, out var azar)) qso.QsoRandom = azar;
-                else if (!vacio) Aviso(avisos, numero, campo, "no es un si o un no de ADIF");
+                else if (!vacio) Aviso(avisos, numero, campo, "Servicios.Adif.Problema.SiNo");
                 return true;
             case "QSLMSG": qso.QslMsg = Texto(valor); return true;
             case "IOTA_ISLAND_ID": qso.IotaIslandId = Texto(valor); return true;
@@ -411,28 +409,28 @@ public static class MapeoAdif
         if (nombre.Equals(d.Enviado, StringComparison.OrdinalIgnoreCase))
         {
             if (ConfirmacionesAdif.TryLeerEstado(campo.Valor, d.EsSubida, out var e)) confirmacion.Enviado = e;
-            else Aviso(avisos, numero, campo, "no es un estado de confirmacion valido");
+            else Aviso(avisos, numero, campo, "Servicios.Adif.Problema.EstadoDeConfirmacion");
         }
         else if (nombre.Equals(d.Recibido, StringComparison.OrdinalIgnoreCase))
         {
             if (ConfirmacionesAdif.TryLeerEstado(campo.Valor, d.EsSubida, out var e)) confirmacion.Recibido = e;
-            else Aviso(avisos, numero, campo, "no es un estado de confirmacion valido");
+            else Aviso(avisos, numero, campo, "Servicios.Adif.Problema.EstadoDeConfirmacion");
         }
         else if (nombre.Equals(d.FechaEnviado, StringComparison.OrdinalIgnoreCase))
         {
             if (ConversionesAdif.TryCombinarUtc(campo.Valor, null, out var f)) confirmacion.EnviadoUtc = f;
-            else Aviso(avisos, numero, campo, "no es una fecha valida");
+            else Aviso(avisos, numero, campo, "Servicios.Adif.Problema.Fecha");
         }
         else if (nombre.Equals(d.FechaRecibido, StringComparison.OrdinalIgnoreCase))
         {
             if (ConversionesAdif.TryCombinarUtc(campo.Valor, null, out var f)) confirmacion.RecibidoUtc = f;
-            else Aviso(avisos, numero, campo, "no es una fecha valida");
+            else Aviso(avisos, numero, campo, "Servicios.Adif.Problema.Fecha");
         }
         else if (nombre.Equals(d.ViaEnviado, StringComparison.OrdinalIgnoreCase)
                  || nombre.Equals(d.ViaRecibido, StringComparison.OrdinalIgnoreCase))
         {
             if (ConfirmacionesAdif.TryLeerVia(campo.Valor, out var via)) confirmacion.Via = via;
-            else Aviso(avisos, numero, campo, "no es una via de envio valida");
+            else Aviso(avisos, numero, campo, "Servicios.Adif.Problema.Via");
         }
     }
 
@@ -440,10 +438,11 @@ public static class MapeoAdif
 
     private static string? Texto(string valor) => string.IsNullOrEmpty(valor) ? null : valor;
 
-    private static void Aviso(List<AvisoAdif> avisos, int numero, CampoAdif campo, string problema) =>
+    // claveDelProblema: clave del texto que dice que le pasa al valor.
+    private static void Aviso(List<AvisoAdif> avisos, int numero, CampoAdif campo, string claveDelProblema) =>
         avisos.Add(new AvisoAdif(
             numero, campo.Nombre,
-            $"El campo «{campo.Nombre}» con valor «{campo.Valor}» {problema}; se conserva sin interpretar.",
+            Textos.F("Servicios.Adif.CampoNoValido", campo.Nombre, campo.Valor, Textos.T(claveDelProblema)),
             NivelDeAviso.Advertencia));
 
     private static void LeerBanda(
@@ -451,7 +450,7 @@ public static class MapeoAdif
     {
         if (string.IsNullOrWhiteSpace(valor)) return;
         if (Banda.TryParse(valor, out var b)) asignar(b);
-        else Aviso(avisos, numero, campo, "no es una banda de ADIF");
+        else Aviso(avisos, numero, campo, "Servicios.Adif.Problema.Banda");
     }
 
     private static void LeerFrecuencia(
@@ -459,7 +458,7 @@ public static class MapeoAdif
     {
         if (string.IsNullOrWhiteSpace(valor)) return;
         if (Frecuencia.TryParseAdif(valor, out var f)) asignar(f);
-        else Aviso(avisos, numero, campo, "no es una frecuencia valida");
+        else Aviso(avisos, numero, campo, "Servicios.Adif.Problema.Frecuencia");
     }
 
     private static void LeerLocator(
@@ -467,14 +466,14 @@ public static class MapeoAdif
     {
         if (string.IsNullOrWhiteSpace(valor)) return;
         if (Locator.TryParse(valor, out var l)) asignar(l);
-        else Aviso(avisos, numero, campo, "no es un localizador Maidenhead valido");
+        else Aviso(avisos, numero, campo, "Servicios.Adif.Problema.Localizador");
     }
 
     private static int? LeerEntero(string valor, CampoAdif campo, int numero, List<AvisoAdif> avisos)
     {
         if (string.IsNullOrWhiteSpace(valor)) return null;
         if (ConversionesAdif.TryLeerEntero(valor, out var n)) return n;
-        Aviso(avisos, numero, campo, "no es un numero entero");
+        Aviso(avisos, numero, campo, "Servicios.Adif.Problema.Entero");
         return null;
     }
 
@@ -482,7 +481,7 @@ public static class MapeoAdif
     {
         if (string.IsNullOrWhiteSpace(valor)) return null;
         if (ConversionesAdif.TryLeerReal(valor, out var n)) return n;
-        Aviso(avisos, numero, campo, "no es un numero");
+        Aviso(avisos, numero, campo, "Servicios.Adif.Problema.Numero");
         return null;
     }
 
@@ -490,7 +489,7 @@ public static class MapeoAdif
     {
         if (string.IsNullOrWhiteSpace(valor)) return null;
         if (ConversionesAdif.TryLeerCoordenada(valor, out var g)) return g;
-        Aviso(avisos, numero, campo, "no es una coordenada en grados y minutos de ADIF");
+        Aviso(avisos, numero, campo, "Servicios.Adif.Problema.Coordenada");
         return null;
     }
 

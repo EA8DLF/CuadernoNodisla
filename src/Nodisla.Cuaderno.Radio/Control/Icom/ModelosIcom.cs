@@ -2,6 +2,8 @@ using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
 using Nodisla.Cuaderno.Radio.Modelos;
 
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Control.Icom;
 
 /// <summary>Como se reparten los dos VFO de la interfaz en un ICOM.</summary>
@@ -128,7 +130,7 @@ public static class ModelosIcom
                 Capacidades(true, false, true, 99, 30_000, 74_800_000),
                 NotaComun + " USB: «CI-V USB Port» en «Unlink from [REMOTE]» para 115200; «CI-V USB Echo Back» OFF por omisión."),
             100, [0, 20], Preamp12, RepartoDeVfos.VfoAyB, Sintonizador: true, Xit: true, Apf: false, LeeMemorias: true,
-            [.. BandasHf(true), B(11, "GEN", "", "Cobertura general", true, 9_700_000, "AM")],
+            [.. BandasHf(true), B(11, "GEN", "", Textos.T("Servicios.Radio.CoberturaGeneral"), true, 9_700_000, "AM")],
             Tension13V, [(0, 0), (97, 10), (146, 15), (241, 25)], PasosHf),
 
         new PerfilIcom(
@@ -139,7 +141,7 @@ public static class ModelosIcom
             10, [0, 20], Preamp12, RepartoDeVfos.VfoAyB, Sintonizador: true, Xit: true, Apf: false, LeeMemorias: false,
             [.. BandasHf(true), B(13, "144", "2m", "2 m (144 MHz)", true, 144_300_000, "USB"),
              B(14, "430", "70cm", "70 cm (430 MHz)", true, 432_200_000, "USB"),
-             B(15, "GEN", "", "Cobertura general", true, 9_700_000, "AM")],
+             B(15, "GEN", "", Textos.T("Servicios.Radio.CoberturaGeneral"), true, 9_700_000, "AM")],
             [(0, 0), (75, 5), (241, 16)], [(0, 0), (121, 2), (241, 4)], PasosVhf),
 
         new PerfilIcom(
@@ -148,7 +150,7 @@ public static class ModelosIcom
                 NotaComun + " A = MAIN, B = SUB. Red (LAN) no implementada: solo USB."),
             100, [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45], Preamp12, RepartoDeVfos.PrincipalYSecundario,
             Sintonizador: true, Xit: true, Apf: true, LeeMemorias: true,
-            [.. BandasHf(true), B(11, "GEN", "", "Cobertura general", true, 9_700_000, "AM")],
+            [.. BandasHf(true), B(11, "GEN", "", Textos.T("Servicios.Radio.CoberturaGeneral"), true, 9_700_000, "AM")],
             [(0, 0), (151, 10), (211, 16)], [(0, 0), (77, 10), (165, 20), (241, 30)], PasosHf),
 
         new PerfilIcom(
@@ -179,7 +181,7 @@ public static class ModelosIcom
                 NotaComun + " A = MAIN, B = SUB. La tensión del medidor Vd es la de la etapa final (44–52 V)."),
             200, [0, 3, 6, 9, 12, 15, 18, 21], Preamp12, RepartoDeVfos.PrincipalYSecundario,
             Sintonizador: true, Xit: true, Apf: true, LeeMemorias: true,
-            [.. BandasHf(true), B(11, "GEN", "", "Cobertura general", true, 9_700_000, "AM")],
+            [.. BandasHf(true), B(11, "GEN", "", Textos.T("Servicios.Radio.CoberturaGeneral"), true, 9_700_000, "AM")],
             [(151, 44), (180, 48), (211, 52)], [(0, 0), (165, 10), (241, 15)], PasosHf),
     ];
 

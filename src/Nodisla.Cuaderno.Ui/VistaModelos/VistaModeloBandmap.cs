@@ -3,6 +3,7 @@ using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
 
@@ -52,6 +53,12 @@ public sealed record RayaDelBandmap(string Texto, double Altura);
 /// </remarks>
 public sealed partial class VistaModeloBandmap : ObservableObject
 {
+    /// <summary>Monta el bandmap vacío; el resumen se rehace al cambiar de idioma.</summary>
+    public VistaModeloBandmap()
+    {
+        Textos.AlCambiar(this, static vm => vm.Rehacer());
+    }
+
     /// <summary>Alto minimo de la escala. Por debajo no cabe ni la regla.</summary>
     public const double AltoMinimo = 180;
 
@@ -174,8 +181,8 @@ public sealed partial class VistaModeloBandmap : ObservableObject
             DialALaVista = false;
             Banda = "—";
             Resumen = _dial.EsCero
-                ? "Sin frecuencia del equipo."
-                : "El dial está fuera de las bandas de aficionado; no hay banda que dibujar.";
+                ? Textos.T("Principal.Bandmap.SinFrecuencia")
+                : Textos.T("Principal.Bandmap.FueraDeBanda");
             OnPropertyChanged(nameof(Titulo));
             return;
         }
@@ -215,8 +222,8 @@ public sealed partial class VistaModeloBandmap : ObservableObject
         }
 
         Resumen = dibujados == 0
-            ? $"Nadie anunciado en {banda.Nombre} ahora mismo."
-            : $"{dibujados.ToString("N0", CultureInfo.CurrentCulture)} en {banda.Nombre}";
+            ? Textos.F("Principal.Bandmap.Nadie", banda.Nombre)
+            : Textos.F("Principal.Bandmap.Dibujados", dibujados, banda.Nombre);
 
         OnPropertyChanged(nameof(Titulo));
     }

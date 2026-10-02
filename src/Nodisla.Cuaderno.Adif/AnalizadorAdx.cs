@@ -1,6 +1,7 @@
 using System.Xml;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Adif;
 
@@ -52,7 +53,7 @@ internal static class AnalizadorAdx
                     numero++;
                     if (campos.Count == 0)
                     {
-                        avisos.Add(new AvisoAdif(numero, null, "Registro vacio; se descarta.", NivelDeAviso.Error));
+                        avisos.Add(new AvisoAdif(numero, null, Textos.T("Servicios.Adif.RegistroVacio"), NivelDeAviso.Error));
                         continue;
                     }
                     qsos.Add(MapeoAdif.LeerContacto(campos, numero, avisos));
@@ -63,7 +64,7 @@ internal static class AnalizadorAdx
         {
             avisos.Add(new AvisoAdif(
                 numero + 1, null,
-                $"El fichero ADX esta mal formado y se deja de leer aqui: {ex.Message}",
+                Textos.F("Servicios.Adif.AdxMalFormado", ex.Message),
                 NivelDeAviso.Error));
         }
 

@@ -2,6 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+             xmlns:vm="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
              Foreground="{DynamicResource Texto}">
 
     <!--
@@ -17,6 +19,35 @@
         <conversores:AnchoEnLetras x:Key="AnchoEnLetras" />
         <conversores:AnchoDeColumnaEnLetras x:Key="AnchoDeColumna" />
         <conversores:Puente x:Key="PuenteDeDatos" Datos="{Binding}" />
+
+        <!--
+            «(todas)» y «(todos)» son el valor centinela del filtro y no cambian: lo que se
+            traduce es como se ESCRIBEN en la lista.
+        -->
+        <DataTemplate x:Key="OpcionDeBanda">
+            <TextBlock x:Name="opcion" Text="{Binding}" />
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding}" Value="{x:Static vm:VistaModeloCuaderno.Cualquiera}">
+                    <Setter TargetName="opcion" Property="Text" Value="{loc:Texto Libro.Filtro.Todas}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+        <DataTemplate x:Key="OpcionDeModo">
+            <TextBlock x:Name="opcion" Text="{Binding}" />
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding}" Value="{x:Static vm:VistaModeloCuaderno.CualquierModo}">
+                    <Setter TargetName="opcion" Property="Text" Value="{loc:Texto Libro.Filtro.Todos}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!--
+            Las cabeceras van en anchos fijos y en aleman salen mas largas: la ayuda emergente
+            dice la cabecera entera aunque la columna la recorte.
+        -->
+        <Style x:Key="CabeceraNumericaConAyuda" TargetType="DataGridColumnHeader" BasedOn="{StaticResource CabeceraNumerica}">
+            <Setter Property="ToolTip" Value="{Binding Content, RelativeSource={RelativeSource Self}}" />
+        </Style>
     </UserControl.Resources>
 
     <Grid>
@@ -30,59 +61,61 @@
         <WrapPanel Grid.Row="0">
             <StackPanel Style="{StaticResource BloqueDeCampo}"
                         Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=20}">
-                <TextBlock Text="Buscar en el cuaderno (F3)" Style="{StaticResource EtiquetaDeCampo}" />
+                <TextBlock Text="{loc:Texto Libro.Buscar}" Style="{StaticResource EtiquetaDeCampo}" />
                 <TextBox x:Name="CampoBusqueda"
                          Text="{Binding Cuaderno.TextoBuscado, UpdateSourceTrigger=PropertyChanged}"
-                         ToolTip="Indicativo, nombre, QTH, localizador, país o comentario" />
+                         ToolTip="{loc:Texto Libro.Buscar.Ayuda}" />
             </StackPanel>
 
             <StackPanel Style="{StaticResource BloqueDeCampo}"
                         Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=9}">
-                <TextBlock Text="Banda" Style="{StaticResource EtiquetaDeCampo}" />
-                <ComboBox ItemsSource="{Binding Cuaderno.Bandas}" SelectedItem="{Binding Cuaderno.BandaFiltro}" />
+                <TextBlock Text="{loc:Texto Comun.Banda}" Style="{StaticResource EtiquetaDeCampo}" />
+                <ComboBox ItemsSource="{Binding Cuaderno.Bandas}" SelectedItem="{Binding Cuaderno.BandaFiltro}"
+                          ItemTemplate="{StaticResource OpcionDeBanda}" />
             </StackPanel>
 
             <StackPanel Style="{StaticResource BloqueDeCampo}"
                         Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=10}">
-                <TextBlock Text="Modo" Style="{StaticResource EtiquetaDeCampo}" />
-                <ComboBox ItemsSource="{Binding Cuaderno.Modos}" SelectedItem="{Binding Cuaderno.ModoFiltro}" />
+                <TextBlock Text="{loc:Texto Comun.Modo}" Style="{StaticResource EtiquetaDeCampo}" />
+                <ComboBox ItemsSource="{Binding Cuaderno.Modos}" SelectedItem="{Binding Cuaderno.ModoFiltro}"
+                          ItemTemplate="{StaticResource OpcionDeModo}" />
             </StackPanel>
 
             <StackPanel Style="{StaticResource BloqueDeCampo}"
                         Width="{Binding TamanoDeLetra, Converter={StaticResource AnchoEnLetras}, ConverterParameter=8}">
-                <TextBlock Text="Por página" Style="{StaticResource EtiquetaDeCampo}" />
+                <TextBlock Text="{loc:Texto Libro.PorPagina}" Style="{StaticResource EtiquetaDeCampo}" />
                 <ComboBox ItemsSource="{Binding Cuaderno.TamanosDePagina}" SelectedItem="{Binding Cuaderno.TamanoDePagina}" />
             </StackPanel>
 
             <StackPanel Style="{StaticResource BloqueDeCampo}" Orientation="Horizontal" VerticalAlignment="Bottom">
-                <Button Content="Quitar filtro" Command="{Binding Cuaderno.QuitarFiltroCommand}" Margin="0,0,8,0" />
-                <Button Content="Modificar (F2)" Command="{Binding Cuaderno.EditarSeleccionadoCommand}" Margin="0,0,8,0" />
-                <Button Content="Ver/enviar QSL…" Click="AlVerEnviarQsl" Margin="0,0,8,0"
-                        ToolTip="La tarjeta QSL de los contactos elegidos, para verla o mandarla por correo"
-                        AutomationProperties.Name="Ver y enviar la tarjeta QSL de los contactos elegidos" />
-                <Button Content="Borrar (Supr)" Command="{Binding Cuaderno.EliminarSeleccionadoCommand}" />
+                <Button Content="{loc:Texto Libro.QuitarFiltro}" Command="{Binding Cuaderno.QuitarFiltroCommand}" Margin="0,0,8,0" />
+                <Button Content="{loc:Texto Libro.Modificar}" Command="{Binding Cuaderno.EditarSeleccionadoCommand}" Margin="0,0,8,0" />
+                <Button Content="{loc:Texto Libro.VerEnviarQsl}" Click="AlVerEnviarQsl" Margin="0,0,8,0"
+                        ToolTip="{loc:Texto Libro.VerEnviarQsl.Ayuda}"
+                        AutomationProperties.Name="{loc:Texto Libro.VerEnviarQsl.Accesible}" />
+                <Button Content="{loc:Texto Libro.Borrar}" Command="{Binding Cuaderno.EliminarSeleccionadoCommand}" />
             </StackPanel>
         </WrapPanel>
 
-        <Expander Grid.Row="1" Header="Columnas del cuaderno" Margin="0,0,0,8"
+        <Expander Grid.Row="1" Header="{loc:Texto Libro.Columnas}" Margin="0,0,0,8"
                   Foreground="{DynamicResource TextoTenue}">
             <WrapPanel Margin="8,8,0,4">
-                <CheckBox Content="Frecuencia" IsChecked="{Binding Cuaderno.VerFrecuencia}" Margin="0,0,18,0" />
-                <CheckBox Content="Informes" IsChecked="{Binding Cuaderno.VerInformes}" Margin="0,0,18,0" />
-                <CheckBox Content="Nombre" IsChecked="{Binding Cuaderno.VerNombre}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Comun.Frecuencia}" IsChecked="{Binding Cuaderno.VerFrecuencia}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Libro.Columnas.Informes}" IsChecked="{Binding Cuaderno.VerInformes}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Comun.Nombre}" IsChecked="{Binding Cuaderno.VerNombre}" Margin="0,0,18,0" />
                 <CheckBox Content="QTH" IsChecked="{Binding Cuaderno.VerQth}" Margin="0,0,18,0" />
-                <CheckBox Content="Localizador" IsChecked="{Binding Cuaderno.VerLocalizador}" Margin="0,0,18,0" />
-                <CheckBox Content="Distancia" IsChecked="{Binding Cuaderno.VerDistancia}" Margin="0,0,18,0" />
-                <CheckBox Content="Comentario" IsChecked="{Binding Cuaderno.VerComentario}" Margin="0,0,18,0" />
-                <CheckBox Content="Mi indicativo" IsChecked="{Binding Cuaderno.VerEstacion}" Margin="0,0,18,0" />
-                <CheckBox Content="Confirmaciones" IsChecked="{Binding Cuaderno.VerConfirmado}" Margin="0,0,18,0" />
-                <CheckBox Content="Antena" IsChecked="{Binding Cuaderno.VerAntena}" Margin="0,0,18,0" />
-                <CheckBox Content="Propagación" IsChecked="{Binding Cuaderno.VerPropagacion}" Margin="0,0,18,0" />
-                <CheckBox Content="Radioescucha" IsChecked="{Binding Cuaderno.VerSwl}" Margin="0,0,18,0" />
-                <CheckBox Content="Completado" IsChecked="{Binding Cuaderno.VerCompletado}" Margin="0,0,18,0" />
-                <CheckBox Content="Casual" IsChecked="{Binding Cuaderno.VerCasual}" Margin="0,0,18,0" />
-                <CheckBox Content="Mensaje QSL" IsChecked="{Binding Cuaderno.VerMensajeQsl}" Margin="0,0,18,0" />
-                <CheckBox Content="Mi nombre" IsChecked="{Binding Cuaderno.VerMiNombre}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Libro.Localizador}" IsChecked="{Binding Cuaderno.VerLocalizador}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Libro.Columnas.Distancia}" IsChecked="{Binding Cuaderno.VerDistancia}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Comun.Comentario}" IsChecked="{Binding Cuaderno.VerComentario}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Libro.Columnas.MiIndicativo}" IsChecked="{Binding Cuaderno.VerEstacion}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Libro.Columnas.Confirmaciones}" IsChecked="{Binding Cuaderno.VerConfirmado}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Libro.Columnas.Antena}" IsChecked="{Binding Cuaderno.VerAntena}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Libro.Columnas.Propagacion}" IsChecked="{Binding Cuaderno.VerPropagacion}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Libro.Columnas.Swl}" IsChecked="{Binding Cuaderno.VerSwl}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Libro.Columnas.Completado}" IsChecked="{Binding Cuaderno.VerCompletado}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Libro.Columnas.Casual}" IsChecked="{Binding Cuaderno.VerCasual}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Libro.Columnas.MensajeQsl}" IsChecked="{Binding Cuaderno.VerMensajeQsl}" Margin="0,0,18,0" />
+                <CheckBox Content="{loc:Texto Libro.Columnas.MiNombre}" IsChecked="{Binding Cuaderno.VerMiNombre}" Margin="0,0,18,0" />
                 <CheckBox Content="IOTA" IsChecked="{Binding Cuaderno.VerIota}" Margin="0,0,18,0" />
             </WrapPanel>
         </Expander>
@@ -122,10 +155,10 @@
             -->
             <DataGrid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Ver/enviar QSL…" Click="AlVerEnviarQsl"
-                              AutomationProperties.Name="Ver y enviar la tarjeta QSL de los contactos elegidos" />
+                    <MenuItem Header="{loc:Texto Libro.VerEnviarQsl}" Click="AlVerEnviarQsl"
+                              AutomationProperties.Name="{loc:Texto Libro.VerEnviarQsl.Accesible}" />
                     <Separator />
-                    <MenuItem Header="Modificar (F2)" Click="AlModificarDesdeElMenu" />
+                    <MenuItem Header="{loc:Texto Libro.Modificar}" Click="AlModificarDesdeElMenu" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
 
@@ -135,40 +168,42 @@
                 DataGrid.CellStyle y compañía. Declarados aquí mandan estos, y sólo aquí.
             -->
             <DataGrid.Resources>
-                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource CabeceraDelCuaderno}" />
+                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource CabeceraDelCuaderno}">
+                    <Setter Property="ToolTip" Value="{Binding Content, RelativeSource={RelativeSource Self}}" />
+                </Style>
                 <Style TargetType="DataGridCell" BasedOn="{StaticResource CeldaDelCuaderno}" />
                 <Style TargetType="DataGridRow" BasedOn="{StaticResource FilaDelCuaderno}" />
             </DataGrid.Resources>
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="FECHA UTC" Binding="{Binding Fecha}" SortMemberPath="Fecha"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.FechaUtc}" Binding="{Binding Fecha}" SortMemberPath="Fecha"
                                     ElementStyle="{StaticResource CeldaDeCifras}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=9}" />
-                <DataGridTextColumn Header="HORA" Binding="{Binding Hora}" SortMemberPath="Fecha"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Hora}" Binding="{Binding Hora}" SortMemberPath="Fecha"
                                     ElementStyle="{StaticResource CeldaDeCifras}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=6.5}" />
-                <DataGridTextColumn Header="INDICATIVO" Binding="{Binding Indicativo}" SortMemberPath="Indicativo"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Indicativo}" Binding="{Binding Indicativo}" SortMemberPath="Indicativo"
                                     ElementStyle="{StaticResource CeldaDeIndicativo}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7.5}" />
-                <DataGridTextColumn Header="BANDA" Binding="{Binding Banda}" SortMemberPath="Banda"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Banda}" Binding="{Binding Banda}" SortMemberPath="Banda"
                                     ElementStyle="{StaticResource CeldaDeTexto}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=5}" />
-                <DataGridTextColumn Header="MODO" Binding="{Binding Modo}" SortMemberPath="Modo"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Modo}" Binding="{Binding Modo}" SortMemberPath="Modo"
                                     ElementStyle="{StaticResource CeldaDeTexto}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=5}" />
-                <DataGridTextColumn Header="FRECUENCIA" Binding="{Binding Frecuencia}" SortMemberPath="Frecuencia"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Frecuencia}" Binding="{Binding Frecuencia}" SortMemberPath="Frecuencia"
                                     ElementStyle="{StaticResource CeldaNumerica}"
-                                    HeaderStyle="{StaticResource CabeceraNumerica}"
+                                    HeaderStyle="{StaticResource CabeceraNumericaConAyuda}"
                                     Visibility="{Binding Datos.Cuaderno.VerFrecuencia, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8.4}" />
-                <DataGridTextColumn Header="ENV." Binding="{Binding InformeEnviado}"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Enviado}" Binding="{Binding InformeEnviado}"
                                     ElementStyle="{StaticResource CeldaNumerica}"
-                                    HeaderStyle="{StaticResource CabeceraNumerica}"
+                                    HeaderStyle="{StaticResource CabeceraNumericaConAyuda}"
                                     Visibility="{Binding Datos.Cuaderno.VerInformes, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=4}" />
-                <DataGridTextColumn Header="REC." Binding="{Binding InformeRecibido}"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Recibido}" Binding="{Binding InformeRecibido}"
                                     ElementStyle="{StaticResource CeldaNumerica}"
-                                    HeaderStyle="{StaticResource CabeceraNumerica}"
+                                    HeaderStyle="{StaticResource CabeceraNumericaConAyuda}"
                                     Visibility="{Binding Datos.Cuaderno.VerInformes, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=4}" />
 
@@ -207,7 +242,7 @@
                     minimo en letras): antes solo crecia el comentario, y nombre y QTH salian
                     cortados con puntos suspensivos teniendo media pantalla libre a la derecha.
                 -->
-                <DataGridTextColumn Header="NOMBRE" Binding="{Binding Nombre}" SortMemberPath="Nombre"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Nombre}" Binding="{Binding Nombre}" SortMemberPath="Nombre"
                                     ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerNombre, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="1.2*"
@@ -217,40 +252,40 @@
                                     Visibility="{Binding Datos.Cuaderno.VerQth, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="1.4*"
                                     MinWidth="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoEnLetras}, ConverterParameter=9}" />
-                <DataGridTextColumn Header="LOCALIZADOR" Binding="{Binding Localizador}"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Localizador}" Binding="{Binding Localizador}"
                                     ElementStyle="{StaticResource CeldaDeCifras}"
                                     Visibility="{Binding Datos.Cuaderno.VerLocalizador, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7}" />
-                <DataGridTextColumn Header="DISTANCIA" Binding="{Binding Distancia}"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Distancia}" Binding="{Binding Distancia}"
                                     ElementStyle="{StaticResource CeldaNumerica}"
-                                    HeaderStyle="{StaticResource CabeceraNumerica}"
+                                    HeaderStyle="{StaticResource CabeceraNumericaConAyuda}"
                                     Visibility="{Binding Datos.Cuaderno.VerDistancia, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=7.5}" />
-                <DataGridTextColumn Header="ANTENA" Binding="{Binding Antena}"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Antena}" Binding="{Binding Antena}"
                                     ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerAntena, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                <DataGridTextColumn Header="PROPAGACIÓN" Binding="{Binding Propagacion}"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Propagacion}" Binding="{Binding Propagacion}"
                                     ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerPropagacion, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=11}" />
-                <DataGridTextColumn Header="RADIOESCUCHA" Binding="{Binding Swl}"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Swl}" Binding="{Binding Swl}"
                                     ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerSwl, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                <DataGridTextColumn Header="COMPLETADO" Binding="{Binding Completado}"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Completado}" Binding="{Binding Completado}"
                                     ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerCompletado, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                <DataGridTextColumn Header="CASUAL" Binding="{Binding Casual}"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Casual}" Binding="{Binding Casual}"
                                     ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerCasual, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=6}" />
-                <DataGridTextColumn Header="MENSAJE QSL" Binding="{Binding MensajeQsl}"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.MensajeQsl}" Binding="{Binding MensajeQsl}"
                                     ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerMensajeQsl, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=14}" />
-                <DataGridTextColumn Header="MI NOMBRE" Binding="{Binding MiNombre}"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.MiNombre}" Binding="{Binding MiNombre}"
                                     ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerMiNombre, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
@@ -258,11 +293,11 @@
                                     ElementStyle="{StaticResource CeldaDeCifras}"
                                     Visibility="{Binding Datos.Cuaderno.VerIota, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=6}" />
-                <DataGridTextColumn Header="MI INDICATIVO" Binding="{Binding Estacion}"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.MiIndicativo}" Binding="{Binding Estacion}"
                                     ElementStyle="{StaticResource CeldaDeIndicativo}"
                                     Visibility="{Binding Datos.Cuaderno.VerEstacion, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="{Binding Datos.TamanoDeLetra, Source={StaticResource PuenteDeDatos}, Converter={StaticResource AnchoDeColumna}, ConverterParameter=8}" />
-                <DataGridTextColumn Header="COMENTARIO" Binding="{Binding Comentario}"
+                <DataGridTextColumn Header="{loc:Texto Libro.Columna.Comentario}" Binding="{Binding Comentario}"
                                     ElementStyle="{StaticResource CeldaDeTexto}"
                                     Visibility="{Binding Datos.Cuaderno.VerComentario, Source={StaticResource PuenteDeDatos}, Converter={StaticResource BooleanoAVisible}}"
                                     Width="1.6*"
@@ -272,13 +307,13 @@
 
         <DockPanel Grid.Row="3" Margin="0,8,0,0">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                <Button Content="&#x23EE; Primera" Command="{Binding Cuaderno.PrimeraPaginaCommand}" Margin="0,0,6,0" />
-                <Button Content="&#x25C0; Anterior" Command="{Binding Cuaderno.PaginaAnteriorCommand}" Margin="0,0,6,0" />
-                <Button Content="Siguiente &#x25B6;" Command="{Binding Cuaderno.PaginaSiguienteCommand}" Margin="0,0,6,0" />
-                <Button Content="Última &#x23ED;" Command="{Binding Cuaderno.UltimaPaginaCommand}" />
+                <Button Content="{loc:Texto Libro.Pagina.Primera}" Command="{Binding Cuaderno.PrimeraPaginaCommand}" Margin="0,0,6,0" />
+                <Button Content="{loc:Texto Libro.Pagina.Anterior}" Command="{Binding Cuaderno.PaginaAnteriorCommand}" Margin="0,0,6,0" />
+                <Button Content="{loc:Texto Libro.Pagina.Siguiente}" Command="{Binding Cuaderno.PaginaSiguienteCommand}" Margin="0,0,6,0" />
+                <Button Content="{loc:Texto Libro.Pagina.Ultima}" Command="{Binding Cuaderno.UltimaPaginaCommand}" />
             </StackPanel>
             <TextBlock DockPanel.Dock="Right"
-                       Text="Cargando…"
+                       Text="{loc:Texto Libro.Cargando}"
                        Margin="12,0,0,0"
                        Style="{StaticResource TextoTenueEstilo}"
                        Visibility="{Binding Cuaderno.Cargando, Converter={StaticResource BooleanoAVisible}}" />

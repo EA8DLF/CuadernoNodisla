@@ -497,6 +497,15 @@ public sealed class AjustesDelPrograma
     /// <summary>Fonía por el ordenador: altavoces, micrófono y PTT de fonía.</summary>
     public AjustesDeFonia Fonia { get; set; } = new();
 
+    /// <summary>El decodificador de telegrafía.</summary>
+    public AjustesDeCw Cw { get; set; } = new();
+
+    /// <summary>
+    /// Idioma del programa: «es», «en», «pt», «fr», «it» o «de». Nulo, el del sistema si es uno
+    /// de esos seis; si no, inglés.
+    /// </summary>
+    public string? Idioma { get; set; }
+
     /// <summary>Lee los ajustes guardados, o devuelve los de fabrica si no hay ninguno.</summary>
     /// <param name="carpeta">Carpeta de datos del programa.</param>
     /// <returns>Los ajustes leidos, nunca nulos.</returns>
@@ -521,6 +530,8 @@ public sealed class AjustesDelPrograma
             leidos.Servicios ??= new AjustesDeServicios();
             leidos.Fonia ??= new AjustesDeFonia();
             leidos.Fonia.Acotar();
+            leidos.Cw ??= new AjustesDeCw();
+            leidos.Cw.Acotar();
             return leidos;
         }
         catch (Exception ex)

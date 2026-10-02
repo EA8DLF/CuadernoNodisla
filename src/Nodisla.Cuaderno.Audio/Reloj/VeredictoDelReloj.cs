@@ -1,5 +1,6 @@
 using System.Globalization;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Audio.Reloj;
 
@@ -36,14 +37,13 @@ public static class VeredictoDelReloj
             return new EstadoDelReloj(
                 desvio,
                 CalidadDelReloj.SinMedir,
-                "Reloj sin comprobar.",
-                "No se ha podido medir el desvío contra ningún servidor de hora, así que no se sabe si "
-                    + "el módem está en hora. Comprueba la conexión a internet y vuelve a medir.",
-                "sin medir");
+                Textos.T("Servicios.Audio.Reloj.SinComprobar"),
+                Textos.T("Servicios.Audio.Reloj.SinComprobarTexto"),
+                Textos.T("Servicios.Audio.Reloj.SinMedir"));
         }
 
         var cuanto = Math.Abs(desvio.DesvioMs);
-        var sentido = desvio.DesvioMs >= 0 ? "adelantado" : "atrasado";
+        var sentido = desvio.DesvioMs >= 0 ? Textos.T("Servicios.Audio.Reloj.Adelantado") : Textos.T("Servicios.Audio.Reloj.Atrasado");
         var cantidad = Escribir(cuanto);
         var paraMostrar = ParaMostrar(desvio.DesvioMs);
 
@@ -52,7 +52,7 @@ public static class VeredictoDelReloj
             return new EstadoDelReloj(
                 desvio,
                 CalidadDelReloj.Bien,
-                string.Create(CultureInfo.CurrentCulture, $"El reloj está en hora ({cantidad} {sentido})."),
+                Textos.F("Servicios.Audio.Reloj.EnHora", cantidad, sentido),
 
                 // Vacio: no hay nada que hacer, y decirlo con una frase solo invita a buscarle
                 // tres pies al gato.
@@ -65,17 +65,16 @@ public static class VeredictoDelReloj
             return new EstadoDelReloj(
                 desvio,
                 CalidadDelReloj.Regular,
-                string.Create(CultureInfo.CurrentCulture, $"El reloj está {cantidad} {sentido}."),
-                "Con este desvío FT8 empieza a decodificar peor: conviene sincronizar el reloj.",
+                Textos.F("Servicios.Audio.Reloj.Desviado", cantidad, sentido),
+                Textos.T("Servicios.Audio.Reloj.Regular"),
                 paraMostrar);
         }
 
         return new EstadoDelReloj(
             desvio,
             CalidadDelReloj.FueraDeVentana,
-            string.Create(CultureInfo.CurrentCulture, $"El reloj está {cantidad} {sentido}."),
-            "Con este desvío no se decodifica casi nada y, sobre todo, se transmite fuera de ventana, "
-                + "molestando a los demás sin enterarse. Hay que sincronizar el reloj antes de transmitir.",
+            Textos.F("Servicios.Audio.Reloj.Desviado", cantidad, sentido),
+            Textos.T("Servicios.Audio.Reloj.FueraDeVentana"),
             paraMostrar);
     }
 

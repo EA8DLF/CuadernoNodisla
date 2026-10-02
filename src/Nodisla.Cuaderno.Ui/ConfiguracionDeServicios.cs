@@ -550,7 +550,7 @@ public static class ConfiguracionDeServicios
         }
         catch (Exception ex)
         {
-            return $"No se ha podido comprobar el estado de LoTW: {ex.Message}";
+            return global::Nodisla.Cuaderno.Idiomas.Textos.F("Ajustes.Tarjeta.Lotw.ErrorAlComprobar", ex.Message);
         }
     };
 
@@ -710,7 +710,7 @@ public static class ConfiguracionDeServicios
             proveedor.GetRequiredService<IAlmacenDeCredenciales>(),
             proveedor.GetRequiredService<ImportarAdif>(),
             proveedor.GetRequiredService<IRepositorioQso>(),
-            Servicios.Lotw.ServicioLotw.AvisoDeLaFraseDePaso,
+            Servicios.Lotw.ServicioLotw.ClaveDelAvisoDeLaFraseDePaso,
             MotivoDeNoPoderSubirALotw(proveedor),
             AjustesDelEquipo(proveedor),
             AjustesDelCluster(proveedor),
@@ -721,6 +721,11 @@ public static class ConfiguracionDeServicios
             Fonia = proveedor.GetService<VistaModeloAjustesFonia>(),
             CorreoQsl = proveedor.GetService<VistaModeloCorreoQsl>(),
             Actualizaciones = proveedor.GetService<VistaModeloActualizaciones>(),
+
+            // Con lo simulado no se escribe en los ajustes de verdad: se cambia y ya.
+            Idioma = new VistaModeloIdioma(
+                proveedor.GetRequiredService<AjustesDelPrograma>(),
+                ConPuertosSimulados ? null : App.CarpetaDeDatos),
         });
 
         servicios.AddSingleton<VistaModeloSolar>();
@@ -807,6 +812,12 @@ public static class ConfiguracionDeServicios
         // El analizador de la propia radio. Con los puertos simulados, AnalizadorSimulado.
         servicios.AddSingleton(proveedor => new VistaModeloAnalizador(
             proveedor.GetService<IAnalizadorDeEspectro>(), audio: proveedor.GetService<IEntradaDeAudio>()));
+
+        // ── Telegrafía: el decodificador de CW propio, sobre el audio de recepción ──
+        // Solo escucha: ni transmite ni manda órdenes al equipo.
+        servicios.AddSingleton(proveedor => new VistaModeloCw(
+            proveedor.GetRequiredService<AjustesDelPrograma>(),
+            proveedor.GetService<IEntradaDeAudio>()));
         AnadirActualizacionesYFallos(servicios);
 
         servicios.AddSingleton<VistaModeloPrincipal>();

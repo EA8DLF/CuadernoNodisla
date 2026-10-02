@@ -1,0 +1,5 @@
+# Bloque Digital: rótulos como en WSJT-X/JTDX, que se escriben igual en todos los idiomas.
+Rx
+Tx
+DX Call
+DX Grid

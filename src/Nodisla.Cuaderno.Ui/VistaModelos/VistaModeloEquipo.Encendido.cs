@@ -1,4 +1,5 @@
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
 
@@ -37,27 +38,27 @@ public sealed partial class VistaModeloEquipo
         {
             if (Conectado)
             {
-                if (ConfirmarApagado is not { } preguntar || !preguntar("¿Apagar el FT-710?"))
+                if (ConfirmarApagado is not { } preguntar || !preguntar(Textos.T("Cabina.Encendido.ConfirmarApagar")))
                 {
-                    Aviso = ConfirmarApagado is null ? "No se ha apagado: hace falta confirmación." : string.Empty;
+                    Aviso = ConfirmarApagado is null ? Textos.T("Cabina.Encendido.SinConfirmar") : string.Empty;
                     return;
                 }
 
                 _medicion.Stop();
                 await equipo.ApagarAsync().ConfigureAwait(true);
-                Aviso = "Radio apagada. Pulsación larga de LOCK para encenderla.";
+                Aviso = Textos.T("Cabina.Encendido.Apagada");
             }
             else
             {
-                Aviso = "Encendiendo la radio…";
+                Aviso = Textos.T("Cabina.Encendido.Encendiendo");
                 var motivo = await equipo.EncenderAsync().ConfigureAwait(true);
                 // Mandos, memorias y medidores se rehacen solos al pasar a conectado (Recoger).
-                Aviso = motivo ?? "Radio encendida y conectada.";
+                Aviso = motivo ?? Textos.T("Cabina.Encendido.Encendida");
             }
         }
         catch (Exception ex)
         {
-            Aviso = $"No se ha podido {(Conectado ? "apagar" : "encender")} la radio: {ex.Message}";
+            Aviso = Conectado ? Textos.F("Cabina.Encendido.NoApaga", ex.Message) : Textos.F("Cabina.Encendido.NoEnciende", ex.Message);
         }
         finally
         {

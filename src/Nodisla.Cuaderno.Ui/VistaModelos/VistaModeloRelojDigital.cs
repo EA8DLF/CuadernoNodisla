@@ -3,6 +3,7 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.Conversores;
 using Serilog;
 
@@ -186,7 +187,7 @@ public sealed partial class VistaModeloRelojDigital : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido poner el reloj en hora.");
-            Parte = $"No se ha podido poner el reloj en hora: {ex.Message}";
+            Parte = Textos.F("Digital.Reloj.NoSePudoPonerEnHora", ex.Message);
         }
         finally
         {
@@ -216,7 +217,7 @@ public sealed partial class VistaModeloRelojDigital : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido configurar el servicio de hora de Windows.");
-            Parte = $"No se ha podido configurar el servicio de hora: {ex.Message}";
+            Parte = Textos.F("Digital.Reloj.NoSePudoConfigurar", ex.Message);
         }
         finally
         {
@@ -241,7 +242,7 @@ public sealed partial class VistaModeloRelojDigital : ObservableObject
         catch (Exception ex)
         {
             Log.Warning(ex, "No se ha podido medir el desvío del reloj.");
-            Parte = $"No se ha podido medir el reloj: {ex.Message}";
+            Parte = Textos.F("Digital.Reloj.NoSePudoMedir", ex.Message);
         }
         finally
         {
@@ -261,9 +262,7 @@ public sealed partial class VistaModeloRelojDigital : ObservableObject
               ?? string.Empty;
 
         var antesYDespues = resultado is { DesvioAntesMs: { } antes, DesvioDespuesMs: { } despues }
-            ? string.Create(
-                CultureInfo.CurrentCulture,
-                $" Antes: {antes:+0;-0} ms. Después: {despues:+0;-0} ms.")
+            ? " " + Textos.F("Digital.Reloj.AntesYDespues", antes, despues)
             : string.Empty;
 
         Parte = resultado.Mensaje + antesYDespues;

@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Dxcc;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Integraciones.Cluster;
 
@@ -146,7 +147,7 @@ public sealed partial class ClusterTelnet : IFuenteSpots
     {
         ArgumentNullException.ThrowIfNull(orden);
         var flujo = _flujo ?? throw new InvalidOperationException(
-            $"No hay conexión con {_opciones.Nombre}: la orden no se ha enviado.");
+            Textos.F("Servicios.Cluster.OrdenSinConexion", _opciones.Nombre));
 
         var bytes = Encoding.ASCII.GetBytes(orden.TrimEnd('\r', '\n') + "\r\n");
         await _envio.WaitAsync(ct).ConfigureAwait(false);
@@ -199,7 +200,7 @@ public sealed partial class ClusterTelnet : IFuenteSpots
             catch (Exception ex) when (ex is IOException or SocketException or ObjectDisposedException
                 or InvalidOperationException)
             {
-                Avisar($"* {_opciones.Nombre}: se perdió la conexión ({ex.Message}).");
+                Avisar(Textos.F("Servicios.Cluster.ConexionPerdida", _opciones.Nombre, ex.Message));
             }
             finally
             {
@@ -214,7 +215,7 @@ public sealed partial class ClusterTelnet : IFuenteSpots
             intento++;
             var espera = EsperaDeReintento(intento);
             CambiarEstado(EstadoDeConexion.Reintentando);
-            Avisar($"* {_opciones.Nombre}: reintentando dentro de {espera.TotalSeconds:0} s.");
+            Avisar(Textos.F("Servicios.Cluster.Reintentando", _opciones.Nombre, espera.TotalSeconds));
             try
             {
                 await Task.Delay(espera, ct).ConfigureAwait(false);
@@ -290,7 +291,7 @@ public sealed partial class ClusterTelnet : IFuenteSpots
                     {
                         // Ni un byte en mucho rato: la conexion esta muerta aunque el socket
                         // siga abierto. Mas vale reconectar que quedarse mirando.
-                        Avisar($"* {_opciones.Nombre}: sin datos, se da la conexión por perdida.");
+                        Avisar(Textos.F("Servicios.Cluster.SinDatos", _opciones.Nombre));
                         return;
                     }
                     // El nodo no ha pedido nada: se sigue con el guion de todas formas.
@@ -334,9 +335,9 @@ public sealed partial class ClusterTelnet : IFuenteSpots
                 if (EsRechazo(linea))
                 {
                     Avisar(linea);
-                    Avisar($"* {_opciones.Nombre}: el nodo ha rechazado el indicativo. No se reintenta.");
+                    Avisar(Textos.F("Servicios.Cluster.IndicativoRechazado", _opciones.Nombre));
                     CambiarEstado(EstadoDeConexion.Fallido);
-                    throw new IOException("Indicativo rechazado por el cluster.");
+                    throw new IOException(Textos.T("Servicios.Cluster.IndicativoRechazadoExcepcion"));
                 }
             }
 

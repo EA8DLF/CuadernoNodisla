@@ -1,6 +1,7 @@
 <UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.ReportarFallo"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              Foreground="{DynamicResource Texto}">
 
     <!--
@@ -45,60 +46,60 @@
 
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <TextBlock Text="Reportar un fallo" Style="{StaticResource TituloDeSeccion}" />
+                <TextBlock Text="{loc:Texto Ayuda.ReportarUnFallo}" Style="{StaticResource TituloDeSeccion}" />
                 <TextBlock Style="{StaticResource TextoTenueEstilo}"
-                           Text="El informe se abre en GitHub, donde es público. Antes de enviar se quitan contraseñas, claves de las direcciones, correos, locator y coordenadas; aun así, revise la vista previa. Hace falta una cuenta de GitHub para enviarlo." />
+                           Text="{loc:Texto Ayuda.Fallo.Explicacion}" TextWrapping="Wrap" />
 
-                <TextBlock Text="Título" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ayuda.Fallo.Titulo}" Style="{StaticResource Rotulo}" />
                 <TextBox Text="{Binding Titulo, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Campo}"
-                         AutomationProperties.Name="Título del fallo" />
+                         AutomationProperties.Name="{loc:Texto Ayuda.Fallo.TituloNombre}" />
 
-                <TextBlock Text="¿Qué pasó?" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ayuda.Fallo.QuePaso}" Style="{StaticResource Rotulo}" />
                 <TextBox Text="{Binding QuePaso, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CampoLargo}"
-                         AutomationProperties.Name="Qué pasó" />
+                         AutomationProperties.Name="{loc:Texto Ayuda.Fallo.QuePasoNombre}" />
 
-                <TextBlock Text="¿Qué esperaba que pasara?" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ayuda.Fallo.QueEsperaba}" Style="{StaticResource Rotulo}" />
                 <TextBox Text="{Binding QueEsperaba, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CampoLargo}"
-                         AutomationProperties.Name="Qué esperaba que pasara" />
+                         AutomationProperties.Name="{loc:Texto Ayuda.Fallo.QueEsperabaNombre}" />
 
-                <TextBlock Text="Pasos para reproducirlo" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ayuda.Fallo.Pasos}" Style="{StaticResource Rotulo}" />
                 <TextBox Text="{Binding Pasos, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CampoLargo}"
-                         AutomationProperties.Name="Pasos para reproducir el fallo" />
+                         AutomationProperties.Name="{loc:Texto Ayuda.Fallo.PasosNombre}" />
 
-                <TextBlock Text="Se adjunta (puede editarlo)" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ayuda.Fallo.SeAdjunta}" Style="{StaticResource Rotulo}" />
                 <TextBox Text="{Binding Entorno, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CampoLargo}"
                          FontFamily="Consolas"
-                         AutomationProperties.Name="Datos del entorno que se adjuntan" />
+                         AutomationProperties.Name="{loc:Texto Ayuda.Fallo.EntornoNombre}" />
 
                 <CheckBox IsChecked="{Binding IncluirRegistro}" Margin="0,8,0,2"
-                          Content="Adjuntar las últimas líneas del registro"
-                          AutomationProperties.Name="Adjuntar las últimas líneas del registro" />
+                          Content="{loc:Texto Ayuda.Fallo.AdjuntarRegistro}"
+                          AutomationProperties.Name="{loc:Texto Ayuda.Fallo.AdjuntarRegistro}" />
                 <TextBox Text="{Binding Registro, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CampoLargo}"
                          FontFamily="Consolas" MaxHeight="220"
                          Visibility="{Binding IncluirRegistro, Converter={StaticResource BooleanoAVisible}}"
-                         AutomationProperties.Name="Líneas del registro que se adjuntan" />
+                         AutomationProperties.Name="{loc:Texto Ayuda.Fallo.RegistroNombre}" />
 
                 <WrapPanel Margin="0,10,0,0">
-                    <Button Content="Abrir en GitHub para enviar"
+                    <Button Content="{loc:Texto Ayuda.Fallo.AbrirEnGitHub}"
                             Command="{Binding EnviarCommand}"
                             Style="{StaticResource BotonPrincipal}"
                             Margin="0,0,6,4"
-                            AutomationProperties.Name="Abrir el informe en GitHub para enviarlo" />
-                    <Button Content="Volver a rellenar lo adjunto"
+                            AutomationProperties.Name="{loc:Texto Ayuda.Fallo.AbrirEnGitHubNombre}" />
+                    <Button Content="{loc:Texto Ayuda.Fallo.Recargar}"
                             Command="{Binding RecargarAdjuntosCommand}"
                             Margin="0,0,6,4"
-                            AutomationProperties.Name="Volver a rellenar lo adjunto" />
-                    <Button Content="Vaciar"
+                            AutomationProperties.Name="{loc:Texto Ayuda.Fallo.Recargar}" />
+                    <Button Content="{loc:Texto Ayuda.Fallo.Vaciar}"
                             Command="{Binding VaciarCommand}"
                             Margin="0,0,6,4"
-                            AutomationProperties.Name="Vaciar el formulario" />
+                            AutomationProperties.Name="{loc:Texto Ayuda.Fallo.VaciarNombre}" />
                 </WrapPanel>
                 <TextBlock Text="{Binding Estado}" Style="{StaticResource TextoTenueEstilo}" Margin="0,4,0,0" />
             </StackPanel>
         </ScrollViewer>
 
         <DockPanel Grid.Column="2">
-            <TextBlock DockPanel.Dock="Top" Text="Vista previa: esto es exactamente lo que se enviará"
+            <TextBlock DockPanel.Dock="Top" Text="{loc:Texto Ayuda.Fallo.VistaPrevia}" TextWrapping="Wrap"
                        Style="{StaticResource Rotulo}" Margin="0,0,0,2" />
             <TextBox Text="{Binding VistaPrevia, Mode=OneWay}"
                      IsReadOnly="True"
@@ -106,7 +107,7 @@
                      VerticalScrollBarVisibility="Auto"
                      FontFamily="Consolas"
                      Style="{StaticResource Campo}"
-                     AutomationProperties.Name="Vista previa del informe" />
+                     AutomationProperties.Name="{loc:Texto Ayuda.Fallo.VistaPreviaNombre}" />
         </DockPanel>
     </Grid>
 </UserControl>

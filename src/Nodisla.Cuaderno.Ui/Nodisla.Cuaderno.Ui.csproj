@@ -8,7 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Recursos\CuadernoNodisla.ico</ApplicationIcon>
-    <SatelliteResourceLanguages>es;en</SatelliteResourceLanguages>
+    <SatelliteResourceLanguages>es;en;pt;fr;it;de</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>
@@ -44,6 +44,27 @@
     <EmbeddedResource Include="..\..\docs\capturas\ayuda\*.png"
                       LogicalName="Ayuda.capturas.%(Filename)%(Extension)"
                       Link="Ayuda\capturas\%(Filename)%(Extension)" />
+    <!--
+      Las traducciones de la ayuda: docs/ayuda/<idioma>/<mismo-nombre>.md, como
+      AyudaIdioma.<idioma>.<fichero>.md (otro prefijo, para no mezclarse con los capítulos en
+      español). Un capítulo sin traducir se enseña en español con un aviso; las capturas son
+      las mismas para todos los idiomas.
+    -->
+    <EmbeddedResource Include="..\..\docs\ayuda\en\*.md"
+                      LogicalName="AyudaIdioma.en.%(Filename)%(Extension)"
+                      Link="Ayuda\en\%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\..\docs\ayuda\pt\*.md"
+                      LogicalName="AyudaIdioma.pt.%(Filename)%(Extension)"
+                      Link="Ayuda\pt\%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\..\docs\ayuda\fr\*.md"
+                      LogicalName="AyudaIdioma.fr.%(Filename)%(Extension)"
+                      Link="Ayuda\fr\%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\..\docs\ayuda\it\*.md"
+                      LogicalName="AyudaIdioma.it.%(Filename)%(Extension)"
+                      Link="Ayuda\it\%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\..\docs\ayuda\de\*.md"
+                      LogicalName="AyudaIdioma.de.%(Filename)%(Extension)"
+                      Link="Ayuda\de\%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

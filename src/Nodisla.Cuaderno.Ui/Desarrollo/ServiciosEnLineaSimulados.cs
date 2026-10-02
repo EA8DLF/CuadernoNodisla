@@ -1,3 +1,4 @@
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
@@ -33,7 +34,7 @@ public sealed class ConsultaIndicativoSimulada : IConsultaIndicativo
             Pais = "Simulado",
             UsaLotw = true,
             UsaEqsl = false,
-            Aviso = "Ficha inventada: sesión con puertos simulados.",
+            Aviso = Textos.T("Dialogos.Simulado.FichaInventada"),
             Fuente = Nombre,
         });
     }

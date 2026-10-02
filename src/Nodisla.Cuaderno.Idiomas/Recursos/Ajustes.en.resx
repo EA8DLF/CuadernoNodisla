@@ -1,0 +1,1124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Ajustes.Actualizaciones.AlArrancar" xml:space="preserve">
+    <value>Check for new versions at startup (at most once a day)</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.AlArrancar.Accesible" xml:space="preserve">
+    <value>Check for new versions at startup</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.AlDia" xml:space="preserve">
+    <value>You are up to date (version {0}).</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Aplazada" xml:space="preserve">
+    <value>Installation postponed. The installer has already been downloaded.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Buscando" xml:space="preserve">
+    <value>Checking…</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Buscar" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Buscar.Accesible" xml:space="preserve">
+    <value>Check for updates now</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Cancelada" xml:space="preserve">
+    <value>Download cancelled.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Comprobado" xml:space="preserve">
+    <value>Installer downloaded and verified (SHA-256 correct).</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Confirmar.Boton" xml:space="preserve">
+    <value>Close and install</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Confirmar.Texto" xml:space="preserve">
+    <value>Cuaderno NODISLA will close and the installer for version {0} will open.
+
+Your QSOs and settings are not touched. If you are transmitting or in the middle of a QSO, cancel and finish first.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Confirmar.Titulo" xml:space="preserve">
+    <value>Install version {0}</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Descargando" xml:space="preserve">
+    <value>Downloading the installer…</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.Explicacion" xml:space="preserve">
+    <value>The public releases page on GitHub is checked, without any account or data of yours. If there is a new version, a notice appears at the top; nothing is downloaded or installed unless you ask for it.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.HayNueva" xml:space="preserve">
+    <value>A new version is available: {0}.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoAbreInstalador" xml:space="preserve">
+    <value>Could not open the installer.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoAbreNavegador" xml:space="preserve">
+    <value>Could not open the browser. The page is {0}</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoDescargado" xml:space="preserve">
+    <value>Could not download the installer.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoMontado" xml:space="preserve">
+    <value>Version notifications are not available in this session.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoSeHaPodidoComprobar" xml:space="preserve">
+    <value>Could not check right now.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.NoSeHaPodidoComprobarMotivo" xml:space="preserve">
+    <value>Could not check right now. {0}</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.SinInstalador" xml:space="preserve">
+    <value>This version has no verifiable installer. Download it from the GitHub page.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.SinNotas" xml:space="preserve">
+    <value>This version has no release notes.</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.TituloDelAviso" xml:space="preserve">
+    <value>A new version of Cuaderno NODISLA is available: {0} (you have {1}).</value>
+  </data>
+  <data name="Ajustes.Actualizaciones.VersionInstalada" xml:space="preserve">
+    <value>Installed version:</value>
+  </data>
+  <data name="Ajustes.Apartado.Actualizaciones" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data name="Ajustes.Apartado.Audio" xml:space="preserve">
+    <value>Audio &amp; digital</value>
+  </data>
+  <data name="Ajustes.Apartado.Cluster" xml:space="preserve">
+    <value>Cluster</value>
+  </data>
+  <data name="Ajustes.Apartado.Correo" xml:space="preserve">
+    <value>QSL e-mail</value>
+  </data>
+  <data name="Ajustes.Apartado.Cuentas" xml:space="preserve">
+    <value>Accounts &amp; services</value>
+  </data>
+  <data name="Ajustes.Apartado.Equipo" xml:space="preserve">
+    <value>Radio (CAT)</value>
+  </data>
+  <data name="Ajustes.Apartado.Fonia" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Ajustes.Apartado.Idioma" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Ajustes.Apartado.Libro" xml:space="preserve">
+    <value>Log (ADIF)</value>
+  </data>
+  <data name="Ajustes.Apartado.Subidas" xml:space="preserve">
+    <value>Uploads &amp; QRZ</value>
+  </data>
+  <data name="Ajustes.Audio.Discrepancia" xml:space="preserve">
+    <value>Warning: the input “{0}” and the output “{1}” do not seem to belong to the same device. If the radio has a USB codec, both input and output should be marked “RIG”; if they are not, check them before transmitting.</value>
+  </data>
+  <data name="Ajustes.Audio.ElEquipo" xml:space="preserve">
+    <value>RIG</value>
+  </data>
+  <data name="Ajustes.Audio.Entrada" xml:space="preserve">
+    <value>Input (from the radio)</value>
+  </data>
+  <data name="Ajustes.Audio.Entrada.Accesible" xml:space="preserve">
+    <value>Audio input device</value>
+  </data>
+  <data name="Ajustes.Audio.Entrada.Ayuda" xml:space="preserve">
+    <value>Where the received audio comes from. On the FT-710 it is its USB codec.</value>
+  </data>
+  <data name="Ajustes.Audio.Escuchando" xml:space="preserve">
+    <value>Listening to “{0}”. Speak or tune the radio to a signal to see the level.</value>
+  </data>
+  <data name="Ajustes.Audio.Explicacion" xml:space="preserve">
+    <value>Where the radio's audio comes in and goes out, and who decodes FT8 and FT4.</value>
+  </data>
+  <data name="Ajustes.Audio.Muestras" xml:space="preserve">
+    <value>Samples per second</value>
+  </data>
+  <data name="Ajustes.Audio.Muestras.Ayuda" xml:space="preserve">
+    <value>48,000 is what the FT-710 codec provides and what FT8 and FT4 expect.</value>
+  </data>
+  <data name="Ajustes.Audio.Nivel.Bajo" xml:space="preserve">
+    <value>{0:0.00} — very low. Raise the codec's recording volume.</value>
+  </data>
+  <data name="Ajustes.Audio.Nivel.Bien" xml:space="preserve">
+    <value>{0:0.00} — good.</value>
+  </data>
+  <data name="Ajustes.Audio.Nivel.Satura" xml:space="preserve">
+    <value>{0:0.00} — CLIPPING. Lower the codec's recording volume in Windows until it stays between 0.20 and 0.60.</value>
+  </data>
+  <data name="Ajustes.Audio.NivelBueno" xml:space="preserve">
+    <value>The right level is between 0.20 and 0.60. Above 0.90 the codec clips and weak signals are lost; below 0.03 nothing gets through.</value>
+  </data>
+  <data name="Ajustes.Audio.NivelDeEntrada" xml:space="preserve">
+    <value>Input level</value>
+  </data>
+  <data name="Ajustes.Audio.NivelDeEntrada.Accesible" xml:space="preserve">
+    <value>Audio input level</value>
+  </data>
+  <data name="Ajustes.Audio.NoMontado" xml:space="preserve">
+    <value>Audio is not available in this session.</value>
+  </data>
+  <data name="Ajustes.Audio.NoSeHaPodidoAbrir" xml:space="preserve">
+    <value>Could not open “{0}”: {1}</value>
+  </data>
+  <data name="Ajustes.Audio.PararPrueba" xml:space="preserve">
+    <value>Stop test</value>
+  </data>
+  <data name="Ajustes.Audio.PreguntarAntes" xml:space="preserve">
+    <value>Ask before transmitting with the modem</value>
+  </data>
+  <data name="Ajustes.Audio.PreguntarAntes.Ayuda" xml:space="preserve">
+    <value>This is what “Don't ask again” turns off. The PTT watchdog, the clock and the output are always required.</value>
+  </data>
+  <data name="Ajustes.Audio.ProbarNivel" xml:space="preserve">
+    <value>Test level</value>
+  </data>
+  <data name="Ajustes.Audio.ProbarNivel.Ayuda" xml:space="preserve">
+    <value>Opens the chosen input and shows the level. It is the only thing on this screen that touches the sound card.</value>
+  </data>
+  <data name="Ajustes.Audio.RecordarPermiso" xml:space="preserve">
+    <value>Remember “Allow transmit” between sessions</value>
+  </data>
+  <data name="Ajustes.Audio.RecordarPermiso.Ayuda" xml:space="preserve">
+    <value>The lock on the Digital tab starts open. By default it starts closed in every session.</value>
+  </data>
+  <data name="Ajustes.Audio.RegistrarAlCompletar" xml:space="preserve">
+    <value>Log the complete QSO automatically</value>
+  </data>
+  <data name="Ajustes.Audio.RegistrarAlCompletar.Ayuda" xml:space="preserve">
+    <value>When RR73/RRR/73 is received from the other station, or when your own RR73 goes out after their R+report, the QSO is logged without pressing “Save to log”.</value>
+  </data>
+  <data name="Ajustes.Audio.Salida" xml:space="preserve">
+    <value>Output (to the radio)</value>
+  </data>
+  <data name="Ajustes.Audio.Salida.Accesible" xml:space="preserve">
+    <value>Audio output device</value>
+  </data>
+  <data name="Ajustes.Audio.Salida.Ayuda" xml:space="preserve">
+    <value>Where the audio is sent to the radio when transmitting.</value>
+  </data>
+  <data name="Ajustes.Audio.SinModulo" xml:space="preserve">
+    <value>There is no audio module in this session, so there is nothing to configure here. Close the program and open it again without CUADERNO_SIMULADO.</value>
+  </data>
+  <data name="Ajustes.Audio.Titulo" xml:space="preserve">
+    <value>Audio and digital modes</value>
+  </data>
+  <data name="Ajustes.Audio.TransmitirYApuntar" xml:space="preserve">
+    <value>Transmitting and logging</value>
+  </data>
+  <data name="Ajustes.Cluster.Aplicado" xml:space="preserve">
+    <value>Saved and applied: {0} ({1}:{2}) as {3}. Press Connect to log in.</value>
+  </data>
+  <data name="Ajustes.Cluster.Conexion.Ayuda" xml:space="preserve">
+    <value>Opens or closes the connection to the node</value>
+  </data>
+  <data name="Ajustes.Cluster.Enviar" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="Ajustes.Cluster.FaltaServidor" xml:space="preserve">
+    <value>The node server is missing.</value>
+  </data>
+  <data name="Ajustes.Cluster.IndicativoNoVale" xml:space="preserve">
+    <value>The call sign “{0}” is not valid: {1}</value>
+  </data>
+  <data name="Ajustes.Cluster.Orden.Ayuda" xml:space="preserve">
+    <value>Command for the node, for example sh/dx</value>
+  </data>
+  <data name="Ajustes.Cluster.Simulado" xml:space="preserve">
+    <value>With simulated ports the cluster is fake, so there is no node to configure. Close the program and open it again without CUADERNO_SIMULADO to choose the node, call sign and password.</value>
+  </data>
+  <data name="Ajustes.Cluster.SinIndicativo" xml:space="preserve">
+    <value>There is no call sign to log in with: type it here or create a station profile.</value>
+  </data>
+  <data name="Ajustes.Correo.Asunto" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="Ajustes.Correo.Asunto.Accesible" xml:space="preserve">
+    <value>QSL e-mail subject</value>
+  </data>
+  <data name="Ajustes.Correo.Cifrado" xml:space="preserve">
+    <value>Encryption</value>
+  </data>
+  <data name="Ajustes.Correo.Cifrado.Accesible" xml:space="preserve">
+    <value>Encryption of the connection to the mail server</value>
+  </data>
+  <data name="Ajustes.Correo.Cifrado.Explicacion" xml:space="preserve">
+    <value>STARTTLS: port 587 (the usual one). Direct SSL: port 465. None: only for a server on your home network.</value>
+  </data>
+  <data name="Ajustes.Correo.ConexionCorrecta" xml:space="preserve">
+    <value>Connection OK: the server accepts the account. No e-mail has been sent.</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena.Accesible" xml:space="preserve">
+    <value>E-mail password</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena.Borrar.Accesible" xml:space="preserve">
+    <value>Delete the saved e-mail password</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena.Explicacion" xml:space="preserve">
+    <value>It is encrypted with your Windows account's data protection and is never shown again.</value>
+  </data>
+  <data name="Ajustes.Correo.Contrasena.Guardar.Accesible" xml:space="preserve">
+    <value>Save the e-mail password encrypted</value>
+  </data>
+  <data name="Ajustes.Correo.ContrasenaBorrada" xml:space="preserve">
+    <value>Password deleted.</value>
+  </data>
+  <data name="Ajustes.Correo.ContrasenaGuardada" xml:space="preserve">
+    <value>Password saved encrypted.</value>
+  </data>
+  <data name="Ajustes.Correo.Explicacion" xml:space="preserve">
+    <value>The account used to send QSL cards by e-mail. Gmail: smtp.gmail.com, 587, STARTTLS and an app password. Outlook: smtp-mail.outlook.com, 587, STARTTLS.</value>
+  </data>
+  <data name="Ajustes.Correo.NombreDelRemitente" xml:space="preserve">
+    <value>Sender name (e.g. EA8DLF José)</value>
+  </data>
+  <data name="Ajustes.Correo.NombreDelRemitente.Accesible" xml:space="preserve">
+    <value>Sender name</value>
+  </data>
+  <data name="Ajustes.Correo.NoMontado" xml:space="preserve">
+    <value>QSL e-mail is not available in this session.</value>
+  </data>
+  <data name="Ajustes.Correo.NoSeHaPodidoProbar" xml:space="preserve">
+    <value>Could not test: {0}</value>
+  </data>
+  <data name="Ajustes.Correo.Probar.Accesible" xml:space="preserve">
+    <value>Test the connection to the mail server without sending anything</value>
+  </data>
+  <data name="Ajustes.Correo.Puerto" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="Ajustes.Correo.Puerto.Accesible" xml:space="preserve">
+    <value>Mail server port</value>
+  </data>
+  <data name="Ajustes.Correo.Remitente" xml:space="preserve">
+    <value>Sender (your address)</value>
+  </data>
+  <data name="Ajustes.Correo.Remitente.Accesible" xml:space="preserve">
+    <value>Sender address</value>
+  </data>
+  <data name="Ajustes.Correo.Seguridad.Ninguna" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Ajustes.Correo.Seguridad.SslDirecto" xml:space="preserve">
+    <value>Direct SSL</value>
+  </data>
+  <data name="Ajustes.Correo.Seguridad.StartTls" xml:space="preserve">
+    <value>STARTTLS</value>
+  </data>
+  <data name="Ajustes.Correo.Servidor" xml:space="preserve">
+    <value>Outgoing server (SMTP)</value>
+  </data>
+  <data name="Ajustes.Correo.Servidor.Accesible" xml:space="preserve">
+    <value>Outgoing mail server</value>
+  </data>
+  <data name="Ajustes.Correo.TarjetaAdjunta" xml:space="preserve">
+    <value>Attach card as</value>
+  </data>
+  <data name="Ajustes.Correo.TarjetaAdjunta.Accesible" xml:space="preserve">
+    <value>Attached card format</value>
+  </data>
+  <data name="Ajustes.Correo.Texto" xml:space="preserve">
+    <value>Body</value>
+  </data>
+  <data name="Ajustes.Correo.Texto.Accesible" xml:space="preserve">
+    <value>QSL e-mail body</value>
+  </data>
+  <data name="Ajustes.Correo.TextoDeOmision" xml:space="preserve">
+    <value>Default text</value>
+  </data>
+  <data name="Ajustes.Correo.TextoDeOmision.Accesible" xml:space="preserve">
+    <value>Go back to the default subject and body</value>
+  </data>
+  <data name="Ajustes.Correo.Usuario" xml:space="preserve">
+    <value>User name (empty if the server does not require authentication)</value>
+  </data>
+  <data name="Ajustes.Correo.Usuario.Accesible" xml:space="preserve">
+    <value>E-mail user name</value>
+  </data>
+  <data name="Ajustes.Correo.Variables" xml:space="preserve">
+    <value>Variables: {{indicativo}} {{nombre}} {{fecha}} {{hora}} {{banda}} {{frecuencia}} {{modo}} {{rst}} {{miindicativo}} {{minombre}} {{contactos}}…</value>
+  </data>
+  <data name="Ajustes.Cuenta.ApodoQth" xml:space="preserve">
+    <value>QTH nickname</value>
+  </data>
+  <data name="Ajustes.Cuenta.ApodoQth.Nota" xml:space="preserve">
+    <value>Only if you have several QTHs on eQSL.</value>
+  </data>
+  <data name="Ajustes.Cuenta.CorreoClubLog" xml:space="preserve">
+    <value>Account e-mail</value>
+  </data>
+  <data name="Ajustes.Cuenta.IndicativoClubLog" xml:space="preserve">
+    <value>Log call sign</value>
+  </data>
+  <data name="Ajustes.Cuenta.RutaTqsl" xml:space="preserve">
+    <value>Path to tqsl.exe</value>
+  </data>
+  <data name="Ajustes.Cuenta.RutaTqsl.Nota" xml:space="preserve">
+    <value>Only if it is not in the usual install location.</value>
+  </data>
+  <data name="Ajustes.Cuenta.UbicacionTqsl" xml:space="preserve">
+    <value>TQSL station location</value>
+  </data>
+  <data name="Ajustes.Cuenta.UbicacionTqsl.Nota" xml:space="preserve">
+    <value>The name you gave the location in TQSL, not your call sign.</value>
+  </data>
+  <data name="Ajustes.Cuenta.Usuario" xml:space="preserve">
+    <value>User name</value>
+  </data>
+  <data name="Ajustes.Cuenta.UsuarioVacio" xml:space="preserve">
+    <value>Empty: the profile call sign is used.</value>
+  </data>
+  <data name="Ajustes.Cuentas.Explicacion" xml:space="preserve">
+    <value>One card per service. Passwords are stored encrypted with your Windows account's data protection and are never shown again: the program only says whether they are saved.</value>
+  </data>
+  <data name="Ajustes.Cw.Ancho" xml:space="preserve">
+    <value>Filter width</value>
+  </data>
+  <data name="Ajustes.Cw.Ancho.Ayuda" xml:space="preserve">
+    <value>Narrower pulls out weaker signals and rejects neighbours better, but struggles above 40 WPM. 100 Hz suits almost everything.</value>
+  </data>
+  <data name="Ajustes.Cw.Explicacion" xml:space="preserve">
+    <value>The cockpit decoder. It listens to the audio input above and never transmits.</value>
+  </data>
+  <data name="Ajustes.Cw.Hasta" xml:space="preserve">
+    <value>to</value>
+  </data>
+  <data name="Ajustes.Cw.Senales" xml:space="preserve">
+    <value>Signals at once</value>
+  </data>
+  <data name="Ajustes.Cw.Senales.Ayuda" xml:space="preserve">
+    <value>Besides the main one, reads the other signals in the passband, each on its own line. 1 = main only.</value>
+  </data>
+  <data name="Ajustes.Cw.Sensibilidad" xml:space="preserve">
+    <value>Sensitivity</value>
+  </data>
+  <data name="Ajustes.Cw.Sensibilidad.Ayuda" xml:space="preserve">
+    <value>Higher reads weaker signals; lower needs more signal before writing. Noise writes nothing at any setting.</value>
+  </data>
+  <data name="Ajustes.Cw.Titulo" xml:space="preserve">
+    <value>Telegraphy (CW)</value>
+  </data>
+  <data name="Ajustes.Cw.Tono" xml:space="preserve">
+    <value>Default pitch</value>
+  </data>
+  <data name="Ajustes.Cw.Tono.Ayuda" xml:space="preserve">
+    <value>Pitch the decoder starts with before it finds a signal.</value>
+  </data>
+  <data name="Ajustes.Cw.Velocidad" xml:space="preserve">
+    <value>Speed</value>
+  </data>
+  <data name="Ajustes.Cw.Velocidad.Ayuda" xml:space="preserve">
+    <value>Speeds that are tracked, from 5 to 60 WPM. Narrowing them avoids mistaking a slow signal for a fast one.</value>
+  </data>
+  <data name="Ajustes.Cw.WpmMaxima" xml:space="preserve">
+    <value>Maximum speed</value>
+  </data>
+  <data name="Ajustes.Cw.WpmMinima" xml:space="preserve">
+    <value>Minimum speed</value>
+  </data>
+  <data name="Ajustes.Descartar" xml:space="preserve">
+    <value>Discard</value>
+  </data>
+  <data name="Ajustes.Equipo.Abriendo" xml:space="preserve">
+    <value>Opening the connection…</value>
+  </data>
+  <data name="Ajustes.Equipo.Aplicando" xml:space="preserve">
+    <value>Applying…</value>
+  </data>
+  <data name="Ajustes.Equipo.Aplicar" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="Ajustes.Equipo.Aplicar.Accesible" xml:space="preserve">
+    <value>Save and apply the radio settings</value>
+  </data>
+  <data name="Ajustes.Equipo.Aplicar.Ayuda" xml:space="preserve">
+    <value>Saves and switches radio control without closing the log</value>
+  </data>
+  <data name="Ajustes.Equipo.Civ" xml:space="preserve">
+    <value>CI-V address</value>
+  </data>
+  <data name="Ajustes.Equipo.Civ.Accesible" xml:space="preserve">
+    <value>CI-V address in hexadecimal</value>
+  </data>
+  <data name="Ajustes.Equipo.Civ.Ayuda" xml:space="preserve">
+    <value>In hexadecimal (94 for the IC-7300). Empty = the model's factory default.</value>
+  </data>
+  <data name="Ajustes.Equipo.Contesta" xml:space="preserve">
+    <value>{0} answers{1}. Frequency {2} MHz, mode {3}.</value>
+  </data>
+  <data name="Ajustes.Equipo.DeFabrica" xml:space="preserve">
+    <value>default, {0}</value>
+  </data>
+  <data name="Ajustes.Equipo.Descartar.Accesible" xml:space="preserve">
+    <value>Discard the changes and go back to what was saved</value>
+  </data>
+  <data name="Ajustes.Equipo.DeteccionAutomatica" xml:space="preserve">
+    <value>Automatic detection</value>
+  </data>
+  <data name="Ajustes.Equipo.Detectar" xml:space="preserve">
+    <value>Detect automatically which port the radio is on</value>
+  </data>
+  <data name="Ajustes.Equipo.Detectar.Ayuda" xml:space="preserve">
+    <value>First tries where it was last time and, if it does not answer, goes through all ports asking ID;</value>
+  </data>
+  <data name="Ajustes.Equipo.Detectar.Explicacion" xml:space="preserve">
+    <value>The radio is recognised by its answer to ID;, never by the port number: there may be other devices on this computer that also talk over serial.</value>
+  </data>
+  <data name="Ajustes.Equipo.EnPuerto" xml:space="preserve">
+    <value>on {0} at {1} baud</value>
+  </data>
+  <data name="Ajustes.Equipo.EnUnaLinea" xml:space="preserve">
+    <value>Radio:</value>
+  </data>
+  <data name="Ajustes.Equipo.Espera" xml:space="preserve">
+    <value>Command timeout (ms)</value>
+  </data>
+  <data name="Ajustes.Equipo.Espera.Accesible" xml:space="preserve">
+    <value>Command timeout in milliseconds</value>
+  </data>
+  <data name="Ajustes.Equipo.Explicacion" xml:space="preserve">
+    <value>How the log talks to the radio. While this is set to “None”, the Connect button on the radio panel does nothing.</value>
+  </data>
+  <data name="Ajustes.Equipo.Fabricante" xml:space="preserve">
+    <value>Manufacturer</value>
+  </data>
+  <data name="Ajustes.Equipo.Fabricante.Accesible" xml:space="preserve">
+    <value>Radio manufacturer</value>
+  </data>
+  <data name="Ajustes.Equipo.Generico" xml:space="preserve">
+    <value>generic radio</value>
+  </data>
+  <data name="Ajustes.Equipo.GuardadoPero" xml:space="preserve">
+    <value>Saved, but: {0}</value>
+  </data>
+  <data name="Ajustes.Equipo.GuardadoSinEquipo" xml:space="preserve">
+    <value>Saved. The log is now without a radio: you type the frequency and mode yourself.</value>
+  </data>
+  <data name="Ajustes.Equipo.GuardadoYAplicado" xml:space="preserve">
+    <value>Saved and applied: {0}{1}. Press Connect on the radio panel to open communication.</value>
+  </data>
+  <data name="Ajustes.Equipo.Maquina" xml:space="preserve">
+    <value>Host</value>
+  </data>
+  <data name="Ajustes.Equipo.Maquina.Accesible" xml:space="preserve">
+    <value>Host where rigctld is listening</value>
+  </data>
+  <data name="Ajustes.Equipo.MaximoEnAntena" xml:space="preserve">
+    <value>Max. transmit (s)</value>
+  </data>
+  <data name="Ajustes.Equipo.MaximoEnAntena.Accesible" xml:space="preserve">
+    <value>Maximum transmit time, in seconds</value>
+  </data>
+  <data name="Ajustes.Equipo.MaximoEnAntena.DeFabrica" xml:space="preserve">
+    <value>default, 180 · hard limit, 600</value>
+  </data>
+  <data name="Ajustes.Equipo.Modelo" xml:space="preserve">
+    <value>Model</value>
+  </data>
+  <data name="Ajustes.Equipo.Modelo.Accesible" xml:space="preserve">
+    <value>Radio model</value>
+  </data>
+  <data name="Ajustes.Equipo.NadaQueProbar" xml:space="preserve">
+    <value>No radio: there is nothing to test. You type the frequency and mode yourself.</value>
+  </data>
+  <data name="Ajustes.Equipo.NoAparece" xml:space="preserve">
+    <value>The radio was not found on the serial ports. Check that it is on, that the USB cable is connected, that the chosen model is yours and that no other program is holding the port.</value>
+  </data>
+  <data name="Ajustes.Equipo.NoContesta" xml:space="preserve">
+    <value>The connection was opened but the radio does not answer. Check the baud rate (set by the radio's CAT RATE menu).</value>
+  </data>
+  <data name="Ajustes.Equipo.NoSeHaPodidoConectar" xml:space="preserve">
+    <value>Could not connect: {0}</value>
+  </data>
+  <data name="Ajustes.Equipo.OmniRig" xml:space="preserve">
+    <value>OmniRig rig</value>
+  </data>
+  <data name="Ajustes.Equipo.OmniRig.Accesible" xml:space="preserve">
+    <value>OmniRig rig number</value>
+  </data>
+  <data name="Ajustes.Equipo.OmniRig.Explicacion" xml:space="preserve">
+    <value>OmniRig handles two rigs: 1 and 2. The one set here is the one the log follows.</value>
+  </data>
+  <data name="Ajustes.Equipo.Probando" xml:space="preserve">
+    <value>Testing…</value>
+  </data>
+  <data name="Ajustes.Equipo.Probar.Accesible" xml:space="preserve">
+    <value>Test the connection to the radio</value>
+  </data>
+  <data name="Ajustes.Equipo.Probar.Ayuda" xml:space="preserve">
+    <value>Opens the connection, reads identification, frequency and mode, and closes. Does not transmit.</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Cat" xml:space="preserve">
+    <value>Via CAT</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Cat.Explicacion" xml:space="preserve">
+    <value>The radio goes into transmit with the manufacturer's command. This is the normal choice.</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Dtr" xml:space="preserve">
+    <value>Via DTR</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Dtr.Explicacion" xml:space="preserve">
+    <value>Same as RTS, but on the other line.</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Rts" xml:space="preserve">
+    <value>Via RTS</value>
+  </data>
+  <data name="Ajustes.Equipo.Ptt.Rts.Explicacion" xml:space="preserve">
+    <value>By raising the serial port's RTS line: audio interfaces with an optocoupler.</value>
+  </data>
+  <data name="Ajustes.Equipo.Puerto" xml:space="preserve">
+    <value>Serial port</value>
+  </data>
+  <data name="Ajustes.Equipo.Puerto.Accesible" xml:space="preserve">
+    <value>Radio serial port</value>
+  </data>
+  <data name="Ajustes.Equipo.PuertoTcp" xml:space="preserve">
+    <value>TCP port</value>
+  </data>
+  <data name="Ajustes.Equipo.PuertoTcp.Accesible" xml:space="preserve">
+    <value>rigctld TCP port</value>
+  </data>
+  <data name="Ajustes.Equipo.Rigctld.Explicacion" xml:space="preserve">
+    <value>rigctld must already be running. The usual setting is 127.0.0.1 on port 4532.</value>
+  </data>
+  <data name="Ajustes.Equipo.SeSube" xml:space="preserve">
+    <value>Keyed via</value>
+  </data>
+  <data name="Ajustes.Equipo.SeSube.Accesible" xml:space="preserve">
+    <value>How PTT is keyed</value>
+  </data>
+  <data name="Ajustes.Equipo.Simulado" xml:space="preserve">
+    <value>The program is running with simulated ports, so there is no real radio to configure. Close the program and open it again without CUADERNO_SIMULADO to configure CAT.</value>
+  </data>
+  <data name="Ajustes.Equipo.SinLatido" xml:space="preserve">
+    <value>No heartbeat (s)</value>
+  </data>
+  <data name="Ajustes.Equipo.SinLatido.Accesible" xml:space="preserve">
+    <value>Time without heartbeat, in seconds</value>
+  </data>
+  <data name="Ajustes.Equipo.SinProbarConRadio" xml:space="preserve">
+    <value>Programmed from the manual, not tested with the radio.</value>
+  </data>
+  <data name="Ajustes.Equipo.Sondeo" xml:space="preserve">
+    <value>Polling (ms)</value>
+  </data>
+  <data name="Ajustes.Equipo.Sondeo.Accesible" xml:space="preserve">
+    <value>Polling interval in milliseconds</value>
+  </data>
+  <data name="Ajustes.Equipo.TiempoAgotado" xml:space="preserve">
+    <value>Timed out ({0:N0} s) looking for the radio. Check that the radio is on and that no other program is holding the port.</value>
+  </data>
+  <data name="Ajustes.Equipo.Titulo" xml:space="preserve">
+    <value>CAT · radio control</value>
+  </data>
+  <data name="Ajustes.Equipo.Velocidad" xml:space="preserve">
+    <value>Baud rate</value>
+  </data>
+  <data name="Ajustes.Equipo.Velocidad.Accesible" xml:space="preserve">
+    <value>Serial port baud rate</value>
+  </data>
+  <data name="Ajustes.Equipo.Velocidad.Explicacion" xml:space="preserve">
+    <value>The baud rate is set by the radio, not the cable: it is in its menu, under CAT RATE. The factory default is 38400. If you do not know it, leave automatic detection on: it tries them all.</value>
+  </data>
+  <data name="Ajustes.Equipo.VelocidadHabitual" xml:space="preserve">
+    <value>{0:N0}  (usual)</value>
+  </data>
+  <data name="Ajustes.Equipo.Via" xml:space="preserve">
+    <value>Control method</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Accesible" xml:space="preserve">
+    <value>Radio control method</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.CatNativo" xml:space="preserve">
+    <value>Native CAT (Yaesu and ICOM)</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.CatNativo.Explicacion" xml:space="preserve">
+    <value>Through the radio's serial port. It is the only method that gives filters, noise, contour, meters and memories.</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Ninguna" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Ninguna.Explicacion" xml:space="preserve">
+    <value>No radio: you type the frequency and mode by hand.</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.OmniRig" xml:space="preserve">
+    <value>OmniRig</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.OmniRig.Explicacion" xml:space="preserve">
+    <value>For those who already have OmniRig set up with their radio configured.</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Rigctld" xml:space="preserve">
+    <value>Hamlib (rigctld)</value>
+  </data>
+  <data name="Ajustes.Equipo.Via.Rigctld.Explicacion" xml:space="preserve">
+    <value>For any other radio, or to share the radio with WSJT-X. rigctld must be running.</value>
+  </data>
+  <data name="Ajustes.Equipo.Vigilante" xml:space="preserve">
+    <value>The watchdog releases PTT no matter what: when the time runs out, if whatever is transmitting stops giving signs of life, if an error occurs and when the program closes. A stuck PTT burns out the final stage.</value>
+  </data>
+  <data name="Ajustes.Equipo.VolverAMirar" xml:space="preserve">
+    <value>Look again</value>
+  </data>
+  <data name="Ajustes.Equipo.VolverAMirar.Accesible" xml:space="preserve">
+    <value>Look again for serial ports</value>
+  </data>
+  <data name="Ajustes.Estado.Configurada" xml:space="preserve">
+    <value>Configured</value>
+  </data>
+  <data name="Ajustes.Estado.Configurado" xml:space="preserve">
+    <value>Configured</value>
+  </data>
+  <data name="Ajustes.Estado.ConfiguradoConContrasena" xml:space="preserve">
+    <value>Configured · with password</value>
+  </data>
+  <data name="Ajustes.Estado.FaltaContrasena" xml:space="preserve">
+    <value>Password missing</value>
+  </data>
+  <data name="Ajustes.Estado.FaltaTqsl" xml:space="preserve">
+    <value>TQSL missing</value>
+  </data>
+  <data name="Ajustes.Estado.Incompleta" xml:space="preserve">
+    <value>Incomplete</value>
+  </data>
+  <data name="Ajustes.Estado.ListaParaSubir" xml:space="preserve">
+    <value>Ready to upload</value>
+  </data>
+  <data name="Ajustes.Estado.SinConfigurar" xml:space="preserve">
+    <value>Not configured</value>
+  </data>
+  <data name="Ajustes.Estado.SinNodo" xml:space="preserve">
+    <value>No node</value>
+  </data>
+  <data name="Ajustes.Estado.SinNodoDeVerdad" xml:space="preserve">
+    <value>No real node</value>
+  </data>
+  <data name="Ajustes.Fonia.Altavoces" xml:space="preserve">
+    <value>PC speakers or headphones</value>
+  </data>
+  <data name="Ajustes.Fonia.Altavoces.Accesible" xml:space="preserve">
+    <value>PC speakers</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.AltavocesSonSalida" xml:space="preserve">
+    <value>The chosen speakers are the output to the radio: what you listen to would be transmitted.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.MicrofonoEsEntrada" xml:space="preserve">
+    <value>The chosen microphone is the radio's input: what is received would be retransmitted.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.SalidaNoEsDelEquipo" xml:space="preserve">
+    <value>The output to the radio is not the radio's codec: your voice would not reach the radio.</value>
+  </data>
+  <data name="Ajustes.Fonia.ComprobarFuente" xml:space="preserve">
+    <value>Check the SSB modulation source via CAT · menu EX</value>
+  </data>
+  <data name="Ajustes.Fonia.EntradaDelEquipo" xml:space="preserve">
+    <value>Radio input (what you hear)</value>
+  </data>
+  <data name="Ajustes.Fonia.EntradaDelEquipo.Accesible" xml:space="preserve">
+    <value>Audio input from the radio</value>
+  </data>
+  <data name="Ajustes.Fonia.EscucharAlEntrar" xml:space="preserve">
+    <value>Start listening when entering Operate</value>
+  </data>
+  <data name="Ajustes.Fonia.Explicacion" xml:space="preserve">
+    <value>The radio is heard through the PC speakers and you talk through the PC microphone using the PTT on the “Phone” panel in Operate. PTT always goes through the watchdog and has a maximum time. On the radio, the SSB modulation source must be set to USB.</value>
+  </data>
+  <data name="Ajustes.Fonia.GananciaMicro" xml:space="preserve">
+    <value>Microphone gain:</value>
+  </data>
+  <data name="Ajustes.Fonia.GananciaMicro.Accesible" xml:space="preserve">
+    <value>Microphone gain</value>
+  </data>
+  <data name="Ajustes.Fonia.IndiceFuente.Accesible" xml:space="preserve">
+    <value>Modulation source menu index</value>
+  </data>
+  <data name="Ajustes.Fonia.Microfono" xml:space="preserve">
+    <value>PC microphone</value>
+  </data>
+  <data name="Ajustes.Fonia.NoMontada" xml:space="preserve">
+    <value>Phone through the PC is not available in this session.</value>
+  </data>
+  <data name="Ajustes.Fonia.PttConmutado" xml:space="preserve">
+    <value>Toggle PTT (click to start, click to stop)</value>
+  </data>
+  <data name="Ajustes.Fonia.SalidaAlEquipo" xml:space="preserve">
+    <value>Output to the radio (what is transmitted)</value>
+  </data>
+  <data name="Ajustes.Fonia.SalidaAlEquipo.Accesible" xml:space="preserve">
+    <value>Audio output to the radio</value>
+  </data>
+  <data name="Ajustes.Fonia.SoloSeLee" xml:space="preserve">
+    <value>The menu is only READ; the program changes nothing on the radio. The index comes from the map read from the FT-710 and has not been confirmed against the manual: if the warning does not match what the radio says, correct it here.</value>
+  </data>
+  <data name="Ajustes.Fonia.Tecla.BloqDespl" xml:space="preserve">
+    <value>Scroll Lock</value>
+  </data>
+  <data name="Ajustes.Fonia.Tecla.CtrlDerecho" xml:space="preserve">
+    <value>Right Ctrl</value>
+  </data>
+  <data name="Ajustes.Fonia.Tecla.Ninguna" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Ajustes.Fonia.Tecla.Pausa" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Ajustes.Fonia.TeclaDelPtt" xml:space="preserve">
+    <value>PTT key</value>
+  </data>
+  <data name="Ajustes.Fonia.TeclaDelPtt.Accesible" xml:space="preserve">
+    <value>Phone PTT key</value>
+  </data>
+  <data name="Ajustes.Fonia.TeclaDelPtt.Ayuda" xml:space="preserve">
+    <value>Only while the window is active and never while typing in a text field</value>
+  </data>
+  <data name="Ajustes.Fonia.TiempoMaximo" xml:space="preserve">
+    <value>Maximum time per over (seconds, 10 to 600)</value>
+  </data>
+  <data name="Ajustes.Fonia.TiempoMaximo.Accesible" xml:space="preserve">
+    <value>Maximum phone transmit time in seconds</value>
+  </data>
+  <data name="Ajustes.Fonia.Titulo" xml:space="preserve">
+    <value>Phone through the PC (SSB, AM, FM)</value>
+  </data>
+  <data name="Ajustes.Fonia.ValorDeUsb" xml:space="preserve">
+    <value>USB value</value>
+  </data>
+  <data name="Ajustes.Fonia.ValorDeUsb.Accesible" xml:space="preserve">
+    <value>Value that means USB</value>
+  </data>
+  <data name="Ajustes.Fonia.VolumenEscucha" xml:space="preserve">
+    <value>Receive volume:</value>
+  </data>
+  <data name="Ajustes.Fonia.VolumenEscucha.Accesible" xml:space="preserve">
+    <value>Receive volume</value>
+  </data>
+  <data name="Ajustes.Guardado" xml:space="preserve">
+    <value>Saved.</value>
+  </data>
+  <data name="Ajustes.Idioma.Ayuda" xml:space="preserve">
+    <value>The built-in help is in Spanish. Chapters that have already been translated are shown in your language; the rest are shown in Spanish with a notice.</value>
+  </data>
+  <data name="Ajustes.Idioma.DelSistema" xml:space="preserve">
+    <value>System language ({0})</value>
+  </data>
+  <data name="Ajustes.Idioma.Explicacion" xml:space="preserve">
+    <value>The change takes effect immediately, without restarting. The program logs stay in Spanish, and the labels that mimic the radio's front panel (MODE, SPLIT, CLAR…) stay as they are on the radio.</value>
+  </data>
+  <data name="Ajustes.Idioma.Titulo" xml:space="preserve">
+    <value>Program language</value>
+  </data>
+  <data name="Ajustes.Libro.Choques" xml:space="preserve">
+    <value>Data that did not match between copies</value>
+  </data>
+  <data name="Ajustes.Libro.Contactos" xml:space="preserve">
+    <value>QSOs:</value>
+  </data>
+  <data name="Ajustes.Libro.ElegirExportar" xml:space="preserve">
+    <value>Choose where to save the log as ADIF</value>
+  </data>
+  <data name="Ajustes.Libro.ElegirImportar" xml:space="preserve">
+    <value>Choose the ADIF file to import</value>
+  </data>
+  <data name="Ajustes.Libro.ErrorAlExportar" xml:space="preserve">
+    <value>Could not export: {0} The file has not been written.</value>
+  </data>
+  <data name="Ajustes.Libro.ErrorAlImportar" xml:space="preserve">
+    <value>Could not import: {0}</value>
+  </data>
+  <data name="Ajustes.Libro.Exportados" xml:space="preserve">
+    <value>{0}: {1:N0} QSOs exported to ADIF.</value>
+  </data>
+  <data name="Ajustes.Libro.Exportando" xml:space="preserve">
+    <value>Exporting…</value>
+  </data>
+  <data name="Ajustes.Libro.Exportar" xml:space="preserve">
+    <value>Export ADIF…</value>
+  </data>
+  <data name="Ajustes.Libro.Exportar.Accesible" xml:space="preserve">
+    <value>Export the log to an ADIF file</value>
+  </data>
+  <data name="Ajustes.Libro.FiltroExportar" xml:space="preserve">
+    <value>ADIF files (*.adi)|*.adi</value>
+  </data>
+  <data name="Ajustes.Libro.FiltroImportar" xml:space="preserve">
+    <value>ADIF files (*.adi;*.adif;*.adx)|*.adi;*.adif;*.adx|All files (*.*)|*.*</value>
+  </data>
+  <data name="Ajustes.Libro.Importando" xml:space="preserve">
+    <value>Importing…</value>
+  </data>
+  <data name="Ajustes.Libro.Importar" xml:space="preserve">
+    <value>Import ADIF…</value>
+  </data>
+  <data name="Ajustes.Libro.Importar.Accesible" xml:space="preserve">
+    <value>Import an ADIF file into the log</value>
+  </data>
+  <data name="Ajustes.Libro.NoSeHaPodidoContar" xml:space="preserve">
+    <value>could not be counted</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Avisos" xml:space="preserve">
+    <value>With {0:N0} read warning(s).</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Duracion" xml:space="preserve">
+    <value>It took {0:N1} s.</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.NoCuadra" xml:space="preserve">
+    <value>WARNING: the numbers do not add up; some records cannot be accounted for. Check the file.</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Programa" xml:space="preserve">
+    <value>Generated by {0}.</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Rescatadas" xml:space="preserve">
+    <value>{0:N0} confirmations were rescued that would have been lost by discarding the copies.</value>
+  </data>
+  <data name="Ajustes.Libro.Parte.Resumen" xml:space="preserve">
+    <value>{0}: {1:N0} records read, {2:N0} new, {3:N0} merged ({4:N0} within the file and {5:N0} with the log), {6:N0} already there.</value>
+  </data>
+  <data name="Ajustes.Libro.SinEscritor" xml:space="preserve">
+    <value>There is no ADIF writer in this session: export is disabled.</value>
+  </data>
+  <data name="Ajustes.Libro.SinEscritorAlExportar" xml:space="preserve">
+    <value>There is no ADIF writer in this session: the file has not been written.</value>
+  </data>
+  <data name="Ajustes.Libro.Titulo" xml:space="preserve">
+    <value>Logbook</value>
+  </data>
+  <data name="Ajustes.NoSeHanPodidoAplicar" xml:space="preserve">
+    <value>Could not apply: {0}</value>
+  </data>
+  <data name="Ajustes.NoSeHanPodidoGuardar" xml:space="preserve">
+    <value>Could not save: {0}</value>
+  </data>
+  <data name="Ajustes.Secreto.Borrar.Accesible" xml:space="preserve">
+    <value>Delete the saved credential</value>
+  </data>
+  <data name="Ajustes.Secreto.ClubLogApi" xml:space="preserve">
+    <value>Club Log API key</value>
+  </data>
+  <data name="Ajustes.Secreto.ClubLogApi.Ayuda" xml:space="preserve">
+    <value>You request it from Club Log support and never share it with anyone.</value>
+  </data>
+  <data name="Ajustes.Secreto.ClubLogContrasena" xml:space="preserve">
+    <value>Club Log password</value>
+  </data>
+  <data name="Ajustes.Secreto.ClubLogContrasena.Ayuda" xml:space="preserve">
+    <value>Your account password, or an application password if you have one.</value>
+  </data>
+  <data name="Ajustes.Secreto.EqslContrasena" xml:space="preserve">
+    <value>eQSL.cc password</value>
+  </data>
+  <data name="Ajustes.Secreto.EqslContrasena.Ayuda" xml:space="preserve">
+    <value>The one for your eQSL.cc account.</value>
+  </data>
+  <data name="Ajustes.Secreto.Guardada" xml:space="preserve">
+    <value>Saved and encrypted</value>
+  </data>
+  <data name="Ajustes.Secreto.Guardar.Accesible" xml:space="preserve">
+    <value>Save the credential encrypted</value>
+  </data>
+  <data name="Ajustes.Secreto.HamQthContrasena" xml:space="preserve">
+    <value>HamQTH password</value>
+  </data>
+  <data name="Ajustes.Secreto.HamQthContrasena.Ayuda" xml:space="preserve">
+    <value>The one for your HamQTH account.</value>
+  </data>
+  <data name="Ajustes.Secreto.LotwContrasena" xml:space="preserve">
+    <value>LoTW password</value>
+  </data>
+  <data name="Ajustes.Secreto.LotwContrasena.Ayuda" xml:space="preserve">
+    <value>The one for your ARRL account. It is used to download the confirmations report.</value>
+  </data>
+  <data name="Ajustes.Secreto.QrzClaveDeCuaderno" xml:space="preserve">
+    <value>QRZ logbook key</value>
+  </data>
+  <data name="Ajustes.Secreto.QrzClaveDeCuaderno.Ayuda" xml:space="preserve">
+    <value>It is not the account password: QRZ issues it for uploading QSOs.</value>
+  </data>
+  <data name="Ajustes.Secreto.QrzContrasena" xml:space="preserve">
+    <value>QRZ.com password</value>
+  </data>
+  <data name="Ajustes.Secreto.QrzContrasena.Ayuda" xml:space="preserve">
+    <value>For call sign lookups via XML.</value>
+  </data>
+  <data name="Ajustes.Secreto.SinGuardar" xml:space="preserve">
+    <value>Not saved</value>
+  </data>
+  <data name="Ajustes.Secreto.TqslFrase" xml:space="preserve">
+    <value>Certificate passphrase</value>
+  </data>
+  <data name="Ajustes.Secreto.TqslFrase.Ayuda" xml:space="preserve">
+    <value>Only if your certificate has one. Read the notice below before typing it.</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola" xml:space="preserve">
+    <value>Upload queue</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.Fallo" xml:space="preserve">
+    <value>Failed: {0}</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.Pendiente" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.PendienteCorregido" xml:space="preserve">
+    <value>Pending (corrected)</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.Reintento" xml:space="preserve">
+    <value>Retry {0}: {1}</value>
+  </data>
+  <data name="Ajustes.Subidas.ColaVacia" xml:space="preserve">
+    <value>Nothing is waiting to be uploaded.</value>
+  </data>
+  <data name="Ajustes.Subidas.Completar" xml:space="preserve">
+    <value>Fill in name, QTH, locator, country, zones… from the QRZ.com (or HamQTH) record</value>
+  </data>
+  <data name="Ajustes.Subidas.Completar.Accesible" xml:space="preserve">
+    <value>Complete QSOs with QRZ.com</value>
+  </data>
+  <data name="Ajustes.Subidas.Completar.Explicacion" xml:space="preserve">
+    <value>Only empty fields are filled in: what you type is never overwritten. Without a network or an account the QSO is saved anyway. Without a paid XML subscription, QRZ.com only provides part of the record.</value>
+  </data>
+  <data name="Ajustes.Subidas.CompletarTitulo" xml:space="preserve">
+    <value>Complete with QRZ.com</value>
+  </data>
+  <data name="Ajustes.Subidas.CuentasEn" xml:space="preserve">
+    <value>User names and passwords for QRZ.com, HamQTH, LoTW, eQSL and Club Log go in “Accounts &amp; services”.</value>
+  </data>
+  <data name="Ajustes.Subidas.CuentasGuardadas" xml:space="preserve">
+    <value>Accounts saved. They take effect now, without restarting.</value>
+  </data>
+  <data name="Ajustes.Subidas.ErrorAlSubir" xml:space="preserve">
+    <value>Could not upload: {0}</value>
+  </data>
+  <data name="Ajustes.Subidas.Explicacion" xml:space="preserve">
+    <value>Every QSO that is saved (form, Digital or net) is uploaded automatically to the ticked services. Without a network it stays in the queue and is retried with increasing waits and at startup. By default, services with credentials are ticked.</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha" xml:space="preserve">
+    <value>Lookup</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.AvisoDelServicio" xml:space="preserve">
+    <value>Notice from the service: {0}</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.Desactivada" xml:space="preserve">
+    <value>Complete with QRZ.com: turned off in Settings › Uploads &amp; QRZ.</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.Listo" xml:space="preserve">
+    <value>Complete with {0}: ready.</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.Problema" xml:space="preserve">
+    <value>{0} QSOs are saved anyway, without the record data.</value>
+  </data>
+  <data name="Ajustes.Subidas.Ficha.SinContrasena" xml:space="preserve">
+    <value>Complete with QRZ.com: the QRZ.com (or HamQTH) password is missing in Settings › Accounts &amp; services. QSOs are saved anyway, without the name or QTH from the record.</value>
+  </data>
+  <data name="Ajustes.Subidas.NadaPendiente" xml:space="preserve">
+    <value>There was nothing pending.</value>
+  </data>
+  <data name="Ajustes.Subidas.NadaSubido" xml:space="preserve">
+    <value>Nothing could be uploaded: check the status of each service.</value>
+  </data>
+  <data name="Ajustes.Subidas.NoMontada" xml:space="preserve">
+    <value>Automatic upload is not available in this session.</value>
+  </data>
+  <data name="Ajustes.Subidas.NotaModificable" xml:space="preserve">
+    <value>If you edit a QSO that has already been uploaded (F2), it is sent again corrected.</value>
+  </data>
+  <data name="Ajustes.Subidas.NotaNoModificable" xml:space="preserve">
+    <value>Edits are not supported: a QSO already uploaded stays as it was uploaded.</value>
+  </data>
+  <data name="Ajustes.Subidas.Subidos" xml:space="preserve">
+    <value>{0:N0} QSO(s) uploaded.</value>
+  </data>
+  <data name="Ajustes.Subidas.Subiendo" xml:space="preserve">
+    <value>Uploading…</value>
+  </data>
+  <data name="Ajustes.Subidas.SubirA" xml:space="preserve">
+    <value>Upload to {0}</value>
+  </data>
+  <data name="Ajustes.Subidas.SubirAhora" xml:space="preserve">
+    <value>Upload now</value>
+  </data>
+  <data name="Ajustes.Subidas.SubirAhora.Accesible" xml:space="preserve">
+    <value>Upload everything pending now</value>
+  </data>
+  <data name="Ajustes.Subidas.Titulo" xml:space="preserve">
+    <value>Automatic upload</value>
+  </data>
+  <data name="Ajustes.Subidas.UsuarioPorOmision" xml:space="preserve">
+    <value>Empty: the station profile call sign is used.</value>
+  </data>
+  <data name="Ajustes.Subidas.UsuarioPorOmisionCon" xml:space="preserve">
+    <value>Empty: the profile call sign is used ({0}).</value>
+  </data>
+  <data name="Ajustes.Tarjeta.ClubLog.Descripcion" xml:space="preserve">
+    <value>Log upload and most wanted DXCC.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Cluster.Aviso" xml:space="preserve">
+    <value>{0} · {1}:{2} as {3}</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Cluster.Descripcion" xml:space="preserve">
+    <value>Node, login call sign and password (if required).</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Cluster.Nombre" xml:space="preserve">
+    <value>DX cluster</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Cluster.Simulado" xml:space="preserve">
+    <value>With simulated ports the cluster is fake.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Configurar" xml:space="preserve">
+    <value>Configure…</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Configurar.Accesible" xml:space="preserve">
+    <value>Go to this service's section</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Correo.Descripcion" xml:space="preserve">
+    <value>The account used to send QSLs by e-mail.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Correo.Nombre" xml:space="preserve">
+    <value>E-mail (SMTP)</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Eqsl.Descripcion" xml:space="preserve">
+    <value>Electronic QSL cards.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.GuardarCuenta" xml:space="preserve">
+    <value>Save account</value>
+  </data>
+  <data name="Ajustes.Tarjeta.GuardarCuenta.Accesible" xml:space="preserve">
+    <value>Save the account details</value>
+  </data>
+  <data name="Ajustes.Tarjeta.GuardarCuenta.Ayuda" xml:space="preserve">
+    <value>Saves the user name and the other account details (each password has its own “Save”)</value>
+  </data>
+  <data name="Ajustes.Tarjeta.HamQth.Descripcion" xml:space="preserve">
+    <value>Station details lookup, as a fallback when QRZ.com does not respond.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.LeaAntes" xml:space="preserve">
+    <value>Read this before typing the passphrase</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Lotw.Descripcion" xml:space="preserve">
+    <value>ARRL confirmations, signed with TQSL.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Lotw.ErrorAlComprobar" xml:space="preserve">
+    <value>Could not check the LoTW status: {0}</value>
+  </data>
+  <data name="Ajustes.Tarjeta.ProbarLaConexion" xml:space="preserve">
+    <value>Test connection</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Qrz.Descripcion" xml:space="preserve">
+    <value>Station details lookup and QSO upload.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.VolverAComprobar" xml:space="preserve">
+    <value>Check again</value>
+  </data>
+  <data name="Ajustes.VolverABuscarDispositivos" xml:space="preserve">
+    <value>Search devices again</value>
+  </data>
+</root>

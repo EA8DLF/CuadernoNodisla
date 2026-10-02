@@ -1,0 +1,5 @@
+﻿# Rótulos de la cabina que imitan el panel real de la radio y llevan minúsculas.
+# Se quedan como en la radio, en todos los idiomas. Uno por línea, sin frases.
+HF/50MHz TRANSCEIVER
+10ms/Div
+0–4 kHz

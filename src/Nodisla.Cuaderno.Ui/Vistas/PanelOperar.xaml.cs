@@ -79,7 +79,8 @@ public partial class PanelOperar : UserControl
     {
         if (Raiz.ActualHeight <= 0) return;
         var arriba = TarjetaDeLaBarra.ActualHeight + TarjetaDeLaBarra.Margin.Bottom
-                     + (TarjetaDeLosMandos.IsVisible ? TarjetaDeLosMandos.ActualHeight + TarjetaDeLosMandos.Margin.Bottom : 0);
+                     + (TarjetaDeLosMandos.IsVisible ? TarjetaDeLosMandos.ActualHeight + TarjetaDeLosMandos.Margin.Bottom : 0)
+                     + (TarjetaCw.IsVisible ? TarjetaCw.ActualHeight + TarjetaCw.Margin.Bottom : 0);
         var alto = AltoDelFrontal(Raiz.ActualHeight, arriba);
         if (alto > 0) _forzado = false;
 

@@ -1,6 +1,7 @@
 <UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.ConexionDelCluster"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -47,10 +48,10 @@
                 <TextBlock Text="{Binding IndicativoDeAcceso}" FontSize="10" FontWeight="Bold" />
             </Border>
 
-            <TextBlock Text="Cluster · conexión" Style="{StaticResource TituloDeSeccion}" />
+            <TextBlock Text="{loc:Texto Principal.ConexionCluster.Titulo}" Style="{StaticResource TituloDeSeccion}" />
         </DockPanel>
 
-        <TextBlock Text="A qué nodo se entra y con qué indicativo. La mayoría de los nodos no pide contraseña: basta el indicativo."
+        <TextBlock Text="{loc:Texto Principal.ConexionCluster.Explicacion}"
                    Style="{StaticResource TextoTenueEstilo}"
                    TextWrapping="Wrap"
                    Margin="0,0,0,8" />
@@ -77,11 +78,11 @@
         </Border>
 
         <DockPanel Style="{StaticResource Fila}">
-            <TextBlock Text="Nodos conocidos" Style="{StaticResource Rotulo}" />
+            <TextBlock Text="{loc:Texto Principal.ConexionCluster.NodosConocidos}" Style="{StaticResource Rotulo}" />
             <ComboBox ItemsSource="{Binding Nodos}"
                       SelectedItem="{Binding Nodo}"
-                      ToolTip="Elegir uno rellena el servidor y el puerto; después puede cambiarlos"
-                      AutomationProperties.Name="Nodos de cluster conocidos">
+                      ToolTip="{loc:Texto Principal.ConexionCluster.NodosConocidosConsejo}"
+                      AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.NodosConocidosNombre}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding ParaElDesplegable}" TextTrimming="CharacterEllipsis" />
@@ -96,24 +97,24 @@
                    Margin="150,0,0,8" />
 
         <DockPanel Style="{StaticResource Fila}">
-            <TextBlock Text="Nombre" Style="{StaticResource Rotulo}" />
+            <TextBlock Text="{loc:Texto Comun.Nombre}" Style="{StaticResource Rotulo}" />
             <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
-                     AutomationProperties.Name="Nombre del nodo" />
+                     AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.NombreDelNodo}" />
         </DockPanel>
 
         <DockPanel Style="{StaticResource Fila}">
-            <TextBlock Text="Servidor" Style="{StaticResource Rotulo}" />
+            <TextBlock Text="{loc:Texto Principal.ConexionCluster.Servidor}" Style="{StaticResource Rotulo}" />
             <TextBox Text="{Binding Servidor, UpdateSourceTrigger=PropertyChanged}"
-                     AutomationProperties.Name="Servidor del nodo" />
+                     AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.ServidorDelNodo}" />
         </DockPanel>
 
         <DockPanel Style="{StaticResource Fila}">
-            <TextBlock Text="Puerto" Style="{StaticResource Rotulo}" />
+            <TextBlock Text="{loc:Texto Principal.ConexionCluster.Puerto}" Style="{StaticResource Rotulo}" />
             <TextBox Text="{Binding Puerto, UpdateSourceTrigger=PropertyChanged}"
                      Width="70"
                      DockPanel.Dock="Left"
-                     AutomationProperties.Name="Puerto de Telnet del nodo" />
-            <TextBlock Text="lo habitual es 7300; hay nodos en el 23 y en el 8000"
+                     AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.PuertoDelNodo}" />
+            <TextBlock Text="{loc:Texto Principal.ConexionCluster.PuertoAyuda}"
                        Style="{StaticResource TextoTenueEstilo}"
                        VerticalAlignment="Center"
                        Margin="8,0,0,0"
@@ -121,28 +122,28 @@
         </DockPanel>
 
         <DockPanel Style="{StaticResource Fila}">
-            <TextBlock Text="Indicativo" Style="{StaticResource Rotulo}" />
+            <TextBlock Text="{loc:Texto Comun.Indicativo}" Style="{StaticResource Rotulo}" />
             <TextBox Text="{Binding Indicativo, UpdateSourceTrigger=PropertyChanged}"
                      Width="110"
                      DockPanel.Dock="Left"
                      CharacterCasing="Upper"
-                     AutomationProperties.Name="Indicativo con el que se entra al cluster" />
+                     AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.IndicativoNombre}" />
             <TextBlock Style="{StaticResource TextoTenueEstilo}"
                        VerticalAlignment="Center"
                        Margin="8,0,0,0"
                        TextTrimming="CharacterEllipsis">
-                <Run Text="en blanco, el del perfil activo:" />
+                <Run Text="{loc:Texto Principal.ConexionCluster.IndicativoEnBlanco}" />
                 <Run Text="{Binding IndicativoDelPerfil, Mode=OneWay}" FontWeight="Bold" />
             </TextBlock>
         </DockPanel>
 
         <DockPanel Style="{StaticResource Fila}">
-            <TextBlock Text="Sufijo" Style="{StaticResource Rotulo}" />
+            <TextBlock Text="{loc:Texto Principal.ConexionCluster.Sufijo}" Style="{StaticResource Rotulo}" />
             <TextBox Text="{Binding Sufijo, UpdateSourceTrigger=PropertyChanged}"
                      Width="50"
                      DockPanel.Dock="Left"
-                     AutomationProperties.Name="Sufijo del indicativo" />
-            <TextBlock Text="para tener dos sesiones abiertas: 1 se manda como «-1»"
+                     AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.SufijoNombre}" />
+            <TextBlock Text="{loc:Texto Principal.ConexionCluster.SufijoAyuda}"
                        Style="{StaticResource TextoTenueEstilo}"
                        VerticalAlignment="Center"
                        Margin="8,0,0,0"
@@ -151,7 +152,7 @@
 
         <!-- ══ La contraseña, al almacén cifrado ══ -->
         <DockPanel Style="{StaticResource Fila}">
-            <TextBlock Text="Contraseña" Style="{StaticResource Rotulo}" />
+            <TextBlock Text="{loc:Texto Principal.ConexionCluster.Contrasena}" Style="{StaticResource Rotulo}" />
             <Border DockPanel.Dock="Right"
                     CornerRadius="8"
                     Padding="7,1"
@@ -174,17 +175,17 @@
             </Border>
 
             <Button DockPanel.Dock="Right"
-                    Content="Borrar"
+                    Content="{loc:Texto Comun.Borrar}"
                     Command="{Binding BorrarLaContrasenaCommand}"
                     Margin="5,0,0,0"
                     Padding="8,2"
-                    AutomationProperties.Name="Borrar la contraseña guardada del cluster" />
+                    AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.BorrarContrasena}" />
             <Button DockPanel.Dock="Right"
-                    Content="Guardar"
+                    Content="{loc:Texto Comun.Guardar}"
                     Command="{Binding GuardarLaContrasenaCommand}"
                     Margin="5,0,0,0"
                     Padding="8,2"
-                    AutomationProperties.Name="Guardar cifrada la contraseña del cluster" />
+                    AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.GuardarContrasena}" />
             <PasswordBox x:Name="CasillaDeLaContrasena"
                          PasswordChanged="AlEscribirLaContrasena"
                          Padding="6,3"
@@ -192,17 +193,17 @@
                          Foreground="{DynamicResource Texto}"
                          BorderBrush="{DynamicResource Borde}"
                          BorderThickness="1"
-                         AutomationProperties.Name="Contraseña del nodo de cluster" />
+                         AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.ContrasenaNombre}" />
         </DockPanel>
 
-        <TextBlock Text="Se cifra con la protección de datos de su cuenta de Windows y no se vuelve a enseñar. En el fichero de ajustes no se escribe nunca."
+        <TextBlock Text="{loc:Texto Principal.ConexionCluster.ContrasenaAyuda}"
                    Style="{StaticResource TextoTenueEstilo}"
                    TextWrapping="Wrap"
                    Margin="150,0,0,8" />
 
         <!-- ══ Guion de arranque ══ -->
-        <TextBlock Text="Órdenes al conectar" Style="{StaticResource EtiquetaDeCampo}" />
-        <TextBlock Text="Una por línea. &lt;CALLSIGN&gt; se cambia por el indicativo y &lt;PASSWORD&gt; por la contraseña; el resto se manda tal cual."
+        <TextBlock Text="{loc:Texto Principal.ConexionCluster.Ordenes}" Style="{StaticResource EtiquetaDeCampo}" />
+        <TextBlock Text="{loc:Texto Principal.ConexionCluster.OrdenesAyuda}"
                    Style="{StaticResource TextoTenueEstilo}"
                    TextWrapping="Wrap"
                    Margin="0,0,0,3" />
@@ -213,61 +214,61 @@
                  VerticalScrollBarVisibility="Auto"
                  FontFamily="Consolas, Cascadia Mono, Courier New"
                  Margin="0,0,0,8"
-                 AutomationProperties.Name="Órdenes que se mandan al conectar" />
+                 AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.OrdenesNombre}" />
 
-        <CheckBox Content="Volver a conectar solo cuando se caiga el nodo"
+        <CheckBox Content="{loc:Texto Principal.ConexionCluster.Reconectar}"
                   IsChecked="{Binding ReconectarSolo}"
                   Margin="0,0,0,6" />
 
-        <Expander Header="Tiempos" Margin="0,0,0,8">
+        <Expander Header="{loc:Texto Principal.ConexionCluster.Tiempos}" Margin="0,0,0,8">
             <StackPanel Margin="0,4,0,0">
                 <DockPanel Style="{StaticResource Fila}">
-                    <TextBlock Text="Espera de conexión (s)" Style="{StaticResource Rotulo}" />
+                    <TextBlock Text="{loc:Texto Principal.ConexionCluster.EsperaConexion}" Style="{StaticResource Rotulo}" />
                     <TextBox Text="{Binding EsperaDeConexionSegundos, UpdateSourceTrigger=PropertyChanged}"
                              Width="70"
                              HorizontalAlignment="Left"
-                             AutomationProperties.Name="Espera de conexión, en segundos" />
+                             AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.EsperaConexionNombre}" />
                 </DockPanel>
                 <DockPanel Style="{StaticResource Fila}">
-                    <TextBlock Text="Primer reintento (s)" Style="{StaticResource Rotulo}" />
+                    <TextBlock Text="{loc:Texto Principal.ConexionCluster.PrimerReintento}" Style="{StaticResource Rotulo}" />
                     <TextBox Text="{Binding PrimerReintentoSegundos, UpdateSourceTrigger=PropertyChanged}"
                              Width="70"
                              HorizontalAlignment="Left"
-                             AutomationProperties.Name="Espera antes del primer reintento, en segundos" />
+                             AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.PrimerReintentoNombre}" />
                 </DockPanel>
                 <DockPanel Style="{StaticResource Fila}">
-                    <TextBlock Text="Reintento máximo (s)" Style="{StaticResource Rotulo}" />
+                    <TextBlock Text="{loc:Texto Principal.ConexionCluster.ReintentoMaximo}" Style="{StaticResource Rotulo}" />
                     <TextBox Text="{Binding ReintentoMaximoSegundos, UpdateSourceTrigger=PropertyChanged}"
                              Width="70"
                              HorizontalAlignment="Left"
-                             AutomationProperties.Name="Tope de la espera entre reintentos, en segundos" />
+                             AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.ReintentoMaximoNombre}" />
                 </DockPanel>
                 <DockPanel Style="{StaticResource Fila}">
-                    <TextBlock Text="Silencio máximo (min)" Style="{StaticResource Rotulo}" />
+                    <TextBlock Text="{loc:Texto Principal.ConexionCluster.SilencioMaximo}" Style="{StaticResource Rotulo}" />
                     <TextBox Text="{Binding SilencioMaximoMinutos, UpdateSourceTrigger=PropertyChanged}"
                              Width="70"
                              HorizontalAlignment="Left"
-                             AutomationProperties.Name="Silencio máximo antes de dar la conexión por muerta, en minutos" />
+                             AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.SilencioMaximoNombre}" />
                 </DockPanel>
-                <TextBlock Text="Un cluster vivo manda algo cada pocos minutos. Pasado el silencio máximo se da la conexión por muerta y se reintenta."
+                <TextBlock Text="{loc:Texto Principal.ConexionCluster.SilencioAyuda}"
                            Style="{StaticResource TextoTenueEstilo}"
                            TextWrapping="Wrap" />
             </StackPanel>
         </Expander>
 
         <WrapPanel Margin="0,0,0,6">
-            <Button Content="Aplicar"
+            <Button Content="{loc:Texto Principal.ConexionCluster.Aplicar}"
                     Command="{Binding AplicarCommand}"
                     Style="{StaticResource BotonPrincipal}"
                     Margin="0,0,6,6"
                     Padding="12,3"
-                    ToolTip="Guarda y cambia el nodo sin cerrar el cuaderno"
-                    AutomationProperties.Name="Guardar y aplicar los ajustes del cluster" />
-            <Button Content="Descartar"
+                    ToolTip="{loc:Texto Principal.ConexionCluster.AplicarConsejo}"
+                    AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.AplicarNombre}" />
+            <Button Content="{loc:Texto Principal.ConexionCluster.Descartar}"
                     Command="{Binding DescartarCommand}"
                     Margin="0,0,6,6"
                     Padding="12,3"
-                    AutomationProperties.Name="Descartar los cambios del cluster" />
+                    AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.DescartarNombre}" />
         </WrapPanel>
 
     </StackPanel>

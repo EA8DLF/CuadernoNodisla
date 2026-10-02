@@ -1,3 +1,5 @@
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Ui.Digital;
 
 /// <summary>Un mensaje decodificado con lo que el secuenciador necesita de el.</summary>
@@ -293,7 +295,7 @@ public sealed class SecuenciadorDeQso
                         if (Operacion == TipoDeOperacion.Hound || TxActual == 4)
                         {
                             // El fox no espera un 73; y si ya mande RR73 y el contesta RR73, hemos terminado.
-                            return Terminar("Contacto terminado.", completoAntes);
+                            return Terminar(Textos.T("Digital.Secuencia.ContactoTerminado"), completoAntes);
                         }
 
                         TxActual = 5;
@@ -301,8 +303,8 @@ public sealed class SecuenciadorDeQso
 
                     case ClaseDeMensaje.S73:
                         _completado = true;
-                        if (TxActual == 4) return Terminar("Contacto terminado.", completoAntes);
-                        if (TxActual == 5) return Terminar("Contacto terminado.", completoAntes);
+                        if (TxActual == 4) return Terminar(Textos.T("Digital.Secuencia.ContactoTerminado"), completoAntes);
+                        if (TxActual == 5) return Terminar(Textos.T("Digital.Secuencia.ContactoTerminado"), completoAntes);
                         TxActual = 5;
                         break;
                 }
@@ -312,12 +314,12 @@ public sealed class SecuenciadorDeQso
         // Los vigilantes: llamando CQ sin que nadie conteste, o con el corresponsal desaparecido.
         if (TxActual == 6 && EmisionesSinNoticias >= CiclosMaximosLlamandoCq)
         {
-            return Parar($"Vigilante de Tx: {EmisionesSinNoticias} llamadas de CQ sin respuesta.", completoAntes);
+            return Parar(Textos.F("Digital.Secuencia.VigilanteCq", EmisionesSinNoticias), completoAntes);
         }
 
         if (TxActual != 6 && EmisionesSinNoticias >= CiclosSinRespuesta)
         {
-            return Parar($"{DxCall} ha desaparecido: {EmisionesSinNoticias} emisiones sin oírle.", completoAntes);
+            return Parar(Textos.F("Digital.Secuencia.Desaparecido", DxCall, EmisionesSinNoticias), completoAntes);
         }
 
         return new DecisionDelSecuenciador(TxActual, tono, _completado && !completoAntes, null);
@@ -337,7 +339,7 @@ public sealed class SecuenciadorDeQso
         {
             var completoAntes = _completado;
             _completado = true;
-            return Terminar("Enviado el 73.", completoAntes);
+            return Terminar(Textos.T("Digital.Secuencia.Enviado73"), completoAntes);
         }
 
         return DecisionDelSecuenciador.Nada;

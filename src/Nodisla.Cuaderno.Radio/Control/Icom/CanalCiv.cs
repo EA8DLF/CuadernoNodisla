@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Control.Icom;
 
 /// <summary>
@@ -88,7 +90,7 @@ public abstract class CanalCiv : IAsyncDisposable
         await _puerta.WaitAsync(ct).ConfigureAwait(false);
         try
         {
-            if (!Abierto) throw new InvalidOperationException($"El canal {Descripcion} no está abierto.");
+            if (!Abierto) throw new InvalidOperationException(Textos.F("Servicios.Radio.CanalCerrado", Descripcion));
 
             var espera = new TaskCompletionSource<TramaCiv>(TaskCreationOptions.RunContinuationsAsynchronously);
             lock (_candado)

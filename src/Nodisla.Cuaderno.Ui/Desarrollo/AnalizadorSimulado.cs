@@ -1,3 +1,4 @@
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Radio.Control.Ft710;
 using Nodisla.Cuaderno.Radio.Espectro;
@@ -31,7 +32,7 @@ public sealed class AnalizadorSimulado : IAnalizadorDeEspectro
     public event EventHandler? EstadoCambiado;
 
     /// <inheritdoc />
-    public string Origen => "Analizador simulado";
+    public string Origen => Textos.T("Dialogos.Simulado.Analizador");
 
     /// <inheritdoc />
     public EstadoDelAnalizador Estado { get; private set; } = EstadoDelAnalizador.Parado;

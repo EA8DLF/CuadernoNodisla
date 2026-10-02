@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Dxcc;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Integraciones.Cluster;
 using Nodisla.Cuaderno.Ui.Ajustes;
 using Serilog;
@@ -73,6 +74,9 @@ public sealed partial class VistaModeloAjustesCluster : ObservableObject
 
         RecogerDeLosAjustes();
         RefrescarLaContrasena();
+
+        // El estado de la contraseña se escribe en el idioma nuevo.
+        Textos.AlCambiar(this, static vm => vm.OnPropertyChanged(nameof(EstadoDeLaContrasena)));
     }
 
     /// <summary>Nodos que se ofrecen hechos.</summary>
@@ -166,7 +170,7 @@ public sealed partial class VistaModeloAjustesCluster : ObservableObject
     public bool HayParte => Parte.Length > 0;
 
     /// <summary>Estado de la contrasena, escrito para el operador.</summary>
-    public string EstadoDeLaContrasena => ContrasenaGuardada ? "Guardada y cifrada" : "Sin guardar";
+    public string EstadoDeLaContrasena => Textos.T(ContrasenaGuardada ? "Ajustes.Secreto.Guardada" : "Ajustes.Secreto.SinGuardar");
 
     /// <summary>Que tiene de particular el nodo elegido.</summary>
     public string NotaDelNodo => Nodo?.Nota ?? string.Empty;
@@ -275,7 +279,7 @@ public sealed partial class VistaModeloAjustesCluster : ObservableObject
             if (string.IsNullOrWhiteSpace(Servidor))
             {
                 Fallo = true;
-                Parte = "Falta el servidor del nodo.";
+                Parte = Textos.T("Ajustes.Cluster.FaltaServidor");
                 return;
             }
 
@@ -283,7 +287,7 @@ public sealed partial class VistaModeloAjustesCluster : ObservableObject
             if (string.IsNullOrWhiteSpace(texto))
             {
                 Fallo = true;
-                Parte = "No hay indicativo con el que entrar: escríbalo aquí o cree un perfil de estación.";
+                Parte = Textos.T("Ajustes.Cluster.SinIndicativo");
                 return;
             }
 
@@ -295,7 +299,7 @@ public sealed partial class VistaModeloAjustesCluster : ObservableObject
             catch (Exception ex)
             {
                 Fallo = true;
-                Parte = $"El indicativo «{texto}» no vale: {ex.Message}";
+                Parte = Textos.F("Ajustes.Cluster.IndicativoNoVale", texto, ex.Message);
                 return;
             }
 
@@ -310,14 +314,13 @@ public sealed partial class VistaModeloAjustesCluster : ObservableObject
             _alCambiarLaFuente?.Invoke();
 
             Fallo = false;
-            Parte = $"Guardado y aplicado: {opciones.Nombre} ({opciones.Servidor}:{opciones.Puerto}) "
-                    + $"como {opciones.IndicativoDeAcceso}. Pulse Conectar para entrar.";
+            Parte = Textos.F("Ajustes.Cluster.Aplicado", opciones.Nombre, opciones.Servidor, opciones.Puerto, opciones.IndicativoDeAcceso);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se han podido aplicar los ajustes del cluster.");
             Fallo = true;
-            Parte = $"No se han podido aplicar: {ex.Message}";
+            Parte = Textos.F("Ajustes.NoSeHanPodidoAplicar", ex.Message);
         }
         finally
         {

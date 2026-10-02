@@ -1,6 +1,7 @@
 using System.Globalization;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Impresion.Modelo;
 
@@ -80,15 +81,15 @@ public sealed record EtiquetaDeQsl(
     /// <summary>Encabezado de la etiqueta: a quien va y por donde.</summary>
     public string Encabezado => string.IsNullOrWhiteSpace(Gestor)
         ? Destino.Valor
-        : $"{Destino.Valor} vía {Gestor}";
+        : Textos.F("Servicios.Impresion.Etiqueta.Via", Destino.Valor, Gestor);
 
     /// <summary>Texto de la via, para el pie.</summary>
     public string TextoDeLaVia => Via switch
     {
-        ViaDeEnvio.Buro => "buró",
-        ViaDeEnvio.Directo => "directa",
-        ViaDeEnvio.Gestor => "gestor",
-        ViaDeEnvio.Electronico => "electrónica",
+        ViaDeEnvio.Buro => Textos.T("Servicios.Impresion.Via.Buro"),
+        ViaDeEnvio.Directo => Textos.T("Servicios.Impresion.Via.Directo"),
+        ViaDeEnvio.Gestor => Textos.T("Servicios.Impresion.Via.Gestor"),
+        ViaDeEnvio.Electronico => Textos.T("Servicios.Impresion.Via.Electronico"),
         _ => string.Empty,
     };
 

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Servicios.Lotw;
 
 namespace Nodisla.Cuaderno.Servicios.Subidas;
@@ -403,32 +404,32 @@ public sealed class ColaDeSubidas : IDisposable
             {
                 semaforo = pendientes + fallidos > 0 ? SemaforoDeSubida.Ambar : SemaforoDeSubida.Apagado;
                 texto = servicio is null || !SeguroConfigurado(servicio)
-                    ? $"{nombre}: subida automática sin configurar (faltan usuario o credenciales en Configuración › Cuentas y servicios)."
-                    : $"{nombre}: subida automática desactivada en Configuración › Subidas y QRZ.";
-                if (pendientes + fallidos > 0) texto += $" {pendientes + fallidos} contacto(s) en espera.";
+                    ? Textos.F("Servicios.Subidas.SinConfigurar", nombre)
+                    : Textos.F("Servicios.Subidas.Desactivada", nombre);
+                if (pendientes + fallidos > 0) texto += " " + Textos.F("Servicios.Subidas.EnEspera", pendientes + fallidos);
             }
             else if (bloqueo is not null)
             {
                 semaforo = SemaforoDeSubida.Rojo;
-                texto = pendientes > 0 ? $"{nombre}: {pendientes} pendiente(s). {bloqueo}" : bloqueo;
+                texto = pendientes > 0 ? Textos.F("Servicios.Subidas.PendientesYBloqueo", nombre, pendientes, bloqueo) : bloqueo;
             }
             else if (fallidos > 0)
             {
                 semaforo = SemaforoDeSubida.Rojo;
-                texto = $"{nombre}: {fallidos} contacto(s) no se han podido subir"
-                    + (pendientes > 0 ? $" y {pendientes} esperan turno" : string.Empty)
-                    + $". Último error: {error}. Use «Subir ahora» en Configuración › Subidas y QRZ.";
+                texto = pendientes > 0
+                    ? Textos.F("Servicios.Subidas.FallidosYPendientes", nombre, fallidos, pendientes, error)
+                    : Textos.F("Servicios.Subidas.Fallidos", nombre, fallidos, error);
             }
             else if (pendientes > 0)
             {
                 semaforo = SemaforoDeSubida.Ambar;
-                texto = $"{nombre}: {pendientes} contacto(s) pendiente(s) de subir."
-                    + (error is null ? string.Empty : $" Último error: {error}. Se reintenta solo.");
+                texto = Textos.F("Servicios.Subidas.Pendientes", nombre, pendientes)
+                    + (error is null ? string.Empty : " " + Textos.F("Servicios.Subidas.UltimoErrorReintenta", error));
             }
             else
             {
                 semaforo = SemaforoDeSubida.Verde;
-                texto = $"{nombre}: al día. Los contactos se suben solos al registrarlos.";
+                texto = Textos.F("Servicios.Subidas.AlDia", nombre);
             }
 
             estados.Add(new EstadoDeSubida(medio, nombre, activado, pendientes, fallidos, semaforo, texto));
@@ -445,11 +446,11 @@ public sealed class ColaDeSubidas : IDisposable
         {
             if (servicio.PuedeSubir) return null;
             if (servicio is ServicioLotw lotw && lotw.MotivoDeNoPoderSubir is { } motivo) return motivo;
-            return $"No se puede subir a {NombreCorto(servicio.Medio)}: faltan el usuario o las credenciales en Configuración › Cuentas y servicios.";
+            return Textos.F("Servicios.Subidas.FaltanCredenciales", NombreCorto(servicio.Medio));
         }
         catch (Exception ex)
         {
-            return $"No se ha podido comprobar {NombreCorto(servicio.Medio)}: {ex.Message}";
+            return Textos.F("Servicios.Subidas.NoSeHaPodidoComprobar", NombreCorto(servicio.Medio), ex.Message);
         }
     }
 

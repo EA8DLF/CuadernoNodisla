@@ -1,3 +1,5 @@
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Modelos;
 
 /// <summary>Fabricante del equipo.</summary>
@@ -103,7 +105,7 @@ public sealed record ModeloDeEquipo(
     public int VelocidadPorOmision => Velocidades.Count > 0 ? Velocidades[0] : 9600;
 
     /// <summary>Para el desplegable de Ajustes.</summary>
-    public string ParaElDesplegable => ProbadoConRadio ? Nombre : $"{Nombre}  (según manual, sin probar con radio)";
+    public string ParaElDesplegable => ProbadoConRadio ? Nombre : Textos.F("Servicios.Radio.SinProbar", Nombre);
 
     /// <inheritdoc />
     public override string ToString() => NombreCompleto;

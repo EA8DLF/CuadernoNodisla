@@ -1,3 +1,5 @@
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Control;
 
 /// <summary>
@@ -10,7 +12,7 @@ public sealed class CanalNoDisponibleException : Exception
     /// <param name="canal">Canal que no se pudo abrir.</param>
     /// <param name="causa">Lo que fallo por debajo.</param>
     public CanalNoDisponibleException(string canal, Exception? causa = null)
-        : base($"No se puede abrir el canal {canal}: no existe, está ocupado o el equipo no está enchufado.", causa) =>
+        : base(Textos.F("Servicios.Radio.CanalNoDisponible", canal), causa) =>
         Canal = canal;
 
     /// <summary>Canal que no se pudo abrir.</summary>
@@ -30,7 +32,7 @@ public sealed class EquipoNoContestaException : Exception
     /// <summary>Crea la excepcion.</summary>
     /// <param name="canal">Canal por el que no contesta nadie.</param>
     public EquipoNoContestaException(string canal)
-        : base($"Por {canal} no contesta ningún equipo. ¿Está encendido?") =>
+        : base(Textos.F("Servicios.Radio.NoContesta", canal)) =>
         Canal = canal;
 
     /// <summary>Canal por el que no contesta nadie.</summary>

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
 
@@ -39,6 +40,7 @@ public sealed partial class VistaModeloVfo : ObservableObject
         Nombre = nombre;
         _bandplan = bandplan;
         Etiqueta = nombre == NombreDeVfo.A ? "VFO A" : "VFO B";
+        Textos.AlCambiar(this, static vm => vm.OnPropertyChanged(nameof(AvisoCortoDelBandplan)));
     }
 
     /// <summary>Cual de los dos VFO es.</summary>
@@ -135,15 +137,15 @@ public sealed partial class VistaModeloVfo : ObservableObject
     public string AvisoCortoDelBandplan => AvisoDelBandplan.Length == 0
         ? string.Empty
         : FueraDeBanda || _usoDelTramo is null
-            ? "Fuera de banda"
+            ? Textos.T("Cabina.Vfo.FueraDeBanda")
             : _usoDelTramo switch
             {
-                UsoDelTramo.Cw => "Tramo de CW",
-                UsoDelTramo.DigitalEstrecho or UsoDelTramo.DigitalAncho => "Tramo digital",
-                UsoDelTramo.Fonia or UsoDelTramo.FoniaEImagen => "Tramo de fonía",
-                UsoDelTramo.Baliza => "Tramo de balizas",
-                UsoDelTramo.Reservado => "Tramo reservado",
-                _ => "Fuera del plan",
+                UsoDelTramo.Cw => Textos.T("Cabina.Vfo.TramoCw"),
+                UsoDelTramo.DigitalEstrecho or UsoDelTramo.DigitalAncho => Textos.T("Cabina.Vfo.TramoDigital"),
+                UsoDelTramo.Fonia or UsoDelTramo.FoniaEImagen => Textos.T("Cabina.Vfo.TramoFonia"),
+                UsoDelTramo.Baliza => Textos.T("Cabina.Vfo.TramoBalizas"),
+                UsoDelTramo.Reservado => Textos.T("Cabina.Vfo.TramoReservado"),
+                _ => Textos.T("Cabina.Vfo.FueraDelPlan"),
             };
 
     /// <summary>El cluster esta anunciando a alguien en esta frecuencia.</summary>
@@ -178,7 +180,7 @@ public sealed partial class VistaModeloVfo : ObservableObject
         Modo = estado.Modo.EsVacio ? "—" : estado.Modo.NombreUsual;
 
         FueraDeBanda = estado.Banda.EsVacia;
-        Banda = FueraDeBanda ? "fuera de banda" : estado.Banda.Nombre;
+        Banda = FueraDeBanda ? Textos.T("Cabina.Vfo.FueraDeBandaMinus") : estado.Banda.Nombre;
         PosicionEnBanda = FueraDeBanda ? -1 : PosicionDentroDe(estado.Banda, estado.Frecuencia);
 
         AnchoDeFiltro = estado.AnchoDeFiltroHz is { } hz and > 0
@@ -250,7 +252,7 @@ public sealed partial class VistaModeloVfo : ObservableObject
         {
             _usoDelTramo = null;
             AvisoDelBandplan = FueraDeBanda
-                ? "Esta frecuencia no cae en ninguna banda de aficionado."
+                ? Textos.T("Cabina.Vfo.SinBanda")
                 : string.Empty;
             TramoDelBandplan = string.Empty;
             return;

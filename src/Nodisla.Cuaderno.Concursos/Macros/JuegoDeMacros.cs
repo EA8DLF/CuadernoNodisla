@@ -1,3 +1,5 @@
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Concursos.Macros;
 
 /// <summary>Una macro: un texto con sustituciones que se dispara con una tecla.</summary>
@@ -50,26 +52,27 @@ public sealed class JuegoDeMacros
     /// <remarks>
     /// Son las cinco de siempre: llamada, contestar, intercambio, repetir y despedida. Estan
     /// escritas con las etiquetas propias para que sirvan de ejemplo al operador cuando abra
-    /// el editor de macros.
+    /// el editor de macros. Se arma en cada consulta para que los nombres salgan en el idioma
+    /// en uso.
     /// </remarks>
-    public static JuegoDeMacros Concurso { get; } = new("Concurso", [
+    public static JuegoDeMacros Concurso => new(Textos.T("Servicios.Concursos.Juego.Concurso"), [
         new Macro("F1", "CQ", "CQ TEST <MICALL> <MICALL> TEST"),
-        new Macro("F2", "Intercambio", "<CALL> <RST> <INTERCAMBIO>"),
-        new Macro("F3", "Confirmar", "TU <MICALL>"),
-        new Macro("F4", "Mi indicativo", "<MICALL>"),
-        new Macro("F5", "Su indicativo", "<CALL>"),
-        new Macro("F6", "Repetir", "AGN AGN"),
-        new Macro("F7", "Pedir indicativo", "CALL?"),
-        new Macro("F8", "Pedir intercambio", "NR?"),
+        new Macro("F2", Textos.T("Servicios.Concursos.Macro.Intercambio"), "<CALL> <RST> <INTERCAMBIO>"),
+        new Macro("F3", Textos.T("Servicios.Concursos.Macro.Confirmar"), "TU <MICALL>"),
+        new Macro("F4", Textos.T("Servicios.Concursos.Macro.MiIndicativo"), "<MICALL>"),
+        new Macro("F5", Textos.T("Servicios.Concursos.Macro.SuIndicativo"), "<CALL>"),
+        new Macro("F6", Textos.T("Servicios.Concursos.Macro.Repetir"), "AGN AGN"),
+        new Macro("F7", Textos.T("Servicios.Concursos.Macro.PedirIndicativo"), "CALL?"),
+        new Macro("F8", Textos.T("Servicios.Concursos.Macro.PedirIntercambio"), "NR?"),
     ]);
 
     /// <summary>El juego de partida para un contacto normal, fuera de concurso.</summary>
-    public static JuegoDeMacros Normal { get; } = new("Normal", [
+    public static JuegoDeMacros Normal => new(Textos.T("Servicios.Concursos.Juego.Normal"), [
         new Macro("F1", "CQ", "CQ CQ DE <MICALL> <MICALL> PSE K"),
-        new Macro("F2", "Contestar", "<CALL> DE <MICALL> K"),
-        new Macro("F3", "Informe", "<CALL> DE <MICALL> UR RST <RST> <RST> NAME <MINOMBRE> QTH <MIQTH> BK"),
-        new Macro("F4", "Despedida", "<CALL> DE <MICALL> 73 GL SK"),
-        new Macro("F5", "Mi indicativo", "<MICALL>"),
-        new Macro("F6", "Localizador", "MY LOC <MILOCATOR>"),
+        new Macro("F2", Textos.T("Servicios.Concursos.Macro.Contestar"), "<CALL> DE <MICALL> K"),
+        new Macro("F3", Textos.T("Servicios.Concursos.Macro.Informe"), "<CALL> DE <MICALL> UR RST <RST> <RST> NAME <MINOMBRE> QTH <MIQTH> BK"),
+        new Macro("F4", Textos.T("Servicios.Concursos.Macro.Despedida"), "<CALL> DE <MICALL> 73 GL SK"),
+        new Macro("F5", Textos.T("Servicios.Concursos.Macro.MiIndicativo"), "<MICALL>"),
+        new Macro("F6", Textos.T("Servicios.Concursos.Macro.Localizador"), "MY LOC <MILOCATOR>"),
     ]);
 }

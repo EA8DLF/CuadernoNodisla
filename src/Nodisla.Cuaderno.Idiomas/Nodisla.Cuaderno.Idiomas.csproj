@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Los textos del programa en los seis idiomas. No depende de nada: lo usan desde el dominio
+    hasta la interfaz, y cada capa saca de aqui lo que le enseña al operador.
+
+    Los .resx van en Recursos\, uno por apartado y por idioma (Cabina.resx es el español, que es
+    la referencia; Cabina.en.resx, Cabina.pt.resx...). Para añadir o cambiar textos sin pelearse
+    con el XML: herramientas\Idiomas\Agregar-Textos.ps1.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

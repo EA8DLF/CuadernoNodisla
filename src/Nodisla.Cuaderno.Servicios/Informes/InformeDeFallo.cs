@@ -1,4 +1,5 @@
 using System.Text;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Servicios.Actualizaciones;
 
 namespace Nodisla.Cuaderno.Servicios.Informes;
@@ -57,9 +58,8 @@ public static class InformeDeFallo
     public const int LargoMaximoDeTitulo = 200;
 
     /// <summary>Lo que va en el cuerpo cuando el completo no cabe.</summary>
-    public const string AvisoDePortapapeles =
-        "El informe completo no cabía en el enlace y se ha copiado al portapapeles. " +
-        "Bórrese este párrafo y péguese aquí (Ctrl+V).";
+    /// <remarks>Va en el idioma del operador: es él quien tiene que leerlo y pegar.</remarks>
+    public static string AvisoDePortapapeles => Textos.T("Servicios.Informes.AvisoDePortapapeles");
 
     /// <summary>Monta el cuerpo en Markdown, ya limpio de datos personales.</summary>
     /// <param name="datos">Lo que cuenta el operador y lo adjunto.</param>

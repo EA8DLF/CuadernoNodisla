@@ -1,4 +1,5 @@
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Propagacion.Prediccion;
 
@@ -20,7 +21,7 @@ namespace Nodisla.Cuaderno.Propagacion.Prediccion;
 public sealed class MotorAproximacionNodisla(OpcionesPropagacion? opciones = null) : IMotorDePrediccion
 {
     /// <summary>Nombre con el que se identifica este motor en pantalla.</summary>
-    public const string NombreDelMotor = "Aproximación NODISLA (MUF/LUF, no es VOACAP)";
+    public static string NombreDelMotor => Textos.T("Servicios.Propagacion.MotorAproximacion");
 
     private readonly OpcionesPropagacion ajustes = opciones ?? new OpcionesPropagacion();
 

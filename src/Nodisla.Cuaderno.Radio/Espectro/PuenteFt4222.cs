@@ -1,5 +1,7 @@
 using System.Runtime.InteropServices;
 
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Espectro;
 
 /// <summary>Donde se pueden leer bytes del analizador. Existe para probar sin radio.</summary>
@@ -107,7 +109,7 @@ public sealed class PuenteFt4222 : IPuenteDelAnalizador
 
         if (!NativeLibrary.TryLoad("ftd2xx.dll", out var d2xx))
         {
-            detalle = "No está ftd2xx.dll: falta el controlador D2XX de FTDI.";
+            detalle = Textos.T("Servicios.Radio.Analizador.SinD2xx");
             return AperturaDelPuente.SinBiblioteca;
         }
 
@@ -115,7 +117,7 @@ public sealed class PuenteFt4222 : IPuenteDelAnalizador
         if (!NativeLibrary.TryLoad(ruta, out var ft4222))
         {
             NativeLibrary.Free(d2xx);
-            detalle = $"No está {Biblioteca} junto al programa.";
+            detalle = Textos.F("Servicios.Radio.Analizador.SinBiblioteca", Biblioteca);
             return AperturaDelPuente.SinBiblioteca;
         }
 
@@ -129,8 +131,8 @@ public sealed class PuenteFt4222 : IPuenteDelAnalizador
                 NativeLibrary.Free(ft4222);
                 NativeLibrary.Free(d2xx);
                 detalle = estado == FtDeviceNotFound
-                    ? "No aparece el puente del analizador (FT4222) por USB."
-                    : $"El puente del analizador no se deja abrir (FT_STATUS {estado}); ¿lo tiene otro programa?";
+                    ? Textos.T("Servicios.Radio.Analizador.SinPuente")
+                    : Textos.F("Servicios.Radio.Analizador.Ocupado", estado);
                 return estado == FtDeviceNotFound ? AperturaDelPuente.SinDispositivo : AperturaDelPuente.Fallo;
             }
 
@@ -142,19 +144,19 @@ public sealed class PuenteFt4222 : IPuenteDelAnalizador
                 || Funcion<Ft4222SetClock>(ft4222, "FT4222_SetClock")(manejador, RelojDelSistema24Mhz) != 0)
             {
                 abierto.Dispose();
-                detalle = "El puente del analizador no acepta el modo SPI.";
+                detalle = Textos.T("Servicios.Radio.Analizador.SinSpi");
                 return AperturaDelPuente.Fallo;
             }
 
             puente = abierto;
-            detalle = "Puente FT4222 abierto en maestro SPI.";
+            detalle = Textos.T("Servicios.Radio.Analizador.Abierto");
             return AperturaDelPuente.Abierto;
         }
         catch (EntryPointNotFoundException ex)
         {
             NativeLibrary.Free(ft4222);
             NativeLibrary.Free(d2xx);
-            detalle = $"Biblioteca de FTDI incompleta: {ex.Message}";
+            detalle = Textos.F("Servicios.Radio.Analizador.Incompleta", ex.Message);
             return AperturaDelPuente.SinBiblioteca;
         }
     }

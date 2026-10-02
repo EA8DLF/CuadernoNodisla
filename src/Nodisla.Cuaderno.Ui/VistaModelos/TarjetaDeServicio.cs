@@ -1,8 +1,25 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
+
+/// <summary>
+/// Un texto de la configuración que puede venir ya escrito («QRZ.com») o como clave de los
+/// recursos («Ajustes.Tarjeta.Cluster.Nombre»). Se resuelve cada vez que se pide, así que sigue
+/// al idioma en uso.
+/// </summary>
+public static class TextoOClave
+{
+    /// <summary>El texto de la clave en el idioma en uso, o lo recibido tal cual si no es una clave.</summary>
+    /// <param name="textoOClave">Texto ya escrito o clave con su apartado delante.</param>
+    /// <returns>El texto que se enseña.</returns>
+    public static string Resolver(string? textoOClave) =>
+        string.IsNullOrEmpty(textoOClave)
+            ? string.Empty
+            : Textos.Buscar(textoOClave, Textos.Cultura) ?? textoOClave;
+}
 
 /// <summary>Como esta un servicio, para el color de su pastilla.</summary>
 public enum EstadoDeServicio
@@ -25,25 +42,35 @@ public sealed class CampoDeCuenta : ObservableObject
 {
     private readonly Func<string> _leer;
     private readonly Action<string> _escribir;
+    private readonly string _rotulo;
+    private readonly Func<string?>? _nota;
 
     /// <summary>Monta el campo.</summary>
-    /// <param name="rotulo">Como se llama en pantalla.</param>
+    /// <param name="rotulo">Como se llama en pantalla: texto o clave de los recursos.</param>
     /// <param name="leer">De donde se lee.</param>
     /// <param name="escribir">Donde se escribe.</param>
-    /// <param name="nota">Aclaracion corta, o nula.</param>
-    public CampoDeCuenta(string rotulo, Func<string> leer, Action<string> escribir, string? nota = null)
+    /// <param name="nota">
+    /// Aclaracion corta (texto o clave), que se vuelve a pedir al cambiar de idioma; o nula.
+    /// </param>
+    public CampoDeCuenta(string rotulo, Func<string> leer, Action<string> escribir, Func<string?>? nota = null)
     {
-        Rotulo = rotulo;
+        _rotulo = rotulo;
         _leer = leer ?? throw new ArgumentNullException(nameof(leer));
         _escribir = escribir ?? throw new ArgumentNullException(nameof(escribir));
-        Nota = nota ?? string.Empty;
+        _nota = nota;
+
+        Textos.AlCambiar(this, static c =>
+        {
+            c.OnPropertyChanged(nameof(Rotulo));
+            c.OnPropertyChanged(nameof(Nota));
+        });
     }
 
     /// <summary>Como se llama en pantalla.</summary>
-    public string Rotulo { get; }
+    public string Rotulo => TextoOClave.Resolver(_rotulo);
 
     /// <summary>Aclaracion corta, para el globo de ayuda.</summary>
-    public string Nota { get; }
+    public string Nota => TextoOClave.Resolver(_nota?.Invoke());
 
     /// <summary>Lo que vale ahora.</summary>
     public string Valor
@@ -77,11 +104,15 @@ public sealed partial class TarjetaDeServicio : ObservableObject
 {
     private readonly Func<(EstadoDeServicio Estado, string Texto)> _estado;
     private readonly Func<string>? _aviso;
+    private readonly string _nombre;
+    private readonly string _descripcion;
+    private readonly string _textoDeProbar = "Ajustes.Tarjeta.ProbarLaConexion";
+    private readonly string _nota = string.Empty;
 
     /// <summary>Monta la tarjeta.</summary>
-    /// <param name="nombre">Nombre del servicio.</param>
+    /// <param name="nombre">Nombre del servicio: nombre propio o clave de los recursos.</param>
     /// <param name="inicial">Letra de la chapa.</param>
-    /// <param name="descripcion">Para qué sirve, en una línea.</param>
+    /// <param name="descripcion">Para qué sirve, en una línea (texto o clave).</param>
     /// <param name="estado">Cómo está: se vuelve a preguntar cuando cambia algo.</param>
     /// <param name="secretos">Sus secretos, o vacío.</param>
     /// <param name="campos">Sus datos de cuenta, o vacío.</param>
@@ -97,9 +128,9 @@ public sealed partial class TarjetaDeServicio : ObservableObject
         Func<string>? aviso = null,
         params INotifyPropertyChanged?[] origenes)
     {
-        Nombre = nombre;
+        _nombre = nombre;
         Inicial = inicial;
-        Descripcion = descripcion;
+        _descripcion = descripcion;
         _estado = estado ?? throw new ArgumentNullException(nameof(estado));
         _aviso = aviso;
         Secretos = secretos ?? [];
@@ -110,16 +141,19 @@ public sealed partial class TarjetaDeServicio : ObservableObject
         {
             if (o is not null) o.PropertyChanged += (_, _) => Refrescar();
         }
+
+        // Nombre, descripción, estado y avisos se vuelven a escribir en el idioma nuevo.
+        Textos.AlCambiar(this, static t => t.OnPropertyChanged(string.Empty));
     }
 
     /// <summary>Nombre del servicio.</summary>
-    public string Nombre { get; }
+    public string Nombre => TextoOClave.Resolver(_nombre);
 
     /// <summary>Letra de la chapa, al estilo de la marca.</summary>
     public string Inicial { get; }
 
     /// <summary>Para qué sirve.</summary>
-    public string Descripcion { get; }
+    public string Descripcion => TextoOClave.Resolver(_descripcion);
 
     /// <summary>Sus secretos.</summary>
     public IReadOnlyList<SecretoDeServicio> Secretos { get; }
@@ -140,7 +174,11 @@ public sealed partial class TarjetaDeServicio : ObservableObject
     public ICommand? Probar { get; init; }
 
     /// <summary>Rótulo del botón de probar.</summary>
-    public string TextoDeProbar { get; init; } = "Probar la conexión";
+    public string TextoDeProbar
+    {
+        get => TextoOClave.Resolver(_textoDeProbar);
+        init => _textoDeProbar = value;
+    }
 
     /// <summary>Hay botón de probar.</summary>
     public bool HayPrueba => Probar is not null;
@@ -152,7 +190,11 @@ public sealed partial class TarjetaDeServicio : ObservableObject
     public bool HayConfigurar => Configurar is not null;
 
     /// <summary>Aclaración fija que se lee ANTES de escribir (por ejemplo, la de TQSL).</summary>
-    public string Nota { get; init; } = string.Empty;
+    public string Nota
+    {
+        get => TextoOClave.Resolver(_nota);
+        init => _nota = value;
+    }
 
     /// <summary>Cómo está, para el color.</summary>
     public EstadoDeServicio Estado => _estado().Estado;
@@ -181,8 +223,8 @@ public sealed partial class TarjetaDeServicio : ObservableObject
         IReadOnlyList<SecretoDeServicio> necesarios,
         IReadOnlyList<SecretoDeServicio> todos)
     {
-        if (necesarios.Count > 0 && necesarios.All(s => s.Guardado)) return (EstadoDeServicio.Configurado, "Configurada");
-        if (todos.Any(s => s.Guardado)) return (EstadoDeServicio.AMedias, "Incompleta");
-        return (EstadoDeServicio.SinConfigurar, "Sin configurar");
+        if (necesarios.Count > 0 && necesarios.All(s => s.Guardado)) return (EstadoDeServicio.Configurado, Textos.T("Ajustes.Estado.Configurada"));
+        if (todos.Any(s => s.Guardado)) return (EstadoDeServicio.AMedias, Textos.T("Ajustes.Estado.Incompleta"));
+        return (EstadoDeServicio.SinConfigurar, Textos.T("Ajustes.Estado.SinConfigurar"));
     }
 }

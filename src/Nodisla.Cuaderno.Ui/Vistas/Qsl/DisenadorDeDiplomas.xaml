@@ -1,9 +1,12 @@
 <UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.Qsl.DisenadorDeDiplomas"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              xmlns:qsl="clr-namespace:Nodisla.Cuaderno.Ui.Qsl"
              xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
              xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             xmlns:controles="clr-namespace:Nodisla.Cuaderno.Ui.Vistas.Controles"
+             controles:SelectorDeColor.OrigenDeColores="{Binding}"
              Foreground="{DynamicResource Texto}"
              Loaded="AlCargar">
 
@@ -35,7 +38,8 @@
 
             <Style x:Key="Etiqueta" TargetType="TextBlock">
                 <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="Width" Value="86" />
+                <Setter Property="MinWidth" Value="86" />
+                <Setter Property="Margin" Value="0,0,6,0" />
             </Style>
 
             <!-- El asa de un elemento sobre el diploma: invisible hasta pasar por encima o elegirlo. -->
@@ -80,8 +84,8 @@
         <Border Grid.Column="0" Style="{StaticResource Tarjeta}" Margin="0,0,5,0" Padding="8,6">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
-                    <TextBlock Text="Plantilla de diploma" Style="{StaticResource TituloDeSeccion}" />
-                    <ComboBox ItemsSource="{Binding Disenos}" SelectedItem="{Binding Diseno}" AutomationProperties.Name="Plantilla de diploma">
+                    <TextBlock Text="{loc:Texto Qsl.Disenador.Plantilla}" Style="{StaticResource TituloDeSeccion}" />
+                    <ComboBox ItemsSource="{Binding Disenos}" SelectedItem="{Binding Diseno}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.Plantilla}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Nombre}" />
@@ -89,129 +93,126 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                     <WrapPanel Margin="0,6,0,0">
-                        <Button Content="Guardar" Command="{Binding GuardarCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Guardar la plantilla" />
-                        <Button Content="Deshacer" Command="{Binding DescartarCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Deshacer los cambios sin guardar" />
-                        <Button Content="Nueva" Command="{Binding NuevaPlantillaCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Plantilla nueva" />
-                        <Button Content="Duplicar" Command="{Binding DuplicarPlantillaCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Duplicar la plantilla" />
-                        <Button Content="Borrar" Command="{Binding BorrarPlantillaCommand}" Style="{StaticResource Boton}"
-                                ToolTip="Las de fábrica vuelven a como venían" AutomationProperties.Name="Borrar la plantilla" />
-                        <Button Content="Usar por omisión" Command="{Binding PonerPorOmisionCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Usar esta plantilla por omisión" />
-                        <Button Content="Exportar…" Command="{Binding ExportarPlantillaCommand}" Style="{StaticResource Boton}"
-                                ToolTip="Un solo fichero con la plantilla y sus imágenes, para llevarla a otro equipo" AutomationProperties.Name="Exportar la plantilla" />
-                        <Button Content="Importar…" Command="{Binding ImportarPlantillaCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Importar una plantilla" />
+                        <Button Content="{loc:Texto Comun.Guardar}" Command="{Binding GuardarCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="{loc:Texto Qsl.Editor.GuardarLaPlantilla}" />
+                        <Button Content="{loc:Texto Qsl.Editor.Deshacer}" Command="{Binding DescartarCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="{loc:Texto Qsl.Editor.DeshacerCambios}" />
+                        <Button Content="{loc:Texto Qsl.Editor.Nueva}" Command="{Binding NuevaPlantillaCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="{loc:Texto Qsl.Editor.PlantillaNueva}" />
+                        <Button Content="{loc:Texto Qsl.Editor.Duplicar}" Command="{Binding DuplicarPlantillaCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="{loc:Texto Qsl.Editor.DuplicarLaPlantilla}" />
+                        <Button Content="{loc:Texto Comun.Borrar}" Command="{Binding BorrarPlantillaCommand}" Style="{StaticResource Boton}"
+                                ToolTip="{loc:Texto Qsl.Disenador.BorrarAyuda}" AutomationProperties.Name="{loc:Texto Qsl.Editor.BorrarLaPlantilla}" />
+                        <Button Content="{loc:Texto Qsl.Editor.UsarPorOmision}" Command="{Binding PonerPorOmisionCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="{loc:Texto Qsl.Editor.UsarEstaPorOmision}" />
+                        <Button Content="{loc:Texto Qsl.Disenador.Exportar}" Command="{Binding ExportarPlantillaCommand}" Style="{StaticResource Boton}"
+                                ToolTip="{loc:Texto Qsl.Disenador.ExportarAyuda}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.ExportarNombre}" />
+                        <Button Content="{loc:Texto Qsl.Disenador.Importar}" Command="{Binding ImportarPlantillaCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.ImportarNombre}" />
                     </WrapPanel>
-                    <TextBlock Text="✓ Es la plantilla por omisión." Style="{StaticResource TextoTenueEstilo}"
+                    <TextBlock Text="{loc:Texto Qsl.Editor.EsLaDeOmision}" Style="{StaticResource TextoTenueEstilo}"
                                Visibility="{Binding EsLaDeOmision, Converter={StaticResource BooleanoAVisible}}" />
-                    <TextBlock Text="● Cambios sin guardar." Foreground="{DynamicResource AvisoTexto}" FontWeight="SemiBold"
+                    <TextBlock Text="{loc:Texto Qsl.Editor.CambiosSinGuardar}" Foreground="{DynamicResource AvisoTexto}" FontWeight="SemiBold"
                                Visibility="{Binding HayCambios, Converter={StaticResource BooleanoAVisible}}" />
 
-                    <TextBlock Text="Nombre" Style="{StaticResource Rotulo}" />
-                    <TextBox Text="{Binding NombreDelDiseno, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Nombre de la plantilla" />
+                    <TextBlock Text="{loc:Texto Comun.Nombre}" Style="{StaticResource Rotulo}" />
+                    <TextBox Text="{Binding NombreDelDiseno, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{loc:Texto Qsl.Editor.NombreDeLaPlantilla}" />
 
                     <DockPanel Margin="0,8,0,0">
-                        <TextBlock Text="Papel" Style="{StaticResource Etiqueta}" />
-                        <CheckBox DockPanel.Dock="Right" Content="Vertical" IsChecked="{Binding Vertical}" VerticalAlignment="Center" Margin="8,0,0,0"
-                                  AutomationProperties.Name="Diploma en vertical" />
-                        <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.Papeles}" SelectedItem="{Binding Papel}" AutomationProperties.Name="Tamaño de papel" />
+                        <TextBlock Text="{loc:Texto Qsl.Disenador.Papel}" Style="{StaticResource Etiqueta}" />
+                        <CheckBox DockPanel.Dock="Right" Content="{loc:Texto Qsl.Disenador.Vertical}" IsChecked="{Binding Vertical}" VerticalAlignment="Center" Margin="8,0,0,0"
+                                  AutomationProperties.Name="{loc:Texto Qsl.Disenador.VerticalNombre}" />
+                        <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.OpcionesDePapel}" DisplayMemberPath="Nombre" SelectedValuePath="Valor" SelectedValue="{Binding Papel}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.TamanoDePapel}" />
                     </DockPanel>
 
-                    <TextBlock Text="Fondo" Style="{StaticResource Rotulo}" />
+                    <TextBlock Text="{loc:Texto Qsl.Editor.Fondo}" Style="{StaticResource Rotulo}" />
                     <WrapPanel>
-                        <Button Content="Elegir imagen…" Command="{Binding ElegirFondoCommand}" Style="{StaticResource Boton}"
-                                ToolTip="Una foto, una textura de papel o una orla en imagen" AutomationProperties.Name="Elegir la imagen de fondo" />
-                        <Button Content="Quitar" Command="{Binding QuitarFondoCommand}" Style="{StaticResource Boton}"
-                                Visibility="{Binding TieneFondo, Converter={StaticResource BooleanoAVisible}}" AutomationProperties.Name="Quitar la imagen de fondo" />
+                        <Button Content="{loc:Texto Qsl.Editor.ElegirImagen}" Command="{Binding ElegirFondoCommand}" Style="{StaticResource Boton}"
+                                ToolTip="{loc:Texto Qsl.Disenador.FondoAyuda}" AutomationProperties.Name="{loc:Texto Qsl.Editor.ElegirImagenDeFondo}" />
+                        <Button Content="{loc:Texto Qsl.Editor.Quitar}" Command="{Binding QuitarFondoCommand}" Style="{StaticResource Boton}"
+                                Visibility="{Binding TieneFondo, Converter={StaticResource BooleanoAVisible}}" AutomationProperties.Name="{loc:Texto Qsl.Editor.QuitarImagenDeFondo}" />
                     </WrapPanel>
                     <DockPanel>
-                        <TextBlock Text="Ajuste" Style="{StaticResource Etiqueta}" />
-                        <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.AjustesDeFondo}" SelectedItem="{Binding Ajuste}" AutomationProperties.Name="Cómo se ajusta la imagen de fondo" />
+                        <TextBlock Text="{loc:Texto Qsl.Editor.Ajuste}" Style="{StaticResource Etiqueta}" />
+                        <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.OpcionesDeAjuste}" DisplayMemberPath="Nombre" SelectedValuePath="Valor" SelectedValue="{Binding Ajuste}" AutomationProperties.Name="{loc:Texto Qsl.Editor.ComoSeAjusta}" />
                     </DockPanel>
                     <DockPanel Margin="0,6,0,0">
-                        <TextBlock Text="Color" Style="{StaticResource Etiqueta}" />
-                        <Border DockPanel.Dock="Right" Style="{StaticResource Muestra}" Background="{Binding ColorDeFondo, Converter={StaticResource PincelDeColor}}" />
-                        <TextBox Text="{Binding ColorDeFondo, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Color del papel" />
+                        <TextBlock Text="{loc:Texto Qsl.Editor.Color}" Style="{StaticResource Etiqueta}" />
+                        <controles:SelectorDeColor Color="{Binding ColorDeFondo}" Titulo="{loc:Texto Qsl.Disenador.ColorDelPapel}" />
                     </DockPanel>
 
-                    <TextBlock Text="Orla" Style="{StaticResource Rotulo}" />
+                    <TextBlock Text="{loc:Texto Qsl.Disenador.Orla}" Style="{StaticResource Rotulo}" />
                     <DockPanel>
-                        <TextBlock Text="Estilo" Style="{StaticResource Etiqueta}" />
-                        <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.EstilosDeMarco}" SelectedItem="{Binding EstiloDeMarco}" AutomationProperties.Name="Estilo de la orla" />
+                        <TextBlock Text="{loc:Texto Qsl.Disenador.Estilo}" Style="{StaticResource Etiqueta}" />
+                        <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.OpcionesDeOrla}" DisplayMemberPath="Nombre" SelectedValuePath="Valor" SelectedValue="{Binding EstiloDeMarco}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.EstiloDeLaOrla}" />
                     </DockPanel>
                     <DockPanel Margin="0,6,0,0">
-                        <TextBlock Text="Color" Style="{StaticResource Etiqueta}" />
-                        <Border DockPanel.Dock="Right" Style="{StaticResource Muestra}" Background="{Binding ColorDelMarco, Converter={StaticResource PincelDeColor}}" />
-                        <TextBox Text="{Binding ColorDelMarco, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Color de la orla" />
+                        <TextBlock Text="{loc:Texto Qsl.Editor.Color}" Style="{StaticResource Etiqueta}" />
+                        <controles:SelectorDeColor Color="{Binding ColorDelMarco}" Titulo="{loc:Texto Qsl.Disenador.ColorDeLaOrla}" />
                     </DockPanel>
                     <DockPanel Margin="0,6,0,0">
-                        <TextBlock Text="Adorno" Style="{StaticResource Etiqueta}" />
-                        <Border DockPanel.Dock="Right" Style="{StaticResource Muestra}" Background="{Binding ColorSecundarioDelMarco, Converter={StaticResource PincelDeColor}}" />
-                        <TextBox Text="{Binding ColorSecundarioDelMarco, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Color secundario de la orla" />
+                        <TextBlock Text="{loc:Texto Qsl.Disenador.Adorno}" Style="{StaticResource Etiqueta}" />
+                        <controles:SelectorDeColor Color="{Binding ColorSecundarioDelMarco}" Titulo="{loc:Texto Qsl.Disenador.ColorDelAdorno}" />
                     </DockPanel>
                     <DockPanel Margin="0,6,0,0">
-                        <TextBlock Text="Margen mm" Style="{StaticResource Etiqueta}" />
-                        <TextBox DockPanel.Dock="Right" Width="50" Text="{Binding GrosorDelMarco, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" AutomationProperties.Name="Grosor de la orla en milímetros" />
-                        <TextBlock DockPanel.Dock="Right" Text=" Grosor " VerticalAlignment="Center" />
-                        <TextBox Text="{Binding MargenDelMarco, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" AutomationProperties.Name="Margen de la orla en milímetros" />
+                        <TextBlock Text="{loc:Texto Qsl.Disenador.MargenMm}" Style="{StaticResource Etiqueta}" />
+                        <TextBox DockPanel.Dock="Right" Width="50" Text="{Binding GrosorDelMarco, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.GrosorNombre}" />
+                        <TextBlock DockPanel.Dock="Right" Text="{loc:Texto Qsl.Disenador.Grosor}" VerticalAlignment="Center" Margin="6,0,4,0" />
+                        <TextBox Text="{Binding MargenDelMarco, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.MargenNombre}" />
                     </DockPanel>
 
-                    <TextBlock Text="Numeración y firma" Style="{StaticResource Rotulo}" />
+                    <TextBlock Text="{loc:Texto Qsl.Disenador.NumeracionYFirma}" Style="{StaticResource Rotulo}" />
                     <DockPanel>
-                        <TextBlock Text="Serie" Style="{StaticResource Etiqueta}" />
+                        <TextBlock Text="{loc:Texto Qsl.Disenador.Serie}" Style="{StaticResource Etiqueta}" />
                         <TextBox Text="{Binding Serie, UpdateSourceTrigger=LostFocus}"
-                                 ToolTip="Cada serie lleva su propia numeración correlativa; varias plantillas pueden compartirla."
-                                 AutomationProperties.Name="Serie de numeración" />
+                                 ToolTip="{loc:Texto Qsl.Disenador.SerieAyuda}"
+                                 AutomationProperties.Name="{loc:Texto Qsl.Disenador.SerieNombre}" />
                     </DockPanel>
                     <DockPanel Margin="0,6,0,0">
-                        <TextBlock Text="Prefijo" Style="{StaticResource Etiqueta}" />
-                        <TextBox DockPanel.Dock="Right" Width="40" Text="{Binding CifrasDelNumero, UpdateSourceTrigger=LostFocus}" AutomationProperties.Name="Cifras del número" />
-                        <TextBlock DockPanel.Dock="Right" Text=" Cifras " VerticalAlignment="Center" />
-                        <TextBox Text="{Binding PrefijoDeNumero, UpdateSourceTrigger=PropertyChanged}" ToolTip="Por ejemplo EA8- o 2026/" AutomationProperties.Name="Prefijo del número" />
+                        <TextBlock Text="{loc:Texto Qsl.Disenador.Prefijo}" Style="{StaticResource Etiqueta}" />
+                        <TextBox DockPanel.Dock="Right" Width="40" Text="{Binding CifrasDelNumero, UpdateSourceTrigger=LostFocus}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.CifrasNombre}" />
+                        <TextBlock DockPanel.Dock="Right" Text="{loc:Texto Qsl.Disenador.Cifras}" VerticalAlignment="Center" Margin="6,0,4,0" />
+                        <TextBox Text="{Binding PrefijoDeNumero, UpdateSourceTrigger=PropertyChanged}" ToolTip="{loc:Texto Qsl.Disenador.PrefijoAyuda}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.PrefijoNombre}" />
                     </DockPanel>
                     <DockPanel Margin="0,6,0,0">
-                        <TextBlock Text="Gestor" Style="{StaticResource Etiqueta}" />
-                        <TextBox Text="{Binding NombreDelGestor, UpdateSourceTrigger=PropertyChanged}" ToolTip="Variable {gestor}: quien firma el diploma" AutomationProperties.Name="Nombre del gestor" />
+                        <TextBlock Text="{loc:Texto Qsl.Disenador.Gestor}" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding NombreDelGestor, UpdateSourceTrigger=PropertyChanged}" ToolTip="{loc:Texto Qsl.Disenador.GestorAyuda, Valor={Binding Tag, RelativeSource={RelativeSource Self}}}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.GestorNombre}" />
                     </DockPanel>
 
-                    <TextBlock Text="Textos" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,4" />
-                    <ListBox ItemsSource="{Binding Campos}" SelectedItem="{Binding ElementoElegido}" MaxHeight="220" AutomationProperties.Name="Textos del diploma">
+                    <TextBlock Text="{loc:Texto Qsl.Disenador.Textos}" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,4" />
+                    <ListBox ItemsSource="{Binding Campos}" SelectedItem="{Binding ElementoElegido}" MaxHeight="220" AutomationProperties.Name="{loc:Texto Qsl.Disenador.TextosDelDiploma}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="{Binding Visible}" Margin="0,0,6,0" ToolTip="Se ve en el diploma" AutomationProperties.Name="{Binding Nombre}" />
+                                    <CheckBox IsChecked="{Binding Visible}" Margin="0,0,6,0" ToolTip="{loc:Texto Qsl.Disenador.SeVe}" AutomationProperties.Name="{Binding Nombre}" />
                                     <TextBlock Text="{Binding Nombre}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                     <WrapPanel Margin="0,6,0,0">
-                        <Button Content="Añadir texto" Command="{Binding AnadirTextoCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Añadir un texto" />
-                        <Button Content="Duplicar" Command="{Binding DuplicarElementoCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Duplicar el elemento elegido" />
-                        <Button Content="Quitar" Command="{Binding QuitarElementoCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Quitar el elemento elegido" />
+                        <Button Content="{loc:Texto Qsl.Editor.AnadirTexto}" Command="{Binding AnadirTextoCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.AnadirTextoNombre}" />
+                        <Button Content="{loc:Texto Qsl.Editor.Duplicar}" Command="{Binding DuplicarElementoCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.DuplicarElemento}" />
+                        <Button Content="{loc:Texto Qsl.Editor.Quitar}" Command="{Binding QuitarElementoCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.QuitarElemento}" />
                     </WrapPanel>
 
-                    <TextBlock Text="Logo, firma e imágenes" Style="{StaticResource TituloDeSeccion}" Margin="0,8,0,4" />
-                    <ListBox ItemsSource="{Binding Imagenes}" SelectedItem="{Binding ElementoElegido}" MaxHeight="140" AutomationProperties.Name="Imágenes del diploma">
+                    <TextBlock Text="{loc:Texto Qsl.Disenador.Imagenes}" Style="{StaticResource TituloDeSeccion}" Margin="0,8,0,4" />
+                    <ListBox ItemsSource="{Binding Imagenes}" SelectedItem="{Binding ElementoElegido}" MaxHeight="140" AutomationProperties.Name="{loc:Texto Qsl.Disenador.ImagenesDelDiploma}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="{Binding Visible}" Margin="0,0,6,0" ToolTip="Se ve en el diploma" AutomationProperties.Name="{Binding Nombre}" />
+                                    <CheckBox IsChecked="{Binding Visible}" Margin="0,0,6,0" ToolTip="{loc:Texto Qsl.Disenador.SeVe}" AutomationProperties.Name="{Binding Nombre}" />
                                     <TextBlock Text="{Binding Nombre}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                     <WrapPanel Margin="0,6,0,0">
-                        <Button Content="Añadir imagen…" Command="{Binding AnadirImagenCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="Añadir una imagen" />
-                        <Button Content="Elegir imagen…" Command="{Binding ElegirImagenDelElementoCommand}" Style="{StaticResource Boton}"
-                                ToolTip="Pone su logo o su firma escaneada en el hueco elegido" AutomationProperties.Name="Elegir la imagen del hueco elegido" />
+                        <Button Content="{loc:Texto Qsl.Disenador.AnadirImagen}" Command="{Binding AnadirImagenCommand}" Style="{StaticResource Boton}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.AnadirImagenNombre}" />
+                        <Button Content="{loc:Texto Qsl.Editor.ElegirImagen}" Command="{Binding ElegirImagenDelElementoCommand}" Style="{StaticResource Boton}"
+                                ToolTip="{loc:Texto Qsl.Disenador.ElegirImagenAyuda}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.ElegirImagenNombre}" />
                     </WrapPanel>
 
-                    <Expander Header="Tabla de referencias o contactos" Margin="0,8,0,0" IsExpanded="False">
+                    <Expander Header="{loc:Texto Qsl.Disenador.Tabla}" Margin="0,8,0,0" IsExpanded="False">
                         <StackPanel Margin="0,4,0,0">
-                            <CheckBox Content="Poner la tabla" IsChecked="{Binding TablaVisible}" AutomationProperties.Name="Poner la tabla" />
-                            <CheckBox Content="Lo que no quepa, en hojas de anexo" IsChecked="{Binding AnexoDeLaTabla}" Margin="0,4,0,0" AutomationProperties.Name="Anexar lo que no quepa" />
-                            <TextBlock Text="Título" Style="{StaticResource Rotulo}" />
-                            <TextBox Text="{Binding TituloDeLaTabla, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Título de la tabla" />
+                            <CheckBox Content="{loc:Texto Qsl.Disenador.PonerTabla}" IsChecked="{Binding TablaVisible}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.PonerTabla}" />
+                            <CheckBox Content="{loc:Texto Qsl.Disenador.Anexo}" IsChecked="{Binding AnexoDeLaTabla}" Margin="0,4,0,0" AutomationProperties.Name="{loc:Texto Qsl.Disenador.AnexoNombre}" />
+                            <TextBlock Text="{loc:Texto Qsl.Disenador.Titulo}" Style="{StaticResource Rotulo}" />
+                            <TextBox Text="{Binding TituloDeLaTabla, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.TituloDeLaTabla}" />
                             <Grid Margin="0,6,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -225,39 +226,52 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <TextBlock Text="X mm " VerticalAlignment="Center" />
-                                <TextBox Grid.Column="1" Text="{Binding XDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,0,6,0" AutomationProperties.Name="Izquierda de la tabla" />
+                                <TextBox Grid.Column="1" Text="{Binding XDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,0,6,0" AutomationProperties.Name="{loc:Texto Qsl.Disenador.TablaX}" />
                                 <TextBlock Grid.Column="2" Text="Y mm " VerticalAlignment="Center" />
-                                <TextBox Grid.Column="3" Text="{Binding YDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" AutomationProperties.Name="Arriba de la tabla" />
-                                <TextBlock Grid.Row="1" Text="Ancho " VerticalAlignment="Center" Margin="0,4,0,0" />
-                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AnchoDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,4,6,0" AutomationProperties.Name="Ancho de la tabla" />
-                                <TextBlock Grid.Row="1" Grid.Column="2" Text="Alto " VerticalAlignment="Center" Margin="0,4,0,0" />
-                                <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding AltoDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,4,0,0" AutomationProperties.Name="Alto de la tabla" />
-                                <TextBlock Grid.Row="2" Text="Bloques " VerticalAlignment="Center" Margin="0,4,0,0" />
+                                <TextBox Grid.Column="3" Text="{Binding YDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.TablaY}" />
+                                <TextBlock Grid.Row="1" Text="{loc:Texto Qsl.Editor.Ancho}" VerticalAlignment="Center" Margin="0,4,4,0" />
+                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AnchoDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,4,6,0" AutomationProperties.Name="{loc:Texto Qsl.Disenador.TablaAncho}" />
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{loc:Texto Qsl.Editor.Alto}" VerticalAlignment="Center" Margin="0,4,4,0" />
+                                <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding AltoDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,4,0,0" AutomationProperties.Name="{loc:Texto Qsl.Disenador.TablaAlto}" />
+                                <TextBlock Grid.Row="2" Text="{loc:Texto Qsl.Disenador.Bloques}" VerticalAlignment="Center" Margin="0,4,4,0" />
                                 <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding BloquesDeLaTabla, UpdateSourceTrigger=LostFocus}" Margin="0,4,6,0"
-                                         ToolTip="Columnas de la tabla una al lado de otra (1 a 4)" AutomationProperties.Name="Bloques de la tabla" />
+                                         ToolTip="{loc:Texto Qsl.Disenador.BloquesAyuda}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.BloquesNombre}" />
                                 <TextBlock Grid.Row="2" Grid.Column="2" Text="pt " VerticalAlignment="Center" Margin="0,4,0,0" />
-                                <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding TamanoDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,4,0,0" AutomationProperties.Name="Tamaño de letra de la tabla" />
+                                <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding TamanoDeLaTabla, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,4,0,0" AutomationProperties.Name="{loc:Texto Qsl.Disenador.TablaTamano}" />
                             </Grid>
-                            <TextBlock Text="Letra" Style="{StaticResource Rotulo}" />
-                            <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.Fuentes}" SelectedItem="{Binding FuenteDeLaTabla}" AutomationProperties.Name="Letra de la tabla" />
-                            <TextBlock Text="Columnas (cabecera · contenido · ancho)" Style="{StaticResource Rotulo}" />
+                            <TextBlock Text="{loc:Texto Qsl.Editor.Letra}" Style="{StaticResource Rotulo}" />
+                            <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.Fuentes}" SelectedItem="{Binding FuenteDeLaTabla}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.TablaLetra}" />
+                            <TextBlock Text="{loc:Texto Qsl.Disenador.Colores}" Style="{StaticResource Rotulo}" />
+                            <DockPanel>
+                                <TextBlock Text="{loc:Texto Qsl.Disenador.Cabecera}" Style="{StaticResource Etiqueta}" />
+                                <controles:SelectorDeColor Color="{Binding ColorDeCabeceraDeLaTabla}" Titulo="{loc:Texto Qsl.Disenador.ColorCabecera}" />
+                            </DockPanel>
+                            <DockPanel Margin="0,6,0,0">
+                                <TextBlock Text="{loc:Texto Qsl.Editor.Texto}" Style="{StaticResource Etiqueta}" />
+                                <controles:SelectorDeColor Color="{Binding ColorDelTextoDeLaTabla}" Titulo="{loc:Texto Qsl.Disenador.ColorTextoTabla}" />
+                            </DockPanel>
+                            <DockPanel Margin="0,6,0,0">
+                                <TextBlock Text="{loc:Texto Qsl.Disenador.Lineas}" Style="{StaticResource Etiqueta}" />
+                                <controles:SelectorDeColor Color="{Binding ColorDeLineasDeLaTabla}" Titulo="{loc:Texto Qsl.Disenador.ColorLineas}" />
+                            </DockPanel>
+                            <TextBlock Text="{loc:Texto Qsl.Disenador.Columnas}" Style="{StaticResource Rotulo}" />
                             <ItemsControl ItemsSource="{Binding Columnas}" Focusable="False">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <DockPanel Margin="0,0,0,4">
                                             <Button DockPanel.Dock="Right" Content="✕" Padding="5,0" Margin="4,0,0,0"
                                                     Command="{Binding DataContext.QuitarColumnaCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                    CommandParameter="{Binding}" ToolTip="Quitar la columna" AutomationProperties.Name="Quitar la columna" />
-                                            <TextBox DockPanel.Dock="Right" Width="34" Text="{Binding Ancho, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" AutomationProperties.Name="Ancho de la columna" />
+                                                    CommandParameter="{Binding}" ToolTip="{loc:Texto Qsl.Disenador.QuitarColumna}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.QuitarColumna}" />
+                                            <TextBox DockPanel.Dock="Right" Width="34" Text="{Binding Ancho, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.AnchoColumna}" />
                                             <UniformGrid Columns="2">
-                                                <TextBox Text="{Binding Titulo, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,4,0" AutomationProperties.Name="Cabecera de la columna" />
-                                                <TextBox Text="{Binding Texto, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,4,0" AutomationProperties.Name="Contenido de la columna" />
+                                                <TextBox Text="{Binding Titulo, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,4,0" AutomationProperties.Name="{loc:Texto Qsl.Disenador.CabeceraColumna}" />
+                                                <TextBox Text="{Binding Texto, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,4,0" AutomationProperties.Name="{loc:Texto Qsl.Disenador.ContenidoColumna}" />
                                             </UniformGrid>
                                         </DockPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                            <Button Content="Añadir columna" Command="{Binding AnadirColumnaCommand}" Style="{StaticResource Boton}" HorizontalAlignment="Left" AutomationProperties.Name="Añadir una columna" />
+                            <Button Content="{loc:Texto Qsl.Disenador.AnadirColumna}" Command="{Binding AnadirColumnaCommand}" Style="{StaticResource Boton}" HorizontalAlignment="Left" AutomationProperties.Name="{loc:Texto Qsl.Disenador.AnadirColumnaNombre}" />
                         </StackPanel>
                     </Expander>
                 </StackPanel>
@@ -275,11 +289,13 @@
 
                 <DockPanel Grid.Row="0" Margin="0,0,0,6">
                     <Button DockPanel.Dock="Right" Content="↻" Command="{Binding RefrescarCommand}" Padding="8,2" Margin="6,0,0,0"
-                            ToolTip="Volver a leer mi estación, los diplomas conseguidos y el historial" AutomationProperties.Name="Volver a leer los datos" />
-                    <RadioButton Content="Emitir a otra estación" IsChecked="{Binding EsParaOtraEstacion}" GroupName="UsoDelDisenador" Foreground="{DynamicResource Texto}" Margin="0,0,14,0" VerticalAlignment="Center"
-                                 AutomationProperties.Name="Emitir un diploma a otra estación" />
-                    <RadioButton Content="Certificado de un diploma conseguido" IsChecked="{Binding EsCertificadoPropio}" GroupName="UsoDelDisenador" Foreground="{DynamicResource Texto}" VerticalAlignment="Center"
-                                 AutomationProperties.Name="Imprimir el certificado de un diploma conseguido" />
+                            ToolTip="{loc:Texto Qsl.Disenador.ReleerAyuda}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.ReleerNombre}" />
+                    <WrapPanel VerticalAlignment="Center">
+                    <RadioButton Content="{loc:Texto Qsl.Disenador.EmitirAOtra}" IsChecked="{Binding EsParaOtraEstacion}" GroupName="UsoDelDisenador" Foreground="{DynamicResource Texto}" Margin="0,0,14,0" VerticalAlignment="Center"
+                                 AutomationProperties.Name="{loc:Texto Qsl.Disenador.EmitirAOtraNombre}" />
+                    <RadioButton Content="{loc:Texto Qsl.Disenador.Certificado}" IsChecked="{Binding EsCertificadoPropio}" GroupName="UsoDelDisenador" Foreground="{DynamicResource Texto}" VerticalAlignment="Center"
+                                 AutomationProperties.Name="{loc:Texto Qsl.Disenador.CertificadoNombre}" />
+                    </WrapPanel>
                 </DockPanel>
 
                 <Border Grid.Row="1" Background="{DynamicResource FondoCampo}" Padding="10">
@@ -290,8 +306,8 @@
                             <!-- La tabla -->
                             <Canvas>
                                 <Thumb Canvas.Left="{Binding TablaX}" Canvas.Top="{Binding TablaY}" Width="{Binding TablaAncho}" Height="{Binding TablaAlto}"
-                                       Cursor="SizeAll" ToolTip="Tabla de referencias" DragDelta="AlArrastrarLaTabla"
-                                       Template="{StaticResource AsaDeTabla}" AutomationProperties.Name="Tabla de referencias" />
+                                       Cursor="SizeAll" ToolTip="{loc:Texto Qsl.Disenador.TablaDeReferencias}" DragDelta="AlArrastrarLaTabla"
+                                       Template="{StaticResource AsaDeTabla}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.TablaDeReferencias}" />
                             </Canvas>
 
                             <!-- Logo, firma, adornos -->
@@ -343,14 +359,14 @@
 
                 <StackPanel Grid.Row="2" Margin="0,8,0,0">
                     <WrapPanel>
-                        <Button Content="Emitir y enviar por correo…" Command="{Binding EmitirYEnviarCommand}" Style="{StaticResource BotonPrincipal}"
-                                Margin="0,0,6,6" Padding="10,4" AutomationProperties.Name="Emitir el diploma y enviarlo por correo" />
-                        <Button Content="Emitir y guardar PDF…" Command="{Binding EmitirYGuardarPdfCommand}" Style="{StaticResource Boton}"
-                                AutomationProperties.Name="Emitir el diploma y guardarlo en PDF" />
-                        <Button Content="PDF de prueba…" Command="{Binding PdfDePruebaCommand}" Style="{StaticResource Boton}"
-                                ToolTip="Sin emitir: para revisarlo antes de darle número" AutomationProperties.Name="PDF de prueba sin emitir" />
-                        <Button Content="Guardar PNG…" Command="{Binding GuardarPngCommand}" Style="{StaticResource Boton}"
-                                AutomationProperties.Name="Guardar el diploma como imagen PNG" />
+                        <Button Content="{loc:Texto Qsl.Disenador.EmitirYEnviar}" Command="{Binding EmitirYEnviarCommand}" Style="{StaticResource BotonPrincipal}"
+                                Margin="0,0,6,6" Padding="10,4" AutomationProperties.Name="{loc:Texto Qsl.Disenador.EmitirYEnviarNombre}" />
+                        <Button Content="{loc:Texto Qsl.Disenador.EmitirYGuardar}" Command="{Binding EmitirYGuardarPdfCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="{loc:Texto Qsl.Disenador.EmitirYGuardarNombre}" />
+                        <Button Content="{loc:Texto Qsl.Disenador.PdfDePrueba}" Command="{Binding PdfDePruebaCommand}" Style="{StaticResource Boton}"
+                                ToolTip="{loc:Texto Qsl.Disenador.PdfDePruebaAyuda}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.PdfDePruebaNombre}" />
+                        <Button Content="{loc:Texto Qsl.Disenador.GuardarPng}" Command="{Binding GuardarPngCommand}" Style="{StaticResource Boton}"
+                                AutomationProperties.Name="{loc:Texto Qsl.Disenador.GuardarPngNombre}" />
                     </WrapPanel>
                     <TextBlock Text="{Binding TextoDelNumero}" Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
                     <TextBlock Text="{Binding TextoDeHojas}" Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
@@ -363,18 +379,18 @@
         <Border Grid.Column="2" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
-                    <TextBlock Text="Diploma" Style="{StaticResource TituloDeSeccion}" />
+                    <TextBlock Text="{loc:Texto Qsl.Disenador.Diploma}" Style="{StaticResource TituloDeSeccion}" />
 
                     <!-- Emitir a otra estación -->
                     <StackPanel Visibility="{Binding EsParaOtraEstacion, Converter={StaticResource BooleanoAVisible}}">
                         <DockPanel>
-                            <TextBlock Text="Indicativo" Style="{StaticResource Etiqueta}" />
-                            <Button DockPanel.Dock="Right" Content="Buscar QSOs" Command="{Binding BuscarContactosCommand}" Padding="6,1" Margin="6,0,0,0"
-                                    ToolTip="Busca en el cuaderno los contactos con esta estación y rellena nombre, correo y tabla"
-                                    AutomationProperties.Name="Buscar los contactos con la estación" />
-                            <TextBox Text="{Binding Indicativo, UpdateSourceTrigger=PropertyChanged}" CharacterCasing="Upper" AutomationProperties.Name="Indicativo que recibe el diploma" />
+                            <TextBlock Text="{loc:Texto Comun.Indicativo}" Style="{StaticResource Etiqueta}" />
+                            <Button DockPanel.Dock="Right" Content="{loc:Texto Qsl.Disenador.BuscarQsos}" Command="{Binding BuscarContactosCommand}" Padding="6,1" Margin="6,0,0,0"
+                                    ToolTip="{loc:Texto Qsl.Disenador.BuscarQsosAyuda}"
+                                    AutomationProperties.Name="{loc:Texto Qsl.Disenador.BuscarQsosNombre}" />
+                            <TextBox Text="{Binding Indicativo, UpdateSourceTrigger=PropertyChanged}" CharacterCasing="Upper" AutomationProperties.Name="{loc:Texto Qsl.Disenador.IndicativoNombre}" />
                         </DockPanel>
-                        <ListBox ItemsSource="{Binding Contactos}" MaxHeight="150" Margin="0,6,0,0" AutomationProperties.Name="Contactos que justifican el diploma"
+                        <ListBox ItemsSource="{Binding Contactos}" MaxHeight="150" Margin="0,6,0,0" AutomationProperties.Name="{loc:Texto Qsl.Disenador.ContactosNombre}"
                                  Visibility="{Binding HayContactos, Converter={StaticResource BooleanoAVisible}}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -386,65 +402,65 @@
 
                     <!-- Certificado de un diploma conseguido -->
                     <StackPanel Visibility="{Binding EsCertificadoPropio, Converter={StaticResource BooleanoAVisible}}">
-                        <TextBlock Text="Diploma conseguido (módulo de Diplomas)" Style="{StaticResource Rotulo}" />
-                        <ComboBox ItemsSource="{Binding Conseguidos}" SelectedItem="{Binding Conseguido}" AutomationProperties.Name="Diploma conseguido">
+                        <TextBlock Text="{loc:Texto Qsl.Disenador.Conseguido}" Style="{StaticResource Rotulo}" />
+                        <ComboBox ItemsSource="{Binding Conseguidos}" SelectedItem="{Binding Conseguido}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.ConseguidoNombre}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Texto}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                        <TextBlock Text="✓ = llega al objetivo. La tabla lleva las referencias confirmadas con su primer contacto."
+                        <TextBlock Text="{loc:Texto Qsl.Disenador.ConseguidoAyuda}"
                                    Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
                         <DockPanel Margin="0,6,0,0">
-                            <TextBlock Text="Indicativo" Style="{StaticResource Etiqueta}" />
-                            <TextBox Text="{Binding Indicativo, UpdateSourceTrigger=PropertyChanged}" CharacterCasing="Upper" AutomationProperties.Name="Mi indicativo en el certificado" />
+                            <TextBlock Text="{loc:Texto Comun.Indicativo}" Style="{StaticResource Etiqueta}" />
+                            <TextBox Text="{Binding Indicativo, UpdateSourceTrigger=PropertyChanged}" CharacterCasing="Upper" AutomationProperties.Name="{loc:Texto Qsl.Disenador.MiIndicativoNombre}" />
                         </DockPanel>
                     </StackPanel>
 
                     <DockPanel Margin="0,6,0,0">
-                        <TextBlock Text="Nombre" Style="{StaticResource Etiqueta}" />
-                        <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Nombre de quien recibe el diploma" />
+                        <TextBlock Text="{loc:Texto Comun.Nombre}" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.NombreNombre}" />
                     </DockPanel>
                     <DockPanel Margin="0,6,0,0">
-                        <TextBlock Text="Diploma" Style="{StaticResource Etiqueta}" />
-                        <TextBox Text="{Binding NombreDelDiploma, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Nombre del diploma" />
+                        <TextBlock Text="{loc:Texto Qsl.Disenador.Diploma}" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding NombreDelDiploma, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.NombreDelDiploma}" />
                     </DockPanel>
                     <DockPanel Margin="0,6,0,0">
-                        <TextBlock Text="Categoría" Style="{StaticResource Etiqueta}" />
-                        <TextBox Text="{Binding Categoria, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Categoría o nivel" />
+                        <TextBlock Text="{loc:Texto Qsl.Disenador.Categoria}" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding Categoria, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.CategoriaNombre}" />
                     </DockPanel>
                     <DockPanel Margin="0,6,0,0">
-                        <TextBlock Text="Fecha" Style="{StaticResource Etiqueta}" />
-                        <DatePicker SelectedDate="{Binding FechaDeEmision}" AutomationProperties.Name="Fecha de emisión" />
+                        <TextBlock Text="{loc:Texto Comun.Fecha}" Style="{StaticResource Etiqueta}" />
+                        <DatePicker SelectedDate="{Binding FechaDeEmision}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.FechaNombre}" />
                     </DockPanel>
                     <DockPanel Margin="0,6,0,0">
-                        <TextBlock Text="Correo" Style="{StaticResource Etiqueta}" />
-                        <TextBox Text="{Binding Correo, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Correo del destinatario" />
+                        <TextBlock Text="{loc:Texto Qsl.Editor.Correo}" Style="{StaticResource Etiqueta}" />
+                        <TextBox Text="{Binding Correo, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.CorreoNombre}" />
                     </DockPanel>
 
-                    <TextBlock Text="Elemento elegido" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,0" />
-                    <TextBlock Text="Elija un texto o una imagen en las listas o pinche en él sobre el diploma."
+                    <TextBlock Text="{loc:Texto Qsl.Disenador.ElementoElegido}" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,0" />
+                    <TextBlock Text="{loc:Texto Qsl.Disenador.ElijaElemento}"
                                Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap"
                                Visibility="{Binding HayElementoElegido, Converter={StaticResource VisibleSiEsFalso}}" />
                     <ContentControl Content="{Binding ElementoElegido}" Focusable="False" />
 
-                    <Expander Header="Correo del diploma" Margin="0,12,0,0">
+                    <Expander Header="{loc:Texto Qsl.Disenador.CorreoDelDiploma}" Margin="0,12,0,0">
                         <StackPanel>
-                            <TextBlock Text="Asunto" Style="{StaticResource Rotulo}" />
-                            <TextBox Text="{Binding Asunto, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Asunto del correo del diploma" />
-                            <TextBlock Text="Texto" Style="{StaticResource Rotulo}" />
+                            <TextBlock Text="{loc:Texto Qsl.Editor.Asunto}" Style="{StaticResource Rotulo}" />
+                            <TextBox Text="{Binding Asunto, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.AsuntoNombre}" />
+                            <TextBlock Text="{loc:Texto Qsl.Editor.Texto}" Style="{StaticResource Rotulo}" />
                             <TextBox Text="{Binding TextoDelCorreo, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MinLines="4" MaxLines="10"
-                                     TextWrapping="Wrap" VerticalContentAlignment="Top" AutomationProperties.Name="Texto del correo del diploma" />
-                            <TextBlock Text="Sale por el mismo servidor que las QSL (Configuración › Correo de las QSL), con el diploma en PDF adjunto."
+                                     TextWrapping="Wrap" VerticalContentAlignment="Top" AutomationProperties.Name="{loc:Texto Qsl.Disenador.TextoCorreoNombre}" />
+                            <TextBlock Text="{loc:Texto Qsl.Disenador.CorreoAyuda}"
                                        Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
                         </StackPanel>
                     </Expander>
 
-                    <Expander Header="Historial de emitidos" Margin="0,8,0,0" IsExpanded="True">
+                    <Expander Header="{loc:Texto Qsl.Disenador.Historial}" Margin="0,8,0,0" IsExpanded="True">
                         <StackPanel>
                             <ListBox ItemsSource="{Binding Historial}" SelectedItem="{Binding HistorialElegido}" MaxHeight="220" Margin="0,4,0,0"
-                                     AutomationProperties.Name="Historial de diplomas emitidos">
+                                     AutomationProperties.Name="{loc:Texto Qsl.Disenador.HistorialNombre}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Margin="0,1">
@@ -461,18 +477,18 @@
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
-                            <TextBlock Text="Todavía no se ha emitido ningún diploma." Style="{StaticResource TextoTenueEstilo}"
+                            <TextBlock Text="{loc:Texto Qsl.Disenador.HistorialVacio}" Style="{StaticResource TextoTenueEstilo}"
                                        Visibility="{Binding HistorialVacio, Converter={StaticResource BooleanoAVisible}}" />
                             <WrapPanel Margin="0,6,0,0">
-                                <Button Content="Volver a sacar PDF…" Command="{Binding ReimprimirCommand}" Style="{StaticResource Boton}"
-                                        ToolTip="Con el mismo número y los datos de entonces" AutomationProperties.Name="Volver a sacar el PDF del diploma elegido" />
-                                <Button Content="Reenviar" Command="{Binding ReenviarCommand}" Style="{StaticResource Boton}"
-                                        AutomationProperties.Name="Volver a mandar por correo el diploma elegido" />
+                                <Button Content="{loc:Texto Qsl.Disenador.Reimprimir}" Command="{Binding ReimprimirCommand}" Style="{StaticResource Boton}"
+                                        ToolTip="{loc:Texto Qsl.Disenador.ReimprimirAyuda}" AutomationProperties.Name="{loc:Texto Qsl.Disenador.ReimprimirNombre}" />
+                                <Button Content="{loc:Texto Qsl.Disenador.Reenviar}" Command="{Binding ReenviarCommand}" Style="{StaticResource Boton}"
+                                        AutomationProperties.Name="{loc:Texto Qsl.Disenador.ReenviarNombre}" />
                             </WrapPanel>
                         </StackPanel>
                     </Expander>
 
-                    <Expander Header="Variables que se pueden escribir" Margin="0,8,0,0">
+                    <Expander Header="{loc:Texto Qsl.Editor.Variables}" Margin="0,8,0,0">
                         <TextBlock Text="{Binding AyudaDeVariables}" TextWrapping="Wrap" Margin="0,4,0,0"
                                    FontFamily="Consolas, Cascadia Mono, Courier New" FontSize="11" />
                     </Expander>

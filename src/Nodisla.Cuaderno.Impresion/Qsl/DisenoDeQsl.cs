@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Impresion.Plantillas;
 
 namespace Nodisla.Cuaderno.Impresion.Qsl;
@@ -43,7 +44,7 @@ public enum AlineacionDeCampo
 public sealed class CampoDeQsl
 {
     /// <summary>Nombre con el que sale en la lista del editor.</summary>
-    public string Nombre { get; set; } = "Texto";
+    public string Nombre { get; set; } = Textos.T("Servicios.Impresion.Qsl.Texto");
 
     /// <summary>Texto que se pinta, con variables entre llaves.</summary>
     public string Texto { get; set; } = string.Empty;
@@ -120,7 +121,7 @@ public sealed class DisenoDeQsl : IPlantillaConImagenes
     public string Id { get; set; } = Guid.NewGuid().ToString("N")[..12];
 
     /// <summary>Como se elige en pantalla.</summary>
-    public string Nombre { get; set; } = "Mi tarjeta";
+    public string Nombre { get; set; } = Textos.T("Servicios.Impresion.Qsl.MiTarjeta");
 
     /// <summary>Tarjeta en vertical (90 × 140) en vez de apaisada (140 × 90).</summary>
     public bool Vertical { get; set; }
@@ -182,18 +183,18 @@ public sealed class DisenoDeQsl : IPlantillaConImagenes
         return new DisenoDeQsl
         {
             Id = "nodisla",
-            Nombre = "NODISLA clásica",
+            Nombre = Textos.T("Servicios.Impresion.Qsl.NodislaClasica"),
             ColorDeFondo = "#1B3A5C",
             Campos =
             [
-                new() { Nombre = "Mi indicativo", Texto = "{miindicativo}", XMm = 70, YMm = 8, TamanoPt = 54, Negrita = true, Color = "#FFFFFF", Alineacion = AlineacionDeCampo.Centro },
-                new() { Nombre = "Mi nombre y QTH", Texto = "{minombre} · {miqth}", XMm = 70, YMm = 32, TamanoPt = 12, Color = "#FFFFFF", Alineacion = AlineacionDeCampo.Centro },
-                new() { Nombre = "Mi localizador", Texto = "Locator {milocalizador}", XMm = 70, YMm = 39, TamanoPt = 10, Color = "#D0E4F5", Alineacion = AlineacionDeCampo.Centro },
+                new() { Nombre = Textos.T("Servicios.Impresion.Qsl.Campo.MiIndicativo"), Texto = "{miindicativo}", XMm = 70, YMm = 8, TamanoPt = 54, Negrita = true, Color = "#FFFFFF", Alineacion = AlineacionDeCampo.Centro },
+                new() { Nombre = Textos.T("Servicios.Impresion.Qsl.Campo.MiNombreYQth"), Texto = "{minombre} · {miqth}", XMm = 70, YMm = 32, TamanoPt = 12, Color = "#FFFFFF", Alineacion = AlineacionDeCampo.Centro },
+                new() { Nombre = Textos.T("Servicios.Impresion.Qsl.Campo.MiLocalizador"), Texto = "Locator {milocalizador}", XMm = 70, YMm = 39, TamanoPt = 10, Color = "#D0E4F5", Alineacion = AlineacionDeCampo.Centro },
                 new() { Nombre = "To Radio", Texto = "To Radio {indicativo}", XMm = 8, YMm = 52, TamanoPt = 16, Negrita = true, Color = "#1B3A5C", ColorDeRecuadro = Recuadro, EsDelContacto = true },
-                new() { Nombre = "Fecha", Texto = "Date {fecha}", XMm = 8, YMm = 62, TamanoPt = 10, Color = "#1B3A5C", ColorDeRecuadro = Recuadro, EsDelContacto = true },
-                new() { Nombre = "Hora UTC", Texto = "UTC {hora}", XMm = 44, YMm = 62, TamanoPt = 10, Color = "#1B3A5C", ColorDeRecuadro = Recuadro, EsDelContacto = true },
-                new() { Nombre = "Banda / frecuencia", Texto = "{banda} · {frecuencia} MHz", XMm = 70, YMm = 62, TamanoPt = 10, Color = "#1B3A5C", ColorDeRecuadro = Recuadro, EsDelContacto = true },
-                new() { Nombre = "Modo", Texto = "Mode {modo}", XMm = 8, YMm = 69, TamanoPt = 10, Color = "#1B3A5C", ColorDeRecuadro = Recuadro, EsDelContacto = true },
+                new() { Nombre = Textos.T("Servicios.Impresion.Qsl.Campo.Fecha"), Texto = "Date {fecha}", XMm = 8, YMm = 62, TamanoPt = 10, Color = "#1B3A5C", ColorDeRecuadro = Recuadro, EsDelContacto = true },
+                new() { Nombre = Textos.T("Servicios.Impresion.Qsl.Campo.HoraUtc"), Texto = "UTC {hora}", XMm = 44, YMm = 62, TamanoPt = 10, Color = "#1B3A5C", ColorDeRecuadro = Recuadro, EsDelContacto = true },
+                new() { Nombre = Textos.T("Servicios.Impresion.Qsl.Campo.BandaFrecuencia"), Texto = "{banda} · {frecuencia} MHz", XMm = 70, YMm = 62, TamanoPt = 10, Color = "#1B3A5C", ColorDeRecuadro = Recuadro, EsDelContacto = true },
+                new() { Nombre = Textos.T("Servicios.Impresion.Qsl.Campo.Modo"), Texto = "Mode {modo}", XMm = 8, YMm = 69, TamanoPt = 10, Color = "#1B3A5C", ColorDeRecuadro = Recuadro, EsDelContacto = true },
                 new() { Nombre = "RST", Texto = "RST {rst}", XMm = 44, YMm = 69, TamanoPt = 10, Color = "#1B3A5C", ColorDeRecuadro = Recuadro, EsDelContacto = true },
                 new() { Nombre = "PSE/TNX QSL", Texto = "{pse}", XMm = 70, YMm = 69, TamanoPt = 10, Negrita = true, Color = "#1B3A5C", ColorDeRecuadro = Recuadro, EsDelContacto = true },
                 new() { Nombre = "73", Texto = "73 de {miindicativo}", XMm = 132, YMm = 80, TamanoPt = 12, Cursiva = true, Color = "#FFFFFF", Alineacion = AlineacionDeCampo.Derecha },

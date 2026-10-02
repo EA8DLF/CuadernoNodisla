@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Radio.Control.Ft710;
 using Nodisla.Cuaderno.Radio.Modelos;
 using Nodisla.Cuaderno.Radio.Ptt;
@@ -321,7 +322,7 @@ public sealed class ControlYaesuBinario
         var hercios = frecuencia.Hercios;
         if (hercios < Modelo.Capacidades.HerciosMinimo || hercios > Modelo.Capacidades.HerciosMaximo)
         {
-            throw new ArgumentOutOfRangeException(nameof(frecuencia), frecuencia, $"El {Modelo.Nombre} no admite esa frecuencia.");
+            throw new ArgumentOutOfRangeException(nameof(frecuencia), frecuencia, Textos.F("Servicios.Radio.FrecuenciaNoAdmitida", Modelo.Nombre));
         }
 
         var bcd = ABcd(hercios);
@@ -336,10 +337,10 @@ public sealed class ControlYaesuBinario
     public Task PonerModoAsync(Modo modo, CancellationToken ct = default)
     {
         var nombre = _opciones.Traductor.AlEquipo(modo, Estado.Frecuencia)
-            ?? throw new ArgumentException($"No sé cómo pedirle al {Modelo.Nombre} el modo {modo}.", nameof(modo));
+            ?? throw new ArgumentException(Textos.F("Servicios.Radio.ModoDesconocido", Modelo.Nombre, modo), nameof(modo));
         if (!ModosAlEquipo.TryGetValue(nombre, out var codigo))
         {
-            throw new ArgumentException($"El {Modelo.Nombre} no tiene el modo {nombre}.", nameof(modo));
+            throw new ArgumentException(Textos.F("Servicios.Radio.SinEseModo", Modelo.Nombre, nombre), nameof(modo));
         }
 
         return PonerCodigoDeModoAsync(codigo, ct);
@@ -363,6 +364,12 @@ public sealed class ControlYaesuBinario
     /// <inheritdoc />
     async Task IPttDirecto.PonerPttDirectoAsync(bool transmitir, CancellationToken ct)
     {
+        if (!transmitir && NoHayNadaQueBajar())
+        {
+            _registro.LogDebug("El canal está cerrado y no hay PTT pedido: no hay nada que bajar.");
+            return;
+        }
+
         if (_opciones.ViaDePtt != ViaDePtt.Cat && _canal.PuedeAccionarLineas)
         {
             await _canal.PonerLineaDePttAsync(transmitir, ct).ConfigureAwait(false);
@@ -404,7 +411,7 @@ public sealed class ControlYaesuBinario
             MandoDeEquipo.Split => si ? Orden.SplitSi : Orden.SplitNo,
             MandoDeEquipo.Rit => si ? Orden.ClarificadorSi : Orden.ClarificadorNo,
             MandoDeEquipo.Bloqueo => si ? Orden.BloqueoSi : Orden.BloqueoNo,
-            _ => throw new NotSupportedException($"El {Modelo.Nombre} no admite el mando {mando} por CAT."),
+            _ => throw new NotSupportedException(Textos.F("Servicios.Radio.SinMandoCat", Modelo.Nombre, mando)),
         };
 
         return EnExclusivaAsync(async () =>
@@ -427,19 +434,19 @@ public sealed class ControlYaesuBinario
 
     /// <inheritdoc />
     public Task IrAMemoriaAsync(int numero, CancellationToken ct = default) =>
-        throw new NotSupportedException($"El CAT del {Modelo.Nombre} no tiene orden para ir a una memoria.");
+        throw new NotSupportedException(Textos.F("Servicios.Radio.SinMemoriasCat", Modelo.Nombre));
 
     /// <inheritdoc />
     /// <remarks>El CAT antiguo es binario: no hay ordenes en texto que mandar.</remarks>
     public Task<string?> OrdenEnCrudoAsync(string orden, CancellationToken ct = default) =>
-        throw new NotSupportedException($"El CAT del {Modelo.Nombre} es binario (bloques de 5 bytes): no admite órdenes en texto.");
+        throw new NotSupportedException(Textos.F("Servicios.Radio.CatBinario", Modelo.Nombre));
 
     /// <inheritdoc />
     public Task PulsarAsync(TeclaDelEquipo tecla, CancellationToken ct = default)
     {
         if (tecla != TeclaDelEquipo.AlternarVfo)
         {
-            throw new NotSupportedException($"El {Modelo.Nombre} no tiene la tecla {tecla} por CAT.");
+            throw new NotSupportedException(Textos.F("Servicios.Radio.SinTeclaCat", Modelo.Nombre, tecla));
         }
 
         return EnExclusivaAsync(async () =>
@@ -598,6 +605,17 @@ public sealed class ControlYaesuBinario
             }
         }
     }
+
+    /// <summary>
+    /// Dice si una orden de bajar el PTT no tiene a quien llegar ni nada que bajar: canal
+    /// cerrado, sin PTT pedido y, o nunca abierto, o el control ya desechado (que al desecharse
+    /// ya bajo el PTT por todas sus vias). Evita el «¡PTT PEGADO!» falso del vigilante que se
+    /// cierra despues del control (01-10-2026). Con PTT pedido no se cumple nunca.
+    /// </summary>
+    private bool NoHayNadaQueBajar() =>
+        !_canal.Abierto
+        && !Volatile.Read(ref _pttPedido)
+        && (Volatile.Read(ref _desechado) || !Volatile.Read(ref _abiertoAlgunaVez));
 
     private async Task BajarElPttComoSeaAsync(CancellationToken ct)
     {

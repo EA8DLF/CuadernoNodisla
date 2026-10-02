@@ -3,6 +3,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.Recursos;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 using Serilog;
@@ -312,10 +313,9 @@ public partial class VentanaPrincipal : Window
         var dialogo = new VentanaDeConfirmacion
         {
             Owner = this,
-            Titulo = "Borrar el contacto",
-            Detalle = $"Se va a borrar el contacto con {fila.Indicativo} del {fila.Fecha} a las " +
-                      $"{fila.Hora} UTC en {fila.Banda} {fila.Modo}.\n\nEsta operación no se puede deshacer.",
-            TextoDeAceptar = "Sí, borrar el contacto",
+            Titulo = Textos.T("Principal.Confirmar.BorrarTitulo"),
+            Detalle = Textos.F("Principal.Confirmar.BorrarDetalle", fila.Indicativo, fila.Fecha, fila.Hora, fila.Banda, fila.Modo),
+            TextoDeAceptar = Textos.T("Principal.Confirmar.BorrarAceptar"),
         };
 
         return dialogo.ShowDialog() == true;
@@ -335,8 +335,8 @@ public partial class VentanaPrincipal : Window
         {
             Owner = this,
             Titulo = que,
-            Detalle = "Se bajará el PTT y se apagará la radio. Para volver a encenderla, pulsación larga de LOCK (si el puerto USB sigue disponible con la radio apagada) o su tecla de encendido.",
-            TextoDeAceptar = "Sí, apagar",
+            Detalle = Textos.T("Principal.Confirmar.ApagarDetalle"),
+            TextoDeAceptar = Textos.T("Principal.Confirmar.ApagarAceptar"),
         };
 
         return dialogo.ShowDialog() == true;
@@ -347,9 +347,9 @@ public partial class VentanaPrincipal : Window
         var dialogo = new VentanaDeConfirmacion
         {
             Owner = this,
-            Titulo = "Se van a cambiar los VFO del equipo",
-            Detalle = que + "\n\nNo se transmite nada, pero lo que tenía el otro VFO puede perderse.",
-            TextoDeAceptar = "Sí, hacerlo",
+            Titulo = Textos.T("Principal.Confirmar.VfosTitulo"),
+            Detalle = Textos.F("Principal.Confirmar.VfosDetalle", que),
+            TextoDeAceptar = Textos.T("Principal.Confirmar.VfosAceptar"),
         };
 
         return dialogo.ShowDialog() == true;
@@ -360,12 +360,9 @@ public partial class VentanaPrincipal : Window
         var dialogo = new VentanaDeConfirmacion
         {
             Owner = this,
-            Titulo = "Se va a transmitir",
-            Detalle = $"Accionar «{mando}» pone el equipo EN ANTENA: se emite portadora.\n\n" +
-                      "Compruebe que hay una antena o una carga artificial conectada antes de seguir.\n\n" +
-                      "La transmisión va vigilada: se suelta sola si algo va mal, y el botón «SOLTAR PTT» " +
-                      "la corta en cualquier momento.",
-            TextoDeAceptar = "Sí, transmitir",
+            Titulo = Textos.T("Principal.Confirmar.TransmitirTitulo"),
+            Detalle = Textos.F("Principal.Confirmar.TransmitirDetalle", mando),
+            TextoDeAceptar = Textos.T("Principal.Confirmar.TransmitirAceptar"),
         };
 
         return dialogo.ShowDialog() == true;
@@ -385,8 +382,8 @@ public partial class VentanaPrincipal : Window
     {
         var dialogo = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "Decodificar un fichero de audio",
-            Filter = "Audio WAV (*.wav)|*.wav|Todos los ficheros (*.*)|*.*",
+            Title = Textos.T("Principal.Wav.Titulo"),
+            Filter = Textos.T("Principal.Wav.Filtro"),
             CheckFileExists = true,
         };
 
@@ -398,15 +395,9 @@ public partial class VentanaPrincipal : Window
         var dialogo = new VentanaDeConfirmacion
         {
             Owner = this,
-            Titulo = "El módem va a transmitir",
-            Detalle = $"Se va a emitir «{mensaje}».\n\n" +
-                      "Un período de FT8 son TRECE SEGUNDOS con el equipo en antena, sin pausa.\n\n" +
-                      "Compruebe que hay una antena o una carga artificial conectada y que el reloj " +
-                      "está en hora: con el reloj desviado se transmite fuera de ventana y se molesta " +
-                      "a las demás estaciones sin enterarse.\n\n" +
-                      "La transmisión va vigilada: se suelta sola si algo va mal, y el botón " +
-                      "«SOLTAR PTT» la corta en cualquier momento.",
-            TextoDeAceptar = "Sí, transmitir",
+            Titulo = Textos.T("Principal.Confirmar.ModemTitulo"),
+            Detalle = Textos.F("Principal.Confirmar.ModemDetalle", mensaje),
+            TextoDeAceptar = Textos.T("Principal.Confirmar.TransmitirAceptar"),
             OfrecerNoVolverAPreguntar = true,
         };
 
@@ -426,9 +417,9 @@ public partial class VentanaPrincipal : Window
         var dialogo = new VentanaDeConfirmacion
         {
             Owner = this,
-            Titulo = "Ha ocurrido un fallo",
+            Titulo = Textos.T("Principal.Fallo.Titulo"),
             Detalle = ex.Message,
-            TextoDeAceptar = "Entendido",
+            TextoDeAceptar = Textos.T("Principal.Fallo.Entendido"),
             SoloAviso = true,
         };
         dialogo.ShowDialog();

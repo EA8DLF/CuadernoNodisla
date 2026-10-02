@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
              xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              d:DataContext="{d:DesignInstance Type=vistamodelos:VistaModeloAjustesCat}"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -32,7 +33,10 @@
         <Style x:Key="Rotulo" TargetType="TextBlock" BasedOn="{StaticResource EtiquetaDeCampo}">
             <Setter Property="Width" Value="150" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <!-- En otros idiomas el rótulo puede no caber en una línea: se parte, no se corta. -->
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="TextTrimming" Value="None" />
+            <Setter Property="Padding" Value="0,0,6,0" />
         </Style>
     </UserControl.Resources>
 
@@ -49,10 +53,10 @@
                 <TextBlock Text="{Binding ViaPuesta}" FontSize="10" />
             </Border>
 
-            <TextBlock Text="CAT · control del equipo" Style="{StaticResource TituloDeSeccion}" />
+            <TextBlock Text="{loc:Texto Ajustes.Equipo.Titulo}" Style="{StaticResource TituloDeSeccion}" />
         </DockPanel>
 
-        <TextBlock Text="Por dónde habla el cuaderno con la radio. Mientras esto sea «Ninguna», el botón Conectar del panel del equipo no abre nada."
+        <TextBlock Text="{loc:Texto Ajustes.Equipo.Explicacion}"
                    Style="{StaticResource TextoTenueEstilo}"
                    TextWrapping="Wrap"
                    Margin="0,0,0,8" />
@@ -85,10 +89,10 @@
 
         <!-- ══ Vía de control ══ -->
         <DockPanel Style="{StaticResource Fila}">
-            <TextBlock Text="Vía de control" Style="{StaticResource Rotulo}" />
+            <TextBlock Text="{loc:Texto Ajustes.Equipo.Via}" Style="{StaticResource Rotulo}" />
             <ComboBox ItemsSource="{Binding Vias}"
                       SelectedItem="{Binding Via}"
-                      AutomationProperties.Name="Vía de control del equipo">
+                      AutomationProperties.Name="{loc:Texto Ajustes.Equipo.Via.Accesible}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Titulo}" TextTrimming="CharacterEllipsis" />
@@ -106,20 +110,20 @@
         <StackPanel Visibility="{Binding EsCatNativo, Converter={StaticResource BooleanoAVisible}}">
             <!-- Fabricante y modelo (docs/16-modelos.md). En automático: Yaesu por ID; e ICOM por CI-V 19 00. -->
             <DockPanel Style="{StaticResource Fila}">
-                <TextBlock Text="Fabricante" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.Fabricante}" Style="{StaticResource Rotulo}" />
                 <ComboBox ItemsSource="{Binding Fabricantes}"
                           SelectedItem="{Binding Fabricante}"
                           DisplayMemberPath="Titulo"
-                          AutomationProperties.Name="Fabricante del equipo" />
+                          AutomationProperties.Name="{loc:Texto Ajustes.Equipo.Fabricante.Accesible}" />
             </DockPanel>
 
             <DockPanel Style="{StaticResource Fila}"
                        Visibility="{Binding SeElijeModelo, Converter={StaticResource BooleanoAVisible}}">
-                <TextBlock Text="Modelo" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.Modelo}" Style="{StaticResource Rotulo}" />
                 <ComboBox ItemsSource="{Binding ModelosDelFabricante}"
                           SelectedItem="{Binding Modelo}"
                           DisplayMemberPath="Titulo"
-                          AutomationProperties.Name="Modelo del equipo" />
+                          AutomationProperties.Name="{loc:Texto Ajustes.Equipo.Modelo.Accesible}" />
             </DockPanel>
 
             <TextBlock Text="{Binding AvisoDelModelo}"
@@ -130,19 +134,19 @@
 
             <DockPanel Style="{StaticResource Fila}"
                        Visibility="{Binding EsIcom, Converter={StaticResource BooleanoAVisible}}">
-                <TextBlock Text="Dirección CI-V" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.Civ}" Style="{StaticResource Rotulo}" />
                 <TextBox Text="{Binding DireccionCiv, UpdateSourceTrigger=PropertyChanged}"
                          Width="60" HorizontalAlignment="Left"
-                         ToolTip="En hexadecimal (94 para el IC-7300). Vacío = la de fábrica del modelo."
-                         AutomationProperties.Name="Dirección CI-V en hexadecimal" />
+                         ToolTip="{loc:Texto Ajustes.Equipo.Civ.Ayuda}"
+                         AutomationProperties.Name="{loc:Texto Ajustes.Equipo.Civ.Accesible}" />
             </DockPanel>
 
-            <CheckBox Content="Detectar automáticamente por qué puerto está el equipo"
+            <CheckBox Content="{loc:Texto Ajustes.Equipo.Detectar}"
                       IsChecked="{Binding DetectarElPuerto}"
                       Margin="150,0,0,4"
-                      ToolTip="Prueba primero por donde estaba y, si no contesta, recorre todos los puertos preguntando ID;" />
+                      ToolTip="{loc:Texto Ajustes.Equipo.Detectar.Ayuda}" />
 
-            <TextBlock Text="Se identifica por lo que contesta a ID;, nunca por el número de puerto: en esta máquina hay otro cacharro que también habla por serie."
+            <TextBlock Text="{loc:Texto Ajustes.Equipo.Detectar.Explicacion}"
                        Style="{StaticResource TextoTenueEstilo}"
                        TextWrapping="Wrap"
                        Margin="150,0,0,6"
@@ -150,16 +154,16 @@
 
             <DockPanel Style="{StaticResource Fila}"
                        Visibility="{Binding SeElijePuerto, Converter={StaticResource BooleanoAVisible}}">
-                <TextBlock Text="Puerto serie" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.Puerto}" Style="{StaticResource Rotulo}" />
                 <Button DockPanel.Dock="Right"
-                        Content="Volver a mirar"
+                        Content="{loc:Texto Ajustes.Equipo.VolverAMirar}"
                         Command="{Binding RefrescarPuertosCommand}"
                         Margin="6,0,0,0"
                         Padding="8,2"
-                        AutomationProperties.Name="Volver a mirar qué puertos serie hay" />
+                        AutomationProperties.Name="{loc:Texto Ajustes.Equipo.VolverAMirar.Accesible}" />
                 <ComboBox ItemsSource="{Binding Puertos}"
                           SelectedItem="{Binding Puerto}"
-                          AutomationProperties.Name="Puerto serie del equipo">
+                          AutomationProperties.Name="{loc:Texto Ajustes.Equipo.Puerto.Accesible}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding ParaElDesplegable}" TextTrimming="CharacterEllipsis" />
@@ -169,10 +173,10 @@
             </DockPanel>
 
             <DockPanel Style="{StaticResource Fila}">
-                <TextBlock Text="Velocidad" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.Velocidad}" Style="{StaticResource Rotulo}" />
                 <ComboBox ItemsSource="{Binding Velocidades}"
                           SelectedItem="{Binding Velocidad}"
-                          AutomationProperties.Name="Velocidad del puerto serie">
+                          AutomationProperties.Name="{loc:Texto Ajustes.Equipo.Velocidad.Accesible}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Titulo}" TextTrimming="CharacterEllipsis" />
@@ -181,7 +185,7 @@
                 </ComboBox>
             </DockPanel>
 
-            <TextBlock Text="La velocidad la manda el equipo, no el cable: está en su menú, en CAT RATE. De fábrica son 38400. Si no la sabe, deje puesta la detección automática: las prueba todas."
+            <TextBlock Text="{loc:Texto Ajustes.Equipo.Velocidad.Explicacion}"
                        Style="{StaticResource TextoTenueEstilo}"
                        TextWrapping="Wrap"
                        Margin="150,0,0,8" />
@@ -190,18 +194,18 @@
         <!-- ══ Lo de Hamlib ══ -->
         <StackPanel Visibility="{Binding EsRigctld, Converter={StaticResource BooleanoAVisible}}">
             <DockPanel Style="{StaticResource Fila}">
-                <TextBlock Text="Máquina" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.Maquina}" Style="{StaticResource Rotulo}" />
                 <TextBox Text="{Binding MaquinaDeRigctld, UpdateSourceTrigger=PropertyChanged}"
-                         AutomationProperties.Name="Máquina donde escucha rigctld" />
+                         AutomationProperties.Name="{loc:Texto Ajustes.Equipo.Maquina.Accesible}" />
             </DockPanel>
             <DockPanel Style="{StaticResource Fila}">
-                <TextBlock Text="Puerto TCP" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.PuertoTcp}" Style="{StaticResource Rotulo}" />
                 <TextBox Text="{Binding PuertoDeRigctld, UpdateSourceTrigger=PropertyChanged}"
                          Width="90"
                          HorizontalAlignment="Left"
-                         AutomationProperties.Name="Puerto TCP de rigctld" />
+                         AutomationProperties.Name="{loc:Texto Ajustes.Equipo.PuertoTcp.Accesible}" />
             </DockPanel>
-            <TextBlock Text="Hay que tener rigctld ya arrancado. Lo habitual es 127.0.0.1 en el puerto 4532."
+            <TextBlock Text="{loc:Texto Ajustes.Equipo.Rigctld.Explicacion}"
                        Style="{StaticResource TextoTenueEstilo}"
                        TextWrapping="Wrap"
                        Margin="150,0,0,8" />
@@ -210,13 +214,13 @@
         <!-- ══ Lo de OmniRig ══ -->
         <StackPanel Visibility="{Binding EsOmniRig, Converter={StaticResource BooleanoAVisible}}">
             <DockPanel Style="{StaticResource Fila}">
-                <TextBlock Text="Equipo de OmniRig" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.OmniRig}" Style="{StaticResource Rotulo}" />
                 <TextBox Text="{Binding EquipoDeOmniRig, UpdateSourceTrigger=PropertyChanged}"
                          Width="60"
                          HorizontalAlignment="Left"
-                         AutomationProperties.Name="Número de equipo de OmniRig" />
+                         AutomationProperties.Name="{loc:Texto Ajustes.Equipo.OmniRig.Accesible}" />
             </DockPanel>
-            <TextBlock Text="OmniRig maneja dos equipos: el 1 y el 2. El que aquí se ponga es el que sigue el cuaderno."
+            <TextBlock Text="{loc:Texto Ajustes.Equipo.OmniRig.Explicacion}"
                        Style="{StaticResource TextoTenueEstilo}"
                        TextWrapping="Wrap"
                        Margin="150,0,0,8" />
@@ -225,24 +229,24 @@
         <!-- ══ Tiempos ══ -->
         <StackPanel Visibility="{Binding HayEquipo, Converter={StaticResource BooleanoAVisible}}">
             <DockPanel Style="{StaticResource Fila}">
-                <TextBlock Text="Sondeo (ms)" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.Sondeo}" Style="{StaticResource Rotulo}" />
                 <TextBox Text="{Binding SondeoMs, UpdateSourceTrigger=PropertyChanged}"
                          Width="70"
                          DockPanel.Dock="Left"
-                         AutomationProperties.Name="Intervalo de sondeo en milisegundos" />
-                <TextBlock Text="de fábrica, 500"
+                         AutomationProperties.Name="{loc:Texto Ajustes.Equipo.Sondeo.Accesible}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.DeFabrica, Valor={Binding Source='500'}}"
                            Style="{StaticResource TextoTenueEstilo}"
                            VerticalAlignment="Center"
                            Margin="8,0,0,0" />
             </DockPanel>
 
             <DockPanel Style="{StaticResource Fila}">
-                <TextBlock Text="Espera de orden (ms)" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.Espera}" Style="{StaticResource Rotulo}" />
                 <TextBox Text="{Binding EsperaDeOrdenMs, UpdateSourceTrigger=PropertyChanged}"
                          Width="70"
                          DockPanel.Dock="Left"
-                         AutomationProperties.Name="Espera de orden en milisegundos" />
-                <TextBlock Text="de fábrica, 350"
+                         AutomationProperties.Name="{loc:Texto Ajustes.Equipo.Espera.Accesible}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.DeFabrica, Valor={Binding Source='350'}}"
                            Style="{StaticResource TextoTenueEstilo}"
                            VerticalAlignment="Center"
                            Margin="8,0,0,0" />
@@ -252,10 +256,10 @@
             <TextBlock Text="PTT" Style="{StaticResource TituloDeSeccion}" Margin="0,6,0,2" />
 
             <DockPanel Style="{StaticResource Fila}">
-                <TextBlock Text="Se sube" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.SeSube}" Style="{StaticResource Rotulo}" />
                 <ComboBox ItemsSource="{Binding ViasDePtt}"
                           SelectedItem="{Binding PttPor}"
-                          AutomationProperties.Name="Por dónde se sube el PTT">
+                          AutomationProperties.Name="{loc:Texto Ajustes.Equipo.SeSube.Accesible}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Titulo}" TextTrimming="CharacterEllipsis" />
@@ -270,30 +274,30 @@
                        Margin="150,0,0,6" />
 
             <DockPanel Style="{StaticResource Fila}">
-                <TextBlock Text="Máximo en antena (s)" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.MaximoEnAntena}" Style="{StaticResource Rotulo}" />
                 <TextBox Text="{Binding TiempoMaximoSegundos, UpdateSourceTrigger=PropertyChanged}"
                          Width="70"
                          DockPanel.Dock="Left"
-                         AutomationProperties.Name="Tiempo máximo en antena, en segundos" />
-                <TextBlock Text="de fábrica, 180 · tope duro, 600"
+                         AutomationProperties.Name="{loc:Texto Ajustes.Equipo.MaximoEnAntena.Accesible}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.MaximoEnAntena.DeFabrica}"
                            Style="{StaticResource TextoTenueEstilo}"
                            VerticalAlignment="Center"
                            Margin="8,0,0,0" />
             </DockPanel>
 
             <DockPanel Style="{StaticResource Fila}">
-                <TextBlock Text="Sin latido (s)" Style="{StaticResource Rotulo}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.SinLatido}" Style="{StaticResource Rotulo}" />
                 <TextBox Text="{Binding TiempoSinLatidoSegundos, UpdateSourceTrigger=PropertyChanged}"
                          Width="70"
                          DockPanel.Dock="Left"
-                         AutomationProperties.Name="Tiempo sin latido, en segundos" />
-                <TextBlock Text="de fábrica, 15"
+                         AutomationProperties.Name="{loc:Texto Ajustes.Equipo.SinLatido.Accesible}" />
+                <TextBlock Text="{loc:Texto Ajustes.Equipo.DeFabrica, Valor={Binding Source='15'}}"
                            Style="{StaticResource TextoTenueEstilo}"
                            VerticalAlignment="Center"
                            Margin="8,0,0,0" />
             </DockPanel>
 
-            <TextBlock Text="El vigilante baja el PTT pase lo que pase: al agotarse el tiempo, si quien transmite deja de dar señales de vida, si salta un fallo y al cerrar el programa. Un PTT pegado quema la etapa final."
+            <TextBlock Text="{loc:Texto Ajustes.Equipo.Vigilante}"
                        Style="{StaticResource TextoTenueEstilo}"
                        TextWrapping="Wrap"
                        Margin="150,0,0,8" />
@@ -301,24 +305,24 @@
 
         <!-- ══ Botones ══ -->
         <WrapPanel Margin="0,2,0,6">
-            <Button Content="Probar"
+            <Button Content="{loc:Texto Comun.Probar}"
                     Command="{Binding ProbarCommand}"
                     Margin="0,0,6,6"
                     Padding="12,3"
-                    ToolTip="Abre la conexión, lee identificación, frecuencia y modo, y cierra. No transmite."
-                    AutomationProperties.Name="Probar la conexión con el equipo" />
-            <Button Content="Aplicar"
+                    ToolTip="{loc:Texto Ajustes.Equipo.Probar.Ayuda}"
+                    AutomationProperties.Name="{loc:Texto Ajustes.Equipo.Probar.Accesible}" />
+            <Button Content="{loc:Texto Ajustes.Equipo.Aplicar}"
                     Command="{Binding AplicarCommand}"
                     Style="{StaticResource BotonPrincipal}"
                     Margin="0,0,6,6"
                     Padding="12,3"
-                    ToolTip="Guarda y cambia el control del equipo sin cerrar el cuaderno"
-                    AutomationProperties.Name="Guardar y aplicar los ajustes del equipo" />
-            <Button Content="Descartar"
+                    ToolTip="{loc:Texto Ajustes.Equipo.Aplicar.Ayuda}"
+                    AutomationProperties.Name="{loc:Texto Ajustes.Equipo.Aplicar.Accesible}" />
+            <Button Content="{loc:Texto Ajustes.Descartar}"
                     Command="{Binding DescartarCommand}"
                     Margin="0,0,6,6"
                     Padding="12,3"
-                    AutomationProperties.Name="Descartar los cambios y volver a lo guardado" />
+                    AutomationProperties.Name="{loc:Texto Ajustes.Equipo.Descartar.Accesible}" />
         </WrapPanel>
 
     </StackPanel>

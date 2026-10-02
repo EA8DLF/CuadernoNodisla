@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Dialogos.Confirmacion.NoVolverAPreguntar" xml:space="preserve">
+    <value>Ne plus demander</value>
+  </data>
+  <data name="Dialogos.Confirmacion.NoVolverTooltip" xml:space="preserve">
+    <value>Vous pouvez le réactiver dans Paramètres › Audio et numérique.</value>
+  </data>
+  <data name="Dialogos.NoSeAbreElCuaderno" xml:space="preserve">
+    <value>Impossible d'ouvrir le carnet de trafic.
+
+{0}
+
+Le carnet de trafic se trouve dans {1}. Si le fichier est endommagé, ce même dossier contient un sous-dossier « copias » avec les sauvegardes précédentes.</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Bienvenida" xml:space="preserve">
+    <value>Bienvenue dans le carnet de trafic</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Crear" xml:space="preserve">
+    <value>Créer le profil et commencer</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Explicacion" xml:space="preserve">
+    <value>Avant d'enregistrer le premier QSO, il faut un profil de station : l'indicatif avec lequel vous émettez et le lieu d'où vous opérez. Sans ces données, le carnet de trafic ne peut pas être exporté en ADIF ni servir à demander des diplômes.</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Indicativo" xml:space="preserve">
+    <value>Indicatif de la station</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.IndicativoEjemplo" xml:space="preserve">
+    <value>Par exemple EA8DLF</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Localidad" xml:space="preserve">
+    <value>Localité (facultatif)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Localizador" xml:space="preserve">
+    <value>Locator (facultatif, mais nécessaire pour les distances et les azimuts)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.LocalizadorEjemplo" xml:space="preserve">
+    <value>Par exemple IL18SN</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombreOperador" xml:space="preserve">
+    <value>Nom de l'opérateur (facultatif)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombrePerfil" xml:space="preserve">
+    <value>Nom du profil</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombrePerfilTooltip" xml:space="preserve">
+    <value>Pour le distinguer d'autres profils : Maison, Portable, Concours…</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Salir" xml:space="preserve">
+    <value>Quitter le programme</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Titulo" xml:space="preserve">
+    <value>Cuaderno NODISLA · premier démarrage</value>
+  </data>
+  <data name="Dialogos.Simulado.Analizador" xml:space="preserve">
+    <value>Analyseur simulé</value>
+  </data>
+  <data name="Dialogos.Simulado.Cluster" xml:space="preserve">
+    <value>Cluster simulé (hors ligne)</value>
+  </data>
+  <data name="Dialogos.Simulado.FichaInventada" xml:space="preserve">
+    <value>Fiche inventée : session avec ports simulés.</value>
+  </data>
+  <data name="Dialogos.Simulado.ModemNoTransmite" xml:space="preserve">
+    <value>Le modem simulé n'émet pas. Fermez le programme et rouvrez-le sans CUADERNO_SIMULADO.</value>
+  </data>
+  <data name="Dialogos.Simulado.QsoDuplicado" xml:space="preserve">
+    <value>Le QSO avec {0} est déjà dans le carnet de trafic.</value>
+  </data>
+  <data name="Dialogos.Simulado.RelojPuesto" xml:space="preserve">
+    <value>Horloge mise à l'heure (simulé) : l'horloge de l'ordinateur n'a pas été modifiée.</value>
+  </data>
+  <data name="Dialogos.Simulado.ServicioDeHora" xml:space="preserve">
+    <value>Service de temps configuré (simulé).</value>
+  </data>
+  <data name="Dialogos.Simulado.SinConfirmaciones" xml:space="preserve">
+    <value>Il n'y a pas encore de confirmations dans le carnet de trafic, donc le confirmé est à zéro. Le contacté, lui, est définitif.</value>
+  </data>
+  <data name="Dialogos.Simulado.SinReferencias" xml:space="preserve">
+    <value>Ce diplôme compte des références (îles, sommets, parcs) que le carnet de trafic n'enregistre pas encore. Le chiffre n'est pas bas : il n'y a simplement rien d'où le tirer. Cela viendra avec la base de données du carnet.</value>
+  </data>
+</root>

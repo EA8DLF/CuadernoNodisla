@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.AjustesDelCluster"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              Foreground="{DynamicResource Texto}">
 
     <!--
@@ -23,24 +24,24 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Cluster de DX" Style="{StaticResource TituloDeSeccion}" />
+        <TextBlock Grid.Row="0" Text="{loc:Texto Ajustes.Tarjeta.Cluster.Nombre}" Style="{StaticResource TituloDeSeccion}" />
 
         <DockPanel Grid.Row="1" Margin="0,0,0,6">
             <Button DockPanel.Dock="Right"
                     Content="{Binding TextoDelBotonDeConexion}"
                     Margin="8,0,0,0"
-                    ToolTip="Abre o cierra la conexión con el nodo">
+                    ToolTip="{loc:Texto Ajustes.Cluster.Conexion.Ayuda}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                         <Setter Property="Command" Value="{Binding ConectarCommand}" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding EstadoTexto}" Value="Conectado">
+                            <DataTrigger Binding="{Binding Estado}" Value="Conectado">
                                 <Setter Property="Command" Value="{Binding DesconectarCommand}" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding EstadoTexto}" Value="Conectando…">
+                            <DataTrigger Binding="{Binding Estado}" Value="Conectando">
                                 <Setter Property="Command" Value="{Binding DesconectarCommand}" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding EstadoTexto}" Value="Reintentando…">
+                            <DataTrigger Binding="{Binding Estado}" Value="Reintentando">
                                 <Setter Property="Command" Value="{Binding DesconectarCommand}" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -73,12 +74,12 @@
 
         <DockPanel Grid.Row="3" Margin="0,6,0,0">
             <Button DockPanel.Dock="Right"
-                    Content="Enviar"
+                    Content="{loc:Texto Ajustes.Cluster.Enviar}"
                     Command="{Binding EnviarOrdenCommand}"
                     Margin="8,0,0,0" />
             <TextBox Text="{Binding Orden, UpdateSourceTrigger=PropertyChanged}"
                      FontFamily="Consolas, Cascadia Mono, Courier New"
-                     ToolTip="Orden para el nodo, por ejemplo sh/dx"
+                     ToolTip="{loc:Texto Ajustes.Cluster.Orden.Ayuda}"
                      KeyDown="AlTeclearLaOrden" />
         </DockPanel>
     </Grid>

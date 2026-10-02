@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Servicios.Subidas;
 using Nodisla.Cuaderno.Ui.Ajustes;
 using Serilog;
@@ -47,9 +48,7 @@ public sealed partial class FilaDeServicioDeSubida : ObservableObject
         Medio = medio;
         Nombre = ColaDeSubidas.NombreCorto(medio);
         _alCambiar = alCambiar;
-        Nota = ColaDeSubidas.AdmiteModificar(medio)
-            ? "Si modifica un contacto ya subido (F2), se vuelve a enviar corregido."
-            : "No admite modificar: un contacto ya subido queda como se subió.";
+        Textos.AlCambiar(this, static f => f.OnPropertyChanged(nameof(Nota)));
     }
 
     /// <summary>Servicio.</summary>
@@ -59,7 +58,9 @@ public sealed partial class FilaDeServicioDeSubida : ObservableObject
     public string Nombre { get; }
 
     /// <summary>Lo que pasa si se modifica un contacto ya subido.</summary>
-    public string Nota { get; }
+    public string Nota => Textos.T(ColaDeSubidas.AdmiteModificar(Medio)
+        ? "Ajustes.Subidas.NotaModificable"
+        : "Ajustes.Subidas.NotaNoModificable");
 
     /// <summary>Subir automaticamente a este servicio.</summary>
     [ObservableProperty]
@@ -108,7 +109,7 @@ public sealed partial class VistaModeloSubidas : ObservableObject
     private readonly string _carpeta;
     private readonly CuentasDeServicios? _cuentas;
     private readonly SynchronizationContext? _contexto;
-    private readonly PastillaDeSubida _pastillaDeFicha = new("Ficha");
+    private readonly PastillaDeSubida _pastillaDeFicha = new(Textos.T("Ajustes.Subidas.Ficha"));
 
     /// <summary>Monta el modelo.</summary>
     /// <param name="cola">Cola de subidas.</param>
@@ -167,6 +168,9 @@ public sealed partial class VistaModeloSubidas : ObservableObject
             };
         }
         Refrescar();
+
+        // Estados, cola y pastillas se vuelven a escribir en el idioma nuevo.
+        Textos.AlCambiar(this, static vm => vm.EnLaInterfaz(vm.Refrescar));
     }
 
     /// <summary>
@@ -194,8 +198,8 @@ public sealed partial class VistaModeloSubidas : ObservableObject
 
     /// <summary>Lo que vale un usuario vacio, para el texto de ayuda.</summary>
     public string UsuarioPorOmision => _cuentas?.IndicativoDelPerfil is { Length: > 0 } p
-        ? $"Vacío: se usa el indicativo del perfil ({p})."
-        : "Vacío: se usa el indicativo del perfil de estación.";
+        ? Textos.F("Ajustes.Subidas.UsuarioPorOmisionCon", p)
+        : Textos.T("Ajustes.Subidas.UsuarioPorOmision");
 
     /// <summary>Lo que ha pasado con la ultima accion.</summary>
     [ObservableProperty]
@@ -251,7 +255,7 @@ public sealed partial class VistaModeloSubidas : ObservableObject
         s.CorreoClubLog = Limpio(CorreoClubLog);
         s.IndicativoClubLog = Limpio(IndicativoClubLog);
         _ajustes.Guardar(_carpeta);
-        Parte = "Cuentas guardadas. Valen ya, sin reiniciar.";
+        Parte = Textos.T("Ajustes.Subidas.CuentasGuardadas");
         Refrescar();
         _cola.Despertar();
     }
@@ -261,18 +265,18 @@ public sealed partial class VistaModeloSubidas : ObservableObject
     public async Task SubirAhoraAsync()
     {
         Subiendo = true;
-        Parte = "Subiendo…";
+        Parte = Textos.T("Ajustes.Subidas.Subiendo");
         try
         {
             var subidos = await _cola.ProcesarAsync(forzar: true).ConfigureAwait(true);
             Parte = subidos == 0
-                ? (_cola.Elementos.Count == 0 ? "No había nada pendiente." : "No se ha podido subir nada: mire el estado de cada servicio.")
-                : string.Create(CultureInfo.CurrentCulture, $"{subidos:N0} contacto(s) subido(s).");
+                ? Textos.T(_cola.Elementos.Count == 0 ? "Ajustes.Subidas.NadaPendiente" : "Ajustes.Subidas.NadaSubido")
+                : Textos.F("Ajustes.Subidas.Subidos", subidos);
         }
         catch (Exception ex)
         {
             Log.Warning(ex, "Falló «Subir ahora».");
-            Parte = $"No se ha podido subir: {ex.Message}";
+            Parte = Textos.F("Ajustes.Subidas.ErrorAlSubir", ex.Message);
         }
         finally
         {
@@ -294,7 +298,7 @@ public sealed partial class VistaModeloSubidas : ObservableObject
             pastilla.Texto = e.Texto;
             var enCola = e.Pendientes + e.Fallidos;
             pastilla.Etiqueta = enCola > 0
-                ? string.Create(CultureInfo.CurrentCulture, $"{e.Nombre} {enCola}")
+                ? string.Create(Textos.Cultura, $"{e.Nombre} {enCola}")
                 : e.Nombre;
         }
 
@@ -303,10 +307,9 @@ public sealed partial class VistaModeloSubidas : ObservableObject
         Cola.Clear();
         foreach (var e in _cola.Elementos.OrderBy(e => e.InicioUtc).Take(200))
         {
-            var estado = e.Fallido ? $"Falló: {e.UltimoError}"
-                : e.UltimoError is { } error ? $"Reintento {e.Intentos}: {error}"
-                : e.Modificado ? "Pendiente (corregido)"
-                : "Pendiente";
+            var estado = e.Fallido ? Textos.F("Ajustes.Subidas.Cola.Fallo", e.UltimoError)
+                : e.UltimoError is { } error ? Textos.F("Ajustes.Subidas.Cola.Reintento", e.Intentos, error)
+                : Textos.T(e.Modificado ? "Ajustes.Subidas.Cola.PendienteCorregido" : "Ajustes.Subidas.Cola.Pendiente");
             Cola.Add(new FilaDeCola(
                 ColaDeSubidas.NombreCorto(e.Medio),
                 e.Indicativo,
@@ -319,28 +322,27 @@ public sealed partial class VistaModeloSubidas : ObservableObject
 
     private void RefrescarFicha()
     {
-        _pastillaDeFicha.Etiqueta = "Ficha";
+        _pastillaDeFicha.Etiqueta = Textos.T("Ajustes.Subidas.Ficha");
         if (!_ajustes.Servicios.CompletarConQrz)
         {
             _pastillaDeFicha.Semaforo = SemaforoDeSubida.Apagado;
-            _pastillaDeFicha.Texto = "Completar con QRZ.com: desactivado en Configuración › Subidas y QRZ.";
+            _pastillaDeFicha.Texto = Textos.T("Ajustes.Subidas.Ficha.Desactivada");
         }
         else if (!_completador.EstaDisponible)
         {
             _pastillaDeFicha.Semaforo = SemaforoDeSubida.Apagado;
-            _pastillaDeFicha.Texto = "Completar con QRZ.com: falta la contraseña de QRZ.com (o de HamQTH) en Configuración › Cuentas y servicios. "
-                + "Los contactos se guardan igual, sin nombre ni QTH de la ficha.";
+            _pastillaDeFicha.Texto = Textos.T("Ajustes.Subidas.Ficha.SinContrasena");
         }
         else if (_completador.Problema is { } problema)
         {
             _pastillaDeFicha.Semaforo = SemaforoDeSubida.Ambar;
-            _pastillaDeFicha.Texto = $"{problema} Los contactos se guardan igual, sin los datos de la ficha.";
+            _pastillaDeFicha.Texto = Textos.F("Ajustes.Subidas.Ficha.Problema", problema);
         }
         else
         {
             _pastillaDeFicha.Semaforo = SemaforoDeSubida.Verde;
-            _pastillaDeFicha.Texto = $"Completar con {_completador.Servicio}: listo."
-                + (_completador.Aviso is { } aviso ? $" Aviso del servicio: {aviso}" : string.Empty);
+            _pastillaDeFicha.Texto = Textos.F("Ajustes.Subidas.Ficha.Listo", _completador.Servicio)
+                + (_completador.Aviso is { } aviso ? " " + Textos.F("Ajustes.Subidas.Ficha.AvisoDelServicio", aviso) : string.Empty);
         }
     }
 

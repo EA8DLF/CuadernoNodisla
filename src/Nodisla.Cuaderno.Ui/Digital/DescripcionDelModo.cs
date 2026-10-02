@@ -1,5 +1,6 @@
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Ui.Digital;
 
@@ -50,8 +51,8 @@ public static class DescripcionDelModo
     {
         var periodo = Periodo(modo);
         return periodo.TotalSeconds < 60
-            ? string.Create(System.Globalization.CultureInfo.CurrentCulture, $"{periodo.TotalSeconds:0.#} s")
-            : string.Create(System.Globalization.CultureInfo.CurrentCulture, $"{periodo.TotalMinutes:0.#} min");
+            ? string.Create(Textos.Cultura, $"{periodo.TotalSeconds:0.#} s")
+            : string.Create(Textos.Cultura, $"{periodo.TotalMinutes:0.#} min");
     }
 
     /// <summary>El modo es una baliza: no se hacen contactos con el.</summary>

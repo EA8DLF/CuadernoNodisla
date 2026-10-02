@@ -1,6 +1,8 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
                     xmlns:qsl="clr-namespace:Nodisla.Cuaderno.Ui.Qsl"
+                    xmlns:controles="clr-namespace:Nodisla.Cuaderno.Ui.Vistas.Controles"
                     xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos">
 
     <!--
@@ -12,29 +14,21 @@
         para no depender de qué pantalla la muestra.
     -->
 
-    <qsl:PincelDeColor x:Key="PincelDeColor" />
+    <BooleanToVisibilityConverter x:Key="VisibleSiMarcado" />
 
     <Style x:Key="Rotulo" TargetType="TextBlock">
         <Setter Property="Margin" Value="0,6,0,2" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
-    <Style x:Key="Muestra" TargetType="Border">
-        <Setter Property="Width" Value="22" />
-        <Setter Property="Height" Value="22" />
-        <Setter Property="Margin" Value="6,0,0,0" />
-        <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
-        <Setter Property="BorderThickness" Value="1" />
-    </Style>
-
     <DataTemplate DataType="{x:Type vistamodelos:CampoEditable}">
         <StackPanel>
-            <TextBlock Text="Nombre" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Nombre del campo" />
+            <TextBlock Text="{loc:Texto Comun.Nombre}" Style="{StaticResource Rotulo}" />
+            <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{loc:Texto Qsl.Editor.NombreDelCampo}" />
 
-            <TextBlock Text="Texto (con variables)" Style="{StaticResource Rotulo}" />
+            <TextBlock Text="{loc:Texto Qsl.Editor.TextoConVariables}" Style="{StaticResource Rotulo}" />
             <TextBox Text="{Binding Texto, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MinLines="2" MaxLines="5" VerticalContentAlignment="Top"
-                     TextWrapping="Wrap" AutomationProperties.Name="Texto del campo" />
+                     TextWrapping="Wrap" AutomationProperties.Name="{loc:Texto Qsl.Editor.TextoDelCampo}" />
 
             <Grid Margin="0,6,0,0">
                 <Grid.ColumnDefinitions>
@@ -45,74 +39,65 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="X mm " VerticalAlignment="Center" />
                 <TextBox Grid.Column="1" Text="{Binding XMm, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,0,8,0"
-                         AutomationProperties.Name="Posición horizontal en milímetros" />
+                         AutomationProperties.Name="{loc:Texto Qsl.Editor.PosicionX}" />
                 <TextBlock Grid.Column="2" Text="Y mm " VerticalAlignment="Center" />
                 <TextBox Grid.Column="3" Text="{Binding YMm, UpdateSourceTrigger=LostFocus, StringFormat=0.#}"
-                         AutomationProperties.Name="Posición vertical en milímetros" />
+                         AutomationProperties.Name="{loc:Texto Qsl.Editor.PosicionY}" />
             </Grid>
 
             <DockPanel Margin="0,6,0,0">
-                <TextBlock Text="Ancho máximo (mm, 0 = sin límite) " VerticalAlignment="Center" />
-                <TextBox Text="{Binding AnchoMaximoMm, UpdateSourceTrigger=LostFocus, StringFormat=0.#}"
-                         ToolTip="Lo que no quepa en ese ancho pasa a la línea siguiente: para párrafos."
-                         AutomationProperties.Name="Ancho máximo del texto en milímetros" />
+                <TextBox DockPanel.Dock="Right" Width="60" Text="{Binding AnchoMaximoMm, UpdateSourceTrigger=LostFocus, StringFormat=0.#}"
+                         ToolTip="{loc:Texto Qsl.Editor.AnchoMaximoAyuda}"
+                         AutomationProperties.Name="{loc:Texto Qsl.Editor.AnchoMaximoNombre}" />
+                <TextBlock Text="{loc:Texto Qsl.Editor.AnchoMaximo}" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,4,0" />
             </DockPanel>
 
-            <TextBlock Text="Letra" Style="{StaticResource Rotulo}" />
+            <TextBlock Text="{loc:Texto Qsl.Editor.Letra}" Style="{StaticResource Rotulo}" />
             <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.Fuentes}" SelectedItem="{Binding Fuente}"
-                      AutomationProperties.Name="Tipo de letra" />
+                      AutomationProperties.Name="{loc:Texto Qsl.Editor.TipoDeLetra}" />
             <Grid Margin="0,6,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="60" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Tamaño (pt) " VerticalAlignment="Center" />
+                <TextBlock Text="{loc:Texto Qsl.Editor.TamanoPt}" VerticalAlignment="Center" Margin="0,0,4,0" />
                 <TextBox Grid.Column="1" Text="{Binding TamanoPt, UpdateSourceTrigger=LostFocus, StringFormat=0.#}"
-                         AutomationProperties.Name="Tamaño de letra en puntos" />
+                         AutomationProperties.Name="{loc:Texto Qsl.Editor.TamanoPtNombre}" />
                 <WrapPanel Grid.Column="2" Margin="8,0,0,0" VerticalAlignment="Center">
-                    <CheckBox Content="Negrita" IsChecked="{Binding Negrita}" Margin="0,0,8,0" />
-                    <CheckBox Content="Cursiva" IsChecked="{Binding Cursiva}" />
+                    <CheckBox Content="{loc:Texto Qsl.Editor.Negrita}" IsChecked="{Binding Negrita}" Margin="0,0,8,0" />
+                    <CheckBox Content="{loc:Texto Qsl.Editor.Cursiva}" IsChecked="{Binding Cursiva}" />
                 </WrapPanel>
             </Grid>
 
-            <TextBlock Text="Alineación respecto a X" Style="{StaticResource Rotulo}" />
-            <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.Alineaciones}" SelectedItem="{Binding Alineacion}"
-                      AutomationProperties.Name="Alineación del campo" />
+            <TextBlock Text="{loc:Texto Qsl.Editor.Alineacion}" Style="{StaticResource Rotulo}" />
+            <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.OpcionesDeAlineacion}" DisplayMemberPath="Nombre" SelectedValuePath="Valor" SelectedValue="{Binding Alineacion}"
+                      AutomationProperties.Name="{loc:Texto Qsl.Editor.AlineacionNombre}" />
 
-            <TextBlock Text="Color del texto" Style="{StaticResource Rotulo}" />
-            <DockPanel>
-                <Border DockPanel.Dock="Right" Style="{StaticResource Muestra}"
-                        Background="{Binding Color, Converter={StaticResource PincelDeColor}}" />
-                <TextBox Text="{Binding Color, UpdateSourceTrigger=PropertyChanged}"
-                         ToolTip="#RRGGBB, #AARRGGBB (AA = opacidad) o un nombre en inglés: White, Navy…"
-                         AutomationProperties.Name="Color del texto" />
-            </DockPanel>
+            <!-- Los colores se eligen en la paleta, no escribiendo códigos. -->
+            <TextBlock Text="{loc:Texto Qsl.Editor.ColorDelTexto}" Style="{StaticResource Rotulo}" />
+            <controles:SelectorDeColor Color="{Binding Color}" Titulo="{loc:Texto Qsl.Editor.ColorDelTexto}" AdmiteOpacidad="True" />
 
-            <TextBlock Text="Recuadro detrás (vacío: sin recuadro)" Style="{StaticResource Rotulo}" />
-            <DockPanel>
-                <Border DockPanel.Dock="Right" Style="{StaticResource Muestra}"
-                        Background="{Binding ColorDeRecuadro, Converter={StaticResource PincelDeColor}}" />
-                <TextBox Text="{Binding ColorDeRecuadro, UpdateSourceTrigger=PropertyChanged}"
-                         ToolTip="Por ejemplo #E6FFFFFF: blanco casi opaco, para leer el texto sobre una foto"
-                         AutomationProperties.Name="Color del recuadro" />
-            </DockPanel>
+            <TextBlock Text="{loc:Texto Qsl.Editor.RecuadroDetras}" Style="{StaticResource Rotulo}" />
+            <controles:SelectorDeColor Color="{Binding ColorDeRecuadro}" Titulo="{loc:Texto Qsl.Editor.RecuadroDetrasDelTexto}" AdmiteOpacidad="True"
+                                       AdmiteVacio="True" TextoSiVacio="{loc:Texto Qsl.Editor.SinRecuadro}"
+                                       ToolTip="{loc:Texto Qsl.Editor.RecuadroAyuda}" />
 
-            <CheckBox Content="Dato del contacto (QSL)" IsChecked="{Binding EsDelContacto}" Margin="0,8,0,0"
-                      ToolTip="En la tarjeta QSL, los datos del contacto se quitan en el «Diseño para eQSL»: eQSL los pone por su cuenta."
-                      AutomationProperties.Name="Es un dato del contacto" />
+            <CheckBox Content="{loc:Texto Qsl.Editor.DatoDelContacto}" IsChecked="{Binding EsDelContacto}" Margin="0,8,0,0"
+                      ToolTip="{loc:Texto Qsl.Editor.DatoDelContactoAyuda}"
+                      AutomationProperties.Name="{loc:Texto Qsl.Editor.DatoDelContactoNombre}" />
         </StackPanel>
     </DataTemplate>
 
     <!-- Logo, firma o adorno del diploma. -->
     <DataTemplate DataType="{x:Type vistamodelos:ImagenEditable}">
         <StackPanel>
-            <TextBlock Text="Nombre" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Nombre de la imagen" />
+            <TextBlock Text="{loc:Texto Comun.Nombre}" Style="{StaticResource Rotulo}" />
+            <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{loc:Texto Qsl.Editor.NombreDeLaImagen}" />
 
-            <TextBlock Text="Uso" Style="{StaticResource Rotulo}" />
-            <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.UsosDeImagen}" SelectedItem="{Binding Uso}"
-                      AutomationProperties.Name="Uso de la imagen" />
+            <TextBlock Text="{loc:Texto Qsl.Editor.Uso}" Style="{StaticResource Rotulo}" />
+            <ComboBox ItemsSource="{x:Static qsl:CatalogosDelEditor.OpcionesDeUso}" DisplayMemberPath="Nombre" SelectedValuePath="Valor" SelectedValue="{Binding Uso}"
+                      AutomationProperties.Name="{loc:Texto Qsl.Editor.UsoDeLaImagen}" />
 
             <TextBlock Text="{Binding TextoDelFichero}" Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,6,0,0" />
 
@@ -129,27 +114,31 @@
                 </Grid.RowDefinitions>
                 <TextBlock Text="X mm " VerticalAlignment="Center" />
                 <TextBox Grid.Column="1" Text="{Binding XMm, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,0,8,0"
-                         AutomationProperties.Name="Izquierda de la imagen en milímetros" />
+                         AutomationProperties.Name="{loc:Texto Qsl.Editor.ImagenX}" />
                 <TextBlock Grid.Column="2" Text="Y mm " VerticalAlignment="Center" />
                 <TextBox Grid.Column="3" Text="{Binding YMm, UpdateSourceTrigger=LostFocus, StringFormat=0.#}"
-                         AutomationProperties.Name="Arriba de la imagen en milímetros" />
-                <TextBlock Grid.Row="1" Text="Ancho " VerticalAlignment="Center" Margin="0,4,0,0" />
+                         AutomationProperties.Name="{loc:Texto Qsl.Editor.ImagenY}" />
+                <TextBlock Grid.Row="1" Text="{loc:Texto Qsl.Editor.Ancho}" VerticalAlignment="Center" Margin="0,4,4,0" />
                 <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding AnchoMm, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,4,8,0"
-                         AutomationProperties.Name="Ancho de la imagen en milímetros" />
-                <TextBlock Grid.Row="1" Grid.Column="2" Text="Alto " VerticalAlignment="Center" Margin="0,4,0,0" />
+                         AutomationProperties.Name="{loc:Texto Qsl.Editor.ImagenAncho}" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="{loc:Texto Qsl.Editor.Alto}" VerticalAlignment="Center" Margin="0,4,4,0" />
                 <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding AltoMm, UpdateSourceTrigger=LostFocus, StringFormat=0.#}" Margin="0,4,0,0"
-                         AutomationProperties.Name="Alto de la imagen en milímetros" />
+                         AutomationProperties.Name="{loc:Texto Qsl.Editor.ImagenAlto}" />
             </Grid>
 
             <DockPanel Margin="0,6,0,0">
-                <TextBlock Text="Opacidad (0–1) " VerticalAlignment="Center" />
-                <TextBox Text="{Binding Opacidad, UpdateSourceTrigger=LostFocus, StringFormat=0.##}"
-                         ToolTip="1 = opaca; 0,15 = sello de agua"
-                         AutomationProperties.Name="Opacidad de la imagen" />
+                <TextBox DockPanel.Dock="Right" Width="60" Text="{Binding Opacidad, UpdateSourceTrigger=LostFocus, StringFormat=0.##}"
+                         ToolTip="{loc:Texto Qsl.Editor.OpacidadAyuda}"
+                         AutomationProperties.Name="{loc:Texto Qsl.Editor.OpacidadNombre}" />
+                <TextBlock Text="{loc:Texto Qsl.Editor.Opacidad01}" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,4,0" />
             </DockPanel>
 
-            <CheckBox Content="Línea de firma debajo" IsChecked="{Binding LineaDeFirma}" Margin="0,8,0,0"
-                      AutomationProperties.Name="Dibujar línea de firma" />
+            <CheckBox Content="{loc:Texto Qsl.Editor.LineaDeFirma}" IsChecked="{Binding LineaDeFirma}" Margin="0,8,0,0"
+                      AutomationProperties.Name="{loc:Texto Qsl.Editor.LineaDeFirmaNombre}" />
+            <StackPanel Visibility="{Binding LineaDeFirma, Converter={StaticResource VisibleSiMarcado}}">
+                <TextBlock Text="{loc:Texto Qsl.Editor.ColorLineaDeFirma}" Style="{StaticResource Rotulo}" />
+                <controles:SelectorDeColor Color="{Binding ColorDeLinea}" Titulo="{loc:Texto Qsl.Editor.ColorLineaDeFirma}" />
+            </StackPanel>
         </StackPanel>
     </DataTemplate>
 </ResourceDictionary>

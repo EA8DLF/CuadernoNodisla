@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Logging;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Espectro;
 
 /// <summary>
@@ -48,15 +50,35 @@ public sealed class AnalizadorFt710 : IAnalizadorDeEspectro
     /// <param name="abrir">Como se abre el puente.</param>
     /// <param name="pausaEntreIntentos">Espera antes de reintentar si algo falla.</param>
     /// <param name="registro">Registro, opcional.</param>
+    /// <param name="plazoDeApertura">
+    /// Lo que se espera a que el puente se abra antes de decir que no contesta; nulo,
+    /// <see cref="PlazoDeAperturaPorOmision"/>.
+    /// </param>
     public AnalizadorFt710(
         Func<(AperturaDelPuente Resultado, IPuenteDelAnalizador? Puente, string Detalle)> abrir,
         TimeSpan pausaEntreIntentos,
-        ILogger? registro = null)
+        ILogger? registro = null,
+        TimeSpan? plazoDeApertura = null)
     {
         _abrir = abrir ?? throw new ArgumentNullException(nameof(abrir));
         _pausaEntreIntentos = pausaEntreIntentos;
         _registro = registro;
+        _plazoDeApertura = plazoDeApertura ?? PlazoDeAperturaPorOmision;
     }
+
+    /// <summary>
+    /// Lo que tarda de sobra en abrirse el FT4222 (la primera vez, unos segundos). Pasado esto
+    /// se avisa de que no contesta, y se sigue esperando a esa misma apertura.
+    /// </summary>
+    public static readonly TimeSpan PlazoDeAperturaPorOmision = TimeSpan.FromSeconds(10);
+
+    private readonly TimeSpan _plazoDeApertura;
+
+    /// <summary>
+    /// La apertura en curso. Si se queda colgada en el controlador de FTDI no se lanza otra
+    /// encima: el siguiente arranque espera a esta.
+    /// </summary>
+    private Task<(AperturaDelPuente Resultado, IPuenteDelAnalizador? Puente, string Detalle)>? _apertura;
 
     /// <inheritdoc />
     public event EventHandler<TrazaDeEspectro>? TrazaRecibida;
@@ -65,7 +87,7 @@ public sealed class AnalizadorFt710 : IAnalizadorDeEspectro
     public event EventHandler? EstadoCambiado;
 
     /// <inheritdoc />
-    public string Origen => "Analizador del FT-710 (USB, puente FT4222)";
+    public string Origen => Textos.T("Servicios.Radio.Analizador.Origen");
 
     /// <inheritdoc />
     public EstadoDelAnalizador Estado { get; private set; }
@@ -143,14 +165,33 @@ public sealed class AnalizadorFt710 : IAnalizadorDeEspectro
     }
 
     /// <inheritdoc />
-    public async ValueTask DisposeAsync() => await DetenerAsync().ConfigureAwait(false);
+    public async ValueTask DisposeAsync()
+    {
+        await DetenerAsync().ConfigureAwait(false);
+
+        // Una apertura que quedo pendiente suelta el puente en cuanto termine.
+        Task<(AperturaDelPuente Resultado, IPuenteDelAnalizador? Puente, string Detalle)>? pendiente;
+        lock (_cerrojo)
+        {
+            pendiente = _apertura;
+            _apertura = null;
+        }
+
+        _ = pendiente?.ContinueWith(
+            t => t.Result.Puente?.Dispose(),
+            CancellationToken.None,
+            TaskContinuationOptions.OnlyOnRanToCompletion,
+            TaskScheduler.Default);
+    }
 
     private void Bucle(CancellationToken token)
     {
         var trama = new byte[TramaDelAnalizadorFt710.Largo];
         while (!token.IsCancellationRequested)
         {
-            var (resultado, puente, detalle) = _abrir();
+            var apertura = AbrirConPlazo(token);
+            if (apertura is null) return;
+            var (resultado, puente, detalle) = apertura.Value;
             if (resultado != AperturaDelPuente.Abierto || puente is null)
             {
                 CambiarEstado(
@@ -175,6 +216,56 @@ public sealed class AnalizadorFt710 : IAnalizadorDeEspectro
         }
     }
 
+    /// <summary>Lo que se dice cuando el puente no termina de abrirse.</summary>
+    internal static string MotivoDeAperturaColgada => Textos.T("Servicios.Radio.Analizador.Colgado");
+
+    /// <summary>
+    /// Abre el puente sin quedarse mudo si el controlador de FTDI no vuelve (01-10-2026: el
+    /// analizador se quedo sin decir nada ni en el registro ni en pantalla). Pasado el plazo lo
+    /// dice y sigue esperando a ESA apertura; si se cancela, la deja pendiente para que el
+    /// siguiente arranque la espere en vez de colgar otra encima.
+    /// </summary>
+    /// <returns>Como ha ido; nulo si se ha cancelado antes de saberlo.</returns>
+    private (AperturaDelPuente Resultado, IPuenteDelAnalizador? Puente, string Detalle)? AbrirConPlazo(CancellationToken token)
+    {
+        Task<(AperturaDelPuente Resultado, IPuenteDelAnalizador? Puente, string Detalle)> apertura;
+        lock (_cerrojo)
+        {
+            apertura = _apertura ??= Task.Factory.StartNew(
+                _abrir, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        }
+
+        try
+        {
+            if (!apertura.Wait(_plazoDeApertura, token))
+            {
+                CambiarEstado(EstadoDelAnalizador.Fallo, MotivoDeAperturaColgada);
+                apertura.Wait(token);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
+        catch (AggregateException ex)
+        {
+            lock (_cerrojo)
+            {
+                if (ReferenceEquals(_apertura, apertura)) _apertura = null;
+            }
+
+            return (AperturaDelPuente.Fallo, null,
+                Textos.F("Servicios.Radio.Analizador.NoAbre", ex.InnerException?.Message ?? ex.Message));
+        }
+
+        lock (_cerrojo)
+        {
+            if (ReferenceEquals(_apertura, apertura)) _apertura = null;
+        }
+
+        return apertura.Result;
+    }
+
     private void LeerMientrasSePueda(IPuenteDelAnalizador puente, byte[] trama, CancellationToken token)
     {
         var sincronizado = false;
@@ -186,7 +277,7 @@ public sealed class AnalizadorFt710 : IAnalizadorDeEspectro
                 {
                     CambiarEstado(
                         EstadoDelAnalizador.SinTramas,
-                        "La radio no manda su espectro. En el equipo: MENU → OPERATION SETTING → GENERAL → SCU-LAN10 = ON.");
+                        Textos.T("Servicios.Radio.Analizador.SinTramas"));
                     return;
                 }
 
@@ -195,7 +286,7 @@ public sealed class AnalizadorFt710 : IAnalizadorDeEspectro
 
             if (!puente.Leer(trama))
             {
-                CambiarEstado(EstadoDelAnalizador.SinDispositivo, "Se ha perdido el puente del analizador.");
+                CambiarEstado(EstadoDelAnalizador.SinDispositivo, Textos.T("Servicios.Radio.Analizador.Perdido"));
                 return;
             }
 

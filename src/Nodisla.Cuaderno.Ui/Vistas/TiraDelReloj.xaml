@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.TiraDelReloj"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
              xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -59,23 +60,23 @@
             <DockPanel>
                 <!-- ── Los botones, a la derecha ── -->
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Content="Medir"
+                    <Button Content="{loc:Texto Principal.Reloj.Medir}"
                             Command="{Binding MedirCommand}"
                             Margin="6,0,0,0"
-                            ToolTip="Pregunta la hora a los servidores de hora y vuelve a calcular el desvío" />
+                            ToolTip="{loc:Texto Principal.Reloj.MedirConsejo}" />
 
-                    <Button Content="Poner el reloj en hora"
+                    <Button Content="{loc:Texto Principal.Reloj.PonerEnHora}"
                             Command="{Binding PonerEnHoraCommand}"
                             Style="{StaticResource BotonPrincipal}"
                             Margin="6,0,0,0"
                             Visibility="{Binding SePuedePonerEnHora, Converter={StaticResource BooleanoAVisible}}"
-                            ToolTip="Mide y escribe la hora del sistema. Nunca se hace solo: es el reloj de su máquina." />
+                            ToolTip="{loc:Texto Principal.Reloj.PonerEnHoraConsejo}" />
 
-                    <Button Content="Configurar el servicio de hora"
+                    <Button Content="{loc:Texto Principal.Reloj.ConfigurarServicio}"
                             Command="{Binding ConfigurarElServicioCommand}"
                             Margin="6,0,0,0"
                             Visibility="{Binding HaySincronizador, Converter={StaticResource BooleanoAVisible}}"
-                            ToolTip="Deja el servicio de hora de Windows apuntando a un buen servidor. Arregla el problema para siempre, no sólo hoy." />
+                            ToolTip="{loc:Texto Principal.Reloj.ConfigurarServicioConsejo}" />
                 </StackPanel>
 
                 <!--
@@ -106,7 +107,7 @@
                     </Ellipse>
 
                     <TextBlock DockPanel.Dock="Left"
-                               Text="Reloj del módem"
+                               Text="{loc:Texto Principal.Reloj.RelojDelModem}"
                                Style="{StaticResource EtiquetaDeCampo}"
                                VerticalAlignment="Center"
                                Margin="0,0,10,0" />
@@ -119,8 +120,8 @@
                                VerticalAlignment="Center"
                                Margin="0,0,12,0"
                                TextTrimming="None"
-                               AutomationProperties.Name="Desvío del reloj del ordenador"
-                               ToolTip="Cuánto adelanta o atrasa el reloj del ordenador frente a la hora de verdad" />
+                               AutomationProperties.Name="{loc:Texto Principal.Reloj.Desvio}"
+                               ToolTip="{loc:Texto Principal.Reloj.DesvioConsejo}" />
 
                     <TextBlock Text="{Binding Veredicto}"
                                VerticalAlignment="Center"

@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using System.Text.Json;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Impresion.Plantillas;
 
@@ -175,7 +176,7 @@ public abstract class AlmacenDePlantillas<T>
         var extension = Path.GetExtension(rutaDeLaImagen).ToLowerInvariant();
         if (!ExtensionesDeImagen.Contains(extension))
         {
-            throw new ArgumentException("La imagen tiene que ser PNG, JPG, BMP, GIF o TIFF.", nameof(rutaDeLaImagen));
+            throw new ArgumentException(Textos.T("Servicios.Impresion.ImagenNoValida"), nameof(rutaDeLaImagen));
         }
 
         Directory.CreateDirectory(Carpeta);
@@ -272,7 +273,7 @@ public abstract class AlmacenDePlantillas<T>
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rutaDelZip);
         using var zip = ZipFile.OpenRead(rutaDelZip);
-        var json = zip.GetEntry(JsonDelPaquete) ?? throw new InvalidDataException("El fichero no es una plantilla exportada: le falta plantilla.json.");
+        var json = zip.GetEntry(JsonDelPaquete) ?? throw new InvalidDataException(Textos.T("Servicios.Impresion.NoEsPlantilla"));
         T? plantilla;
         try
         {
@@ -281,13 +282,13 @@ public abstract class AlmacenDePlantillas<T>
         }
         catch (JsonException ex)
         {
-            throw new InvalidDataException("La plantilla del fichero está dañada.", ex);
+            throw new InvalidDataException(Textos.T("Servicios.Impresion.PlantillaDanada"), ex);
         }
 
-        if (plantilla is null) throw new InvalidDataException("La plantilla del fichero está vacía.");
+        if (plantilla is null) throw new InvalidDataException(Textos.T("Servicios.Impresion.PlantillaVacia"));
         Normalizar(plantilla);
         plantilla.Id = IdNuevo();
-        if (string.IsNullOrWhiteSpace(plantilla.Nombre)) plantilla.Nombre = "Plantilla importada";
+        if (string.IsNullOrWhiteSpace(plantilla.Nombre)) plantilla.Nombre = Textos.T("Servicios.Impresion.PlantillaImportada");
         Directory.CreateDirectory(Carpeta);
 
         foreach (var imagen in plantilla.Imagenes().Distinct(StringComparer.OrdinalIgnoreCase).ToList())

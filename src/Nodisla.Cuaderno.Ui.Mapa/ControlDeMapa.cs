@@ -6,6 +6,7 @@ using Mapsui.Layers;
 using Mapsui.Tiling;
 using Mapsui.UI.Wpf;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Ui.Mapa;
 
@@ -164,7 +165,8 @@ public class ControlDeMapa : UserControl, IDisposable
         _atribucion.HorizontalAlignment = HorizontalAlignment.Right;
         _atribucion.VerticalAlignment = VerticalAlignment.Bottom;
         _atribucion.IsHitTestVisible = false;
-        _atribucion.Text = "Mosaicos © colaboradores de OpenStreetMap";
+        _atribucion.Text = Textos.T("Servicios.Mapa.Atribucion");
+        Textos.AlCambiar(this, static c => c._atribucion.Text = Textos.T("Servicios.Mapa.Atribucion"));
         _atribucion.Opacity = 0.75;
 
         _aviso.Margin = new Thickness(8, 8, 8, 8);
@@ -443,7 +445,7 @@ public class ControlDeMapa : UserControl, IDisposable
             // Sin mosaicos el mapa sigue sirviendo: los contactos, los trayectos y el paso
             // gris se pintan igual sobre el fondo liso.
             _atribucion.Visibility = Visibility.Collapsed;
-            MostrarAviso("Sin mapa de fondo: no se han podido cargar los mosaicos. Los contactos y el paso gris se siguen viendo.");
+            MostrarAviso(Textos.T("Servicios.Mapa.SinFondo"));
         }
     }
 
@@ -765,7 +767,7 @@ public class ControlDeMapa : UserControl, IDisposable
         var cuantos = info.Feature?[CapasDelMapa.ClaveDeCuantos] as int? ?? 1;
 
         _mapa.ToolTip = cuantos > 1
-            ? $"{marca.Etiqueta} y {cuantos - 1} más en esta zona"
+            ? Textos.F("Servicios.Mapa.YMasEnLaZona", marca.Etiqueta, cuantos - 1)
             : marca.Etiqueta;
     }
 

@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Concursos.Macros;
 
@@ -64,31 +65,32 @@ public sealed class MotorDeMacros
     /// <summary>Sustituciones que entiende el motor, con lo que significan.</summary>
     /// <remarks>
     /// Sirve para la ayuda y para el editor de macros: el operador tiene que poder ver la
-    /// lista sin buscarla en la documentacion.
+    /// lista sin buscarla en la documentacion. Se arma en cada consulta para que salga en el
+    /// idioma en uso.
     /// </remarks>
-    public static IReadOnlyDictionary<string, string> Sustituciones { get; } =
+    public static IReadOnlyDictionary<string, string> Sustituciones =>
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            ["CALL"] = "Indicativo del corresponsal",
-            ["MICALL"] = "Mi indicativo",
-            ["NOMBRE"] = "Nombre del corresponsal",
-            ["MINOMBRE"] = "Mi nombre",
-            ["QTH"] = "Localidad del corresponsal",
-            ["MIQTH"] = "Mi localidad",
-            ["LOCATOR"] = "Localizador del corresponsal",
-            ["MILOCATOR"] = "Mi localizador",
-            ["RST"] = "Informe que envío",
-            ["RSTR"] = "Informe que he recibido",
-            ["SERIE"] = "Número de serie que toca enviar",
-            ["SERIER"] = "Número de serie recibido",
-            ["INTERCAMBIO"] = "Intercambio completo que envío",
-            ["INTERCAMBIOR"] = "Intercambio recibido",
-            ["BANDA"] = "Banda en la que estoy",
-            ["MODO"] = "Modo en el que estoy",
-            ["FREQ"] = "Frecuencia en MHz",
-            ["CONCURSO"] = "Concurso en marcha",
-            ["HORA"] = "Hora UTC, en HHMM",
-            ["FECHA"] = "Fecha UTC, en aaaa-mm-dd",
+            ["CALL"] = Textos.T("Servicios.Concursos.Sustitucion.Call"),
+            ["MICALL"] = Textos.T("Servicios.Concursos.Sustitucion.MiCall"),
+            ["NOMBRE"] = Textos.T("Servicios.Concursos.Sustitucion.Nombre"),
+            ["MINOMBRE"] = Textos.T("Servicios.Concursos.Sustitucion.MiNombre"),
+            ["QTH"] = Textos.T("Servicios.Concursos.Sustitucion.Qth"),
+            ["MIQTH"] = Textos.T("Servicios.Concursos.Sustitucion.MiQth"),
+            ["LOCATOR"] = Textos.T("Servicios.Concursos.Sustitucion.Locator"),
+            ["MILOCATOR"] = Textos.T("Servicios.Concursos.Sustitucion.MiLocator"),
+            ["RST"] = Textos.T("Servicios.Concursos.Sustitucion.Rst"),
+            ["RSTR"] = Textos.T("Servicios.Concursos.Sustitucion.RstR"),
+            ["SERIE"] = Textos.T("Servicios.Concursos.Sustitucion.Serie"),
+            ["SERIER"] = Textos.T("Servicios.Concursos.Sustitucion.SerieR"),
+            ["INTERCAMBIO"] = Textos.T("Servicios.Concursos.Sustitucion.Intercambio"),
+            ["INTERCAMBIOR"] = Textos.T("Servicios.Concursos.Sustitucion.IntercambioR"),
+            ["BANDA"] = Textos.T("Servicios.Concursos.Sustitucion.Banda"),
+            ["MODO"] = Textos.T("Servicios.Concursos.Sustitucion.Modo"),
+            ["FREQ"] = Textos.T("Servicios.Concursos.Sustitucion.Freq"),
+            ["CONCURSO"] = Textos.T("Servicios.Concursos.Sustitucion.Concurso"),
+            ["HORA"] = Textos.T("Servicios.Concursos.Sustitucion.Hora"),
+            ["FECHA"] = Textos.T("Servicios.Concursos.Sustitucion.Fecha"),
         };
 
     /// <summary>Expande una macro.</summary>

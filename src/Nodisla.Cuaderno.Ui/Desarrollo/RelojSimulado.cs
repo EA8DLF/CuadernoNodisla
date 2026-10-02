@@ -1,3 +1,4 @@
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 
 namespace Nodisla.Cuaderno.Ui.Desarrollo;
@@ -85,7 +86,7 @@ public sealed class RelojSimulado : IRelojDelModem, ISincronizadorDeHora
         return Task.FromResult(new ResultadoDePuestaEnHora(
             Hecho: true,
             ViaDeSincronizacion.HoraPuestaAMano,
-            "Reloj puesto en hora (simulado): no se ha tocado el reloj del ordenador.",
+            Textos.T("Dialogos.Simulado.RelojPuesto"),
             Detalle: null,
             antes,
             puesto.DesvioMs));
@@ -96,55 +97,16 @@ public sealed class RelojSimulado : IRelojDelModem, ISincronizadorDeHora
         Task.FromResult(new ResultadoDePuestaEnHora(
             Hecho: true,
             ViaDeSincronizacion.ServicioConfigurado,
-            "Servicio de hora configurado (simulado).",
+            Textos.T("Dialogos.Simulado.ServicioDeHora"),
             InstruccionesParaHacerloAMano,
             Desvio.DesvioMs,
             DesvioDespuesMs: null));
 
     /// <summary>
-    /// Pone el veredicto en palabras con los mismos umbrales de fabrica que el reloj real.
+    /// Pone el veredicto en palabras con el MISMO veredicto del reloj real y sus umbrales de
+    /// fabrica (200 ms y un segundo): asi el simulado dice lo mismo, en el mismo idioma, que el
+    /// de verdad.
     /// </summary>
-    /// <remarks>
-    /// Se escribe aqui y no se llama al modulo de audio porque este ensamblado no lo necesita
-    /// para nada mas, y porque los umbrales de fabrica son los que son: 200 ms y un segundo.
-    /// </remarks>
-    private static EstadoDelReloj Componer(DesvioDelReloj desvio)
-    {
-        var cuanto = Math.Abs(desvio.DesvioMs);
-        var sentido = desvio.DesvioMs >= 0 ? "adelantado" : "atrasado";
-        var cantidad = cuanto >= 1000
-            ? string.Create(System.Globalization.CultureInfo.CurrentCulture, $"{cuanto / 1000.0:0.00} s")
-            : string.Create(System.Globalization.CultureInfo.CurrentCulture, $"{cuanto:0} ms");
-        var paraMostrar = cuanto >= 1000
-            ? string.Create(System.Globalization.CultureInfo.CurrentCulture, $"{desvio.DesvioMs / 1000.0:+0.00;-0.00} s")
-            : string.Create(System.Globalization.CultureInfo.CurrentCulture, $"{desvio.DesvioMs:+0;-0} ms");
-
-        if (cuanto <= 200)
-        {
-            return new EstadoDelReloj(
-                desvio,
-                CalidadDelReloj.Bien,
-                $"El reloj está en hora ({cantidad} {sentido}).",
-                string.Empty,
-                paraMostrar);
-        }
-
-        if (cuanto < 1000)
-        {
-            return new EstadoDelReloj(
-                desvio,
-                CalidadDelReloj.Regular,
-                $"El reloj está {cantidad} {sentido}.",
-                "Con este desvío FT8 empieza a decodificar peor: conviene sincronizar el reloj.",
-                paraMostrar);
-        }
-
-        return new EstadoDelReloj(
-            desvio,
-            CalidadDelReloj.FueraDeVentana,
-            $"El reloj está {cantidad} {sentido}.",
-            "Con este desvío no se decodifica casi nada y, sobre todo, se transmite fuera de ventana, "
-                + "molestando a los demás sin enterarse. Hay que sincronizar el reloj antes de transmitir.",
-            paraMostrar);
-    }
+    private static EstadoDelReloj Componer(DesvioDelReloj desvio) =>
+        Nodisla.Cuaderno.Audio.Reloj.VeredictoDelReloj.Componer(desvio, new Nodisla.Cuaderno.Audio.Reloj.OpcionesDelReloj());
 }

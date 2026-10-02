@@ -1,4 +1,5 @@
 using System.Globalization;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Modos.Ft8;
 
 namespace Nodisla.Cuaderno.Ui.Digital;
@@ -183,11 +184,11 @@ public static class GramaticaDeMensajes
     /// <summary>Nombre para el selector.</summary>
     public static string Nombre(TipoDeOperacion operacion) => operacion switch
     {
-        TipoDeOperacion.Normal => "Normal",
-        TipoDeOperacion.Hound => "Hound (llamar a un fox)",
-        TipoDeOperacion.Fox => "Fox (ser el DX) — sólo gramática",
-        TipoDeOperacion.NaVhf => "Concurso NA VHF",
-        TipoDeOperacion.EuVhf => "Concurso EU VHF",
+        TipoDeOperacion.Normal => Textos.T("Digital.Operacion.Normal"),
+        TipoDeOperacion.Hound => Textos.T("Digital.Operacion.Hound"),
+        TipoDeOperacion.Fox => Textos.T("Digital.Operacion.Fox"),
+        TipoDeOperacion.NaVhf => Textos.T("Digital.Operacion.NaVhf"),
+        TipoDeOperacion.EuVhf => Textos.T("Digital.Operacion.EuVhf"),
         TipoDeOperacion.FieldDay => "ARRL Field Day",
         TipoDeOperacion.RttyRoundup => "ARRL RTTY Roundup",
         TipoDeOperacion.WwDigi => "WW Digi",

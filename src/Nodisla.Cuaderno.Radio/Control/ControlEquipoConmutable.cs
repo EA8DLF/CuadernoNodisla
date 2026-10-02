@@ -5,6 +5,8 @@ using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
 using Nodisla.Cuaderno.Radio.Ptt;
 
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Control;
 
 /// <summary>
@@ -105,7 +107,7 @@ public sealed class ControlEquipoConmutable
         // se intenta, que es lo que no puede fallar nunca.
         return transmitir
             ? Task.FromException(new InvalidOperationException(
-                "El control de equipo que hay puesto no sabe subir el PTT."))
+                Textos.T("Servicios.Radio.SinPtt")))
             : control.PonerPttAsync(false, ct);
     }
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
@@ -15,7 +15,10 @@ namespace Nodisla.Cuaderno.Ui.VistaModelos;
 /// </summary>
 public sealed partial class VistaModeloCuaderno : ObservableObject
 {
-    /// <summary>Texto que representa «no filtrar por este campo».</summary>
+    /// <summary>
+    /// Valor que representa «no filtrar por este campo». Es un centinela y no se traduce: la
+    /// lista lo escribe en el idioma en uso con su propia plantilla.
+    /// </summary>
     public const string Cualquiera = "(todas)";
 
     /// <summary>Texto que representa «cualquier modo».</summary>
@@ -39,6 +42,19 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
             "MFSK", "DIGITALVOICE",
         ];
         TamanosDePagina = [50, 100, 200, 500, 1000];
+
+        // Al cambiar de idioma: los textos calculados aqui y las filas ya formateadas (fechas,
+        // «Sí», resumen de QSL) se vuelven a escribir en el idioma nuevo.
+        Textos.AlCambiar(this, static vm => vm.AlCambiarDeIdioma());
+    }
+
+    private void AlCambiarDeIdioma()
+    {
+        OnPropertyChanged(nameof(TextoDePagina));
+        OnPropertyChanged(nameof(PorQueNoHayFilas));
+        var elegida = FilaSeleccionada?.Id;
+        for (var i = 0; i < Filas.Count; i++) Filas[i] = new FilaDeQso(Filas[i].Qso);
+        if (elegida is { } id) FilaSeleccionada = Filas.FirstOrDefault(f => f.Id == id);
     }
 
     /// <summary>Se dispara cuando el operador pide modificar un contacto.</summary>
@@ -178,10 +194,9 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
 
     /// <summary>Texto del indicador de pagina de la barra de paginacion.</summary>
     public string TextoDePagina => TotalFiltrado == 0
-        ? "Sin contactos"
-        : string.Format(
-            CultureInfo.CurrentCulture,
-            "Página {0} de {1} · {2:N0} contactos",
+        ? Textos.T("Libro.Pagina.SinContactos")
+        : Textos.F(
+            "Libro.Pagina.Texto",
             Pagina,
             TotalDePaginas,
             TotalFiltrado);
@@ -196,8 +211,8 @@ public sealed partial class VistaModeloCuaderno : ObservableObject
     /// </remarks>
     public string PorQueNoHayFilas =>
         Cargando || TotalFiltrado > 0 ? string.Empty
-        : HayFiltro ? "Ningún contacto cumple el filtro. Pulse «Quitar filtro» para verlos todos."
-        : "El cuaderno está vacío. Registre un contacto en «Operar» o importe un ADIF.";
+        : HayFiltro ? Textos.T("Libro.Vacia.Filtro")
+        : Textos.F("Libro.Vacia.Cuaderno", Textos.T("Principal.Nav.Operar"));
 
     /// <summary>Hay algun filtro puesto.</summary>
     public bool HayFiltro =>

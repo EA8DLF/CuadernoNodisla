@@ -1,7 +1,7 @@
-using System.Globalization;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 
@@ -164,41 +164,40 @@ public sealed class RegistrarQso(
 
         if (qso.Call.EsVacio)
         {
-            errores.Add("Falta el indicativo del corresponsal.");
+            errores.Add(Textos.T("Servicios.Aplicacion.FaltaIndicativo"));
         }
         else if (!Indicativo.EsFormaValida(qso.Call.Valor))
         {
-            errores.Add($"El indicativo «{qso.Call.Valor}» no tiene una forma válida.");
+            errores.Add(Textos.F("Servicios.Aplicacion.IndicativoNoValido", qso.Call.Valor));
         }
 
-        if (qso.Mode.EsVacio) errores.Add("Falta el modo.");
+        if (qso.Mode.EsVacio) errores.Add(Textos.T("Servicios.Aplicacion.FaltaModo"));
 
         if (qso.Band.EsVacia && qso.Freq.EsCero)
         {
-            errores.Add("Falta la banda o la frecuencia.");
+            errores.Add(Textos.T("Servicios.Aplicacion.FaltaBanda"));
         }
         else if (!qso.Band.EsVacia && !qso.Freq.EsCero && !qso.Band.Contiene(qso.Freq))
         {
-            errores.Add(string.Format(
-                CultureInfo.CurrentCulture,
-                "La frecuencia {0} MHz no está dentro de la banda {1}.",
+            errores.Add(Textos.F(
+                "Servicios.Aplicacion.FrecuenciaFueraDeBanda",
                 qso.Freq.AAdif(),
                 qso.Band.Nombre));
         }
 
         if (qso.InicioUtc != default && qso.InicioUtc > DateTimeOffset.UtcNow + MargenDeFuturo)
         {
-            errores.Add("La hora del contacto está en el futuro.");
+            errores.Add(Textos.T("Servicios.Aplicacion.HoraEnElFuturo"));
         }
 
         if (qso.FinUtc is { } fin && fin < qso.InicioUtc)
         {
-            errores.Add("La hora de fin es anterior a la de inicio.");
+            errores.Add(Textos.T("Servicios.Aplicacion.FinAntesDeInicio"));
         }
 
         if (qso.StationCallsign.EsVacio)
         {
-            errores.Add("Falta el indicativo de mi estación: elija un perfil de estación.");
+            errores.Add(Textos.T("Servicios.Aplicacion.FaltaMiIndicativo"));
         }
 
         return errores;

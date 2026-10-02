@@ -4,7 +4,7 @@ namespace Nodisla.Cuaderno.Ui.Vistas;
 
 /// <summary>
 /// Ventana de confirmacion propia. No se usa el cuadro de dialogo de Windows porque sus botones
-/// salen en el idioma del sistema, y aqui todo tiene que estar en espanol.
+/// salen en el idioma del sistema, y aqui todo tiene que estar en el idioma elegido en el programa.
 /// </summary>
 public partial class VentanaDeConfirmacion : Window
 {

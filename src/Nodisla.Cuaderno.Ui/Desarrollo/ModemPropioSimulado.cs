@@ -1,3 +1,4 @@
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
 
@@ -100,8 +101,7 @@ public sealed class ModemPropioSimulado : IModemPropio
 
     /// <inheritdoc />
     public Task EmitirAsync(string texto, int tonoHz, CancellationToken ct = default) =>
-        throw new InvalidOperationException(
-            "El módem simulado no transmite. Cierre el programa y vuelva a abrirlo sin CUADERNO_SIMULADO.");
+        throw new InvalidOperationException(Textos.T("Dialogos.Simulado.ModemNoTransmite"));
 
     /// <inheritdoc />
     public Task AbortarEmisionAsync(CancellationToken ct = default) => Task.CompletedTask;

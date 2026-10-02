@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Servicios.Adif;
 using Nodisla.Cuaderno.Servicios.Red;
 
@@ -120,7 +121,7 @@ public sealed partial class ServicioEqsl : IServicioQsl
         var reloj = Stopwatch.StartNew();
         if (qsos.Count == 0) return new ResultadoDeSubida(0, 0, SinMotivos(), reloj.Elapsed);
 
-        Avisar(progreso, 0, qsos.Count, $"Enviando {qsos.Count} contactos a eQSL…");
+        Avisar(progreso, 0, qsos.Count, Textos.F("Servicios.Eqsl.Enviando", qsos.Count));
         var contrasena = LeerContrasena();
         var registros = new List<IReadOnlyDictionary<string, string>>(qsos.Count);
         foreach (var qso in qsos)
@@ -142,7 +143,7 @@ public sealed partial class ServicioEqsl : IServicioQsl
                 ["PROGRAMID"] = "Cuaderno NODISLA",
             });
 
-        var respuesta = await _reintentos.EjecutarAsync("subir a eQSL", async testigo =>
+        var respuesta = await _reintentos.EjecutarAsync(Textos.T("Servicios.Eqsl.Subir"), async testigo =>
         {
             var cliente = _fabrica.CreateClient(NombresDeClienteHttp.Eqsl);
             using var formulario = new MultipartFormDataContent();
@@ -158,7 +159,7 @@ public sealed partial class ServicioEqsl : IServicioQsl
             if (!http.IsSuccessStatusCode)
             {
                 throw new RespuestaDelServicioException(
-                    $"eQSL respondió {(int)http.StatusCode}.", http.StatusCode);
+                    Textos.F("Servicios.Respondio", "eQSL", (int)http.StatusCode), http.StatusCode);
             }
             return cuerpo;
         }, ct).ConfigureAwait(false);
@@ -166,7 +167,7 @@ public sealed partial class ServicioEqsl : IServicioQsl
         reloj.Stop();
         var resultado = InterpretarSubida(respuesta, qsos, reloj.Elapsed, _log);
         Avisar(progreso, resultado.Enviados, qsos.Count,
-            $"eQSL aceptó {resultado.Enviados} de {qsos.Count} contactos.");
+            Textos.F("Servicios.Eqsl.Acepto", resultado.Enviados, qsos.Count));
         return resultado;
     }
 
@@ -226,30 +227,28 @@ public sealed partial class ServicioEqsl : IServicioQsl
         IProgress<ProgresoDeSincronizacion>? progreso = null,
         CancellationToken ct = default)
     {
-        Avisar(progreso, 0, null, "Pidiendo a eQSL que prepare el buzón…");
+        Avisar(progreso, 0, null, Textos.T("Servicios.Eqsl.PreparandoBuzon"));
         var pagina = await PedirBuzonAsync(desdeUtc, ct).ConfigureAwait(false);
         var enlace = ExtraerEnlace(pagina, _opciones.RaizDelSitio)
-            ?? throw new RespuestaDelServicioException(
-                "eQSL no devolvió el enlace al fichero del buzón. Suele significar que el "
-                + "usuario o la contraseña no son correctos, o que no había nada que descargar.");
+            ?? throw new RespuestaDelServicioException(Textos.T("Servicios.Eqsl.SinEnlace"));
 
         _log.LogInformation("Descargando el buzón de eQSL.");
-        Avisar(progreso, 0, null, "Descargando el buzón de eQSL…");
-        var adif = await _reintentos.EjecutarAsync("descargar el buzón de eQSL", async testigo =>
+        Avisar(progreso, 0, null, Textos.T("Servicios.Eqsl.DescargandoBuzon"));
+        var adif = await _reintentos.EjecutarAsync(Textos.T("Servicios.Eqsl.DescargarBuzon"), async testigo =>
         {
             var cliente = _fabrica.CreateClient(NombresDeClienteHttp.Eqsl);
             using var http = await cliente.GetAsync(enlace, testigo).ConfigureAwait(false);
             if (!http.IsSuccessStatusCode)
             {
                 throw new RespuestaDelServicioException(
-                    $"eQSL respondió {(int)http.StatusCode} al pedir el fichero.", http.StatusCode);
+                    Textos.F("Servicios.Eqsl.RespondioAlFichero", (int)http.StatusCode), http.StatusCode);
             }
             return await http.Content.ReadAsStringAsync(testigo).ConfigureAwait(false);
         }, ct).ConfigureAwait(false);
 
         var confirmaciones = Interpretar(adif);
         Avisar(progreso, confirmaciones.Count, confirmaciones.Count,
-            $"eQSL devolvió {confirmaciones.Count} confirmaciones.");
+            Textos.F("Servicios.Eqsl.Devolvio", confirmaciones.Count));
         return confirmaciones;
     }
 
@@ -323,7 +322,7 @@ public sealed partial class ServicioEqsl : IServicioQsl
         var url = new UriBuilder(_opciones.UrlDelBuzon) { Query = consulta.ToString() }.Uri;
         _log.LogInformation("Pidiendo el buzón de eQSL a {Servidor}.", _opciones.UrlDelBuzon);
 
-        return await _reintentos.EjecutarAsync("pedir el buzón de eQSL", async testigo =>
+        return await _reintentos.EjecutarAsync(Textos.T("Servicios.Eqsl.PedirBuzon"), async testigo =>
         {
             var cliente = _fabrica.CreateClient(NombresDeClienteHttp.Eqsl);
             using var http = await cliente.GetAsync(url, testigo).ConfigureAwait(false);
@@ -331,7 +330,7 @@ public sealed partial class ServicioEqsl : IServicioQsl
             if (!http.IsSuccessStatusCode)
             {
                 throw new RespuestaDelServicioException(
-                    $"eQSL respondió {(int)http.StatusCode}.", http.StatusCode);
+                    Textos.F("Servicios.Respondio", "eQSL", (int)http.StatusCode), http.StatusCode);
             }
             return cuerpo;
         }, ct).ConfigureAwait(false);
@@ -339,8 +338,7 @@ public sealed partial class ServicioEqsl : IServicioQsl
 
     private string LeerContrasena() =>
         _credenciales.Leer(ClavesDeCredencial.EqslContrasena)
-        ?? throw new InvalidOperationException(
-            "No hay contraseña de eQSL guardada. Configúrela en Configuración › Cuentas y servicios.");
+        ?? throw new InvalidOperationException(Textos.F("Servicios.SinContrasena", "eQSL"));
 
     private static IReadOnlyDictionary<string, string> SinMotivos() =>
         new Dictionary<string, string>(StringComparer.Ordinal);

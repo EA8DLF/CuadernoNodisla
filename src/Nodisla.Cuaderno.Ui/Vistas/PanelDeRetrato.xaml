@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PanelDeRetrato"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              Foreground="{DynamicResource Texto}">
 
     <!--
@@ -139,7 +140,7 @@
                     Padding="4,0"
                     Margin="6,0,0,0"
                     VerticalAlignment="Center">
-                <TextBlock Text="APORTA"
+                <TextBlock Text="{loc:Texto Libro.Retrato.Aporta}"
                            FontSize="8"
                            FontWeight="Bold"
                            TextTrimming="None"
@@ -153,7 +154,7 @@
             </TextBlock>
         </DockPanel>
 
-        <TextBlock Text="Escriba un indicativo para ver si aporta algo."
+        <TextBlock Text="{loc:Texto Libro.Retrato.EscribaUnIndicativo}"
                    TextWrapping="Wrap">
             <TextBlock.Style>
                 <Style TargetType="TextBlock" BasedOn="{StaticResource RotuloDeRejilla}">
@@ -182,12 +183,12 @@
 
                 <!-- La esquina dice qué cruza la rejilla; si no, son doce casillas sueltas. -->
                 <TextBlock Grid.Row="0" Grid.Column="0"
-                           Text="¿Nuevo?"
+                           Text="{loc:Texto Libro.Retrato.Nuevo}"
                            Style="{StaticResource RotuloDeEsquina}" />
 
                 <!-- Cabecera: las cuatro vías de confirmación. -->
                 <UniformGrid Grid.Row="0" Grid.Column="1" Columns="4">
-                    <TextBlock Text="Papel" Style="{StaticResource RotuloDeRejilla}" TextAlignment="Center" />
+                    <TextBlock Text="{loc:Texto Libro.Retrato.Papel}" Style="{StaticResource RotuloDeRejilla}" TextAlignment="Center" />
                     <TextBlock Text="eQSL" Style="{StaticResource RotuloDeRejilla}" TextAlignment="Center" />
                     <TextBlock Text="LoTW" Style="{StaticResource RotuloDeRejilla}" TextAlignment="Center" />
                     <TextBlock Text="QRZ" Style="{StaticResource RotuloDeRejilla}" TextAlignment="Center" />
@@ -195,9 +196,9 @@
 
                 <!-- Las tres filas, rotuladas: es lo que puede ser nuevo. -->
                 <UniformGrid Grid.Row="1" Grid.Column="0" Rows="3" Margin="0,0,5,0">
-                    <TextBlock Text="País" Style="{StaticResource RotuloDeRejilla}" />
-                    <TextBlock Text="Banda" Style="{StaticResource RotuloDeRejilla}" />
-                    <TextBlock Text="Modo" Style="{StaticResource RotuloDeRejilla}" />
+                    <TextBlock Text="{loc:Texto Comun.Pais}" Style="{StaticResource RotuloDeRejilla}" />
+                    <TextBlock Text="{loc:Texto Comun.Banda}" Style="{StaticResource RotuloDeRejilla}" />
+                    <TextBlock Text="{loc:Texto Comun.Modo}" Style="{StaticResource RotuloDeRejilla}" />
                 </UniformGrid>
 
                 <ItemsControl Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Novedad}">
@@ -230,7 +231,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0"
-                           Text="Con él"
+                           Text="{loc:Texto Libro.Retrato.ConEl}"
                            Style="{StaticResource RotuloDeEsquina}" />
 
                 <!--
@@ -256,7 +257,7 @@
 
                 <!-- Las tres familias con las que se opera de verdad. -->
                 <UniformGrid Grid.Row="1" Grid.Column="0" Rows="3" Margin="0,0,5,0">
-                    <TextBlock Text="FONÍA" Style="{StaticResource RotuloDeFila}" />
+                    <TextBlock Text="{loc:Texto Libro.Retrato.Fonia}" Style="{StaticResource RotuloDeFila}" />
                     <TextBlock Text="CW" Style="{StaticResource RotuloDeFila}" />
                     <TextBlock Text="DIGI" Style="{StaticResource RotuloDeFila}" />
                 </UniformGrid>
@@ -313,7 +314,7 @@
                 La leyenda de los tres estados. No sobra: es lo que permite leer la rejilla sin
                 depender del color, y ocupa una línea.
             -->
-            <TextBlock Text="Vacía: sin trabajar · número: trabajado · ✓: confirmado."
+            <TextBlock Text="{loc:Texto Libro.Retrato.Leyenda}"
                        Style="{StaticResource RotuloDeRejilla}"
                        TextWrapping="Wrap"
                        Margin="0,2,0,0" />

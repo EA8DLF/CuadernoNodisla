@@ -30,6 +30,7 @@
 <li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
 <li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
 <li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+<li><a href="17-cw.html">Telegraf&#237;a (CW)</a></li>
 </ul>
 </nav>
 <main class="capitulo">
@@ -40,13 +41,26 @@
 <ul>
 <li><strong>Plantilla</strong> — puede tener varias (una para HF, otra para una activaci&#243;n…). <strong>Guardar</strong>, <strong>Deshacer</strong> (vuelve a lo guardado), <strong>Nueva</strong>, <strong>Duplicar</strong>, <strong>Borrar</strong> y <strong>Usar por omisi&#243;n</strong>: la de omisi&#243;n es la que sale al abrir el env&#237;o. Se guardan en la carpeta de datos del programa, en <code>qsl\disenos\</code> (un JSON por plantilla y su imagen de fondo).</li>
 <li><strong>Tama&#241;o</strong> — 140 &#215; 90 mm, el internacional de QSL. <strong>Vertical</strong> la pone en 90 &#215; 140 y recoloca los campos en proporci&#243;n.</li>
-<li><strong>Fondo</strong> — <strong>Elegir imagen…</strong> (JPG, PNG, BMP, GIF o TIFF: su foto, su logo). La imagen <strong>se copia</strong> a la carpeta de la plantilla, as&#237; que borrar o mover la original no deja la tarjeta sin fondo. <strong>Ajuste</strong>: <em>Rellenar</em> (cubre la tarjeta y recorta lo que sobre), <em>Encajar</em> (se ve entera; lo que falte queda del color de fondo) o <em>Estirar</em>. <strong>Color</strong> es el color liso de debajo.</li>
+<li><strong>Fondo</strong> — <strong>Elegir imagen…</strong> (JPG, PNG, BMP, GIF o TIFF: su foto, su logo). La imagen <strong>se copia</strong> a la carpeta de la plantilla, as&#237; que borrar o mover la original no deja la tarjeta sin fondo. <strong>Ajuste</strong>: <em>Rellenar</em> (cubre la tarjeta y recorta lo que sobre), <em>Encajar</em> (se ve entera; lo que falte queda del color de fondo) o <em>Estirar</em>. <strong>Color</strong> es el color liso de debajo; se elige en la paleta (vea <a href="#elegir-un-color">Elegir un color</a>).</li>
 <li><strong>Campos</strong> — cada texto de la tarjeta: mi indicativo (grande), mi nombre y QTH, mi localizador, &#171;To Radio&#187;, fecha, hora UTC, banda/frecuencia, modo, RST, &#171;PSE/TNX QSL&#187; y &#171;73&#187;. <strong>Se mueven arrastr&#225;ndolos sobre la tarjeta</strong>; para afinar, X/Y en mil&#237;metros. La casilla de la lista los enciende o apaga. <strong>A&#241;adir texto</strong> pone uno libre.</li>
-<li><strong>El campo elegido</strong> (a la derecha): texto, letra (cualquier tipograf&#237;a instalada), tama&#241;o en puntos, negrita, cursiva, color, <strong>recuadro detr&#225;s</strong> (por ejemplo <code>#E6FFFFFF</code>, blanco casi opaco, para que se lea sobre una foto) y alineaci&#243;n respecto a X (izquierda, centro, derecha).</li>
+<li><strong>El campo elegido</strong> (a la derecha): texto, letra (cualquier tipograf&#237;a instalada), tama&#241;o en puntos, negrita, cursiva, alineaci&#243;n respecto a X (izquierda, centro, derecha), <strong>color del texto</strong> y <strong>recuadro detr&#225;s</strong> (por ejemplo un blanco casi opaco, para que se lea sobre una foto; <em>Sin recuadro</em> lo quita).</li>
 <li><strong>Vista previa con</strong> — un contacto de verdad del cuaderno (los &#250;ltimos 40), o ninguno para ver solo sus datos.</li>
 </ul>
 <p>La tarjeta del centro <strong>es la imagen de verdad</strong>: la misma rutina la dibuja para el correo (200 ppp) y para el PDF (300 ppp). Lo que se ve es lo que recibe el corresponsal.</p>
 <p>En una pantalla peque&#241;a (1366 &#215; 768) cabe igual: las columnas laterales se desplazan.</p>
+<h3 id="elegir-un-color">Elegir un color</h3>
+<p>Los colores (del texto, del recuadro, del fondo) se eligen <strong>mirando, no escribiendo c&#243;digos</strong>. El bot&#243;n ense&#241;a la muestra y el nombre del color (&#171;Azul marino&#187;, &#171;Blanco al 90 %&#187;); al pulsarlo se despliega la paleta:</p>
+<figure><a href="capturas/selector-de-color.png"><img src="capturas/selector-de-color.png" alt="Selector de color desplegado: paleta, colores del dise&#241;o, &#250;ltimos usados, opacidad y el selector libre de tono" loading="lazy"></a><figcaption>Selector de color desplegado: paleta, colores del dise&#241;o, &#250;ltimos usados, opacidad y el selector libre de tono</figcaption></figure>
+<ul>
+<li><strong>Paleta</strong> — 40 colores: negros y grises, los de NODISLA (y el azul marino y el oro viejo de las plantillas de f&#225;brica), colores vivos y pastel. Un clic lo elige; la ✓ marca el actual. Al pasar por encima sale su nombre.</li>
+<li><strong>Colores del dise&#241;o</strong> — los que ya usa la plantilla abierta, para repetir el mismo color en otro texto sin buscarlo.</li>
+<li><strong>&#218;ltimos usados</strong> — los &#250;ltimos colores elegidos en esta sesi&#243;n, en cualquier selector.</li>
+<li><strong>Opacidad</strong> — solo donde tiene sentido (texto y recuadro): a la izquierda, transparente. Elegir otro color de la paleta conserva la opacidad que hubiera.</li>
+<li><strong>Color exacto</strong> — un cuadro de saturaci&#243;n y brillo y una barra de tono que se arrastran, para un color que no est&#233; en la paleta.</li>
+<li><strong>Avanzado</strong> — el c&#243;digo (<code>#1B3A5C</code>, <code>#E6FFFFFF</code>…), por si lo trae apuntado. Es opcional.</li>
+</ul>
+<p>Con el teclado: <code>Tab</code> llega al bot&#243;n, <code>Espacio</code>, <code>Intro</code> o <code>Flecha abajo</code> lo abren, las flechas recorren las muestras, <code>Intro</code> elige y <code>Esc</code> cierra sin cambiar nada. En el cuadro de color exacto y en las barras, las flechas mueven poco y <code>May&#250;s</code> + flechas, m&#225;s.</p>
+<p>Las plantillas guardan el color igual que antes, as&#237; que las de versiones anteriores abren sin cambios.</p>
 <h3 id="variables">Variables</h3>
 <p>Los campos, el asunto y el texto del correo admiten variables entre llaves:</p>
 <div class="tabla"><table>

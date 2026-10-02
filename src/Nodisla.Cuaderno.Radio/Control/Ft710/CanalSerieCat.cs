@@ -4,6 +4,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Radio.Ptt;
 
 namespace Nodisla.Cuaderno.Radio.Control.Ft710;
@@ -155,7 +156,7 @@ public sealed class CanalSerieCat : ICanalCat
         // Aqui no se pide el semaforo a proposito: esto se llama para bajar el PTT cuando todo
         // lo demas ha fallado o el proceso se esta muriendo, y esperar a un candado tomado por
         // una orden colgada seria justo lo contrario de lo que hace falta.
-        var serie = _serie ?? throw new InvalidOperationException($"El canal {Descripcion} no está abierto.");
+        var serie = _serie ?? throw new InvalidOperationException(Textos.F("Servicios.Radio.CanalCerrado", Descripcion));
         var bytes = Encoding.ASCII.GetBytes(orden);
         serie.Write(bytes, 0, bytes.Length);
     }
@@ -183,7 +184,7 @@ public sealed class CanalSerieCat : ICanalCat
         // Como en MandarSincrono, aqui no se pide el semaforo: esto es lo que baja el PTT
         // cuando lo demas ha fallado, y esperar a un candado tomado por una orden colgada es lo
         // ultimo que hace falta.
-        var serie = _serie ?? throw new InvalidOperationException($"El canal {Descripcion} no está abierto.");
+        var serie = _serie ?? throw new InvalidOperationException(Textos.F("Servicios.Radio.CanalCerrado", Descripcion));
 
         if (_viaDePtt == ViaDePtt.Rts)
         {
@@ -304,7 +305,7 @@ public sealed class CanalSerieCat : ICanalCat
 
     private SerialPort Serie() => _serie is { IsOpen: true }
         ? _serie
-        : throw new InvalidOperationException($"El canal {Descripcion} no está abierto.");
+        : throw new InvalidOperationException(Textos.F("Servicios.Radio.CanalCerrado", Descripcion));
 
     private void CerrarSinCandado()
     {

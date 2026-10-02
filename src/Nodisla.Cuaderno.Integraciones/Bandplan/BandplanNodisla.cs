@@ -1,6 +1,7 @@
 using System.Globalization;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Integraciones.Bandplan;
 
@@ -92,7 +93,7 @@ public sealed class BandplanNodisla : IBandplan
                 null,
                 DentroDeBanda: false,
                 ModoEncaja: null,
-                Aviso: $"{Texto(frecuencia)} queda fuera del plan de bandas de {Plan.Nombre}.");
+                Aviso: Textos.F("Servicios.Bandplan.FueraDelPlan", Texto(frecuencia), Plan.Nombre));
         }
 
         var encaja = modo.EsVacio ? (bool?)null : Encaja(modo, segmento.Uso);
@@ -158,21 +159,21 @@ public sealed class BandplanNodisla : IBandplan
 
     /// <summary>Texto del tramo para mostrarlo, en castellano.</summary>
     private static string Descripcion(SegmentoBandplan s) =>
-        s.Modulacion is null or "" ? $"{Nombre(s.Uso)} en {s.Banda}" : $"{Nombre(s.Uso)} en {s.Banda} ({s.Modulacion})";
+        s.Modulacion is null or ""
+            ? Textos.F("Servicios.Bandplan.Tramo", Nombre(s.Uso), s.Banda)
+            : Textos.F("Servicios.Bandplan.TramoConModulacion", Nombre(s.Uso), s.Banda, s.Modulacion);
 
     /// <summary>Redacta el aviso para el operador. Nulo si no hay nada que decir.</summary>
     private string? Redactar(Frecuencia frecuencia, Modo modo, SegmentoBandplan segmento, bool? encaja)
     {
         if (!segmento.AdmiteClase(_clase))
         {
-            return $"{Texto(frecuencia)} está en el tramo de {Nombre(segmento.Uso)} de " +
-                $"{segmento.Banda}, y tu licencia ({_clase}) no tiene acceso a ese tramo.";
+            return Textos.F("Servicios.Bandplan.SinLicencia", Texto(frecuencia), Nombre(segmento.Uso), segmento.Banda, _clase);
         }
 
         if (encaja == false)
         {
-            return $"{Texto(frecuencia)} es el tramo de {Nombre(segmento.Uso)} de {segmento.Banda}; " +
-                $"vas a transmitir en {modo.NombreUsual}.";
+            return Textos.F("Servicios.Bandplan.ModoNoEncaja", Texto(frecuencia), Nombre(segmento.Uso), segmento.Banda, modo.NombreUsual);
         }
 
         return null;
@@ -210,12 +211,12 @@ public sealed class BandplanNodisla : IBandplan
     private static string Nombre(UsoDelTramo uso) => uso switch
     {
         UsoDelTramo.Cw => "CW",
-        UsoDelTramo.DigitalEstrecho => "modos digitales",
-        UsoDelTramo.DigitalAncho => "modos digitales de banda ancha",
-        UsoDelTramo.Fonia => "fonía",
-        UsoDelTramo.FoniaEImagen => "fonía e imagen",
-        UsoDelTramo.Baliza => "balizas",
-        UsoDelTramo.Reservado => "uso reservado",
-        _ => "todos los modos",
+        UsoDelTramo.DigitalEstrecho => Textos.T("Servicios.Bandplan.Uso.Digital"),
+        UsoDelTramo.DigitalAncho => Textos.T("Servicios.Bandplan.Uso.DigitalAncho"),
+        UsoDelTramo.Fonia => Textos.T("Servicios.Bandplan.Uso.Fonia"),
+        UsoDelTramo.FoniaEImagen => Textos.T("Servicios.Bandplan.Uso.FoniaEImagen"),
+        UsoDelTramo.Baliza => Textos.T("Servicios.Bandplan.Uso.Balizas"),
+        UsoDelTramo.Reservado => Textos.T("Servicios.Bandplan.Uso.Reservado"),
+        _ => Textos.T("Servicios.Bandplan.Uso.Todos"),
     };
 }

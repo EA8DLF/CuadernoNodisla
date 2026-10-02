@@ -1,6 +1,7 @@
 <UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.AjustesDeSubidas"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              Foreground="{DynamicResource Texto}">
 
     <!--
@@ -29,23 +30,23 @@
 
     <StackPanel>
         <!-- ── Ficha de QRZ ── -->
-        <TextBlock Text="Completar con QRZ.com" Style="{StaticResource TituloDeSeccion}" Margin="0,0,0,4" />
+        <TextBlock Text="{loc:Texto Ajustes.Subidas.CompletarTitulo}" Style="{StaticResource TituloDeSeccion}" Margin="0,0,0,4" />
         <CheckBox IsChecked="{Binding CompletarConQrz}"
-                  Content="Rellenar nombre, QTH, localizador, país, zonas… con la ficha de QRZ.com (o HamQTH)"
-                  AutomationProperties.Name="Completar los contactos con QRZ.com" />
-        <TextBlock Text="Solo se rellena lo que esté vacío: nunca se pisa lo que usted escriba. Sin red o sin cuenta el contacto se guarda igual. Sin suscripción XML de pago, QRZ.com solo da una parte de la ficha."
+                  Content="{loc:Texto Ajustes.Subidas.Completar}"
+                  AutomationProperties.Name="{loc:Texto Ajustes.Subidas.Completar.Accesible}" />
+        <TextBlock Text="{loc:Texto Ajustes.Subidas.Completar.Explicacion}"
                    Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,2,0,4" />
 
         <!--
             Los usuarios de cada servicio ya no van aquí: están en su tarjeta, en «Cuentas y
             servicios», junto a su contraseña. Antes había que ir y venir entre dos listas.
         -->
-        <TextBlock Text="Los usuarios y contraseñas de QRZ.com, HamQTH, LoTW, eQSL y Club Log se ponen en «Cuentas y servicios»."
+        <TextBlock Text="{loc:Texto Ajustes.Subidas.CuentasEn}"
                    Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,0,0,4" />
 
         <!-- ── Subida automática ── -->
-        <TextBlock Text="Subida automática" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,4" />
-        <TextBlock Text="Cada contacto que se guarda (formulario, Digital o ronda) se sube solo a los servicios marcados. Sin red se queda en la cola y se reintenta con espera creciente y al arrancar. Por omisión se marcan los que tienen credenciales."
+        <TextBlock Text="{loc:Texto Ajustes.Subidas.Titulo}" Style="{StaticResource TituloDeSeccion}" Margin="0,12,0,4" />
+        <TextBlock Text="{loc:Texto Ajustes.Subidas.Explicacion}"
                    Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,0,0,4" />
 
         <ItemsControl ItemsSource="{Binding Servicios}" Focusable="False">
@@ -73,10 +74,7 @@
                         <StackPanel>
                             <CheckBox IsChecked="{Binding Activado}" FontWeight="Bold"
                                       AutomationProperties.Name="{Binding Nombre}">
-                                <TextBlock>
-                                    <Run Text="Subir a" />
-                                    <Run Text="{Binding Nombre, Mode=OneWay}" />
-                                </TextBlock>
+                                <TextBlock Text="{loc:Texto Ajustes.Subidas.SubirA, Valor={Binding Nombre}}" />
                             </CheckBox>
                             <TextBlock Text="{Binding Estado}" TextWrapping="Wrap" Margin="0,2,0,0" />
                             <TextBlock Text="{Binding Nota}" Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" />
@@ -88,14 +86,14 @@
 
         <DockPanel Margin="0,2,0,4">
             <Button DockPanel.Dock="Left"
-                    Content="Subir ahora"
+                    Content="{loc:Texto Ajustes.Subidas.SubirAhora}"
                     Command="{Binding SubirAhoraCommand}"
-                    AutomationProperties.Name="Subir ahora todo lo pendiente" />
+                    AutomationProperties.Name="{loc:Texto Ajustes.Subidas.SubirAhora.Accesible}" />
             <TextBlock Text="{Binding Parte}" Margin="8,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap" />
         </DockPanel>
 
-        <TextBlock Text="Cola de subidas" Style="{StaticResource Rotulo}" />
-        <TextBlock Text="No hay nada pendiente de subir."
+        <TextBlock Text="{loc:Texto Ajustes.Subidas.Cola}" Style="{StaticResource Rotulo}" />
+        <TextBlock Text="{loc:Texto Ajustes.Subidas.ColaVacia}"
                    Style="{StaticResource TextoTenueEstilo}"
                    Visibility="{Binding ColaVacia, Converter={StaticResource BooleanoAVisible}}" />
         <ItemsControl ItemsSource="{Binding Cola}" Focusable="False">

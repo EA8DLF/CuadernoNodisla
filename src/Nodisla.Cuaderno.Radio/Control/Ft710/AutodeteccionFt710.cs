@@ -3,6 +3,7 @@ using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Radio.Control.Ft710;
 
@@ -17,8 +18,8 @@ public sealed record EquipoEncontrado(string Puerto, int Baudios, string Identif
 
     /// <summary>Nombre para enseñarselo al operador.</summary>
     public string Descripcion => EsFt710
-        ? $"Yaesu FT-710 en {Puerto} a {Baudios} baudios"
-        : $"Equipo Yaesu ID{Identificador} en {Puerto} a {Baudios} baudios";
+        ? Textos.F("Servicios.Radio.EquipoEnPuerto", "Yaesu FT-710", Puerto, Baudios)
+        : Textos.F("Servicios.Radio.YaesuIdEnPuerto", Identificador, Puerto, Baudios);
 }
 
 /// <summary>

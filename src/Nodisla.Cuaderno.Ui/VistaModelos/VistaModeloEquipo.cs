@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.Conversores;
 using Serilog;
 
@@ -77,6 +78,9 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         ConstruirLosMandos();
         RehacerLaBotonera();
         Recoger(_equipo.Estado);
+
+        // Los textos calculados (estado, vía, botón de conexión) cambian con el idioma.
+        Textos.AlCambiar(this, static vm => vm.AlCambiarElIdioma());
     }
 
     /// <summary>
@@ -167,7 +171,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     /// <summary>Nombre comercial del equipo.</summary>
     public string NombreDelEquipo => Real is IEquipoAvanzado avanzado
         ? avanzado.NombreDelEquipo
-        : "Equipo genérico";
+        : Textos.T("Cabina.Equipo.Generico");
 
     /// <summary>Modelo del catalogo que se maneja, o nulo (rigctld, OmniRig, sin equipo).</summary>
     public Radio.Modelos.ModeloDeEquipo? Modelo => (Real as Radio.Modelos.IEquipoDeModelo)?.Modelo;
@@ -315,7 +319,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     /// De momento dice la via de control y el modo, que es lo que el operador necesita saber
     /// mientras el analizador sea nuestro y no del equipo.
     /// </remarks>
-    public string EstadoDelEspectro => Conectado ? $"{ViaTexto}  ·  {Modo}" : "SIN CONEXIÓN";
+    public string EstadoDelEspectro => Conectado ? $"{ViaTexto}  ·  {Modo}" : Textos.T("Cabina.Equipo.SinConexionRotulo");
 
     [ObservableProperty]
     private string _ordenEnCrudo = string.Empty;
@@ -370,18 +374,18 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     /// <summary>Via por la que se habla con el equipo, para la pantalla.</summary>
     public string ViaTexto => _equipo.Via switch
     {
-        ViaDeControl.CatNativo => "FT-710 (CAT nativo)",
+        ViaDeControl.CatNativo => Textos.T("Cabina.Equipo.ViaCatNativo"),
         ViaDeControl.Rigctld => "Hamlib (rigctld)",
         ViaDeControl.OmniRig => "OmniRig",
-        _ => "Sin control del equipo",
+        _ => Textos.T("Cabina.Equipo.SinControl"),
     };
 
     /// <summary>Como esta el equipo, en una linea.</summary>
     public string EstadoTexto => this switch
     {
-        { Transmitiendo: true } => "EN ANTENA",
-        { Conectado: true } => "Conectado",
-        _ => "Sin conexión",
+        { Transmitiendo: true } => Textos.T("Cabina.Equipo.EnAntena"),
+        { Conectado: true } => Textos.T("Comun.Conectado"),
+        _ => Textos.T("Cabina.Equipo.SinConexion"),
     };
 
     /// <summary>
@@ -393,11 +397,11 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     /// resulta que el equipo se habia desconectado.
     /// </remarks>
     public string OrigenDeLaFrecuencia => Conectado
-        ? "La frecuencia y el modo los pone el equipo"
-        : "La frecuencia y el modo los pone usted";
+        ? Textos.T("Cabina.Equipo.OrigenEquipo")
+        : Textos.T("Cabina.Equipo.OrigenUsted");
 
     /// <summary>Texto del boton que conecta o desconecta.</summary>
-    public string TextoDelBotonDeConexion => Conectado ? "Desconectar" : "Conectar";
+    public string TextoDelBotonDeConexion => Conectado ? Textos.T("Comun.Desconectar") : Textos.T("Comun.Conectar");
 
     /// <summary>
     /// Lo que hace falta tras conectar, se conecte como se conecte (botón Conectar o encender
@@ -432,7 +436,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido conectar con el equipo.");
-            Aviso = $"No se ha podido conectar con el equipo: {ex.Message}";
+            Aviso = Textos.F("Cabina.Equipo.NoConecta", ex.Message);
         }
         finally
         {
@@ -457,7 +461,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "Fallo al desconectar del equipo.");
-            Aviso = $"Fallo al desconectar: {ex.Message}";
+            Aviso = Textos.F("Cabina.Equipo.FalloAlDesconectar", ex.Message);
         }
     }
 
@@ -475,12 +479,12 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         try
         {
             await _vigilante.SoltarYaAsync(MotivoDeSuelta.Panico).ConfigureAwait(true);
-            Aviso = "PTT soltado por el operador.";
+            Aviso = Textos.T("Cabina.Equipo.PttSoltadoOperador");
         }
         catch (Exception ex)
         {
             Log.Error(ex, "El botón de pánico no ha podido soltar el PTT.");
-            Aviso = $"¡Atención! No se ha podido soltar el PTT: {ex.Message}";
+            Aviso = Textos.F("Cabina.Equipo.NoSueltaPtt", ex.Message);
         }
     }
 
@@ -497,7 +501,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido ir a la memoria {Numero}.", memoria.Numero);
-            Aviso = $"No se ha podido ir a la memoria {memoria.Numero}: {ex.Message}";
+            Aviso = Textos.F("Cabina.Equipo.NoVaAMemoria", memoria.Numero, ex.Message);
         }
     }
 
@@ -520,12 +524,12 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         try
         {
             var respuesta = await avanzado.OrdenEnCrudoAsync(orden).ConfigureAwait(true);
-            RespuestaEnCrudo = respuesta ?? "(el equipo no ha contestado)";
+            RespuestaEnCrudo = respuesta ?? Textos.T("Cabina.Equipo.SinContestar");
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Fallo al enviar la orden CAT «{Orden}».", orden);
-            RespuestaEnCrudo = $"Fallo: {ex.Message}";
+            RespuestaEnCrudo = Textos.F("Cabina.Equipo.Fallo", ex.Message);
         }
     }
 
@@ -575,7 +579,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         if (MandoDe(mando) is not { Disponible: true } vista) return "—";
         if (vista.EsInterruptor) return vista.Encendido ? "ON" : "OFF";
 
-        return TextoCorto(mando, (int)Math.Round(vista.Valor), vista.ValorTexto);
+        return TextoCorto(mando, (int)Math.Round(vista.Valor), vista.EtiquetaSinTraducir);
     }
 
     /// <summary>El valor de ATT, IPO o AGC como lo escribe la radio en su pantalla.</summary>
@@ -684,10 +688,10 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         foreach (var fila in enLaBanda) EnLaBanda.Add(fila);
 
         TituloDeLaBanda = enSuBanda
-            ? $"EN {banda}"
+            ? Textos.F("Cabina.Equipo.EnBanda", banda)
             : banda.Length == 0 || banda == "—"
-                ? "EN EL AIRE"
-                : $"EN EL AIRE · NADIE EN {banda}";
+                ? Textos.T("Cabina.Equipo.EnElAire")
+                : Textos.F("Cabina.Equipo.NadieEnBanda", banda);
 
         BandaVacia = EnLaBanda.Count == 0;
     }
@@ -697,7 +701,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     public async Task IntercambiarVfosAsync()
     {
         if (Real is not IEquipoConDosVfos conDos) return;
-        if (!Confirmar("Intercambiar el contenido de los VFO A y B en el equipo (A/B).")) return;
+        if (!Confirmar(Textos.T("Cabina.Equipo.ConfirmarIntercambio"))) return;
 
         try
         {
@@ -706,7 +710,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se han podido intercambiar los VFO.");
-            Aviso = $"No se han podido intercambiar los VFO: {ex.Message}";
+            Aviso = Textos.F("Cabina.Equipo.NoIntercambia", ex.Message);
         }
     }
 
@@ -715,7 +719,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     public async Task IgualarVfosAsync()
     {
         if (Real is not IEquipoConDosVfos conDos) return;
-        if (!Confirmar("Copiar el VFO activo sobre el otro (A=B). El otro VFO se pierde.")) return;
+        if (!Confirmar(Textos.T("Cabina.Equipo.ConfirmarIgualar"))) return;
 
         try
         {
@@ -724,7 +728,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se han podido igualar los VFO.");
-            Aviso = $"No se han podido igualar los VFO: {ex.Message}";
+            Aviso = Textos.F("Cabina.Equipo.NoIguala", ex.Message);
         }
     }
 
@@ -742,7 +746,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido cambiar de VFO.");
-            Aviso = $"No se ha podido cambiar de VFO: {ex.Message}";
+            Aviso = Textos.F("Cabina.Equipo.NoCambiaVfo", ex.Message);
         }
     }
 
@@ -788,7 +792,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido cambiar de modo.");
-            Aviso = $"No se ha podido cambiar de modo: {ex.Message}";
+            Aviso = Textos.F("Cabina.Equipo.NoCambiaModo", ex.Message);
         }
     }
 
@@ -817,7 +821,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido cambiar de banda.");
-            Aviso = $"No se ha podido cambiar de banda: {ex.Message}";
+            Aviso = Textos.F("Cabina.Equipo.NoCambiaBanda", ex.Message);
         }
     }
 
@@ -844,12 +848,12 @@ public sealed partial class VistaModeloEquipo : ObservableObject
             vista.Encendido = !vista.Encendido;
             antena.Latir();
 
-            Aviso = $"«{vista.Nombre}» accionado con el equipo en antena.";
+            Aviso = Textos.F("Cabina.Equipo.Accionado", vista.Nombre);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Fallo accionando el mando {Mando} en transmisión.", vista.Mando);
-            Aviso = $"No se ha podido accionar «{vista.Nombre}»: {ex.Message}";
+            Aviso = Textos.F("Cabina.Equipo.NoAcciona", vista.Nombre, ex.Message);
         }
     }
 
@@ -887,7 +891,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
     {
         if (ConfirmarAccion is { } preguntar && preguntar(que)) return true;
 
-        Aviso = ConfirmarAccion is null ? $"No se ha hecho: {que} necesita confirmación." : string.Empty;
+        Aviso = ConfirmarAccion is null ? Textos.F("Cabina.Equipo.SinConfirmar", que) : string.Empty;
         return false;
     }
 
@@ -1093,7 +1097,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         EnviarOrdenEnCrudoCommand.NotifyCanExecuteChanged();
         IrALaMemoriaCommand.NotifyCanExecuteChanged();
 
-        Aviso = $"Cambiada la vía de control del equipo: {ViaTexto}.";
+        Aviso = Textos.F("Cabina.Equipo.ViaCambiada", ViaTexto);
         Recoger(nuevo.Estado);
     });
 
@@ -1111,10 +1115,10 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         // Una suelta normal no se cuenta; las demas si, porque explican por que se corto.
         Aviso = motivo switch
         {
-            MotivoDeSuelta.TiempoAgotado => "Se soltó el PTT: se agotó el tiempo máximo de transmisión.",
-            MotivoDeSuelta.SinLatido => "Se soltó el PTT: quien transmitía dejó de dar señales de vida.",
-            MotivoDeSuelta.Excepcion => "Se soltó el PTT por un fallo durante la transmisión.",
-            MotivoDeSuelta.Panico => "PTT soltado por el operador.",
+            MotivoDeSuelta.TiempoAgotado => Textos.T("Cabina.Equipo.SueltaTiempo"),
+            MotivoDeSuelta.SinLatido => Textos.T("Cabina.Equipo.SueltaSinLatido"),
+            MotivoDeSuelta.Excepcion => Textos.T("Cabina.Equipo.SueltaFallo"),
+            MotivoDeSuelta.Panico => Textos.T("Cabina.Equipo.PttSoltadoOperador"),
             _ => Aviso,
         };
     });
@@ -1164,7 +1168,7 @@ public sealed partial class VistaModeloEquipo : ObservableObject
         // No toda frecuencia tiene banda: 27.555 MHz no esta en la tabla de ADIF, y ahi
         // estaba el dial del FT-710 el dia de la captura. Se dice y se sigue operando.
         FueraDeBanda = estado.Banda.EsVacia;
-        Banda = FueraDeBanda ? "fuera de banda" : estado.Banda.Nombre;
+        Banda = FueraDeBanda ? Textos.T("Cabina.Vfo.FueraDeBandaMinus") : estado.Banda.Nombre;
         Vfo = estado.Vfo ?? string.Empty;
 
         Potencia = estado.PotenciaVatios is { } vatios

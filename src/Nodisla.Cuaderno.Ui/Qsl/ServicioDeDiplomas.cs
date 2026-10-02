@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Impresion;
 using Nodisla.Cuaderno.Impresion.Diplomas;
 using Nodisla.Cuaderno.Impresion.Qsl;
@@ -19,9 +20,11 @@ public sealed record DiplomaConseguido(Diploma Diploma, ProgresoDeDiploma Progre
     public bool Completo => Progreso.Objetivo is not > 0 || Progreso.Confirmadas >= Progreso.Objetivo;
 
     /// <summary>Como se ve en la lista.</summary>
-    public string Texto => string.Create(
-        CultureInfo.CurrentCulture,
-        $"{(Completo ? "✓ " : string.Empty)}{Diploma.Codigo} · {Progreso.Variante} — {Progreso.Confirmadas}{(Progreso.Objetivo is > 0 ? "/" + Progreso.Objetivo : string.Empty)} confirmadas");
+    public string Texto => Textos.F(
+        "Qsl.Disenador.ConseguidoTexto",
+        (Completo ? "✓ " : string.Empty) + Diploma.Codigo,
+        Progreso.Variante,
+        string.Create(CultureInfo.InvariantCulture, $"{Progreso.Confirmadas}{(Progreso.Objetivo is > 0 ? "/" + Progreso.Objetivo : string.Empty)}"));
 
     /// <inheritdoc />
     public override string ToString() => Texto;
@@ -226,8 +229,8 @@ public sealed class ServicioDeDiplomas
     {
         ArgumentNullException.ThrowIfNull(diseno);
         ArgumentNullException.ThrowIfNull(datos);
-        if (string.IsNullOrWhiteSpace(datos.Indicativo)) throw new ArgumentException("Falta el indicativo de quien recibe el diploma.", nameof(datos));
-        if (string.IsNullOrWhiteSpace(datos.NombreDelDiploma)) throw new ArgumentException("Falta el nombre del diploma.", nameof(datos));
+        if (string.IsNullOrWhiteSpace(datos.Indicativo)) throw new ArgumentException(Textos.T("Qsl.Disenador.FaltaIndicativo"), nameof(datos));
+        if (string.IsNullOrWhiteSpace(datos.NombreDelDiploma)) throw new ArgumentException(Textos.T("Qsl.Disenador.FaltaNombre"), nameof(datos));
 
         var v = VariablesDeDiploma.Para(datos, diseno, null);
         datos.Numero = null;

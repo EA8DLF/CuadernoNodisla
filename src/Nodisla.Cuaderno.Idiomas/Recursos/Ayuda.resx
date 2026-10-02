@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Ayuda.AcercaDe" xml:space="preserve">
+    <value>Acerca de</value>
+  </data>
+  <data name="Ayuda.AcercaDeCuaderno" xml:space="preserve">
+    <value>Acerca de Cuaderno NODISLA</value>
+  </data>
+  <data name="Ayuda.AcercaDeTooltip" xml:space="preserve">
+    <value>Versión, licencia, repositorio y contacto</value>
+  </data>
+  <data name="Ayuda.BuscarActualizaciones" xml:space="preserve">
+    <value>Buscar actualizaciones</value>
+  </data>
+  <data name="Ayuda.BuscarActualizacionesTooltip" xml:space="preserve">
+    <value>Mira ahora si hay una versión nueva; si la hay, sale el aviso arriba</value>
+  </data>
+  <data name="Ayuda.BuscarEnLaAyuda" xml:space="preserve">
+    <value>Buscar en la ayuda</value>
+  </data>
+  <data name="Ayuda.BuscarTooltip" xml:space="preserve">
+    <value>Una o varias palabras; da igual mayúsculas o tildes</value>
+  </data>
+  <data name="Ayuda.Busqueda.Ninguno" xml:space="preserve">
+    <value>Ningún capítulo lo menciona.</value>
+  </data>
+  <data name="Ayuda.Busqueda.Uno" xml:space="preserve">
+    <value>Lo menciona 1 capítulo.</value>
+  </data>
+  <data name="Ayuda.Busqueda.Varios" xml:space="preserve">
+    <value>Lo mencionan {0} capítulos.</value>
+  </data>
+  <data name="Ayuda.CapituloDeLaAyuda" xml:space="preserve">
+    <value>Capítulo de la ayuda</value>
+  </data>
+  <data name="Ayuda.Capitulos" xml:space="preserve">
+    <value>Capítulos</value>
+  </data>
+  <data name="Ayuda.CapituloSinTraducir" xml:space="preserve">
+    <value>Este capítulo aún no está traducido a su idioma; se muestra en español.</value>
+    <comment>Aviso al principio de un capítulo de la ayuda que solo existe en español</comment>
+  </data>
+  <data name="Ayuda.CodigoFuente" xml:space="preserve">
+    <value>Código fuente e incidencias</value>
+  </data>
+  <data name="Ayuda.Contacto" xml:space="preserve">
+    <value>Contacto</value>
+  </data>
+  <data name="Ayuda.Descripcion" xml:space="preserve">
+    <value>Cuaderno de guardia para radioaficionados, en español: operación con el equipo por CAT, modos digitales con módem propio, cluster, diplomas, QSL y mapa. Es un proyecto de la suite NODISLA.</value>
+  </data>
+  <data name="Ayuda.Fallo.AbrirEnGitHub" xml:space="preserve">
+    <value>Abrir en GitHub para enviar</value>
+  </data>
+  <data name="Ayuda.Fallo.AbrirEnGitHubNombre" xml:space="preserve">
+    <value>Abrir el informe en GitHub para enviarlo</value>
+  </data>
+  <data name="Ayuda.Fallo.AdjuntarRegistro" xml:space="preserve">
+    <value>Adjuntar las últimas líneas del registro</value>
+  </data>
+  <data name="Ayuda.Fallo.EntornoNombre" xml:space="preserve">
+    <value>Datos del entorno que se adjuntan</value>
+  </data>
+  <data name="Ayuda.Fallo.EstadoAbierto" xml:space="preserve">
+    <value>Se ha abierto GitHub con el informe rellenado. Revíselo y pulse «Submit new issue» (hace falta una cuenta de GitHub).</value>
+  </data>
+  <data name="Ayuda.Fallo.EstadoPortapapeles" xml:space="preserve">
+    <value>El informe era demasiado largo para el enlace: se ha copiado al portapapeles. En la página de GitHub, borre el aviso del cuerpo y pegue con Ctrl+V.</value>
+  </data>
+  <data name="Ayuda.Fallo.EstadoSinNada" xml:space="preserve">
+    <value>No se ha podido abrir el navegador ni copiar el informe. Abra {0} y copie la vista previa.</value>
+  </data>
+  <data name="Ayuda.Fallo.EstadoSinNavegador" xml:space="preserve">
+    <value>No se ha podido abrir el navegador. El informe está en el portapapeles; péguelo en {0}</value>
+  </data>
+  <data name="Ayuda.Fallo.Explicacion" xml:space="preserve">
+    <value>El informe se abre en GitHub, donde es público. Antes de enviar se quitan contraseñas, claves de las direcciones, correos, locator y coordenadas; aun así, revise la vista previa. Hace falta una cuenta de GitHub para enviarlo.</value>
+  </data>
+  <data name="Ayuda.Fallo.Pasos" xml:space="preserve">
+    <value>Pasos para reproducirlo</value>
+  </data>
+  <data name="Ayuda.Fallo.PasosNombre" xml:space="preserve">
+    <value>Pasos para reproducir el fallo</value>
+  </data>
+  <data name="Ayuda.Fallo.QueEsperaba" xml:space="preserve">
+    <value>¿Qué esperaba que pasara?</value>
+  </data>
+  <data name="Ayuda.Fallo.QueEsperabaNombre" xml:space="preserve">
+    <value>Qué esperaba que pasara</value>
+  </data>
+  <data name="Ayuda.Fallo.QuePaso" xml:space="preserve">
+    <value>¿Qué pasó?</value>
+  </data>
+  <data name="Ayuda.Fallo.QuePasoNombre" xml:space="preserve">
+    <value>Qué pasó</value>
+  </data>
+  <data name="Ayuda.Fallo.Recargar" xml:space="preserve">
+    <value>Volver a rellenar lo adjunto</value>
+  </data>
+  <data name="Ayuda.Fallo.RegistroNombre" xml:space="preserve">
+    <value>Líneas del registro que se adjuntan</value>
+  </data>
+  <data name="Ayuda.Fallo.SeAdjunta" xml:space="preserve">
+    <value>Se adjunta (puede editarlo)</value>
+  </data>
+  <data name="Ayuda.Fallo.Titulo" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Ayuda.Fallo.TituloNombre" xml:space="preserve">
+    <value>Título del fallo</value>
+  </data>
+  <data name="Ayuda.Fallo.Vaciar" xml:space="preserve">
+    <value>Vaciar</value>
+  </data>
+  <data name="Ayuda.Fallo.VaciarNombre" xml:space="preserve">
+    <value>Vaciar el formulario</value>
+  </data>
+  <data name="Ayuda.Fallo.VistaPrevia" xml:space="preserve">
+    <value>Vista previa: esto es exactamente lo que se enviará</value>
+  </data>
+  <data name="Ayuda.Fallo.VistaPreviaNombre" xml:space="preserve">
+    <value>Vista previa del informe</value>
+  </data>
+  <data name="Ayuda.FaltaCaptura" xml:space="preserve">
+    <value>[Falta la captura «{0}»: {1}]</value>
+  </data>
+  <data name="Ayuda.IndiceDeCapitulos" xml:space="preserve">
+    <value>Índice de capítulos de la ayuda</value>
+  </data>
+  <data name="Ayuda.Licencia" xml:space="preserve">
+    <value>Licencia</value>
+  </data>
+  <data name="Ayuda.LicenciaTexto" xml:space="preserve">
+    <value>GPL-3.0 (Licencia Pública General de GNU, versión 3)</value>
+  </data>
+  <data name="Ayuda.MejorReportar" xml:space="preserve">
+    <value>Para avisar de un fallo, mejor «Reportar un fallo»: prepara el informe con la versión y el equipo, y usted ve todo lo que se manda antes de mandarlo.</value>
+  </data>
+  <data name="Ayuda.ReportarTooltip" xml:space="preserve">
+    <value>Prepara un informe del fallo, con lo que usted vea antes de mandarlo</value>
+  </data>
+  <data name="Ayuda.ReportarUnFallo" xml:space="preserve">
+    <value>Reportar un fallo</value>
+  </data>
+  <data name="Ayuda.SoftwareLibre" xml:space="preserve">
+    <value>Es software libre: puede usarlo, estudiarlo, compartirlo y modificarlo según esa licencia. Se ofrece sin ninguna garantía.</value>
+  </data>
+  <data name="Ayuda.Titulo" xml:space="preserve">
+    <value>Ayuda</value>
+    <comment>Título de la ayuda sin capítulo</comment>
+  </data>
+  <data name="Ayuda.Version" xml:space="preserve">
+    <value>Versión</value>
+  </data>
+  <data name="Ayuda.VolverALaAyuda" xml:space="preserve">
+    <value>Volver a la ayuda</value>
+  </data>
+</root>

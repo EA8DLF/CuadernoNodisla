@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Ayuda.AcercaDe" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Ayuda.AcercaDeCuaderno" xml:space="preserve">
+    <value>About Cuaderno NODISLA</value>
+  </data>
+  <data name="Ayuda.AcercaDeTooltip" xml:space="preserve">
+    <value>Version, licence, repository and contact</value>
+  </data>
+  <data name="Ayuda.BuscarActualizaciones" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data name="Ayuda.BuscarActualizacionesTooltip" xml:space="preserve">
+    <value>Checks now for a new version; if there is one, a notice appears at the top</value>
+  </data>
+  <data name="Ayuda.BuscarEnLaAyuda" xml:space="preserve">
+    <value>Search the help</value>
+  </data>
+  <data name="Ayuda.BuscarTooltip" xml:space="preserve">
+    <value>One or more words; case and accents don't matter</value>
+  </data>
+  <data name="Ayuda.Busqueda.Ninguno" xml:space="preserve">
+    <value>No chapter mentions it.</value>
+  </data>
+  <data name="Ayuda.Busqueda.Uno" xml:space="preserve">
+    <value>Mentioned in 1 chapter.</value>
+  </data>
+  <data name="Ayuda.Busqueda.Varios" xml:space="preserve">
+    <value>Mentioned in {0} chapters.</value>
+  </data>
+  <data name="Ayuda.CapituloDeLaAyuda" xml:space="preserve">
+    <value>Help chapter</value>
+  </data>
+  <data name="Ayuda.Capitulos" xml:space="preserve">
+    <value>Chapters</value>
+  </data>
+  <data name="Ayuda.CapituloSinTraducir" xml:space="preserve">
+    <value>This chapter has not been translated into English yet; it is shown in Spanish.</value>
+  </data>
+  <data name="Ayuda.CodigoFuente" xml:space="preserve">
+    <value>Source code and issues</value>
+  </data>
+  <data name="Ayuda.Contacto" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="Ayuda.Descripcion" xml:space="preserve">
+    <value>Logbook for radio amateurs: rig control via CAT, digital modes with its own modem, DX cluster, awards, QSL cards and map. Part of the NODISLA suite.</value>
+  </data>
+  <data name="Ayuda.Fallo.AbrirEnGitHub" xml:space="preserve">
+    <value>Open in GitHub to send</value>
+  </data>
+  <data name="Ayuda.Fallo.AbrirEnGitHubNombre" xml:space="preserve">
+    <value>Open the report in GitHub to send it</value>
+  </data>
+  <data name="Ayuda.Fallo.AdjuntarRegistro" xml:space="preserve">
+    <value>Attach the last lines of the log file</value>
+  </data>
+  <data name="Ayuda.Fallo.EntornoNombre" xml:space="preserve">
+    <value>Attached system details</value>
+  </data>
+  <data name="Ayuda.Fallo.EstadoAbierto" xml:space="preserve">
+    <value>GitHub has opened with the report filled in. Check it and click “Submit new issue” (a GitHub account is required).</value>
+  </data>
+  <data name="Ayuda.Fallo.EstadoPortapapeles" xml:space="preserve">
+    <value>The report was too long for the link, so it has been copied to the clipboard. On the GitHub page, delete the notice in the body and paste with Ctrl+V.</value>
+  </data>
+  <data name="Ayuda.Fallo.EstadoSinNada" xml:space="preserve">
+    <value>The browser could not be opened and the report could not be copied. Open {0} and copy the preview.</value>
+  </data>
+  <data name="Ayuda.Fallo.EstadoSinNavegador" xml:space="preserve">
+    <value>The browser could not be opened. The report is on the clipboard; paste it at {0}</value>
+  </data>
+  <data name="Ayuda.Fallo.Explicacion" xml:space="preserve">
+    <value>The report opens on GitHub, where it is public. Passwords, keys in addresses, e-mail addresses, locator and coordinates are removed before sending; even so, please check the preview. You need a GitHub account to send it. You may write in English; the report's section headings stay in Spanish for the developer.</value>
+  </data>
+  <data name="Ayuda.Fallo.Pasos" xml:space="preserve">
+    <value>Steps to reproduce</value>
+  </data>
+  <data name="Ayuda.Fallo.PasosNombre" xml:space="preserve">
+    <value>Steps to reproduce the bug</value>
+  </data>
+  <data name="Ayuda.Fallo.QueEsperaba" xml:space="preserve">
+    <value>What did you expect to happen?</value>
+  </data>
+  <data name="Ayuda.Fallo.QueEsperabaNombre" xml:space="preserve">
+    <value>What you expected to happen</value>
+  </data>
+  <data name="Ayuda.Fallo.QuePaso" xml:space="preserve">
+    <value>What happened?</value>
+  </data>
+  <data name="Ayuda.Fallo.QuePasoNombre" xml:space="preserve">
+    <value>What happened</value>
+  </data>
+  <data name="Ayuda.Fallo.Recargar" xml:space="preserve">
+    <value>Refill the attachments</value>
+  </data>
+  <data name="Ayuda.Fallo.RegistroNombre" xml:space="preserve">
+    <value>Attached log lines</value>
+  </data>
+  <data name="Ayuda.Fallo.SeAdjunta" xml:space="preserve">
+    <value>Attached (you can edit it)</value>
+  </data>
+  <data name="Ayuda.Fallo.Titulo" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Ayuda.Fallo.TituloNombre" xml:space="preserve">
+    <value>Bug title</value>
+  </data>
+  <data name="Ayuda.Fallo.Vaciar" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Ayuda.Fallo.VaciarNombre" xml:space="preserve">
+    <value>Clear the form</value>
+  </data>
+  <data name="Ayuda.Fallo.VistaPrevia" xml:space="preserve">
+    <value>Preview: this is exactly what will be sent</value>
+  </data>
+  <data name="Ayuda.Fallo.VistaPreviaNombre" xml:space="preserve">
+    <value>Report preview</value>
+  </data>
+  <data name="Ayuda.FaltaCaptura" xml:space="preserve">
+    <value>[Missing screenshot “{0}”: {1}]</value>
+  </data>
+  <data name="Ayuda.IndiceDeCapitulos" xml:space="preserve">
+    <value>Help chapter index</value>
+  </data>
+  <data name="Ayuda.Licencia" xml:space="preserve">
+    <value>Licence</value>
+  </data>
+  <data name="Ayuda.LicenciaTexto" xml:space="preserve">
+    <value>GPL-3.0 (GNU General Public License, version 3)</value>
+  </data>
+  <data name="Ayuda.MejorReportar" xml:space="preserve">
+    <value>To report a bug, use “Report a bug” instead: it prepares the report with the version and your rig, and you see everything that is sent before it is sent.</value>
+  </data>
+  <data name="Ayuda.ReportarTooltip" xml:space="preserve">
+    <value>Prepares a bug report, showing you everything before it is sent</value>
+  </data>
+  <data name="Ayuda.ReportarUnFallo" xml:space="preserve">
+    <value>Report a bug</value>
+  </data>
+  <data name="Ayuda.SoftwareLibre" xml:space="preserve">
+    <value>It is free software: you may use, study, share and modify it under that licence. It comes with no warranty whatsoever.</value>
+  </data>
+  <data name="Ayuda.Titulo" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="Ayuda.Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="Ayuda.VolverALaAyuda" xml:space="preserve">
+    <value>Back to help</value>
+  </data>
+</root>

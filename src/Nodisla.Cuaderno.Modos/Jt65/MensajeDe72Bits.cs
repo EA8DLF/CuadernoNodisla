@@ -1,5 +1,6 @@
 using System.Text;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Modos.Jt65;
 
@@ -86,7 +87,7 @@ public static class MensajeDe72Bits
         motivo = string.Empty;
         var limpio = (texto ?? string.Empty).Trim().ToUpperInvariant();
         while (limpio.Contains("  ", StringComparison.Ordinal)) limpio = limpio.Replace("  ", " ", StringComparison.Ordinal);
-        if (limpio.Length == 0) { motivo = "El mensaje esta vacio."; return false; }
+        if (limpio.Length == 0) { motivo = Textos.T("Servicios.Modos.MensajeVacioJt"); return false; }
 
         if (TryEmpaquetarEstructurado(limpio, out var nc1, out var nc2, out var ng))
         {
@@ -96,13 +97,13 @@ public static class MensajeDe72Bits
 
         if (limpio.Length > CaracteresDeTextoLibre)
         {
-            motivo = $"No es un mensaje estructurado y como texto libre pasa de {CaracteresDeTextoLibre} caracteres.";
+            motivo = Textos.F("Servicios.Modos.Jt65.TextoLibreLargo", CaracteresDeTextoLibre);
             return false;
         }
         foreach (var c in limpio)
             if (!AlfabetoDeTextoLibre.Contains(c, StringComparison.Ordinal))
             {
-                motivo = $"El caracter '{c}' no existe en el alfabeto del texto libre.";
+                motivo = Textos.F("Servicios.Modos.Jt65.CaracterNoValido", c);
                 return false;
             }
 

@@ -221,7 +221,7 @@ public static class ConstructorDeLaAyuda
         if (fuente is null)
         {
             // Una captura que falta se dice, no se esconde: es un fallo de la ayuda.
-            var falta = new Paragraph(new Run($"[Falta la captura «{Path.GetFileName(imagen.Ruta)}»: {imagen.Texto}]"))
+            var falta = new Paragraph(new Run(Nodisla.Cuaderno.Idiomas.Textos.F("Ayuda.FaltaCaptura", Path.GetFileName(imagen.Ruta), imagen.Texto)))
             {
                 FontStyle = FontStyles.Italic,
                 Margin = new Thickness(0, 0, 0, 9),

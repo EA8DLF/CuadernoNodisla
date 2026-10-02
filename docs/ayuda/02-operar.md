@@ -40,6 +40,8 @@ sale al dejar el ratón encima.
   pliegue se recuerda de una sesión a la siguiente.
 - A la derecha del frontal va el panel de **Fonía**: escuchar la radio por el PC y hablar con su
   micrófono. Ver [Fonía por el PC](12-fonia.md).
+- Con el equipo en **CW** (o con el botón **CW** de la barra) sale bajo el frontal el panel de
+  **Telegrafía**, que lee la CW que se oye. Ver [Telegrafía (CW)](17-cw.md).
 
 ![Con «Ocultar equipo» el frontal se pliega a una barra y el cluster gana alto](../capturas/ayuda/operar-plegado.png)
 

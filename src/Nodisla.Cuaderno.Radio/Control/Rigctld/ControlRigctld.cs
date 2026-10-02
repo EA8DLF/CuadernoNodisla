@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Radio.Ptt;
 
 namespace Nodisla.Cuaderno.Radio.Control.Rigctld;
@@ -32,6 +33,7 @@ public sealed class ControlRigctld : IControlEquipo, IPttDirecto, ISueltaDeEmerg
     private bool _elEquipoInformaDelPtt = true;
     private int _pasadas;
     private bool _desechado;
+    private bool _conectadoAlgunaVez;
 
     /// <summary>Crea el control con los ajustes indicados.</summary>
     /// <param name="opciones">Donde esta el demonio y como hablarle.</param>
@@ -80,6 +82,7 @@ public sealed class ControlRigctld : IControlEquipo, IPttDirecto, ISueltaDeEmerg
         }
 
         await _cliente.ConectarAsync(ct).ConfigureAwait(false);
+        Volatile.Write(ref _conectadoAlgunaVez, true);
         await LeerEstadoAsync(ct).ConfigureAwait(false);
 
         lock (_candado)
@@ -146,7 +149,7 @@ public sealed class ControlRigctld : IControlEquipo, IPttDirecto, ISueltaDeEmerg
     public async Task PonerModoAsync(Modo modo, CancellationToken ct = default)
     {
         var nombre = _opciones.Traductor.AlEquipo(modo, Estado.Frecuencia)
-            ?? throw new ArgumentException($"No sé cómo pedirle al equipo el modo {modo}.", nameof(modo));
+            ?? throw new ArgumentException(Textos.F("Servicios.Radio.EquipoModoDesconocido", modo), nameof(modo));
 
         // El ancho cero deja el que tenga el equipo para ese modo.
         await MandarAsync($"\\set_mode {nombre} 0", ct).ConfigureAwait(false);
@@ -166,10 +169,27 @@ public sealed class ControlRigctld : IControlEquipo, IPttDirecto, ISueltaDeEmerg
     /// <inheritdoc />
     async Task IPttDirecto.PonerPttDirectoAsync(bool transmitir, CancellationToken ct)
     {
+        if (!transmitir && NoHayNadaQueBajar())
+        {
+            _registro.LogDebug("rigctld no está conectado y no hay PTT pedido: no hay nada que bajar.");
+            return;
+        }
+
         await MandarAsync(transmitir ? "\\set_ptt 1" : "\\set_ptt 0", ct).ConfigureAwait(false);
         Volatile.Write(ref _pttPedido, transmitir);
         Actualizar(estado => estado with { Transmitiendo = transmitir });
     }
+
+    /// <summary>
+    /// Dice si una orden de bajar el PTT no tiene a quien llegar ni nada que bajar: sin
+    /// conexion, sin PTT pedido y, o nunca conectado, o el control ya desechado (que al
+    /// desecharse ya bajo el PTT por todas sus vias). Evita el «¡PTT PEGADO!» falso del
+    /// vigilante que se cierra despues del control (01-10-2026). Con PTT pedido no se cumple.
+    /// </summary>
+    private bool NoHayNadaQueBajar() =>
+        !_cliente.Conectado
+        && !Volatile.Read(ref _pttPedido)
+        && (Volatile.Read(ref _desechado) || !Volatile.Read(ref _conectadoAlgunaVez));
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
@@ -403,6 +423,15 @@ public sealed class ControlRigctld : IControlEquipo, IPttDirecto, ISueltaDeEmerg
     /// </remarks>
     private async Task BajarElPttComoSeaAsync(CancellationToken ct)
     {
+        if (!_cliente.Conectado
+            && !Volatile.Read(ref _conectadoAlgunaVez)
+            && !Volatile.Read(ref _pttPedido))
+        {
+            // Nunca se conecto y no hay PTT pedido: no se abre un socket a nadie solo para
+            // mandarle «set_ptt 0», igual que en el FT-710 (27-09-2026).
+            return;
+        }
+
         try
         {
             if (_cliente.Conectado)
@@ -440,7 +469,7 @@ public sealed class ControlRigctld : IControlEquipo, IPttDirecto, ISueltaDeEmerg
         if (!respuesta.Bien)
         {
             throw new InvalidOperationException(
-                $"rigctld rechazó «{orden}» con el código {respuesta.Codigo}.");
+                Textos.F("Servicios.Radio.RigctldRechaza", orden, respuesta.Codigo));
         }
 
         return respuesta;

@@ -1,4 +1,5 @@
 using System.Text;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Modos.Wspr;
 
 namespace Nodisla.Cuaderno.Modos.Msk144;
@@ -71,12 +72,12 @@ public static class MensajeCortoMsk144
         var indice = IndiceDelInforme(informe);
         if (indice < 0)
         {
-            motivo = $"El informe «{informe}» no es uno de los dieciséis del mensaje corto.";
+            motivo = Textos.F("Servicios.Modos.Msk144.InformeNoValido", informe);
             return false;
         }
         if (string.IsNullOrWhiteSpace(llamado) || string.IsNullOrWhiteSpace(propio))
         {
-            motivo = "El mensaje corto necesita los dos indicativos.";
+            motivo = Textos.T("Servicios.Modos.Msk144.DosIndicativos");
             return false;
         }
         var valor = (Resumen(llamado, propio) << 4) | indice;

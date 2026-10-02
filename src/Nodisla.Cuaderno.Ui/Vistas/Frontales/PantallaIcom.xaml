@@ -1,9 +1,10 @@
 <UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.Frontales.PantallaIcom"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
              xmlns:frontales="clr-namespace:Nodisla.Cuaderno.Ui.Vistas.Frontales"
-             AutomationProperties.Name="Pantalla del equipo">
+             AutomationProperties.Name="{loc:Texto Cabina.Frontal.PantallaDelEquipo}">
 
     <!--
         LA PANTALLA TÁCTIL A COLOR DE LOS ICOM (IC-7300, IC-705, IC-7610), en lo esencial:
@@ -110,7 +111,7 @@
                 </TextBlock>
                 <Border Style="{StaticResource Indicador}" ToolTip="{Binding Preamplificador}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="P.AMP" /></Border>
                 <Border Style="{StaticResource Indicador}" ToolTip="{Binding Atenuador}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="ATT" /></Border>
-                <Border Style="{StaticResource Indicador}" ToolTip="Control automático de ganancia"><TextBlock Style="{StaticResource TextoDeIndicador}"><Run Text="AGC-" /><Run Text="{Binding Agc, Mode=OneWay}" /></TextBlock></Border>
+                <Border Style="{StaticResource Indicador}" ToolTip="{loc:Texto Cabina.Icom.Agc}"><TextBlock Style="{StaticResource TextoDeIndicador}"><Run Text="AGC-" /><Run Text="{Binding Agc, Mode=OneWay}" /></TextBlock></Border>
                 <Border Style="{StaticResource Indicador}" Tag="{Binding Pilotos[SupresorDeRuido].Encendido}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="NB" /></Border>
                 <Border Style="{StaticResource Indicador}" Tag="{Binding Pilotos[ReductorDeRuido].Encendido}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="NR" /></Border>
                 <Border Style="{StaticResource Indicador}" Tag="{Binding Pilotos[MuescaAutomatica].Encendido}"><TextBlock Style="{StaticResource TextoDeIndicador}" Text="NOTCH" /></Border>
@@ -133,10 +134,10 @@
                                           Tinta="{StaticResource Blanco}"
                                           TintaFuerte="#FFFF3B30"
                                           ToolTip="{Binding MedidorS}"
-                                          AutomationProperties.Name="Medidor de señal" />
+                                          AutomationProperties.Name="{loc:Texto Cabina.Frontal.MedidorDeSenal}" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Button Style="{StaticResource Tactil}" Margin="0,0,6,0" Command="{Binding SiguienteModoCommand}"
-                            ToolTip="Modo (se toca en la pantalla): pasa al modo siguiente">
+                            ToolTip="{loc:Texto Cabina.Icom.Modo}">
                         <Border Background="{StaticResource AzulIcom}" CornerRadius="2" Padding="6,1">
                             <TextBlock Text="{Binding Principal.Modo}" Foreground="White" FontFamily="Arial" FontWeight="Bold" FontSize="14" />
                         </Border>
@@ -222,32 +223,32 @@
                         <Setter Property="Background" Value="#FF1A2230" />
                     </Style>
                 </UniformGrid.Resources>
-                <Button Style="{StaticResource Tactil}" Command="{Binding SiguienteBandaCommand}" ToolTip="Banda (se toca en la pantalla): banda siguiente">
+                <Button Style="{StaticResource Tactil}" Command="{Binding SiguienteBandaCommand}" ToolTip="{loc:Texto Cabina.Icom.Banda}">
                     <Border><TextBlock Text="{Binding Principal.Banda}" /></Border>
                 </Button>
                 <Button Style="{StaticResource Tactil}" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="SPAN+"
-                        ToolTip="SPAN — Ancho del analizador. Clic derecho: más estrecho.">
+                        ToolTip="{loc:Texto Cabina.Icom.Span}">
                     <Button.InputBindings>
                         <MouseBinding Gesture="RightClick" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="SPAN-" />
                     </Button.InputBindings>
                     <Border><TextBlock Text="SPAN" /></Border>
                 </Button>
                 <Button Style="{StaticResource Tactil}" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="CENTER"
-                        ToolTip="CENT/FIX — Analizador centrado o fijo">
+                        ToolTip="{loc:Texto Cabina.Icom.CentFix}">
                     <Border><TextBlock Text="CENT/FIX" /></Border>
                 </Button>
                 <Button Style="{StaticResource Tactil}" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="EXPAND"
-                        ToolTip="EXPD — Analizador ampliado">
+                        ToolTip="{loc:Texto Cabina.Icom.Expd}">
                     <Border><TextBlock Text="EXPD/SET" /></Border>
                 </Button>
                 <Button Style="{StaticResource Tactil}" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="SPEED+"
-                        ToolTip="SPEED — Velocidad de la cascada. Clic derecho: más lenta.">
+                        ToolTip="{loc:Texto Cabina.Icom.Speed}">
                     <Button.InputBindings>
                         <MouseBinding Gesture="RightClick" Command="{Binding TeclaDelAnalizadorCommand}" CommandParameter="SPEED-" />
                     </Button.InputBindings>
                     <Border><TextBlock Text="SPEED" /></Border>
                 </Button>
-                <Button Style="{StaticResource Tactil}" IsEnabled="False" ToolTip="REF — Nivel de referencia: se ajusta en la radio">
+                <Button Style="{StaticResource Tactil}" IsEnabled="False" ToolTip="{loc:Texto Cabina.Icom.Ref}">
                     <Border><TextBlock Text="REF" /></Border>
                 </Button>
             </UniformGrid>

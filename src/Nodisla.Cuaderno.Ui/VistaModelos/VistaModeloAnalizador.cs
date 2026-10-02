@@ -5,6 +5,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.Recursos;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
@@ -312,9 +313,9 @@ public sealed partial class VistaModeloAnalizador : ObservableObject
         if (_analizador is null)
         {
             Recibiendo = false;
-            Rotulo = _delCat is null ? "SIN ANALIZADOR" : RotuloDe(Posicion, Velocidad, (int)SpanHz, InicioFijoHz);
-            TituloDelAviso = "SIN ANALIZADOR DEL EQUIPO";
-            TextoDelAviso = "Sin radio conectada no hay espectro.";
+            Rotulo = _delCat is null ? Textos.T("Cabina.Analizador.SinAnalizador") : RotuloDe(Posicion, Velocidad, (int)SpanHz, InicioFijoHz);
+            TituloDelAviso = Textos.T("Cabina.Analizador.SinAnalizadorTitulo");
+            TextoDelAviso = Textos.T("Cabina.Analizador.SinRadio");
             return;
         }
 
@@ -324,20 +325,20 @@ public sealed partial class VistaModeloAnalizador : ObservableObject
         Recibiendo = false;
 
         // Sin trazas, el rotulo sigue diciendo lo que el CAT sabe del analizador de la radio.
-        Rotulo = _delCat is null ? "SCOPE  SIN DATOS" : RotuloDe(Posicion, Velocidad, (int)SpanHz, InicioFijoHz);
+        Rotulo = _delCat is null ? Textos.T("Cabina.Analizador.SinDatos") : RotuloDe(Posicion, Velocidad, (int)SpanHz, InicioFijoHz);
         (TituloDelAviso, TextoDelAviso) = estado switch
         {
             EstadoDelAnalizador.SinBiblioteca => (
-                "FALTA LA BIBLIOTECA DE FTDI",
-                $"{_analizador.Motivo} Sin ella no se puede leer el analizador de la radio."),
+                Textos.T("Cabina.Analizador.FaltaFtdi"),
+                Textos.F("Cabina.Analizador.FaltaFtdiTexto", _analizador.Motivo)),
             EstadoDelAnalizador.SinDispositivo => (
-                "LA RADIO NO ENTREGA SU ANALIZADOR",
-                "No aparece su puente USB (FT4222). ¿Está la radio encendida y con el cable USB puesto?"),
+                Textos.T("Cabina.Analizador.SinDispositivo"),
+                Textos.T("Cabina.Analizador.SinDispositivoTexto")),
             EstadoDelAnalizador.SinTramas => (
-                "LA RADIO NO MANDA SU ESPECTRO",
+                Textos.T("Cabina.Analizador.SinTramas"),
                 _analizador.Motivo),
-            EstadoDelAnalizador.Fallo => ("ANALIZADOR CON FALLO", _analizador.Motivo),
-            _ => ("ANALIZADOR PARADO", "Se pone en marcha al mostrar esta pantalla."),
+            EstadoDelAnalizador.Fallo => (Textos.T("Cabina.Analizador.ConFallo"), _analizador.Motivo),
+            _ => (Textos.T("Cabina.Analizador.Parado"), Textos.T("Cabina.Analizador.ParadoTexto")),
         };
     }
 }

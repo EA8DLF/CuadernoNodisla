@@ -1,6 +1,8 @@
 using System.Globalization;
 using System.Text;
 
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Control.Icom;
 
 /// <summary>
@@ -104,7 +106,7 @@ public static class Hex
         if (limpio.StartsWith("0x", StringComparison.OrdinalIgnoreCase)) limpio = limpio[2..];
         if (limpio.Length == 0 || limpio.Length % 2 != 0)
         {
-            throw new FormatException($"«{texto}» no son bytes en hexadecimal.");
+            throw new FormatException(Textos.F("Servicios.Radio.NoEsHexadecimal", texto));
         }
 
         return Convert.FromHexString(limpio);

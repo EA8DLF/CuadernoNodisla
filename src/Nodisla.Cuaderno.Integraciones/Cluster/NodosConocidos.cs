@@ -1,3 +1,5 @@
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Integraciones.Cluster;
 
 /// <summary>Un nodo de cluster de los que se ofrecen hechos.</summary>
@@ -30,18 +32,18 @@ public static class NodosConocidos
     public static IReadOnlyList<NodoConocido> Todos { get; } =
     [
         new("EA4RCH (España)", "cluster.ea4rch.es", 7300,
-            "Nodo español del Radio Club Henares. Es el que viene puesto."),
+            Textos.T("Servicios.Cluster.Nodo.Ea4rch")),
         new("EA7URC (España)", "ea7urc.ddns.net", 7300,
-            "Otro nodo español, por si el primero no contesta."),
+            Textos.T("Servicios.Cluster.Nodo.Ea7urc")),
         new("DXFun (internacional)", "dxfun.com", 8000,
-            "Nodo internacional muy concurrido, con mucho tráfico de DX."),
+            Textos.T("Servicios.Cluster.Nodo.Dxfun")),
         new("VE7CC (CC Cluster)", "ve7cc.net", 23,
-            "CC Cluster: admite órdenes de filtrado muy finas (set/filter)."),
+            Textos.T("Servicios.Cluster.Nodo.Ve7cc")),
         new("NC7J (Estados Unidos)", "dxc.nc7j.com", 7373,
-            "Nodo americano, bueno para ver qué se oye al otro lado del charco."),
+            Textos.T("Servicios.Cluster.Nodo.Nc7j")),
         new("DL9GTB (Alemania)", "cluster.dl9gtb.de", 8000,
-            "Nodo alemán, con mucho anuncio de Europa."),
+            Textos.T("Servicios.Cluster.Nodo.Dl9gtb")),
         new("Reverse Beacon Network", "telnet.reversebeacon.net", 7000,
-            "No son personas: son estaciones de escucha automática. Mucho volumen; conviene filtrar."),
+            Textos.T("Servicios.Cluster.Nodo.Rbn")),
     ];
 }

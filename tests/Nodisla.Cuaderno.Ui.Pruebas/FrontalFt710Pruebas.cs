@@ -389,7 +389,7 @@ public sealed partial class FrontalFt710Pruebas
     /// <summary>
     /// Canal en memoria con las respuestas reales del 28-09-2026 y las reglas vistas en la radio.
     /// </summary>
-    private sealed class CanalReal : ICanalCat
+    internal sealed class CanalReal : ICanalCat
     {
         private readonly ConcurrentDictionary<string, string> _respuestas = new(StringComparer.Ordinal);
         private readonly ConcurrentDictionary<string, TaskCompletionSource> _esperas = new(StringComparer.Ordinal);

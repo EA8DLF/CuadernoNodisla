@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Impresion.Plantillas;
 using Nodisla.Cuaderno.Impresion.Qsl;
 
@@ -81,7 +82,7 @@ public sealed class MarcoDeDiploma
 public sealed class ImagenDeDiploma
 {
     /// <summary>Nombre con el que sale en la lista del editor.</summary>
-    public string Nombre { get; set; } = "Imagen";
+    public string Nombre { get; set; } = Textos.T("Servicios.Impresion.Diploma.Imagen");
 
     /// <summary>Para que es.</summary>
     public UsoDeImagen Uso { get; set; }
@@ -232,7 +233,7 @@ public sealed class DisenoDeDiploma : IPlantillaConImagenes
     public string Id { get; set; } = Guid.NewGuid().ToString("N")[..12];
 
     /// <summary>Como se elige en pantalla.</summary>
-    public string Nombre { get; set; } = "Mi diploma";
+    public string Nombre { get; set; } = Textos.T("Servicios.Impresion.Diploma.MiDiploma");
 
     /// <summary>Papel.</summary>
     public PapelDeDiploma Papel { get; set; }
@@ -288,11 +289,10 @@ public sealed class DisenoDeDiploma : IPlantillaConImagenes
     public string CategoriaPorOmision { get; set; } = string.Empty;
 
     /// <summary>Asunto del correo, con variables.</summary>
-    public string Asunto { get; set; } = "{diploma} nº {numero} - {indicativo}";
+    public string Asunto { get; set; } = Textos.F("Servicios.Impresion.Diploma.Asunto");
 
     /// <summary>Texto del correo, con variables.</summary>
-    public string TextoDelCorreo { get; set; } =
-        "Estimado/a {nombre} ({indicativo}):\n\nLe adjuntamos el diploma «{diploma}» nº {numero}, categoría {categoria}.\n\nEnhorabuena y 73,\n{gestor}\n{miindicativo}";
+    public string TextoDelCorreo { get; set; } = Textos.F("Servicios.Impresion.Diploma.TextoDelCorreo");
 
     /// <inheritdoc />
     public override string ToString() => Nombre;

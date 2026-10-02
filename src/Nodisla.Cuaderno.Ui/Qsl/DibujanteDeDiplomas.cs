@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Impresion.Diplomas;
 using Nodisla.Cuaderno.Impresion.Qsl;
 
@@ -137,8 +138,8 @@ public static class DibujanteDeDiplomas
                 var t = diseno.Tabla;
                 var pie = filas.Count > enLaTabla
                     ? conAnexo
-                        ? string.Create(CultureInfo.InvariantCulture, $"… sigue en el anexo ({filas.Count - enLaTabla} más)")
-                        : string.Create(CultureInfo.InvariantCulture, $"… y {filas.Count - enLaTabla} más")
+                        ? Textos.F("Qsl.Disenador.Impreso.SigueEnAnexo", filas.Count - enLaTabla)
+                        : Textos.F("Qsl.Disenador.Impreso.YMas", filas.Count - enLaTabla)
                     : null;
                 Tabla(dc, t, VariablesDeDiploma.Sustituir(t.Titulo, variables), filas.Take(enLaTabla).ToList(), 0, pie, t.XMm, t.YMm, t.AnchoMm, t.Bloques, Capacidad(t, t.AltoMm, 1), k, ppp, textos);
             }
@@ -171,8 +172,8 @@ public static class DibujanteDeDiplomas
     {
         var k = ppp / 25.4;
         var textos = new List<TextoDePagina>();
-        var titulo = VariablesDeDiploma.Sustituir("{diploma} · {indicativo} · nº {numero}", variables)
-            + string.Create(CultureInfo.InvariantCulture, $" — Anexo {hoja} de {hojas}");
+        var titulo = VariablesDeDiploma.Sustituir(Textos.F("Qsl.Disenador.Impreso.TituloDelAnexo"), variables)
+            + " — " + Textos.F("Qsl.Disenador.Impreso.Anexo", hoja, hojas);
         var imagen = Pintar(diseno, ppp, dc =>
         {
             Orla(dc, diseno.Marco, diseno.AnchoMm, diseno.AltoMm, k);
@@ -316,7 +317,7 @@ public static class DibujanteDeDiplomas
             y += AltoDelTitulo(t);
         }
 
-        var columnas = t.Columnas.Count > 0 ? t.Columnas : [new ColumnaDeTabla { Titulo = "Referencia", Texto = "{referencia}" }];
+        var columnas = t.Columnas.Count > 0 ? t.Columnas : [new ColumnaDeTabla { Titulo = Textos.T("Qsl.Disenador.Impreso.Referencia"), Texto = "{referencia}" }];
         var anchoDeBloque = (anchoMm - (SeparacionDeBloquesMm * (bloques - 1))) / bloques;
         var pesos = columnas.Sum(c => Math.Max(0.1, c.Ancho));
         // Se llena un bloque entero antes de pasar al siguiente, como las columnas de un periodico.

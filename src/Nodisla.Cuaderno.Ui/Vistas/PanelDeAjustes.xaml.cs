@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 
 namespace Nodisla.Cuaderno.Ui.Vistas;
@@ -85,8 +86,8 @@ public partial class PanelDeAjustes : UserControl
     {
         var dialogo = new OpenFileDialog
         {
-            Title = "Elija el fichero ADIF que quiere importar",
-            Filter = "Ficheros ADIF (*.adi;*.adif;*.adx)|*.adi;*.adif;*.adx|Todos los ficheros (*.*)|*.*",
+            Title = Textos.T("Ajustes.Libro.ElegirImportar"),
+            Filter = Textos.T("Ajustes.Libro.FiltroImportar"),
             CheckFileExists = true,
         };
 
@@ -97,8 +98,8 @@ public partial class PanelDeAjustes : UserControl
     {
         var dialogo = new SaveFileDialog
         {
-            Title = "Elija dónde guardar el cuaderno en ADIF",
-            Filter = "Ficheros ADIF (*.adi)|*.adi",
+            Title = Textos.T("Ajustes.Libro.ElegirExportar"),
+            Filter = Textos.T("Ajustes.Libro.FiltroExportar"),
             FileName = $"cuaderno-{DateTime.Now:yyyy-MM-dd}.adi",
             OverwritePrompt = true,
         };

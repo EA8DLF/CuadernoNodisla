@@ -1,5 +1,6 @@
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 
@@ -43,7 +44,7 @@ public sealed class EditarQso(
 
         if (qso.Id <= 0)
         {
-            return new ResultadoDeEdicion { Errores = ["El contacto que se intenta modificar no tiene identificador."] };
+            return new ResultadoDeEdicion { Errores = [Textos.T("Servicios.Aplicacion.SinIdentificador")] };
         }
 
         var existente = await repositorioQso.ObtenerAsync(qso.Id, ct).ConfigureAwait(false);

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Servicios.Adif;
 using Nodisla.Cuaderno.Servicios.Red;
 
@@ -120,14 +121,11 @@ public sealed class ServicioLotw : IServicioQsl
         {
             if (!_firmante.EstaDisponible)
             {
-                return "No se puede subir a LoTW porque no está TQSL instalado en este equipo. "
-                    + "LoTW exige firmar los contactos con el certificado de la ARRL: instale "
-                    + "Trusted QSL, o indique dónde está tqsl.exe en la tarjeta de LoTW (Configuración › Cuentas y servicios).";
+                return Textos.T("Servicios.Lotw.SinTqsl");
             }
             if (string.IsNullOrWhiteSpace(_opciones.UbicacionDeEstacion))
             {
-                return "No se puede subir a LoTW porque no se ha elegido una ubicación de "
-                    + "estación de TQSL. Es el nombre que usted le puso en TQSL, no su indicativo.";
+                return Textos.T("Servicios.Lotw.SinUbicacion");
             }
             return null;
         }
@@ -141,11 +139,13 @@ public sealed class ServicioLotw : IServicioQsl
     /// en la linea de ordenes de TQSL y es visible para cualquier programa que mire la lista de
     /// procesos. No hay otra via; la decision es del operador, pero informada.
     /// </remarks>
-    public static string AvisoDeLaFraseDePaso =>
-        "Si su certificado de LoTW tiene frase de paso, tenga en cuenta que TQSL solo la acepta "
-        + "por línea de órdenes: mientras dura la subida, la frase es visible en la lista de "
-        + "procesos del equipo. Aquí se guarda cifrada y nunca se escribe en el registro de "
-        + "actividad, pero esa ventana no la podemos cerrar nosotros.";
+    public static string AvisoDeLaFraseDePaso => Textos.T(ClaveDelAvisoDeLaFraseDePaso);
+
+    /// <summary>
+    /// Clave del aviso de la frase de paso en los textos del programa, para quien lo enseña y
+    /// tiene que seguir al idioma cuando el operador lo cambia.
+    /// </summary>
+    public const string ClaveDelAvisoDeLaFraseDePaso = "Servicios.Lotw.AvisoDeLaFraseDePaso";
 
     /// <inheritdoc />
     public async Task<bool> ComprobarCredencialesAsync(CancellationToken ct = default)
@@ -186,7 +186,7 @@ public sealed class ServicioLotw : IServicioQsl
             return new ResultadoDeSubida(0, 0, VacioDeMotivos(), reloj.Elapsed);
         }
 
-        Avisar(progreso, 0, qsos.Count, "Preparando el fichero para TQSL…");
+        Avisar(progreso, 0, qsos.Count, Textos.T("Servicios.Lotw.Preparando"));
 
         var registros = qsos.Select(q => ConversorDeQso.Proyectar(q, CamposAdmitidos)).ToList();
         var contenido = AdifLigero.EscribirRegistros(
@@ -204,13 +204,13 @@ public sealed class ServicioLotw : IServicioQsl
             await File.WriteAllTextAsync(temporal, contenido, new UTF8Encoding(false), ct)
                 .ConfigureAwait(false);
 
-            Avisar(progreso, 0, qsos.Count, "Firmando y subiendo con TQSL…");
+            Avisar(progreso, 0, qsos.Count, Textos.T("Servicios.Lotw.Firmando"));
             var resultado = await _firmante.FirmarYSubirAsync(temporal, ct).ConfigureAwait(false);
             reloj.Stop();
 
             if (resultado.EsExito)
             {
-                Avisar(progreso, qsos.Count, qsos.Count, "Subida a LoTW terminada.");
+                Avisar(progreso, qsos.Count, qsos.Count, Textos.T("Servicios.Lotw.Terminada"));
                 _log.LogInformation(
                     "LoTW: {Cuantos} contactos firmados y subidos en {Duracion}.",
                     qsos.Count, reloj.Elapsed);
@@ -258,17 +258,15 @@ public sealed class ServicioLotw : IServicioQsl
         // El informe completo de un cuaderno de muchos anos tarda minutos en generarse al otro
         // lado, y hasta que llega no hay nada que contar: el aviso de que se esta esperando es
         // lo unico que distingue «va lento» de «se ha colgado».
-        Avisar(progreso, 0, null, desdeUtc is null
-            ? "Pidiendo a LoTW el informe completo; puede tardar varios minutos…"
-            : "Pidiendo a LoTW las confirmaciones nuevas…");
+        Avisar(progreso, 0, null, Textos.T(desdeUtc is null ? "Servicios.Lotw.PidiendoTodo" : "Servicios.Lotw.PidiendoNuevas"));
 
         var texto = await DescargarInformeAsync(parametros, ct).ConfigureAwait(false);
 
-        Avisar(progreso, 0, null, "Leyendo el informe de LoTW…");
+        Avisar(progreso, 0, null, Textos.T("Servicios.Lotw.Leyendo"));
         var confirmaciones = Interpretar(texto);
 
         Avisar(progreso, confirmaciones.Count, confirmaciones.Count,
-            $"LoTW devolvió {confirmaciones.Count} confirmaciones.");
+            Textos.F("Servicios.Lotw.Devolvio", confirmaciones.Count));
         return confirmaciones;
     }
 
@@ -321,8 +319,7 @@ public sealed class ServicioLotw : IServicioQsl
         IReadOnlyDictionary<string, string> parametros, CancellationToken ct)
     {
         var contrasena = _credenciales.Leer(ClavesDeCredencial.LotwContrasena)
-            ?? throw new InvalidOperationException(
-                "No hay contraseña de LoTW guardada. Configúrela en Configuración › Cuentas y servicios.");
+            ?? throw new InvalidOperationException(Textos.F("Servicios.SinContrasena", "LoTW"));
 
         var consulta = new StringBuilder();
         consulta.Append("login=").Append(Uri.EscapeDataString(_opciones.Usuario));
@@ -337,7 +334,7 @@ public sealed class ServicioLotw : IServicioQsl
         // Se traza la direccion sin la consulta: lleva la contrasena en claro.
         _log.LogInformation("Descargando el informe de LoTW de {Servidor}.", _opciones.UrlDelInforme);
 
-        return await _reintentos.EjecutarAsync("descargar el informe de LoTW", async testigo =>
+        return await _reintentos.EjecutarAsync(Textos.T("Servicios.Lotw.DescargarInforme"), async testigo =>
         {
             var cliente = _fabrica.CreateClient(NombresDeClienteHttp.Lotw);
             using var respuesta = await cliente.GetAsync(url, testigo).ConfigureAwait(false);
@@ -346,7 +343,7 @@ public sealed class ServicioLotw : IServicioQsl
             if (!respuesta.IsSuccessStatusCode)
             {
                 throw new RespuestaDelServicioException(
-                    $"LoTW respondió {(int)respuesta.StatusCode}.", respuesta.StatusCode);
+                    Textos.F("Servicios.Respondio", "LoTW", (int)respuesta.StatusCode), respuesta.StatusCode);
             }
 
             // Con la contrasena mal, LoTW devuelve una pagina web con codigo 200. La unica
@@ -354,9 +351,7 @@ public sealed class ServicioLotw : IServicioQsl
             if (!cuerpo.Contains("<eoh>", StringComparison.OrdinalIgnoreCase)
                 && !cuerpo.Contains("APP_LoTW_EOF", StringComparison.OrdinalIgnoreCase))
             {
-                throw new RespuestaDelServicioException(
-                    "LoTW no devolvió un fichero ADIF. Lo habitual es que el usuario o la "
-                    + "contraseña no sean correctos.");
+                throw new RespuestaDelServicioException(Textos.T("Servicios.Lotw.NoEsAdif"));
             }
             return cuerpo;
         }, ct).ConfigureAwait(false);

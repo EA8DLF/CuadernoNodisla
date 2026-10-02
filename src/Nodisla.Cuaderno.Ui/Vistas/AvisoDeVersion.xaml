@@ -1,6 +1,7 @@
 <UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.AvisoDeVersion"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              Foreground="{DynamicResource Texto}"
              Focusable="False">
 
@@ -38,43 +39,43 @@
                            Margin="0,0,8,0" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding TituloDelAviso}" FontWeight="SemiBold"
                            VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,12,0" />
-                <Button Content="Descargar e instalar"
+                <Button Content="{loc:Texto Principal.Version.Descargar}"
                         Command="{Binding DescargarEInstalarCommand}"
                         Style="{StaticResource BotonPrincipal}"
                         Margin="0,2,6,2"
-                        AutomationProperties.Name="Descargar e instalar la versión nueva" />
-                <Button Content="Ver en GitHub"
+                        AutomationProperties.Name="{loc:Texto Principal.Version.DescargarNombre}" />
+                <Button Content="{loc:Texto Principal.Version.VerEnGithub}"
                         Command="{Binding VerEnGitHubCommand}"
                         Margin="0,2,6,2"
-                        AutomationProperties.Name="Ver la versión nueva en GitHub" />
-                <Button Content="Cancelar descarga"
+                        AutomationProperties.Name="{loc:Texto Principal.Version.VerEnGithubNombre}" />
+                <Button Content="{loc:Texto Principal.Version.CancelarDescarga}"
                         Command="{Binding CancelarDescargaCommand}"
                         Visibility="{Binding Descargando, Converter={StaticResource BooleanoAVisible}}"
                         Margin="0,2,6,2"
-                        AutomationProperties.Name="Cancelar la descarga" />
+                        AutomationProperties.Name="{loc:Texto Principal.Version.CancelarDescargaNombre}" />
             </WrapPanel>
 
             <Button Grid.Column="1"
                     Content="&#x2715;"
                     Command="{Binding DescartarCommand}"
-                    ToolTip="Ocultar este aviso. No se volverá a avisar de esta versión al arrancar."
+                    ToolTip="{loc:Texto Principal.Version.OcultarConsejo}"
                     Padding="6,1"
                     VerticalAlignment="Top"
-                    AutomationProperties.Name="Ocultar el aviso de versión nueva" />
+                    AutomationProperties.Name="{loc:Texto Principal.Version.OcultarNombre}" />
 
             <ProgressBar Grid.Row="1" Grid.ColumnSpan="2"
                          Minimum="0" Maximum="1" Value="{Binding Progreso, Mode=OneWay}"
                          Height="4" Margin="0,4,0,0"
                          Visibility="{Binding Descargando, Converter={StaticResource BooleanoAVisible}}"
-                         AutomationProperties.Name="Progreso de la descarga" />
+                         AutomationProperties.Name="{loc:Texto Principal.Version.Progreso}" />
 
             <StackPanel Grid.Row="2" Grid.ColumnSpan="2">
                 <TextBlock Text="{Binding Estado}" Style="{StaticResource TextoTenueEstilo}" Margin="0,2,0,0" />
-                <Expander Header="Novedades de esta versión" Foreground="{DynamicResource Texto}" Margin="0,2,0,0">
+                <Expander Header="{loc:Texto Principal.Version.Novedades}" Foreground="{DynamicResource Texto}" Margin="0,2,0,0">
                     <ScrollViewer MaxHeight="220" VerticalScrollBarVisibility="Auto">
                         <TextBox Text="{Binding Notas, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap"
                                  BorderThickness="0" Background="Transparent" Foreground="{DynamicResource Texto}"
-                                 AutomationProperties.Name="Notas de la versión nueva" />
+                                 AutomationProperties.Name="{loc:Texto Principal.Version.Notas}" />
                     </ScrollViewer>
                 </Expander>
             </StackPanel>

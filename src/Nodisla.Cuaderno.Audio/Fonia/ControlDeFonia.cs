@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Audio.Fonia;
 
@@ -184,7 +185,7 @@ public sealed class ControlDeFonia : IAsyncDisposable
             if (_vigilante.EnAntena)
             {
                 throw new InvalidOperationException(
-                    "Ya hay otra transmisión en el aire (¿el módem digital?). Termine esa antes de hablar.");
+                    Textos.T("Servicios.Audio.OtraTransmision"));
             }
 
             ITransmisionEnCurso? pedida = null;

@@ -3,6 +3,7 @@ using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 using Serilog;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
@@ -17,6 +18,7 @@ public sealed partial class FilaDeDiploma : ObservableObject
     {
         Diploma = diploma ?? throw new ArgumentNullException(nameof(diploma));
         Variante = variante ?? throw new ArgumentNullException(nameof(variante));
+        Textos.AlCambiar(this, static f => f.OnPropertyChanged(string.Empty));
     }
 
     /// <summary>Diploma al que pertenece.</summary>
@@ -42,7 +44,7 @@ public sealed partial class FilaDeDiploma : ObservableObject
     public string NombreLargo => $"{Diploma.Nombre} · {Variante.Variante}";
 
     /// <summary>Quien lo otorga.</summary>
-    public string Gestor => Diploma.Gestor ?? "sin gestor conocido";
+    public string Gestor => Diploma.Gestor ?? Textos.T("Qsl.Diplomas.SinGestor");
 
     /// <summary>Es uno de los diplomas que el operador sigue.</summary>
     [ObservableProperty]
@@ -61,15 +63,15 @@ public sealed partial class FilaDeDiploma : ObservableObject
     public string Cifra => Progreso is null
         ? "—"
         : Progreso.Objetivo is > 0
-            ? $"{Progreso.Confirmadas.ToString("N0", CultureInfo.CurrentCulture)} de {Progreso.Objetivo!.Value.ToString("N0", CultureInfo.CurrentCulture)}"
-            : Progreso.Confirmadas.ToString("N0", CultureInfo.CurrentCulture);
+            ? Textos.F("Qsl.Diplomas.Cifra", Progreso.Confirmadas, Progreso.Objetivo!.Value)
+            : Progreso.Confirmadas.ToString("N0", Textos.Cultura);
 
     /// <summary>Cuantas faltan, escrito para el operador.</summary>
     public string Faltan => Progreso?.Faltan switch
     {
         null => string.Empty,
-        0 => "Ya lo tiene",
-        var n => $"Le faltan {n.Value.ToString("N0", CultureInfo.CurrentCulture)}",
+        0 => Textos.T("Qsl.Diplomas.YaLoTiene"),
+        var n => Textos.F("Qsl.Diplomas.LeFaltan", n.Value),
     };
 
     /// <summary>Parte cubierta, de cero a uno, para la barra.</summary>
@@ -83,10 +85,12 @@ public sealed partial class FilaDeDiploma : ObservableObject
 
     /// <summary>Lo trabajado, para la ayuda emergente.</summary>
     public string Detalle => Progreso is null
-        ? "Sin calcular"
-        : $"Trabajadas {Progreso.Trabajadas.ToString("N0", CultureInfo.CurrentCulture)}, "
-          + $"confirmadas {Progreso.Confirmadas.ToString("N0", CultureInfo.CurrentCulture)}. "
-          + $"Calculado a las {Progreso.CalculadoUtc.UtcDateTime.ToString("HH:mm", CultureInfo.InvariantCulture)} UTC.";
+        ? Textos.T("Qsl.Diplomas.SinCalcular")
+        : Textos.F(
+            "Qsl.Diplomas.Detalle",
+            Progreso.Trabajadas,
+            Progreso.Confirmadas,
+            Progreso.CalculadoUtc.UtcDateTime.ToString("HH:mm", CultureInfo.InvariantCulture));
 }
 
 /// <summary>
@@ -119,8 +123,11 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
     /// <c>MisDiplomasAsync</c> y <c>FijarMisDiplomasAsync</c>. Asi cualquier otra cosa que
     /// quiera saberlo —un aviso al teclear un indicativo— pregunta al motor y no a la ventana.
     /// </remarks>
-    public VistaModeloDiplomas(IDiplomas diplomas) =>
+    public VistaModeloDiplomas(IDiplomas diplomas)
+    {
         _diplomas = diplomas ?? throw new ArgumentNullException(nameof(diplomas));
+        Textos.AlCambiar(this, static vm => vm.OnPropertyChanged(string.Empty));
+    }
 
     /// <summary>Todo el catalogo, para elegir.</summary>
     public ObservableCollection<FilaDeDiploma> Catalogo { get; } = [];
@@ -160,15 +167,13 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
 
     /// <summary>Titulo del bloque de detalle.</summary>
     public string TituloDelDetalle => ElegidoParaElDetalle is null
-        ? "Detalle"
-        : $"Detalle · {ElegidoParaElDetalle.Nombre}";
+        ? Textos.T("Qsl.Diplomas.TituloDetalle")
+        : Textos.F("Qsl.Diplomas.DetalleDe", ElegidoParaElDetalle.Nombre);
 
     /// <summary>Que trozo del detalle se esta viendo.</summary>
     public string TextoDeLaPagina => TotalDeReferencias == 0
         ? string.Empty
-        : $"{(Desplazamiento + 1).ToString("N0", CultureInfo.CurrentCulture)} a "
-          + $"{Math.Min(Desplazamiento + ReferenciasPorPagina, TotalDeReferencias).ToString("N0", CultureInfo.CurrentCulture)} "
-          + $"de {TotalDeReferencias.ToString("N0", CultureInfo.CurrentCulture)}";
+        : Textos.F("Qsl.Diplomas.Pagina", Desplazamiento + 1, Math.Min(Desplazamiento + ReferenciasPorPagina, TotalDeReferencias), TotalDeReferencias);
 
     /// <summary>Trae el catalogo y recalcula lo elegido. Lo llama la ventana al abrirse.</summary>
     [RelayCommand]
@@ -177,7 +182,7 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
         if (Catalogo.Count > 0) return;
 
         Ocupado = true;
-        Aviso = "Trayendo el catálogo de diplomas…";
+        Aviso = Textos.T("Qsl.Diplomas.Trayendo");
         try
         {
             var diplomas = await _diplomas.CatalogoAsync().ConfigureAwait(true);
@@ -205,7 +210,7 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido traer el catálogo de diplomas.");
-            Aviso = $"No se ha podido traer el catálogo: {ex.Message}";
+            Aviso = Textos.F("Qsl.Diplomas.NoCatalogo", ex.Message);
         }
         finally
         {
@@ -226,7 +231,7 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
         if (SinEleccion) return;
 
         Ocupado = true;
-        Aviso = $"Calculando {elegidos.Count} diploma(s)…";
+        Aviso = Textos.F("Qsl.Diplomas.Calculando", elegidos.Count);
         try
         {
             // De una vez, no uno a uno. El motor ya sabe cuales sigue el operador —la eleccion
@@ -251,7 +256,7 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido calcular el progreso de los diplomas.");
-            Aviso = $"No se ha podido calcular el progreso: {ex.Message}";
+            Aviso = Textos.F("Qsl.Diplomas.NoProgreso", ex.Message);
         }
         finally
         {
@@ -315,8 +320,7 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
             // que no se ha guardado NADA y se recuerda lo que decia el motor.
             Log.Error(ex, "No se ha podido guardar la selección de diplomas: {Claves}", string.Join(", ", claves));
 
-            Aviso = "No se ha podido guardar la selección, y no se ha guardado ninguna: "
-                + ex.Message;
+            Aviso = Textos.F("Qsl.Diplomas.NoSeleccion", ex.Message);
 
             return false;
         }
@@ -341,13 +345,13 @@ public sealed partial class VistaModeloDiplomas : ObservableObject
             TotalDeReferencias = pagina.TotalFiltrado;
 
             Aviso = TotalDeReferencias == 0
-                ? "Este diploma cuenta referencias que el cuaderno todavía no guarda."
+                ? Textos.T("Qsl.Diplomas.SinReferencias")
                 : string.Empty;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido traer el detalle del diploma.");
-            Aviso = $"No se ha podido traer el detalle: {ex.Message}";
+            Aviso = Textos.F("Qsl.Diplomas.NoDetalle", ex.Message);
         }
         finally
         {

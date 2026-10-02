@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.ListaDeMandos"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              Foreground="{DynamicResource Texto}">
 
     <!--
@@ -55,12 +56,12 @@
                     </DockPanel>
 
                     <!-- El mando que pone el equipo en antena se avisa aquí mismo. -->
-                    <TextBlock Text="Accionarlo pone el equipo EN ANTENA: se avisa antes."
+                    <TextBlock Text="{loc:Texto Cabina.Mandos.EnAntena}"
                                Style="{StaticResource TextoTenueEstilo}"
                                Foreground="{DynamicResource AvisoTexto}"
                                Visibility="{Binding TransmiteAlAccionar, Converter={StaticResource BooleanoAVisible}}" />
 
-                    <CheckBox Content="Encendido"
+                    <CheckBox Content="{loc:Texto Cabina.Mandos.Encendido}"
                               IsChecked="{Binding Encendido}"
                               IsEnabled="{Binding Disponible}"
                               Visibility="{Binding EsInterruptor, Converter={StaticResource BooleanoAVisible}}" />

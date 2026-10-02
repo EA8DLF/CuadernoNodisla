@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Dialogos.Confirmacion.NoVolverAPreguntar" xml:space="preserve">
+    <value>Don't ask again</value>
+  </data>
+  <data name="Dialogos.Confirmacion.NoVolverTooltip" xml:space="preserve">
+    <value>You can turn it back on in Settings › Audio &amp; digital.</value>
+  </data>
+  <data name="Dialogos.NoSeAbreElCuaderno" xml:space="preserve">
+    <value>The logbook could not be opened.
+
+{0}
+
+The logbook lives in {1}. If the file is damaged, that same folder has a «copias» subfolder with the earlier backups.</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Bienvenida" xml:space="preserve">
+    <value>Welcome to the logbook</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Crear" xml:space="preserve">
+    <value>Create profile and start</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Explicacion" xml:space="preserve">
+    <value>Before logging your first QSO you need a station profile: the call sign you transmit with and where you operate from. Without it the log cannot be exported to ADIF or used to apply for awards.</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Indicativo" xml:space="preserve">
+    <value>Station call sign</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.IndicativoEjemplo" xml:space="preserve">
+    <value>For example EA8DLF</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Localidad" xml:space="preserve">
+    <value>Town / city (optional)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Localizador" xml:space="preserve">
+    <value>Locator (optional, but needed for distances and bearings)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.LocalizadorEjemplo" xml:space="preserve">
+    <value>For example IL18SN</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombreOperador" xml:space="preserve">
+    <value>Operator name (optional)</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombrePerfil" xml:space="preserve">
+    <value>Profile name</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.NombrePerfilTooltip" xml:space="preserve">
+    <value>To tell it apart from other profiles: Home, Portable, Contests…</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Salir" xml:space="preserve">
+    <value>Exit the program</value>
+  </data>
+  <data name="Dialogos.PrimerArranque.Titulo" xml:space="preserve">
+    <value>Cuaderno NODISLA · first start</value>
+  </data>
+  <data name="Dialogos.Simulado.Analizador" xml:space="preserve">
+    <value>Simulated scope</value>
+  </data>
+  <data name="Dialogos.Simulado.Cluster" xml:space="preserve">
+    <value>Simulated cluster (offline)</value>
+  </data>
+  <data name="Dialogos.Simulado.FichaInventada" xml:space="preserve">
+    <value>Made-up record: session with simulated ports.</value>
+  </data>
+  <data name="Dialogos.Simulado.ModemNoTransmite" xml:space="preserve">
+    <value>The simulated modem does not transmit. Close the program and open it again without CUADERNO_SIMULADO.</value>
+  </data>
+  <data name="Dialogos.Simulado.QsoDuplicado" xml:space="preserve">
+    <value>The QSO with {0} is already in the log.</value>
+  </data>
+  <data name="Dialogos.Simulado.RelojPuesto" xml:space="preserve">
+    <value>Clock set (simulated): the computer clock has not been touched.</value>
+  </data>
+  <data name="Dialogos.Simulado.ServicioDeHora" xml:space="preserve">
+    <value>Time service configured (simulated).</value>
+  </data>
+  <data name="Dialogos.Simulado.SinConfirmaciones" xml:space="preserve">
+    <value>There are no confirmations in the log yet, so the confirmed count is zero. The worked count is final.</value>
+  </data>
+  <data name="Dialogos.Simulado.SinReferencias" xml:space="preserve">
+    <value>This award counts references (islands, summits, parks) and the log does not store them yet. The figure is not low: there is simply nothing to take it from. It will come with the log database.</value>
+  </data>
+</root>

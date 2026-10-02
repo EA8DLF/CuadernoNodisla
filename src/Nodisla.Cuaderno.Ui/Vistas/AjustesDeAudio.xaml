@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
              xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:DataContext="{d:DesignInstance Type=vistamodelos:VistaModeloAjustesAudio}"
@@ -36,7 +37,10 @@
         <Style x:Key="Rotulo" TargetType="TextBlock" BasedOn="{StaticResource EtiquetaDeCampo}">
             <Setter Property="Width" Value="150" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <!-- En otros idiomas el rótulo puede no caber en una línea: se parte, no se corta. -->
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="TextTrimming" Value="None" />
+            <Setter Property="Padding" Value="0,0,6,0" />
         </Style>
 
         <DataTemplate x:Key="FilaDeDispositivo">
@@ -58,7 +62,7 @@
                             </Style.Triggers>
                         </Style>
                     </Border.Style>
-                    <TextBlock Text="EL EQUIPO"
+                    <TextBlock Text="{loc:Texto Ajustes.Audio.ElEquipo}"
                                Foreground="{DynamicResource CorrectoTexto}"
                                FontSize="10"
                                FontWeight="Bold"
@@ -70,13 +74,13 @@
     </UserControl.Resources>
 
     <StackPanel>
-        <TextBlock Text="Audio y modos digitales" Style="{StaticResource TituloDeSeccion}" />
-        <TextBlock Text="Por dónde entra y sale el sonido del equipo, y quién decodifica FT8 y FT4."
+        <TextBlock Text="{loc:Texto Ajustes.Audio.Titulo}" Style="{StaticResource TituloDeSeccion}" />
+        <TextBlock Text="{loc:Texto Ajustes.Audio.Explicacion}"
                    Style="{StaticResource TextoTenueEstilo}"
                    TextWrapping="Wrap"
                    Margin="0,0,0,8" />
 
-        <TextBlock Text="No hay módulo de audio en esta sesión, así que no hay nada que configurar aquí. Cierre el programa y vuelva a abrirlo sin CUADERNO_SIMULADO."
+        <TextBlock Text="{loc:Texto Ajustes.Audio.SinModulo}"
                    Style="{StaticResource TextoTenueEstilo}"
                    TextWrapping="Wrap"
                    Margin="0,0,0,8"
@@ -84,21 +88,21 @@
 
         <!-- ══ Los dispositivos ══ -->
         <DockPanel Margin="0,0,0,4">
-            <TextBlock Text="Entrada (del equipo)" Style="{StaticResource Rotulo}" />
+            <TextBlock Text="{loc:Texto Ajustes.Audio.Entrada}" Style="{StaticResource Rotulo}" />
             <ComboBox ItemsSource="{Binding Entradas}"
                       SelectedItem="{Binding EntradaElegida}"
                       ItemTemplate="{StaticResource FilaDeDispositivo}"
-                      AutomationProperties.Name="Dispositivo de entrada de audio"
-                      ToolTip="De dónde sale el audio recibido. En el FT-710 es su codec USB." />
+                      AutomationProperties.Name="{loc:Texto Ajustes.Audio.Entrada.Accesible}"
+                      ToolTip="{loc:Texto Ajustes.Audio.Entrada.Ayuda}" />
         </DockPanel>
 
         <DockPanel Margin="0,0,0,4">
-            <TextBlock Text="Salida (al equipo)" Style="{StaticResource Rotulo}" />
+            <TextBlock Text="{loc:Texto Ajustes.Audio.Salida}" Style="{StaticResource Rotulo}" />
             <ComboBox ItemsSource="{Binding Salidas}"
                       SelectedItem="{Binding SalidaElegida}"
                       ItemTemplate="{StaticResource FilaDeDispositivo}"
-                      AutomationProperties.Name="Dispositivo de salida de audio"
-                      ToolTip="Por dónde se le manda el audio al equipo al transmitir." />
+                      AutomationProperties.Name="{loc:Texto Ajustes.Audio.Salida.Accesible}"
+                      ToolTip="{loc:Texto Ajustes.Audio.Salida.Ayuda}" />
         </DockPanel>
 
         <Border Padding="8,6"
@@ -116,13 +120,13 @@
         </Border>
 
         <DockPanel Margin="0,0,0,8">
-            <TextBlock Text="Muestras por segundo" Style="{StaticResource Rotulo}" />
+            <TextBlock Text="{loc:Texto Ajustes.Audio.Muestras}" Style="{StaticResource Rotulo}" />
             <ComboBox ItemsSource="{Binding Frecuencias}"
                       SelectedItem="{Binding FrecuenciaDeMuestreo}"
                       HorizontalAlignment="Left"
                       Width="120"
-                      AutomationProperties.Name="Muestras por segundo"
-                      ToolTip="48.000 es lo que da el codec del FT-710 y lo que esperan FT8 y FT4." />
+                      AutomationProperties.Name="{loc:Texto Ajustes.Audio.Muestras}"
+                      ToolTip="{loc:Texto Ajustes.Audio.Muestras.Ayuda}" />
         </DockPanel>
 
         <!-- ══ El medidor ══ -->
@@ -146,26 +150,26 @@
             <StackPanel>
                 <DockPanel Margin="0,0,0,4">
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                        <Button Content="Probar el nivel"
+                        <Button Content="{loc:Texto Ajustes.Audio.ProbarNivel}"
                                 Command="{Binding ProbarElNivelCommand}"
                                 Margin="0,0,6,0"
                                 Visibility="{Binding Probando, Converter={StaticResource VisibleSiEsFalso}}"
-                                ToolTip="Abre la entrada elegida y enseña el nivel. Es lo único de esta pantalla que toca la tarjeta de sonido." />
-                        <Button Content="Parar la prueba"
+                                ToolTip="{loc:Texto Ajustes.Audio.ProbarNivel.Ayuda}" />
+                        <Button Content="{loc:Texto Ajustes.Audio.PararPrueba}"
                                 Command="{Binding PararLaPruebaCommand}"
                                 Margin="0,0,6,0"
                                 Visibility="{Binding Probando, Converter={StaticResource BooleanoAVisible}}" />
-                        <Button Content="Volver a buscar dispositivos" Command="{Binding RefrescarCommand}" />
+                        <Button Content="{loc:Texto Ajustes.VolverABuscarDispositivos}" Command="{Binding RefrescarCommand}" />
                     </StackPanel>
 
-                    <TextBlock Text="Nivel de entrada" Style="{StaticResource EtiquetaDeCampo}" VerticalAlignment="Center" />
+                    <TextBlock Text="{loc:Texto Ajustes.Audio.NivelDeEntrada}" Style="{StaticResource EtiquetaDeCampo}" VerticalAlignment="Center" />
                 </DockPanel>
 
                 <ProgressBar Minimum="0"
                              Maximum="100"
                              Height="16"
                              Value="{Binding NivelPorCiento, Mode=OneWay}"
-                             AutomationProperties.Name="Nivel de entrada de audio">
+                             AutomationProperties.Name="{loc:Texto Ajustes.Audio.NivelDeEntrada.Accesible}">
                     <ProgressBar.Style>
                         <Style TargetType="ProgressBar" BasedOn="{StaticResource {x:Type ProgressBar}}">
                             <Style.Triggers>
@@ -196,7 +200,7 @@
                     </TextBlock.Style>
                 </TextBlock>
 
-                <TextBlock Text="Lo bueno está entre 0,20 y 0,60. Por encima de 0,90 el codec recorta y las señales débiles se pierden; por debajo de 0,03 no llega nada."
+                <TextBlock Text="{loc:Texto Ajustes.Audio.NivelBueno}"
                            Style="{StaticResource TextoTenueEstilo}"
                            TextWrapping="Wrap"
                            Margin="0,4,0,0" />
@@ -204,28 +208,87 @@
         </Border>
 
         <!-- ══ Transmitir y apuntar ══ -->
-        <TextBlock Text="Transmitir y apuntar" Style="{StaticResource Rotulo}" Margin="0,4,0,4" />
+        <TextBlock Text="{loc:Texto Ajustes.Audio.TransmitirYApuntar}" Style="{StaticResource Rotulo}" Width="Auto" Margin="0,4,0,4" />
         <StackPanel Margin="0,0,0,12">
-            <CheckBox Content="Preguntar antes de transmitir con el módem"
+            <CheckBox Content="{loc:Texto Ajustes.Audio.PreguntarAntes}"
                       IsChecked="{Binding PedirConfirmacionAlTransmitir}"
                       Margin="0,0,0,6"
-                      ToolTip="Es lo que apaga «No volver a preguntar». El vigilante de PTT, el reloj y la salida se exigen siempre." />
-            <CheckBox Content="Recordar «Permitir transmitir» entre sesiones"
+                      ToolTip="{loc:Texto Ajustes.Audio.PreguntarAntes.Ayuda}" />
+            <CheckBox Content="{loc:Texto Ajustes.Audio.RecordarPermiso}"
                       IsChecked="{Binding RecordarPermisoDeTransmitir}"
                       Margin="0,0,0,6"
-                      ToolTip="El pestillo de la pestaña Digital arranca abierto. De fábrica arranca cerrado en cada sesión." />
-            <CheckBox Content="Guardar solo en el cuaderno el contacto completo"
+                      ToolTip="{loc:Texto Ajustes.Audio.RecordarPermiso.Ayuda}" />
+            <CheckBox Content="{loc:Texto Ajustes.Audio.RegistrarAlCompletar}"
                       IsChecked="{Binding RegistrarAlCompletar}"
-                      ToolTip="Al recibir RR73/RRR/73 del corresponsal, o al salir el RR73 propio tras su R+informe, el contacto se apunta sin pulsar «Guardar en el cuaderno»." />
+                      ToolTip="{loc:Texto Ajustes.Audio.RegistrarAlCompletar.Ayuda}" />
+        </StackPanel>
+
+        <!-- ══ Telegrafía (CW): el decodificador de la cabina ══ -->
+        <TextBlock Text="{loc:Texto Ajustes.Cw.Titulo}" Style="{StaticResource Rotulo}" Width="Auto" Margin="0,4,0,2" />
+        <TextBlock Text="{loc:Texto Ajustes.Cw.Explicacion}"
+                   Style="{StaticResource TextoTenueEstilo}"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,6" />
+        <StackPanel x:Name="AjustesDeCw" Margin="0,0,0,12">
+            <DockPanel Margin="0,0,0,4">
+                <TextBlock Text="{loc:Texto Ajustes.Cw.Tono}" Style="{StaticResource Rotulo}" />
+                <TextBlock DockPanel.Dock="Right" Width="64" Margin="8,0,0,0" VerticalAlignment="Center"
+                           Text="{Binding CwTonoHz, StringFormat={}{0} Hz}" />
+                <Slider Minimum="300" Maximum="1200" SmallChange="10" LargeChange="50" TickFrequency="10" IsSnapToTickEnabled="True"
+                        Value="{Binding CwTonoHz}"
+                        AutomationProperties.Name="{loc:Texto Ajustes.Cw.Tono}"
+                        ToolTip="{loc:Texto Ajustes.Cw.Tono.Ayuda}" />
+            </DockPanel>
+            <DockPanel Margin="0,0,0,4">
+                <TextBlock Text="{loc:Texto Ajustes.Cw.Ancho}" Style="{StaticResource Rotulo}" />
+                <ComboBox ItemsSource="{Binding AnchosDeFiltroCw}"
+                          SelectedItem="{Binding CwAnchoHz}"
+                          ItemStringFormat="{}{0} Hz"
+                          HorizontalAlignment="Left"
+                          Width="120"
+                          AutomationProperties.Name="{loc:Texto Ajustes.Cw.Ancho}"
+                          ToolTip="{loc:Texto Ajustes.Cw.Ancho.Ayuda}" />
+            </DockPanel>
+            <DockPanel Margin="0,0,0,4">
+                <TextBlock Text="{loc:Texto Ajustes.Cw.Sensibilidad}" Style="{StaticResource Rotulo}" />
+                <TextBlock DockPanel.Dock="Right" Width="64" Margin="8,0,0,0" VerticalAlignment="Center"
+                           Text="{Binding CwSensibilidad}" />
+                <Slider Minimum="1" Maximum="10" SmallChange="1" LargeChange="1" TickFrequency="1" IsSnapToTickEnabled="True"
+                        Value="{Binding CwSensibilidad}"
+                        AutomationProperties.Name="{loc:Texto Ajustes.Cw.Sensibilidad}"
+                        ToolTip="{loc:Texto Ajustes.Cw.Sensibilidad.Ayuda}" />
+            </DockPanel>
+            <DockPanel Margin="0,0,0,4">
+                <TextBlock Text="{loc:Texto Ajustes.Cw.Velocidad}" Style="{StaticResource Rotulo}" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Text="{Binding CwWpmMinima, UpdateSourceTrigger=PropertyChanged}" Width="48"
+                             AutomationProperties.Name="{loc:Texto Ajustes.Cw.WpmMinima}"
+                             ToolTip="{loc:Texto Ajustes.Cw.Velocidad.Ayuda}" />
+                    <TextBlock Text="{loc:Texto Ajustes.Cw.Hasta}" VerticalAlignment="Center" Margin="6,0" />
+                    <TextBox Text="{Binding CwWpmMaxima, UpdateSourceTrigger=PropertyChanged}" Width="48"
+                             AutomationProperties.Name="{loc:Texto Ajustes.Cw.WpmMaxima}"
+                             ToolTip="{loc:Texto Ajustes.Cw.Velocidad.Ayuda}" />
+                    <TextBlock Text="WPM" VerticalAlignment="Center" Margin="6,0,0,0" />
+                </StackPanel>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="{loc:Texto Ajustes.Cw.Senales}" Style="{StaticResource Rotulo}" />
+                <TextBlock DockPanel.Dock="Right" Width="64" Margin="8,0,0,0" VerticalAlignment="Center"
+                           Text="{Binding CwSenales}" />
+                <Slider Minimum="1" Maximum="8" SmallChange="1" LargeChange="1" TickFrequency="1" IsSnapToTickEnabled="True"
+                        Value="{Binding CwSenales}"
+                        AutomationProperties.Name="{loc:Texto Ajustes.Cw.Senales}"
+                        ToolTip="{loc:Texto Ajustes.Cw.Senales.Ayuda}" />
+            </DockPanel>
         </StackPanel>
 
         <!-- ══ Guardar ══ -->
         <WrapPanel Margin="0,0,0,6">
-            <Button Content="Guardar"
+            <Button Content="{loc:Texto Comun.Guardar}"
                     Command="{Binding GuardarCommand}"
                     Style="{StaticResource BotonPrincipal}"
                     Margin="0,0,8,0" />
-            <Button Content="Descartar" Command="{Binding DescartarCommand}" />
+            <Button Content="{loc:Texto Ajustes.Descartar}" Command="{Binding DescartarCommand}" />
         </WrapPanel>
 
         <Border Padding="8,6"

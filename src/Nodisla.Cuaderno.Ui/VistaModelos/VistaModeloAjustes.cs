@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 using Serilog;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
@@ -20,13 +21,15 @@ namespace Nodisla.Cuaderno.Ui.VistaModelos;
 public sealed partial class SecretoDeServicio : ObservableObject
 {
     private readonly IAlmacenDeCredenciales _almacen;
+    private readonly string _titulo;
+    private readonly string _explicacion;
 
     /// <summary>Monta la fila del secreto.</summary>
     /// <param name="almacen">Almacen cifrado.</param>
     /// <param name="clave">Clave con la que se guarda.</param>
     /// <param name="servicio">Servicio al que pertenece.</param>
-    /// <param name="titulo">Como se llama en pantalla.</param>
-    /// <param name="explicacion">Que es, para el operador.</param>
+    /// <param name="titulo">Como se llama en pantalla (texto o clave de los recursos).</param>
+    /// <param name="explicacion">Que es, para el operador (texto o clave de los recursos).</param>
     public SecretoDeServicio(
         IAlmacenDeCredenciales almacen,
         string clave,
@@ -37,10 +40,17 @@ public sealed partial class SecretoDeServicio : ObservableObject
         _almacen = almacen ?? throw new ArgumentNullException(nameof(almacen));
         Clave = clave;
         Servicio = servicio;
-        Titulo = titulo;
-        Explicacion = explicacion;
+        _titulo = titulo;
+        _explicacion = explicacion;
 
         Refrescar();
+
+        Textos.AlCambiar(this, static s =>
+        {
+            s.OnPropertyChanged(nameof(Titulo));
+            s.OnPropertyChanged(nameof(Explicacion));
+            s.OnPropertyChanged(nameof(Estado));
+        });
     }
 
     /// <summary>Clave con la que se guarda.</summary>
@@ -50,10 +60,10 @@ public sealed partial class SecretoDeServicio : ObservableObject
     public string Servicio { get; }
 
     /// <summary>Como se llama en pantalla.</summary>
-    public string Titulo { get; }
+    public string Titulo => TextoOClave.Resolver(_titulo);
 
     /// <summary>Que es, para el operador.</summary>
-    public string Explicacion { get; }
+    public string Explicacion => TextoOClave.Resolver(_explicacion);
 
     /// <summary>Lo que el operador acaba de teclear. Se vacia al guardar.</summary>
     /// <remarks>
@@ -72,7 +82,7 @@ public sealed partial class SecretoDeServicio : ObservableObject
     private bool _guardado;
 
     /// <summary>Estado, escrito para el operador.</summary>
-    public string Estado => Guardado ? "Guardada y cifrada" : "Sin guardar";
+    public string Estado => Textos.T(Guardado ? "Ajustes.Secreto.Guardada" : "Ajustes.Secreto.SinGuardar");
 
     /// <summary>Guarda lo tecleado y vacia el campo.</summary>
     [RelayCommand(CanExecute = nameof(HayAlgoTecleado))]
@@ -120,6 +130,9 @@ public sealed partial class VistaModeloAjustes : ObservableObject
     private readonly Func<string?> _motivoDeNoPoderSubir;
     private readonly IEscritorAdif? _escritor;
 
+    /// <summary>El aviso de la frase de paso tal y como llegó: el texto o, mejor, su clave, que sigue al idioma.</summary>
+    private readonly string _avisoDeLaFraseDePaso;
+
     /// <summary>Contactos que se piden de una vez al exportar.</summary>
     private const int PaginaDeExportacion = 1000;
 
@@ -166,27 +179,30 @@ public sealed partial class VistaModeloAjustes : ObservableObject
         _cuaderno = cuaderno ?? throw new ArgumentNullException(nameof(cuaderno));
         _motivoDeNoPoderSubir = motivoDeNoPoderSubir ?? throw new ArgumentNullException(nameof(motivoDeNoPoderSubir));
 
-        AvisoDeLaFraseDePaso = avisoDeLaFraseDePaso;
+        _avisoDeLaFraseDePaso = avisoDeLaFraseDePaso;
 
         Secretos =
         [
-            new(credenciales, ClavesDeCredencial.LotwContrasena, "LoTW", "Contraseña de LoTW",
-                "La de su cuenta de la ARRL. Se usa para descargar el informe de confirmaciones."),
-            new(credenciales, ClavesDeCredencial.TqslFraseDePaso, "LoTW", "Frase de paso del certificado",
-                "Solo si su certificado la lleva. Lea el aviso de abajo antes de escribirla."),
-            new(credenciales, ClavesDeCredencial.EqslContrasena, "eQSL", "Contraseña de eQSL.cc",
-                "La de su cuenta de eQSL.cc."),
-            new(credenciales, ClavesDeCredencial.ClubLogContrasena, "Club Log", "Contraseña de Club Log",
-                "La de su cuenta, o una contraseña de aplicación si la tiene."),
-            new(credenciales, ClavesDeCredencial.ClubLogApi, "Club Log", "Clave de API de Club Log",
-                "Se pide al soporte de Club Log y no se comparte con nadie."),
-            new(credenciales, ClavesDeCredencial.QrzContrasena, "QRZ.com", "Contraseña de QRZ.com",
-                "Para la consulta de indicativos por XML."),
-            new(credenciales, ClavesDeCredencial.QrzClaveDeCuaderno, "QRZ.com", "Clave del cuaderno de QRZ",
-                "Es distinta de la contraseña de la cuenta: la da QRZ para subir contactos."),
-            new(credenciales, ClavesDeCredencial.HamQthContrasena, "HamQTH", "Contraseña de HamQTH",
-                "La de su cuenta de HamQTH."),
+            new(credenciales, ClavesDeCredencial.LotwContrasena, "LoTW", "Ajustes.Secreto.LotwContrasena",
+                "Ajustes.Secreto.LotwContrasena.Ayuda"),
+            new(credenciales, ClavesDeCredencial.TqslFraseDePaso, "LoTW", "Ajustes.Secreto.TqslFrase",
+                "Ajustes.Secreto.TqslFrase.Ayuda"),
+            new(credenciales, ClavesDeCredencial.EqslContrasena, "eQSL", "Ajustes.Secreto.EqslContrasena",
+                "Ajustes.Secreto.EqslContrasena.Ayuda"),
+            new(credenciales, ClavesDeCredencial.ClubLogContrasena, "Club Log", "Ajustes.Secreto.ClubLogContrasena",
+                "Ajustes.Secreto.ClubLogContrasena.Ayuda"),
+            new(credenciales, ClavesDeCredencial.ClubLogApi, "Club Log", "Ajustes.Secreto.ClubLogApi",
+                "Ajustes.Secreto.ClubLogApi.Ayuda"),
+            new(credenciales, ClavesDeCredencial.QrzContrasena, "QRZ.com", "Ajustes.Secreto.QrzContrasena",
+                "Ajustes.Secreto.QrzContrasena.Ayuda"),
+            new(credenciales, ClavesDeCredencial.QrzClaveDeCuaderno, "QRZ.com", "Ajustes.Secreto.QrzClaveDeCuaderno",
+                "Ajustes.Secreto.QrzClaveDeCuaderno.Ayuda"),
+            new(credenciales, ClavesDeCredencial.HamQthContrasena, "HamQTH", "Ajustes.Secreto.HamQthContrasena",
+                "Ajustes.Secreto.HamQthContrasena.Ayuda"),
         ];
+
+        // El aviso de la frase de paso sigue al idioma.
+        Textos.AlCambiar(this, static vm => vm.OnPropertyChanged(nameof(AvisoDeLaFraseDePaso)));
 
         RefrescarLotw();
 
@@ -198,13 +214,20 @@ public sealed partial class VistaModeloAjustes : ObservableObject
         }
     }
 
-    /// <summary>Los apartados de la configuración, en el orden de la columna de la izquierda.</summary>
-    public static IReadOnlyList<string> Apartados { get; } =
-        ["Cuentas y servicios", "Subidas y QRZ", "Equipo (CAT)", "Audio y digitales", "Fonía", "Cluster", "Correo de las QSL", "Libro (ADIF)", "Actualizaciones"];
+    /// <summary>Las claves de los nombres de los apartados, en el orden de la columna de la izquierda.</summary>
+    public static IReadOnlyList<string> ClavesDeLosApartados { get; } =
+    [
+        "Ajustes.Apartado.Cuentas", "Ajustes.Apartado.Subidas", "Ajustes.Apartado.Equipo", "Ajustes.Apartado.Audio",
+        "Ajustes.Apartado.Fonia", "Ajustes.Apartado.Cluster", "Ajustes.Apartado.Correo", "Ajustes.Apartado.Libro",
+        "Ajustes.Apartado.Actualizaciones", "Ajustes.Apartado.Idioma",
+    ];
+
+    /// <summary>Los apartados de la configuración, en el idioma en uso y en el orden de la columna de la izquierda.</summary>
+    public static IReadOnlyList<string> Apartados => ClavesDeLosApartados.Select(Textos.T).ToList();
 
     /// <summary>Índices de los apartados.</summary>
     public const int ApartadoCuentas = 0, ApartadoSubidas = 1, ApartadoEquipo = 2, ApartadoAudio = 3,
-        ApartadoFonia = 4, ApartadoCluster = 5, ApartadoCorreo = 6, ApartadoLibro = 7, ApartadoActualizaciones = 8;
+        ApartadoFonia = 4, ApartadoCluster = 5, ApartadoCorreo = 6, ApartadoLibro = 7, ApartadoActualizaciones = 8, ApartadoIdioma = 9;
 
     /// <summary>Apartado que se está viendo.</summary>
     [ObservableProperty]
@@ -227,77 +250,83 @@ public sealed partial class VistaModeloAjustes : ObservableObject
         var subidas = Subidas;
         var guardarCuenta = subidas?.GuardarCuentasCommand;
 
-        IReadOnlyList<CampoDeCuenta> Campos(params (string Rotulo, Func<VistaModeloSubidas, string> Leer, Action<VistaModeloSubidas, string> Escribir, string? Nota)[] campos) =>
+        IReadOnlyList<CampoDeCuenta> Campos(params (string Rotulo, Func<VistaModeloSubidas, string> Leer, Action<VistaModeloSubidas, string> Escribir, Func<string?>? Nota)[] campos) =>
             subidas is null
                 ? []
                 : campos.Select(c => new CampoDeCuenta(c.Rotulo, () => c.Leer(subidas), v => c.Escribir(subidas, v), c.Nota)).ToList();
+
+        Func<string?> Nota(string clave) => () => clave;
 
         var qrz = new[] { S(ClavesDeCredencial.QrzContrasena), S(ClavesDeCredencial.QrzClaveDeCuaderno) };
         var lotw = new[] { S(ClavesDeCredencial.LotwContrasena), S(ClavesDeCredencial.TqslFraseDePaso) };
         var eqsl = new[] { S(ClavesDeCredencial.EqslContrasena) };
         var clubLog = new[] { S(ClavesDeCredencial.ClubLogContrasena), S(ClavesDeCredencial.ClubLogApi) };
         var hamQth = new[] { S(ClavesDeCredencial.HamQthContrasena) };
-        var usuarioVacio = subidas?.UsuarioPorOmision ?? "Vacío: se usa el indicativo del perfil.";
+        // El texto de «usuario vacío» lo da el apartado de subidas con el indicativo del perfil;
+        // se pide cada vez que se enseña, para que siga al perfil y al idioma.
+        Func<string?> usuarioVacio = () => subidas?.UsuarioPorOmision ?? Textos.T("Ajustes.Cuenta.UsuarioVacio");
 
         var tarjetas = new List<TarjetaDeServicio>
         {
-            new("QRZ.com", "Q", "Ficha del corresponsal y subida de contactos.",
+            new("QRZ.com", "Q", "Ajustes.Tarjeta.Qrz.Descripcion",
                 () => TarjetaDeServicio.PorSecretos([qrz[0]], qrz), qrz,
-                Campos(("Usuario", s => s.UsuarioQrz, (s, v) => s.UsuarioQrz = v, usuarioVacio)))
+                Campos(("Ajustes.Cuenta.Usuario", s => s.UsuarioQrz, (s, v) => s.UsuarioQrz = v, usuarioVacio)))
             { GuardarCuenta = guardarCuenta },
 
-            new("LoTW", "L", "Confirmaciones de la ARRL, firmadas con TQSL.",
+            new("LoTW", "L", "Ajustes.Tarjeta.Lotw.Descripcion",
                 () =>
                 {
-                    if (SePuedeSubirALotw) return (EstadoDeServicio.Configurado, "Lista para subir");
+                    if (SePuedeSubirALotw) return (EstadoDeServicio.Configurado, Textos.T("Ajustes.Estado.ListaParaSubir"));
                     var (estado, texto) = TarjetaDeServicio.PorSecretos([lotw[0]], lotw);
 
                     // Con la contraseña puesta pero sin poder firmar, lo que falta es TQSL.
-                    return estado == EstadoDeServicio.Configurado ? (EstadoDeServicio.AMedias, "Falta TQSL") : (estado, texto);
+                    return estado == EstadoDeServicio.Configurado ? (EstadoDeServicio.AMedias, Textos.T("Ajustes.Estado.FaltaTqsl")) : (estado, texto);
                 },
                 lotw,
                 Campos(
-                    ("Usuario", s => s.UsuarioLotw, (s, v) => s.UsuarioLotw = v, usuarioVacio),
-                    ("Ubicación de estación de TQSL", s => s.UbicacionTqsl, (s, v) => s.UbicacionTqsl = v, "El nombre que le puso a la ubicación en TQSL, no su indicativo."),
-                    ("Ruta de tqsl.exe", s => s.RutaTqsl, (s, v) => s.RutaTqsl = v, "Solo si no está donde se instala siempre.")),
+                    ("Ajustes.Cuenta.Usuario", s => s.UsuarioLotw, (s, v) => s.UsuarioLotw = v, usuarioVacio),
+                    ("Ajustes.Cuenta.UbicacionTqsl", s => s.UbicacionTqsl, (s, v) => s.UbicacionTqsl = v, Nota("Ajustes.Cuenta.UbicacionTqsl.Nota")),
+                    ("Ajustes.Cuenta.RutaTqsl", s => s.RutaTqsl, (s, v) => s.RutaTqsl = v, Nota("Ajustes.Cuenta.RutaTqsl.Nota"))),
                 () => MotivoDeNoPoderSubirALotw,
                 this)
             {
                 GuardarCuenta = guardarCuenta,
                 Probar = RefrescarCommand,
-                TextoDeProbar = "Volver a comprobar",
-                Nota = AvisoDeLaFraseDePaso,
+                TextoDeProbar = "Ajustes.Tarjeta.VolverAComprobar",
+                Nota = _avisoDeLaFraseDePaso,
             },
 
-            new("eQSL.cc", "E", "Tarjetas QSL electrónicas.",
+            new("eQSL.cc", "E", "Ajustes.Tarjeta.Eqsl.Descripcion",
                 () => TarjetaDeServicio.PorSecretos(eqsl, eqsl), eqsl,
                 Campos(
-                    ("Usuario", s => s.UsuarioEqsl, (s, v) => s.UsuarioEqsl = v, usuarioVacio),
-                    ("Apodo del QTH", s => s.ApodoEqsl, (s, v) => s.ApodoEqsl = v, "Solo si tiene varios QTH en eQSL.")))
+                    ("Ajustes.Cuenta.Usuario", s => s.UsuarioEqsl, (s, v) => s.UsuarioEqsl = v, usuarioVacio),
+                    ("Ajustes.Cuenta.ApodoQth", s => s.ApodoEqsl, (s, v) => s.ApodoEqsl = v, Nota("Ajustes.Cuenta.ApodoQth.Nota"))))
             { GuardarCuenta = guardarCuenta },
 
-            new("Club Log", "C", "Subida del cuaderno y DXCC más buscados.",
+            new("Club Log", "C", "Ajustes.Tarjeta.ClubLog.Descripcion",
                 () => TarjetaDeServicio.PorSecretos(clubLog, clubLog), clubLog,
                 Campos(
-                    ("Correo de la cuenta", s => s.CorreoClubLog, (s, v) => s.CorreoClubLog = v, null),
-                    ("Indicativo del cuaderno", s => s.IndicativoClubLog, (s, v) => s.IndicativoClubLog = v, null)))
+                    ("Ajustes.Cuenta.CorreoClubLog", s => s.CorreoClubLog, (s, v) => s.CorreoClubLog = v, null),
+                    ("Ajustes.Cuenta.IndicativoClubLog", s => s.IndicativoClubLog, (s, v) => s.IndicativoClubLog = v, null)))
             { GuardarCuenta = guardarCuenta },
 
-            new("HamQTH", "H", "Ficha del corresponsal, de reserva si QRZ.com no responde.",
+            new("HamQTH", "H", "Ajustes.Tarjeta.HamQth.Descripcion",
                 () => TarjetaDeServicio.PorSecretos(hamQth, hamQth), hamQth,
-                Campos(("Usuario", s => s.UsuarioHamQth, (s, v) => s.UsuarioHamQth = v, usuarioVacio)))
+                Campos(("Ajustes.Cuenta.Usuario", s => s.UsuarioHamQth, (s, v) => s.UsuarioHamQth = v, usuarioVacio)))
             { GuardarCuenta = guardarCuenta },
         };
 
-        tarjetas.Add(new TarjetaDeServicio("Cluster de DX", "D", "Nodo, indicativo de entrada y contraseña (si la pide).",
+        tarjetas.Add(new TarjetaDeServicio("Ajustes.Tarjeta.Cluster.Nombre", "D", "Ajustes.Tarjeta.Cluster.Descripcion",
             () => Cluster is null
-                ? (EstadoDeServicio.SinConfigurar, "Sin nodo de verdad")
+                ? (EstadoDeServicio.SinConfigurar, Textos.T("Ajustes.Estado.SinNodoDeVerdad"))
                 : string.IsNullOrWhiteSpace(Cluster.Servidor)
-                    ? (EstadoDeServicio.SinConfigurar, "Sin nodo")
-                    : (EstadoDeServicio.Configurado, Cluster.ContrasenaGuardada ? "Configurado · con contraseña" : "Configurado"),
+                    ? (EstadoDeServicio.SinConfigurar, Textos.T("Ajustes.Estado.SinNodo"))
+                    : (EstadoDeServicio.Configurado, Textos.T(Cluster.ContrasenaGuardada ? "Ajustes.Estado.ConfiguradoConContrasena" : "Ajustes.Estado.Configurado")),
             aviso: () => Cluster is null
-                ? "Con los puertos simulados el cluster es de mentira."
-                : string.IsNullOrWhiteSpace(Cluster.Servidor) ? string.Empty : $"{Cluster.Nombre} · {Cluster.Servidor}:{Cluster.Puerto} como {Cluster.IndicativoDeAcceso}",
+                ? Textos.T("Ajustes.Tarjeta.Cluster.Simulado")
+                : string.IsNullOrWhiteSpace(Cluster.Servidor)
+                    ? string.Empty
+                    : Textos.F("Ajustes.Tarjeta.Cluster.Aviso", Cluster.Nombre, Cluster.Servidor, Cluster.Puerto, Cluster.IndicativoDeAcceso),
             origenes: Cluster)
         {
             Configurar = new RelayCommand(() => IndiceDelApartado = ApartadoCluster),
@@ -305,13 +334,13 @@ public sealed partial class VistaModeloAjustes : ObservableObject
 
         if (CorreoQsl is { } correo)
         {
-            tarjetas.Add(new TarjetaDeServicio("Correo (SMTP)", "@", "La cuenta con la que se mandan las QSL por correo.",
+            tarjetas.Add(new TarjetaDeServicio("Ajustes.Tarjeta.Correo.Nombre", "@", "Ajustes.Tarjeta.Correo.Descripcion",
                 () => string.IsNullOrWhiteSpace(correo.Servidor)
                     ? (correo.ContrasenaGuardada ? EstadoDeServicio.AMedias : EstadoDeServicio.SinConfigurar,
-                       correo.ContrasenaGuardada ? "Incompleta" : "Sin configurar")
+                       Textos.T(correo.ContrasenaGuardada ? "Ajustes.Estado.Incompleta" : "Ajustes.Estado.SinConfigurar"))
                     : correo.ContrasenaGuardada || string.IsNullOrWhiteSpace(correo.Usuario)
-                        ? (EstadoDeServicio.Configurado, "Configurada")
-                        : (EstadoDeServicio.AMedias, "Falta la contraseña"),
+                        ? (EstadoDeServicio.Configurado, Textos.T("Ajustes.Estado.Configurada"))
+                        : (EstadoDeServicio.AMedias, Textos.T("Ajustes.Estado.FaltaContrasena")),
                 aviso: () => correo.Aviso is { Length: > 0 } a
                     ? a
                     : string.IsNullOrWhiteSpace(correo.Servidor) ? string.Empty : $"{correo.Servidor}:{correo.Puerto} · {correo.Seguridad}",
@@ -364,6 +393,12 @@ public sealed partial class VistaModeloAjustes : ObservableObject
     /// </remarks>
     public VistaModeloAjustesAudio? Audio { get; }
 
+    /// <summary>
+    /// Apartado del idioma del programa. Nunca nulo: sin registrar (pruebas) cambia el idioma
+    /// sin guardarlo, y la pestaña no se queda con enlaces rotos.
+    /// </summary>
+    public VistaModeloIdioma Idioma { get; init; } = new(new Ajustes.AjustesDelPrograma(), null);
+
     /// <summary>Apartado de fonía por el PC, o nulo si no se registró.</summary>
     public VistaModeloAjustesFonia? Fonia { get; init; }
 
@@ -396,7 +431,7 @@ public sealed partial class VistaModeloAjustes : ObservableObject
     /// procesos mientras dura la subida. No se puede evitar; lo que si se puede es decirlo
     /// antes y no despues.
     /// </remarks>
-    public string AvisoDeLaFraseDePaso { get; }
+    public string AvisoDeLaFraseDePaso => TextoOClave.Resolver(_avisoDeLaFraseDePaso);
 
     /// <summary>Por que no se puede subir a LoTW. Vacio cuando si se puede.</summary>
     [ObservableProperty]
@@ -479,14 +514,14 @@ public sealed partial class VistaModeloAjustes : ObservableObject
 
         if (_escritor is null)
         {
-            ParteDeLaImportacion = "No hay escritor de ADIF en esta sesión: el fichero no se ha escrito.";
+            ParteDeLaImportacion = Textos.T("Ajustes.Libro.SinEscritorAlExportar");
             return;
         }
 
         Ocupado = true;
         Choques.Clear();
         HayChoques = false;
-        ParteDeLaImportacion = "Exportando…";
+        ParteDeLaImportacion = Textos.T("Ajustes.Libro.Exportando");
 
         var temporal = ruta + ".escribiendo";
         var escritos = 0;
@@ -519,14 +554,12 @@ public sealed partial class VistaModeloAjustes : ObservableObject
             }
 
             File.Move(temporal, ruta, overwrite: true);
-            ParteDeLaImportacion = string.Create(
-                CultureInfo.CurrentCulture,
-                $"{Path.GetFileName(ruta)}: {escritos:N0} contactos exportados a ADIF.");
+            ParteDeLaImportacion = Textos.F("Ajustes.Libro.Exportados", Path.GetFileName(ruta), escritos);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido exportar el cuaderno a {Ruta}.", ruta);
-            ParteDeLaImportacion = $"No se ha podido exportar: {ex.Message} El fichero no se ha escrito.";
+            ParteDeLaImportacion = Textos.F("Ajustes.Libro.ErrorAlExportar", ex.Message);
             try
             {
                 if (File.Exists(temporal)) File.Delete(temporal);
@@ -556,12 +589,12 @@ public sealed partial class VistaModeloAjustes : ObservableObject
         try
         {
             var total = await _cuaderno.ContarAsync().ConfigureAwait(true);
-            ContactosDelCuaderno = total.ToString("N0", CultureInfo.CurrentCulture);
+            ContactosDelCuaderno = total.ToString("N0", Textos.Cultura);
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se han podido contar los contactos del cuaderno.");
-            ContactosDelCuaderno = "no se ha podido contar";
+            ContactosDelCuaderno = Textos.T("Ajustes.Libro.NoSeHaPodidoContar");
         }
     }
 
@@ -582,7 +615,7 @@ public sealed partial class VistaModeloAjustes : ObservableObject
         Ocupado = true;
         Choques.Clear();
         HayChoques = false;
-        ParteDeLaImportacion = "Importando…";
+        ParteDeLaImportacion = Textos.T("Ajustes.Libro.Importando");
 
         try
         {
@@ -603,7 +636,7 @@ public sealed partial class VistaModeloAjustes : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido importar el ADIF {Ruta}.", ruta);
-            ParteDeLaImportacion = $"No se ha podido importar: {ex.Message}";
+            ParteDeLaImportacion = Textos.F("Ajustes.Libro.ErrorAlImportar", ex.Message);
         }
         finally
         {
@@ -615,35 +648,36 @@ public sealed partial class VistaModeloAjustes : ObservableObject
     {
         var texto = new System.Text.StringBuilder();
 
-        texto.Append(CultureInfo.CurrentCulture, $"{Path.GetFileName(ruta)}: ");
-        texto.Append(CultureInfo.CurrentCulture, $"{parte.RegistrosLeidos:N0} registros leídos, ");
-        texto.Append(CultureInfo.CurrentCulture, $"{parte.Anadidos:N0} nuevos, ");
-        texto.Append(CultureInfo.CurrentCulture, $"{parte.Fundidos:N0} fundidos ");
-        texto.Append(CultureInfo.CurrentCulture, $"({parte.FundidosEnElFichero:N0} dentro del fichero y ");
-        texto.Append(CultureInfo.CurrentCulture, $"{parte.FundidosConElCuaderno:N0} contra el cuaderno), ");
-        texto.Append(CultureInfo.CurrentCulture, $"{parte.YaEstaban:N0} ya estaban.");
+        texto.Append(Textos.F(
+            "Ajustes.Libro.Parte.Resumen",
+            Path.GetFileName(ruta),
+            parte.RegistrosLeidos,
+            parte.Anadidos,
+            parte.Fundidos,
+            parte.FundidosEnElFichero,
+            parte.FundidosConElCuaderno,
+            parte.YaEstaban));
 
         if (parte.ConfirmacionesRecuperadas > 0)
         {
-            texto.Append(CultureInfo.CurrentCulture,
-                $" Se han rescatado {parte.ConfirmacionesRecuperadas:N0} confirmaciones que se habrían perdido descartando las copias.");
+            texto.Append(' ').Append(Textos.F("Ajustes.Libro.Parte.Rescatadas", parte.ConfirmacionesRecuperadas));
         }
 
         if (parte.ProgramaOrigen is { Length: > 0 } programa)
         {
-            texto.Append(CultureInfo.CurrentCulture, $" Lo generó {programa}.");
+            texto.Append(' ').Append(Textos.F("Ajustes.Libro.Parte.Programa", programa));
         }
 
-        texto.Append(CultureInfo.CurrentCulture, $" Ha tardado {parte.Duracion.TotalSeconds:N1} s.");
+        texto.Append(' ').Append(Textos.F("Ajustes.Libro.Parte.Duracion", parte.Duracion.TotalSeconds));
 
         if (!parte.NoSePierdeNada)
         {
-            texto.Append(" AVISO: las cuentas no cuadran, hay registros que no se pueden explicar. Revise el fichero.");
+            texto.Append(' ').Append(Textos.T("Ajustes.Libro.Parte.NoCuadra"));
         }
 
         if (parte.Avisos.Count > 0)
         {
-            texto.Append(CultureInfo.CurrentCulture, $" Con {parte.Avisos.Count:N0} aviso(s) de lectura.");
+            texto.Append(' ').Append(Textos.F("Ajustes.Libro.Parte.Avisos", parte.Avisos.Count));
         }
 
         return texto.ToString();
@@ -658,7 +692,7 @@ public sealed partial class VistaModeloAjustes : ObservableObject
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido comprobar si LoTW está listo.");
-            MotivoDeNoPoderSubirALotw = $"No se ha podido comprobar el estado de LoTW: {ex.Message}";
+            MotivoDeNoPoderSubirALotw = Textos.F("Ajustes.Tarjeta.Lotw.ErrorAlComprobar", ex.Message);
         }
     }
 }

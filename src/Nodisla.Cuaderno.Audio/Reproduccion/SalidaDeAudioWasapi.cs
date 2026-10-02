@@ -6,6 +6,7 @@ using NAudio.Wave;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Audio.Captura;
 using Nodisla.Cuaderno.Audio.Dispositivos;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Audio.Reproduccion;
 
@@ -119,7 +120,7 @@ public sealed class SalidaDeAudioWasapi : ISalidaDeAudio
         catch (Exception fallo)
         {
             throw new ArgumentException(
-                "No se encuentra ese dispositivo de sonido; puede que la radio esté apagada.",
+                Textos.T("Servicios.Audio.SinDispositivo"),
                 nameof(idDispositivo),
                 fallo);
         }
@@ -225,7 +226,7 @@ public sealed class SalidaDeAudioWasapi : ISalidaDeAudio
             if (_salida is null || _cola is null || _remuestreador is null)
             {
                 throw new InvalidOperationException(
-                    "No hay ningún dispositivo de salida abierto: no se puede reproducir.");
+                    Textos.T("Servicios.Audio.SinSalidaAbierta"));
             }
 
             cola = _cola;

@@ -2,7 +2,8 @@
         Icon="/Nodisla.Cuaderno.Ui;component/Recursos/CuadernoNodisla.ico"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Cuaderno NODISLA · primer arranque"
+        xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+        Title="{loc:Texto Dialogos.PrimerArranque.Titulo}"
         SizeToContent="Height"
         Width="600"
         MinWidth="420"
@@ -22,24 +23,24 @@
 
     <Border Style="{StaticResource Tarjeta}" Margin="14">
         <StackPanel>
-            <TextBlock Text="Bienvenido al cuaderno" Style="{StaticResource TituloDeSeccion}" FontSize="19" />
+            <TextBlock Text="{loc:Texto Dialogos.PrimerArranque.Bienvenida}" Style="{StaticResource TituloDeSeccion}" FontSize="19" />
 
             <TextBlock TextWrapping="Wrap" TextTrimming="None" Margin="0,0,0,16"
-                       Text="Antes de registrar el primer contacto hace falta un perfil de estación: el indicativo con el que transmite y desde dónde opera. Sin esos datos el cuaderno no se puede exportar a ADIF ni sirve para pedir diplomas." />
+                       Text="{loc:Texto Dialogos.PrimerArranque.Explicacion}" />
 
-            <TextBlock Text="Indicativo de la estación" Style="{StaticResource EtiquetaDeCampo}" />
+            <TextBlock Text="{loc:Texto Dialogos.PrimerArranque.Indicativo}" Style="{StaticResource EtiquetaDeCampo}" />
             <TextBox x:Name="CampoIndicativo"
                      Style="{StaticResource CampoDeIndicativo}"
                      Text="{Binding Indicativo, UpdateSourceTrigger=PropertyChanged}"
                      Margin="0,0,0,12"
-                     ToolTip="Por ejemplo EA8DLF" />
+                     ToolTip="{loc:Texto Dialogos.PrimerArranque.IndicativoEjemplo}" />
 
-            <TextBlock Text="Localizador (opcional, pero hace falta para distancias y rumbos)"
+            <TextBlock Text="{loc:Texto Dialogos.PrimerArranque.Localizador}"
                        Style="{StaticResource EtiquetaDeCampo}" />
             <TextBox Text="{Binding Localizador, UpdateSourceTrigger=PropertyChanged}"
                      CharacterCasing="Upper"
                      Margin="0,0,0,12"
-                     ToolTip="Por ejemplo IL18SN" />
+                     ToolTip="{loc:Texto Dialogos.PrimerArranque.LocalizadorEjemplo}" />
 
             <Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
@@ -48,19 +49,19 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
-                    <TextBlock Text="Nombre del operador (opcional)" Style="{StaticResource EtiquetaDeCampo}" />
+                    <TextBlock Text="{loc:Texto Dialogos.PrimerArranque.NombreOperador}" Style="{StaticResource EtiquetaDeCampo}" />
                     <TextBox Text="{Binding NombreOperador, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
                 <StackPanel Grid.Column="2">
-                    <TextBlock Text="Localidad (opcional)" Style="{StaticResource EtiquetaDeCampo}" />
+                    <TextBlock Text="{loc:Texto Dialogos.PrimerArranque.Localidad}" Style="{StaticResource EtiquetaDeCampo}" />
                     <TextBox Text="{Binding Localidad, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
             </Grid>
 
-            <TextBlock Text="Nombre del perfil" Style="{StaticResource EtiquetaDeCampo}" />
+            <TextBlock Text="{loc:Texto Dialogos.PrimerArranque.NombrePerfil}" Style="{StaticResource EtiquetaDeCampo}" />
             <TextBox Text="{Binding NombrePerfil, UpdateSourceTrigger=PropertyChanged}"
                      Margin="0,0,0,12"
-                     ToolTip="Para distinguirlo de otros perfiles: Casa, Portable, Concursos…" />
+                     ToolTip="{loc:Texto Dialogos.PrimerArranque.NombrePerfilTooltip}" />
 
             <Border Padding="12,8" CornerRadius="4" BorderThickness="1" Margin="0,0,0,12"
                     Background="{DynamicResource ErrorFondo}"
@@ -72,8 +73,8 @@
             </Border>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Salir del programa" IsCancel="True" Margin="0,0,10,0" Click="AlSalir" />
-                <Button Content="Crear el perfil y empezar"
+                <Button Content="{loc:Texto Dialogos.PrimerArranque.Salir}" IsCancel="True" Margin="0,0,10,0" Click="AlSalir" />
+                <Button Content="{loc:Texto Dialogos.PrimerArranque.Crear}"
                         Style="{StaticResource BotonPrincipal}"
                         IsDefault="True"
                         Command="{Binding CrearCommand}" />

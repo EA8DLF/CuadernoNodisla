@@ -1,5 +1,6 @@
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Adif;
 
@@ -90,14 +91,14 @@ public sealed class LectorAdif : ILectorAdif
             numero++;
             avisos.Add(new AvisoAdif(
                 numero, null,
-                "El fichero termina con un registro sin cerrar; se importa igualmente con lo que trae.",
+                Textos.T("Servicios.Adif.RegistroSinCerrar"),
                 NivelDeAviso.Advertencia));
             AnadirRegistro(qsos, pendientes, numero, avisos);
         }
 
         if (!cabeceraCerrada && qsos.Count == 0 && avisos.Count == 0)
         {
-            avisos.Add(new AvisoAdif(0, null, "El fichero no contiene ningun contacto.", NivelDeAviso.Advertencia));
+            avisos.Add(new AvisoAdif(0, null, Textos.T("Servicios.Adif.SinContactos"), NivelDeAviso.Advertencia));
         }
 
         MarcarOrigen(qsos, cabecera);
@@ -109,7 +110,7 @@ public sealed class LectorAdif : ILectorAdif
     {
         if (campos.Count == 0)
         {
-            avisos.Add(new AvisoAdif(numero, null, "Registro vacio; se descarta.", NivelDeAviso.Error));
+            avisos.Add(new AvisoAdif(numero, null, Textos.T("Servicios.Adif.RegistroVacio"), NivelDeAviso.Error));
             return;
         }
 
@@ -123,7 +124,7 @@ public sealed class LectorAdif : ILectorAdif
         {
             avisos.Add(new AvisoAdif(
                 numero, null,
-                $"No se ha podido leer el registro y se descarta: {ex.Message}",
+                Textos.F("Servicios.Adif.RegistroIlegible", ex.Message),
                 NivelDeAviso.Error));
         }
     }

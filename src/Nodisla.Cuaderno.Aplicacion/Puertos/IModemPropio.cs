@@ -1,4 +1,5 @@
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Aplicacion.Puertos;
 
@@ -173,7 +174,7 @@ public interface IModemPropio : IAsyncDisposable
     /// El modem de verdad lo sobreescribe con lo que diga <c>TablasDelProtocolo</c>.
     /// </para>
     /// </remarks>
-    EstadoDeLasTablas EstadoDeLasTablas => new(EsElCodigoReal: true, Procedencia: "no procede");
+    EstadoDeLasTablas EstadoDeLasTablas => new(EsElCodigoReal: true, Procedencia: Textos.T("Servicios.Aplicacion.NoProcede"));
 
     /// <summary>
     /// Modos que este modem sabe hacer de verdad, en el orden en que se ofrecen.

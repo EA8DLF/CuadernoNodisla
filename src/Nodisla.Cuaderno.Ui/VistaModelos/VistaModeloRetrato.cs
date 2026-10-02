@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 using Serilog;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
@@ -31,28 +32,28 @@ public sealed record CasillaVista(
         ? "—"
         : (Trabajado, Confirmado) switch
         {
-            (false, _) => "NUEVO",
-            (true, false) => "sin QSL",
-            _ => "✓ OK",
+            (false, _) => Textos.T("Libro.Retrato.Casilla.Nuevo"),
+            (true, false) => Textos.T("Libro.Retrato.Casilla.SinQsl"),
+            _ => Textos.T("Libro.Retrato.Casilla.Ok"),
         };
 
     /// <summary>Nombre para el lector de pantalla, que no ve los colores.</summary>
     public string NombreAccesible => Aplica
-        ? $"{NombreDelEje} por {NombreDelMedio}: {Texto}"
-        : $"{NombreDelEje} por {NombreDelMedio}: sin dato para calcularlo";
+        ? Textos.F("Libro.Retrato.Casilla.Accesible", NombreDelEje, NombreDelMedio, Texto)
+        : Textos.F("Libro.Retrato.Casilla.SinDato", NombreDelEje, NombreDelMedio);
 
-    /// <summary>Nombre del eje en espanol.</summary>
+    /// <summary>Nombre del eje en el idioma en uso.</summary>
     public string NombreDelEje => Eje switch
     {
-        EjeDeNovedad.Pais => "País",
-        EjeDeNovedad.Banda => "Banda",
-        _ => "Modo",
+        EjeDeNovedad.Pais => Textos.T("Comun.Pais"),
+        EjeDeNovedad.Banda => Textos.T("Comun.Banda"),
+        _ => Textos.T("Comun.Modo"),
     };
 
-    /// <summary>Nombre de la via en espanol.</summary>
+    /// <summary>Nombre de la via en el idioma en uso.</summary>
     public string NombreDelMedio => Medio switch
     {
-        MedioDeConfirmacion.Papel => "Papel",
+        MedioDeConfirmacion.Papel => Textos.T("Libro.Retrato.Papel"),
         MedioDeConfirmacion.Eqsl => "eQSL",
         MedioDeConfirmacion.Lotw => "LoTW",
         MedioDeConfirmacion.QrzCom => "QRZ",
@@ -86,25 +87,25 @@ public sealed record CasillaDeRejilla(string Banda, FamiliaDeModo Familia, int C
     {
         (0, _) => string.Empty,
         (_, > 0) => "✓",
-        (< 10, _) => Contactos.ToString(System.Globalization.CultureInfo.CurrentCulture),
+        (< 10, _) => Contactos.ToString(Textos.Cultura),
         _ => "9+",
     };
 
     /// <summary>Lo que se dice al pasar el raton y al lector de pantalla.</summary>
     public string Detalle => Contactos switch
     {
-        0 => $"{Banda} en {NombreDeLaFamilia}: sin trabajar",
+        0 => Textos.F("Libro.Retrato.Rejilla.SinTrabajar", Banda, NombreDeLaFamilia),
         _ when Confirmados > 0 =>
-            $"{Banda} en {NombreDeLaFamilia}: {Contactos} contacto(s), {Confirmados} confirmado(s)",
-        _ => $"{Banda} en {NombreDeLaFamilia}: {Contactos} contacto(s), ninguno confirmado",
+            Textos.F("Libro.Retrato.Rejilla.Confirmados", Banda, NombreDeLaFamilia, Contactos, Confirmados),
+        _ => Textos.F("Libro.Retrato.Rejilla.NingunoConfirmado", Banda, NombreDeLaFamilia, Contactos),
     };
 
-    /// <summary>Nombre de la familia de modo en espanol.</summary>
+    /// <summary>Nombre de la familia de modo en el idioma en uso.</summary>
     public string NombreDeLaFamilia => Familia switch
     {
-        FamiliaDeModo.Fonia => "fonía",
-        FamiliaDeModo.Telegrafia => "telegrafía",
-        _ => "digitales",
+        FamiliaDeModo.Fonia => Textos.T("Libro.Retrato.Familia.Fonia"),
+        FamiliaDeModo.Telegrafia => Textos.T("Libro.Retrato.Familia.Telegrafia"),
+        _ => Textos.T("Libro.Retrato.Familia.Digitales"),
     };
 }
 
@@ -156,6 +157,26 @@ public sealed partial class VistaModeloRetrato : ObservableObject, IDisposable
             _espera.Stop();
             await ArmarAsync().ConfigureAwait(true);
         };
+
+        Textos.AlCambiar(this, static vm => vm.AlCambiarDeIdioma());
+    }
+
+    /// <summary>
+    /// Las casillas escriben sus textos al pintarse: con el idioma nuevo se vuelve a armar el
+    /// retrato (o el aviso de «escriba un indicativo» si no hay nada).
+    /// </summary>
+    private void AlCambiarDeIdioma()
+    {
+        if (_liberado) return;
+        if (HayDatos && _pendiente.Length >= 3)
+        {
+            _espera.Stop();
+            _espera.Start();
+        }
+        else
+        {
+            Resumen = Textos.T("Libro.Retrato.Resumen.Vacio");
+        }
     }
 
     /// <summary>Perfil de estacion activo, para no mezclar cuadernos.</summary>
@@ -177,7 +198,7 @@ public sealed partial class VistaModeloRetrato : ObservableObject, IDisposable
 
     /// <summary>Resumen del trabajado antes: cuantas veces y si hay algo nuevo.</summary>
     [ObservableProperty]
-    private string _resumen = "Escriba un indicativo.";
+    private string _resumen = Textos.T("Libro.Retrato.Resumen.Vacio");
 
     /// <summary>Hay algo que el contacto aportaria: entidad, banda o modo nuevos.</summary>
     [ObservableProperty]
@@ -232,7 +253,7 @@ public sealed partial class VistaModeloRetrato : ObservableObject, IDisposable
         AportaAlgo = false;
         Indicativo = string.Empty;
         Pais = string.Empty;
-        Resumen = "Escriba un indicativo.";
+        Resumen = Textos.T("Libro.Retrato.Resumen.Vacio");
     }
 
     private async Task ArmarAsync()
@@ -263,7 +284,7 @@ public sealed partial class VistaModeloRetrato : ObservableObject, IDisposable
             if (ct.IsCancellationRequested || _liberado) return;
 
             Indicativo = valor.Valor;
-            Pais = entidad?.NombreParaMostrar ?? "entidad sin resolver";
+            Pais = entidad?.NombreParaMostrar ?? Textos.T("Libro.Retrato.SinEntidad");
             Poner(retrato);
         }
         catch (OperationCanceledException)
@@ -309,9 +330,9 @@ public sealed partial class VistaModeloRetrato : ObservableObject, IDisposable
 
         Resumen = retrato.ContactosConElIndicativo switch
         {
-            0 => "Nunca trabajado.",
-            1 => "Trabajado 1 vez.",
-            var cuantos => $"Trabajado {cuantos} veces.",
+            0 => Textos.T("Libro.Retrato.Resumen.Nunca"),
+            1 => Textos.T("Libro.Retrato.Resumen.UnaVez"),
+            var cuantos => Textos.F("Libro.Retrato.Resumen.Veces", cuantos),
         };
     }
 }

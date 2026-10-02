@@ -1,6 +1,7 @@
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
 using Nodisla.Cuaderno.Dominio.Valores;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 
@@ -99,7 +100,7 @@ public sealed class CompletadorDeQso
         }
         catch (Exception ex)
         {
-            Cambiar($"{_consulta.Nombre} no ha contestado: {ex.Message}", Aviso);
+            Cambiar(Textos.F("Servicios.Aplicacion.NoHaContestado", _consulta.Nombre, ex.Message), Aviso);
             return null;
         }
     }

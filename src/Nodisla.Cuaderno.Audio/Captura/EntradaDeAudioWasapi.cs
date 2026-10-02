@@ -5,6 +5,7 @@ using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Audio.Dispositivos;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Audio.Captura;
 
@@ -131,7 +132,7 @@ public sealed class EntradaDeAudioWasapi : IEntradaDeAudio
         catch (Exception fallo)
         {
             throw new ArgumentException(
-                "No se encuentra ese dispositivo de sonido; puede que la radio esté apagada.",
+                Textos.T("Servicios.Audio.SinDispositivo"),
                 nameof(idDispositivo),
                 fallo);
         }

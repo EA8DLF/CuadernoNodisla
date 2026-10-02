@@ -18,14 +18,15 @@ Cuaderno o desde la ficha de un contacto se genera la tarjeta de cualquier QSO c
   copia** a la carpeta de la plantilla, así que borrar o mover la original no deja la tarjeta sin
   fondo. **Ajuste**: *Rellenar* (cubre la tarjeta y recorta lo que sobre), *Encajar* (se ve
   entera; lo que falte queda del color de fondo) o *Estirar*. **Color** es el color liso de
-  debajo.
+  debajo; se elige en la paleta (vea [Elegir un color](#elegir-un-color)).
 - **Campos** — cada texto de la tarjeta: mi indicativo (grande), mi nombre y QTH, mi localizador,
   «To Radio», fecha, hora UTC, banda/frecuencia, modo, RST, «PSE/TNX QSL» y «73». **Se mueven
   arrastrándolos sobre la tarjeta**; para afinar, X/Y en milímetros. La casilla de la lista los
   enciende o apaga. **Añadir texto** pone uno libre.
 - **El campo elegido** (a la derecha): texto, letra (cualquier tipografía instalada), tamaño en
-  puntos, negrita, cursiva, color, **recuadro detrás** (por ejemplo `#E6FFFFFF`, blanco casi
-  opaco, para que se lea sobre una foto) y alineación respecto a X (izquierda, centro, derecha).
+  puntos, negrita, cursiva, alineación respecto a X (izquierda, centro, derecha), **color del
+  texto** y **recuadro detrás** (por ejemplo un blanco casi opaco, para que se lea sobre una
+  foto; *Sin recuadro* lo quita).
 - **Vista previa con** — un contacto de verdad del cuaderno (los últimos 40), o ninguno para ver
   solo sus datos.
 
@@ -33,6 +34,33 @@ La tarjeta del centro **es la imagen de verdad**: la misma rutina la dibuja para
 (200 ppp) y para el PDF (300 ppp). Lo que se ve es lo que recibe el corresponsal.
 
 En una pantalla pequeña (1366 × 768) cabe igual: las columnas laterales se desplazan.
+
+### Elegir un color
+
+Los colores (del texto, del recuadro, del fondo) se eligen **mirando, no escribiendo códigos**.
+El botón enseña la muestra y el nombre del color («Azul marino», «Blanco al 90 %»); al pulsarlo
+se despliega la paleta:
+
+![Selector de color desplegado: paleta, colores del diseño, últimos usados, opacidad y el selector libre de tono](../capturas/ayuda/selector-de-color.png)
+
+- **Paleta** — 40 colores: negros y grises, los de NODISLA (y el azul marino y el oro viejo de
+  las plantillas de fábrica), colores vivos y pastel. Un clic lo elige; la ✓ marca el actual.
+  Al pasar por encima sale su nombre.
+- **Colores del diseño** — los que ya usa la plantilla abierta, para repetir el mismo color en
+  otro texto sin buscarlo.
+- **Últimos usados** — los últimos colores elegidos en esta sesión, en cualquier selector.
+- **Opacidad** — solo donde tiene sentido (texto y recuadro): a la izquierda, transparente.
+  Elegir otro color de la paleta conserva la opacidad que hubiera.
+- **Color exacto** — un cuadro de saturación y brillo y una barra de tono que se arrastran,
+  para un color que no esté en la paleta.
+- **Avanzado** — el código (`#1B3A5C`, `#E6FFFFFF`…), por si lo trae apuntado. Es opcional.
+
+Con el teclado: `Tab` llega al botón, `Espacio`, `Intro` o `Flecha abajo` lo abren, las flechas
+recorren las muestras, `Intro` elige y `Esc` cierra sin cambiar nada. En el cuadro de color
+exacto y en las barras, las flechas mueven poco y `Mayús` + flechas, más.
+
+Las plantillas guardan el color igual que antes, así que las de versiones anteriores abren sin
+cambios.
 
 ### Variables
 

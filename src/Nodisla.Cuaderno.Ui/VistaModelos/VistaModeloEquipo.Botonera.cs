@@ -3,6 +3,7 @@ using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 using Serilog;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
@@ -42,17 +43,17 @@ public sealed partial class VistaModeloEquipo
     /// <summary>LSB · USB · CW · AM · FM · DATA.</summary>
     public IReadOnlyList<TeclaDeLaBotonera> TeclasDeModo { get; } =
     [
-        new("LSB", "Banda lateral inferior en el VFO activo (MD0 1).", TeclaDeModo.Lsb),
-        new("USB", "Banda lateral superior en el VFO activo (MD0 2).", TeclaDeModo.Usb),
-        new("CW", "Telegrafía en el VFO activo (MD0 3, CW-U).", TeclaDeModo.Cw),
-        new("AM", "AM en el VFO activo (MD0 5).", TeclaDeModo.Am),
-        new("FM", "FM en el VFO activo (MD0 4).", TeclaDeModo.Fm),
-        new("DATA", "Datos en el VFO activo: DATA-L por debajo de 10 MHz, DATA-U por encima (MD0 8 / MD0 C).", TeclaDeModo.Datos),
+        new("LSB", AyudaDelModo(TeclaDeModo.Lsb), TeclaDeModo.Lsb),
+        new("USB", AyudaDelModo(TeclaDeModo.Usb), TeclaDeModo.Usb),
+        new("CW", AyudaDelModo(TeclaDeModo.Cw), TeclaDeModo.Cw),
+        new("AM", AyudaDelModo(TeclaDeModo.Am), TeclaDeModo.Am),
+        new("FM", AyudaDelModo(TeclaDeModo.Fm), TeclaDeModo.Fm),
+        new("DATA", AyudaDelModo(TeclaDeModo.Datos), TeclaDeModo.Datos),
     ];
 
     /// <summary>M1 … M6: los canales de memoria 1 a 6 del equipo.</summary>
     public IReadOnlyList<TeclaDeLaBotonera> TeclasDeMemoria { get; } =
-        [.. Enumerable.Range(1, 6).Select(n => new TeclaDeLaBotonera($"M{n}", $"Memoria {n} del equipo (MC{n:D3}).", n))];
+        [.. Enumerable.Range(1, 6).Select(n => new TeclaDeLaBotonera($"M{n}", Textos.F("Cabina.Botonera.MemoriaAyuda", n), n))];
 
     /// <summary>Canales 1 a 40 de la banda ciudadana, en el plan elegido.</summary>
     public IReadOnlyList<TeclaDeLaBotonera> CanalesDeCb { get; } =
@@ -78,10 +79,10 @@ public sealed partial class VistaModeloEquipo
 
     /// <summary>Por que la botonera esta apagada, para su ayuda emergente.</summary>
     public string MotivoDeLaBotonera => !HayBotonera
-        ? "Este equipo no admite las teclas de banda y modo por CAT."
+        ? Textos.T("Cabina.Botonera.SinBotonera")
         : !Conectado
-            ? "Conecte el equipo para usar la botonera."
-            : "Todo va al VFO activo, como en la radio. Ninguna tecla transmite.";
+            ? Textos.T("Cabina.Botonera.ConecteElEquipo")
+            : Textos.T("Cabina.Botonera.TodoAlVfo");
 
     /// <summary>
     /// Pulsa una tecla de banda: <c>BS</c>, como la tecla BAND de la radio, sobre el VFO activo.
@@ -99,7 +100,7 @@ public sealed partial class VistaModeloEquipo
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido ir a la banda {Banda}.", banda.Rotulo);
-            Aviso = $"No se ha podido ir a {banda.Descripcion}: {ex.Message}";
+            Aviso = Textos.F("Cabina.Botonera.NoVaABanda", banda.Descripcion, ex.Message);
         }
     }
 
@@ -117,7 +118,7 @@ public sealed partial class VistaModeloEquipo
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido poner el modo {Modo}.", modo);
-            Aviso = $"No se ha podido poner {tecla.Rotulo}: {ex.Message}";
+            Aviso = Textos.F("Cabina.Botonera.NoPoneModo", tecla.Rotulo, ex.Message);
         }
     }
 
@@ -135,7 +136,7 @@ public sealed partial class VistaModeloEquipo
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido recuperar la memoria {Numero}.", numero);
-            Aviso = $"No se ha podido recuperar M{numero}: {ex.Message}";
+            Aviso = Textos.F("Cabina.Botonera.NoRecuperaMemoria", numero, ex.Message);
         }
     }
 
@@ -155,7 +156,7 @@ public sealed partial class VistaModeloEquipo
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido ir al canal {Canal}.", canal);
-            Aviso = $"No se ha podido ir al canal {canal}: {ex.Message}";
+            Aviso = Textos.F("Cabina.Botonera.NoVaACanal", canal, ex.Message);
         }
     }
 
@@ -171,11 +172,21 @@ public sealed partial class VistaModeloEquipo
 
     private static string AyudaDelPlan(PlanCb plan) => plan switch
     {
-        PlanCb.Once => "11 m: los 40 canales de la tabla común (CEPT/USA), 26,965–27,405 MHz.",
-        PlanCb.Uk => "Reino Unido 27/81: 27,60125–27,99125 MHz, cada 10 kHz.",
-        PlanCb.Cept => "CEPT: 26,965–27,405 MHz (tabla FCC 95.963 / ECC).",
-        PlanCb.Pl => "Polonia: la tabla CEPT 5 kHz por debajo (canal 1 = 26,960 MHz).",
-        _ => "USA (FCC 95.963): 26,965–27,405 MHz.",
+        PlanCb.Once => Textos.T("Cabina.Botonera.Plan11m"),
+        PlanCb.Uk => Textos.T("Cabina.Botonera.PlanUk"),
+        PlanCb.Cept => Textos.T("Cabina.Botonera.PlanCept"),
+        PlanCb.Pl => Textos.T("Cabina.Botonera.PlanPl"),
+        _ => Textos.T("Cabina.Botonera.PlanUsa"),
+    };
+
+    private static string AyudaDelModo(TeclaDeModo modo) => modo switch
+    {
+        TeclaDeModo.Lsb => Textos.T("Cabina.Botonera.ModoLsb"),
+        TeclaDeModo.Usb => Textos.T("Cabina.Botonera.ModoUsb"),
+        TeclaDeModo.Cw => Textos.T("Cabina.Botonera.ModoCw"),
+        TeclaDeModo.Am => Textos.T("Cabina.Botonera.ModoAm"),
+        TeclaDeModo.Fm => Textos.T("Cabina.Botonera.ModoFm"),
+        _ => Textos.T("Cabina.Botonera.ModoDatos"),
     };
 
     /// <summary>Monta las teclas de banda del equipo que haya y avisa de lo que cambia.</summary>
@@ -186,12 +197,25 @@ public sealed partial class VistaModeloEquipo
         {
             foreach (var tecla in botonera.TeclasDeBanda)
             {
-                TeclasDeBanda.Add(new TeclaDeLaBotonera(tecla.Rotulo, $"{tecla.Descripcion}: vuelve a lo último usado en esa banda (pila de banda, como BAND).", tecla));
+                TeclasDeBanda.Add(new TeclaDeLaBotonera(tecla.Rotulo, Textos.F("Cabina.Botonera.BandaAyuda", tecla.Descripcion), tecla));
             }
         }
 
         OnPropertyChanged(nameof(HayBotonera));
         AvisarDeLaBotonera();
+    }
+
+    /// <summary>Al cambiar de idioma: los textos calculados y las ayudas de la botonera, que se guardan hechas.</summary>
+    private void AlCambiarElIdioma()
+    {
+        OnPropertyChanged(string.Empty);
+        foreach (var tecla in TeclasDeModo) tecla.Ayuda = AyudaDelModo((TeclaDeModo)tecla.Valor);
+        foreach (var tecla in PlanesDeCb) tecla.Ayuda = AyudaDelPlan((PlanCb)tecla.Valor);
+        // Las teclas de banda se retocan en su sitio y no se vuelven a montar: vaciar y rellenar
+        // la colección obliga a hacerlo desde el hilo de su vista, y el cambio de idioma puede
+        // llegar de otro. Cambiar una propiedad de una tecla, en cambio, WPF lo admite.
+        foreach (var tecla in TeclasDeBanda) tecla.Ayuda = Textos.F("Cabina.Botonera.BandaAyuda", ((TeclaDeBanda)tecla.Valor).Descripcion);
+        RecogerLaBotonera();
     }
 
     private void AvisarDeLaBotonera()
@@ -228,7 +252,7 @@ public sealed partial class VistaModeloEquipo
             var memoria = Memorias.FirstOrDefault(x => x.Numero == numero);
             tecla.Ayuda = memoria is { Ocupada: true }
                 ? $"M{numero}: {Aplicacion.CasosDeUso.TextoDeFrecuencia.Escribir(memoria.Frecuencia)} MHz {memoria.Modo.NombreUsual}{(memoria.Etiqueta is { } e ? $" «{e}»" : string.Empty)} (MC{numero:D3})."
-                : $"M{numero}: memoria {numero} del equipo (MC{numero:D3}). Vacía o sin leer.";
+                : Textos.F("Cabina.Botonera.MemoriaVacia", numero);
         }
 
         var canal = conectado ? CanalesCb.CanalEn(PlanCb, hercios) : null;
@@ -236,7 +260,7 @@ public sealed partial class VistaModeloEquipo
         {
             var n = (int)tecla.Valor;
             tecla.Activa = canal == n;
-            tecla.Ayuda = $"Canal {n} ({CanalesCb.Rotulo(PlanCb)}): {(CanalesCb.Hercios(PlanCb, n) / 1e6).ToString("0.00000", CultureInfo.CurrentCulture)} MHz en el VFO activo.";
+            tecla.Ayuda = Textos.F("Cabina.Botonera.CanalAyuda", n, CanalesCb.Rotulo(PlanCb), (CanalesCb.Hercios(PlanCb, n) / 1e6).ToString("0.00000", CultureInfo.CurrentCulture));
         }
 
         foreach (var tecla in PlanesDeCb)

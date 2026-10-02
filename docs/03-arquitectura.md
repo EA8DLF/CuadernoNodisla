@@ -234,6 +234,46 @@ Enlazado a clases fuertemente tipadas (`AjustesEstacion`, `AjustesRadio`, `Ajust
 | PDF | **QuestPDF** | 2026.9.0 | Community/dual | Ver 3.7 |
 | CSV | **CsvHelper** | 33.1.0 | Apache-2.0 / MS-PL | Importación de listas de referencias (SOTA, POTA, faros) |
 
+#### Idiomas (desde 2026-10)
+
+El programa habla español (la referencia), inglés, portugués, francés, italiano y alemán, y se
+cambia **en caliente** desde Configuración › Idioma (se guarda en `ajustes.json`, campo
+`Idioma`; nulo = el de Windows si es uno de los seis, si no inglés; `CUADERNO_IDIOMA=de` lo
+fuerza para capturas y pruebas).
+
+- **Textos**: `.resx` estándar en `src\Nodisla.Cuaderno.Idiomas\Recursos\`, un fichero por
+  apartado (`Comun`, `Principal`, `Cabina`, `Digital`, `Libro`, `Qsl`, `Ajustes`, `Ayuda`,
+  `Dialogos`, `Servicios`) y por idioma (`Cabina.resx`, `Cabina.en.resx`…). La clave lleva
+  delante su apartado: `Cabina.Conectar`. Se editan con
+  `herramientas\Idiomas\Agregar-Textos.ps1` (valida los seis idiomas y los huecos `{0}`).
+- **Código**: `Textos.T("Clave")`, `Textos.F("Clave", valores)`, `Textos.Cultura`. Lo que enseña
+  textos fijos se entera del cambio con `Textos.AlCambiar(this, static vm => …)`: suscripción
+  débil, y el aviso llega en el hilo en que se suscribió (por su contexto de sincronización), así
+  que un modelo de vista puede retocar sus colecciones. Aun así, mejor retocar los elementos en
+  su sitio que vaciar y rellenar la colección.
+- **Huecos con nombre** (`{indicativo}` de las plantillas de correo y diplomas): van con las
+  llaves dobladas en el `.resx` (`{{indicativo}}`) y se leen con `Textos.F`, que las deshace.
+- **Lo que se compara**: nunca un texto traducido. Los `DataTrigger` y las comprobaciones miran
+  el enumerado (`Estado`), no `EstadoTexto`; los valores centinela («(todas)») no cambian y solo se
+  traduce cómo se ven.
+- **XAML**: `xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"` y
+  `Text="{loc:Texto Clave}"`, o con huecos `{loc:Texto Clave, Valor={Binding X}}`. Es un enlace
+  al indizador de `FuenteDeTextos`, que avisa de `Item[]` al cambiar de idioma.
+- **No se traduce**: los registros, los rótulos que imitan el panel de la radio (MODE, SPLIT…),
+  los datos (países, referencias, mensajes del aire) y el formato técnico de frecuencias y horas UTC.
+- **Ayuda**: `docs\ayuda\*.md` en español; los capítulos traducidos van en
+  `docs\ayuda\<idioma>\` con el mismo nombre (hoy `en\README.md` y `en\01-primer-uso.md`) y se
+  incrustan como `AyudaIdioma.<idioma>.<fichero>.md`. Si falta uno, se ve el español con un
+  aviso. Una traducción conserva los títulos del original en el mismo orden y nivel: un ancla
+  española que llega a un capítulo traducido se lleva al título que ocupa su sitio.
+- **Lo impreso no se traduce**: el contenido de las plantillas de tarjeta y diploma es dato del
+  diseño (la QSL de fábrica ya va en inglés internacional; los diplomas, en español).
+- **Capturas**: `docs\capturas\idioma-<en|de>-<operar|configuracion|configuracion-idioma>.png`,
+  a 1366×900, apartadas y simuladas, con `CUADERNO_IDIOMA`.
+- **Pruebas**: cada clave en los seis idiomas y sin vacíos, mismos huecos, ninguna clave usada
+  que no exista, ningún literal en los XAML (salvo `tests\…\Idiomas\Permitidos\*.txt`) y el cambio
+  en caliente.
+
 ### 3.6 Mapas: Mapsui, no GMap.NET
 
 Log4OM usa GMap.NET. **No se recomienda**: el paquete `GMap.NET.WinPresentation` (la variante WPF) está en **2.1.7, publicada el 30-06-2022** — más de cuatro años sin publicar. Su licencia además no es una expresión SPDX estándar, sino una página de wiki.

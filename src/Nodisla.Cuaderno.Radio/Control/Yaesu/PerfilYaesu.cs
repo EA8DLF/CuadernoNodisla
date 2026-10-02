@@ -4,6 +4,8 @@ using Nodisla.Cuaderno.Dominio.Valores;
 using Nodisla.Cuaderno.Radio.Control.Ft710;
 using Nodisla.Cuaderno.Radio.Modelos;
 
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Control.Yaesu;
 
 /// <summary>
@@ -157,7 +159,7 @@ public sealed class PerfilYaesu
             Tecla(10, "50", "6m", "6 m (50 MHz)"),
         ]);
         bandas.AddRange(extra);
-        bandas.Add(new TeclaDeBanda(11, "GEN", Banda.Vacia, "Cobertura general (recepción fuera de las bandas)"));
+        bandas.Add(new TeclaDeBanda(11, "GEN", Banda.Vacia, Textos.T("Servicios.Radio.CoberturaGeneralLarga")));
         return bandas;
     }
 

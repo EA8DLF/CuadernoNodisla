@@ -4,6 +4,8 @@ using System.Runtime.Versioning;
 using Microsoft.Extensions.Logging;
 using Nodisla.Cuaderno.Radio.Ptt;
 
+using Nodisla.Cuaderno.Idiomas;
+
 namespace Nodisla.Cuaderno.Radio.Control.Icom;
 
 /// <summary>
@@ -82,7 +84,7 @@ public sealed class CanalSerieCiv : CanalCiv
             throw new NotSupportedException($"El canal {Descripcion} tiene el PTT por CI-V: no hay línea que accionar.");
         }
 
-        var serie = _serie ?? throw new InvalidOperationException($"El canal {Descripcion} no está abierto.");
+        var serie = _serie ?? throw new InvalidOperationException(Textos.F("Servicios.Radio.CanalCerrado", Descripcion));
         if (_viaDePtt == ViaDePtt.Rts) serie.RtsEnable = transmitir;
         else serie.DtrEnable = transmitir;
     }
@@ -129,7 +131,7 @@ public sealed class CanalSerieCiv : CanalCiv
     /// <inheritdoc />
     protected override async Task EscribirNucleoAsync(byte[] bytes, CancellationToken ct)
     {
-        var serie = _serie is { IsOpen: true } s ? s : throw new InvalidOperationException($"El canal {Descripcion} no está abierto.");
+        var serie = _serie is { IsOpen: true } s ? s : throw new InvalidOperationException(Textos.F("Servicios.Radio.CanalCerrado", Descripcion));
         await serie.BaseStream.WriteAsync(bytes.AsMemory(), ct).ConfigureAwait(false);
         await serie.BaseStream.FlushAsync(ct).ConfigureAwait(false);
     }
@@ -137,7 +139,7 @@ public sealed class CanalSerieCiv : CanalCiv
     /// <inheritdoc />
     protected override void EscribirNucleoSincrono(byte[] bytes)
     {
-        var serie = _serie ?? throw new InvalidOperationException($"El canal {Descripcion} no está abierto.");
+        var serie = _serie ?? throw new InvalidOperationException(Textos.F("Servicios.Radio.CanalCerrado", Descripcion));
         serie.Write(bytes, 0, bytes.Length);
     }
 

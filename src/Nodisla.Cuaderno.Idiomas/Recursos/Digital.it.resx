@@ -1,0 +1,774 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Digital.Aviso.ContactoGuardado" xml:space="preserve">
+    <value>Collegamento con {0} salvato nel log.</value>
+  </data>
+  <data name="Digital.Aviso.NoSePudoEscuchar" xml:space="preserve">
+    <value>Impossibile ascoltare: {0}</value>
+  </data>
+  <data name="Digital.Aviso.NoSePudoGuardar" xml:space="preserve">
+    <value>Impossibile salvare: {0}</value>
+  </data>
+  <data name="Digital.Aviso.NoSePudoGuardarElContacto" xml:space="preserve">
+    <value>Impossibile salvare il collegamento: {0}</value>
+  </data>
+  <data name="Digital.Decibelios.Ayuda" xml:space="preserve">
+    <value>Rapporto segnale/rumore in decibel</value>
+  </data>
+  <data name="Digital.Escuchar" xml:space="preserve">
+    <value>Ascolta</value>
+  </data>
+  <data name="Digital.GuardarEnElCuaderno" xml:space="preserve">
+    <value>Salva nel log</value>
+  </data>
+  <data name="Digital.Modem.Ahora" xml:space="preserve">
+    <value>ora</value>
+  </data>
+  <data name="Digital.Modem.Anadir" xml:space="preserve">
+    <value>Aggiungi</value>
+  </data>
+  <data name="Digital.Modem.Anadir.Ayuda" xml:space="preserve">
+    <value>Aggiunge una riga con il modo e il dial attuali</value>
+  </data>
+  <data name="Digital.Modem.Ancho" xml:space="preserve">
+    <value>Larghezza</value>
+  </data>
+  <data name="Digital.Modem.Ancho.Ayuda" xml:space="preserve">
+    <value>Fino a quale frequenza si disegna (1000–5000 Hz)</value>
+  </data>
+  <data name="Digital.Modem.Ancho.Nombre" xml:space="preserve">
+    <value>Larghezza visibile</value>
+  </data>
+  <data name="Digital.Modem.Aviso.BalizaNoCq" xml:space="preserve">
+    <value>{0} è un modo beacon: non si chiama CQ.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.BalizaSinSecuencia" xml:space="preserve">
+    <value>{0} è un modo beacon: qui non c’è sequenza da abilitare.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.ContactoPreparado" xml:space="preserve">
+    <value>Collegamento con {0} pronto: tocca a Tx{1}. Non è ancora uscito nulla in aria.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.Contestando" xml:space="preserve">
+    <value>Risposta a {0}: Tx{1} esce all’inizio della prossima finestra propria ({2}).</value>
+  </data>
+  <data name="Digital.Modem.Aviso.Decodificado" xml:space="preserve">
+    <value>«{0}»: {1} decodifiche.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.Decodificando" xml:space="preserve">
+    <value>Decodifica di «{0}»…</value>
+  </data>
+  <data name="Digital.Modem.Aviso.DetenidoConEmision" xml:space="preserve">
+    <value>Interrotto: trasmissione tagliata e sequenza ferma.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.DetenidoSinEmision" xml:space="preserve">
+    <value>Sequenza ferma e Tx disabilitato.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.EmisionCortada" xml:space="preserve">
+    <value>Trasmissione interrotta e PTT rilasciato.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.Emitido" xml:space="preserve">
+    <value>Trasmesso «{0}».</value>
+  </data>
+  <data name="Digital.Modem.Aviso.EquipoEn" xml:space="preserve">
+    <value>Apparato su {0} MHz ({1}, {2}).</value>
+  </data>
+  <data name="Digital.Modem.Aviso.GuardadoSolo" xml:space="preserve">
+    <value>Salvato: {0} {1} {2}</value>
+  </data>
+  <data name="Digital.Modem.Aviso.GuardadoSoloSinBanda" xml:space="preserve">
+    <value>Salvato: {0} {1}</value>
+  </data>
+  <data name="Digital.Modem.Aviso.GuardeloEnElCuaderno" xml:space="preserve">
+    <value>Collegamento con {0} completo: lo salvi nel log.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.HoundTono" xml:space="preserve">
+    <value>In hound si chiama sopra {0} Hz. Alzi il tono di trasmissione.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.IndicativoNoValido" xml:space="preserve">
+    <value>Il nominativo «{0}» non ha una forma valida.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.LibrePendiente" xml:space="preserve">
+    <value>«{0}» esce all’inizio della prossima finestra ({1}). «Interrompi» lo annulla.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.LlamandoCq" xml:space="preserve">
+    <value>Chiamata CQ: Tx6 esce all’inizio della prossima finestra ({0}).</value>
+  </data>
+  <data name="Digital.Modem.Aviso.MuestrasPerdidas" xml:space="preserve">
+    <value>Persi {0:N0} campioni audio alle {1} UTC: quella finestra non si decodificherà bene.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.NoHabiaEmision" xml:space="preserve">
+    <value>Nessuna trasmissione in corso. PTT rilasciato per sicurezza e sequenza ferma.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.NoSeAbreLaSalida" xml:space="preserve">
+    <value>Non sarà possibile trasmettere: impossibile aprire «{0}»: {1}</value>
+  </data>
+  <data name="Digital.Modem.Aviso.NoSePudoCortar" xml:space="preserve">
+    <value>Impossibile interrompere la trasmissione: {0}</value>
+  </data>
+  <data name="Digital.Modem.Aviso.NoSePudoDecodificar" xml:space="preserve">
+    <value>Impossibile decodificare il file: {0}</value>
+  </data>
+  <data name="Digital.Modem.Aviso.NoSePudoEmitir" xml:space="preserve">
+    <value>Impossibile trasmettere: {0}</value>
+  </data>
+  <data name="Digital.Modem.Aviso.NoSePudoMover" xml:space="preserve">
+    <value>Impossibile spostare l’apparato: {0}</value>
+  </data>
+  <data name="Digital.Modem.Aviso.PreparadoSinSalir" xml:space="preserve">
+    <value>Pronto, ma non esce nulla: {0}</value>
+  </data>
+  <data name="Digital.Modem.Aviso.RelojMal" xml:space="preserve">
+    <value>Non si trasmette con l’orologio così: si trasmetterebbe fuori finestra disturbando gli altri. Prima metta l’orologio all’ora giusta.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.SeGuardaTrasRr73" xml:space="preserve">
+    <value>Collegamento con {0} completo: si salva quando esce l’RR73.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.SinEntrada" xml:space="preserve">
+    <value>Non c’è nessun dispositivo di ingresso da aprire. Ne scelga uno in Impostazioni › Audio e digitali.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.SinEquipo" xml:space="preserve">
+    <value>Nessun apparato da comandare: colleghi la radio in Operare.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.SinFrecuenciaApuntada" xml:space="preserve">
+    <value>Nessuna frequenza operativa impostata per {0}.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.SinIndicativo" xml:space="preserve">
+    <value>Quella decodifica non contiene un nominativo con cui fare un collegamento.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.SinMensaje" xml:space="preserve">
+    <value>Non c’è nessun messaggio da trasmettere.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.SinSalida" xml:space="preserve">
+    <value>Non c’è nessun dispositivo di uscita da aprire: non sarà possibile trasmettere. Ne scelga uno in Impostazioni › Audio e digitali.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.TxHabilitadoSale" xml:space="preserve">
+    <value>Tx abilitato: Tx{0} esce all’inizio della prossima finestra propria ({1}).</value>
+  </data>
+  <data name="Digital.Modem.Aviso.TxIncompleto" xml:space="preserve">
+    <value>Tx{0} è incompleto: «{1}». Compili il DX e il Suo locatore.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.VentanaTarde" xml:space="preserve">
+    <value>La finestra ha richiesto più del periodo stesso: il computer non ce la fa e si stanno perdendo decodifiche.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.YaGuardado" xml:space="preserve">
+    <value>Il collegamento con {0} è già stato salvato da solo al completamento.</value>
+  </data>
+  <data name="Digital.Modem.Cascada" xml:space="preserve">
+    <value>Cascata</value>
+  </data>
+  <data name="Digital.Modem.Cero" xml:space="preserve">
+    <value>Zero</value>
+  </data>
+  <data name="Digital.Modem.Cero.Ayuda" xml:space="preserve">
+    <value>Dove inizia il nero rispetto al rumore</value>
+  </data>
+  <data name="Digital.Modem.Cero.Nombre" xml:space="preserve">
+    <value>Zero della cascata</value>
+  </data>
+  <data name="Digital.Modem.CerrarAviso.Ayuda" xml:space="preserve">
+    <value>Toglie l’avviso</value>
+  </data>
+  <data name="Digital.Modem.CerrarAviso.Nombre" xml:space="preserve">
+    <value>Chiudi l’avviso</value>
+  </data>
+  <data name="Digital.Modem.CiclosSinRespuesta" xml:space="preserve">
+    <value>cicli senza risposta</value>
+  </data>
+  <data name="Digital.Modem.CiclosSinRespuesta.Nombre" xml:space="preserve">
+    <value>Cicli senza risposta</value>
+  </data>
+  <data name="Digital.Modem.Contacto" xml:space="preserve">
+    <value>Collegamento</value>
+  </data>
+  <data name="Digital.Modem.CorrectorDePruebas.Texto" xml:space="preserve">
+    <value>Funziona del tutto e capisce sé stesso, ma NON decodificherà nessun’altra stazione: manca la tabella dell’LDPC(174,91). Finché c’è questo avviso, ciò che compare nell’elenco non è traffico reale.</value>
+  </data>
+  <data name="Digital.Modem.CorrectorDePruebas.Titulo" xml:space="preserve">
+    <value>IL MODEM USA IL CODICE CORRETTORE DI PROVA</value>
+  </data>
+  <data name="Digital.Modem.Corresponsal.Nombre" xml:space="preserve">
+    <value>Nominativo del corrispondente</value>
+  </data>
+  <data name="Digital.Modem.CortarYSoltarPtt" xml:space="preserve">
+    <value>Taglia e rilascia PTT</value>
+  </data>
+  <data name="Digital.Modem.CortarYSoltarPtt.Ayuda" xml:space="preserve">
+    <value>Taglia ciò che sta suonando, rilascia il PTT e ferma la sequenza. Funziona sempre.</value>
+  </data>
+  <data name="Digital.Modem.CqDirigido.Ayuda" xml:space="preserve">
+    <value>Suffisso del CQ: vuoto, DX, EU, POTA…</value>
+  </data>
+  <data name="Digital.Modem.CqDirigido.Nombre" xml:space="preserve">
+    <value>Suffisso del CQ</value>
+  </data>
+  <data name="Digital.Modem.Desfase.Ayuda" xml:space="preserve">
+    <value>Sfasamento del segnale rispetto alla finestra, in secondi</value>
+  </data>
+  <data name="Digital.Modem.Detener" xml:space="preserve">
+    <value>Interrompi</value>
+  </data>
+  <data name="Digital.Modem.Detener.Ayuda" xml:space="preserve">
+    <value>Ferma la sequenza e disattiva Tx</value>
+  </data>
+  <data name="Digital.Modem.DispositivoNoEsta" xml:space="preserve">
+    <value>{0} (assente)</value>
+  </data>
+  <data name="Digital.Modem.DistanciaYAcimut.Ayuda" xml:space="preserve">
+    <value>Distanza e azimut dal locatore del profilo</value>
+  </data>
+  <data name="Digital.Modem.Emitir" xml:space="preserve">
+    <value>Trasmetti — METTE L’APPARATO IN ARIA</value>
+  </data>
+  <data name="Digital.Modem.Emitir.Ayuda" xml:space="preserve">
+    <value>Trasmette il messaggio libero all’inizio della prossima finestra: l’apparato VA IN ARIA. Passa dal sorvegliante del PTT, che lo rilascia comunque. «Interrompi» lo annulla mentre attende.</value>
+  </data>
+  <data name="Digital.Modem.Emitir.Nombre" xml:space="preserve">
+    <value>Trasmetti il messaggio. Mette l’apparato in aria per tredici secondi.</value>
+  </data>
+  <data name="Digital.Modem.Entrada" xml:space="preserve">
+    <value>Ingresso</value>
+  </data>
+  <data name="Digital.Modem.Entrada.Nombre" xml:space="preserve">
+    <value>Livello di ingresso audio</value>
+  </data>
+  <data name="Digital.Modem.Enviar" xml:space="preserve">
+    <value>Invia</value>
+  </data>
+  <data name="Digital.Modem.Enviar.Ayuda" xml:space="preserve">
+    <value>Questo messaggio esce nella prossima finestra propria (come il doppio clic). Passa dal blocco e dalla conferma.</value>
+  </data>
+  <data name="Digital.Modem.EnviarTx.Nombre" xml:space="preserve">
+    <value>Invia {0}</value>
+  </data>
+  <data name="Digital.Modem.Escuchar.Ayuda" xml:space="preserve">
+    <value>Apre l’ingresso audio e inizia a decodificare. Non trasmette nulla.</value>
+  </data>
+  <data name="Digital.Modem.EsElSiguiente.Nombre" xml:space="preserve">
+    <value>{0} è il prossimo</value>
+  </data>
+  <data name="Digital.Modem.Estado.Escuchando" xml:space="preserve">
+    <value>In ascolto in {0} · {1}</value>
+  </data>
+  <data name="Digital.Modem.Estado.Parado" xml:space="preserve">
+    <value>Fermo</value>
+  </data>
+  <data name="Digital.Modem.Estado.SinModem" xml:space="preserve">
+    <value>Il modem integrato non è caricato in questa sessione.</value>
+  </data>
+  <data name="Digital.Modem.Fichero" xml:space="preserve">
+    <value>file</value>
+  </data>
+  <data name="Digital.Modem.FrecuenciaDelModo" xml:space="preserve">
+    <value>{0} in {1}: {2} MHz</value>
+  </data>
+  <data name="Digital.Modem.FrecuenciaRx.Ayuda" xml:space="preserve">
+    <value>Frequenza di ricezione, in hertz. Un clic sulla cascata la imposta.</value>
+  </data>
+  <data name="Digital.Modem.FrecuenciaRx.Nombre" xml:space="preserve">
+    <value>Frequenza di ricezione, in hertz</value>
+  </data>
+  <data name="Digital.Modem.FrecuenciasDeTrabajo.Nombre" xml:space="preserve">
+    <value>Frequenze operative</value>
+  </data>
+  <data name="Digital.Modem.FrecuenciasDeTrabajo.Titulo" xml:space="preserve">
+    <value>Frequenze operative per banda e modo</value>
+  </data>
+  <data name="Digital.Modem.FrecuenciaTx.Ayuda" xml:space="preserve">
+    <value>Frequenza di trasmissione, in hertz. Maiusc+clic sulla cascata la imposta.</value>
+  </data>
+  <data name="Digital.Modem.FrecuenciaTx.Nombre" xml:space="preserve">
+    <value>Frequenza di trasmissione, in hertz</value>
+  </data>
+  <data name="Digital.Modem.Ganancia" xml:space="preserve">
+    <value>Guadagno</value>
+  </data>
+  <data name="Digital.Modem.Ganancia.Ayuda" xml:space="preserve">
+    <value>Luminosità, in decibel</value>
+  </data>
+  <data name="Digital.Modem.Ganancia.Nombre" xml:space="preserve">
+    <value>Guadagno della cascata</value>
+  </data>
+  <data name="Digital.Modem.Generar" xml:space="preserve">
+    <value>Genera</value>
+  </data>
+  <data name="Digital.Modem.Generar.Ayuda" xml:space="preserve">
+    <value>Ricompone Tx1–Tx6 con il DX, i locatori e il rapporto</value>
+  </data>
+  <data name="Digital.Modem.GuardarDecodificaciones" xml:space="preserve">
+    <value>Annota tutte le decodifiche in decodificaciones.txt</value>
+  </data>
+  <data name="Digital.Modem.GuardarEnElCuaderno.Ayuda" xml:space="preserve">
+    <value>Registra il collegamento con la frequenza del dial più il tono audio, e il modo come prevede l’ADIF.</value>
+  </data>
+  <data name="Digital.Modem.GuardarWav" xml:space="preserve">
+    <value>Salva un WAV di ogni finestra (cartella wav dei dati)</value>
+  </data>
+  <data name="Digital.Modem.InformeEnviado.Nombre" xml:space="preserve">
+    <value>Rapporto inviato</value>
+  </data>
+  <data name="Digital.Modem.InformeRecibido.Nombre" xml:space="preserve">
+    <value>Rapporto ricevuto</value>
+  </data>
+  <data name="Digital.Modem.Intercambio" xml:space="preserve">
+    <value>Scambio</value>
+  </data>
+  <data name="Digital.Modem.Intercambio.Ayuda" xml:space="preserve">
+    <value>Scambio del contest: «2A EMA», «579 MA», «570123 IO91NP»</value>
+  </data>
+  <data name="Digital.Modem.Intercambio.Nombre" xml:space="preserve">
+    <value>Scambio del contest</value>
+  </data>
+  <data name="Digital.Modem.IrALaElegida" xml:space="preserve">
+    <value>Vai alla scelta</value>
+  </data>
+  <data name="Digital.Modem.IrALaFrecuenciaDelModo" xml:space="preserve">
+    <value>Vai alla frequenza del modo</value>
+  </data>
+  <data name="Digital.Modem.IrALaFrecuenciaDelModo.Ayuda" xml:space="preserve">
+    <value>Porta l’apparato via CAT alla frequenza del modo nella banda del dial</value>
+  </data>
+  <data name="Digital.Modem.LasDeWsjtx" xml:space="preserve">
+    <value>Quelle di WSJT-X</value>
+  </data>
+  <data name="Digital.Modem.LasDeWsjtx.Ayuda" xml:space="preserve">
+    <value>Ripristina la tabella di fabbrica</value>
+  </data>
+  <data name="Digital.Modem.Lista.Ayuda" xml:space="preserve">
+    <value>Doppio clic: fissa il DX, compone i messaggi e avvia la sequenza. Senza il blocco aperto non esce nulla.</value>
+  </data>
+  <data name="Digital.Modem.Lista.Nombre" xml:space="preserve">
+    <value>Decodifiche del modem integrato</value>
+  </data>
+  <data name="Digital.Modem.LlamarAlPrimero" xml:space="preserve">
+    <value>Chiama il primo</value>
+  </data>
+  <data name="Digital.Modem.LlamarAlPrimero.Ayuda" xml:space="preserve">
+    <value>Chiamando CQ, si risponde da soli al primo che chiama</value>
+  </data>
+  <data name="Digital.Modem.LlamarCq" xml:space="preserve">
+    <value>Chiama CQ</value>
+  </data>
+  <data name="Digital.Modem.LlamarCq.Ayuda" xml:space="preserve">
+    <value>Inizia a chiamare con Tx6 nella finestra successiva. Passa dal blocco.</value>
+  </data>
+  <data name="Digital.Modem.LlegoTarde" xml:space="preserve">
+    <value>IL COMPUTER NON CE LA FA</value>
+  </data>
+  <data name="Digital.Modem.LlegoTarde.Ayuda" xml:space="preserve">
+    <value>La finestra ha richiesto più del periodo stesso: il computer non ce la fa e si stanno perdendo decodifiche</value>
+  </data>
+  <data name="Digital.Modem.LocalizadorDelCorresponsal.Nombre" xml:space="preserve">
+    <value>Locatore del corrispondente</value>
+  </data>
+  <data name="Digital.Modem.MandarAPsk" xml:space="preserve">
+    <value>Invia ciò che si sente a PSK Reporter (rete in uscita)</value>
+  </data>
+  <data name="Digital.Modem.MandarAPsk.Ayuda" xml:space="preserve">
+    <value>UDP alla porta 4739 di report.pskreporter.info, ogni 5 minuti. Invia il Suo nominativo e il Suo locatore con ogni decodifica.</value>
+  </data>
+  <data name="Digital.Modem.MantenerTx" xml:space="preserve">
+    <value>Blocca Tx</value>
+  </data>
+  <data name="Digital.Modem.MantenerTx.Ayuda" xml:space="preserve">
+    <value>La trasmissione non segue il clic né il doppio clic: si sposta solo con Maiusc+clic o scrivendola.</value>
+  </data>
+  <data name="Digital.Modem.MarcarSiguiente.Ayuda" xml:space="preserve">
+    <value>Segna questo come il prossimo da inviare</value>
+  </data>
+  <data name="Digital.Modem.MensajeAEmitir.Nombre" xml:space="preserve">
+    <value>Messaggio che verrebbe trasmesso</value>
+  </data>
+  <data name="Digital.Modem.MensajeLibre" xml:space="preserve">
+    <value>Messaggio libero</value>
+  </data>
+  <data name="Digital.Modem.Mensajes.Titulo" xml:space="preserve">
+    <value>Messaggi · doppio clic invia quello; il segno indica il prossimo</value>
+  </data>
+  <data name="Digital.Modem.Modo.Ayuda" xml:space="preserve">
+    <value>I modi che il modem sa gestire. Cambiare modo durante l’ascolto lo fa ripartire.</value>
+  </data>
+  <data name="Digital.Modem.Modo.Nombre" xml:space="preserve">
+    <value>Modo del modem</value>
+  </data>
+  <data name="Digital.Modem.Nivel.Ayuda" xml:space="preserve">
+    <value>L’ideale è tra 0,20 e 0,60. Sopra 0,90 il codec taglia e i segnali deboli si perdono.</value>
+  </data>
+  <data name="Digital.Modem.Nivel.MuyBajo" xml:space="preserve">
+    <value>{0:0.00} — troppo basso</value>
+  </data>
+  <data name="Digital.Modem.Nivel.Saturando" xml:space="preserve">
+    <value>{0:0.00} — SATURA</value>
+  </data>
+  <data name="Digital.Modem.NombreDelCorresponsal.Ayuda" xml:space="preserve">
+    <value>Nome del corrispondente secondo la sua scheda su QRZ.com</value>
+  </data>
+  <data name="Digital.Modem.NombreDelCorresponsal.Nombre" xml:space="preserve">
+    <value>Nome del corrispondente</value>
+  </data>
+  <data name="Digital.Modem.Nota" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="Digital.Modem.Olvidar" xml:space="preserve">
+    <value>Dimentica</value>
+  </data>
+  <data name="Digital.Modem.Operacion" xml:space="preserve">
+    <value>Attività</value>
+  </data>
+  <data name="Digital.Modem.Operacion.Nombre" xml:space="preserve">
+    <value>Tipo di attività</value>
+  </data>
+  <data name="Digital.Modem.Paleta" xml:space="preserve">
+    <value>Tavolozza</value>
+  </data>
+  <data name="Digital.Modem.Parar" xml:space="preserve">
+    <value>Ferma</value>
+  </data>
+  <data name="Digital.Modem.Parar.Ayuda" xml:space="preserve">
+    <value>Ferma il modem e la sequenza e rilascia la scheda audio</value>
+  </data>
+  <data name="Digital.Modem.PararTras" xml:space="preserve">
+    <value>Ferma dopo</value>
+  </data>
+  <data name="Digital.Modem.PermitirTransmitir" xml:space="preserve">
+    <value>Consenti di trasmettere in questa sessione</value>
+  </data>
+  <data name="Digital.Modem.PermitirTransmitir.Ayuda" xml:space="preserve">
+    <value>Parte chiuso a ogni avvio, salvo diversa impostazione in Impostazioni › Audio e digitali. Lo apra solo con l’antenna o il carico fittizio collegati.</value>
+  </data>
+  <data name="Digital.Modem.Pregunta.Secuencia" xml:space="preserve">
+    <value>la sequenza automatica: ogni finestra propria sono tredici secondi in aria finché il collegamento non termina o si preme «Interrompi»</value>
+  </data>
+  <data name="Digital.Modem.Promedio" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="Digital.Modem.Promedio.Ayuda" xml:space="preserve">
+    <value>Colonne mediate per riga (1–10)</value>
+  </data>
+  <data name="Digital.Modem.Promedio.Nombre" xml:space="preserve">
+    <value>Media delle colonne</value>
+  </data>
+  <data name="Digital.Modem.Psk" xml:space="preserve">
+    <value>PSK Reporter: {0} inviate, {1} in attesa.</value>
+  </data>
+  <data name="Digital.Modem.PskApagado" xml:space="preserve">
+    <value>PSK Reporter spento.</value>
+  </data>
+  <data name="Digital.Modem.PskYFicheros" xml:space="preserve">
+    <value>PSK Reporter e file</value>
+  </data>
+  <data name="Digital.Modem.Quitar" xml:space="preserve">
+    <value>Rimuovi</value>
+  </data>
+  <data name="Digital.Modem.Rescatada" xml:space="preserve">
+    <value>RECUPERATA</value>
+  </data>
+  <data name="Digital.Modem.Rescatada.Ayuda" xml:space="preserve">
+    <value>Recuperata con correzione profonda: segnale molto debole recuperato con più sforzo. Rischio un po’ maggiore che sia falsa; la verifichi prima di registrarla.</value>
+  </data>
+  <data name="Digital.Modem.SaltarTx1" xml:space="preserve">
+    <value>Salta Tx1</value>
+  </data>
+  <data name="Digital.Modem.SaltarTx1.Ayuda" xml:space="preserve">
+    <value>Rispondendo a un CQ si parte dal rapporto (Tx2), come in JTDX</value>
+  </data>
+  <data name="Digital.Modem.Secuencia.EnMarcha" xml:space="preserve">
+    <value>In corso: tocca a Tx{0}</value>
+  </data>
+  <data name="Digital.Modem.Secuencia.EnMarchaCon" xml:space="preserve">
+    <value>In corso: tocca a Tx{0} con {1}</value>
+  </data>
+  <data name="Digital.Modem.Secuencia.EnMarchaConSinTx" xml:space="preserve">
+    <value>In corso: tocca a Tx{0} con {1} (Tx disabilitato: non esce nulla)</value>
+  </data>
+  <data name="Digital.Modem.Secuencia.EnMarchaSinTx" xml:space="preserve">
+    <value>In corso: tocca a Tx{0} (Tx disabilitato: non esce nulla)</value>
+  </data>
+  <data name="Digital.Modem.Secuencia.Parada" xml:space="preserve">
+    <value>Sequenza ferma.</value>
+  </data>
+  <data name="Digital.Modem.Secuencia.TxSinSecuencia" xml:space="preserve">
+    <value>Tx abilitato, nessuna sequenza in corso.</value>
+  </data>
+  <data name="Digital.Modem.SecuenciaAutomatica" xml:space="preserve">
+    <value>Sequenza automatica</value>
+  </data>
+  <data name="Digital.Modem.SecuenciaAutomatica.Ayuda" xml:space="preserve">
+    <value>Avanza da sola per Tx1…Tx5 secondo ciò che risponde il corrispondente</value>
+  </data>
+  <data name="Digital.Modem.SinDispositivoDeEntrada" xml:space="preserve">
+    <value>nessun dispositivo di ingresso</value>
+  </data>
+  <data name="Digital.Modem.SinFrecuenciaDeTrabajo" xml:space="preserve">
+    <value>Nessuna frequenza operativa per {0}.</value>
+  </data>
+  <data name="Digital.Modem.SoloAMi" xml:space="preserve">
+    <value>Solo a me</value>
+  </data>
+  <data name="Digital.Modem.SoloAMi.Ayuda" xml:space="preserve">
+    <value>Mostra solo ciò che è diretto al Suo nominativo</value>
+  </data>
+  <data name="Digital.Modem.SoloCq" xml:space="preserve">
+    <value>Solo CQ</value>
+  </data>
+  <data name="Digital.Modem.SoloCq.Ayuda" xml:space="preserve">
+    <value>Mostra solo le chiamate generali</value>
+  </data>
+  <data name="Digital.Modem.SoloNuevos" xml:space="preserve">
+    <value>Solo nuovi</value>
+  </data>
+  <data name="Digital.Modem.SoloNuevos.Ayuda" xml:space="preserve">
+    <value>Mostra solo ciò che porta qualcosa: nominativo, entità, banda o quadrato nuovi</value>
+  </data>
+  <data name="Digital.Modem.TablasCargadasDe" xml:space="preserve">
+    <value>Tabelle caricate da:</value>
+  </data>
+  <data name="Digital.Modem.Titulo" xml:space="preserve">
+    <value>Modem integrato</value>
+  </data>
+  <data name="Digital.Modem.Transmision.Cerrada" xml:space="preserve">
+    <value>La trasmissione è bloccata. La sblocchi solo con l’antenna o il carico fittizio collegati.</value>
+  </data>
+  <data name="Digital.Modem.Transmision.Permitida" xml:space="preserve">
+    <value>TRASMISSIONE CONSENTITA. Ogni invio sono tredici secondi con l’apparato in aria.</value>
+  </data>
+  <data name="Digital.Modem.Transmision.SinSalida" xml:space="preserve">
+    <value>Nessuna uscita audio aperta: il modem non può trasmettere. Prema prima «Ascolta».</value>
+  </data>
+  <data name="Digital.Modem.Tx4ConRrr" xml:space="preserve">
+    <value>Tx4 con RRR</value>
+  </data>
+  <data name="Digital.Modem.TxHabilitado" xml:space="preserve">
+    <value>Tx abilitato</value>
+  </data>
+  <data name="Digital.Modem.TxHabilitado.Ayuda" xml:space="preserve">
+    <value>Trasmette il messaggio segnato in ogni finestra propria. Si accende solo con il blocco aperto e l’uscita audio aperta, e chiede prima.</value>
+  </data>
+  <data name="Digital.Modem.UltimaVentana" xml:space="preserve">
+    <value>{0} UTC · {1} decodifiche in {2:0.0} s</value>
+  </data>
+  <data name="Digital.Modem.Wav.Ayuda" xml:space="preserve">
+    <value>Decodifica un file audio e aggiunge il risultato all’elenco</value>
+  </data>
+  <data name="Digital.Nuevo" xml:space="preserve">
+    <value>Nuovo</value>
+  </data>
+  <data name="Digital.Operacion.EuVhf" xml:space="preserve">
+    <value>Contest EU VHF</value>
+  </data>
+  <data name="Digital.Operacion.Fox" xml:space="preserve">
+    <value>Fox (essere il DX) — solo grammatica</value>
+  </data>
+  <data name="Digital.Operacion.Hound" xml:space="preserve">
+    <value>Hound (chiamare un fox)</value>
+  </data>
+  <data name="Digital.Operacion.NaVhf" xml:space="preserve">
+    <value>Contest NA VHF</value>
+  </data>
+  <data name="Digital.Operacion.Normal" xml:space="preserve">
+    <value>Normale</value>
+  </data>
+  <data name="Digital.Paleta.Azul" xml:space="preserve">
+    <value>Blu</value>
+  </data>
+  <data name="Digital.Paleta.Fuego" xml:space="preserve">
+    <value>Fuoco</value>
+  </data>
+  <data name="Digital.Paleta.Gris" xml:space="preserve">
+    <value>Grigio</value>
+  </data>
+  <data name="Digital.Puente.Adif" xml:space="preserve">
+    <value>ADIF inviato dal programma</value>
+  </data>
+  <data name="Digital.Puente.AdmiteTodo" xml:space="preserve">
+    <value>{0} supporta tutto ciò che offre questo pannello.</value>
+  </data>
+  <data name="Digital.Puente.AjustesDelPrograma" xml:space="preserve">
+    <value>Impostazioni del programma</value>
+  </data>
+  <data name="Digital.Puente.Aviso.ConfiguracionCambiada" xml:space="preserve">
+    <value>{0} è passato alla configurazione «{1}».</value>
+  </data>
+  <data name="Digital.Puente.Aviso.InstanciaPerdida" xml:space="preserve">
+    <value>Si è persa l’istanza «{0}».</value>
+  </data>
+  <data name="Digital.Puente.Aviso.LlamandoCq" xml:space="preserve">
+    <value>{0} sta lanciando una chiamata generale.</value>
+  </data>
+  <data name="Digital.Puente.Aviso.NoAdmiteConfiguracion" xml:space="preserve">
+    <value>{0} non permette di cambiare configurazione.</value>
+  </data>
+  <data name="Digital.Puente.Aviso.NoAdmiteLlamarCq" xml:space="preserve">
+    <value>{0} non permette di lanciare una chiamata generale.</value>
+  </data>
+  <data name="Digital.Puente.Aviso.NoAdmiteResaltar" xml:space="preserve">
+    <value>{0} non permette di evidenziare nominativi.</value>
+  </data>
+  <data name="Digital.Puente.Aviso.NoAdmiteResponder" xml:space="preserve">
+    <value>{0} non accetta che gli si dica chi chiamare.</value>
+  </data>
+  <data name="Digital.Puente.Aviso.NoAdmiteTono" xml:space="preserve">
+    <value>{0} non permette di cambiare il tono di trasmissione.</value>
+  </data>
+  <data name="Digital.Puente.Aviso.NoSePudoCambiarConfiguracion" xml:space="preserve">
+    <value>Impossibile cambiare la configurazione: {0}</value>
+  </data>
+  <data name="Digital.Puente.Aviso.NoSePudoCambiarTono" xml:space="preserve">
+    <value>Impossibile cambiare il tono: {0}</value>
+  </data>
+  <data name="Digital.Puente.Aviso.NoSePudoLlamar" xml:space="preserve">
+    <value>Impossibile chiamare: {0}</value>
+  </data>
+  <data name="Digital.Puente.Aviso.NoSePudoResaltar" xml:space="preserve">
+    <value>Impossibile evidenziare: {0}</value>
+  </data>
+  <data name="Digital.Puente.Aviso.NoSePudoResponder" xml:space="preserve">
+    <value>Impossibile rispondere: {0}</value>
+  </data>
+  <data name="Digital.Puente.Aviso.Resaltado" xml:space="preserve">
+    <value>{0} evidenziato in {1}.</value>
+  </data>
+  <data name="Digital.Puente.Aviso.Responder" xml:space="preserve">
+    <value>Si è chiesto a {0} di chiamare {1}.</value>
+  </data>
+  <data name="Digital.Puente.Aviso.TonoPuesto" xml:space="preserve">
+    <value>Tono di trasmissione impostato a {0:N0} Hz.</value>
+  </data>
+  <data name="Digital.Puente.Aviso.TonoSoloCifras" xml:space="preserve">
+    <value>Il tono si scrive in hertz, solo con cifre.</value>
+  </data>
+  <data name="Digital.Puente.Cambiar" xml:space="preserve">
+    <value>Cambia</value>
+  </data>
+  <data name="Digital.Puente.Cambiar.Ayuda" xml:space="preserve">
+    <value>Fa passare il programma a quella configurazione</value>
+  </data>
+  <data name="Digital.Puente.Cerrados" xml:space="preserve">
+    <value>Collegamenti chiusi, pronti per il log</value>
+  </data>
+  <data name="Digital.Puente.Configuracion" xml:space="preserve">
+    <value>Configurazione</value>
+  </data>
+  <data name="Digital.Puente.Configuracion.Nombre" xml:space="preserve">
+    <value>Nome della configurazione del programma</value>
+  </data>
+  <data name="Digital.Puente.DejarDeEscuchar" xml:space="preserve">
+    <value>Smetti di ascoltare</value>
+  </data>
+  <data name="Digital.Puente.Desconocido" xml:space="preserve">
+    <value>Sconosciuto</value>
+  </data>
+  <data name="Digital.Puente.ElijaInstancia" xml:space="preserve">
+    <value>Scelga un’istanza per poter agire su di essa.</value>
+  </data>
+  <data name="Digital.Puente.Escuchando" xml:space="preserve">
+    <value>In ascolto sulla porta UDP {0}</value>
+  </data>
+  <data name="Digital.Puente.Falta.CambiarConfiguracion" xml:space="preserve">
+    <value>cambiare configurazione</value>
+  </data>
+  <data name="Digital.Puente.Falta.CambiarTono" xml:space="preserve">
+    <value>cambiare il tono di trasmissione</value>
+  </data>
+  <data name="Digital.Puente.Falta.LlamarCq" xml:space="preserve">
+    <value>lanciare una chiamata generale</value>
+  </data>
+  <data name="Digital.Puente.Falta.Resaltar" xml:space="preserve">
+    <value>evidenziare nominativi</value>
+  </data>
+  <data name="Digital.Puente.Falta.Responder" xml:space="preserve">
+    <value>rispondere a una chiamata</value>
+  </data>
+  <data name="Digital.Puente.Instancias.Ayuda" xml:space="preserve">
+    <value>Istanze di WSJT-X o JTDX che danno segni di vita</value>
+  </data>
+  <data name="Digital.Puente.LlamarCq" xml:space="preserve">
+    <value>Chiama CQ — TRASMETTE</value>
+  </data>
+  <data name="Digital.Puente.LlamarCq.Ayuda" xml:space="preserve">
+    <value>Lancia una chiamata generale: l’apparato VA IN ARIA. Chiama senza destinatario e rispetta il periodo impostato nel programma. Il pulsante «RILASCIA PTT» la interrompe.</value>
+  </data>
+  <data name="Digital.Puente.LlamarCq.Nombre" xml:space="preserve">
+    <value>Lancia una chiamata generale. Mette l’apparato in aria.</value>
+  </data>
+  <data name="Digital.Puente.Ni" xml:space="preserve">
+    <value>, né </value>
+  </data>
+  <data name="Digital.Puente.NoAdmite" xml:space="preserve">
+    <value>{0} non permette di {1}.</value>
+  </data>
+  <data name="Digital.Puente.PonerTono" xml:space="preserve">
+    <value>Imposta tono</value>
+  </data>
+  <data name="Digital.Puente.PonerTono.Ayuda" xml:space="preserve">
+    <value>Cambiarlo a metà trasmissione si sente in aria: la stazione dall’altra parte può perdere il resto del periodo.</value>
+  </data>
+  <data name="Digital.Puente.Resaltar" xml:space="preserve">
+    <value>Evidenzia nominativo</value>
+  </data>
+  <data name="Digital.Puente.Resaltar.Ayuda" xml:space="preserve">
+    <value>Evidenzia il nominativo nella finestra del programma</value>
+  </data>
+  <data name="Digital.Puente.Responder" xml:space="preserve">
+    <value>Rispondi a questa chiamata</value>
+  </data>
+  <data name="Digital.Puente.Responder.Ayuda" xml:space="preserve">
+    <value>Chiede al programma di chiamare la stazione decodificata</value>
+  </data>
+  <data name="Digital.Puente.SinEscuchar" xml:space="preserve">
+    <value>Non in ascolto</value>
+  </data>
+  <data name="Digital.Puente.SoloNuevos" xml:space="preserve">
+    <value>Solo nominativi nuovi</value>
+  </data>
+  <data name="Digital.Puente.Titulo" xml:space="preserve">
+    <value>Modi digitali</value>
+  </data>
+  <data name="Digital.Puente.TonoDeTx" xml:space="preserve">
+    <value>Tono TX</value>
+  </data>
+  <data name="Digital.Puente.TonoDeTx.Nombre" xml:space="preserve">
+    <value>Tono di trasmissione, in hertz</value>
+  </data>
+  <data name="Digital.Reloj.AntesYDespues" xml:space="preserve">
+    <value>Prima: {0:+0;-0} ms. Dopo: {1:+0;-0} ms.</value>
+  </data>
+  <data name="Digital.Reloj.NoSePudoConfigurar" xml:space="preserve">
+    <value>Impossibile configurare il servizio orario: {0}</value>
+  </data>
+  <data name="Digital.Reloj.NoSePudoMedir" xml:space="preserve">
+    <value>Impossibile misurare l’orologio: {0}</value>
+  </data>
+  <data name="Digital.Reloj.NoSePudoPonerEnHora" xml:space="preserve">
+    <value>Impossibile regolare l’orologio: {0}</value>
+  </data>
+  <data name="Digital.Secuencia.ContactoTerminado" xml:space="preserve">
+    <value>Collegamento terminato.</value>
+  </data>
+  <data name="Digital.Secuencia.Desaparecido" xml:space="preserve">
+    <value>{0} è sparito: {1} trasmissioni senza sentirlo.</value>
+  </data>
+  <data name="Digital.Secuencia.Enviado73" xml:space="preserve">
+    <value>73 inviato.</value>
+  </data>
+  <data name="Digital.Secuencia.VigilanteCq" xml:space="preserve">
+    <value>Sorveglianza Tx: {0} chiamate CQ senza risposta.</value>
+  </data>
+  <data name="Digital.Tono.Ayuda" xml:space="preserve">
+    <value>Tono all’interno della banda audio, in hertz</value>
+  </data>
+  <data name="Digital.Vaciar" xml:space="preserve">
+    <value>Svuota</value>
+  </data>
+</root>

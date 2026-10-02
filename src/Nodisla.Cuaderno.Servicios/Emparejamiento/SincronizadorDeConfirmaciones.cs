@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Dominio.Entidades;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Servicios.Emparejamiento;
 
@@ -70,7 +71,7 @@ public sealed class SincronizadorDeConfirmaciones
 
         progreso?.Report(new ProgresoDeSincronizacion(
             servicio.Nombre, emparejamiento.Parejas.Count, descargadas.Count,
-            "Emparejando las confirmaciones con el cuaderno…"));
+            Textos.T("Servicios.Emparejando")));
 
         var modificados = new List<Qso>();
         foreach (var pareja in emparejamiento.Parejas)

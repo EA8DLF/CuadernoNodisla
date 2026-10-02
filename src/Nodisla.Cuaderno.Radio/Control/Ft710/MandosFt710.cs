@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Radio.Control.Ft710;
 
@@ -105,7 +106,7 @@ public sealed record MandoFt710(
     public string OrdenDeEscritura(double valor, VfoDelEquipo vfo, string? loQueHay)
     {
         var consulta = ConsultaDe(vfo)
-            ?? throw new NotSupportedException($"El mando {Mando} no existe en el VFO {vfo}.");
+            ?? throw new NotSupportedException(Textos.F("Servicios.Radio.MandoNoEnVfo", Mando, vfo));
 
         if (EscrituraPropia is { } propia)
         {
