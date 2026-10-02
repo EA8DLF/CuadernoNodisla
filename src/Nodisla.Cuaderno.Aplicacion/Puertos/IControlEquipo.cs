@@ -131,6 +131,10 @@ public enum MotivoDeSuelta
     EquipoPerdido,
     /// <summary>El operador ha pedido parar.</summary>
     Panico,
+    /// <summary>La ROE ha pasado del limite varias lecturas seguidas.</summary>
+    RoeAlta,
+    /// <summary>ROE de antena abierta o en corto, o alarma de ROE del propio equipo.</summary>
+    AntenaAbierta,
 }
 
 /// <summary>Una transmision en curso. Soltar el PTT es liberar este objeto.</summary>
@@ -186,4 +190,34 @@ public interface IVigilantePtt
     /// tambien lo que se llama al cerrar la aplicacion.
     /// </summary>
     Task SoltarYaAsync(MotivoDeSuelta motivo = MotivoDeSuelta.Panico);
+
+    /// <summary>
+    /// Por que no se puede transmitir ahora tras un corte de seguridad (ROE, tope, latido), o
+    /// nulo. Se levanta solo cuando se han soltado todas las fuentes de PTT.
+    /// </summary>
+    string? MotivoDeBloqueo => null;
+
+    /// <summary>Para que se pidio la antena que esta en el aire (la fuente que la tiene), o nulo.</summary>
+    string? FuenteEnAntena => null;
+
+    /// <summary>
+    /// Da de alta una fuente de PTT (macros, secuenciador, MOX, modem, fonia…). Tras un corte de
+    /// seguridad no se vuelve a transmitir hasta que todas digan que estan sueltas.
+    /// </summary>
+    /// <param name="nombre">Como se llama, para el registro.</param>
+    /// <param name="pulsada">Dice si la fuente sigue pidiendo transmitir (tecla abajo, automatico puesto…).</param>
+    /// <returns>Liberarlo da de baja la fuente.</returns>
+    IDisposable RegistrarFuente(string nombre, Func<bool> pulsada) => FuenteSinRegistro.Instancia;
+}
+
+/// <summary>Lo que devuelve un vigilante que no lleva cuenta de las fuentes de PTT.</summary>
+internal sealed class FuenteSinRegistro : IDisposable
+{
+    /// <summary>La unica.</summary>
+    public static FuenteSinRegistro Instancia { get; } = new();
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+    }
 }

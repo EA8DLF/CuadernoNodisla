@@ -1,0 +1,77 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.SeguridadTx"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+             Loaded="AlCargar"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        SALVAGUARDAS DE TRANSMISION: plan de banda, ROE y potencia maxima por banda. Las aplica
+        el vigilante del PTT, que es el unico camino para salir al aire.
+    -->
+
+    <StackPanel>
+        <TextBlock Text="{loc:Texto Ajustes.SeguridadTx.Titulo}" Style="{StaticResource TituloDeSeccion}" />
+        <TextBlock Text="{loc:Texto Ajustes.SeguridadTx.Explicacion}" TextWrapping="Wrap" Foreground="{DynamicResource TextoTenue}" Margin="0,2,0,8" />
+
+        <TextBlock Text="{Binding MotivoDeBloqueo}" TextWrapping="Wrap" Foreground="{DynamicResource ErrorTexto}" FontWeight="Bold" Margin="0,0,0,6" />
+
+        <CheckBox Content="{loc:Texto Ajustes.SeguridadTx.Bloquear}"
+                  IsChecked="{Binding BloquearFueraDeBanda}"
+                  Margin="0,0,0,6"
+                  ToolTip="{loc:Texto Ajustes.SeguridadTx.Bloquear.Ayuda}" />
+
+        <WrapPanel Margin="0,0,0,8">
+            <CheckBox Content="{loc:Texto Ajustes.SeguridadTx.VigilarRoe}"
+                      IsChecked="{Binding VigilarRoe}"
+                      VerticalAlignment="Center"
+                      Margin="0,0,12,0"
+                      ToolTip="{loc:Texto Ajustes.SeguridadTx.VigilarRoe.Ayuda}" />
+            <TextBlock Text="{loc:Texto Ajustes.SeguridadTx.RoeMaxima}" VerticalAlignment="Center" Margin="0,0,4,0" />
+            <TextBox Text="{Binding RoeMaxima, UpdateSourceTrigger=LostFocus}" Width="50" Margin="0,0,12,0" />
+            <TextBlock Text="{loc:Texto Ajustes.SeguridadTx.Lecturas}" VerticalAlignment="Center" Margin="0,0,4,0" />
+            <TextBox Text="{Binding LecturasSeguidas, UpdateSourceTrigger=LostFocus}" Width="40" />
+        </WrapPanel>
+
+        <Grid Margin="0,0,0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90" />
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{loc:Texto Ajustes.SeguridadTx.Banda}" FontWeight="Bold" />
+            <TextBlock Grid.Column="1" Text="{loc:Texto Ajustes.SeguridadTx.FueraDelPlan}" FontWeight="Bold" />
+            <TextBlock Grid.Column="2" Text="{loc:Texto Ajustes.SeguridadTx.PotenciaMaxima}" FontWeight="Bold" />
+        </Grid>
+        <ItemsControl ItemsSource="{Binding Filas}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,0,0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding Banda}" VerticalAlignment="Center" />
+                        <CheckBox Grid.Column="1"
+                                  Content="{loc:Texto Ajustes.SeguridadTx.Liberar}"
+                                  IsChecked="{Binding Liberada}"
+                                  VerticalAlignment="Center"
+                                  ToolTip="{loc:Texto Ajustes.SeguridadTx.Liberar.Ayuda}" />
+                        <TextBox Grid.Column="2"
+                                 Text="{Binding PotenciaMaxima, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="60"
+                                 HorizontalAlignment="Left"
+                                 AutomationProperties.Name="{loc:Texto Ajustes.SeguridadTx.PotenciaMaxima}"
+                                 ToolTip="{loc:Texto Ajustes.SeguridadTx.PotenciaMaxima.Ayuda}" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <WrapPanel Margin="0,8,0,0">
+            <Button Content="{loc:Texto Ajustes.SeguridadTx.Guardar}" Command="{Binding GuardarCommand}" Style="{StaticResource BotonPrincipal}" Margin="0,0,10,0" />
+            <TextBlock Text="{Binding Aviso}" VerticalAlignment="Center" Foreground="{DynamicResource TextoTenue}" />
+        </WrapPanel>
+    </StackPanel>
+</UserControl>

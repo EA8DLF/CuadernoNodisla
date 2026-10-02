@@ -76,6 +76,9 @@ Il log si trova in {1}. Se il file è danneggiato, nella stessa cartella c'è un
   <data name="Dialogos.Simulado.ModemNoTransmite" xml:space="preserve">
     <value>Il modem simulato non trasmette. Chiuda il programma e lo riapra senza CUADERNO_SIMULADO.</value>
   </data>
+  <data name="Dialogos.Simulado.NodoCaido" xml:space="preserve">
+    <value>Nodo giù (prova)</value>
+  </data>
   <data name="Dialogos.Simulado.QsoDuplicado" xml:space="preserve">
     <value>Il collegamento con {0} è già nel log.</value>
   </data>

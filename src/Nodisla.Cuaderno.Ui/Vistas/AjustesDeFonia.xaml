@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
              xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
              Foreground="{DynamicResource Texto}">
 
     <!--
@@ -113,6 +114,9 @@
             </StackPanel>
             <TextBlock Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,2,0,0"
                        Text="{loc:Texto Ajustes.Fonia.SoloSeLee}" />
+
+            <Separator Margin="0,10,0,8" />
+            <vistas:ProcesadoDeFonia />
         </StackPanel>
     </Border>
 </UserControl>

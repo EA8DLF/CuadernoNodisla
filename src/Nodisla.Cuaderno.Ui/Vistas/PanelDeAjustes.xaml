@@ -46,6 +46,9 @@
         <DataTemplate DataType="{x:Type vistamodelos:VistaModeloAjustesFonia}">
             <vistas:AjustesDeFonia />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vistamodelos:VistaModeloAjustesAnalizador}">
+            <vistas:AjustesDelAnalizadorDelEquipo />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vistamodelos:VistaModeloAjustesCluster}">
             <vistas:ConexionDelCluster />
         </DataTemplate>
@@ -326,6 +329,9 @@
                                    TextWrapping="Wrap"
                                    Margin="0,0,0,8"
                                    Visibility="{Binding HayCat, Converter={StaticResource VisibleSiEsFalso}}" />
+
+                        <!-- El analizador de la radio: spots, clic, suelo de ruido y colores. -->
+                        <ContentControl Content="{Binding Analizador}" Focusable="False" />
                     </StackPanel>
                 </ScrollViewer>
             </Border>
@@ -502,6 +508,26 @@
                         <TextBlock Text="{loc:Texto Ajustes.Idioma.Ayuda}"
                                    Style="{StaticResource TextoTenueEstilo}"
                                    TextWrapping="Wrap" />
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </TabItem>
+
+        <!-- ══ 10 · Servidor para otros programas (rigctld y TCI) ══ -->
+        <!-- La vista y su modelo viven en la ventana principal (Servidores); aquí solo se alojan. -->
+        <TabItem Header="{loc:Texto Ajustes.Apartado.Servidor}">
+            <Border Style="{StaticResource CuerpoDelApartado}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel MaxWidth="900" HorizontalAlignment="Left">
+                        <!-- Plantilla por tipo: sin modelo detrás no se monta nada (ni enlaces muertos). -->
+                        <ContentControl Content="{Binding DataContext.Servidores, RelativeSource={RelativeSource AncestorType=Window}, FallbackValue={x:Null}}"
+                                        Focusable="False">
+                            <ContentControl.Resources>
+                                <DataTemplate DataType="{x:Type vistamodelos:VistaModeloServidores}">
+                                    <vistas:ServidoresExternos />
+                                </DataTemplate>
+                            </ContentControl.Resources>
+                        </ContentControl>
                     </StackPanel>
                 </ScrollViewer>
             </Border>

@@ -117,6 +117,10 @@ public sealed partial class VistaModeloAjustesAudio : ObservableObject
     [ObservableProperty]
     private int _cwSenales = 4;
 
+    /// <summary>Segundos sin señal antes de volver a buscar (AUTO).</summary>
+    [ObservableProperty]
+    private int _cwSinSenal = 5;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HayDiscrepanciaDeDispositivos))]
     [NotifyPropertyChangedFor(nameof(AvisoDeDiscrepancia))]
@@ -285,6 +289,7 @@ public sealed partial class VistaModeloAjustesAudio : ObservableObject
             cw.WpmMinima = CwWpmMinima;
             cw.WpmMaxima = CwWpmMaxima;
             cw.Senales = CwSenales;
+            cw.SegundosSinSenal = CwSinSenal;
             cw.Acotar();
 
             _ajustes.Guardar(_carpetaDeDatos);
@@ -346,6 +351,7 @@ public sealed partial class VistaModeloAjustesAudio : ObservableObject
         CwWpmMinima = cw.WpmMinima;
         CwWpmMaxima = cw.WpmMaxima;
         CwSenales = cw.Senales;
+        CwSinSenal = cw.SegundosSinSenal;
     }
 
     private static void Rellenar(

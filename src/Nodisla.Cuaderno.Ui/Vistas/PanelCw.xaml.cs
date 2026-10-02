@@ -5,7 +5,7 @@ using Nodisla.Cuaderno.Ui.VistaModelos;
 
 namespace Nodisla.Cuaderno.Ui.Vistas;
 
-/// <summary>El panel de telegrafía de la cabina.</summary>
+/// <summary>El decodificador de telegrafía a lo grande, en la página CW.</summary>
 public partial class PanelCw : UserControl
 {
     private VistaModeloCw? _modelo;
@@ -29,5 +29,14 @@ public partial class PanelCw : UserControl
     {
         var abajo = Desplazamiento.VerticalOffset >= Desplazamiento.ScrollableHeight - 4;
         if (abajo) Dispatcher.BeginInvoke(Desplazamiento.ScrollToEnd, System.Windows.Threading.DispatcherPriority.Background);
+    }
+
+    /// <summary>La rueda sobre la casilla del tono: ±10 Hz por paso.</summary>
+    private void AlGirarLaRueda(object sender, System.Windows.Input.MouseWheelEventArgs e)
+    {
+        if (_modelo is null) return;
+        if (e.Delta > 0) _modelo.SubirTono();
+        else if (e.Delta < 0) _modelo.BajarTono();
+        e.Handled = true;
     }
 }

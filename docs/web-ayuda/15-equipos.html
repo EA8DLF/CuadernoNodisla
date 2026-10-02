@@ -31,6 +31,9 @@
 <li><a href="15-equipos.html" class="actual" aria-current="page">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
 <li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
 <li><a href="17-cw.html">Telegraf&#237;a (CW)</a></li>
+<li><a href="18-transmitir-cw.html">Transmitir en CW</a></li>
+<li><a href="19-seguridad-de-transmision.html">Salvaguardas de transmisi&#243;n</a></li>
+<li><a href="20-conectar-otros-programas.html">Conectar otros programas</a></li>
 </ul>
 </nav>
 <main class="capitulo">
@@ -70,6 +73,21 @@
 <h3 id="multi-osciloscopio-y-af-fft">MULTI: osciloscopio y AF-FFT</h3>
 <p>La tecla <strong>MULTI</strong> hace lo que la pantalla MULTI del FT-710: el analizador en peque&#241;o arriba y, debajo, el <strong>osciloscopio</strong> y el <strong>AF-FFT</strong> del audio de recepci&#243;n. Es una vista del programa, no manda nada a la radio. Usa la entrada de audio del c&#243;dec del equipo (la misma del m&#243;dem); si el audio no est&#225; abierto, el aviso de MULTI ofrece abrirlo.</p>
 <figure><a href="capturas/analizador-multi.png"><img src="capturas/analizador-multi.png" alt="MULTI: el analizador arriba y el osciloscopio y el AF-FFT del audio de recepci&#243;n debajo" loading="lazy"></a><figcaption>MULTI: el analizador arriba y el osciloscopio y el AF-FFT del audio de recepci&#243;n debajo</figcaption></figure>
+<h3 id="spots-clic-y-rueda-sobre-el-analizador">Spots, clic y rueda sobre el analizador</h3>
+<ul>
+<li><strong>Spots del cluster encima</strong>: cada anuncio de la lista que cae en lo que se ve sale con su indicativo en su frecuencia, en filas para que no se pisen. <strong>Magenta</strong>: entidad nueva; <strong>verde</strong>: banda o modo nuevos; <strong>gris</strong>: ya trabajado. Con el rat&#243;n encima, el detalle del anuncio. <strong>Clic en el r&#243;tulo</strong> = el doble clic de la lista: frecuencia y modo al equipo e indicativo al contacto nuevo.</li>
+<li><strong>Clic en el espectro</strong>: lleva el <strong>VFO activo</strong> (el A o el B, el que est&#233; elegido en la radio en ese momento) a ese punto, <strong>ajustado al paso</strong>. Mientras el rat&#243;n est&#225; encima, una l&#237;nea fina y una cifra dicen a qu&#233; frecuencia ir&#237;a.</li>
+<li><strong>Rueda del rat&#243;n</strong> encima: mueve el VFO activo <strong>un paso por muesca</strong>. Con <strong>May&#250;s</strong>, paso fino (la d&#233;cima parte) en el clic y en la rueda.</li>
+<li>El <strong>paso</strong> es autom&#225;tico seg&#250;n el ancho que se ve (500 Hz con 200 kHz de span, 50 Hz con 20 kHz), o el que se elija.</li>
+<li><strong>Nada de esto funciona transmitiendo</strong> ni sin equipo conectado: el analizador no cambia la frecuencia con la portadora puesta.</li>
+</ul>
+<h3 id="suelo-de-ruido-colores-y-picos">Suelo de ruido, colores y picos</h3>
+<p>La radio manda niveles relativos (0-255) que cambian con la banda, el span, el preamplificador y el atenuador. Con el <strong>suelo de ruido autom&#225;tico</strong> (AGC de la cascada) el cuaderno sigue el ruido y pone el negro justo debajo: la cascada sale con buen contraste <strong>sin tocar la radio</strong>, y al volver a una banda ya vista sale bien desde la primera fila (se recuerda el suelo de cada banda y span). Al resintonizar en CENTER, la <strong>cascada se corre</strong> con la frecuencia: cada se&#241;al sigue en su sitio en vez de emborronarse en diagonal.</p>
+<figure><a href="capturas/analizador-resintonizado.png"><img src="capturas/analizador-resintonizado.png" alt="Tras subir el VFO 25 kHz, lo ya pintado se ha corrido a la izquierda y cada se&#241;al sigue en su raya; a la derecha, lo reci&#233;n descubierto empieza en negro (tramas reales)" loading="lazy"></a><figcaption>Tras subir el VFO 25 kHz, lo ya pintado se ha corrido a la izquierda y cada se&#241;al sigue en su raya; a la derecha, lo reci&#233;n descubierto empieza en negro (tramas reales)</figcaption></figure>
+<figure><a href="capturas/analizador-en-el-frontal.png"><img src="capturas/analizador-en-el-frontal.png" alt="El analizador en el frontal del FT-710 con los spots encima (equipo y cluster simulados)" loading="lazy"></a><figcaption>El analizador en el frontal del FT-710 con los spots encima (equipo y cluster simulados)</figcaption></figure>
+<p>Todo se ajusta en <strong>Configuraci&#243;n › Equipo › Analizador de la radio</strong>: spots encima y filas de r&#243;tulos, clic para sintonizar y paso, suelo autom&#225;tico, <strong>contraste</strong>, <strong>brillo del ruido</strong>, <strong>colores de la cascada</strong> (rojos como la radio, NODISLA, arco&#237;ris, fuego, hielo o grises), <strong>marcar los picos</strong> (las cinco se&#241;ales m&#225;s altas con una marca &#225;mbar y lo que asoman sobre el ruido) y correr la cascada al resintonizar. Nada de esto cambia ajustes de la radio.</p>
+<figure><a href="capturas/analizador-arcoiris-picos.png"><img src="capturas/analizador-arcoiris-picos.png" alt="Paleta arco&#237;ris con los picos marcados y la frecuencia del rat&#243;n (tramas reales de la radio)" loading="lazy"></a><figcaption>Paleta arco&#237;ris con los picos marcados y la frecuencia del rat&#243;n (tramas reales de la radio)</figcaption></figure>
+<figure><a href="capturas/ajustes-analizador.png"><img src="capturas/ajustes-analizador.png" alt="Configuraci&#243;n › Equipo › Analizador de la radio" loading="lazy"></a><figcaption>Configuraci&#243;n › Equipo › Analizador de la radio</figcaption></figure>
 <h2 id="la-botonera-bandas-modos-memorias-y-canales-cb">La botonera: bandas, modos, memorias y canales CB</h2>
 <p>A los lados del frontal (en <strong>Cabina</strong> y en <strong>Digital</strong>):</p>
 <ul>
@@ -82,6 +100,7 @@
 <li>Conectarse solo al abrir.</li>
 <li>Transmitir sin una acci&#243;n del operador (y, en el m&#243;dem, sin abrir antes el pestillo).</li>
 <li>Cambiar men&#250;s de la radio. Solo <strong>lee</strong> los que necesita para avisar (por ejemplo, la fuente de modulaci&#243;n para la fon&#237;a).</li>
+<li>Cambiar la frecuencia desde el analizador mientras se transmite.</li>
 <li>Dejar un PTT subido: el <strong>vigilante de PTT</strong> lo baja al agotarse el tiempo m&#225;ximo, si se pierde la comunicaci&#243;n, si salta un fallo o al cerrar el programa.</li>
 </ul>
 

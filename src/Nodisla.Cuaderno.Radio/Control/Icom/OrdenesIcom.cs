@@ -33,6 +33,76 @@ public static class OrdenesIcom
 {
     private static readonly AsyncLocal<bool> ApagadoAutorizado = new();
     private static readonly AsyncLocal<bool> TransmisionAutorizada = new();
+    private static readonly AsyncLocal<bool> ManipulacionAutorizada = new();
+
+    // ── Telegrafia: orden 17 «Send CW messages» (referencia CI-V de ICOM) ───────────────────
+    //
+    // 17 + hasta 30 caracteres ASCII: el equipo los manipula con su manipulador interno.
+    // 17 FF: para el envio en curso. Caracteres: 0-9 A-Z a-z / ? . - , : ' ( ) = + " @ y espacio;
+    // «^» delante de dos letras las une en un prosigno (^SK).
+
+    /// <summary>Caracteres que admite una orden <c>17</c>.</summary>
+    public const int LetrasPorOrden = 30;
+
+    /// <summary>Orden que para el manipulador en el acto: <c>17 FF</c>.</summary>
+    public static IReadOnlyList<byte> PararElManipulador { get; } = [0x17, 0xFF];
+
+    /// <summary>
+    /// Deja pasar <c>17</c> con texto solo mientras dura <paramref name="manipular"/>. Lo abre
+    /// unicamente el control con el PTT pedido al vigilante.
+    /// </summary>
+    internal static async Task ConManipulacionAutorizadaAsync(Func<Task> manipular)
+    {
+        ArgumentNullException.ThrowIfNull(manipular);
+        ManipulacionAutorizada.Value = true;
+        try
+        {
+            await manipular().ConfigureAwait(false);
+        }
+        finally
+        {
+            ManipulacionAutorizada.Value = false;
+        }
+    }
+
+    /// <summary>
+    /// Deja un texto en lo que sabe manipular la orden <c>17</c>: <c>&lt;AR&gt;</c> pasa a
+    /// <c>+</c>, <c>&lt;BT&gt;</c> a <c>=</c> y los demas prosignos a <c>^</c> mas sus dos letras.
+    /// </summary>
+    /// <param name="texto">Texto con prosignos entre angulos.</param>
+    /// <returns>El texto limpio, en mayusculas, sin espacios dobles.</returns>
+    public static string TextoParaElManipulador(string texto)
+    {
+        ArgumentNullException.ThrowIfNull(texto);
+        var t = System.Text.RegularExpressions.Regex.Replace(
+            texto.ToUpperInvariant().Replace("<AR>", "+", StringComparison.Ordinal).Replace("<BT>", "=", StringComparison.Ordinal),
+            "<([A-Z]{2})>",
+            "^$1");
+        var limpio = new System.Text.StringBuilder(t.Length);
+        foreach (var c in t)
+        {
+            if (c is (>= 'A' and <= 'Z') or (>= '0' and <= '9') or ' ' or '/' or '?' or '.' or '-' or ',' or ':' or '\'' or '(' or ')' or '=' or '+' or '"' or '@' or '^')
+            {
+                limpio.Append(c);
+            }
+        }
+
+        return string.Join(' ', limpio.ToString().Split(' ', StringSplitOptions.RemoveEmptyEntries));
+    }
+
+    /// <summary>La orden <c>17</c> con el texto ya limpio.</summary>
+    /// <param name="texto">De 1 a <see cref="LetrasPorOrden"/> caracteres, ya limpio.</param>
+    /// <returns>El cuerpo CI-V.</returns>
+    public static byte[] OrdenDeManipular(string texto)
+    {
+        ArgumentNullException.ThrowIfNull(texto);
+        if (texto.Length is 0 or > LetrasPorOrden)
+        {
+            throw new ArgumentOutOfRangeException(nameof(texto), texto.Length, $"La orden 17 lleva de 1 a {LetrasPorOrden} caracteres.");
+        }
+
+        return [0x17, .. System.Text.Encoding.ASCII.GetBytes(texto)];
+    }
 
     /// <summary>Orden de apagar.</summary>
     public static IReadOnlyList<byte> Apagar { get; } = [0x18, 0x00];
@@ -121,6 +191,15 @@ public static class OrdenesIcom
         if (orden == 0x1E && cuerpo.Length > 2 && cuerpo[1] == 0x03)
         {
             throw new OrdenPeligrosaException(texto, Textos.T("Servicios.Radio.Peligro.Limites"));
+        }
+
+        // 17 FF para el manipulador: pasa siempre. 17 con texto solo dentro del ambito que abre
+        // el control con el PTT pedido al vigilante (ConManipulacionAutorizadaAsync).
+        if (orden == 0x17 && cuerpo.SequenceEqual(PararElManipulador.ToArray())) return;
+        if (orden == 0x17 && ManipulacionAutorizada.Value && cuerpo.Length is > 1 and <= LetrasPorOrden + 1
+            && !cuerpo[1..].Contains((byte)0xFF))
+        {
+            return;
         }
 
         if (orden is 0x17 or 0x28)

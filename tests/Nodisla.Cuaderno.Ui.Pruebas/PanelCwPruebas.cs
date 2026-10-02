@@ -201,11 +201,33 @@ public sealed class PanelCwPruebas
             Pulsar(panel, "Borrar");
             await Asentar();
             modelo.Principal.Palabras.Should().BeEmpty();
-            Pulsar(panel, "Ocultar");
-            await Asentar();
-            modelo.MostrarAMano.Should().BeFalse();
 
-            Todos<ButtonBase>(panel).Where(b => b.Command is null && b.TemplatedParent is null).Should().BeEmpty("cada botón lleva su orden");
+            // «Buscar» vuelve a AUTO.
+            modelo.FijarEn(650);
+            Pulsar(panel, "Buscar");
+            await Asentar();
+            modelo.Fijo.Should().BeFalse();
+
+            // El tono a mano: se escribe y Intro (la orden de la casilla) lo fija, acotado.
+            modelo.TonoEscrito = "1500";
+            modelo.AplicarTonoEscritoCommand.Execute(null);
+            modelo.Fijo.Should().BeTrue();
+            modelo.TonoHz.Should().Be(1200);
+            modelo.Aviso.Should().Contain("1200");
+            modelo.SubirTonoCommand.Execute(null);
+            modelo.TonoHz.Should().Be(1200, "no pasa del máximo");
+            modelo.BajarTonoCommand.Execute(null);
+            modelo.TonoHz.Should().Be(1190);
+            modelo.TonoEscrito = "250";
+            modelo.AplicarTonoEscritoCommand.Execute(null);
+            modelo.TonoHz.Should().Be(300);
+
+            // Grabar: empieza y cuenta.
+            Pulsar(panel, "Grabar 60 s");
+            await Asentar();
+            modelo.Grabando.Should().BeTrue();
+
+            Todos<ButtonBase>(panel).Where(b => b is not ToggleButton && b.Command is null && b.TemplatedParent is null).Should().BeEmpty("cada botón lleva su orden");
             errores.ToString().Should().BeEmpty("cada enlace roto es un control o un dato muerto");
         }
         finally
@@ -253,19 +275,207 @@ public sealed class PanelCwPruebas
             var modelo = new VistaModeloCw(new AjustesDelPrograma(), entrada, conReloj: false) { MiIndicativo = "EA8DLF" };
             modelo.SeguirAlEquipo("CW", 700);
             await entrada.AbrirAsync("simulado-ft710-entrada");
-            var (ventana, panel) = Pintar(modelo, 1340);
+            var equipo = new EquipoSimulado();
+            var tx = new VistaModeloTransmisionCw(new AjustesDelPrograma(), new Nodisla.Cuaderno.Radio.Cw.EmisorCw(equipo, new VigilantePttDeDesarrollo(equipo)), equipo,
+                cw: modelo, carpeta: Path.Combine(Path.GetTempPath(), "cuaderno-cw-capturas"), conReloj: false);
+            var pagina = new PestanaCw { DataContext = new PrincipalDePrueba(modelo, tx) };
+            var ventana = Ventana(pagina, 1340, 860);
+            var linea = new PanelCwReducido { DataContext = modelo, Margin = new Thickness(8) };
+            var bordeLinea = new Border { Child = linea, Padding = new Thickness(4), VerticalAlignment = VerticalAlignment.Top };
+            bordeLinea.SetResourceReference(Border.BackgroundProperty, "FondoPanel");
+            var ventanaLinea = Ventana(bordeLinea, 1340, 60);
             try
             {
                 Alimentar(entrada, modelo, 36);
                 await Asentar();
-                Retratar(panel, Path.Combine(capturas, $"cw-cabina{sufijo}.png"));
+
+                // La rejilla del glosario genera sus filas en una pasada de diseño aparte.
+                for (var i = 0; i < 4; i++)
+                {
+                    pagina.UpdateLayout();
+                    await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+                    await Task.Delay(50);
+                }
+
+                Guardar(pagina, new Rect(0, 0, pagina.ActualWidth, pagina.ActualHeight), Path.Combine(capturas, $"cw-pagina{sufijo}.png"));
+                Retratar(linea, Path.Combine(capturas, $"cw-cabina{sufijo}.png"));
             }
             finally
             {
                 ventana.Close();
+                ventanaLinea.Close();
             }
         }
     });
+
+    [Fact]
+    public Task LaPaginaCwNoTieneEnlacesRotosYElHuecoDeTransmisionEstaListo() => HiloDeVentana.Ejecutar(async () =>
+    {
+        var errores = new StringBuilder();
+        using var oyente = new OyenteDeEnlacesCw(errores);
+        var entrada = new EntradaDeAudioSimulada { SinReloj = true };
+        var modelo = new VistaModeloCw(new AjustesDelPrograma(), entrada, conReloj: false) { MiIndicativo = "EA8DLF" };
+
+        // Con todo enganchado: la transmisión de verdad sobre el equipo simulado (montarla no
+        // transmite nada; aquí no se pulsa ninguna macro).
+        var equipo = new EquipoSimulado();
+        var vigilante = new VigilantePttDeDesarrollo(equipo);
+        var carpeta = Path.Combine(Path.GetTempPath(), "cuaderno-cw-" + Guid.NewGuid().ToString("N"));
+        var tx = new VistaModeloTransmisionCw(new AjustesDelPrograma(), new Nodisla.Cuaderno.Radio.Cw.EmisorCw(equipo, vigilante), equipo, cw: modelo, carpeta: carpeta, conReloj: false);
+        var pagina = new PestanaCw { DataContext = new PrincipalDePrueba(modelo, tx) };
+        var ventana = Ventana(pagina, 1340, 900);
+        try
+        {
+            await Asentar();
+            Alimentar(entrada, modelo, 20);
+            await Asentar();
+
+            // El glosario está en la página, con su significado.
+            var glosario = (ListBox)pagina.FindName("Glosario");
+            glosario.Items.Count.Should().Be(modelo.Glosario.Count).And.BeGreaterThan(80);
+
+            // El hueco de la transmisión lleva las macros; vacío, dice lo que irá.
+            var rotulo = (TextBlock)pagina.FindName("RotuloDelHueco");
+            pagina.HuecoDeTransmision.Content.Should().BeOfType<MacrosCw>();
+            ((MacrosCw)pagina.HuecoDeTransmision.Content).DataContext.Should().BeSameAs(tx);
+            rotulo.Visibility.Should().Be(Visibility.Collapsed);
+            pagina.HuecoDeTransmision.Content = null;
+            rotulo.Visibility.Should().Be(Visibility.Visible);
+
+            errores.ToString().Should().BeEmpty("cada enlace roto es un control o un dato muerto");
+        }
+        finally
+        {
+            ventana.Close();
+        }
+    });
+
+    [Fact]
+    public Task LaLineaDeLaCabinaAbreLaPagina() => HiloDeVentana.Ejecutar(async () =>
+    {
+        var errores = new StringBuilder();
+        using var oyente = new OyenteDeEnlacesCw(errores);
+        var modelo = new VistaModeloCw(new AjustesDelPrograma(), new EntradaDeAudioSimulada { SinReloj = true }, conReloj: false) { MostrarAMano = true };
+        var abierta = false;
+        modelo.AbrirPaginaPedido += (_, _) => abierta = true;
+        var linea = new PanelCwReducido { DataContext = modelo };
+        var ventana = Ventana(linea, 1300, 60);
+        try
+        {
+            await Asentar();
+            Pulsar(linea, "Abrir CW");
+            await Asentar();
+            abierta.Should().BeTrue();
+            Pulsar(linea, "Ocultar");
+            await Asentar();
+            modelo.MostrarAMano.Should().BeFalse();
+            errores.ToString().Should().BeEmpty();
+        }
+        finally
+        {
+            ventana.Close();
+        }
+    });
+
+    [Fact]
+    public void LaPaginaCwEstaEnElGrupoOperarConSuCapitulo()
+    {
+        VistaModeloPrincipal.Grupos["Operar"].Should().Equal(
+            VistaModeloPrincipal.PaginaOperar, VistaModeloPrincipal.PaginaDigital, VistaModeloPrincipal.PaginaCw,
+            VistaModeloPrincipal.PaginaSatelites, VistaModeloPrincipal.PaginaRonda);
+        VistaModeloPrincipal.GrupoDe(VistaModeloPrincipal.PaginaCw).Should().Be("Operar");
+        VistaModeloPrincipal.CapituloDeCadaPagina[VistaModeloPrincipal.PaginaCw].Should().Be("17-cw");
+    }
+
+    // ── Glosario, resaltado y ayuda ──────────────────────────────────────
+
+    [Theory]
+    [InlineData("QRZ", GrupoDelGlosarioCw.CodigoQ, "¿Quién me llama?")]
+    [InlineData("QTH", GrupoDelGlosarioCw.CodigoQ, "Ubicación")]
+    [InlineData("TU", GrupoDelGlosarioCw.Abreviatura, "Gracias")]
+    [InlineData("73", GrupoDelGlosarioCw.Abreviatura, "Saludos cordiales")]
+    [InlineData("5NN", GrupoDelGlosarioCw.Abreviatura, "599")]
+    [InlineData("?", GrupoDelGlosarioCw.Abreviatura, "repita")]
+    [InlineData("<SK>", GrupoDelGlosarioCw.Prosigno, "Fin del contacto")]
+    [InlineData("<KN>", GrupoDelGlosarioCw.Prosigno, "solo la estación llamada")]
+    public void ElGlosarioDiceQueSignificaCadaCosa(string texto, GrupoDelGlosarioCw grupo, string trozo)
+    {
+        var entrada = GlosarioCw.Buscar(texto);
+        entrada.Should().NotBeNull();
+        entrada!.Grupo.Should().Be(grupo);
+        entrada.Significado.Should().Contain(trozo);
+    }
+
+    [Fact]
+    public void ElGlosarioTieneTodoEnLosSeisIdiomasYLosNumerosCortos()
+    {
+        GlosarioCw.Entradas.Should().Contain(e => e.Grupo == GrupoDelGlosarioCw.NumeroCorto && e.Texto == "N" && e.Significado.StartsWith('9'));
+        GlosarioCw.Buscar("N").Should().BeNull("una N suelta no se traduce en el texto: es ambigua");
+        // Se leen los recursos de cada idioma directamente, sin cambiar el idioma del programa
+        // (cambiarlo avisa a las ventanas de otras pruebas, que viven en otro hilo).
+        var recursos = new System.Resources.ResourceManager(
+            "Nodisla.Cuaderno.Idiomas.Recursos.Digital", typeof(Nodisla.Cuaderno.Idiomas.Textos).Assembly);
+        foreach (var codigo in Nodisla.Cuaderno.Idiomas.Textos.Idiomas.Select(i => i.Codigo))
+        {
+            var cultura = new System.Globalization.CultureInfo(codigo);
+            var conjunto = recursos.GetResourceSet(cultura, createIfNotExists: true, tryParents: codigo == "es");
+            conjunto.Should().NotBeNull(codigo);
+            foreach (var e in GlosarioCw.Entradas)
+                conjunto!.GetString(e.Clave).Should().NotBeNullOrWhiteSpace($"falta el significado de {e.Texto} en {codigo}");
+        }
+
+        recursos.GetString("Digital.CwAbrev.TU", new System.Globalization.CultureInfo("en")).Should().Be("Thank you");
+        recursos.GetString("Digital.CwAbrev.TU", new System.Globalization.CultureInfo("de")).Should().Be("Danke");
+    }
+
+    [Fact]
+    public void LasAbreviaturasSeResaltanConSuSignificadoYLaTraduccion()
+    {
+        var modelo = new VistaModeloCw(new AjustesDelPrograma(), null, conReloj: false) { MiIndicativo = "EA8DLF" };
+        foreach (var c in "TU 73 QRZ? DE EA8DLF <SK> ") modelo.Principal.Anadir(c.ToString());
+
+        var palabras = modelo.Principal.Palabras;
+        palabras.Should().Contain(p => p.Texto == "TU" && p.Tipo == TipoDePalabraCw.Abreviatura && p.Ayuda == "Gracias");
+        palabras.Should().Contain(p => p.Texto == "73" && p.Tipo == TipoDePalabraCw.Abreviatura);
+        palabras.Should().Contain(p => p.Texto == "QRZ?" && p.Tipo == TipoDePalabraCw.Llamada && p.TieneAyuda);
+        modelo.Principal.Traduccion.Should().Contain("TU = Gracias").And.Contain("73 = Saludos cordiales");
+    }
+
+    [Fact]
+    public void ElEstadoDeLaBusquedaYElIndicadorDeEntrada()
+    {
+        var entrada = new EntradaDeAudioSimulada { SinReloj = true };
+        var modelo = new VistaModeloCw(new AjustesDelPrograma(), entrada, conReloj: false) { MostrarAMano = true };
+        modelo.EstadoDeLaBusqueda.Should().Contain("Buscando");
+        modelo.FijarEn(640);
+        modelo.EstadoDeLaBusqueda.Should().Contain("640");
+
+        // El audio simulado llega con nivel: «bien».
+        entrada.Adelantar(1);
+        modelo.Refrescar();
+        modelo.NivelDeEntrada.Should().Be(NivelDeEntradaCw.Bien);
+        modelo.EntradaTexto.Should().Contain("dBFS");
+    }
+
+    /// <summary>Lo que la página CW toma de la ventana principal, sin montar la ventana entera.</summary>
+    private sealed class PrincipalDePrueba(VistaModeloCw cw, VistaModeloTransmisionCw? txCw = null)
+    {
+        public VistaModeloCw Cw { get; } = cw;
+
+        public VistaModeloTransmisionCw? TxCw { get; } = txCw;
+
+        public object? Equipo => null;
+
+        public bool FrontalDibujadoVisible => false;
+
+        public bool FrontalDesplegado { get; set; }
+
+        public bool ListaDeMandosVisible { get; set; }
+
+        public string TextoDeLaListaDeMandos => string.Empty;
+
+        public string TextoDelPliegueDelFrontal => string.Empty;
+    }
 
     // ── Utilidades ───────────────────────────────────────────────────────
 
@@ -284,7 +494,8 @@ public sealed class PanelCwPruebas
         var panel = new PanelCw { DataContext = modelo, Margin = new Thickness(8) };
         var borde = new Border { Child = panel, Padding = new Thickness(4), VerticalAlignment = VerticalAlignment.Top };
         borde.SetResourceReference(Border.BackgroundProperty, "FondoPanel");
-        return (Ventana(borde, ancho, 260), panel);
+        panel.Height = 320;
+        return (Ventana(borde, ancho, 360), panel);
     }
 
     private static Window Ventana(UIElement contenido, double ancho, double alto)

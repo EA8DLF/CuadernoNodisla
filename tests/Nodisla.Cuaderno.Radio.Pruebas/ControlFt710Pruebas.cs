@@ -77,6 +77,7 @@ public class ControlFt710Pruebas
             TiempoMaximo = TimeSpan.FromSeconds(10),
             TiempoSinLatido = TimeSpan.FromSeconds(10),
             EngancharseAlCierreDelProceso = false,
+            Seguridad = Dobles.SeguridadDePrueba.SinPlanNiRoe,
         });
 
         await using (await vigilante.PedirAntenaAsync("sintonizar el acoplador"))
@@ -546,6 +547,7 @@ public class ControlFt710Pruebas
             TiempoMaximo = TimeSpan.FromSeconds(5),
             TiempoSinLatido = TimeSpan.FromSeconds(5),
             EngancharseAlCierreDelProceso = false,
+            Seguridad = Dobles.SeguridadDePrueba.SinPlanNiRoe,
         });
 
         await using (await vigilante.PedirAntenaAsync("prueba contra el equipo de mentira"))
@@ -594,6 +596,7 @@ public class ControlFt710Pruebas
             TiempoSinLatido = TimeSpan.FromSeconds(30),
             EsperaDeSuelta = TimeSpan.FromMilliseconds(400),
             EngancharseAlCierreDelProceso = false,
+            Seguridad = Dobles.SeguridadDePrueba.SinPlanNiRoe,
         });
 
         var sueltas = new EsperaDeSueltas(vigilante);
@@ -636,6 +639,7 @@ public class ControlFt710Pruebas
             TiempoMaximo = TimeSpan.FromSeconds(30),
             TiempoSinLatido = TimeSpan.FromSeconds(30),
             EngancharseAlCierreDelProceso = false,
+            Seguridad = Dobles.SeguridadDePrueba.SinPlanNiRoe,
         });
 
         var transmision = await vigilante.PedirAntenaAsync("prueba");

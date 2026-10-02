@@ -86,6 +86,23 @@ public static class ClavesDeCredencial
     /// </remarks>
     public const string ClusterContrasena = "cluster.contrasena";
 
+    /// <summary>
+    /// Identificador del nodo de cluster que habia antes de poder tener varios.
+    /// </summary>
+    /// <remarks>
+    /// Su contrasena se sigue guardando con <see cref="ClusterContrasena"/>: asi la que ya
+    /// estaba guardada vale sin moverla de sitio.
+    /// </remarks>
+    public const string NodoDeClusterPrincipal = "principal";
+
+    /// <summary>Clave de la contrasena de un nodo de cluster concreto.</summary>
+    /// <param name="idDelNodo">Identificador del nodo en los ajustes.</param>
+    /// <returns>La clave con la que se guarda en el almacen cifrado.</returns>
+    public static string ContrasenaDeNodoDeCluster(string idDelNodo) =>
+        string.IsNullOrWhiteSpace(idDelNodo) || idDelNodo == NodoDeClusterPrincipal
+            ? ClusterContrasena
+            : $"{ClusterContrasena}.{idDelNodo}";
+
     /// <summary>Contraseña del servidor de correo saliente con el que se mandan las QSL.</summary>
     public const string SmtpContrasena = "smtp.contrasena";
 }

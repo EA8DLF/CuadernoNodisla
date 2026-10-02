@@ -4,6 +4,7 @@
              xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
              xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
              xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
              d:DataContext="{d:DesignInstance Type=vistamodelos:VistaModeloAjustesCat}"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -324,6 +325,21 @@
                     Padding="12,3"
                     AutomationProperties.Name="{loc:Texto Ajustes.Equipo.Descartar.Accesible}" />
         </WrapPanel>
+
+        <!--
+            ══ Seguridad de la transmisión ══ La vista y su modelo son de la transmisión en CW
+            (VistaModeloSeguridadTx, en la ventana principal como SeguridadTx); aquí solo se aloja.
+        -->
+        <ContentControl x:Name="HuecoDeSeguridadTx"
+                        Content="{Binding DataContext.SeguridadTx, RelativeSource={RelativeSource AncestorType=Window}, FallbackValue={x:Null}}"
+                        Margin="0,8,0,0">
+            <!-- Plantilla por tipo: sin modelo (ventanas de prueba) no se pinta nada. -->
+            <ContentControl.Resources>
+                <DataTemplate DataType="{x:Type vistamodelos:VistaModeloSeguridadTx}">
+                    <vistas:SeguridadTx />
+                </DataTemplate>
+            </ContentControl.Resources>
+        </ContentControl>
 
     </StackPanel>
 </UserControl>

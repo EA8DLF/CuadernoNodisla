@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Salvaguardas de transmisi&#243;n · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+<li><a href="17-cw.html">Telegraf&#237;a (CW)</a></li>
+<li><a href="18-transmitir-cw.html">Transmitir en CW</a></li>
+<li><a href="19-seguridad-de-transmision.html" class="actual" aria-current="page">Salvaguardas de transmisi&#243;n</a></li>
+<li><a href="20-conectar-otros-programas.html">Conectar otros programas</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="salvaguardas-de-transmisi&#243;n">Salvaguardas de transmisi&#243;n</h1>
+<p>Todo lo que pone el equipo en antena —el MOX y el TUNE del frontal, el m&#243;dem digital, la fon&#237;a y la telegraf&#237;a— pasa por el <strong>vigilante del PTT</strong>, que es el &#250;nico camino para salir al aire. Adem&#225;s del tope de tiempo, el latido y el bot&#243;n de p&#225;nico de siempre, el vigilante aplica estas salvaguardas:</p>
+<figure><a href="capturas/seguridad-tx.png"><img src="capturas/seguridad-tx.png" alt="Las salvaguardas de transmisi&#243;n" loading="lazy"></a><figcaption>Las salvaguardas de transmisi&#243;n</figcaption></figure>
+<h2 id="fuera-del-plan-de-banda-no-se-transmite">Fuera del plan de banda no se transmite</h2>
+<p>Antes de subir el PTT se mira el <strong>canal entero</strong> que va a ocupar la emisi&#243;n, no solo la portadora, contra el plan de banda de la regi&#243;n 1 de la IARU que usa el programa:</p>
+<div class="tabla"><table>
+<thead><tr><th>Modo</th><th>Canal que se mira</th></tr></thead>
+<tbody>
+<tr><td>CW</td><td>la portadora m&#225;s o menos medio ancho del filtro (500 Hz si el equipo no lo dice)</td></tr>
+<tr><td>USB y modos de datos</td><td>de la portadora hacia arriba, el ancho del filtro (3 kHz como m&#237;nimo)</td></tr>
+<tr><td>LSB</td><td>de la portadora hacia abajo</td></tr>
+<tr><td>AM y FM</td><td>a los dos lados (6 y 16 kHz)</td></tr>
+</tbody></table></div>
+<p>Si un borde se sale del plan, <strong>no se transmite</strong> y se dice por qu&#233;, con las frecuencias: por ejemplo, en LSB a 7,002 MHz el canal baja hasta 6,999 MHz. Con <em>split</em>, se mira el VFO que transmite.</p>
+<p><strong>Licencias especiales.</strong> En la tabla, <strong>Permitir</strong> deja transmitir fuera del plan en una banda concreta. Pide una confirmaci&#243;n expl&#237;cita (&#171;S&#237;, mi licencia lo permite&#187;) y queda anotado en el registro. Tambi&#233;n se puede quitar del todo con <strong>No transmitir fuera del plan de banda</strong>, pero no es lo recomendable.</p>
+<h2 id="roe-alta-o-antena-abierta-corte">ROE alta o antena abierta: corte</h2>
+<p>Mientras se transmite, el vigilante lee la ROE del equipo cuatro veces por segundo:</p>
+<ul>
+<li><strong>FT-710</strong>: el medidor <code>RM6</code> y la alarma <strong>Hi-SWR</strong> del propio equipo (<code>RI0</code>, segundo dato).</li>
+<li><strong>ICOM</strong>: el medidor <code>15 12</code>.</li>
+</ul>
+<p>Solo cuenta cuando hay potencia (en CW con la llave arriba la ROE no dice nada). Si pasa de la <strong>ROE m&#225;xima</strong> (2,5 de f&#225;brica) en varias <strong>lecturas seguidas</strong> (3), corta. Si llega a 3,0 o el equipo da su alarma de ROE, corta en la primera lectura: antena abierta o en corto.</p>
+<blockquote>
+<p>En el FT-710, el manual CAT da el medidor de ROE en bruto (0 a 255) sin su curva; el programa usa la de la familia FTDX10/FTDX101 y, por encima, la alarma del propio equipo. Conviene comprobar la escala una vez con una carga artificial.</p>
+</blockquote>
+<h2 id="tras-un-corte-no-se-rearma-solo">Tras un corte, no se rearma solo</h2>
+<p>Si el vigilante corta por <strong>ROE</strong>, por el <strong>tiempo m&#225;ximo</strong> o porque quien transmit&#237;a <strong>dej&#243; de responder</strong>, no deja volver a transmitir hasta que se suelten <strong>todas</strong> las fuentes de PTT:</p>
+<ul>
+<li>el <strong>MOX</strong> del frontal;</li>
+<li>el <strong>Tx habilitado</strong> del m&#243;dem digital;</li>
+<li>el PTT de la <strong>fon&#237;a</strong>;</li>
+<li>la <strong>telegraf&#237;a</strong> (lo que est&#233; saliendo y el autom&#225;tico).</li>
+</ul>
+<p>As&#237; una secuencia autom&#225;tica o una tecla que se qued&#243; pulsada no vuelven a poner el equipo en el aire una y otra vez. El motivo sale en rojo en este apartado y en la zona de telegraf&#237;a.</p>
+<h2 id="solo-quien-subi&#243;-el-ptt-lo-baja">Solo quien subi&#243; el PTT lo baja</h2>
+<p>En el uso normal, solo la fuente que tiene la antena la suelta al terminar: otra fuente no puede ni subir el PTT encima ni bajarlo por ella. Las bajadas de emergencia —<strong>PARAR CW</strong>, Esc, el bot&#243;n de p&#225;nico, el tope, el cierre del programa— pueden siempre.</p>
+<h2 id="potencia-m&#225;xima-por-banda">Potencia m&#225;xima por banda</h2>
+<p>En la tabla, <strong>Potencia m&#225;xima (W)</strong> por banda. Antes de transmitir en esa banda se baja la potencia del equipo a ese valor (<code>PC</code> en Yaesu, el nivel de potencia en ICOM). Si el equipo no deja poner o comprobar la potencia, no se transmite. Vac&#237;o: sin l&#237;mite.</p>
+<p>Pulse <strong>Guardar salvaguardas</strong>: se aplican en el acto y quedan en <code>seguridad-tx.json</code>, en la carpeta de datos.</p>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

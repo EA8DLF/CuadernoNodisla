@@ -219,7 +219,7 @@ public sealed partial class VistaModeloAjustes : ObservableObject
     [
         "Ajustes.Apartado.Cuentas", "Ajustes.Apartado.Subidas", "Ajustes.Apartado.Equipo", "Ajustes.Apartado.Audio",
         "Ajustes.Apartado.Fonia", "Ajustes.Apartado.Cluster", "Ajustes.Apartado.Correo", "Ajustes.Apartado.Libro",
-        "Ajustes.Apartado.Actualizaciones", "Ajustes.Apartado.Idioma",
+        "Ajustes.Apartado.Actualizaciones", "Ajustes.Apartado.Idioma", "Ajustes.Apartado.Servidor",
     ];
 
     /// <summary>Los apartados de la configuración, en el idioma en uso y en el orden de la columna de la izquierda.</summary>
@@ -227,7 +227,8 @@ public sealed partial class VistaModeloAjustes : ObservableObject
 
     /// <summary>Índices de los apartados.</summary>
     public const int ApartadoCuentas = 0, ApartadoSubidas = 1, ApartadoEquipo = 2, ApartadoAudio = 3,
-        ApartadoFonia = 4, ApartadoCluster = 5, ApartadoCorreo = 6, ApartadoLibro = 7, ApartadoActualizaciones = 8, ApartadoIdioma = 9;
+        ApartadoFonia = 4, ApartadoCluster = 5, ApartadoCorreo = 6, ApartadoLibro = 7, ApartadoActualizaciones = 8, ApartadoIdioma = 9,
+        ApartadoServidor = 10;
 
     /// <summary>Apartado que se está viendo.</summary>
     [ObservableProperty]
@@ -319,14 +320,18 @@ public sealed partial class VistaModeloAjustes : ObservableObject
         tarjetas.Add(new TarjetaDeServicio("Ajustes.Tarjeta.Cluster.Nombre", "D", "Ajustes.Tarjeta.Cluster.Descripcion",
             () => Cluster is null
                 ? (EstadoDeServicio.SinConfigurar, Textos.T("Ajustes.Estado.SinNodoDeVerdad"))
-                : string.IsNullOrWhiteSpace(Cluster.Servidor)
+                : Cluster.NodosActivos == 0
                     ? (EstadoDeServicio.SinConfigurar, Textos.T("Ajustes.Estado.SinNodo"))
-                    : (EstadoDeServicio.Configurado, Textos.T(Cluster.ContrasenaGuardada ? "Ajustes.Estado.ConfiguradoConContrasena" : "Ajustes.Estado.Configurado")),
+                    : (EstadoDeServicio.Configurado, Textos.T(Cluster.HayContrasenas ? "Ajustes.Estado.ConfiguradoConContrasena" : "Ajustes.Estado.Configurado")),
             aviso: () => Cluster is null
                 ? Textos.T("Ajustes.Tarjeta.Cluster.Simulado")
-                : string.IsNullOrWhiteSpace(Cluster.Servidor)
+                : Cluster.Nodos.Count == 0
                     ? string.Empty
-                    : Textos.F("Ajustes.Tarjeta.Cluster.Aviso", Cluster.Nombre, Cluster.Servidor, Cluster.Puerto, Cluster.IndicativoDeAcceso),
+                    : Textos.F(
+                        "Ajustes.Tarjeta.Cluster.AvisoVarios",
+                        Cluster.ResumenDeNodos,
+                        string.Join(", ", Cluster.Nodos.Where(n => n.Activo).Select(n => n.Nombre)),
+                        Cluster.IndicativoDeAcceso),
             origenes: Cluster)
         {
             Configurar = new RelayCommand(() => IndiceDelApartado = ApartadoCluster),
@@ -401,6 +406,9 @@ public sealed partial class VistaModeloAjustes : ObservableObject
 
     /// <summary>Apartado de fonía por el PC, o nulo si no se registró.</summary>
     public VistaModeloAjustesFonia? Fonia { get; init; }
+
+    /// <summary>Ajustes del analizador de la radio (dentro de Equipo), o nulo si no se registró.</summary>
+    public VistaModeloAjustesAnalizador? Analizador { get; init; }
 
     /// <summary>Apartado del correo con el que se mandan las QSL, o nulo si no se registró.</summary>
     public VistaModeloCorreoQsl? CorreoQsl { get; init; }

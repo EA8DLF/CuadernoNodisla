@@ -7,10 +7,11 @@
     <!--
         EL ANALIZADOR DE ESPECTRO DE LA PROPIA RADIO, no el del audio: la traza y la cascada que
         el FT-710 manda por su puente USB FT4222 (docs\14-espectro-ft710.md). Se ve en cualquier
-        modo. Colores fijos, los de la pantalla del equipo: traza blanca azulada sobre negro con
-        rejilla gris, cascada en rojos, y la marca roja del VFO.
+        modo. Colores de la pantalla del equipo: traza blanca azulada sobre negro con rejilla
+        gris, cascada en rojos (u otra paleta de Configuración → Equipo) y la marca roja del VFO.
 
-        Solo muestra. Como la radio: en cascada (W/F), la traza arriba y la cascada debajo, que
+        Lo único que manda a la radio es la sintonía (clic, rueda y clic en un spot), siempre
+        al VFO activo y nunca transmitiendo. Como la radio: en cascada (W/F), la traza arriba y la cascada debajo, que
         corre según SPEED; en 3DSS, las últimas pasadas en perspectiva ocupando todo el hueco.
         EXPAND lo hace el visor (le da más alto a este control). MULTI (manual de operación del
         FT-710, pág. 23): el analizador arriba y, debajo, el osciloscopio y el AF-FFT del audio
@@ -47,6 +48,26 @@
             <Path x:Name="TrianguloDelVfo" Fill="#FFE2352B" Data="M 0,0 L 7,0 L 3.5,5 Z" />
             <Rectangle x:Name="LineaDelVfo" Width="1" Fill="#FFE2352B" Opacity="0.75" />
         </Canvas>
+
+        <!--
+            EL ANALIZADOR COMO MANDO (docs\19-analisis-thetis.md, A2 y A3). Clic en el espectro:
+            sintoniza el VFO activo ahí, ajustado al paso; rueda: mueve el VFO por pasos (Mayús,
+            paso fino). Encima, los spots del cluster en carriles, con el color de su novedad;
+            clic en un spot = el doble clic de la lista. Todo lo pinta el código de detrás con
+            piezas reutilizadas: nada se crea por pasada.
+        -->
+        <Border Grid.Row="0" x:Name="ZonaDelEspectro" Background="Transparent"
+                AutomationProperties.Name="{loc:Texto Cabina.Analizador.ZonaDeSintonia}" />
+        <Canvas Grid.Row="0" x:Name="CapaDePicos" IsHitTestVisible="False" ClipToBounds="True" />
+        <Canvas Grid.Row="0" x:Name="CapaDelRaton" IsHitTestVisible="False" Visibility="Collapsed">
+            <Rectangle x:Name="LineaDelRaton" Width="1" Fill="#FFFFFFFF" Opacity="0.55" />
+            <Border x:Name="CajaDelRaton" Background="#D805070A" BorderBrush="#FF6CC3FF" BorderThickness="1"
+                    CornerRadius="2" Padding="3,0">
+                <TextBlock x:Name="FrecuenciaDelRaton" Foreground="#FF6CC3FF" FontFamily="Consolas" FontSize="11"
+                           FontWeight="Bold" TextTrimming="None" />
+            </Border>
+        </Canvas>
+        <Canvas Grid.Row="0" x:Name="CapaDeSpots" ClipToBounds="True" />
 
         <!-- ══ MULTI: osciloscopio (izquierda, cian, 10 ms/div) y AF-FFT (derecha, 0-4 kHz) ══ -->
         <Grid Grid.Row="1" x:Name="VistaMultiple" Visibility="Collapsed" Margin="0,1,0,0">

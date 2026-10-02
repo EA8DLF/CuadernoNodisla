@@ -40,9 +40,12 @@ public sealed class AjustesDelProgramaPruebas : IDisposable
         ajustes.Equipo.Baudios.Should().Be(38400, "es lo que trae el FT-710 de fábrica en su menú CAT RATE");
         ajustes.Equipo.DetectarElPuerto.Should().BeTrue();
         ajustes.Equipo.PttPor.Should().Be(ViaDePtt.Cat);
-        ajustes.Cluster.Servidor.Should().Be("cluster.ea4rch.es");
-        ajustes.Cluster.Puerto.Should().Be(7300);
+        var nodo = ajustes.Cluster.Nodos.Should().ContainSingle().Subject;
+        nodo.Servidor.Should().Be("cluster.ea4rch.es");
+        nodo.Puerto.Should().Be(7300);
+        nodo.Id.Should().Be(ClavesDeCredencial.NodoDeClusterPrincipal);
         ajustes.Cluster.Indicativo.Should().BeNull("el indicativo sale del perfil de estación activo");
+        ajustes.Cluster.ToleranciaDeRepetidosKhz.Should().Be(1.0m);
     }
 
     [Fact]
@@ -81,10 +84,12 @@ public sealed class AjustesDelProgramaPruebas : IDisposable
         leidos.Equipo.SondeoMs.Should().Be(250);
         leidos.Equipo.PttPor.Should().Be(ViaDePtt.Rts);
         leidos.Equipo.TiempoMaximoSegundos.Should().Be(90);
-        leidos.Cluster.Servidor.Should().Be("dxfun.com");
-        leidos.Cluster.Puerto.Should().Be(8000);
+        var nodo = leidos.Cluster.Nodos.Should().ContainSingle().Subject;
+        nodo.Nombre.Should().Be("Mi nodo");
+        nodo.Servidor.Should().Be("dxfun.com");
+        nodo.Puerto.Should().Be(8000);
+        nodo.GuionDeArranque.Should().Equal("<CALLSIGN>", "SH/DX 50");
         leidos.Cluster.Sufijo.Should().Be("1");
-        leidos.Cluster.GuionDeArranque.Should().Equal("<CALLSIGN>", "SH/DX 50");
     }
 
     [Fact]
@@ -111,6 +116,16 @@ public sealed class AjustesDelProgramaPruebas : IDisposable
             nombre.Contains("Contrasen", StringComparison.OrdinalIgnoreCase)
             || nombre.Contains("Password", StringComparison.OrdinalIgnoreCase)
             || nombre.Contains("Secreto", StringComparison.OrdinalIgnoreCase));
+
+        // Y en cada nodo, lo unico con ese nombre es la CLAVE del almacen, que no se escribe.
+        var delNodo = typeof(AjustesDeNodoDeCluster).GetProperties()
+            .Where(p => !p.IsDefined(typeof(System.Text.Json.Serialization.JsonIgnoreAttribute), false))
+            .Select(p => p.Name)
+            .ToList();
+        delNodo.Should().NotContain(nombre =>
+            nombre.Contains("Contrasen", StringComparison.OrdinalIgnoreCase)
+            || nombre.Contains("Password", StringComparison.OrdinalIgnoreCase)
+            || nombre.Contains("Secreto", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -119,7 +134,7 @@ public sealed class AjustesDelProgramaPruebas : IDisposable
         const string secreto = "loquesea-1234";
 
         var ajustes = new AjustesDelPrograma();
-        ajustes.Cluster.Servidor = "cluster.ea4rch.es";
+        ajustes.Cluster.Nodos[0].Servidor = "cluster.ea4rch.es";
         ajustes.Guardar(_carpeta);
 
         var texto = File.ReadAllText(Path.Combine(_carpeta, AjustesDelPrograma.NombreDelFichero));
@@ -130,7 +145,7 @@ public sealed class AjustesDelProgramaPruebas : IDisposable
         texto.Should().Contain("PASSWORD");
 
         // La contrasena solo entra al construir las opciones, y ahi viene del almacen cifrado.
-        var opciones = ajustes.Cluster.AOpcionesDeCluster(Indicativo.Parse("EA8DLF"), secreto);
+        var opciones = ajustes.Cluster.AOpcionesDeNodo(ajustes.Cluster.Nodos[0], Indicativo.Parse("EA8DLF"), secreto);
         opciones.Contrasena.Should().Be(secreto);
         opciones.IndicativoDeAcceso.Should().Be("EA8DLF");
     }
@@ -217,7 +232,7 @@ public sealed class AjustesDelProgramaPruebas : IDisposable
     {
         var cluster = new AjustesDeCluster { Sufijo = "-2" };
 
-        var opciones = cluster.AOpcionesDeCluster(Indicativo.Parse("EA8DLF"), null);
+        var opciones = cluster.AOpcionesDeNodo(cluster.Nodos[0], Indicativo.Parse("EA8DLF"), null);
 
         opciones.IndicativoDeAcceso.Should().Be("EA8DLF-2");
     }
@@ -228,14 +243,14 @@ public sealed class AjustesDelProgramaPruebas : IDisposable
         var ajustes = new AjustesDelPrograma();
         ajustes.Guardar(_carpeta);
 
-        ajustes.Cluster.Servidor = "dxfun.com";
+        ajustes.Cluster.Nodos[0].Servidor = "dxfun.com";
         ajustes.Guardar(_carpeta);
 
         var ruta = Path.Combine(_carpeta, AjustesDelPrograma.NombreDelFichero);
         Directory.GetFiles(_carpeta).Should().ContainSingle().Which.Should().Be(ruta);
 
         using var documento = JsonDocument.Parse(File.ReadAllText(ruta));
-        documento.RootElement.GetProperty("Cluster").GetProperty("Servidor").GetString()
+        documento.RootElement.GetProperty("Cluster").GetProperty("Nodos")[0].GetProperty("Servidor").GetString()
             .Should().Be("dxfun.com");
     }
 }

@@ -126,6 +126,21 @@
   <data name="Libro.Entrada.Ahora" xml:space="preserve">
     <value>Jetzt (F8)</value>
   </data>
+  <data name="Libro.Entrada.Audio" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Escuchar" xml:space="preserve">
+    <value>Anhören</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Escuchar.Ayuda" xml:space="preserve">
+    <value>Spielt die angehängte Aufnahme über die PC-Lautsprecher ab.</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Quitar" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="Libro.Entrada.Audio.Quitar.Ayuda" xml:space="preserve">
+    <value>Entfernt das Audio von der Verbindung. Die Datei bleibt im Audioordner.</value>
+  </data>
   <data name="Libro.Entrada.CambiosGuardados" xml:space="preserve">
     <value>Änderungen an der Verbindung mit {0} gespeichert.</value>
   </data>

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Audio.Procesado;
 using Nodisla.Cuaderno.Idiomas;
 
 namespace Nodisla.Cuaderno.Audio.Fonia;
@@ -47,6 +48,7 @@ public sealed class ControlDeFonia : IAsyncDisposable
     private readonly ITimer _vigilancia;
 
     private ITransmisionEnCurso? _enCurso;
+    private ReproductorEnElAire? _mensaje;
     private DateTimeOffset? _inicio;
     private bool _escuchaSilenciadaPorElOperador;
     private int _terminandoPorVigilancia;
@@ -77,6 +79,12 @@ public sealed class ControlDeFonia : IAsyncDisposable
         _opciones = opciones ?? new OpcionesDeFonia();
         _reloj = reloj ?? TimeProvider.System;
         _registro = registro ?? NullLogger.Instance;
+
+        // El procesado va montado siempre; cada paso se enciende y apaga en vivo. El grabador
+        // ve la recepcion tal como llega; la cadena de escucha, despues del volumen.
+        _recepcion.AntesDeLaGanancia = Grabador;
+        _recepcion.TrasLaGanancia = Escucha;
+        _transmision.TrasLaGanancia = Microfono;
 
         _vigilante.PttSoltado += AlSoltarseElPtt;
         _transmision.Fallo += AlFallarLaTransmision;
@@ -115,6 +123,21 @@ public sealed class ControlDeFonia : IAsyncDisposable
 
     /// <summary>Camino de transmision, para medidores y ganancia.</summary>
     public IPuenteDeAudio Transmision => _transmision;
+
+    /// <summary>Reductor, notch y limitador de la escucha por los altavoces.</summary>
+    public CadenaDeEscucha Escucha { get; } = new();
+
+    /// <summary>Puerta, ecualizador, compresor y techo del microfono del PC.</summary>
+    public CadenaDeMicrofono Microfono { get; } = new();
+
+    /// <summary>Los ultimos minutos de la recepcion, en memoria.</summary>
+    public GrabadorCircular Grabador { get; } = new();
+
+    /// <summary>La pasada en curso es un mensaje del voice keyer.</summary>
+    public bool EnviandoMensaje => Volatile.Read(ref _mensaje) is not null && Transmitiendo;
+
+    /// <summary>Lo que va sonado del mensaje en curso, de 0 a 1.</summary>
+    public double AvanceDelMensaje => Volatile.Read(ref _mensaje)?.Avance ?? 0;
 
     /// <summary>Salta al acabar cada pasada, sea como sea.</summary>
     public event EventHandler<FinDeFonia>? TransmisionTerminada;
@@ -171,7 +194,41 @@ public sealed class ControlDeFonia : IAsyncDisposable
     /// <param name="idSalidaAlEquipo">Salida de audio hacia el codec del equipo.</param>
     /// <param name="ct">Testigo de cancelacion.</param>
     /// <exception cref="InvalidOperationException">Si ya hay otra transmision en curso, por ejemplo del modem.</exception>
-    public async Task EmpezarTransmisionAsync(string idMicrofono, string idSalidaAlEquipo, CancellationToken ct = default)
+    public Task EmpezarTransmisionAsync(string idMicrofono, string idSalidaAlEquipo, CancellationToken ct = default) =>
+        EmpezarAsync(idMicrofono, idSalidaAlEquipo, null, ct);
+
+    /// <summary>
+    /// Emite un mensaje grabado (voice keyer) por el mismo camino que la voz: vigilante, tope de
+    /// tiempo, latido y procesado del microfono. Al acabar el mensaje se vuelve sola a recepcion.
+    /// </summary>
+    /// <param name="mensaje">La grabacion.</param>
+    /// <param name="idMicrofono">Microfono del PC: su reloj marca el paso del mensaje.</param>
+    /// <param name="idSalidaAlEquipo">Salida de audio hacia el codec del equipo.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <exception cref="InvalidOperationException">
+    /// Si ya se transmite, si el mensaje esta vacio o si dura mas que el tope de la pasada.
+    /// </exception>
+    public async Task EmitirMensajeAsync(AudioEnMemoria mensaje, string idMicrofono, string idSalidaAlEquipo, CancellationToken ct = default)
+    {
+        ObjectDisposedException.ThrowIf(_desechado, this);
+        ArgumentNullException.ThrowIfNull(mensaje);
+
+        if (mensaje.Muestras.Length == 0) throw new InvalidOperationException(Textos.T("Servicios.Audio.MensajeVacio"));
+        if (Transmitiendo || _vigilante.EnAntena) throw new InvalidOperationException(Textos.T("Servicios.Audio.OtraTransmision"));
+
+        var reproductor = new ReproductorEnElAire(mensaje);
+        if (reproductor.Duracion >= TiempoMaximoEfectivo)
+        {
+            throw new InvalidOperationException(Textos.F(
+                "Servicios.Audio.MensajeLargo",
+                (int)Math.Ceiling(reproductor.Duracion.TotalSeconds),
+                (int)TiempoMaximoEfectivo.TotalSeconds));
+        }
+
+        await EmpezarAsync(idMicrofono, idSalidaAlEquipo, reproductor, ct).ConfigureAwait(false);
+    }
+
+    private async Task EmpezarAsync(string idMicrofono, string idSalidaAlEquipo, ReproductorEnElAire? mensaje, CancellationToken ct)
     {
         ObjectDisposedException.ThrowIf(_desechado, this);
         ArgumentException.ThrowIfNullOrWhiteSpace(idMicrofono);
@@ -191,12 +248,28 @@ public sealed class ControlDeFonia : IAsyncDisposable
             ITransmisionEnCurso? pedida = null;
             try
             {
+                // 0. Con mensaje, el reproductor va delante de la ganancia, aun desarmado: saca
+                //    silencio en vez de la voz. Si el camino no lo acepta, no se sale al aire.
+                _transmision.AntesDeLaGanancia = mensaje;
+                if (!ReferenceEquals(_transmision.AntesDeLaGanancia, mensaje))
+                {
+                    throw new InvalidOperationException(Textos.T("Servicios.Audio.SinVoiceKeyer"));
+                }
+
+                if (mensaje is not null)
+                {
+                    Volatile.Write(ref _mensaje, mensaje);
+                    mensaje.Terminado += AlTerminarElMensaje;
+                }
+
                 // 1. El camino, abierto y callado.
                 _transmision.Silenciado = true;
                 await _transmision.AbrirAsync(idMicrofono, idSalidaAlEquipo, ct).ConfigureAwait(false);
 
                 // 2. La antena, siempre por el vigilante.
-                pedida = await _vigilante.PedirAntenaAsync("Fonía por el micrófono del PC", ct).ConfigureAwait(false);
+                pedida = await _vigilante.PedirAntenaAsync(
+                    mensaje is null ? "Fonía por el micrófono del PC" : "Fonía: mensaje de voz grabado",
+                    ct).ConfigureAwait(false);
                 _inicio = _reloj.GetUtcNow();
                 Interlocked.Exchange(ref _terminandoPorVigilancia, 0);
                 Volatile.Write(ref _enCurso, pedida);
@@ -206,11 +279,16 @@ public sealed class ControlDeFonia : IAsyncDisposable
 
                 // 4. Ahora si, la voz.
                 _transmision.Silenciado = false;
-                _registro.LogInformation("Fonía en el aire. Tope {Tope}.", TiempoMaximoEfectivo);
+                if (mensaje is not null) mensaje.Armado = true;
+                _registro.LogInformation(
+                    "Fonía en el aire{Mensaje}. Tope {Tope}.",
+                    mensaje is null ? string.Empty : " con un mensaje grabado",
+                    TiempoMaximoEfectivo);
             }
             catch
             {
                 _transmision.Silenciado = true;
+                QuitarElMensaje();
                 Volatile.Write(ref _enCurso, null);
                 _inicio = null;
 
@@ -245,6 +323,7 @@ public sealed class ControlDeFonia : IAsyncDisposable
 
             var duracion = TiempoEnElAire;
             _transmision.Silenciado = true;
+            QuitarElMensaje();
             Volatile.Write(ref _enCurso, null);
             _inicio = null;
 
@@ -310,6 +389,27 @@ public sealed class ControlDeFonia : IAsyncDisposable
         _vigilante.PttSoltado -= AlSoltarseElPtt;
         _transmision.Fallo -= AlFallarLaTransmision;
         _recepcion.Fallo -= AlFallarLaRecepcion;
+    }
+
+    private void AlTerminarElMensaje(object? origen, EventArgs e)
+    {
+        // Desde el hilo de audio: el mensaje y su cola han sonado. Se vuelve a recepcion.
+        if (!ReferenceEquals(origen, Volatile.Read(ref _mensaje)) || !Transmitiendo) return;
+        _transmision.Silenciado = true;
+        _ = TerminarSinFallarAsync(MotivoDeSuelta.Normal);
+    }
+
+    private void QuitarElMensaje()
+    {
+        var mensaje = Interlocked.Exchange(ref _mensaje, null);
+        if (mensaje is not null)
+        {
+            mensaje.Armado = false;
+            mensaje.Terminado -= AlTerminarElMensaje;
+        }
+
+        // Nunca se deja nada delante de la voz al acabar: la siguiente pasada es el microfono.
+        _transmision.AntesDeLaGanancia = null;
     }
 
     private void TerminarDesdeLaVigilancia(MotivoDeSuelta motivo, string porque)

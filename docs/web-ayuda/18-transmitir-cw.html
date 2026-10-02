@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transmitir en CW · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+<li><a href="17-cw.html">Telegraf&#237;a (CW)</a></li>
+<li><a href="18-transmitir-cw.html" class="actual" aria-current="page">Transmitir en CW</a></li>
+<li><a href="19-seguridad-de-transmision.html">Salvaguardas de transmisi&#243;n</a></li>
+<li><a href="20-conectar-otros-programas.html">Conectar otros programas</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="transmitir-en-cw">Transmitir en CW</h1>
+<p>La zona <strong>Transmitir en CW</strong> manda telegraf&#237;a desde el cuaderno: doce macros en las teclas <strong>F1</strong> a <strong>F12</strong>, un rengl&#243;n para escribir lo que quiera y una secuencia del contacto que puede ir sola, como la del FT8 del m&#243;dem propio.</p>
+<figure><a href="capturas/txcw-secuencia.png"><img src="capturas/txcw-secuencia.png" alt="Transmitir en CW: el informe saliendo en plena secuencia" loading="lazy"></a><figcaption>Transmitir en CW: el informe saliendo en plena secuencia</figcaption></figure>
+<p><strong>La telegraf&#237;a la genera la radio, no el ordenador.</strong> El cuaderno le pasa el texto al manipulador interno del equipo por CAT; el PC no produce ning&#250;n audio. Por eso hace falta un equipo que sepa manipular por CAT:</p>
+<div class="tabla"><table>
+<thead><tr><th>Equipo</th><th>C&#243;mo se manda</th></tr></thead>
+<tbody>
+<tr><td><strong>FT-710</strong></td><td>El texto se escribe en la memoria de texto 5 del manipulador (<code>KM5…;</code>) y se reproduce (<code>KY05;</code>), en trozos de 50 caracteres. Lo que ten&#237;a esa memoria se le devuelve al terminar.</td></tr>
+<tr><td><strong>ICOM</strong> (CI-V)</td><td>Orden <code>17</code> con hasta 30 caracteres; <code>17 FF</code> para.</td></tr>
+<tr><td><strong>Hamlib</strong> (rigctld)</td><td><code>send_morse</code>; <code>stop_morse</code> para. Depende de que Hamlib sepa hacerlo con su equipo.</td></tr>
+<tr><td>Los dem&#225;s Yaesu, OmniRig</td><td>No: el bot&#243;n queda apagado y se dice por qu&#233;.</td></tr>
+</tbody></table></div>
+<h2 id="antes-de-transmitir-las-cinco-puertas">Antes de transmitir: las cinco puertas</h2>
+<p>Nada sale al aire sin pasar por todas, en este orden:</p>
+<ol>
+<li><strong>Permitir transmitir en esta sesi&#243;n</strong> marcado. Es el mismo pestillo del m&#243;dem digital: empieza cerrado en cada arranque y no se guarda.</li>
+<li><strong>Un equipo que manipule por CAT</strong>, conectado. Si no, la l&#237;nea amarilla dice por qu&#233;.</li>
+<li><strong>El equipo en CW.</strong> Si est&#225; en otro modo, se pregunta antes de cambiarlo; si dice que no, no se transmite.</li>
+<li><strong>La pregunta de transmitir</strong>, con el texto que va a salir. Tiene el mismo &#171;No volver a preguntar&#187; que el m&#243;dem (se vuelve a encender en <strong>Configuraci&#243;n › Audio y digitales</strong>).</li>
+<li><strong>El vigilante del PTT</strong>, que es quien sube y baja la antena, como en todo el programa, con sus <a href="19-seguridad-de-transmision.html">salvaguardas</a>: plan de banda, ROE y potencia por banda.</li>
+</ol>
+<p><strong>Nunca se transmite al arrancar ni al conectar</strong>: solo con una tecla o un bot&#243;n suyo, o con el autom&#225;tico que usted ha encendido en esta sesi&#243;n.</p>
+<h2 id="parar-esc-o-parar-cw">Parar: Esc o PARAR CW</h2>
+<p><strong>Esc</strong> o el bot&#243;n rojo <strong>PARAR CW</strong> cortan en el acto: mandan la orden de parar al manipulador del equipo y bajan el PTT. Esc funciona en cualquier p&#225;gina mientras haya algo saliendo o el autom&#225;tico puesto. Adem&#225;s:</p>
+<ul>
+<li>Hay un <strong>tope de transmisi&#243;n</strong> (120 s de f&#225;brica, se cambia en el editor de macros). Pasado, se corta. Detr&#225;s sigue el tope del vigilante del PTT, que no depende de nada.</li>
+<li>Cualquier bajada del PTT —la normal, el tope, el p&#225;nico, perder el equipo, cerrar el programa— para antes el manipulador: con el <em>break-in</em> puesto, la radio podr&#237;a seguir manipulando sola.</li>
+<li>Cerrar el pestillo tambi&#233;n corta lo que est&#233; saliendo y apaga el autom&#225;tico.</li>
+</ul>
+<h2 id="las-macros">Las macros</h2>
+<p>Cada bot&#243;n es una macro; su tecla F la manda. La que toca en la secuencia sale recuadrada.</p>
+<p>Variables que se rellenan al mandar:</p>
+<div class="tabla"><table>
+<thead><tr><th>Variable</th><th>Qu&#233; pone</th></tr></thead>
+<tbody>
+<tr><td><code>{MICALL}</code></td><td>Su indicativo (el del perfil de estaci&#243;n activo).</td></tr>
+<tr><td><code>{CALL}</code></td><td>El indicativo del <strong>Contacto nuevo</strong>.</td></tr>
+<tr><td><code>{RST}</code></td><td>El RST que da (599 si no hay otro; en concurso, 5NN).</td></tr>
+<tr><td><code>{NR}</code></td><td>El n&#250;mero de serie, con tres cifras.</td></tr>
+<tr><td><code>{NOMBRE}</code> <code>{QTH}</code> <code>{LOC}</code></td><td>Nombre, QTH y localizador del corresponsal.</td></tr>
+<tr><td><code>{MINOMBRE}</code> <code>{MIQTH}</code> <code>{MILOC}</code></td><td>Los suyos.</td></tr>
+<tr><td><code>{CQ}</code> <code>{TU}</code> <code>{73}</code> <code>{AGN}</code> <code>{?}</code></td><td>CQ (CQ TEST en concurso), TU, 73, AGN, ?.</td></tr>
+</tbody></table></div>
+<p><strong>Velocidad dentro de la macro:</strong> <code>&lt;+5&gt;</code> y <code>&lt;-5&gt;</code> suben o bajan desde ah&#237; hasta el final; <code>&lt;WPM 25&gt;</code> la pone fija. <strong>Prosignos:</strong> <code>&lt;AR&gt;</code>, <code>&lt;SK&gt;</code>, <code>&lt;BT&gt;</code>, <code>&lt;KN&gt;</code>.</p>
+<p>Si una macro usa <code>{CALL}</code> y el contacto nuevo no tiene indicativo, no se manda y se avisa.</p>
+<p>La velocidad de partida se cambia con <strong>−</strong> y <strong>+</strong> (de 2 en 2 WPM).</p>
+<h3 id="dos-juegos-qso-normal-y-concurso">Dos juegos: QSO normal y concurso</h3>
+<ul>
+<li><strong>QSO normal</strong>: F1 CQ, F2 contestar a un CQ, F3 informe con nombre y QTH, F4 confirmaci&#243;n y 73, F5 despedida, F6 informe con R (cuando contesta usted), y de F7 a F12 ?, AGN, QRZ?, su indicativo, QRS y QRL?.</li>
+<li><strong>Concurso</strong> (casilla <strong>Concurso</strong>): F1 CQ TEST, F2 intercambio (5NN y n&#250;mero), F3 TU, F4 su indicativo, F5 el del otro, F6 repetir el intercambio… Al estilo de N1MM.</li>
+</ul>
+<h3 id="editar-guardar-exportar">Editar, guardar, exportar</h3>
+<p><strong>Editar macros</strong> abre el editor: r&#243;tulo y texto de cada una, su nombre, su QTH, el siguiente n&#250;mero de serie y el tope de transmisi&#243;n. <strong>Guardar</strong> las deja en el fichero <code>transmision-cw.json</code> de la carpeta de datos. <strong>Volver a las de f&#225;brica</strong> repone el juego en uso. <strong>Exportar…</strong> e <strong>Importar…</strong> pasan los dos juegos a un fichero y de un fichero.</p>
+<figure><a href="capturas/txcw-editor-claro.png"><img src="capturas/txcw-editor-claro.png" alt="El editor de macros" loading="lazy"></a><figcaption>El editor de macros</figcaption></figure>
+<h2 id="escribir-a-mano">Escribir a mano</h2>
+<p>El rengl&#243;n de texto manda lo que escriba al pulsar <strong>Intro</strong> o <strong>Enviar</strong> (admite las mismas variables). Con <strong>Escribir mientras se env&#237;a</strong>, cada palabra sale en cuanto teclea su espacio, detr&#225;s de lo que est&#233; saliendo: puede ir escribiendo mientras la radio manipula. Debajo se ve lo que falta por salir.</p>
+<h2 id="la-secuencia-del-contacto">La secuencia del contacto</h2>
+<p>La tira <strong>CQ → Respuesta → Informe → Confirmaci&#243;n → 73</strong> dice en qu&#233; paso est&#225; el contacto y cu&#225;l toca (recuadrado). <strong>Lo que toca</strong> —o <strong>Intro</strong> con el rengl&#243;n vac&#237;o— manda las macros de ese paso: es el <em>Enter Sends Message</em> de N1MM.</p>
+<ul>
+<li><strong>Llamando</strong> (lo normal): CQ → le contesta alguien → informe → su informe → confirmaci&#243;n, y el contacto queda completo.</li>
+<li><strong>Busco y contesto</strong> (casilla): contestar al CQ de otro → su informe → su informe con R → su despedida → 73. En concurso se completa con el intercambio.</li>
+</ul>
+<p>La secuencia avanza con <strong>lo que lee el decodificador de la p&#225;gina CW</strong>:</p>
+<ul>
+<li>si oye su indicativo seguido de otro (&#171;EA8DLF DE DL1ABC&#187;), o solo un indicativo tras su CQ, toma ese como corresponsal y lo pone en el <strong>Contacto nuevo</strong>;</li>
+<li>de su informe saca el RST, el nombre (NAME, OP), el QTH y el localizador, y en concurso el n&#250;mero (con los n&#250;meros cortados: T = 0, N = 9…);</li>
+<li>espera a que el otro termine (un <code>K</code>, <code>KN</code>, <code>&lt;AR&gt;</code>… o un silencio) antes de contestar;</li>
+<li>un &#171;?&#187;, &#171;AGN&#187;, &#171;NR?&#187;… hace repetir lo &#250;ltimo;</li>
+<li>si el otro est&#225; con otra estaci&#243;n, no se mete.</li>
+</ul>
+<p>Mientras usted transmite, lo que lee el decodificador (su propio tono de escucha) no cuenta.</p>
+<h3 id="autom&#225;tico">Autom&#225;tico</h3>
+<p>Con <strong>Autom&#225;tico</strong>, la secuencia contesta sola, como el &#171;Tx habilitado&#187; del FT8. Pasa por las mismas cinco puertas: si la pregunta de transmitir est&#225; puesta, se le pregunta cada vez. Si nadie contesta, repite lo &#250;ltimo tras 12 s de silencio, hasta 3 veces, y luego se apaga solo. Tambi&#233;n se apaga al parar, al cerrar el pestillo o si se dice que no a una pregunta. Empieza apagado en cada arranque.</p>
+<h3 id="al-completar">Al completar</h3>
+<p>Con el contacto completo, el <strong>Contacto nuevo</strong> queda relleno (indicativo, RST dado y recibido, nombre, QTH, localizador; en concurso, los n&#250;meros en el comentario). Si en <strong>Configuraci&#243;n › Audio y digitales</strong> est&#225; <strong>Registrar al completar</strong> —el mismo ajuste del FT8—, se apunta solo en el cuaderno; si no, queda listo para pulsar <strong>Registrar</strong>. <strong>Contacto nuevo</strong> vuelve la secuencia al principio sin borrar el formulario.</p>
+<h2 id="antes-de-la-primera-vez-con-la-radio">Antes de la primera vez con la radio</h2>
+<ul>
+<li>En el FT-710, el cuaderno usa la <strong>memoria 5 del manipulador</strong> (men&#250; CW SETTING › KEYER › CW MEMORY 5 en <strong>TEXT</strong>). Lo que tuviera se le devuelve al terminar cada transmisi&#243;n.</li>
+<li>Ning&#250;n equipo dice por CAT cu&#225;ndo ha terminado de manipular: el cuaderno lo calcula con la velocidad. Si cambia el <strong>peso</strong> (CW WEIGHT) del manipulador, los trozos largos pueden quedar algo m&#225;s separados.</li>
+</ul>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

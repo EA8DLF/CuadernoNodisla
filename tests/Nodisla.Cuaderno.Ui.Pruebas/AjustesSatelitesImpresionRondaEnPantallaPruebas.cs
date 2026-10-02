@@ -27,6 +27,12 @@ public sealed class VentanaDeAjustesDeMentira
 
     /// <summary>El panel del cluster.</summary>
     public required VistaModeloCluster Cluster { get; init; }
+
+    /// <summary>La seguridad de la transmisión, que Configuración › Equipo aloja (aquí no hay).</summary>
+    public VistaModeloSeguridadTx? SeguridadTx => null;
+
+    /// <summary>El servidor para otros programas, que Configuración aloja (aquí no hay).</summary>
+    public VistaModeloServidores? Servidores => null;
 }
 
 /// <summary>
@@ -376,7 +382,7 @@ public sealed class AjustesSatelitesImpresionRondaEnPantallaPruebas : IDisposabl
             await Asentar();
 
             // Cluster: aplicar sin servidor avisa en rojo.
-            modelo.Cluster!.Servidor = string.Empty;
+            modelo.Cluster!.NodoSeleccionado!.Servidor = string.Empty;
             modelo.Cluster.Indicativo = "EA8DLF";
             modelo.IndiceDelApartado = VistaModeloAjustes.ApartadoCluster;
             await Asentar();

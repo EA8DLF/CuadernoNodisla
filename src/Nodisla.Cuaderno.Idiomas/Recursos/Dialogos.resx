@@ -80,6 +80,9 @@ El cuaderno vive en {1}. Si el fichero está dañado, ahí mismo hay una carpeta
     <value>El módem simulado no transmite. Cierre el programa y vuelva a abrirlo sin CUADERNO_SIMULADO.</value>
     <comment>Modo simulado</comment>
   </data>
+  <data name="Dialogos.Simulado.NodoCaido" xml:space="preserve">
+    <value>Nodo caído (prueba)</value>
+  </data>
   <data name="Dialogos.Simulado.QsoDuplicado" xml:space="preserve">
     <value>El contacto con {0} ya está en el cuaderno.</value>
     <comment>Modo simulado</comment>

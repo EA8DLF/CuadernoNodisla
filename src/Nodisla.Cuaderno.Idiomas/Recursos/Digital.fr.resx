@@ -24,6 +24,303 @@
   <data name="Digital.Aviso.NoSePudoGuardarElContacto" xml:space="preserve">
     <value>Impossible d’enregistrer le contact : {0}</value>
   </data>
+  <data name="Digital.CwAbrev.599" xml:space="preserve">
+    <value>Report parfait : lisible, fort, tonalité pure</value>
+  </data>
+  <data name="Digital.CwAbrev.5NN" xml:space="preserve">
+    <value>Report 599 abrégé</value>
+  </data>
+  <data name="Digital.CwAbrev.72" xml:space="preserve">
+    <value>Amitiés QRP</value>
+  </data>
+  <data name="Digital.CwAbrev.73" xml:space="preserve">
+    <value>Meilleures amitiés</value>
+  </data>
+  <data name="Digital.CwAbrev.88" xml:space="preserve">
+    <value>Bises et amitiés</value>
+  </data>
+  <data name="Digital.CwAbrev.ABT" xml:space="preserve">
+    <value>Environ, à propos de</value>
+  </data>
+  <data name="Digital.CwAbrev.AGN" xml:space="preserve">
+    <value>Encore, répétez</value>
+  </data>
+  <data name="Digital.CwAbrev.ANT" xml:space="preserve">
+    <value>Antenne</value>
+  </data>
+  <data name="Digital.CwAbrev.B4" xml:space="preserve">
+    <value>Avant</value>
+  </data>
+  <data name="Digital.CwAbrev.BK" xml:space="preserve">
+    <value>Je coupe / passage rapide</value>
+  </data>
+  <data name="Digital.CwAbrev.CFM" xml:space="preserve">
+    <value>Je confirme</value>
+  </data>
+  <data name="Digital.CwAbrev.CL" xml:space="preserve">
+    <value>Je ferme la station</value>
+  </data>
+  <data name="Digital.CwAbrev.Corto0" xml:space="preserve">
+    <value>0 (chiffre abrégé de concours)</value>
+  </data>
+  <data name="Digital.CwAbrev.Corto1" xml:space="preserve">
+    <value>1 (chiffre abrégé de concours)</value>
+  </data>
+  <data name="Digital.CwAbrev.Corto2" xml:space="preserve">
+    <value>2 (chiffre abrégé de concours)</value>
+  </data>
+  <data name="Digital.CwAbrev.Corto3" xml:space="preserve">
+    <value>3 (chiffre abrégé de concours)</value>
+  </data>
+  <data name="Digital.CwAbrev.Corto5" xml:space="preserve">
+    <value>5 (chiffre abrégé de concours)</value>
+  </data>
+  <data name="Digital.CwAbrev.Corto7" xml:space="preserve">
+    <value>7 (chiffre abrégé de concours)</value>
+  </data>
+  <data name="Digital.CwAbrev.Corto8" xml:space="preserve">
+    <value>8 (chiffre abrégé de concours)</value>
+  </data>
+  <data name="Digital.CwAbrev.Corto9" xml:space="preserve">
+    <value>9 (chiffre abrégé de concours)</value>
+  </data>
+  <data name="Digital.CwAbrev.CQ" xml:space="preserve">
+    <value>Appel général à toute station</value>
+  </data>
+  <data name="Digital.CwAbrev.CUL" xml:space="preserve">
+    <value>À plus tard</value>
+  </data>
+  <data name="Digital.CwAbrev.DE" xml:space="preserve">
+    <value>De (ici la station…)</value>
+  </data>
+  <data name="Digital.CwAbrev.DX" xml:space="preserve">
+    <value>Distance, station lointaine</value>
+  </data>
+  <data name="Digital.CwAbrev.ENN" xml:space="preserve">
+    <value>Report 599 abrégé (E = 5)</value>
+  </data>
+  <data name="Digital.CwAbrev.ES" xml:space="preserve">
+    <value>Et</value>
+  </data>
+  <data name="Digital.CwAbrev.FB" xml:space="preserve">
+    <value>Très bien, excellent</value>
+  </data>
+  <data name="Digital.CwAbrev.FER" xml:space="preserve">
+    <value>Pour</value>
+  </data>
+  <data name="Digital.CwAbrev.GA" xml:space="preserve">
+    <value>Bon après-midi</value>
+  </data>
+  <data name="Digital.CwAbrev.GE" xml:space="preserve">
+    <value>Bonsoir</value>
+  </data>
+  <data name="Digital.CwAbrev.GL" xml:space="preserve">
+    <value>Bonne chance</value>
+  </data>
+  <data name="Digital.CwAbrev.GM" xml:space="preserve">
+    <value>Bonjour (matin)</value>
+  </data>
+  <data name="Digital.CwAbrev.GN" xml:space="preserve">
+    <value>Bonne nuit</value>
+  </data>
+  <data name="Digital.CwAbrev.HR" xml:space="preserve">
+    <value>Ici</value>
+  </data>
+  <data name="Digital.CwAbrev.HW" xml:space="preserve">
+    <value>Comment me copiez-vous ?</value>
+  </data>
+  <data name="Digital.CwAbrev.INFO" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="Digital.CwAbrev.Interrogacion" xml:space="preserve">
+    <value>Question : répétez / quoi ?</value>
+  </data>
+  <data name="Digital.CwAbrev.K" xml:space="preserve">
+    <value>À vous</value>
+  </data>
+  <data name="Digital.CwAbrev.NAME" xml:space="preserve">
+    <value>Nom (de l'opérateur)</value>
+  </data>
+  <data name="Digital.CwAbrev.NR" xml:space="preserve">
+    <value>Numéro</value>
+  </data>
+  <data name="Digital.CwAbrev.NW" xml:space="preserve">
+    <value>Maintenant</value>
+  </data>
+  <data name="Digital.CwAbrev.OM" xml:space="preserve">
+    <value>Cher ami (opérateur)</value>
+  </data>
+  <data name="Digital.CwAbrev.OP" xml:space="preserve">
+    <value>Opérateur</value>
+  </data>
+  <data name="Digital.CwAbrev.Prosigno_AR" xml:space="preserve">
+    <value>Fin de message</value>
+  </data>
+  <data name="Digital.CwAbrev.Prosigno_AS" xml:space="preserve">
+    <value>Attendez un instant</value>
+  </data>
+  <data name="Digital.CwAbrev.Prosigno_BT" xml:space="preserve">
+    <value>Séparation (pause, nouveau paragraphe)</value>
+  </data>
+  <data name="Digital.CwAbrev.Prosigno_HH" xml:space="preserve">
+    <value>Erreur, j'annule</value>
+  </data>
+  <data name="Digital.CwAbrev.Prosigno_KA" xml:space="preserve">
+    <value>Début du message</value>
+  </data>
+  <data name="Digital.CwAbrev.Prosigno_KN" xml:space="preserve">
+    <value>À vous, station appelée uniquement</value>
+  </data>
+  <data name="Digital.CwAbrev.Prosigno_SK" xml:space="preserve">
+    <value>Fin de la liaison</value>
+  </data>
+  <data name="Digital.CwAbrev.Prosigno_SN" xml:space="preserve">
+    <value>Compris</value>
+  </data>
+  <data name="Digital.CwAbrev.Prosigno_SOS" xml:space="preserve">
+    <value>Détresse (urgence)</value>
+  </data>
+  <data name="Digital.CwAbrev.PSE" xml:space="preserve">
+    <value>S'il vous plaît</value>
+  </data>
+  <data name="Digital.CwAbrev.PWR" xml:space="preserve">
+    <value>Puissance</value>
+  </data>
+  <data name="Digital.CwAbrev.QRA" xml:space="preserve">
+    <value>Nom de la station</value>
+  </data>
+  <data name="Digital.CwAbrev.QRG" xml:space="preserve">
+    <value>Fréquence exacte</value>
+  </data>
+  <data name="Digital.CwAbrev.QRK" xml:space="preserve">
+    <value>Lisibilité du signal</value>
+  </data>
+  <data name="Digital.CwAbrev.QRL" xml:space="preserve">
+    <value>Fréquence occupée (est-elle occupée ?)</value>
+  </data>
+  <data name="Digital.CwAbrev.QRM" xml:space="preserve">
+    <value>Brouillage par d'autres stations</value>
+  </data>
+  <data name="Digital.CwAbrev.QRN" xml:space="preserve">
+    <value>Parasites atmosphériques</value>
+  </data>
+  <data name="Digital.CwAbrev.QRO" xml:space="preserve">
+    <value>Augmentez la puissance / forte puissance</value>
+  </data>
+  <data name="Digital.CwAbrev.QRP" xml:space="preserve">
+    <value>Faible puissance (5 W ou moins en CW)</value>
+  </data>
+  <data name="Digital.CwAbrev.QRQ" xml:space="preserve">
+    <value>Transmettez plus vite</value>
+  </data>
+  <data name="Digital.CwAbrev.QRS" xml:space="preserve">
+    <value>Transmettez plus lentement</value>
+  </data>
+  <data name="Digital.CwAbrev.QRT" xml:space="preserve">
+    <value>Je cesse d'émettre / je ferme la station</value>
+  </data>
+  <data name="Digital.CwAbrev.QRU" xml:space="preserve">
+    <value>Je n'ai rien pour vous</value>
+  </data>
+  <data name="Digital.CwAbrev.QRV" xml:space="preserve">
+    <value>Je suis prêt</value>
+  </data>
+  <data name="Digital.CwAbrev.QRX" xml:space="preserve">
+    <value>Attendez / je vous rappellerai</value>
+  </data>
+  <data name="Digital.CwAbrev.QRZ" xml:space="preserve">
+    <value>Qui m'appelle ?</value>
+  </data>
+  <data name="Digital.CwAbrev.QRZ_Pregunta" xml:space="preserve">
+    <value>Qui m'appelle ?</value>
+  </data>
+  <data name="Digital.CwAbrev.QSB" xml:space="preserve">
+    <value>Évanouissement (fading)</value>
+  </data>
+  <data name="Digital.CwAbrev.QSK" xml:space="preserve">
+    <value>Écoute entre les signaux (full break-in)</value>
+  </data>
+  <data name="Digital.CwAbrev.QSL" xml:space="preserve">
+    <value>Accusé de réception / carte QSL</value>
+  </data>
+  <data name="Digital.CwAbrev.QSO" xml:space="preserve">
+    <value>Contact (QSO)</value>
+  </data>
+  <data name="Digital.CwAbrev.QSP" xml:space="preserve">
+    <value>Je retransmets le message</value>
+  </data>
+  <data name="Digital.CwAbrev.QSY" xml:space="preserve">
+    <value>Changez de fréquence</value>
+  </data>
+  <data name="Digital.CwAbrev.QTH" xml:space="preserve">
+    <value>Lieu (position)</value>
+  </data>
+  <data name="Digital.CwAbrev.QTR" xml:space="preserve">
+    <value>Heure exacte</value>
+  </data>
+  <data name="Digital.CwAbrev.R" xml:space="preserve">
+    <value>Reçu</value>
+  </data>
+  <data name="Digital.CwAbrev.RIG" xml:space="preserve">
+    <value>Appareil (émetteur-récepteur)</value>
+  </data>
+  <data name="Digital.CwAbrev.RPT" xml:space="preserve">
+    <value>Report / répétez</value>
+  </data>
+  <data name="Digital.CwAbrev.RST" xml:space="preserve">
+    <value>Report : lisibilité, force, tonalité</value>
+  </data>
+  <data name="Digital.CwAbrev.SIG" xml:space="preserve">
+    <value>Signal</value>
+  </data>
+  <data name="Digital.CwAbrev.SRI" xml:space="preserve">
+    <value>Désolé</value>
+  </data>
+  <data name="Digital.CwAbrev.TEST" xml:space="preserve">
+    <value>Appel de concours</value>
+  </data>
+  <data name="Digital.CwAbrev.TKS" xml:space="preserve">
+    <value>Merci</value>
+  </data>
+  <data name="Digital.CwAbrev.TNX" xml:space="preserve">
+    <value>Merci</value>
+  </data>
+  <data name="Digital.CwAbrev.TT" xml:space="preserve">
+    <value>Chiffre abrégé : 00</value>
+  </data>
+  <data name="Digital.CwAbrev.TU" xml:space="preserve">
+    <value>Merci</value>
+  </data>
+  <data name="Digital.CwAbrev.UR" xml:space="preserve">
+    <value>Votre</value>
+  </data>
+  <data name="Digital.CwAbrev.VY" xml:space="preserve">
+    <value>Très</value>
+  </data>
+  <data name="Digital.CwAbrev.WPM" xml:space="preserve">
+    <value>Mots par minute</value>
+  </data>
+  <data name="Digital.CwAbrev.WX" xml:space="preserve">
+    <value>Météo</value>
+  </data>
+  <data name="Digital.CwAbrev.XYL" xml:space="preserve">
+    <value>Épouse</value>
+  </data>
+  <data name="Digital.CwAbrev.YL" xml:space="preserve">
+    <value>Opératrice</value>
+  </data>
+  <data name="Digital.CwGlosario.GrupoAbreviatura" xml:space="preserve">
+    <value>Abréviation</value>
+  </data>
+  <data name="Digital.CwGlosario.GrupoCodigoQ" xml:space="preserve">
+    <value>Code Q</value>
+  </data>
+  <data name="Digital.CwGlosario.GrupoNumeroCorto" xml:space="preserve">
+    <value>Chiffre abrégé</value>
+  </data>
+  <data name="Digital.CwGlosario.GrupoProsigno" xml:space="preserve">
+    <value>Prosigne</value>
+  </data>
   <data name="Digital.Decibelios.Ayuda" xml:space="preserve">
     <value>Rapport signal/bruit en décibels</value>
   </data>

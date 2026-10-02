@@ -76,6 +76,9 @@ O logbook está em {1}. Se o ficheiro estiver danificado, aí mesmo há uma past
   <data name="Dialogos.Simulado.ModemNoTransmite" xml:space="preserve">
     <value>O modem simulado não transmite. Feche o programa e volte a abri-lo sem CUADERNO_SIMULADO.</value>
   </data>
+  <data name="Dialogos.Simulado.NodoCaido" xml:space="preserve">
+    <value>Nó em baixo (teste)</value>
+  </data>
   <data name="Dialogos.Simulado.QsoDuplicado" xml:space="preserve">
     <value>O contacto com {0} já está no logbook.</value>
   </data>

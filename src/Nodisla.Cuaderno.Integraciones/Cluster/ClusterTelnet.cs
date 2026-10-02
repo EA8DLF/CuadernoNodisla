@@ -20,7 +20,7 @@ namespace Nodisla.Cuaderno.Integraciones.Cluster;
 /// teniendo un mal dia. Lo unico que no se reintenta es un rechazo del indicativo, porque
 /// insistir no lo va a arreglar.
 /// </remarks>
-public sealed partial class ClusterTelnet : IFuenteSpots
+public sealed partial class ClusterTelnet : IFuenteSpots, IFuenteConDiagnostico
 {
     private readonly OpcionesCluster _opciones;
     private readonly AnalizadorSpot _analizador;
@@ -77,6 +77,9 @@ public sealed partial class ClusterTelnet : IFuenteSpots
 
     /// <summary>Numero de reconexiones hechas desde que se arranco.</summary>
     public int Reconexiones { get; private set; }
+
+    /// <inheritdoc/>
+    public string? UltimoError { get; private set; }
 
     /// <inheritdoc/>
     public event EventHandler<EstadoDeConexion>? EstadoCambiado;
@@ -200,6 +203,7 @@ public sealed partial class ClusterTelnet : IFuenteSpots
             catch (Exception ex) when (ex is IOException or SocketException or ObjectDisposedException
                 or InvalidOperationException)
             {
+                if (_estado != EstadoDeConexion.Fallido) UltimoError = ex.Message;
                 Avisar(Textos.F("Servicios.Cluster.ConexionPerdida", _opciones.Nombre, ex.Message));
             }
             finally
@@ -291,7 +295,8 @@ public sealed partial class ClusterTelnet : IFuenteSpots
                     {
                         // Ni un byte en mucho rato: la conexion esta muerta aunque el socket
                         // siga abierto. Mas vale reconectar que quedarse mirando.
-                        Avisar(Textos.F("Servicios.Cluster.SinDatos", _opciones.Nombre));
+                        UltimoError = Textos.F("Servicios.Cluster.SinDatos", _opciones.Nombre);
+                        Avisar(UltimoError);
                         return;
                     }
                     // El nodo no ha pedido nada: se sigue con el guion de todas formas.
@@ -336,6 +341,7 @@ public sealed partial class ClusterTelnet : IFuenteSpots
                 {
                     Avisar(linea);
                     Avisar(Textos.F("Servicios.Cluster.IndicativoRechazado", _opciones.Nombre));
+                    UltimoError = linea.Trim();
                     CambiarEstado(EstadoDeConexion.Fallido);
                     throw new IOException(Textos.T("Servicios.Cluster.IndicativoRechazadoExcepcion"));
                 }
@@ -347,6 +353,14 @@ public sealed partial class ClusterTelnet : IFuenteSpots
                 // Un anuncio significa que ya estamos dentro, aunque no hayamos visto el
                 // saludo del nodo.
                 if (_fase != Fase.Dentro) await SeguirElGuionAsync(ct).ConfigureAwait(false);
+
+                // Lo que llega de una red de escucha automatica es de maquina aunque la linea
+                // no lo diga: asi se puede esconder con el filtro de skimmers.
+                if (_opciones.EsSkimmer && !anuncio.Spot.EsDeEscuchaAutomatica)
+                {
+                    anuncio = anuncio with { Spot = anuncio.Spot with { EsDeEscuchaAutomatica = true } };
+                }
+
                 SpotRecibido?.Invoke(this, anuncio.Spot);
                 AnuncioRecibido?.Invoke(this, anuncio);
             }
@@ -442,6 +456,7 @@ public sealed partial class ClusterTelnet : IFuenteSpots
     private async Task EntrarAsync(CancellationToken ct)
     {
         _fase = Fase.Dentro;
+        UltimoError = null;
         CambiarEstado(EstadoDeConexion.Conectado);
 
         var guion = _opciones.GuionDeArranque;

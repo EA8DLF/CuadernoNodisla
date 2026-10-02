@@ -76,6 +76,9 @@ The logbook lives in {1}. If the file is damaged, that same folder has a «copia
   <data name="Dialogos.Simulado.ModemNoTransmite" xml:space="preserve">
     <value>The simulated modem does not transmit. Close the program and open it again without CUADERNO_SIMULADO.</value>
   </data>
+  <data name="Dialogos.Simulado.NodoCaido" xml:space="preserve">
+    <value>Down node (test)</value>
+  </data>
   <data name="Dialogos.Simulado.QsoDuplicado" xml:space="preserve">
     <value>The QSO with {0} is already in the log.</value>
   </data>

@@ -291,6 +291,7 @@ public class BotonesFt710Pruebas
             TiempoMaximo = TimeSpan.FromSeconds(10),
             TiempoSinLatido = TimeSpan.FromSeconds(10),
             EngancharseAlCierreDelProceso = false,
+            Seguridad = Dobles.SeguridadDePrueba.SinPlanNiRoe,
         });
 
         // Lo que contesto RI0; en la radio mientras sintonizaba (28-09-2026, 15:07): TX y
@@ -320,6 +321,7 @@ public class BotonesFt710Pruebas
             TiempoMaximo = TimeSpan.FromSeconds(10),
             TiempoSinLatido = TimeSpan.FromSeconds(10),
             EngancharseAlCierreDelProceso = false,
+            Seguridad = Dobles.SeguridadDePrueba.SinPlanNiRoe,
         });
 
         // Sintonizando siempre: se corta al tope y se para con AC000 antes de dejarlo en linea.

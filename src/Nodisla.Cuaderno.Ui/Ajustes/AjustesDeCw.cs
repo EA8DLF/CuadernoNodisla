@@ -24,6 +24,9 @@ public sealed class AjustesDeCw
     /// <summary>Señales que se leen a la vez (1 = solo la principal).</summary>
     public int Senales { get; set; } = 4;
 
+    /// <summary>En automático, segundos sin señal antes de volver a buscar.</summary>
+    public int SegundosSinSenal { get; set; } = 5;
+
     /// <summary>Deja estos ajustes dentro de unos límites con sentido.</summary>
     /// <returns>Los mismos ajustes, ya acotados.</returns>
     public AjustesDeCw Acotar()
@@ -34,6 +37,7 @@ public sealed class AjustesDeCw
         WpmMinima = Math.Clamp(WpmMinima, 5, 55);
         WpmMaxima = Math.Clamp(WpmMaxima, WpmMinima + 5, 60);
         Senales = Math.Clamp(Senales, 1, 8);
+        SegundosSinSenal = Math.Clamp(SegundosSinSenal, 1, 60);
         return this;
     }
 
@@ -46,5 +50,6 @@ public sealed class AjustesDeCw
         WpmMinima = WpmMinima,
         WpmMaxima = WpmMaxima,
         CanalesMaximos = Senales,
+        SegundosSinSenalParaBuscar = SegundosSinSenal,
     }.Acotada();
 }

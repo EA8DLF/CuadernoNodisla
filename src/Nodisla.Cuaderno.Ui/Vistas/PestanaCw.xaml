@@ -1,0 +1,125 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PestanaCw"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        LA PÁGINA CW (Operar › CW).
+
+            ┌──────────────────────────────────────────────┐
+            │ barra del equipo                             │
+            │ FRONTAL (si cabe; cede el alto, como Digital) │
+            ├────────────────────────────┬─────────────────┤
+            │ decodificador a lo grande  │ Glosario CW     │
+            ├────────────────────────────┤                 │
+            │ HUECO DE TRANSMISIÓN       │                 │
+            └────────────────────────────┴─────────────────┘
+
+        El frontal es el MISMO control sobre el MISMO modelo que en la cabina y en Digital.
+
+        HUECO DE TRANSMISIÓN: «HuecoDeTransmision», a todo lo ancho bajo el decodificador y el
+        glosario, lleva la vista de la transmisión en CW (Vistas\MacrosCw.xaml, con
+        VistaModeloTransmisionCw: macros F1–F12, escritura libre, PARAR con Esc). Se puede
+        cambiar desde código (PestanaCw.HuecoDeTransmision.Content = …); vacío, enseña un rótulo.
+        El decodificador NO transmite: lo que pone el equipo en antena va por el vigilante de PTT
+        desde esa vista.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+    </UserControl.Resources>
+
+    <Grid x:Name="Raiz" SizeChanged="AlCambiarDeTamano">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Style="{StaticResource Tarjeta}" Margin="0,0,0,5" Padding="8,4">
+            <vistas:BarraDelEquipo x:Name="Barra" />
+        </Border>
+
+        <Grid Grid.Row="1" x:Name="HuecoDelFrontal">
+            <Border Style="{StaticResource Tarjeta}"
+                    Margin="0,0,0,5"
+                    Padding="5"
+                    DataContext="{Binding Equipo}"
+                    Visibility="{Binding DataContext.FrontalDibujadoVisible, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanoAVisible}}">
+                <vistas:FrontalConBotonera x:Name="Frontal" AltoMaximoDelFrontal="300" />
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="420" />
+                <ColumnDefinition Width="360" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" MinHeight="240" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- ══ El decodificador a lo grande ══ -->
+            <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource Tarjeta}" Margin="0,0,5,5" Padding="8,6">
+                <vistas:PanelCw x:Name="Decodificador" DataContext="{Binding Cw}" />
+            </Border>
+
+            <!-- ══ El hueco de la transmisión (macros y escritura libre): ver el comentario de arriba ══ -->
+            <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Tarjeta}" Margin="0" Padding="8,6" MinHeight="70">
+                <Grid>
+                    <TextBlock x:Name="RotuloDelHueco"
+                               Text="{loc:Texto Cabina.Cw.HuecoTransmision}"
+                               Style="{StaticResource TextoTenueEstilo}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center" />
+                    <ContentControl x:Name="HuecoDeTransmision" x:FieldModifier="public">
+                        <vistas:MacrosCw DataContext="{Binding TxCw}" />
+                    </ContentControl>
+                </Grid>
+            </Border>
+
+            <!-- ══ El glosario ══ -->
+            <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource Tarjeta}" Margin="0,0,0,5" Padding="8,6">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="{loc:Texto Cabina.Cw.Glosario}" Style="{StaticResource TituloDeSeccion}" />
+                    <!-- Cabecera de la lista: se lee · significado · tipo. -->
+                    <Grid DockPanel.Dock="Top" Margin="2,4,18,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="64" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="86" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{loc:Texto Cabina.Cw.GlosarioTexto}" FontWeight="Bold" />
+                        <TextBlock Grid.Column="1" Text="{loc:Texto Cabina.Cw.GlosarioSignificado}" FontWeight="Bold" />
+                        <TextBlock Grid.Column="2" Text="{loc:Texto Cabina.Cw.GlosarioGrupo}" FontWeight="Bold" />
+                    </Grid>
+                    <ListBox x:Name="Glosario"
+                             ItemsSource="{Binding Cw.Glosario}"
+                             HorizontalContentAlignment="Stretch"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             BorderThickness="0"
+                             Background="Transparent"
+                             AutomationProperties.Name="{loc:Texto Cabina.Cw.Glosario}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="64" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="86" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Texto}" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource Acento}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Significado}" TextWrapping="Wrap" Margin="0,0,6,0" />
+                                    <TextBlock Grid.Column="2" Text="{Binding GrupoTexto}" Style="{StaticResource TextoTenueEstilo}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

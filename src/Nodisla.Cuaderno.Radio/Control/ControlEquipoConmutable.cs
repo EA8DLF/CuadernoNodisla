@@ -32,8 +32,44 @@ namespace Nodisla.Cuaderno.Radio.Control;
 /// </para>
 /// </remarks>
 public sealed class ControlEquipoConmutable
-    : IControlEquipoConmutable, IPttDirecto, ISueltaDeEmergenciaPtt, IAvisaDePerdidaDeComunicacion
+    : IControlEquipoConmutable, IPttDirecto, ISueltaDeEmergenciaPtt, IAvisaDePerdidaDeComunicacion, IManipuladorCw
 {
+    // ── Telegrafia: se pasa al control de detras, que es quien sabe si su equipo manipula ──
+
+    /// <inheritdoc />
+    public string? PorQueNoManipula => _actual is IManipuladorCw m
+        ? m.PorQueNoManipula
+        : Textos.T("Servicios.Radio.Cw.SinManipuladorPorCat");
+
+    /// <inheritdoc />
+    public int LetrasPorOrden => (_actual as IManipuladorCw)?.LetrasPorOrden ?? 30;
+
+    /// <inheritdoc />
+    public int WpmMinima => (_actual as IManipuladorCw)?.WpmMinima ?? 5;
+
+    /// <inheritdoc />
+    public int WpmMaxima => (_actual as IManipuladorCw)?.WpmMaxima ?? 60;
+
+    /// <inheritdoc />
+    public Task PonerVelocidadAsync(int wpm, CancellationToken ct = default) =>
+        Manipulador().PonerVelocidadAsync(wpm, ct);
+
+    /// <inheritdoc />
+    public Task ManipularAsync(string texto, CancellationToken ct = default) =>
+        Manipulador().ManipularAsync(texto, ct);
+
+    /// <inheritdoc />
+    /// <remarks>Parar no falla nunca por no haber manipulador: no hay nada que parar.</remarks>
+    public Task PararManipuladorAsync(CancellationToken ct = default) =>
+        _actual is IManipuladorCw m ? m.PararManipuladorAsync(ct) : Task.CompletedTask;
+
+    /// <inheritdoc />
+    public Task TerminarAsync(CancellationToken ct = default) =>
+        _actual is IManipuladorCw m ? m.TerminarAsync(ct) : Task.CompletedTask;
+
+    private IManipuladorCw Manipulador() =>
+        _actual as IManipuladorCw ?? throw new InvalidOperationException(Textos.T("Servicios.Radio.Cw.SinManipuladorPorCat"));
+
     private readonly ILogger _registro;
     private readonly SemaphoreSlim _puerta = new(1, 1);
 

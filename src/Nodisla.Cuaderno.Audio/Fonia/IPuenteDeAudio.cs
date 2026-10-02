@@ -1,3 +1,5 @@
+using Nodisla.Cuaderno.Audio.Procesado;
+
 namespace Nodisla.Cuaderno.Audio.Fonia;
 
 /// <summary>
@@ -46,6 +48,18 @@ public interface IPuenteDeAudio : IAsyncDisposable
     /// muestras o la tarjeta del equipo se cuelga, deja de avanzar y se deja de latir.
     /// </remarks>
     DateTimeOffset? UltimoAvanceUtc { get; }
+
+    /// <summary>
+    /// Paso que ve cada bloque tal como llega, antes de la ganancia: el grabador de la
+    /// recepcion, o el voice keyer en la transmision, que cambia la voz por el mensaje.
+    /// </summary>
+    IProcesadorDeAudio? AntesDeLaGanancia { get; set; }
+
+    /// <summary>
+    /// Paso que trabaja despues de la ganancia y antes del silencio: el reductor y el limitador
+    /// de la escucha, o el procesado del microfono. El medidor mide lo que sale de aqui.
+    /// </summary>
+    IProcesadorDeAudio? TrasLaGanancia { get; set; }
 
     /// <summary>Salta si el camino se rompe solo: se desenchufo algo o fallo el controlador.</summary>
     event EventHandler<Exception>? Fallo;

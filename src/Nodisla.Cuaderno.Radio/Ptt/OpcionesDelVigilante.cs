@@ -108,6 +108,12 @@ public sealed class OpcionesDelVigilante
     /// </summary>
     public bool EngancharseAlCierreDelProceso { get; set; } = true;
 
+    /// <summary>
+    /// Salvaguardas de transmision: plan de banda, ROE y potencia maxima por banda. Se pueden
+    /// cambiar en marcha con <see cref="VigilantePtt.CambiarSeguridad"/>.
+    /// </summary>
+    public OpcionesDeSeguridadDeTx Seguridad { get; set; } = new();
+
     /// <summary>Copia estos ajustes, para no compartir el objeto con quien lo configuro.</summary>
     /// <returns>Una copia independiente.</returns>
     public OpcionesDelVigilante Copiar() => new()
@@ -117,5 +123,6 @@ public sealed class OpcionesDelVigilante
         _pasoDeVigilancia = _pasoDeVigilancia,
         _esperaDeSuelta = _esperaDeSuelta,
         EngancharseAlCierreDelProceso = EngancharseAlCierreDelProceso,
+        Seguridad = Seguridad,
     };
 }

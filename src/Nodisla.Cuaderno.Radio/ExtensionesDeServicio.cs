@@ -53,7 +53,8 @@ public static class ExtensionesDeServicio
         servicios.AddSingleton<IVigilantePtt>(proveedor => new VigilantePtt(
             proveedor.GetRequiredService<IControlEquipo>(),
             opciones.Vigilante,
-            proveedor.GetService<ILoggerFactory>()?.CreateLogger("Nodisla.Cuaderno.Radio.Ptt")));
+            proveedor.GetService<ILoggerFactory>()?.CreateLogger("Nodisla.Cuaderno.Radio.Ptt"),
+            proveedor.GetService<IBandplan>()));
 
         // El analizador de espectro del propio FT-710, por su puente FT4222 interno. Solo lee;
         // registrarlo no abre nada: se arranca cuando la pantalla del frontal lo pide.

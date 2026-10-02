@@ -76,6 +76,9 @@ Das Logbuch liegt in {1}. Ist die Datei beschädigt, finden Sie im selben Ordner
   <data name="Dialogos.Simulado.ModemNoTransmite" xml:space="preserve">
     <value>Das simulierte Modem sendet nicht. Schließen Sie das Programm und öffnen Sie es ohne CUADERNO_SIMULADO erneut.</value>
   </data>
+  <data name="Dialogos.Simulado.NodoCaido" xml:space="preserve">
+    <value>Ausgefallener Knoten (Test)</value>
+  </data>
   <data name="Dialogos.Simulado.QsoDuplicado" xml:space="preserve">
     <value>Die Verbindung mit {0} ist bereits im Logbuch.</value>
   </data>

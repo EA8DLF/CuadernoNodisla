@@ -8,7 +8,8 @@ namespace Nodisla.Cuaderno.Ui.Desarrollo;
 /// <summary>
 /// Toca las teclas de la pantalla del frontal (CENTER, 3DSS, MULTI, EXPAND, SPAN±, SPEED±, y
 /// AUDIO para abrir la entrada de audio) para el
-/// retrato de comprobacion.
+/// retrato de comprobacion. Ademas, la sintonia desde el analizador: <c>IR:14074000</c>,
+/// <c>CLIC:0.25</c> (sitio del clic, de 0 a 1) y <c>RUEDA:+3</c>.
 /// </summary>
 /// <remarks>
 /// Se activa con <c>CUADERNO_TECLAS_ANALIZADOR</c>, una lista separada por barras
@@ -51,6 +52,34 @@ public static class TeclasDelAnalizadorDePrueba
 
             // MULTI es de la pantalla del programa; AUDIO pulsa «Abrir el audio» del aviso de MULTI.
             var tecla = cola.Dequeue();
+
+            // CLIC:0.25 pulsa en ese sitio del analizador (0 izquierda, 1 derecha); RUEDA:+3 gira
+            // la rueda encima. Lo mismo que el raton, por el mismo camino.
+            if (tecla.StartsWith("CLIC:", StringComparison.OrdinalIgnoreCase)
+                && double.TryParse(tecla[5..], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var donde))
+            {
+                _ = principal.Analizador.ClicAsync(donde);
+                Log.Information("Prueba: clic en el analizador en {Donde}", donde);
+                return;
+            }
+
+            // IR:14074000 lleva el VFO activo ahi, por el camino del clic (sin ajustar al paso).
+            if (tecla.StartsWith("IR:", StringComparison.OrdinalIgnoreCase)
+                && long.TryParse(tecla[3..], System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var hz))
+            {
+                _ = principal.Analizador.Sintonia?.IrAAsync(hz);
+                Log.Information("Prueba: sintonia del analizador a {Hz}", hz);
+                return;
+            }
+
+            if (tecla.StartsWith("RUEDA:", StringComparison.OrdinalIgnoreCase)
+                && int.TryParse(tecla[6..], System.Globalization.NumberStyles.AllowLeadingSign, System.Globalization.CultureInfo.InvariantCulture, out var muescas))
+            {
+                _ = principal.Analizador.RuedaAsync(muescas);
+                Log.Information("Prueba: rueda en el analizador {Muescas}", muescas);
+                return;
+            }
+
             System.Windows.Input.ICommand orden = tecla switch
             {
                 "MULTI" => principal.Analizador.AlternarMultipleCommand,

@@ -1,0 +1,66 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PanelCwReducido"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        TELEGRAFÍA EN LA CABINA, en una línea: el estado, la velocidad, cómo llega la entrada y
+        las últimas palabras, con «Abrir CW» para ir a la página entera. La cabina es para el
+        contacto y el cluster: el decodificador a lo grande, el skimmer y el glosario viven en
+        Operar › CW. Así la línea no quita alto y sigue diciendo de un vistazo qué se oye.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+    </UserControl.Resources>
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Text="{loc:Texto Cabina.Cw.Titulo}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,8,0" />
+            <Ellipse Width="10" Height="10" Margin="0,0,8,0" VerticalAlignment="Center">
+                <Ellipse.Style>
+                    <Style TargetType="Ellipse">
+                        <Setter Property="Fill" Value="{DynamicResource FondoCampo}" />
+                        <Setter Property="Stroke" Value="{DynamicResource Borde}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Marcando}" Value="True">
+                                <Setter Property="Fill" Value="{DynamicResource CorrectoTexto}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Ellipse.Style>
+            </Ellipse>
+            <TextBlock Text="{Binding WpmTexto}" FontWeight="Bold" MinWidth="64" VerticalAlignment="Center" Margin="0,0,8,0" />
+            <TextBlock Text="{Binding EstadoDeLaBusqueda}" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="0,0,10,0" />
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Text="{Binding EntradaTexto}" VerticalAlignment="Center" Margin="0,0,8,0">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource TextoTenueEstilo}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding EntradaSaturada}" Value="True">
+                                <Setter Property="Foreground" Value="{DynamicResource ErrorTexto}" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <Button Content="{loc:Texto Cabina.Cw.AbrirCw}" Command="{Binding AbrirPaginaCommand}"
+                    Padding="10,1" Margin="0,0,6,0"
+                    ToolTip="{loc:Texto Cabina.Cw.AbrirCwAyuda}" />
+            <Button Content="{loc:Texto Cabina.Cw.Ocultar}" Command="{Binding AlternarMostrarCommand}"
+                    Padding="8,1"
+                    Visibility="{Binding MostrarAMano, Converter={StaticResource BooleanoAVisible}}" />
+        </StackPanel>
+
+        <Border Background="{DynamicResource FondoCampo}" BorderBrush="{DynamicResource BordeSuave}" BorderThickness="1"
+                Padding="6,1" Margin="0,0,8,0">
+            <TextBlock Text="{Binding Principal.Ultimo}" FontFamily="Consolas" FontSize="14"
+                       TextTrimming="CharacterEllipsis" FlowDirection="LeftToRight"
+                       AutomationProperties.Name="{loc:Texto Cabina.Cw.TextoNombre}" />
+        </Border>
+    </DockPanel>
+</UserControl>

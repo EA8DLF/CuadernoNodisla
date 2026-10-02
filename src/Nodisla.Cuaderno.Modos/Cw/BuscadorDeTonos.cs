@@ -103,16 +103,17 @@ public sealed class BuscadorDeTonos
     public IReadOnlyList<PicoCw> Picos(double desdeHz, double hastaHz, double separacionHz)
     {
         // El ruido se mide algo más ancho que la ventana, para que una banda llena de señales no
-        // lo suba.
+        // lo suba, y SOLO con lo que queda dentro del filtro del equipo: con el filtro de CW de
+        // la radio (500 Hz), más de la mitad de la ventana es banda eliminada, decenas de dB por
+        // debajo, y la mediana caía ahí: todo lo de dentro del filtro parecía un pico.
         var k0 = Math.Max(2, (int)((desdeHz - 200) / HzPorCasilla));
         var k1 = Math.Min(_media.Length - 3, (int)Math.Ceiling((hastaHz + 400) / HzPorCasilla));
         if (k1 <= k0) return [];
-        var copia = new double[k1 - k0 + 1];
-        Array.Copy(_media, k0, copia, 0, copia.Length);
-        Array.Sort(copia);
-        Ruido = Math.Max(copia[copia.Length / 2], 1e-20);
+        Ruido = Suelo(k0, k1, -1, 0);
 
         var umbral = Ruido * Math.Pow(10, UmbralDb / 10);
+        var radioLocal = (int)Math.Round(300 / HzPorCasilla);
+        var hueco = (int)Math.Round(Math.Max(60, separacionHz / 2) / HzPorCasilla);
         var vecinas = Math.Max(1, (int)Math.Round(separacionHz / HzPorCasilla / 2));
         var b0 = Math.Max(1, (int)Math.Floor(desdeHz / HzPorCasilla));
         var b1 = Math.Min(_media.Length - 2, (int)Math.Ceiling(hastaHz / HzPorCasilla));
@@ -141,11 +142,40 @@ public sealed class BuscadorDeTonos
             var desplazamiento = den < 0 ? Math.Clamp(0.5 * (a - c) / den, -0.5, 0.5) : 0;
             var hz = (k + desplazamiento) * HzPorCasilla;
             if (hz < desdeHz || hz > hastaHz) continue;
-            picos.Add(new PicoCw(hz, 10 * Math.Log10(v / Ruido)));
+
+            // Y tiene que destacar de lo que tiene alrededor (±300 Hz, sin contarse a sí mismo):
+            // un trozo de banda más ruidoso, o el borde del filtro de la radio, no es un tono.
+            var suelo = Math.Max(Ruido, Suelo(Math.Max(1, k - radioLocal), Math.Min(_media.Length - 2, k + radioLocal), k, hueco));
+            var sobre = 10 * Math.Log10(v / suelo);
+            if (sobre < UmbralDb) continue;
+            picos.Add(new PicoCw(hz, sobre));
         }
 
         picos.Sort((x, y) => y.SobreElRuidoDb.CompareTo(x.SobreElRuidoDb));
         return picos;
+    }
+
+    /// <summary>
+    /// El suelo de ruido de un tramo del espectro: el percentil 40 de las casillas que no caen a
+    /// más de 45 dB del máximo del tramo (las de la banda eliminada del filtro de la radio no
+    /// cuentan), quitando las que están a menos de <paramref name="hueco"/> casillas de
+    /// <paramref name="centro"/>.
+    /// </summary>
+    private double Suelo(int desde, int hasta, int centro, int hueco)
+    {
+        double maximo = 0;
+        for (var j = desde; j <= hasta; j++) maximo = Math.Max(maximo, _media[j]);
+        var tope = maximo * 3e-5;
+        var utiles = new List<double>(hasta - desde + 1);
+        for (var j = desde; j <= hasta; j++)
+        {
+            if (centro >= 0 && Math.Abs(j - centro) <= hueco) continue;
+            if (_media[j] >= tope) utiles.Add(_media[j]);
+        }
+
+        if (utiles.Count == 0) return Math.Max(maximo, 1e-20);
+        utiles.Sort();
+        return Math.Max(utiles[(int)(0.4 * (utiles.Count - 1))], 1e-20);
     }
 
     /// <summary>El espectro medio en dB sobre el ruido, de <paramref name="desdeHz"/> a <paramref name="hastaHz"/>.</summary>

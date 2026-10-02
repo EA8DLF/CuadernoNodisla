@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 
 namespace Nodisla.Cuaderno.Ui.Vistas;
@@ -86,6 +87,7 @@ public partial class PanelDeFonia : UserControl
         }
 
         _refresco.Start();
+        if (Modelo?.Mensajes is { } mensajes) mensajes.ConfirmarQueVaATransmitir ??= PreguntarSiTransmite;
 
         // Hay dos paneles montados —en columna junto al frontal y en franja— y solo uno se ve:
         // el escondido no abre nada.
@@ -110,12 +112,54 @@ public partial class PanelDeFonia : UserControl
 
         if (que.Contains("dispositivos", StringComparison.OrdinalIgnoreCase)) Desplegar.IsChecked = true;
         if (que.Contains("escucha", StringComparison.OrdinalIgnoreCase) && !modelo.Escuchando) await modelo.AlternarEscuchaAsync();
+
+        // El retrato no ve las ventanitas: su contenido se pone en linea, debajo del panel.
+        if (que.Contains("procesado", StringComparison.OrdinalIgnoreCase))
+        {
+            modelo.Ajustes.ReductorActivo = true;
+            modelo.Ajustes.NotchActivo = true;
+            modelo.Ajustes.ProcesarMicro = true;
+            PonerEnLinea(PopupProcesado);
+        }
+
+        if (que.Contains("mensajes", StringComparison.OrdinalIgnoreCase)) PonerEnLinea(PopupMensajes);
+        if (que.Contains("voz", StringComparison.OrdinalIgnoreCase) && modelo.Mensajes is { } voz)
+        {
+            // Dos mensajes «grabados» con el microfono de mentira, para que se vean los botones.
+            foreach (var n in new[] { 1, 2 })
+            {
+                var m = voz.Mensajes[n - 1];
+                await voz.GrabarAsync(m);
+                await Task.Delay(TimeSpan.FromSeconds(n == 1 ? 2.5 : 1.2));
+                await voz.GrabarAsync(m);
+            }
+        }
+
+        if (que.Contains("guardar", StringComparison.OrdinalIgnoreCase) && modelo.Grabacion is { } grabacion)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(3));
+            if (Environment.GetEnvironmentVariable("CUADERNO_INDICATIVO_FONIA") is { Length: > 0 } indicativo && grabacion.Entrada is { } entrada)
+            {
+                entrada.Indicativo = indicativo;
+            }
+
+            grabacion.GuardarLoUltimo();
+        }
+
         if (que.Contains("aire", StringComparison.OrdinalIgnoreCase))
         {
             await Task.Delay(TimeSpan.FromSeconds(4));
             modelo.Ajustes.PttConmutado = true;
             await modelo.PttAbajoAsync();
         }
+    }
+
+    private void PonerEnLinea(Popup ventanita)
+    {
+        if (ventanita.Child is not { } contenido) return;
+        ventanita.Child = null;
+        if (contenido is FrameworkElement fe) fe.Margin = new Thickness(0, 6, 12, 0);
+        EnLineaParaCaptura.Children.Add(contenido);
     }
 
     private async void AlDescargar(object sender, RoutedEventArgs e)
@@ -158,6 +202,7 @@ public partial class PanelDeFonia : UserControl
 
     private async void AlPulsarTecla(object sender, KeyEventArgs e)
     {
+        if (await AtenderTeclaDeMensajeAsync(e)) return;
         if (!EsLaTeclaDelPtt(e)) return;
         e.Handled = true;
         if (e.IsRepeat || _teclaAbajo) return;
@@ -172,6 +217,55 @@ public partial class PanelDeFonia : UserControl
         e.Handled = true;
         _teclaAbajo = false;
         if (Modelo is { } modelo) await modelo.PttArribaAsync();
+    }
+
+    /// <summary>
+    /// Esc corta un mensaje grabado en el aire. F1–F6 lanzan los mensajes, solo con la opcion
+    /// puesta, el panel a la vista, la ventana activa, el equipo en modo de voz, la tecla con
+    /// mensaje grabado y el foco fuera de un campo de texto. Si no, la tecla sigue haciendo lo
+    /// de siempre (F1, la ayuda).
+    /// </summary>
+    private async Task<bool> AtenderTeclaDeMensajeAsync(KeyEventArgs e)
+    {
+        if (Modelo is not { Mensajes: { } mensajes } modelo) return false;
+        var tecla = e.Key == Key.System ? e.SystemKey : e.Key;
+
+        if (tecla == Key.Escape && !e.Handled && modelo.EnviandoMensaje)
+        {
+            e.Handled = true;
+            await mensajes.PararAsync();
+            return true;
+        }
+
+        if (tecla is < Key.F1 or > Key.F6 || Keyboard.Modifiers != ModifierKeys.None) return false;
+        if (!modelo.Ajustes.TeclasDeMensajes || _ventana is not { IsActive: true } || !IsVisible) return false;
+        if (Keyboard.FocusedElement is TextBoxBase or PasswordBox or ComboBox { IsEditable: true }) return false;
+        if (!modelo.PuedeTransmitir) return false;
+
+        var numero = tecla - Key.F1 + 1;
+        if (!mensajes.Mensajes.Any(m => m.Numero == numero && m.Grabado)) return false;
+
+        e.Handled = true;
+        if (!e.IsRepeat) await mensajes.PulsarTeclaAsync(numero);
+        return true;
+    }
+
+    private bool PreguntarSiTransmite(string mensaje)
+    {
+        var dialogo = new VentanaDeConfirmacion
+        {
+            Owner = Window.GetWindow(this),
+            Titulo = Textos.T("Cabina.Fonia.Voz.Confirmar.Titulo"),
+            Detalle = mensaje,
+            TextoDeAceptar = Textos.T("Principal.Confirmar.TransmitirAceptar"),
+            OfrecerNoVolverAPreguntar = true,
+        };
+
+        var si = dialogo.ShowDialog() == true;
+        // «No volver a preguntar» solo cuenta si se ha dicho que si; es el mismo ajuste del modem y la CW.
+        if (si && dialogo.NoVolverAPreguntar) Modelo?.Mensajes?.NoVolverAPreguntarAlTransmitir();
+
+        return si;
     }
 
     private bool EsLaTeclaDelPtt(KeyEventArgs e)

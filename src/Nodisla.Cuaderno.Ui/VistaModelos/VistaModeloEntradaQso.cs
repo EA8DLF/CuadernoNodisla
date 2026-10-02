@@ -106,6 +106,33 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
     [ObservableProperty]
     private string _resumenDeFicha = string.Empty;
 
+    /// <summary>
+    /// Grabacion de la recepcion adjunta al contacto (nombre del fichero en la carpeta de audio),
+    /// o vacio. La pone «Guardar lo ultimo» de la fonia y se guarda con el contacto.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TieneAudio))]
+    [NotifyCanExecuteChangedFor(nameof(EscucharAudioCommand))]
+    [NotifyCanExecuteChangedFor(nameof(QuitarAudioCommand))]
+    private string _audioAdjunto = string.Empty;
+
+    /// <summary>El contacto tiene audio adjunto.</summary>
+    public bool TieneAudio => !string.IsNullOrWhiteSpace(AudioAdjunto);
+
+    /// <summary>Como se escucha un audio adjunto; lo pone la fonia. Nulo: no se puede.</summary>
+    public Func<string, Task>? EscucharAudio { get; set; }
+
+    /// <summary>Escucha por los altavoces del PC el audio adjunto.</summary>
+    [RelayCommand(CanExecute = nameof(TieneAudio))]
+    private async Task EscucharAudioAsync()
+    {
+        if (EscucharAudio is { } escuchar && TieneAudio) await escuchar(AudioAdjunto).ConfigureAwait(true);
+    }
+
+    /// <summary>Quita el adjunto del contacto (el fichero se queda en la carpeta).</summary>
+    [RelayCommand(CanExecute = nameof(TieneAudio))]
+    private void QuitarAudio() => AudioAdjunto = string.Empty;
+
     /// <summary>Bandas que se ofrecen en la lista desplegable.</summary>
     public IReadOnlyList<string> Bandas { get; }
 
@@ -317,6 +344,7 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         Qth = qso.Qth ?? string.Empty;
         Localizador = qso.Gridsquare.Valor;
         Comentario = qso.Comentario ?? string.Empty;
+        AudioAdjunto = qso.AudioAdjunto ?? string.Empty;
         _silencio = false;
 
         Mensaje = Textos.F("Libro.Entrada.Modificando", qso.Call.Valor);
@@ -431,6 +459,7 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         Qth = string.Empty;
         Localizador = string.Empty;
         Comentario = string.Empty;
+        AudioAdjunto = string.Empty;
         HoraAutomatica = true;
         _silencio = false;
 
@@ -457,6 +486,7 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
         original.Qth = delFormulario.Qth;
         original.Gridsquare = delFormulario.Gridsquare;
         original.Comentario = delFormulario.Comentario;
+        original.AudioAdjunto = delFormulario.AudioAdjunto;
     }
 
     private Qso? ConstruirQso()
@@ -506,6 +536,7 @@ public sealed partial class VistaModeloEntradaQso : ObservableObject
             Qth = Vacio(Qth),
             Gridsquare = localizador,
             Comentario = Vacio(Comentario),
+            AudioAdjunto = Vacio(AudioAdjunto),
         };
     }
 

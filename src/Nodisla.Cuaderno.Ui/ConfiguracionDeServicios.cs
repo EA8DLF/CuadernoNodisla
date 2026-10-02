@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
@@ -195,6 +195,9 @@ public static class ConfiguracionDeServicios
             opciones.Rigctld = deLaRadio.Rigctld;
             opciones.OmniRig = deLaRadio.OmniRig;
             opciones.Vigilante = deLaRadio.Vigilante;
+
+            // Salvaguardas de TX (plan de banda, ROE, potencia por banda): su propio fichero.
+            opciones.Vigilante.Seguridad = Ajustes.AjustesDeSeguridadTx.Leer(App.CarpetaDeDatos).AOpciones();
         });
 
         // OJO: aqui NO se registra un IEquipoAvanzado de mentira. El modelo de vista mira si
@@ -203,20 +206,16 @@ public static class ConfiguracionDeServicios
         // conectada. Mientras la via de control sea Ninguna, el control es generico y la cabina
         // lo dice.
 
-        // ── El cluster, por Telnet y sin conectar solo ──────────────────────
-        // El nodo, el indicativo y los tiempos salen de los ajustes, y la contrasena del
+        // ── El cluster: varios nodos por Telnet a la vez, sin conectar solos ──
+        // Los nodos, el indicativo y los tiempos salen de los ajustes, y cada contrasena del
         // almacen cifrado. El indicativo vacio quiere decir «el del perfil de estacion
         // activo», que es lo que hay que poner cuando alguien opera como EA8DLF/P.
-        servicios.AddSingleton(proveedor => new Integraciones.Cluster.FuenteSpotsConmutable(
-            new Integraciones.Cluster.ClusterTelnet(
-                ajustes.Cluster.AOpcionesDeCluster(
-                    IndicativoDeAcceso(proveedor, ajustes),
-                    proveedor.GetRequiredService<IAlmacenDeCredenciales>()
-                        .Leer(ClavesDeCredencial.ClusterContrasena)),
-                proveedor.GetRequiredService<IResolutorDxcc>())));
+        servicios.AddSingleton(proveedor => new Integraciones.Cluster.FuenteDeVariosNodos(
+            opciones => new Integraciones.Cluster.ClusterTelnet(opciones, proveedor.GetRequiredService<IResolutorDxcc>()),
+            OpcionesDeLosNodos(proveedor, ajustes)));
 
         servicios.AddSingleton<IFuenteSpots>(
-            proveedor => proveedor.GetRequiredService<Integraciones.Cluster.FuenteSpotsConmutable>());
+            proveedor => proveedor.GetRequiredService<Integraciones.Cluster.FuenteDeVariosNodos>());
 
 
         // ── El audio del modem propio ──────────────────────────────────────
@@ -299,7 +298,18 @@ public static class ConfiguracionDeServicios
         servicios.AddSingleton<IAnalizadorDeEspectro>(p => new AnalizadorSimulado(p.GetRequiredService<EquipoSimulado>()));
         servicios.AddSingleton<IVigilantePtt>(
             p => new VigilantePttDeDesarrollo(p.GetRequiredService<IControlEquipo>()));
-        servicios.AddSingleton<IFuenteSpots>(_ => new FuenteSpotsSimulada());
+        // El cluster de mentira tiene VARIOS nodos, como el de verdad: cada uno con sus
+        // anuncios, que se solapan para que se vea la fusion, uno de escucha automatica y uno
+        // caido para que se vea el error. Ninguno sale a la red.
+        // Los nodos de muestra van en una COPIA de los ajustes: los de verdad no se tocan, ni
+        // en memoria ni en disco.
+        servicios.AddSingleton(proveedor => new AjustesDelClusterDeMuestra(
+            FuenteSpotsSimulada.ConNodosDeMuestra(proveedor.GetRequiredService<AjustesDelPrograma>())));
+        servicios.AddSingleton(proveedor => new Integraciones.Cluster.FuenteDeVariosNodos(
+            opciones => new FuenteSpotsSimulada(opciones),
+            OpcionesDeLosNodos(proveedor, proveedor.GetRequiredService<AjustesDelClusterDeMuestra>().Ajustes)));
+        servicios.AddSingleton<IFuenteSpots>(
+            proveedor => proveedor.GetRequiredService<Integraciones.Cluster.FuenteDeVariosNodos>());
 
         // ── Los modos digitales, de mentira ────────────────────────────────
         // Ni tarjeta de sonido ni servidores de hora: la cascada y las decodificaciones se
@@ -336,6 +346,28 @@ public static class ConfiguracionDeServicios
     /// entrar en un nodo publico con el de otro.
     /// </para>
     /// </remarks>
+    /// <summary>
+    /// Los nodos de los ajustes, ya listos para la integracion: indicativo resuelto y
+    /// contrasena de cada uno sacada del almacen cifrado.
+    /// </summary>
+    /// <param name="proveedor">Proveedor de servicios.</param>
+    /// <param name="ajustes">Ajustes del programa.</param>
+    /// <returns>Las opciones de cada nodo con servidor, en orden.</returns>
+    internal static IReadOnlyList<Integraciones.Cluster.OpcionesCluster> OpcionesDeLosNodos(
+        IServiceProvider proveedor,
+        AjustesDelPrograma ajustes)
+    {
+        var comun = IndicativoDeAcceso(proveedor, ajustes);
+        var almacen = proveedor.GetRequiredService<IAlmacenDeCredenciales>();
+
+        return
+        [
+            .. ajustes.Cluster.Nodos
+                .Where(n => !string.IsNullOrWhiteSpace(n.Servidor))
+                .Select(n => ajustes.Cluster.AOpcionesDeNodo(n, comun, almacen.Leer(n.ClaveDeContrasena))),
+        ];
+    }
+
     private static Indicativo IndicativoDeAcceso(IServiceProvider proveedor, AjustesDelPrograma ajustes)
     {
         if (Indicativo.TryParse(ajustes.Cluster.Indicativo, out var escrito)) return escrito;
@@ -524,7 +556,18 @@ public static class ConfiguracionDeServicios
         servicios.AddSingleton<ConsultarTrabajadoAntes>();
         servicios.AddSingleton<CrearPerfilDeEstacion>();
         servicios.AddSingleton<PuntosDelCuaderno>();
-        servicios.AddSingleton<SeguirElCluster>();
+        // Con varios nodos, el mismo anuncio llega varias veces: la ventana y la tolerancia
+        // con las que se juntan salen de los ajustes del cluster.
+        servicios.AddSingleton(proveedor =>
+        {
+            var cluster = proveedor.GetRequiredService<AjustesDelPrograma>().Cluster;
+            return new SeguirElCluster(
+                proveedor.GetRequiredService<IFuenteSpots>(),
+                proveedor.GetRequiredService<IConsultasDeInforme>(),
+                proveedor.GetRequiredService<IResolutorDxcc>(),
+                cluster.VentanaAcotada,
+                cluster.ToleranciaAcotada);
+        });
         servicios.AddSingleton<RetratoDelIndicativo>();
         servicios.AddSingleton<ImportarAdif>();
         servicios.AddSingleton<GestionarRonda>();
@@ -604,21 +647,26 @@ public static class ConfiguracionDeServicios
         proveedor.GetService<IEntradaDeAudio>(),
         proveedor.GetService<ISalidaDeAudio>());
 
-    /// <summary>Monta el apartado del cluster, o nulo si se esta con los puertos simulados.</summary>
+    /// <summary>Monta el apartado del cluster.</summary>
+    /// <remarks>
+    /// Con los puertos simulados tambien se monta: los nodos son de mentira y no salen a la
+    /// red, «Probar» contesta sin abrir ningun puerto y no se escribe en los ajustes de verdad.
+    /// </remarks>
     private static VistaModeloAjustesCluster? AjustesDelCluster(IServiceProvider proveedor)
     {
-        var conmutable = proveedor.GetService<Integraciones.Cluster.FuenteSpotsConmutable>();
-        if (conmutable is null) return null;
+        var varios = proveedor.GetService<Integraciones.Cluster.FuenteDeVariosNodos>();
+        if (varios is null) return null;
 
         return new VistaModeloAjustesCluster(
-            proveedor.GetRequiredService<AjustesDelPrograma>(),
-            App.CarpetaDeDatos,
+            proveedor.GetService<AjustesDelClusterDeMuestra>()?.Ajustes ?? proveedor.GetRequiredService<AjustesDelPrograma>(),
+            ConPuertosSimulados ? null : App.CarpetaDeDatos,
             proveedor.GetRequiredService<IAlmacenDeCredenciales>(),
             proveedor.GetRequiredService<IRepositorioEstacion>(),
-            proveedor.GetRequiredService<IResolutorDxcc>(),
-            conmutable,
+            varios,
+            proveedor.GetRequiredService<SeguirElCluster>(),
+            ConPuertosSimulados ? FuenteSpotsSimulada.ProbarAsync : null,
 
-            // Cambiar de nodo cambia el nombre que se lee en el panel del cluster, y ese
+            // Cambiar los nodos cambia el nombre que se lee en el panel del cluster, y ese
             // nombre no es una propiedad observable: hay que avisarlo a mano.
             () => proveedor.GetRequiredService<VistaModeloCluster>().AvisarDeCambioDeFuente());
     }
@@ -719,6 +767,7 @@ public static class ConfiguracionDeServicios
         {
             Subidas = proveedor.GetService<VistaModeloSubidas>(),
             Fonia = proveedor.GetService<VistaModeloAjustesFonia>(),
+            Analizador = proveedor.GetService<VistaModeloAjustesAnalizador>(),
             CorreoQsl = proveedor.GetService<VistaModeloCorreoQsl>(),
             Actualizaciones = proveedor.GetService<VistaModeloActualizaciones>(),
 
@@ -810,17 +859,47 @@ public static class ConfiguracionDeServicios
         servicios.AnadirFonia(ConPuertosSimulados, App.CarpetaDeDatos);
 
         // El analizador de la propia radio. Con los puertos simulados, AnalizadorSimulado.
-        servicios.AddSingleton(proveedor => new VistaModeloAnalizador(
-            proveedor.GetService<IAnalizadorDeEspectro>(), audio: proveedor.GetService<IEntradaDeAudio>()));
+        // Sus ajustes (spots, clic, suelo de ruido, paleta) van en Configuración → Equipo y se
+        // aplican al momento. Con los simulados no se escriben en disco.
+        servicios.AddSingleton(proveedor => new VistaModeloAjustesAnalizador(
+            proveedor.GetRequiredService<AjustesDelPrograma>(),
+            ConPuertosSimulados ? null : App.CarpetaDeDatos));
+        servicios.AddSingleton(proveedor =>
+        {
+            var analizador = new VistaModeloAnalizador(
+                proveedor.GetService<IAnalizadorDeEspectro>(), audio: proveedor.GetService<IEntradaDeAudio>());
+            var ajustes = proveedor.GetRequiredService<VistaModeloAjustesAnalizador>();
+            analizador.Aplicar(ajustes.Guardado);
+            ajustes.Cambiado += (_, _) => analizador.Aplicar(ajustes.Guardado);
+            return analizador;
+        });
 
         // ── Telegrafía: el decodificador de CW propio, sobre el audio de recepción ──
         // Solo escucha: ni transmite ni manda órdenes al equipo.
         servicios.AddSingleton(proveedor => new VistaModeloCw(
             proveedor.GetRequiredService<AjustesDelPrograma>(),
-            proveedor.GetService<IEntradaDeAudio>()));
+            proveedor.GetService<IEntradaDeAudio>(),
+            dxcc: proveedor.GetService<Dominio.Dxcc.IResolutorDxcc>())
+        {
+            CarpetaDeDatos = App.CarpetaDeDatos,
+        });
+
+        // ── Transmitir en CW (macros y secuencia) y las salvaguardas de TX ──
+        Telegrafia.ServiciosDeTransmisionCw.AnadirTransmisionCw(servicios, App.CarpetaDeDatos);
         AnadirActualizacionesYFallos(servicios);
 
-        servicios.AddSingleton<VistaModeloPrincipal>();
+        // ── Servidor para otros programas (rigctld y TCI): apagado de fábrica ──
+        OtrosProgramas.ServiciosDeServidores.AnadirServidoresParaOtrosProgramas(servicios, App.CarpetaDeDatos);
+
+        // Al montar la ventana se dan de alta las fuentes de PTT en el vigilante: tras un corte
+        // de seguridad no se vuelve a transmitir hasta que todas esten sueltas.
+        servicios.AddSingleton(proveedor =>
+        {
+            var principal = ActivatorUtilities.CreateInstance<VistaModeloPrincipal>(proveedor);
+            Telegrafia.FuentesDePtt.Conectar(proveedor);
+            OtrosProgramas.ServiciosDeServidores.Arrancar(proveedor);
+            return principal;
+        });
         servicios.AddSingleton<VentanaPrincipal>();
 
         // El primer arranque se pide una sola vez, pero se crea al vuelo para que la ventana

@@ -68,11 +68,39 @@ internal static class ExtensionesDeFonia
                 porOmision);
         });
 
-        servicios.AddSingleton(proveedor => new VistaModeloFonia(
-            proveedor.GetRequiredService<VistaModeloAjustesFonia>(),
-            proveedor.GetRequiredService<ControlDeFonia>(),
-            proveedor.GetRequiredService<VistaModeloEquipo>(),
-            proveedor.GetService<IControlEquipo>()));
+        // Grabar y escuchar en local (voice keyer y audio de los contactos): nunca van al equipo.
+        servicios.AddSingleton<IGrabadorDeMicrofono>(_ => simulado ? new GrabadorDeMicrofonoSimulado() : new GrabadorDeMicrofonoWasapi());
+        servicios.AddSingleton<IReproductorLocal>(_ => simulado ? new ReproductorLocalSimulado() : new ReproductorLocalWasapi());
+
+        servicios.AddSingleton(proveedor =>
+        {
+            var control = proveedor.GetRequiredService<ControlDeFonia>();
+            var ajustesDeFonia = proveedor.GetRequiredService<VistaModeloAjustesFonia>();
+            var reproductor = proveedor.GetRequiredService<IReproductorLocal>();
+            var fonia = new VistaModeloFonia(
+                ajustesDeFonia,
+                control,
+                proveedor.GetRequiredService<VistaModeloEquipo>(),
+                proveedor.GetService<IControlEquipo>());
+
+            fonia.Mensajes = new VistaModeloMensajesDeVoz(
+                fonia,
+                control,
+                new AlmacenDeMensajesDeVoz(carpeta),
+                proveedor.GetRequiredService<IGrabadorDeMicrofono>(),
+                reproductor,
+                proveedor.GetRequiredService<AjustesDelPrograma>(),
+                proveedor.GetService<VistaModeloModemPropio>());
+
+            fonia.Grabacion = new VistaModeloGrabacionRx(
+                control,
+                ajustesDeFonia,
+                reproductor,
+                carpeta,
+                proveedor.GetService<VistaModeloEntradaQso>());
+
+            return fonia;
+        });
 
         return servicios;
     }

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
              xmlns:vistamodelos="clr-namespace:Nodisla.Cuaderno.Ui.VistaModelos"
+             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              d:DataContext="{d:DesignInstance Type=vistamodelos:VistaModeloAjustesCluster}"
@@ -10,18 +11,24 @@
              Foreground="{DynamicResource Texto}">
 
     <!--
-        CONEXIÓN AL CLUSTER.
+        CONEXIÓN AL CLUSTER: VARIOS NODOS A LA VEZ.
 
-        El nodo, el indicativo con el que se entra y el guion de arranque estaban escritos en el
-        código del registro de servicios, sin contraseña y sin pantalla donde cambiarlos.
+        Arriba, la lista de nodos con su estado EN VIVO: conectado, conectando, reintentando con
+        el motivo, desactivado; y cuántos anuncios por minuto trae cada uno. Cada fila tiene sus
+        botones: conectar o desconectar ese nodo sin tocar los demás, probarlo (abre el puerto y
+        lee el saludo, SIN entrar con el indicativo) y quitarlo.
+
+        Debajo, lo del nodo elegido en la lista: servidor, puerto, órdenes al conectar,
+        indicativo propio si no vale el común y su contraseña.
 
         LA CONTRASEÑA NO SE GUARDA AQUÍ: va al almacén cifrado con la protección de datos de la
-        cuenta de Windows, y una vez escrita no se vuelve a enseñar. En el fichero de ajustes no
-        aparece nunca.
+        cuenta de Windows, una por nodo, y una vez escrita no se vuelve a enseñar. En el fichero
+        de ajustes no aparece nunca.
     -->
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+        <conversores:VisibleSiEsFalso x:Key="VisibleSiEsFalso" />
 
         <Style x:Key="Fila" TargetType="DockPanel">
             <Setter Property="Margin" Value="0,0,0,4" />
@@ -32,6 +39,40 @@
             <Setter Property="Width" Value="150" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+
+        <!-- La pastilla del estado: verde dentro, ámbar intentándolo, rojo si no se puede. -->
+        <Style x:Key="PastillaDeEstadoDelNodo" TargetType="Border">
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="7,1" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Estado}" Value="Conectado">
+                    <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Estado}" Value="Conectando">
+                    <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Estado}" Value="Reintentando">
+                    <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Estado}" Value="Fallido">
+                    <Setter Property="Background" Value="{DynamicResource ErrorFondo}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorde}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BotonDeFila" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Margin" Value="4,0,0,0" />
+            <Setter Property="Padding" Value="8,1" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
     </UserControl.Resources>
 
@@ -77,10 +118,148 @@
             <TextBlock Text="{Binding Parte}" TextWrapping="Wrap" />
         </Border>
 
+        <!-- ══ Los nodos, con su estado en vivo ══ -->
+        <DockPanel Margin="0,0,0,4">
+            <TextBlock DockPanel.Dock="Right"
+                       Text="{Binding ResumenDeNodos}"
+                       Style="{StaticResource TextoTenueEstilo}"
+                       VerticalAlignment="Bottom" />
+            <TextBlock Text="{loc:Texto Principal.ConexionCluster.Nodos}" Style="{StaticResource EtiquetaDeCampo}" />
+        </DockPanel>
+
+        <ListBox ItemsSource="{Binding Nodos}"
+                 SelectedItem="{Binding NodoSeleccionado}"
+                 HorizontalContentAlignment="Stretch"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 MaxHeight="330"
+                 Margin="0,0,0,4"
+                 AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.Nodos}">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type vistamodelos:NodoDeClusterEnAjustes}">
+                    <Grid Margin="2,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <CheckBox Grid.Column="0"
+                                  IsChecked="{Binding Activo}"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,8,0"
+                                  ToolTip="{loc:Texto Principal.ConexionCluster.ActivoConsejo}"
+                                  AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.Activo}" />
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Nombre}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                <Border Margin="6,0,0,0"
+                                        CornerRadius="6"
+                                        Padding="5,0"
+                                        BorderThickness="1"
+                                        VerticalAlignment="Center"
+                                        Background="{DynamicResource AvisoFondo}"
+                                        BorderBrush="{DynamicResource AvisoBorde}"
+                                        Visibility="{Binding EsSkimmer, Converter={StaticResource BooleanoAVisible}}"
+                                        ToolTip="{loc:Texto Principal.ConexionCluster.SkimmerConsejo}">
+                                    <TextBlock Text="{loc:Texto Principal.ConexionCluster.SkimmerPastilla}"
+                                               FontSize="9"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource AvisoTexto}" />
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="{Binding Direccion}" Style="{StaticResource TextoTenueEstilo}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0">
+                            <TextBlock Text="{Binding Ritmo}"
+                                       Style="{StaticResource TextoTenueEstilo}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,0"
+                                       ToolTip="{loc:Texto Principal.ConexionCluster.RitmoConsejo}" />
+                            <Border Style="{StaticResource PastillaDeEstadoDelNodo}">
+                                <TextBlock Text="{Binding EstadoTexto}" FontSize="10" />
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0,0,0">
+                            <Button Content="{loc:Texto Comun.Conectar}"
+                                    Style="{StaticResource BotonDeFila}"
+                                    Command="{Binding DataContext.ConectarNodoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                    CommandParameter="{Binding}"
+                                    Visibility="{Binding EstaEnMarcha, Converter={StaticResource VisibleSiEsFalso}}" />
+                            <Button Content="{loc:Texto Comun.Desconectar}"
+                                    Style="{StaticResource BotonDeFila}"
+                                    Command="{Binding DataContext.DesconectarNodoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                    CommandParameter="{Binding}"
+                                    Visibility="{Binding EstaEnMarcha, Converter={StaticResource BooleanoAVisible}}" />
+                            <Button Content="{loc:Texto Principal.ConexionCluster.Probar}"
+                                    Style="{StaticResource BotonDeFila}"
+                                    ToolTip="{loc:Texto Principal.ConexionCluster.ProbarConsejo}"
+                                    Command="{Binding DataContext.ProbarNodoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                    CommandParameter="{Binding}" />
+                            <Button Content="{loc:Texto Principal.ConexionCluster.Quitar}"
+                                    Style="{StaticResource BotonDeFila}"
+                                    Command="{Binding DataContext.QuitarNodoCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                    CommandParameter="{Binding}" />
+                        </StackPanel>
+
+                        <!-- Por qué no conecta: lo primero que hay que leer cuando un nodo no trae nada. -->
+                        <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
+                                   Text="{Binding Motivo}"
+                                   Foreground="{DynamicResource ErrorTexto}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,2,0,0"
+                                   Visibility="{Binding HayMotivo, Converter={StaticResource BooleanoAVisible}}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3"
+                                   Text="{Binding Prueba}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,2,0,0"
+                                   Visibility="{Binding HayPrueba, Converter={StaticResource BooleanoAVisible}}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{DynamicResource ErrorTexto}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding PruebaBien}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource CorrectoTexto}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <TextBlock Text="{loc:Texto Principal.ConexionCluster.NodosAyuda}"
+                   Style="{StaticResource TextoTenueEstilo}"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,6" />
+
+        <!-- ══ Añadir: uno de los conocidos con un clic, o uno en blanco ══ -->
         <DockPanel Style="{StaticResource Fila}">
             <TextBlock Text="{loc:Texto Principal.ConexionCluster.NodosConocidos}" Style="{StaticResource Rotulo}" />
-            <ComboBox ItemsSource="{Binding Nodos}"
-                      SelectedItem="{Binding Nodo}"
+            <Button DockPanel.Dock="Right"
+                    Content="{loc:Texto Principal.ConexionCluster.EnBlanco}"
+                    Command="{Binding AnadirNodoCommand}"
+                    Margin="5,0,0,0"
+                    Padding="8,2" />
+            <Button DockPanel.Dock="Right"
+                    Content="{loc:Texto Principal.ConexionCluster.Anadir}"
+                    Command="{Binding AnadirConocidoCommand}"
+                    Margin="5,0,0,0"
+                    Padding="8,2"
+                    ToolTip="{loc:Texto Principal.ConexionCluster.AnadirConsejo}" />
+            <ComboBox ItemsSource="{Binding NodosConocidos}"
+                      SelectedItem="{Binding NodoConocido}"
                       ToolTip="{loc:Texto Principal.ConexionCluster.NodosConocidosConsejo}"
                       AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.NodosConocidosNombre}">
                 <ComboBox.ItemTemplate>
@@ -96,30 +275,148 @@
                    TextWrapping="Wrap"
                    Margin="150,0,0,8" />
 
-        <DockPanel Style="{StaticResource Fila}">
-            <TextBlock Text="{loc:Texto Comun.Nombre}" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
-                     AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.NombreDelNodo}" />
-        </DockPanel>
+        <!-- ══ El nodo elegido ══ -->
+        <Border Padding="10,8"
+                Margin="0,4,0,8"
+                CornerRadius="4"
+                BorderThickness="1"
+                BorderBrush="{DynamicResource Borde}"
+                Visibility="{Binding HayNodoSeleccionado, Converter={StaticResource BooleanoAVisible}}">
+            <StackPanel>
+                <TextBlock Style="{StaticResource EtiquetaDeCampo}" Margin="0,0,0,6">
+                    <Run Text="{loc:Texto Principal.ConexionCluster.NodoElegido}" />
+                    <Run Text="{Binding NodoSeleccionado.Nombre, Mode=OneWay}" FontWeight="Bold" />
+                </TextBlock>
 
-        <DockPanel Style="{StaticResource Fila}">
-            <TextBlock Text="{loc:Texto Principal.ConexionCluster.Servidor}" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding Servidor, UpdateSourceTrigger=PropertyChanged}"
-                     AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.ServidorDelNodo}" />
-        </DockPanel>
+                <StackPanel DataContext="{Binding NodoSeleccionado}">
+                    <DockPanel Style="{StaticResource Fila}">
+                        <TextBlock Text="{loc:Texto Comun.Nombre}" Style="{StaticResource Rotulo}" />
+                        <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
+                                 AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.NombreDelNodo}" />
+                    </DockPanel>
 
-        <DockPanel Style="{StaticResource Fila}">
-            <TextBlock Text="{loc:Texto Principal.ConexionCluster.Puerto}" Style="{StaticResource Rotulo}" />
-            <TextBox Text="{Binding Puerto, UpdateSourceTrigger=PropertyChanged}"
-                     Width="70"
-                     DockPanel.Dock="Left"
-                     AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.PuertoDelNodo}" />
-            <TextBlock Text="{loc:Texto Principal.ConexionCluster.PuertoAyuda}"
-                       Style="{StaticResource TextoTenueEstilo}"
-                       VerticalAlignment="Center"
-                       Margin="8,0,0,0"
-                       TextTrimming="CharacterEllipsis" />
-        </DockPanel>
+                    <DockPanel Style="{StaticResource Fila}">
+                        <TextBlock Text="{loc:Texto Principal.ConexionCluster.Servidor}" Style="{StaticResource Rotulo}" />
+                        <TextBox Text="{Binding Servidor, UpdateSourceTrigger=PropertyChanged}"
+                                 AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.ServidorDelNodo}" />
+                    </DockPanel>
+
+                    <DockPanel Style="{StaticResource Fila}">
+                        <TextBlock Text="{loc:Texto Principal.ConexionCluster.Puerto}" Style="{StaticResource Rotulo}" />
+                        <TextBox Text="{Binding Puerto, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="70"
+                                 DockPanel.Dock="Left"
+                                 AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.PuertoDelNodo}" />
+                        <TextBlock Text="{loc:Texto Principal.ConexionCluster.PuertoAyuda}"
+                                   Style="{StaticResource TextoTenueEstilo}"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,0,0"
+                                   TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
+
+                    <DockPanel Style="{StaticResource Fila}">
+                        <TextBlock Text="{loc:Texto Principal.ConexionCluster.IndicativoPropio}" Style="{StaticResource Rotulo}" />
+                        <TextBox Text="{Binding Indicativo, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="110"
+                                 DockPanel.Dock="Left"
+                                 CharacterCasing="Upper"
+                                 AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.IndicativoPropio}" />
+                        <TextBlock Text="{loc:Texto Principal.ConexionCluster.SufijoPropio}"
+                                   Style="{StaticResource EtiquetaDeCampo}"
+                                   DockPanel.Dock="Left"
+                                   VerticalAlignment="Center"
+                                   Margin="12,0,6,0" />
+                        <TextBox Text="{Binding Sufijo, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="50"
+                                 DockPanel.Dock="Left"
+                                 AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.SufijoPropio}" />
+                        <TextBlock Text="{loc:Texto Principal.ConexionCluster.IndicativoPropioAyuda}"
+                                   Style="{StaticResource TextoTenueEstilo}"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,0,0"
+                                   TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
+
+                    <WrapPanel Margin="150,2,0,6">
+                        <CheckBox Content="{loc:Texto Principal.ConexionCluster.Skimmer}"
+                                  IsChecked="{Binding EsSkimmer}"
+                                  Margin="0,0,16,0"
+                                  ToolTip="{loc:Texto Principal.ConexionCluster.SkimmerConsejo}" />
+                        <CheckBox Content="{loc:Texto Principal.ConexionCluster.Reconectar}"
+                                  IsChecked="{Binding ReconectarSolo}" />
+                    </WrapPanel>
+
+                    <!-- ══ Guion de arranque de este nodo ══ -->
+                    <TextBlock Text="{loc:Texto Principal.ConexionCluster.Ordenes}" Style="{StaticResource EtiquetaDeCampo}" />
+                    <TextBlock Text="{loc:Texto Principal.ConexionCluster.OrdenesAyuda}"
+                               Style="{StaticResource TextoTenueEstilo}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,3" />
+                    <TextBox Text="{Binding GuionDeArranque, UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="True"
+                             MinLines="3"
+                             MaxLines="8"
+                             VerticalScrollBarVisibility="Auto"
+                             FontFamily="Consolas, Cascadia Mono, Courier New"
+                             Margin="0,0,0,8"
+                             AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.OrdenesNombre}" />
+                </StackPanel>
+
+                <!-- ══ La contraseña del nodo elegido, al almacén cifrado ══ -->
+                <DockPanel Style="{StaticResource Fila}">
+                    <TextBlock Text="{loc:Texto Principal.ConexionCluster.Contrasena}" Style="{StaticResource Rotulo}" />
+                    <Border DockPanel.Dock="Right"
+                            CornerRadius="8"
+                            Padding="7,1"
+                            Margin="6,0,0,0"
+                            VerticalAlignment="Center"
+                            BorderThickness="1">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ContrasenaGuardada}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding EstadoDeLaContrasena}" FontSize="10" />
+                    </Border>
+
+                    <Button DockPanel.Dock="Right"
+                            Content="{loc:Texto Comun.Borrar}"
+                            Command="{Binding BorrarLaContrasenaCommand}"
+                            Margin="5,0,0,0"
+                            Padding="8,2"
+                            AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.BorrarContrasena}" />
+                    <Button DockPanel.Dock="Right"
+                            Content="{loc:Texto Comun.Guardar}"
+                            Command="{Binding GuardarLaContrasenaCommand}"
+                            Margin="5,0,0,0"
+                            Padding="8,2"
+                            AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.GuardarContrasena}" />
+                    <PasswordBox x:Name="CasillaDeLaContrasena"
+                                 PasswordChanged="AlEscribirLaContrasena"
+                                 Padding="6,3"
+                                 Background="{DynamicResource FondoCampo}"
+                                 Foreground="{DynamicResource Texto}"
+                                 BorderBrush="{DynamicResource Borde}"
+                                 BorderThickness="1"
+                                 AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.ContrasenaNombre}" />
+                </DockPanel>
+
+                <TextBlock Text="{loc:Texto Principal.ConexionCluster.ContrasenaAyuda}"
+                           Style="{StaticResource TextoTenueEstilo}"
+                           TextWrapping="Wrap"
+                           Margin="150,0,0,0" />
+            </StackPanel>
+        </Border>
+
+        <!-- ══ Lo común a todos los nodos ══ -->
+        <TextBlock Text="{loc:Texto Principal.ConexionCluster.Comun}" Style="{StaticResource EtiquetaDeCampo}" Margin="0,0,0,4" />
 
         <DockPanel Style="{StaticResource Fila}">
             <TextBlock Text="{loc:Texto Comun.Indicativo}" Style="{StaticResource Rotulo}" />
@@ -150,77 +447,30 @@
                        TextTrimming="CharacterEllipsis" />
         </DockPanel>
 
-        <!-- ══ La contraseña, al almacén cifrado ══ -->
+        <!-- ══ Cómo se juntan los repetidos de varios nodos ══ -->
+        <TextBlock Text="{loc:Texto Principal.ConexionCluster.Repetidos}" Style="{StaticResource EtiquetaDeCampo}" Margin="0,8,0,2" />
+        <TextBlock Text="{loc:Texto Principal.ConexionCluster.RepetidosAyuda}"
+                   Style="{StaticResource TextoTenueEstilo}"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,4" />
         <DockPanel Style="{StaticResource Fila}">
-            <TextBlock Text="{loc:Texto Principal.ConexionCluster.Contrasena}" Style="{StaticResource Rotulo}" />
-            <Border DockPanel.Dock="Right"
-                    CornerRadius="8"
-                    Padding="7,1"
-                    Margin="6,0,0,0"
-                    VerticalAlignment="Center"
-                    BorderThickness="1">
-                <Border.Style>
-                    <Style TargetType="Border">
-                        <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
-                        <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ContrasenaGuardada}" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
-                                <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-                <TextBlock Text="{Binding EstadoDeLaContrasena}" FontSize="10" />
-            </Border>
-
-            <Button DockPanel.Dock="Right"
-                    Content="{loc:Texto Comun.Borrar}"
-                    Command="{Binding BorrarLaContrasenaCommand}"
-                    Margin="5,0,0,0"
-                    Padding="8,2"
-                    AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.BorrarContrasena}" />
-            <Button DockPanel.Dock="Right"
-                    Content="{loc:Texto Comun.Guardar}"
-                    Command="{Binding GuardarLaContrasenaCommand}"
-                    Margin="5,0,0,0"
-                    Padding="8,2"
-                    AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.GuardarContrasena}" />
-            <PasswordBox x:Name="CasillaDeLaContrasena"
-                         PasswordChanged="AlEscribirLaContrasena"
-                         Padding="6,3"
-                         Background="{DynamicResource FondoCampo}"
-                         Foreground="{DynamicResource Texto}"
-                         BorderBrush="{DynamicResource Borde}"
-                         BorderThickness="1"
-                         AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.ContrasenaNombre}" />
+            <TextBlock Text="{loc:Texto Principal.ConexionCluster.Tolerancia}" Style="{StaticResource Rotulo}" />
+            <TextBox Text="{Binding ToleranciaDeRepetidosKhz, UpdateSourceTrigger=PropertyChanged}"
+                     Width="70"
+                     DockPanel.Dock="Left"
+                     AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.Tolerancia}" />
+            <TextBlock Text="{loc:Texto Principal.ConexionCluster.Ventana}"
+                       Style="{StaticResource EtiquetaDeCampo}"
+                       DockPanel.Dock="Left"
+                       VerticalAlignment="Center"
+                       Margin="16,0,6,0" />
+            <TextBox Text="{Binding VentanaDeRepetidosMinutos, UpdateSourceTrigger=PropertyChanged}"
+                     Width="60"
+                     HorizontalAlignment="Left"
+                     AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.Ventana}" />
         </DockPanel>
 
-        <TextBlock Text="{loc:Texto Principal.ConexionCluster.ContrasenaAyuda}"
-                   Style="{StaticResource TextoTenueEstilo}"
-                   TextWrapping="Wrap"
-                   Margin="150,0,0,8" />
-
-        <!-- ══ Guion de arranque ══ -->
-        <TextBlock Text="{loc:Texto Principal.ConexionCluster.Ordenes}" Style="{StaticResource EtiquetaDeCampo}" />
-        <TextBlock Text="{loc:Texto Principal.ConexionCluster.OrdenesAyuda}"
-                   Style="{StaticResource TextoTenueEstilo}"
-                   TextWrapping="Wrap"
-                   Margin="0,0,0,3" />
-        <TextBox Text="{Binding GuionDeArranque, UpdateSourceTrigger=PropertyChanged}"
-                 AcceptsReturn="True"
-                 MinLines="3"
-                 MaxLines="8"
-                 VerticalScrollBarVisibility="Auto"
-                 FontFamily="Consolas, Cascadia Mono, Courier New"
-                 Margin="0,0,0,8"
-                 AutomationProperties.Name="{loc:Texto Principal.ConexionCluster.OrdenesNombre}" />
-
-        <CheckBox Content="{loc:Texto Principal.ConexionCluster.Reconectar}"
-                  IsChecked="{Binding ReconectarSolo}"
-                  Margin="0,0,0,6" />
-
-        <Expander Header="{loc:Texto Principal.ConexionCluster.Tiempos}" Margin="0,0,0,8">
+        <Expander Header="{loc:Texto Principal.ConexionCluster.Tiempos}" Margin="0,6,0,8">
             <StackPanel Margin="0,4,0,0">
                 <DockPanel Style="{StaticResource Fila}">
                     <TextBlock Text="{loc:Texto Principal.ConexionCluster.EsperaConexion}" Style="{StaticResource Rotulo}" />

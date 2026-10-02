@@ -30,7 +30,7 @@ namespace Nodisla.Cuaderno.Radio.Control.Icom;
 /// </remarks>
 public sealed class ControlIcom
     : IEquipoAvanzado, IEquipoConDosVfos, IEquipoConTeclas, IEquipoConBotonera, IEquipoConEncendido,
-      IEquipoDeModelo, IEquipoConSintonia, IPttDirecto, ISueltaDeEmergenciaPtt, IAvisaDePerdidaDeComunicacion
+      IEquipoDeModelo, IEquipoConSintonia, IPttDirecto, ISueltaDeEmergenciaPtt, IAvisaDePerdidaDeComunicacion, IManipuladorCw, IMedidorDeRoe
 {
     /// <summary>Pasadas seguidas sin respuesta para dar el equipo por perdido.</summary>
     public const int FallosParaDarloPorPerdido = 3;
@@ -92,7 +92,11 @@ public sealed class ControlIcom
         vias.Add(new ViaDeSuelta(
             $"{nombre}: 1C 00 00 por el canal abierto",
             async ct => await BajarPorCivAsync(ct).ConfigureAwait(false),
-            () => _canal.MandarSincrono([.. OrdenesIcom.BajarPtt])));
+            () =>
+            {
+                PararElManipuladorSincronoSiHaceFalta();
+                _canal.MandarSincrono([.. OrdenesIcom.BajarPtt]);
+            }));
         vias.Add(new ViaDeSuelta(
             $"{nombre}: reabrir el puerto y 1C 00 00",
             async ct =>
@@ -774,6 +778,23 @@ public sealed class ControlIcom
             DateTimeOffset.UtcNow);
     }
 
+    /// <inheritdoc />
+    /// <remarks>
+    /// <c>15 11</c> (potencia, 0-255; 213 = 100 %) y <c>15 12</c> (ROE, 0-255: 0 = 1,0; 48 = 1,5;
+    /// 80 = 2,0; 120 = 3,0, de la referencia CI-V). Por encima de 120 la escala no esta en el
+    /// manual: se queda en 3,0, que es justo el umbral de antena abierta.
+    /// </remarks>
+    public async Task<LecturaDeRoe?> LeerRoeAsync(CancellationToken ct = default)
+    {
+        var po = await LeerMedidorAsync(0x11, ct).ConfigureAwait(false);
+        var swr = await LeerMedidorAsync(0x12, ct).ConfigureAwait(false);
+        if (po is null && swr is null) return null;
+        return new LecturaDeRoe(
+            swr is { } s ? Interpolar(s, EscalaRoe) : null,
+            HayPotencia: po is { } p && Interpolar(p, EscalaPo) >= 5,
+            AlarmaDelEquipo: false);
+    }
+
     private static readonly (int, double)[] EscalaPo = [(0, 0), (143, 50), (213, 100)];
     private static readonly (int, double)[] EscalaRoe = [(0, 1.0), (48, 1.5), (80, 2.0), (120, 3.0)];
     private static readonly (int, double)[] EscalaCompresion = [(0, 0), (130, 15), (241, 30)];
@@ -922,6 +943,9 @@ public sealed class ControlIcom
             return;
         }
 
+        // Telegrafia en marcha: se para el manipulador antes de bajar el PTT, por la via que sea.
+        if (!transmitir) await PararElManipuladorSiHaceFaltaAsync(ct).ConfigureAwait(false);
+
         if (!transmitir && Volatile.Read(ref _sintonizando))
         {
             // Bajar una sintonia: 1C 00 00 siempre y, si sigue sintonizando (1C 01 = 02), pararla
@@ -987,7 +1011,87 @@ public sealed class ControlIcom
     private async Task BajarPorCivAsync(CancellationToken ct)
     {
         if (!_canal.Abierto) throw new InvalidOperationException(Textos.F("Servicios.Radio.CanalCerrado", _canal.Descripcion));
+        await PararElManipuladorSiHaceFaltaAsync(ct).ConfigureAwait(false);
         await _canal.PreguntarAsync([.. OrdenesIcom.BajarPtt], ct).ConfigureAwait(false);
+    }
+
+    // ── Telegrafia por el manipulador interno (IManipuladorCw): orden 17 ─────────────────────
+
+    /// <summary>Uno mientras el manipulador puede estar manipulando algo mandado por el programa.</summary>
+    private int _manipulando;
+
+    /// <inheritdoc />
+    public string? PorQueNoManipula => !Estado.Conectado ? Textos.T("Servicios.Radio.Cw.Desconectado") : null;
+
+    /// <inheritdoc />
+    public int LetrasPorOrden => OrdenesIcom.LetrasPorOrden;
+
+    /// <inheritdoc />
+    public int WpmMinima => 6;
+
+    /// <inheritdoc />
+    public int WpmMaxima => 48;
+
+    /// <inheritdoc />
+    /// <remarks>Por el nivel <c>14 0C</c> (6 a 48 WPM), el mismo mando de la botonera.</remarks>
+    public Task PonerVelocidadAsync(int wpm, CancellationToken ct = default)
+    {
+        if (PorQueNoManipula is { } porque) throw new InvalidOperationException(porque);
+        return EscribirMandoAsync(MandoDeEquipo.VelocidadKeyer, Math.Clamp(wpm, WpmMinima, WpmMaxima), ct);
+    }
+
+    /// <inheritdoc />
+    /// <remarks><c>17</c> mas el texto (hasta 30). Solo con el PTT pedido al vigilante.</remarks>
+    public async Task ManipularAsync(string texto, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(texto);
+        if (PorQueNoManipula is { } porque) throw new InvalidOperationException(porque);
+        if (!Volatile.Read(ref _pttPedido) || Volatile.Read(ref _sintonizando))
+        {
+            throw new InvalidOperationException(Textos.T("Servicios.Radio.Cw.SinAntena"));
+        }
+
+        var limpio = OrdenesIcom.TextoParaElManipulador(texto);
+        if (limpio.Length == 0) return;
+        Volatile.Write(ref _manipulando, 1);
+        await OrdenesIcom.ConManipulacionAutorizadaAsync(
+            async () => await _canal.PreguntarAsync(OrdenesIcom.OrdenDeManipular(limpio), ct).ConfigureAwait(false)).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task PararManipuladorAsync(CancellationToken ct = default)
+    {
+        if (_canal.Abierto) await _canal.PreguntarAsync([.. OrdenesIcom.PararElManipulador], ct).ConfigureAwait(false);
+        Volatile.Write(ref _manipulando, 0);
+    }
+
+    /// <summary>Si el manipulador puede estar en marcha, lo para (17 FF). Nunca lanza.</summary>
+    private async Task PararElManipuladorSiHaceFaltaAsync(CancellationToken ct)
+    {
+        if (Volatile.Read(ref _manipulando) == 0 || !_canal.Abierto) return;
+        try
+        {
+            await _canal.PreguntarAsync([.. OrdenesIcom.PararElManipulador], ct).ConfigureAwait(false);
+            Volatile.Write(ref _manipulando, 0);
+        }
+        catch (Exception ex)
+        {
+            _registro.LogWarning(ex, "No se ha podido parar el manipulador (17 FF) antes de bajar el PTT.");
+        }
+    }
+
+    private void PararElManipuladorSincronoSiHaceFalta()
+    {
+        if (Volatile.Read(ref _manipulando) == 0) return;
+        try
+        {
+            _canal.MandarSincrono([.. OrdenesIcom.PararElManipulador]);
+            Volatile.Write(ref _manipulando, 0);
+        }
+        catch (Exception ex)
+        {
+            _registro.LogWarning(ex, "No se ha podido parar el manipulador (17 FF) por la vía síncrona.");
+        }
     }
 
     /// <summary>

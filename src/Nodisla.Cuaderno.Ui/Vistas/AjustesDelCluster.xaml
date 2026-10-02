@@ -16,6 +16,10 @@
         es lo que hace falta para configurar y para diagnosticar cuando algo no va.
     -->
 
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -51,7 +55,11 @@
 
             <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="{Binding Nombre}" FontWeight="Bold" />
-                <TextBlock Text="{Binding EstadoTexto}" Style="{StaticResource TextoTenueEstilo}" />
+                <TextBlock Style="{StaticResource TextoTenueEstilo}">
+                    <Run Text="{Binding EstadoTexto, Mode=OneWay}" />
+                    <Run Text="·" />
+                    <Run Text="{Binding ResumenDeNodos, Mode=OneWay}" />
+                </TextBlock>
             </StackPanel>
         </DockPanel>
 
@@ -72,11 +80,24 @@
             </ScrollViewer>
         </Border>
 
+        <!--
+            Con varios nodos, la orden va SOLO al elegido en el desplegable. Un «DX» propio
+            mandado por todos los nodos de la misma red saldría repetido en el mundo entero.
+        -->
         <DockPanel Grid.Row="3" Margin="0,6,0,0">
             <Button DockPanel.Dock="Right"
                     Content="{loc:Texto Ajustes.Cluster.Enviar}"
                     Command="{Binding EnviarOrdenCommand}"
                     Margin="8,0,0,0" />
+            <ComboBox DockPanel.Dock="Left"
+                      ItemsSource="{Binding NodosParaEnviar}"
+                      SelectedItem="{Binding NodoDeEnvio}"
+                      DisplayMemberPath="Nombre"
+                      MinWidth="150"
+                      Margin="0,0,8,0"
+                      ToolTip="{loc:Texto Ajustes.Cluster.NodoDeEnvioConsejo}"
+                      AutomationProperties.Name="{loc:Texto Ajustes.Cluster.NodoDeEnvio}"
+                      Visibility="{Binding HayVariosNodos, Converter={StaticResource BooleanoAVisible}}" />
             <TextBox Text="{Binding Orden, UpdateSourceTrigger=PropertyChanged}"
                      FontFamily="Consolas, Cascadia Mono, Courier New"
                      ToolTip="{loc:Texto Ajustes.Cluster.Orden.Ayuda}"

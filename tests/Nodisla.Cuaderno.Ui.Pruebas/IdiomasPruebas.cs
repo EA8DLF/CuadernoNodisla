@@ -261,7 +261,8 @@ public sealed partial class IdiomasPruebas
     public Task La_configuracion_tiene_su_apartado_de_idioma() =>
         HiloDeVentana.Ejecutar(async () =>
         {
-            VistaModeloAjustes.Apartados.Should().HaveCount(VistaModeloAjustes.ApartadoIdioma + 1);
+            VistaModeloAjustes.Apartados.Should().HaveCount(VistaModeloAjustes.ApartadoServidor + 1);
+            VistaModeloAjustes.ClavesDeLosApartados[VistaModeloAjustes.ApartadoIdioma].Should().Be("Ajustes.Apartado.Idioma");
             await Task.CompletedTask;
         });
 

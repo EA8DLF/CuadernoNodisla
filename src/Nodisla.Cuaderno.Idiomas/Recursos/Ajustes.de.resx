@@ -89,6 +89,96 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   <data name="Ajustes.Actualizaciones.VersionInstalada" xml:space="preserve">
     <value>Installierte Version:</value>
   </data>
+  <data name="Ajustes.Analizador.Brillo" xml:space="preserve">
+    <value>Helligkeit des Rauschens:</value>
+  </data>
+  <data name="Ajustes.Analizador.BrilloAyuda" xml:space="preserve">
+    <value>Hebt oder senkt das Schwarz: mehr zeigt etwas Rauschen, weniger macht es ganz schwarz.</value>
+  </data>
+  <data name="Ajustes.Analizador.Carriles" xml:space="preserve">
+    <value>Beschriftungszeilen</value>
+  </data>
+  <data name="Ajustes.Analizador.ClicParaSintonizar" xml:space="preserve">
+    <value>Klick zum Abstimmen, Mausrad bewegt den VFO</value>
+  </data>
+  <data name="Ajustes.Analizador.ClicParaSintonizarAyuda" xml:space="preserve">
+    <value>Wirkt immer auf den aktiven VFO und nie während des Sendens. Mit Umschalt feiner Schritt (ein Zehntel).</value>
+  </data>
+  <data name="Ajustes.Analizador.Contraste" xml:space="preserve">
+    <value>Kontrast:</value>
+  </data>
+  <data name="Ajustes.Analizador.ContrasteAyuda" xml:space="preserve">
+    <value>Skaleneinheiten des Funkgeräts zwischen Schwarz und hellster Farbe. Weniger: schwache Signale treten stärker hervor.</value>
+  </data>
+  <data name="Ajustes.Analizador.DeFabrica" xml:space="preserve">
+    <value>Werkseinstellungen</value>
+  </data>
+  <data name="Ajustes.Analizador.Desplazar" xml:space="preserve">
+    <value>Wasserfall beim Umstimmen mitschieben</value>
+  </data>
+  <data name="Ajustes.Analizador.DesplazarAyuda" xml:space="preserve">
+    <value>In CENTER wandert das bereits Gezeichnete beim Verstellen des VFO mit: jedes Signal bleibt an seinem Platz statt diagonal zu verschmieren.</value>
+  </data>
+  <data name="Ajustes.Analizador.Explicacion" xml:space="preserve">
+    <value>Spektrum und Wasserfall, die das Funkgerät selbst sendet (FT-710 über USB). Hier wird gewählt, wie es gezeichnet wird und was die Maus darüber tut. Nichts davon ändert Einstellungen am Funkgerät.</value>
+  </data>
+  <data name="Ajustes.Analizador.NivelBajo" xml:space="preserve">
+    <value>Schwarz ohne AGC:</value>
+  </data>
+  <data name="Ajustes.Analizador.NivelBajoAyuda" xml:space="preserve">
+    <value>Ohne automatischen Rauschboden der Pegel des Funkgeräts (0-255), der schwarz erscheint.</value>
+  </data>
+  <data name="Ajustes.Analizador.Paleta" xml:space="preserve">
+    <value>Wasserfallfarben</value>
+  </data>
+  <data name="Ajustes.Analizador.PaletaArcoiris" xml:space="preserve">
+    <value>Regenbogen (klassisch bei SDR)</value>
+  </data>
+  <data name="Ajustes.Analizador.PaletaFuego" xml:space="preserve">
+    <value>Feuer</value>
+  </data>
+  <data name="Ajustes.Analizador.PaletaGris" xml:space="preserve">
+    <value>Graustufen</value>
+  </data>
+  <data name="Ajustes.Analizador.PaletaHielo" xml:space="preserve">
+    <value>Eis</value>
+  </data>
+  <data name="Ajustes.Analizador.PaletaNodisla" xml:space="preserve">
+    <value>NODISLA (Blau, Grün, Bernstein)</value>
+  </data>
+  <data name="Ajustes.Analizador.PaletaRadio" xml:space="preserve">
+    <value>Rot, wie das Funkgerät</value>
+  </data>
+  <data name="Ajustes.Analizador.Paso" xml:space="preserve">
+    <value>Schritt</value>
+  </data>
+  <data name="Ajustes.Analizador.PasoAutomatico" xml:space="preserve">
+    <value>Automatisch</value>
+  </data>
+  <data name="Ajustes.Analizador.PasoAyuda" xml:space="preserve">
+    <value>Raster, auf das die geklickte Frequenz einrastet, und Weg pro Mausrad-Raste. Automatisch: nach sichtbarer Breite (500 Hz bei 200 kHz, 50 Hz bei 20 kHz).</value>
+  </data>
+  <data name="Ajustes.Analizador.Picos" xml:space="preserve">
+    <value>Spitzen markieren</value>
+  </data>
+  <data name="Ajustes.Analizador.PicosAyuda" xml:space="preserve">
+    <value>Die fünf stärksten Signale bekommen eine bernsteinfarbene Marke und ihren Abstand zum Rauschen in Skaleneinheiten des Funkgeräts.</value>
+  </data>
+  <data name="Ajustes.Analizador.SpotsEncima" xml:space="preserve">
+    <value>Cluster-Spots einblenden</value>
+  </data>
+  <data name="Ajustes.Analizador.SpotsEncimaAyuda" xml:space="preserve">
+    <value>Rufzeichen aus der Cluster-Liste (alle Knoten, mit ihrem Filter) auf ihrer Frequenz. Magenta: neues Gebiet; Grün: neues Band oder neue Betriebsart; Grau: bereits gearbeitet.</value>
+  </data>
+  <data name="Ajustes.Analizador.SueloAutomatico" xml:space="preserve">
+    <value>Automatischer Rauschboden (Wasserfall-AGC)</value>
+  </data>
+  <data name="Ajustes.Analizador.SueloAutomaticoAyuda" xml:space="preserve">
+    <value>Das Rauschen bleibt dunkel und Signale behalten guten Kontrast, auch wenn Band, Vorverstärker oder Abschwächer wechseln, ohne das Funkgerät anzufassen. Merkt sich den Rauschboden je Band.</value>
+  </data>
+  <data name="Ajustes.Analizador.Titulo" xml:space="preserve">
+    <value>Spektrumanzeige des Funkgeräts</value>
+  </data>
   <data name="Ajustes.Apartado.Actualizaciones" xml:space="preserve">
     <value>Updates</value>
   </data>
@@ -115,6 +205,9 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   </data>
   <data name="Ajustes.Apartado.Libro" xml:space="preserve">
     <value>Logbuch (ADIF)</value>
+  </data>
+  <data name="Ajustes.Apartado.Servidor" xml:space="preserve">
+    <value>Server für andere Programme</value>
   </data>
   <data name="Ajustes.Apartado.Subidas" xml:space="preserve">
     <value>Uploads und QRZ</value>
@@ -215,8 +308,11 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   <data name="Ajustes.Audio.TransmitirYApuntar" xml:space="preserve">
     <value>Senden und Loggen</value>
   </data>
-  <data name="Ajustes.Cluster.Aplicado" xml:space="preserve">
-    <value>Gespeichert und übernommen: {0} ({1}:{2}) als {3}. Klicken Sie auf Verbinden, um sich anzumelden.</value>
+  <data name="Ajustes.Cluster.AplicadoVarios" xml:space="preserve">
+    <value>Gespeichert und übernommen: {0} Knoten, {1} aktiv, Anmeldung als {2}. Unveränderte Knoten bleiben verbunden.</value>
+  </data>
+  <data name="Ajustes.Cluster.AplicaPrimero" xml:space="preserve">
+    <value>Vor dem Verbinden von „{0}“ speichern und übernehmen.</value>
   </data>
   <data name="Ajustes.Cluster.Conexion.Ayuda" xml:space="preserve">
     <value>Öffnet oder schließt die Verbindung zum Knoten</value>
@@ -224,20 +320,47 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   <data name="Ajustes.Cluster.Enviar" xml:space="preserve">
     <value>Senden</value>
   </data>
-  <data name="Ajustes.Cluster.FaltaServidor" xml:space="preserve">
-    <value>Der Server des Knotens fehlt.</value>
-  </data>
   <data name="Ajustes.Cluster.IndicativoNoVale" xml:space="preserve">
     <value>Das Rufzeichen „{0}“ ist ungültig: {1}</value>
   </data>
+  <data name="Ajustes.Cluster.NodoDeEnvio" xml:space="preserve">
+    <value>Zielknoten</value>
+  </data>
+  <data name="Ajustes.Cluster.NodoDeEnvioConsejo" xml:space="preserve">
+    <value>Befehle und eigene Spots (DX …) gehen nur an diesen Knoten, nie an alle: sonst würden sie im ganzen Netz mehrfach erscheinen.</value>
+  </data>
+  <data name="Ajustes.Cluster.NodoNuevo" xml:space="preserve">
+    <value>Neuer Knoten</value>
+  </data>
+  <data name="Ajustes.Cluster.NodoSinServidor" xml:space="preserve">
+    <value>Beim Knoten „{0}“ fehlt der Server.</value>
+  </data>
+  <data name="Ajustes.Cluster.NoResponde" xml:space="preserve">
+    <value>Keine Antwort: {0}</value>
+  </data>
   <data name="Ajustes.Cluster.Orden.Ayuda" xml:space="preserve">
     <value>Befehl für den Knoten, zum Beispiel sh/dx</value>
+  </data>
+  <data name="Ajustes.Cluster.Probando" xml:space="preserve">
+    <value>Wird geprüft…</value>
+  </data>
+  <data name="Ajustes.Cluster.PuertoNoVale" xml:space="preserve">
+    <value>Der Port von „{0}“ ist ungültig: Er muss zwischen 1 und 65535 liegen.</value>
+  </data>
+  <data name="Ajustes.Cluster.Responde" xml:space="preserve">
+    <value>Antwortet in {0} ms (ohne Anmeldung).</value>
+  </data>
+  <data name="Ajustes.Cluster.RespondeConSaludo" xml:space="preserve">
+    <value>Antwortet in {0} ms (ohne Anmeldung): „{1}“</value>
   </data>
   <data name="Ajustes.Cluster.Simulado" xml:space="preserve">
     <value>Mit simulierten Schnittstellen ist der Cluster nur eine Attrappe, es gibt also keinen Knoten einzurichten. Schließen Sie das Programm und starten Sie es ohne CUADERNO_SIMULADO neu, um Knoten, Rufzeichen und Passwort zu wählen.</value>
   </data>
   <data name="Ajustes.Cluster.SinIndicativo" xml:space="preserve">
     <value>Es gibt kein Rufzeichen für die Anmeldung: Tragen Sie es hier ein oder legen Sie ein Stationsprofil an.</value>
+  </data>
+  <data name="Ajustes.Cluster.YaEnLaLista" xml:space="preserve">
+    <value>„{0}“ ist bereits in der Liste.</value>
   </data>
   <data name="Ajustes.Correo.Asunto" xml:space="preserve">
     <value>Betreff</value>
@@ -406,6 +529,12 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   </data>
   <data name="Ajustes.Cw.Sensibilidad.Ayuda" xml:space="preserve">
     <value>Höher liest schwächere Signale; niedriger verlangt mehr Signal, bevor geschrieben wird. Rauschen schreibt bei keiner Einstellung.</value>
+  </data>
+  <data name="Ajustes.Cw.SinSenal" xml:space="preserve">
+    <value>Erneut suchen nach</value>
+  </data>
+  <data name="Ajustes.Cw.SinSenal.Ayuda" xml:space="preserve">
+    <value>Im Automatikbetrieb Sekunden ohne das gehaltene Signal, bevor ein anderes gesucht wird (1 bis 60).</value>
   </data>
   <data name="Ajustes.Cw.Titulo" xml:space="preserve">
     <value>Telegrafie (CW)</value>
@@ -704,6 +833,9 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   <data name="Ajustes.Estado.SinNodoDeVerdad" xml:space="preserve">
     <value>Kein echter Knoten</value>
   </data>
+  <data name="Ajustes.Fonia.Agudos" xml:space="preserve">
+    <value>Höhen</value>
+  </data>
   <data name="Ajustes.Fonia.Altavoces" xml:space="preserve">
     <value>PC-Lautsprecher oder Kopfhörer</value>
   </data>
@@ -719,14 +851,38 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   <data name="Ajustes.Fonia.Aviso.SalidaNoEsDelEquipo" xml:space="preserve">
     <value>Der Ausgang zum Funkgerät ist nicht der Codec des Geräts: Die Stimme würde das Funkgerät nicht erreichen.</value>
   </data>
+  <data name="Ajustes.Fonia.Compresor" xml:space="preserve">
+    <value>Kompressor</value>
+  </data>
+  <data name="Ajustes.Fonia.Compresor.Ayuda" xml:space="preserve">
+    <value>Gleicht die Stimme aus, indem Spitzen abgesenkt werden. Hebt nichts an: keine Aufholverstärkung.</value>
+  </data>
+  <data name="Ajustes.Fonia.Compresor.Relacion" xml:space="preserve">
+    <value>Verhältnis</value>
+  </data>
+  <data name="Ajustes.Fonia.Compresor.Umbral" xml:space="preserve">
+    <value>Schwelle</value>
+  </data>
   <data name="Ajustes.Fonia.ComprobarFuente" xml:space="preserve">
     <value>SSB-Modulationsquelle per CAT prüfen · Menü EX</value>
+  </data>
+  <data name="Ajustes.Fonia.CorteDeGraves" xml:space="preserve">
+    <value>Tiefenschnitt</value>
+  </data>
+  <data name="Ajustes.Fonia.CorteHz" xml:space="preserve">
+    <value>{0} Hz</value>
   </data>
   <data name="Ajustes.Fonia.EntradaDelEquipo" xml:space="preserve">
     <value>Eingang vom Funkgerät (was man hört)</value>
   </data>
   <data name="Ajustes.Fonia.EntradaDelEquipo.Accesible" xml:space="preserve">
     <value>Audioeingang vom Funkgerät</value>
+  </data>
+  <data name="Ajustes.Fonia.Escucha.Explicacion" xml:space="preserve">
+    <value>Es ändert nur, was Sie über die PC-Lautsprecher hören. Das Digitalmodem und der CW-Decoder erhalten das Funkgeräte-Audio unverändert.</value>
+  </data>
+  <data name="Ajustes.Fonia.Escucha.Titulo" xml:space="preserve">
+    <value>Hören über die Lautsprecher</value>
   </data>
   <data name="Ajustes.Fonia.EscucharAlEntrar" xml:space="preserve">
     <value>Empfang beim Öffnen von Betrieb starten</value>
@@ -740,8 +896,47 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   <data name="Ajustes.Fonia.GananciaMicro.Accesible" xml:space="preserve">
     <value>Mikrofonverstärkung</value>
   </data>
+  <data name="Ajustes.Fonia.Grabacion.Adjuntar" xml:space="preserve">
+    <value>Beim Speichern an die Verbindung anhängen</value>
+  </data>
+  <data name="Ajustes.Fonia.Grabacion.Adjuntar.Ayuda" xml:space="preserve">
+    <value>Das Gespeicherte wird an die Verbindung angehängt, die Sie gerade eingeben oder ändern, und mit ihr gespeichert.</value>
+  </data>
+  <data name="Ajustes.Fonia.Grabacion.Grabar" xml:space="preserve">
+    <value>Empfang im Speicher halten</value>
+  </data>
+  <data name="Ajustes.Fonia.Grabacion.Grabar.Ayuda" xml:space="preserve">
+    <value>Solange das Hören offen ist, bleiben die letzten Minuten des Funkgeräte-Audios im Speicher. Erst mit „Letztes speichern“ wird etwas auf die Festplatte geschrieben.</value>
+  </data>
+  <data name="Ajustes.Fonia.Grabacion.Minutos" xml:space="preserve">
+    <value>Minuten im Speicher:</value>
+  </data>
+  <data name="Ajustes.Fonia.Grabacion.Titulo" xml:space="preserve">
+    <value>Aufnahme und Sprachnachrichten</value>
+  </data>
+  <data name="Ajustes.Fonia.Graves" xml:space="preserve">
+    <value>Bässe</value>
+  </data>
   <data name="Ajustes.Fonia.IndiceFuente.Accesible" xml:space="preserve">
     <value>Menüindex der Modulationsquelle</value>
+  </data>
+  <data name="Ajustes.Fonia.Limitador" xml:space="preserve">
+    <value>Begrenzer</value>
+  </data>
+  <data name="Ajustes.Fonia.Limitador.Ayuda" xml:space="preserve">
+    <value>Kein Audiospitzenwert überschreitet die Obergrenze: schützt Lautsprecher und Ohren.</value>
+  </data>
+  <data name="Ajustes.Fonia.Medios" xml:space="preserve">
+    <value>Mitten</value>
+  </data>
+  <data name="Ajustes.Fonia.Micro.Explicacion" xml:space="preserve">
+    <value>Wird auf Ihre Stimme und auf aufgenommene Nachrichten angewendet, bevor sie zum Funkgerät gehen. Hebt den Pegel nie über den Eingang oder die Obergrenze an.</value>
+  </data>
+  <data name="Ajustes.Fonia.Micro.Procesar" xml:space="preserve">
+    <value>Mikrofon bearbeiten</value>
+  </data>
+  <data name="Ajustes.Fonia.Micro.Titulo" xml:space="preserve">
+    <value>PC-Mikrofon beim Senden</value>
   </data>
   <data name="Ajustes.Fonia.Microfono" xml:space="preserve">
     <value>PC-Mikrofon</value>
@@ -749,8 +944,41 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   <data name="Ajustes.Fonia.NoMontada" xml:space="preserve">
     <value>Sprechfunk über den PC ist in dieser Sitzung nicht verfügbar.</value>
   </data>
+  <data name="Ajustes.Fonia.Notch" xml:space="preserve">
+    <value>Automatischer Notch</value>
+  </data>
+  <data name="Ajustes.Fonia.Notch.Ayuda" xml:space="preserve">
+    <value>Findet und entfernt nur gleichbleibende Träger und Pfeiftöne. Keine Verzögerung.</value>
+  </data>
   <data name="Ajustes.Fonia.PttConmutado" xml:space="preserve">
     <value>PTT umschaltend (Klick zum Starten, Klick zum Beenden)</value>
+  </data>
+  <data name="Ajustes.Fonia.Puerta" xml:space="preserve">
+    <value>Noise-Gate</value>
+  </data>
+  <data name="Ajustes.Fonia.Puerta.Ayuda" xml:space="preserve">
+    <value>Senkt den Hintergrund, wenn Sie nicht sprechen: Lüfter, Tastatur...</value>
+  </data>
+  <data name="Ajustes.Fonia.Puerta.Umbral" xml:space="preserve">
+    <value>Öffnet oberhalb von</value>
+  </data>
+  <data name="Ajustes.Fonia.Reductor" xml:space="preserve">
+    <value>Rauschunterdrückung</value>
+  </data>
+  <data name="Ajustes.Fonia.Reductor.Adaptativo" xml:space="preserve">
+    <value>Adaptiv (NR1), ohne Verzögerung</value>
+  </data>
+  <data name="Ajustes.Fonia.Reductor.Ayuda" xml:space="preserve">
+    <value>Entfernt das Hintergrundrauschen. Spektral (NR2) entfernt am meisten und fügt etwa 11 ms hinzu; adaptiv (NR1) ist sanfter und verzögert nichts.</value>
+  </data>
+  <data name="Ajustes.Fonia.Reductor.Espectral" xml:space="preserve">
+    <value>Spektral (NR2), der stärkste</value>
+  </data>
+  <data name="Ajustes.Fonia.Reductor.Nivel" xml:space="preserve">
+    <value>Stärke</value>
+  </data>
+  <data name="Ajustes.Fonia.Reductor.Tipo" xml:space="preserve">
+    <value>Art der Rauschunterdrückung</value>
   </data>
   <data name="Ajustes.Fonia.SalidaAlEquipo" xml:space="preserve">
     <value>Ausgang zum Funkgerät (was gesendet wird)</value>
@@ -758,8 +986,23 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   <data name="Ajustes.Fonia.SalidaAlEquipo.Accesible" xml:space="preserve">
     <value>Audioausgang zum Funkgerät</value>
   </data>
+  <data name="Ajustes.Fonia.SinCorte" xml:space="preserve">
+    <value>Kein Schnitt</value>
+  </data>
   <data name="Ajustes.Fonia.SoloSeLee" xml:space="preserve">
     <value>Das Menü wird nur GELESEN; das Programm ändert nichts am Funkgerät. Der Index stammt aus der vom FT-710 gelesenen Tabelle und ist nicht mit dem Handbuch abgeglichen: Wenn der Hinweis nicht zu dem passt, was das Gerät anzeigt, korrigieren Sie ihn hier.</value>
+  </data>
+  <data name="Ajustes.Fonia.Techo" xml:space="preserve">
+    <value>Obergrenze</value>
+  </data>
+  <data name="Ajustes.Fonia.Techo.Escucha" xml:space="preserve">
+    <value>Obergrenze beim Hören</value>
+  </data>
+  <data name="Ajustes.Fonia.Techo.Micro" xml:space="preserve">
+    <value>Obergrenze des Mikrofons</value>
+  </data>
+  <data name="Ajustes.Fonia.Techo.Micro.Ayuda" xml:space="preserve">
+    <value>Der höchste Pegel, der zum Funkgerät gehen kann. Nicht über −1 dBFS einstellbar.</value>
   </data>
   <data name="Ajustes.Fonia.Tecla.BloqDespl" xml:space="preserve">
     <value>Rollen</value>
@@ -781,6 +1024,12 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   </data>
   <data name="Ajustes.Fonia.TeclaDelPtt.Ayuda" xml:space="preserve">
     <value>Nur bei aktivem Fenster und nie beim Tippen in einem Textfeld</value>
+  </data>
+  <data name="Ajustes.Fonia.TeclasDeMensajes" xml:space="preserve">
+    <value>F1–F6 senden die Sprachnachrichten</value>
+  </data>
+  <data name="Ajustes.Fonia.TeclasDeMensajes.Ayuda" xml:space="preserve">
+    <value>Nur in einer Sprachbetriebsart, mit sichtbarem Sprechfunk-Bereich und wenn die Taste eine Aufnahme hat. Sonst öffnet F1 weiterhin die Hilfe.</value>
   </data>
   <data name="Ajustes.Fonia.TiempoMaximo" xml:space="preserve">
     <value>Maximale Dauer pro Durchgang (Sekunden, 10 bis 600)</value>
@@ -959,6 +1208,207 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   <data name="Ajustes.Secreto.TqslFrase.Ayuda" xml:space="preserve">
     <value>Nur wenn Ihr Zertifikat eine hat. Lesen Sie vor der Eingabe den Hinweis unten.</value>
   </data>
+  <data name="Ajustes.SeguridadTx.Banda" xml:space="preserve">
+    <value>Band</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Bloquear" xml:space="preserve">
+    <value>Nicht außerhalb des Bandplans senden</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Bloquear.Ayuda" xml:space="preserve">
+    <value>Geprüft wird der ganze belegte Kanal (in CW Träger plus/minus halbes Filter), nicht nur der Träger.</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.ConfirmarLiberar" xml:space="preserve">
+    <value>Sie erlauben gleich das Senden AUSSERHALB des Bandplans auf {0}. Nur tun, wenn Ihre Lizenz es erlaubt (z. B. eine Sondergenehmigung). Das Programm verhindert es auf diesem Band dann nicht mehr.</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.ConfirmarLiberar.Aceptar" xml:space="preserve">
+    <value>Ja, meine Lizenz erlaubt es</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.ConfirmarLiberar.Titulo" xml:space="preserve">
+    <value>Außerhalb des Bandplans senden?</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Explicacion" xml:space="preserve">
+    <value>Der PTT-Wächter wendet sie auf alles an, was sendet: MOX, Abstimmen, Modem, Fonie und CW.</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.FueraDelPlan" xml:space="preserve">
+    <value>Außerhalb des Plans</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Guardado" xml:space="preserve">
+    <value>Gespeichert und angewendet.</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Guardar" xml:space="preserve">
+    <value>Schutzfunktionen speichern</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Lecturas" xml:space="preserve">
+    <value>Aufeinanderfolgende Messungen</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Liberar" xml:space="preserve">
+    <value>Erlauben</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Liberar.Ayuda" xml:space="preserve">
+    <value>Erlaubt Senden außerhalb des Plans auf diesem Band, für Sondergenehmigungen. Fragt nach.</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.NoGuarda" xml:space="preserve">
+    <value>Speichern nicht möglich: {0}</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.PotenciaMaxima" xml:space="preserve">
+    <value>Höchstleistung (W)</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.PotenciaMaxima.Ayuda" xml:space="preserve">
+    <value>Die Geräteleistung wird vor dem Senden auf diesem Band hierauf gesenkt. Leer: keine Grenze.</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.RoeMaxima" xml:space="preserve">
+    <value>Maximales SWR</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.Titulo" xml:space="preserve">
+    <value>Sende-Schutzfunktionen</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.VigilarRoe" xml:space="preserve">
+    <value>Bei hohem SWR oder offener Antenne abbrechen</value>
+  </data>
+  <data name="Ajustes.SeguridadTx.VigilarRoe.Ayuda" xml:space="preserve">
+    <value>Liest beim Senden viermal pro Sekunde das SWR (RM6 und Hi-SWR-Alarm beim FT-710; 15 12 bei ICOM).</value>
+  </data>
+  <data name="Ajustes.Servidor.AbrirRed" xml:space="preserve">
+    <value>Auch für das lokale Netz öffnen (sonst nur dieser PC)</value>
+  </data>
+  <data name="Ajustes.Servidor.AbrirRed.Ayuda" xml:space="preserve">
+    <value>Auch geöffnet kommen nur dieser PC und die aufgeführten IPs hinein.</value>
+  </data>
+  <data name="Ajustes.Servidor.Apagado" xml:space="preserve">
+    <value>Aus</value>
+  </data>
+  <data name="Ajustes.Servidor.Clientes" xml:space="preserve">
+    <value>Verbundene Programme</value>
+  </data>
+  <data name="Ajustes.Servidor.Confirmar.Aceptar" xml:space="preserve">
+    <value>Ja, aktivieren</value>
+  </data>
+  <data name="Ajustes.Servidor.ConfirmarRed" xml:space="preserve">
+    <value>Andere Rechner in Ihrem Netz können das Funkgerät steuern (und senden, falls erlaubt). Nur die aufgeführten IPs kommen hinein. Niemals ins Internet öffnen.</value>
+  </data>
+  <data name="Ajustes.Servidor.ConfirmarRed.Titulo" xml:space="preserve">
+    <value>Server für das lokale Netz öffnen?</value>
+  </data>
+  <data name="Ajustes.Servidor.ConfirmarTx" xml:space="preserve">
+    <value>Ein verbundenes Programm kann das Funkgerät auf Sendung schalten. Sitzungssperre, Bandplan, SWR, Höchstleistung und Höchstzeit gelten weiter, und jede Anforderung wird protokolliert.</value>
+  </data>
+  <data name="Ajustes.Servidor.ConfirmarTx.Titulo" xml:space="preserve">
+    <value>Externe Programme senden lassen?</value>
+  </data>
+  <data name="Ajustes.Servidor.Control" xml:space="preserve">
+    <value>Sie dürfen Frequenz, Betriebsart, VFO, Split und Leistung ändern</value>
+  </data>
+  <data name="Ajustes.Servidor.Control.Ayuda" xml:space="preserve">
+    <value>Ohne dies dürfen sie nur lesen. Während des Sendens wird nichts geändert.</value>
+  </data>
+  <data name="Ajustes.Servidor.Desconectar" xml:space="preserve">
+    <value>Trennen</value>
+  </data>
+  <data name="Ajustes.Servidor.EnTx" xml:space="preserve">
+    <value>TX</value>
+  </data>
+  <data name="Ajustes.Servidor.EnviarSpots" xml:space="preserve">
+    <value>Spots des Logbuchs an TCI-Clients senden</value>
+  </data>
+  <data name="Ajustes.Servidor.Escuchando" xml:space="preserve">
+    <value>Lauscht auf {0}</value>
+  </data>
+  <data name="Ajustes.Servidor.Explicacion" xml:space="preserve">
+    <value>Andere Programme (WSJT-X, JTDX, GridTracker, Logbücher…) können das Funkgerät über das Logbuch nutzen, das sein Besitzer bleibt. Alles, was sie anfordern, durchläuft dieselben Schutzmechanismen wie das Logbuch.</value>
+  </data>
+  <data name="Ajustes.Servidor.Guardado" xml:space="preserve">
+    <value>Gespeichert und angewendet.</value>
+  </data>
+  <data name="Ajustes.Servidor.Guardar" xml:space="preserve">
+    <value>Speichern und anwenden</value>
+  </data>
+  <data name="Ajustes.Servidor.Indicador" xml:space="preserve">
+    <value>Externe Programme: {0}</value>
+  </data>
+  <data name="Ajustes.Servidor.Indicador.Nadie" xml:space="preserve">
+    <value>Server an; kein Programm verbunden.</value>
+  </data>
+  <data name="Ajustes.Servidor.IpMala" xml:space="preserve">
+    <value>Diese Einträge sind keine gültigen IPs oder Netze: {0}</value>
+  </data>
+  <data name="Ajustes.Servidor.Ips" xml:space="preserve">
+    <value>Erlaubte IPs</value>
+  </data>
+  <data name="Ajustes.Servidor.Ips.Ayuda" xml:space="preserve">
+    <value>Durch Kommas getrennt. Eine IP (192.168.1.20) oder ein Netz (192.168.1.0/24).</value>
+  </data>
+  <data name="Ajustes.Servidor.NoGuarda" xml:space="preserve">
+    <value>Speichern nicht möglich: {0}</value>
+  </data>
+  <data name="Ajustes.Servidor.Ordenes" xml:space="preserve">
+    <value>Befehle: {0} · abgelehnt: {1}</value>
+  </data>
+  <data name="Ajustes.Servidor.Permisos" xml:space="preserve">
+    <value>Berechtigungen</value>
+  </data>
+  <data name="Ajustes.Servidor.Peticion.Concedida" xml:space="preserve">
+    <value>{0}  {1}  {2} kHz {3}  ✔ {4}</value>
+  </data>
+  <data name="Ajustes.Servidor.Peticion.Denegada" xml:space="preserve">
+    <value>{0}  {1}  {2} kHz {3}  ✖ {4}</value>
+  </data>
+  <data name="Ajustes.Servidor.Puerto" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="Ajustes.Servidor.PuertoMalo" xml:space="preserve">
+    <value>Ports müssen Zahlen zwischen 1024 und 65535 und verschieden sein.</value>
+  </data>
+  <data name="Ajustes.Servidor.PuertoRigctld" xml:space="preserve">
+    <value>Port des rigctld-Servers</value>
+  </data>
+  <data name="Ajustes.Servidor.PuertoTci" xml:space="preserve">
+    <value>Port des TCI-Servers</value>
+  </data>
+  <data name="Ajustes.Servidor.RecibirSpots" xml:space="preserve">
+    <value>Von TCI-Clients gesendete Spots in der Bandkarte zeigen</value>
+  </data>
+  <data name="Ajustes.Servidor.Red" xml:space="preserve">
+    <value>Netzwerk</value>
+  </data>
+  <data name="Ajustes.Servidor.Registro" xml:space="preserve">
+    <value>Wer senden wollte</value>
+  </data>
+  <data name="Ajustes.Servidor.Rigctld" xml:space="preserve">
+    <value>rigctld-kompatibler Server (Hamlib)</value>
+  </data>
+  <data name="Ajustes.Servidor.Rigctld.Ayuda" xml:space="preserve">
+    <value>Für WSJT-X, JTDX, fldigi oder GridTracker: Funkgerät „Hamlib NET rigctl“, Adresse 127.0.0.1:4532.</value>
+  </data>
+  <data name="Ajustes.Servidor.SinClientes" xml:space="preserve">
+    <value>Derzeit keines.</value>
+  </data>
+  <data name="Ajustes.Servidor.SinPeticiones" xml:space="preserve">
+    <value>Keine Sendeanforderungen in dieser Sitzung.</value>
+  </data>
+  <data name="Ajustes.Servidor.Tci" xml:space="preserve">
+    <value>TCI-Server (WebSocket)</value>
+  </data>
+  <data name="Ajustes.Servidor.Tci.Ayuda" xml:space="preserve">
+    <value>Für Programme, die TCI (Expert Electronics) sprechen: Frequenz, Betriebsart, PTT, Leistung und Spots. Vorerst ohne Audio.</value>
+  </data>
+  <data name="Ajustes.Servidor.Titulo" xml:space="preserve">
+    <value>Server für andere Programme</value>
+  </data>
+  <data name="Ajustes.Servidor.Token" xml:space="preserve">
+    <value>TCI-Passwort (optional)</value>
+  </data>
+  <data name="Ajustes.Servidor.Token.Ayuda" xml:space="preserve">
+    <value>Wenn gesetzt, muss das Programm ws://host:port/?token=… verbinden. Die meisten TCI-Programme können das nicht; nur für eigene Programme sinnvoll.</value>
+  </data>
+  <data name="Ajustes.Servidor.Tx" xml:space="preserve">
+    <value>Senden für externe Clients erlauben</value>
+  </data>
+  <data name="Ajustes.Servidor.Tx.Ayuda" xml:space="preserve">
+    <value>Hauptschalter. Ab Werk aus.</value>
+  </data>
+  <data name="Ajustes.Servidor.Tx.Nota" xml:space="preserve">
+    <value>Zusätzlich muss „Senden in dieser Sitzung erlauben“ angehakt sein. Die PTT eines Programms durchläuft Bandplan, SWR, Höchstleistung, Höchstzeit und PTT-Besitzer und fällt ab, wenn das Programm trennt oder verstummt.</value>
+  </data>
   <data name="Ajustes.Subidas.Cola" xml:space="preserve">
     <value>Upload-Warteschlange</value>
   </data>
@@ -1061,8 +1511,8 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   <data name="Ajustes.Tarjeta.ClubLog.Descripcion" xml:space="preserve">
     <value>Logbuch-Upload und meistgesuchte DXCC.</value>
   </data>
-  <data name="Ajustes.Tarjeta.Cluster.Aviso" xml:space="preserve">
-    <value>{0} · {1}:{2} als {3}</value>
+  <data name="Ajustes.Tarjeta.Cluster.AvisoVarios" xml:space="preserve">
+    <value>{0}: {1}. Anmeldung als {2}.</value>
   </data>
   <data name="Ajustes.Tarjeta.Cluster.Descripcion" xml:space="preserve">
     <value>Knoten, Login-Rufzeichen und Passwort (falls verlangt).</value>

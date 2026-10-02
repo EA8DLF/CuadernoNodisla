@@ -1,0 +1,158 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.ServidoresExternos"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             Loaded="AlCargar"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        SERVIDOR PARA OTROS PROGRAMAS: rigctld y TCI. Otros programas usan la radio A TRAVÉS del
+        Cuaderno, que sigue siendo su dueño. Todo PTT de un cliente pasa por el vigilante.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+        <conversores:VisibleSiEsFalso x:Key="VisibleSiEsFalso" />
+    </UserControl.Resources>
+
+    <StackPanel>
+        <TextBlock Text="{loc:Texto Ajustes.Servidor.Titulo}" Style="{StaticResource TituloDeSeccion}" />
+        <TextBlock Text="{loc:Texto Ajustes.Servidor.Explicacion}" TextWrapping="Wrap" Foreground="{DynamicResource TextoTenue}" Margin="0,2,0,10" />
+
+        <!-- Los dos servidores -->
+        <Grid Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <CheckBox Grid.Row="0" Grid.Column="0"
+                      Content="{loc:Texto Ajustes.Servidor.Rigctld}"
+                      IsChecked="{Binding RigctldActivo}"
+                      VerticalAlignment="Center"
+                      Margin="0,0,12,4"
+                      ToolTip="{loc:Texto Ajustes.Servidor.Rigctld.Ayuda}" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{loc:Texto Ajustes.Servidor.Puerto}" VerticalAlignment="Center" Margin="0,0,4,4" />
+            <TextBox Grid.Row="0" Grid.Column="2"
+                     Text="{Binding PuertoRigctld, UpdateSourceTrigger=PropertyChanged}"
+                     Width="70"
+                     Margin="0,0,12,4"
+                     AutomationProperties.Name="{loc:Texto Ajustes.Servidor.PuertoRigctld}" />
+            <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding EstadoRigctld}" VerticalAlignment="Center" Foreground="{DynamicResource TextoTenue}" TextWrapping="Wrap" Margin="0,0,0,4" />
+
+            <CheckBox Grid.Row="1" Grid.Column="0"
+                      Content="{loc:Texto Ajustes.Servidor.Tci}"
+                      IsChecked="{Binding TciActivo}"
+                      VerticalAlignment="Center"
+                      Margin="0,0,12,0"
+                      ToolTip="{loc:Texto Ajustes.Servidor.Tci.Ayuda}" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{loc:Texto Ajustes.Servidor.Puerto}" VerticalAlignment="Center" Margin="0,0,4,0" />
+            <TextBox Grid.Row="1" Grid.Column="2"
+                     Text="{Binding PuertoTci, UpdateSourceTrigger=PropertyChanged}"
+                     Width="70"
+                     Margin="0,0,12,0"
+                     AutomationProperties.Name="{loc:Texto Ajustes.Servidor.PuertoTci}" />
+            <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding EstadoTci}" VerticalAlignment="Center" Foreground="{DynamicResource TextoTenue}" TextWrapping="Wrap" />
+        </Grid>
+
+        <!-- Red -->
+        <TextBlock Text="{loc:Texto Ajustes.Servidor.Red}" FontWeight="Bold" Margin="0,6,0,4" />
+        <CheckBox Content="{loc:Texto Ajustes.Servidor.AbrirRed}"
+                  IsChecked="{Binding AbrirALaRedLocal}"
+                  Margin="0,0,0,4"
+                  ToolTip="{loc:Texto Ajustes.Servidor.AbrirRed.Ayuda}" />
+        <DockPanel Margin="0,0,0,4">
+            <TextBlock Text="{loc:Texto Ajustes.Servidor.Ips}" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <TextBox Text="{Binding IpsPermitidas, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding AbrirALaRedLocal}"
+                     MinWidth="260"
+                     AutomationProperties.Name="{loc:Texto Ajustes.Servidor.Ips}"
+                     ToolTip="{loc:Texto Ajustes.Servidor.Ips.Ayuda}" />
+        </DockPanel>
+        <DockPanel Margin="0,0,0,8">
+            <TextBlock Text="{loc:Texto Ajustes.Servidor.Token}" VerticalAlignment="Center" Margin="0,0,6,0" />
+            <TextBox Text="{Binding TokenTci, UpdateSourceTrigger=PropertyChanged}"
+                     MinWidth="200"
+                     AutomationProperties.Name="{loc:Texto Ajustes.Servidor.Token}"
+                     ToolTip="{loc:Texto Ajustes.Servidor.Token.Ayuda}" />
+        </DockPanel>
+
+        <!-- Permisos -->
+        <TextBlock Text="{loc:Texto Ajustes.Servidor.Permisos}" FontWeight="Bold" Margin="0,6,0,4" />
+        <CheckBox Content="{loc:Texto Ajustes.Servidor.Control}"
+                  IsChecked="{Binding PermitirControl}"
+                  Margin="0,0,0,4"
+                  ToolTip="{loc:Texto Ajustes.Servidor.Control.Ayuda}" />
+        <CheckBox Content="{loc:Texto Ajustes.Servidor.Tx}"
+                  IsChecked="{Binding PermitirTx}"
+                  FontWeight="Bold"
+                  Margin="0,0,0,2"
+                  ToolTip="{loc:Texto Ajustes.Servidor.Tx.Ayuda}" />
+        <TextBlock Text="{loc:Texto Ajustes.Servidor.Tx.Nota}" TextWrapping="Wrap" Foreground="{DynamicResource TextoTenue}" Margin="20,0,0,6" />
+        <CheckBox Content="{loc:Texto Ajustes.Servidor.EnviarSpots}" IsChecked="{Binding EnviarSpots}" Margin="0,0,0,4" />
+        <CheckBox Content="{loc:Texto Ajustes.Servidor.RecibirSpots}" IsChecked="{Binding RecibirSpots}" Margin="0,0,0,8" />
+
+        <WrapPanel Margin="0,0,0,12">
+            <Button Content="{loc:Texto Ajustes.Servidor.Guardar}" Command="{Binding GuardarCommand}" Style="{StaticResource BotonPrincipal}" Margin="0,0,10,0" />
+            <TextBlock Text="{Binding Aviso}" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="{DynamicResource TextoTenue}" />
+        </WrapPanel>
+
+        <!-- Clientes en vivo -->
+        <TextBlock Text="{loc:Texto Ajustes.Servidor.Clientes}" FontWeight="Bold" Margin="0,0,0,4" />
+        <TextBlock Text="{loc:Texto Ajustes.Servidor.SinClientes}"
+                   Foreground="{DynamicResource TextoTenue}"
+                   Margin="0,0,0,6"
+                   Visibility="{Binding HayClientes, Converter={StaticResource VisibleSiEsFalso}}" />
+        <ItemsControl ItemsSource="{Binding Clientes}" Margin="0,0,0,10">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,0,0,3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="170" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding Protocolo}" FontWeight="Bold" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Text="{Binding Direccion}" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="2" Text="{Binding Desde}" VerticalAlignment="Center" Foreground="{DynamicResource TextoTenue}" />
+                        <TextBlock Grid.Column="3"
+                                   Text="{loc:Texto Ajustes.Servidor.EnTx}"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource ErrorTexto}"
+                                   VerticalAlignment="Center"
+                                   Visibility="{Binding Transmitiendo, Converter={StaticResource BooleanoAVisible}}" />
+                        <TextBlock Grid.Column="4" Text="{Binding Ordenes}" VerticalAlignment="Center" Foreground="{DynamicResource TextoTenue}" />
+                        <Button Grid.Column="5"
+                                Content="{loc:Texto Ajustes.Servidor.Desconectar}"
+                                Command="{Binding DataContext.DesconectarCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}"
+                                Padding="10,2" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Registro de quién pidió transmitir -->
+        <TextBlock Text="{loc:Texto Ajustes.Servidor.Registro}" FontWeight="Bold" Margin="0,0,0,4" />
+        <TextBlock Text="{loc:Texto Ajustes.Servidor.SinPeticiones}"
+                   Foreground="{DynamicResource TextoTenue}"
+                   Visibility="{Binding HayPeticiones, Converter={StaticResource VisibleSiEsFalso}}" />
+        <ItemsControl ItemsSource="{Binding Peticiones}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" TextWrapping="Wrap" FontFamily="Consolas" FontSize="11" Margin="0,0,0,1" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

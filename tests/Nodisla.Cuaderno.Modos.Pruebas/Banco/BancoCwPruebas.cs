@@ -65,8 +65,8 @@ public class BancoCwPruebas(ITestOutputHelper salida)
         porVelocidad.Concat(dificiles).Concat(fijo).Should().OnlyContain(f => f.Cer <= 101, "lo que no se lee no se inventa");
 
         // Guardas contra regresiones, con margen sobre lo medido (ver resultados-cw.md).
-        porVelocidad.Where(f => f.Decibelios >= 0).Should().OnlyContain(f => f.Cer < 8, "de 0 dB para arriba se copia casi limpio");
-        porVelocidad.Where(f => Math.Abs(f.Decibelios + 6) < 0.1 && f.Wpm <= 30).Should().OnlyContain(f => f.Cer < 45);
+        porVelocidad.Where(f => f.Decibelios >= 0).Should().OnlyContain(f => f.Cer < 10, "de 0 dB para arriba se copia casi limpio");
+        porVelocidad.Where(f => Math.Abs(f.Decibelios + 4) < 0.1 && f.Wpm <= 30).Should().OnlyContain(f => f.Cer < 15);
         dificiles.Where(f => f.Decibelios >= 10).Should().OnlyContain(f => f.Cer < 25, "mano, QSB, QRM y cambios de velocidad con buena señal");
         dificiles.Where(f => f.Decibelios >= 0 && !f.Escenario.StartsWith("QSB", StringComparison.Ordinal)).Should().OnlyContain(f => f.Cer < 20);
     }

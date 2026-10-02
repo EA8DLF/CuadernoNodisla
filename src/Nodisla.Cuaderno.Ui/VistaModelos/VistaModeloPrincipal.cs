@@ -60,8 +60,12 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         VistaModeloActualizaciones? actualizaciones = null,
         VistaModeloDisenadorDeDiplomas? disenadorDeDiplomas = null,
         VistaModeloAyuda? ayuda = null,
-        VistaModeloCw? cw = null)
+        VistaModeloCw? cw = null,
+        VistaModeloTransmisionCw? txCw = null,
+        VistaModeloSeguridadTx? seguridadTx = null,
+        VistaModeloServidores? servidores = null)
     {
+        Servidores = servidores;
         // Los textos calculados (pliegues, perfil, contador) siguen al idioma en caliente.
         Textos.AlCambiar(this, static vm =>
         {
@@ -72,6 +76,8 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         DisenadorDeDiplomas = disenadorDeDiplomas;
         Ayuda = ayuda;
         Cw = cw;
+        TxCw = txCw;
+        SeguridadTx = seguridadTx;
         Subidas = subidas;
         Fonia = fonia;
         Analizador = analizador ?? new VistaModeloAnalizador(null);
@@ -115,6 +121,11 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         // Lo que el CAT sabe del analizador de la radio (teclas de la pantalla, o cambios hechos
         // en la propia radio que ve el sondeo) llega al dibujo sin esperar a la trama.
         Analizador.Seguir(Equipo);
+
+        // Clic en el analizador: sintoniza el VFO activo; clic en un spot: lo mismo que el doble
+        // clic de la lista (IrAlSpotAsync). Nunca transmitiendo.
+        Analizador.Sintonia = new SintoniaDelAnalizador(
+            _control, () => Equipo.Conectado, () => Equipo.Transmitiendo, IrAlSpotAsync);
 
         Entrada.CuadernoCambiado += async (_, _) => await RefrescarTodoAsync().ConfigureAwait(true);
         if (subidas is not null)
@@ -212,6 +223,9 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
             // que decide si merece la pena llamar.
             Equipo.PonerSpots(Cluster.Spots);
             Bandmap.PonerSpots(Cluster.Spots);
+
+            // Y el analizador de la radio los pone encima del espectro.
+            Analizador.PonerSpots(Cluster.Spots);
         };
         Modem.CuadernoCambiado += async (_, _) => await RefrescarTodoAsync().ConfigureAwait(true);
         Ronda.CuadernoCambiado += async (_, _) => await RefrescarTodoAsync().ConfigureAwait(true);
@@ -223,6 +237,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         if (Cw is not null)
         {
             Cw.IndicativoElegido += (_, indicativo) => Entrada.Indicativo = indicativo;
+            Cw.AbrirPaginaPedido += (_, _) => VerLaCw();
             Equipo.PropertyChanged += (_, args) =>
             {
                 if (args.PropertyName is nameof(VistaModeloEquipo.Modo) or nameof(VistaModeloEquipo.Conectado)) SeguirAlEquipoEnCw();
@@ -260,6 +275,15 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
 
     /// <summary>El decodificador de telegrafía de la cabina. Nulo si no se registró.</summary>
     public VistaModeloCw? Cw { get; }
+
+    /// <summary>La transmisión en CW (macros y escritura libre) de la página CW. Nulo si no se registró.</summary>
+    public VistaModeloTransmisionCw? TxCw { get; }
+
+    /// <summary>La seguridad de la transmisión (Configuración › Equipo). Nulo si no se registró.</summary>
+    public VistaModeloSeguridadTx? SeguridadTx { get; }
+
+    /// <summary>El servidor para otros programas (rigctld y TCI). Nulo si no se registró.</summary>
+    public VistaModeloServidores? Servidores { get; }
 
     /// <summary>Hay decodificador de telegrafía (se ofrece el botón «CW»).</summary>
     public bool HayCw => Cw is not null;
@@ -370,7 +394,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// </remarks>
     public IReadOnlyList<string> Pestanas { get; } =
         ["Operar", "Digital", "Cuaderno", "Mapa", "Diplomas", "Configuración", "Satélites", "Tarjeta QSL", "Ronda", "Etiquetas",
-            "Diseñador de diplomas", "Ayuda"];
+            "Diseñador de diplomas", "Ayuda", "CW"];
 
     /// <summary>
     /// Las entradas de primer nivel de la barra y las paginas que agrupa cada una.
@@ -382,7 +406,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// </remarks>
     public static IReadOnlyDictionary<string, int[]> Grupos { get; } = new Dictionary<string, int[]>
     {
-        ["Operar"] = [PaginaOperar, PaginaDigital, PaginaSatelites, PaginaRonda],
+        ["Operar"] = [PaginaOperar, PaginaDigital, PaginaCw, PaginaSatelites, PaginaRonda],
         ["Libro"] = [PaginaCuaderno, PaginaMapa],
         ["QSL"] = [PaginaQsl, PaginaEtiquetas, PaginaDisenadorDeDiplomas],
         ["Diplomas"] = [PaginaDiplomas],
@@ -393,7 +417,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// <summary>Indices de las paginas.</summary>
     public const int PaginaOperar = 0, PaginaDigital = 1, PaginaCuaderno = 2, PaginaMapa = 3,
         PaginaDiplomas = 4, PaginaConfiguracion = 5, PaginaSatelites = 6, PaginaQsl = 7,
-        PaginaRonda = 8, PaginaEtiquetas = 9, PaginaDisenadorDeDiplomas = 10, PaginaAyuda = 11;
+        PaginaRonda = 8, PaginaEtiquetas = 9, PaginaDisenadorDeDiplomas = 10, PaginaAyuda = 11, PaginaCw = 12;
 
     /// <summary>
     /// El capitulo de la ayuda que explica cada pagina: lo que abre F1 desde ella.
@@ -411,6 +435,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         [PaginaRonda] = "11-ronda-de-control",
         [PaginaEtiquetas] = "08-impresion-qsl",
         [PaginaDisenadorDeDiplomas] = "14-disenador-de-diplomas",
+        [PaginaCw] = "17-cw",
     };
 
     /// <summary>La ultima pagina vista de cada grupo: al volver al grupo se vuelve a ella.</summary>
@@ -670,6 +695,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     partial void OnIndiceDeLaPestanaChanged(int value)
     {
         if (value == PestanaDeLosDigitales) Modem.Asomarse();
+        if (Cw is not null) Cw.PaginaVisible = value == PaginaCw;
 
         _ultimaDelGrupo[GrupoDe(value)] = value;
         OnPropertyChanged(nameof(GrupoActivo));
@@ -839,6 +865,10 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     [RelayCommand]
     public void VerLaAyuda() => IndiceDeLaPestana = PaginaAyuda;
 
+    /// <summary>Pone a la vista la página CW (Ctrl+Mayús+1).</summary>
+    [RelayCommand]
+    public void VerLaCw() => IndiceDeLaPestana = PaginaCw;
+
     /// <summary>
     /// F1: abre la ayuda por el capitulo que explica la pagina en la que se esta. Desde la
     /// propia ayuda no hace nada: ya se esta en ella.
@@ -885,35 +915,30 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// <summary>
     /// Lleva el equipo a la frecuencia del spot y prepara el formulario para trabajarlo.
     /// </summary>
+    /// <remarks>
+    /// Todos los caminos (lista, bandmap, «Ir a este spot», analizador) pasan por aqui y por
+    /// <see cref="LlevarAlSpot"/>: transmitiendo o sin equipo no se hace nada y la barra del
+    /// equipo dice por que.
+    /// </remarks>
     /// <param name="fila">Spot elegido.</param>
-    public async Task IrAlSpotAsync(FilaDeSpot fila)
+    /// <returns>La tarea.</returns>
+    public Task IrAlSpotAsync(FilaDeSpot fila)
     {
         ArgumentNullException.ThrowIfNull(fila);
-
-        Entrada.PonerDesdeElSpot(fila.Indicativo, fila.Spot.Frecuencia, fila.Modo);
-        Mapa.TrazarHastaElSpot(fila);
-
-        if (!Equipo.Conectado) return;
-
-        try
-        {
-            await _control.PonerFrecuenciaAsync(fila.Spot.Frecuencia).ConfigureAwait(true);
-
-            if (Dominio.Valores.Modo.TryParse(fila.Modo, null, out var modo))
+        _llevarAlSpot ??= new LlevarAlSpot(
+            _control,
+            () => Equipo.Conectado,
+            () => Equipo.Transmitiendo,
+            f =>
             {
-                await _control.PonerModoAsync(modo).ConfigureAwait(true);
-
-                // Cambiar de modo corre el dial en el FT-710 (visto en la radio el 29-09-2026: un
-                // spot de FT8 en 14.074.000 quedaba en 14.074.700 al pasar a DATA-U). Se vuelve a
-                // poner la frecuencia del spot, que es la que manda.
-                await _control.PonerFrecuenciaAsync(fila.Spot.Frecuencia).ConfigureAwait(true);
-            }
-        }
-        catch (Exception ex)
-        {
-            Serilog.Log.Warning(ex, "No se ha podido llevar el equipo al spot de {Indicativo}.", fila.Indicativo);
-        }
+                Entrada.PonerDesdeElSpot(f.Indicativo, f.Spot.Frecuencia, f.Modo);
+                Mapa.TrazarHastaElSpot(f);
+            },
+            motivo => Equipo.Aviso = motivo);
+        return _llevarAlSpot.IrAsync(fila);
     }
+
+    private LlevarAlSpot? _llevarAlSpot;
 
     private void MostrarPanel(Ajustes.PanelDeOperacion panel)
     {
