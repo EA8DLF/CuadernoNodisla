@@ -459,6 +459,9 @@
   <data name="Cabina.Rtty.NoSeAbreLaSalida" xml:space="preserve">
     <value>No se ha podido abrir la salida de audio: {0}</value>
   </data>
+  <data name="Cabina.Rtty.Pais" xml:space="preserve">
+    <value>País: {0}</value>
+  </data>
   <data name="Cabina.Rtty.Parado" xml:space="preserve">
     <value>Transmisión de RTTY parada.</value>
   </data>
@@ -503,6 +506,12 @@
   </data>
   <data name="Cabina.Rtty.TonoEscritoAyuda" xml:space="preserve">
     <value>Escriba el tono de marca (300 a 3000 Hz) y pulse Intro para fijarlo. Flechas o rueda: ±10 Hz. Sirve para escuchar y para transmitir.</value>
+  </data>
+  <data name="Cabina.Rtty.Traduccion" xml:space="preserve">
+    <value>Traducción</value>
+  </data>
+  <data name="Cabina.Rtty.TraduccionAyuda" xml:space="preserve">
+    <value>Debajo del texto, el significado de las abreviaturas y códigos Q que se reconocen.</value>
   </data>
   <data name="Cabina.Encendido.Apagada" xml:space="preserve">
     <value>Radio apagada. Pulsación larga de LOCK para encenderla.</value>

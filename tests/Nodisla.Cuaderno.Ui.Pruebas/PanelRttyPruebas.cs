@@ -9,6 +9,7 @@ using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Modos.Rtty;
 using Nodisla.Cuaderno.Ui.Ajustes;
+using Nodisla.Cuaderno.Ui.Digital;
 using Nodisla.Cuaderno.Ui.Desarrollo;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 using Nodisla.Cuaderno.Ui.Vistas;
@@ -54,6 +55,30 @@ public sealed class PanelRttyPruebas
         await modelo.EmitirCommand.ExecuteAsync(null);
         vigilante.Pedidas.Should().Be(1, "ya no hace falta confirmar, y esta vez sí se transmite");
         modelo.TextoAEmitir.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ClasificaIndicativosLlamadaPropioYAbreviaturasComoEnCw()
+    {
+        var modelo = new VistaModeloRtty(new AjustesDelPrograma(), conReloj: false) { MiIndicativo = "EA8DLF" };
+
+        modelo.Simular("CQ DE EA5XYZ EA5XYZ K\nEA5XYZ DE EA8DLF RST 599 TU 73\n");
+
+        modelo.Principal.Palabras.Should().Contain(p => p.Texto == "CQ" && p.Tipo == TipoDePalabraCw.Llamada);
+        modelo.Principal.Palabras.Should().Contain(p => p.Texto == "EA5XYZ" && p.Tipo == TipoDePalabraCw.Indicativo);
+        modelo.Principal.Palabras.Should().Contain(p => p.Texto == "EA8DLF" && p.Tipo == TipoDePalabraCw.Propio);
+        modelo.Principal.Palabras.Should().Contain(p => p.Texto == "TU" && p.Tipo == TipoDePalabraCw.Abreviatura);
+        modelo.Principal.Traduccion.Should().Contain("TU").And.Contain("73");
+        modelo.SinTexto.Should().BeFalse();
+
+        string? elegido = null;
+        modelo.IndicativoElegido += (_, i) => elegido = i;
+        modelo.PasarIndicativoCommand.Execute("EA5XYZ");
+        elegido.Should().Be("EA5XYZ");
+
+        modelo.Borrar();
+        modelo.Principal.Palabras.Should().BeEmpty();
+        modelo.SinTexto.Should().BeTrue();
     }
 
     [Fact]
@@ -105,8 +130,10 @@ public sealed class PanelRttyPruebas
         var modelo = new VistaModeloRtty(ajustes, entrada, emisor, salida, conReloj: false) { PaginaVisible = true };
 
         // Texto recibido de mentira, sin pasar audio de verdad por el canal: solo hace falta que
-        // se vea la terminal con algo escrito.
-        modelo.TextoRecibido = "CQ CQ CQ DE EA5XYZ EA5XYZ K\nEA5XYZ DE EA8DLF EA8DLF RST 599 599 NAME JOSE QTH TENERIFE TU 73\n";
+        // se vea la terminal con algo escrito, clasificado como en CW (indicativos, llamada y
+        // propio resaltados, con la traducción debajo).
+        modelo.MiIndicativo = "EA8DLF";
+        modelo.Simular("CQ CQ CQ DE EA5XYZ EA5XYZ K\nEA5XYZ DE EA8DLF EA8DLF RST 599 599 NAME JOSE QTH TENERIFE TU 73\n");
 
         var panel = new PanelRtty { DataContext = modelo, Margin = new Thickness(8) };
         var borde = new Border { Child = panel, Padding = new Thickness(4), VerticalAlignment = VerticalAlignment.Top };

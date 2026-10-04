@@ -247,6 +247,9 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
             if (Configuracion.Audio is { } audio) audio.AjustesDeCwGuardados += (_, _) => Cw.AplicarAjustes();
         }
 
+        // RTTY: un indicativo pulsado en el texto va al contacto nuevo, igual que en CW.
+        if (Rtty is not null) Rtty.IndicativoElegido += (_, indicativo) => Entrada.Indicativo = indicativo;
+
         RecuperarEstadoDeLosPaneles();
 
         _reloj = new DispatcherTimer(DispatcherPriority.Background)
@@ -1180,6 +1183,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         // cuándo un mensaje va dirigido A UNO —y no a cualquiera— y compone la respuesta.
         Modem.MiIndicativo = value?.StationCallsign ?? Dominio.Valores.Indicativo.Vacio;
         if (Cw is not null) Cw.MiIndicativo = value?.StationCallsign.Valor;
+        if (Rtty is not null) Rtty.MiIndicativo = value?.StationCallsign.Valor;
         Modem.MiLocalizador = value?.MyGridsquare ?? Dominio.Valores.Locator.Vacio;
         Retrato.EstacionId = value?.Id;
 

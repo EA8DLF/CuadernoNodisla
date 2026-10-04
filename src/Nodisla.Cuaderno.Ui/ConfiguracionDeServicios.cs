@@ -900,7 +900,8 @@ public static class ConfiguracionDeServicios
             proveedor.GetRequiredService<AjustesDelPrograma>(),
             proveedor.GetService<IEntradaDeAudio>(),
             proveedor.GetRequiredService<EmisorRtty>(),
-            proveedor.GetService<ISalidaDeAudio>())
+            proveedor.GetService<ISalidaDeAudio>(),
+            dxcc: proveedor.GetService<Dominio.Dxcc.IResolutorDxcc>())
         {
             CarpetaDeDatos = App.CarpetaDeDatos,
         });

@@ -3,10 +3,13 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Dominio.Dxcc;
+using Nodisla.Cuaderno.Dominio.Valores;
 using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Modos.Rtty;
 using Nodisla.Cuaderno.Ui.Ajustes;
 using Nodisla.Cuaderno.Ui.Conversores;
+using Nodisla.Cuaderno.Ui.Digital;
 using Serilog;
 
 namespace Nodisla.Cuaderno.Ui.VistaModelos;
@@ -43,13 +46,14 @@ public sealed partial class VistaModeloRtty : ObservableObject
     /// <summary>Tono más alto que se puede escribir.</summary>
     public const int TonoMaximo = 3000;
 
-    /// <summary>Caracteres que se guardan en el texto recibido; los más viejos se van.</summary>
-    public const int CaracteresGuardados = 8000;
+    /// <summary>Palabras que se guardan en el texto recibido; las más viejas se van.</summary>
+    public const int PalabrasGuardadas = 400;
 
     private readonly AjustesDelPrograma _ajustes;
     private readonly IEntradaDeAudio? _entrada;
     private readonly EmisorRtty? _emisor;
     private readonly ISalidaDeAudio? _salida;
+    private readonly IResolutorDxcc? _dxcc;
     private readonly CanalRtty _canal;
     private readonly ConcurrentQueue<string> _cola = new();
     private readonly DispatcherTimer? _reloj;
@@ -63,15 +67,24 @@ public sealed partial class VistaModeloRtty : ObservableObject
     /// <param name="emisor">El emisor de RTTY. Puede faltar: entonces no se puede transmitir.</param>
     /// <param name="salida">Salida de audio real, para la transmisión. Puede faltar.</param>
     /// <param name="conReloj">Volcar solo cada 100 ms. Las pruebas lo quitan y llaman a <see cref="Refrescar"/>.</param>
+    /// <param name="dxcc">Para el país de los indicativos. Puede faltar.</param>
     public VistaModeloRtty(
         AjustesDelPrograma ajustes, IEntradaDeAudio? entrada = null, EmisorRtty? emisor = null,
-        ISalidaDeAudio? salida = null, bool conReloj = true)
+        ISalidaDeAudio? salida = null, bool conReloj = true, IResolutorDxcc? dxcc = null)
     {
         ArgumentNullException.ThrowIfNull(ajustes);
         _ajustes = ajustes;
         _entrada = entrada;
         _emisor = emisor;
         _salida = salida;
+        _dxcc = dxcc;
+
+        Principal = new LineaCw(-1, PalabrasGuardadas, Clasificar);
+        Principal.Palabras.CollectionChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(SinTexto));
+            OnPropertyChanged(nameof(TextoRecibido));
+        };
 
         // Lo que quedó guardado la última vez (o lo de fábrica): se construye el canal con ello
         // directamente y LUEGO se refleja en las propiedades observables, para que al escribirlas
@@ -108,6 +121,15 @@ public sealed partial class VistaModeloRtty : ObservableObject
 
     /// <summary>El canal de recepción, para las pruebas.</summary>
     public CanalRtty Canal => _canal;
+
+    /// <summary>El texto recibido, con los indicativos y llamadas reconocidos (como en CW).</summary>
+    public LineaCw Principal { get; }
+
+    /// <summary>Salta cuando se pulsa un indicativo del texto recibido.</summary>
+    public event EventHandler<string>? IndicativoElegido;
+
+    /// <summary>El indicativo de la propia estación, para resaltarlo. Lo pone la ventana principal.</summary>
+    public string? MiIndicativo { get; set; }
 
     /// <summary>Carpeta de datos del programa: donde se guarda «no volver a preguntar».</summary>
     public string? CarpetaDeDatos { get; set; }
@@ -180,10 +202,9 @@ public sealed partial class VistaModeloRtty : ObservableObject
     [NotifyPropertyChangedFor(nameof(SinAudio))]
     private bool _hayAudio;
 
-    /// <summary>El texto recibido, como una terminal.</summary>
+    /// <summary>Se enseña la línea de traducción de las abreviaturas.</summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(SinTexto))]
-    private string _textoRecibido = string.Empty;
+    private bool _mostrarTraduccion = true;
 
     /// <summary>Lo que escribe el operador para emitir.</summary>
     [ObservableProperty]
@@ -213,8 +234,11 @@ public sealed partial class VistaModeloRtty : ObservableObject
     /// <summary>Hay aviso que enseñar.</summary>
     public bool HayAviso => Aviso.Length > 0;
 
+    /// <summary>El texto recibido tal cual, para quien no necesite la clasificación por palabras.</summary>
+    public string TextoRecibido => Principal.Texto;
+
     /// <summary>Todavía no hay texto recibido.</summary>
-    public bool SinTexto => TextoRecibido.Length == 0;
+    public bool SinTexto => Principal.Palabras.Count == 0;
 
     /// <summary>Se está escuchando el audio ahora mismo.</summary>
     public bool Escuchando => _escuchando;
@@ -245,7 +269,42 @@ public sealed partial class VistaModeloRtty : ObservableObject
 
     /// <summary>Borra el texto recibido.</summary>
     [RelayCommand]
-    public void Borrar() => TextoRecibido = string.Empty;
+    public void Borrar() => Principal.Borrar();
+
+    /// <summary>Pasa un indicativo del texto al contacto nuevo.</summary>
+    [RelayCommand]
+    public void PasarIndicativo(string? indicativo)
+    {
+        if (string.IsNullOrWhiteSpace(indicativo)) return;
+        IndicativoElegido?.Invoke(this, indicativo);
+    }
+
+    /// <summary>Clasifica una palabra y le pone su ayuda (significado o país), igual que en CW.</summary>
+    public PalabraCw Clasificar(string palabra)
+    {
+        var tipo = PalabrasCw.Clasificar(palabra, MiIndicativo);
+        string? ayuda = null;
+        if (tipo is TipoDePalabraCw.Indicativo or TipoDePalabraCw.Propio)
+        {
+            ayuda = Pais(palabra);
+        }
+        else if (GlosarioCw.Buscar(palabra) is { } entrada)
+        {
+            ayuda = entrada.Significado;
+            if (tipo == TipoDePalabraCw.Normal) tipo = TipoDePalabraCw.Abreviatura;
+        }
+
+        return new PalabraCw(palabra, tipo, ayuda);
+    }
+
+    /// <summary>
+    /// Mete texto en el recibido como si llegara del canal, sin audio real: solo para las
+    /// capturas de la ayuda y las pruebas que necesitan algo escrito en la terminal.
+    /// </summary>
+    public void Simular(string texto)
+    {
+        foreach (var c in texto) Principal.Anadir(c is '\n' or '\r' ? " " : c.ToString());
+    }
 
     /// <summary>Pausa o sigue.</summary>
     [RelayCommand]
@@ -426,11 +485,9 @@ public sealed partial class VistaModeloRtty : ObservableObject
         NivelDb = _canal.SeparacionDb;
         Enganchado = _canal.Enganchado;
 
-        if (_cola.IsEmpty) return;
-        var nuevo = TextoRecibido;
-        while (_cola.TryDequeue(out var t)) nuevo += t;
-        if (nuevo.Length > CaracteresGuardados) nuevo = nuevo[^CaracteresGuardados..];
-        TextoRecibido = nuevo;
+        // CR y LF viajan de verdad por Baudot (TablaBaudot.EsComun): para la línea de texto son
+        // un espacio, no un carácter de la palabra.
+        while (_cola.TryDequeue(out var t)) Principal.Anadir(t is "\r" or "\n" ? " " : t);
     }
 
     partial void OnPaginaVisibleChanged(bool value) => MirarLaEscucha();
@@ -456,6 +513,23 @@ public sealed partial class VistaModeloRtty : ObservableObject
     }
 
     private static string Resumen(string texto) => texto.Length <= 40 ? texto : texto[..37] + "…";
+
+    private string? Pais(string palabra)
+    {
+        if (_dxcc is null || !Indicativo.TryParse(palabra, out var indicativo)) return null;
+        try
+        {
+            var r = _dxcc.Resolver(indicativo, DateOnly.FromDateTime(DateTime.UtcNow));
+            if (r.Entidad is not { } e) return null;
+            var nombre = Textos.Codigo == "es" && !string.IsNullOrEmpty(e.NombreEspanol) ? e.NombreEspanol : e.Nombre;
+            return Textos.F("Cabina.Rtty.Pais", nombre);
+        }
+        catch (Exception ex)
+        {
+            Log.Debug(ex, "No se ha podido resolver el país de {Indicativo}.", palabra);
+            return null;
+        }
+    }
 
     private DispositivoDeAudio? ElegirLaSalida()
     {

@@ -54,8 +54,8 @@ public partial class PanelRtty : UserControl
     private void AlCambiarAlgo(object? origen, PropertyChangedEventArgs e)
     {
         if (e.PropertyName != nameof(VistaModeloRtty.TextoRecibido)) return;
-        var abajo = Terminal.VerticalOffset >= Terminal.ExtentHeight - Terminal.ViewportHeight - 4;
-        if (abajo) Dispatcher.BeginInvoke(Terminal.ScrollToEnd, System.Windows.Threading.DispatcherPriority.Background);
+        var abajo = Desplazamiento.VerticalOffset >= Desplazamiento.ExtentHeight - Desplazamiento.ViewportHeight - 4;
+        if (abajo) Dispatcher.BeginInvoke(Desplazamiento.ScrollToEnd, System.Windows.Threading.DispatcherPriority.Background);
     }
 
     /// <summary>La rueda sobre la casilla del tono: ±10 Hz por paso.</summary>
