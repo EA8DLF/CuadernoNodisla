@@ -396,6 +396,114 @@
   <data name="Cabina.Cw.WpmSinDato" xml:space="preserve">
     <value>— WPM</value>
   </data>
+  <data name="Cabina.Rtty.Borrar" xml:space="preserve">
+    <value>Borrar</value>
+  </data>
+  <data name="Cabina.Rtty.BitsDeParada" xml:space="preserve">
+    <value>Parada</value>
+  </data>
+  <data name="Cabina.Rtty.Confirmar.Detalle" xml:space="preserve">
+    <value>El equipo va a salir al aire con RTTY: «{0}». «Parar» lo corta en el acto.</value>
+  </data>
+  <data name="Cabina.Rtty.Confirmar.Titulo" xml:space="preserve">
+    <value>¿Transmitir en RTTY?</value>
+  </data>
+  <data name="Cabina.Rtty.Desplazamiento" xml:space="preserve">
+    <value>Desplazamiento</value>
+  </data>
+  <data name="Cabina.Rtty.Invertido" xml:space="preserve">
+    <value>Invertido</value>
+  </data>
+  <data name="Cabina.Rtty.InvertidoAyuda" xml:space="preserve">
+    <value>El tono de marca es el más bajo de los dos («reversa»). Sirve igual para escuchar y para transmitir.</value>
+  </data>
+  <data name="Cabina.Rtty.Emitir" xml:space="preserve">
+    <value>Emitir</value>
+  </data>
+  <data name="Cabina.Rtty.EmitirAyuda" xml:space="preserve">
+    <value>Manda el texto escrito. Si ya se está transmitiendo, se encola detrás.</value>
+  </data>
+  <data name="Cabina.Rtty.EnAntena" xml:space="preserve">
+    <value>EN ANTENA</value>
+  </data>
+  <data name="Cabina.Rtty.EnEscucha" xml:space="preserve">
+    <value>En escucha</value>
+  </data>
+  <data name="Cabina.Rtty.Enganchado" xml:space="preserve">
+    <value>Enganchado</value>
+  </data>
+  <data name="Cabina.Rtty.Buscando" xml:space="preserve">
+    <value>Buscando…</value>
+  </data>
+  <data name="Cabina.Rtty.Escuchar" xml:space="preserve">
+    <value>Escuchar</value>
+  </data>
+  <data name="Cabina.Rtty.EscucharAyuda" xml:space="preserve">
+    <value>Abre la entrada de audio del equipo elegida en Configuración › Audio y digitales. No transmite nada.</value>
+  </data>
+  <data name="Cabina.Rtty.Esperando" xml:space="preserve">
+    <value>Esperando una señal de RTTY… El texto sale cuando se reconocen varios caracteres seguidos; el ruido no escribe nada.</value>
+  </data>
+  <data name="Cabina.Rtty.Fallo" xml:space="preserve">
+    <value>Fallo en RTTY: {0}</value>
+  </data>
+  <data name="Cabina.Rtty.Motivo" xml:space="preserve">
+    <value>RTTY: {0}</value>
+  </data>
+  <data name="Cabina.Rtty.Nivel" xml:space="preserve">
+    <value>Señal {0} dB</value>
+  </data>
+  <data name="Cabina.Rtty.NoSeAbre" xml:space="preserve">
+    <value>No se ha podido abrir la entrada de audio: {0}</value>
+  </data>
+  <data name="Cabina.Rtty.NoSeAbreLaSalida" xml:space="preserve">
+    <value>No se ha podido abrir la salida de audio: {0}</value>
+  </data>
+  <data name="Cabina.Rtty.Parado" xml:space="preserve">
+    <value>Transmisión de RTTY parada.</value>
+  </data>
+  <data name="Cabina.Rtty.Parar" xml:space="preserve">
+    <value>Parar</value>
+  </data>
+  <data name="Cabina.Rtty.Pausa" xml:space="preserve">
+    <value>Pausa</value>
+  </data>
+  <data name="Cabina.Rtty.PausaNombre" xml:space="preserve">
+    <value>Pausar o seguir el decodificador de RTTY</value>
+  </data>
+  <data name="Cabina.Rtty.Seguir" xml:space="preserve">
+    <value>Seguir</value>
+  </data>
+  <data name="Cabina.Rtty.SinDispositivoDeSalida" xml:space="preserve">
+    <value>No hay ninguna salida de audio que abrir. Elija una en Configuración › Audio y digitales.</value>
+  </data>
+  <data name="Cabina.Rtty.SinEntrada" xml:space="preserve">
+    <value>No hay ninguna entrada de audio que abrir. Elija una en Configuración › Audio y digitales.</value>
+  </data>
+  <data name="Cabina.Rtty.SinSalida" xml:space="preserve">
+    <value>No hay salida de audio: no se puede transmitir RTTY.</value>
+  </data>
+  <data name="Cabina.Rtty.TextoAEmitirNombre" xml:space="preserve">
+    <value>Texto a emitir en RTTY</value>
+  </data>
+  <data name="Cabina.Rtty.TextoNombre" xml:space="preserve">
+    <value>Texto de RTTY decodificado</value>
+  </data>
+  <data name="Cabina.Rtty.TiempoAgotado" xml:space="preserve">
+    <value>Se ha llegado al tiempo máximo de transmisión.</value>
+  </data>
+  <data name="Cabina.Rtty.Titulo" xml:space="preserve">
+    <value>RTTY</value>
+  </data>
+  <data name="Cabina.Rtty.Tono" xml:space="preserve">
+    <value>Tono {0} Hz</value>
+  </data>
+  <data name="Cabina.Rtty.TonoEscrito" xml:space="preserve">
+    <value>Tono</value>
+  </data>
+  <data name="Cabina.Rtty.TonoEscritoAyuda" xml:space="preserve">
+    <value>Escriba el tono de marca (300 a 3000 Hz) y pulse Intro para fijarlo. Flechas o rueda: ±10 Hz. Sirve para escuchar y para transmitir.</value>
+  </data>
   <data name="Cabina.Encendido.Apagada" xml:space="preserve">
     <value>Radio apagada. Pulsación larga de LOCK para encenderla.</value>
   </data>

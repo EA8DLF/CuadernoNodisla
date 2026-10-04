@@ -212,8 +212,8 @@ public sealed partial class VistaModeloAjustesAudio : ObservableObject
     [RelayCommand]
     public void Refrescar()
     {
-        if (_entrada is Audio.Captura.EntradaDeAudioWasapi entradaReal) entradaReal.Refrescar();
-        if (_salida is Audio.Reproduccion.SalidaDeAudioWasapi salidaReal) salidaReal.Refrescar();
+        if (_entrada is Audio.Captura.EntradaDeAudioCompartida entradaReal) entradaReal.Refrescar();
+        if (_salida is Audio.Reproduccion.SalidaDeAudioCompartida salidaReal) salidaReal.Refrescar();
 
         Rellenar(Entradas, _entrada?.Dispositivos, _ajustes.Digital.DispositivoDeEntrada, d => EntradaElegida = d);
         Rellenar(Salidas, _salida?.Dispositivos, _ajustes.Digital.DispositivoDeSalida, d => SalidaElegida = d);

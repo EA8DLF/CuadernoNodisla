@@ -678,6 +678,9 @@ public sealed class AjustesDelPrograma
     /// <summary>El decodificador de telegrafía.</summary>
     public AjustesDeCw Cw { get; set; } = new();
 
+    /// <summary>RTTY: decodificador y emisor propios.</summary>
+    public AjustesDeRtty Rtty { get; set; } = new();
+
     /// <summary>El analizador de la propia radio: spots encima, clic, suelo de ruido y colores.</summary>
     public AjustesDelAnalizador Analizador { get; set; } = new();
 
@@ -714,6 +717,8 @@ public sealed class AjustesDelPrograma
             leidos.Fonia.Acotar();
             leidos.Cw ??= new AjustesDeCw();
             leidos.Cw.Acotar();
+            leidos.Rtty ??= new AjustesDeRtty();
+            leidos.Rtty.Acotar();
             leidos.Analizador ??= new AjustesDelAnalizador();
             leidos.Analizador.Acotar();
             return leidos;

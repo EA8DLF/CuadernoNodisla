@@ -86,7 +86,11 @@ public sealed class PanelCwPruebas
     [Fact]
     public void LeeElAudioSimuladoYResaltaLlamadaIndicativosYElPropio()
     {
-        var entrada = new EntradaDeAudioSimulada();
+        // SinReloj: la prueba alimenta el audio a mano con Alimentar(); sin esto, MirarLaEscucha
+        // pide ahora la entrada de verdad (el arreglo del recuento de referencias) y arrancaría
+        // además el reloj en tiempo real de la entrada simulada, que metería audio por su cuenta
+        // a la vez que Alimentar() y lo mezclaría todo.
+        var entrada = new EntradaDeAudioSimulada { SinReloj = true };
         var modelo = new VistaModeloCw(new AjustesDelPrograma(), entrada, conReloj: false) { MiIndicativo = "EA8DLF" };
         modelo.MostrarAMano = true;
 
@@ -382,7 +386,7 @@ public sealed class PanelCwPruebas
     {
         VistaModeloPrincipal.Grupos["Operar"].Should().Equal(
             VistaModeloPrincipal.PaginaOperar, VistaModeloPrincipal.PaginaDigital, VistaModeloPrincipal.PaginaCw,
-            VistaModeloPrincipal.PaginaSatelites, VistaModeloPrincipal.PaginaRonda);
+            VistaModeloPrincipal.PaginaRtty, VistaModeloPrincipal.PaginaSatelites, VistaModeloPrincipal.PaginaRonda);
         VistaModeloPrincipal.GrupoDe(VistaModeloPrincipal.PaginaCw).Should().Be("Operar");
         VistaModeloPrincipal.CapituloDeCadaPagina[VistaModeloPrincipal.PaginaCw].Should().Be("17-cw");
     }

@@ -23,6 +23,7 @@ public class NavegacionAgrupadaPruebas
     [InlineData(11, "Ayuda")]
     [InlineData(4, "Diplomas")]
     [InlineData(5, "Configuración")]
+    [InlineData(13, "Operar")]
     public void Cada_pagina_esta_en_su_grupo(int pagina, string grupo) =>
         VistaModeloPrincipal.GrupoDe(pagina).Should().Be(grupo);
 
@@ -31,7 +32,7 @@ public class NavegacionAgrupadaPruebas
     {
         var todas = VistaModeloPrincipal.Grupos.Values.SelectMany(p => p).ToList();
         todas.Should().OnlyHaveUniqueItems();
-        todas.Should().BeEquivalentTo(Enumerable.Range(0, 13));
+        todas.Should().BeEquivalentTo(Enumerable.Range(0, 14));
     }
 
     [Fact]
@@ -45,13 +46,14 @@ public class NavegacionAgrupadaPruebas
         VistaModeloPrincipal.PaginaDisenadorDeDiplomas.Should().Be(10);
         VistaModeloPrincipal.PaginaAyuda.Should().Be(11);
         VistaModeloPrincipal.PaginaCw.Should().Be(12);
+        VistaModeloPrincipal.PaginaRtty.Should().Be(13);
     }
 
     [Fact]
     public void Cada_pagina_menos_la_ayuda_tiene_su_capitulo_y_el_capitulo_existe()
     {
         var libro = Nodisla.Cuaderno.Ui.Soporte.LibroDeAyuda.DelEnsamblado(typeof(VistaModeloPrincipal).Assembly);
-        foreach (var pagina in Enumerable.Range(0, 13).Where(p => p != VistaModeloPrincipal.PaginaAyuda))
+        foreach (var pagina in Enumerable.Range(0, 14).Where(p => p != VistaModeloPrincipal.PaginaAyuda))
         {
             VistaModeloPrincipal.CapituloDeCadaPagina.Should().ContainKey(pagina);
             libro.Buscar(VistaModeloPrincipal.CapituloDeCadaPagina[pagina]).Should().NotBeNull($"la página {pagina} abre su capítulo con F1");

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RTTY · Ayuda de Cuaderno NODISLA</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="cabecera"><a href="index.html" class="marca">Cuaderno NODISLA</a><span>Ayuda</span></header>
+<div class="marco">
+<nav class="indice" aria-label="Capítulos">
+<input id="buscar" type="search" placeholder="Buscar en la ayuda" aria-label="Buscar en la ayuda">
+<p id="resultado" class="tenue"></p>
+<ul id="capitulos">
+<li><a href="index.html">Ayuda de Cuaderno NODISLA</a></li>
+<li><a href="01-primer-uso.html">Primer uso, paso a paso</a></li>
+<li><a href="02-operar.html">Operar</a></li>
+<li><a href="03-digital.html">Digital</a></li>
+<li><a href="04-cuaderno.html">Contactos</a></li>
+<li><a href="05-diplomas.html">Diplomas</a></li>
+<li><a href="06-mapa.html">Mapa</a></li>
+<li><a href="07-satelites.html">Sat&#233;lites</a></li>
+<li><a href="08-impresion-qsl.html">QSL: etiquetas del bur&#243;</a></li>
+<li><a href="09-ajustes.html">Configuraci&#243;n</a></li>
+<li><a href="10-atajos-de-teclado.html">Atajos de teclado</a></li>
+<li><a href="11-ronda-de-control.html">Ronda de control</a></li>
+<li><a href="12-fonia.html">Fon&#237;a por el PC</a></li>
+<li><a href="13-tarjeta-qsl.html">Tarjeta QSL propia: dise&#241;arla y enviarla por correo</a></li>
+<li><a href="14-disenador-de-diplomas.html">Dise&#241;ador de diplomas y certificados</a></li>
+<li><a href="15-equipos.html">Equipos: el FT-710, otros Yaesu e ICOM</a></li>
+<li><a href="16-ayuda-actualizaciones-y-fallos.html">Ayuda, actualizaciones y reporte de fallos</a></li>
+<li><a href="17-cw.html">Telegraf&#237;a (CW)</a></li>
+<li><a href="18-transmitir-cw.html">Transmitir en CW</a></li>
+<li><a href="19-seguridad-de-transmision.html">Salvaguardas de transmisi&#243;n</a></li>
+<li><a href="20-conectar-otros-programas.html">Conectar otros programas</a></li>
+<li><a href="21-rtty.html" class="actual" aria-current="page">RTTY</a></li>
+</ul>
+</nav>
+<main class="capitulo">
+<h1 id="rtty">RTTY</h1>
+<p>La p&#225;gina <strong>Operar › RTTY</strong> decodifica y transmite RTTY (radioteletipo) con el AFSK y el Baudot del propio programa: no hace falta fldigi, MMTTY ni ning&#250;n otro programa, ni de un lado ni del otro.</p>
+<p><strong>A diferencia de CW, aqu&#237; s&#237; se transmite desde el programa.</strong> RTTY son dos tonos de audio (como FT8), as&#237; que el PC genera el audio y lo saca por la tarjeta de sonido, con el PTT sostenido por el mismo vigilante que usan el m&#243;dem digital y la fon&#237;a.</p>
+<figure><a href="capturas/rtty-pagina.png"><img src="capturas/rtty-pagina.png" alt="Operar › RTTY: el estado y los mandos arriba, el texto recibido en el medio y la l&#237;nea de transmisi&#243;n abajo" loading="lazy"></a><figcaption>Operar › RTTY: el estado y los mandos arriba, el texto recibido en el medio y la l&#237;nea de transmisi&#243;n abajo</figcaption></figure>
+<h2 id="d&#243;nde-est&#225;">D&#243;nde est&#225;</h2>
+<p>La p&#225;gina entera: arriba el estado y los mandos, en medio el texto recibido (como una terminal, con desplazamiento), y abajo la l&#237;nea de transmisi&#243;n.</p>
+<p>Escucha mientras se ve la p&#225;gina y no est&#225; en pausa, por la entrada elegida en <strong>Configuraci&#243;n › Audio y digitales</strong>. Si esa entrada est&#225; cerrada, ofrece <strong>Escuchar</strong>, que la abre sin tocar la radio. La entrada y la salida de audio se comparten con CW, el m&#243;dem digital y la fon&#237;a: nada se queda abierto cuando no hace falta.</p>
+<h2 id="qu&#233;-ense&#241;a">Qu&#233; ense&#241;a</h2>
+<ul>
+<li><strong>Enganchado</strong> o <strong>Buscando…</strong>: si el texto que llega tiene varios caracteres v&#225;lidos seguidos (el bit de parada hace de validaci&#243;n), se engancha; el ruido no escribe nada.</li>
+<li><strong>Se&#241;al</strong> en dB sobre el ruido.</li>
+<li>El <strong>texto</strong> recibido, en una terminal con desplazamiento. <strong>Borrar</strong> la limpia.</li>
+</ul>
+<h2 id="el-tono-el-desplazamiento-y-la-parada">El tono, el desplazamiento y la parada</h2>
+<p>Una sola se&#241;al sintonizada a la vez, como un TU de verdad: no hay varias se&#241;ales le&#237;das en paralelo como en CW.</p>
+<ul>
+<li><strong>Tono</strong>: el tono de marca, de 300 a 3000 Hz. Sirve igual para escuchar y para transmitir: es el mismo TU en los dos sentidos. Se escribe y se pulsa <code>Intro</code>, o se mueve con las flechas o la rueda del rat&#243;n (&#177;10 Hz).</li>
+<li><strong>Desplazamiento</strong>: 170 Hz (lo habitual en HF) u 850 Hz.</li>
+<li><strong>Parada</strong>: 1, 1,5 (de f&#225;brica, lo normal a 45,45 baudios) o 2 bits.</li>
+<li><strong>Invertido</strong>: el tono de marca es el m&#225;s bajo de los dos (&#171;reversa&#187;). Con el filtro de BLU del equipo puesto al rev&#233;s, se oye invertido.</li>
+<li>La velocidad est&#225; fija en 45,45 baudios (el &#171;60 WPM&#187; de radioaficionado): es con la que se trabaja casi siempre en HF.</li>
+</ul>
+<p>El tono, el desplazamiento, la parada y la inversi&#243;n se guardan solos: al volver a abrir el programa siguen como se dejaron.</p>
+<h2 id="transmitir">Transmitir</h2>
+<p>Se escribe el texto en la casilla de abajo y se manda con <code>Intro</code> o el bot&#243;n <strong>Emitir</strong>:</p>
+<ul>
+<li>La primera vez de la sesi&#243;n se pregunta &#171;&#191;Transmitir en RTTY?&#187; —la misma pregunta, con el mismo &#171;no volver a preguntar&#187;, que la telegraf&#237;a y la fon&#237;a—. Se puede apagar para siempre desde ah&#237;, o encenderla otra vez en <strong>Configuraci&#243;n › Audio y digitales</strong>.</li>
+<li>Confirmado, se pide la antena al vigilante del PTT <strong>una sola vez</strong> y se genera y reproduce el audio del texto.</li>
+<li>Si ya se est&#225; transmitiendo, lo escrito se <strong>encola</strong> detr&#225;s, sin volver a preguntar: se puede seguir escribiendo mientras sale, como en la telegraf&#237;a.</li>
+<li>El PTT se suelta en cuanto se vac&#237;a la cola, se pulsa <strong>Parar</strong> o falla algo: nunca se queda pegado.</li>
+</ul>
+<p><strong>EN ANTENA</strong> / <strong>En escucha</strong> dice si el PTT est&#225; arriba por esta transmisi&#243;n.</p>
+<figure><a href="capturas/rtty-en-antena.png"><img src="capturas/rtty-en-antena.png" alt="RTTY en el aire: EN ANTENA en rojo mientras dura la transmisi&#243;n" loading="lazy"></a><figcaption>RTTY en el aire: EN ANTENA en rojo mientras dura la transmisi&#243;n</figcaption></figure>
+<h2 id="el-ruido-no-escribe">El ruido no escribe</h2>
+<p>Como en CW, lo decodificado no se entrega hasta que se enganchan varios caracteres v&#225;lidos seguidos; uno inv&#225;lido antes de engancharse lo tira todo. Ya enganchado, una r&#225;faga suelta de QRN no desengancha la se&#241;al entera.</p>
+
+</main>
+</div>
+<footer class="pie">Cuaderno NODISLA · GPL-3.0 · <a href="https://github.com/EA8DLF/CuadernoNodisla">github.com/EA8DLF/CuadernoNodisla</a> · <a href="mailto:nodisla@nodisla.org">nodisla@nodisla.org</a></footer>
+<script src="indice.js"></script>
+<script src="buscar.js"></script>
+</body>
+</html>

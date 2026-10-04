@@ -51,14 +51,19 @@ public static class ExtensionesDeServicio
             opciones.Reloj,
             proveedor.GetService<ILoggerFactory>()?.CreateLogger("Nodisla.Cuaderno.Audio.Reloj")));
 
-        servicios.AddSingleton<IEntradaDeAudio>(proveedor => new EntradaDeAudioWasapi(
+        // Envueltas en un recuento de referencias: CW, el módem propio y la fonía comparten la
+        // misma tarjeta (un AddSingleton) sin conocerse entre sí. Sin esto, quien la cierra se la
+        // quita a los demás, y quien deja de necesitarla no puede cerrarla por si acaso otro la
+        // sigue usando — con lo que, en la práctica, nadie la cerraba nunca. Ver
+        // EntradaDeAudioCompartida para el porqué completo.
+        servicios.AddSingleton<IEntradaDeAudio>(proveedor => new EntradaDeAudioCompartida(new EntradaDeAudioWasapi(
             proveedor.GetRequiredService<IRelojDelModem>(),
             opciones,
-            proveedor.GetService<ILoggerFactory>()?.CreateLogger("Nodisla.Cuaderno.Audio.Entrada")));
+            proveedor.GetService<ILoggerFactory>()?.CreateLogger("Nodisla.Cuaderno.Audio.Entrada"))));
 
-        servicios.AddSingleton<ISalidaDeAudio>(proveedor => new SalidaDeAudioWasapi(
+        servicios.AddSingleton<ISalidaDeAudio>(proveedor => new SalidaDeAudioCompartida(new SalidaDeAudioWasapi(
             opciones,
-            proveedor.GetService<ILoggerFactory>()?.CreateLogger("Nodisla.Cuaderno.Audio.Salida")));
+            proveedor.GetService<ILoggerFactory>()?.CreateLogger("Nodisla.Cuaderno.Audio.Salida"))));
 
         return servicios;
     }

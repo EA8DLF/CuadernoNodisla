@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Nodisla.Cuaderno.Audio;
 using Nodisla.Cuaderno.Modos.Ldpc;
 using Nodisla.Cuaderno.Modos.Modem;
+using Nodisla.Cuaderno.Modos.Rtty;
 using Nodisla.Cuaderno.Radio;
 using Nodisla.Cuaderno.Satelites;
 using Nodisla.Cuaderno.Impresion;
@@ -886,6 +887,23 @@ public static class ConfiguracionDeServicios
 
         // ── Transmitir en CW (macros y secuencia) y las salvaguardas de TX ──
         Telegrafia.ServiciosDeTransmisionCw.AnadirTransmisionCw(servicios, App.CarpetaDeDatos);
+
+        // ── RTTY: AFSK propio, decodificador y emisor, sobre el mismo audio compartido ──
+        // El emisor solo necesita la salida de audio y el vigilante del PTT (como el módem
+        // propio): sin ellos se niega a emitir en vez de buscar un camino alternativo.
+        servicios.AddSingleton(proveedor => new EmisorRtty(
+            proveedor.GetService<ISalidaDeAudio>(),
+            proveedor.GetService<IVigilantePtt>(),
+            registro: proveedor.GetService<ILoggerFactory>()?.CreateLogger<EmisorRtty>()));
+
+        servicios.AddSingleton(proveedor => new VistaModeloRtty(
+            proveedor.GetRequiredService<AjustesDelPrograma>(),
+            proveedor.GetService<IEntradaDeAudio>(),
+            proveedor.GetRequiredService<EmisorRtty>(),
+            proveedor.GetService<ISalidaDeAudio>())
+        {
+            CarpetaDeDatos = App.CarpetaDeDatos,
+        });
         AnadirActualizacionesYFallos(servicios);
 
         // ── Servidor para otros programas (rigctld y TCI): apagado de fábrica ──

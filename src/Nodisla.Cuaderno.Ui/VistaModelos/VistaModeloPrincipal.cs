@@ -63,9 +63,11 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         VistaModeloCw? cw = null,
         VistaModeloTransmisionCw? txCw = null,
         VistaModeloSeguridadTx? seguridadTx = null,
-        VistaModeloServidores? servidores = null)
+        VistaModeloServidores? servidores = null,
+        VistaModeloRtty? rtty = null)
     {
         Servidores = servidores;
+        Rtty = rtty;
         // Los textos calculados (pliegues, perfil, contador) siguen al idioma en caliente.
         Textos.AlCambiar(this, static vm =>
         {
@@ -285,8 +287,14 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// <summary>El servidor para otros programas (rigctld y TCI). Nulo si no se registró.</summary>
     public VistaModeloServidores? Servidores { get; }
 
+    /// <summary>RTTY: decodificador y emisor propios (AFSK) de la página RTTY. Nulo si no se registró.</summary>
+    public VistaModeloRtty? Rtty { get; }
+
     /// <summary>Hay decodificador de telegrafía (se ofrece el botón «CW»).</summary>
     public bool HayCw => Cw is not null;
+
+    /// <summary>Hay RTTY (se ofrece el botón «RTTY»).</summary>
+    public bool HayRtty => Rtty is not null;
 
     /// <summary>El analizador de espectro de la propia radio, para la pantalla del frontal.</summary>
     public VistaModeloAnalizador Analizador { get; }
@@ -394,7 +402,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// </remarks>
     public IReadOnlyList<string> Pestanas { get; } =
         ["Operar", "Digital", "Cuaderno", "Mapa", "Diplomas", "Configuración", "Satélites", "Tarjeta QSL", "Ronda", "Etiquetas",
-            "Diseñador de diplomas", "Ayuda", "CW"];
+            "Diseñador de diplomas", "Ayuda", "CW", "RTTY"];
 
     /// <summary>
     /// Las entradas de primer nivel de la barra y las paginas que agrupa cada una.
@@ -406,7 +414,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// </remarks>
     public static IReadOnlyDictionary<string, int[]> Grupos { get; } = new Dictionary<string, int[]>
     {
-        ["Operar"] = [PaginaOperar, PaginaDigital, PaginaCw, PaginaSatelites, PaginaRonda],
+        ["Operar"] = [PaginaOperar, PaginaDigital, PaginaCw, PaginaRtty, PaginaSatelites, PaginaRonda],
         ["Libro"] = [PaginaCuaderno, PaginaMapa],
         ["QSL"] = [PaginaQsl, PaginaEtiquetas, PaginaDisenadorDeDiplomas],
         ["Diplomas"] = [PaginaDiplomas],
@@ -417,7 +425,8 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     /// <summary>Indices de las paginas.</summary>
     public const int PaginaOperar = 0, PaginaDigital = 1, PaginaCuaderno = 2, PaginaMapa = 3,
         PaginaDiplomas = 4, PaginaConfiguracion = 5, PaginaSatelites = 6, PaginaQsl = 7,
-        PaginaRonda = 8, PaginaEtiquetas = 9, PaginaDisenadorDeDiplomas = 10, PaginaAyuda = 11, PaginaCw = 12;
+        PaginaRonda = 8, PaginaEtiquetas = 9, PaginaDisenadorDeDiplomas = 10, PaginaAyuda = 11, PaginaCw = 12,
+        PaginaRtty = 13;
 
     /// <summary>
     /// El capitulo de la ayuda que explica cada pagina: lo que abre F1 desde ella.
@@ -436,6 +445,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         [PaginaEtiquetas] = "08-impresion-qsl",
         [PaginaDisenadorDeDiplomas] = "14-disenador-de-diplomas",
         [PaginaCw] = "17-cw",
+        [PaginaRtty] = "21-rtty",
     };
 
     /// <summary>La ultima pagina vista de cada grupo: al volver al grupo se vuelve a ella.</summary>
@@ -696,6 +706,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     {
         if (value == PestanaDeLosDigitales) Modem.Asomarse();
         if (Cw is not null) Cw.PaginaVisible = value == PaginaCw;
+        if (Rtty is not null) Rtty.PaginaVisible = value == PaginaRtty;
 
         _ultimaDelGrupo[GrupoDe(value)] = value;
         OnPropertyChanged(nameof(GrupoActivo));
@@ -869,6 +880,10 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
     [RelayCommand]
     public void VerLaCw() => IndiceDeLaPestana = PaginaCw;
 
+    /// <summary>Pone a la vista la página RTTY.</summary>
+    [RelayCommand]
+    public void VerLaRtty() => IndiceDeLaPestana = PaginaRtty;
+
     /// <summary>
     /// F1: abre la ayuda por el capitulo que explica la pagina en la que se esta. Desde la
     /// propia ayuda no hace nada: ya se esta en ella.
@@ -897,6 +912,7 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
         // El modo y el tono del modem viven en el fichero de configuracion, no en el del
         // estado de los paneles: son cosa del operador, no de como dejo la ventana.
         Modem.GuardarLoElegido(carpeta);
+        Rtty?.GuardarLoElegido(carpeta);
         _estadoDeLosPaneles.ListaDeSpots = IndiceDeLaListaDeSpots;
         _estadoDeLosPaneles.EquipoDesplegado = FrontalDesplegado;
         _estadoDeLosPaneles.PanelVisible = PanelDeOperacionPedido;

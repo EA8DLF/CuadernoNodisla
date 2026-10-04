@@ -74,6 +74,12 @@ public partial class PanelDeFonia : UserControl
 
         BotonPtt.Height = Vertical ? 64 : 46;
         MaxWidth = Vertical ? 250 : double.PositiveInfinity;
+
+        // En columna no hay sitio para NR/notch/limitador, mensajes de voz ni grabador: esa fila
+        // se queda a su ancho horizontal de siempre y es ella la que, sin tocar, obliga al
+        // Viewbox exterior (Stretch="Uniform") a encoger TODO el panel para que quepa junto al
+        // frontal, dejando el texto ilegible. En franja (Vertical=False) vuelve a verse.
+        Extras.Visibility = Vertical ? Visibility.Collapsed : Visibility.Visible;
     }
 
     private async void AlCargar(object sender, RoutedEventArgs e)

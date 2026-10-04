@@ -1,0 +1,192 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.PanelRtty"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+             Foreground="{DynamicResource Texto}">
+
+    <!--
+        RTTY: el decodificador y el emisor propios (página Operar › RTTY).
+
+        Arriba, el estado (pausa/escuchar, tono, nivel, enganchado). Debajo, el texto recibido en
+        una terminal con scroll. Abajo, la línea de transmisión: caja de texto (Intro o «Emitir»
+        manda; se puede seguir escribiendo mientras sale, se encola), «Parar» y el estado del PTT.
+
+        Una sola señal sintonizada a la vez, como un TU de verdad: no hay skimmer de varias
+        señales como en CW.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" MinHeight="120" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ══ Estado de la recepción ══ -->
+        <WrapPanel Grid.Row="0" Orientation="Horizontal">
+            <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
+                <TextBlock Text="{loc:Texto Cabina.Rtty.Titulo}" Style="{StaticResource TituloDeSeccion}" Margin="0" />
+            </StackPanel>
+
+            <Border CornerRadius="3" Padding="8,2" Margin="0,0,10,0" VerticalAlignment="Center" BorderThickness="1">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Enganchado}" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="{Binding EstadoDeEscucha}" />
+            </Border>
+
+            <StackPanel VerticalAlignment="Center" Width="180" Margin="0,0,12,0">
+                <TextBlock Style="{StaticResource TextoTenueEstilo}" Text="{Binding NivelTexto, Mode=OneWay}" />
+                <ProgressBar Minimum="0" Maximum="100" Height="7" Value="{Binding NivelPorCiento, Mode=OneWay}"
+                             AutomationProperties.Name="{Binding NivelTexto}" />
+            </StackPanel>
+        </WrapPanel>
+
+        <!-- ══ Mandos ══ -->
+        <WrapPanel Grid.Row="1" Orientation="Horizontal" Margin="0,6,0,0">
+            <Button Content="{loc:Texto Cabina.Rtty.Borrar}" Command="{Binding BorrarCommand}"
+                    Padding="10,2" Margin="0,0,6,4" VerticalAlignment="Center" />
+            <Button Content="{Binding RotuloDePausa}" Command="{Binding AlternarPausaCommand}"
+                    Padding="10,2" Margin="0,0,6,4" VerticalAlignment="Center"
+                    AutomationProperties.Name="{loc:Texto Cabina.Rtty.PausaNombre}" />
+            <Button Content="{loc:Texto Cabina.Rtty.Escuchar}" Command="{Binding EscucharCommand}"
+                    Padding="10,2" Margin="0,0,10,4" VerticalAlignment="Center"
+                    Visibility="{Binding SinAudio, Converter={StaticResource BooleanoAVisible}}"
+                    ToolTip="{loc:Texto Cabina.Rtty.EscucharAyuda}" />
+
+            <!-- El tono (marca): sirve para escuchar y para transmitir. Intro lo fija; flechas o rueda, ±10 Hz. -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,10,4" VerticalAlignment="Center"
+                        ToolTip="{loc:Texto Cabina.Rtty.TonoEscritoAyuda}">
+                <TextBlock Text="{loc:Texto Cabina.Rtty.TonoEscrito}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                <TextBox x:Name="CasillaDelTono"
+                         Text="{Binding TonoEscrito, UpdateSourceTrigger=PropertyChanged}"
+                         Width="60"
+                         TextAlignment="Right"
+                         PreviewMouseWheel="AlGirarLaRueda"
+                         AutomationProperties.Name="{loc:Texto Cabina.Rtty.TonoEscrito}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding AplicarTonoEscritoCommand}" />
+                        <KeyBinding Key="Up" Command="{Binding SubirTonoCommand}" />
+                        <KeyBinding Key="Down" Command="{Binding BajarTonoCommand}" />
+                    </TextBox.InputBindings>
+                </TextBox>
+                <TextBlock Text="Hz" VerticalAlignment="Center" Margin="4,0,0,0" />
+            </StackPanel>
+
+            <!-- Desplazamiento: 170 ó 850 Hz. -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,10,4" VerticalAlignment="Center">
+                <TextBlock Text="{loc:Texto Cabina.Rtty.Desplazamiento}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                <ComboBox ItemsSource="{Binding DesplazamientosDisponibles}"
+                          SelectedItem="{Binding DesplazamientoHz}"
+                          Width="70"
+                          AutomationProperties.Name="{loc:Texto Cabina.Rtty.Desplazamiento}" />
+                <TextBlock Text="Hz" VerticalAlignment="Center" Margin="4,0,0,0" />
+            </StackPanel>
+
+            <!-- Bits de parada: 1, 1,5 ó 2. -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,10,4" VerticalAlignment="Center">
+                <TextBlock Text="{loc:Texto Cabina.Rtty.BitsDeParada}" VerticalAlignment="Center" Margin="0,0,6,0" />
+                <ComboBox ItemsSource="{Binding BitsDeParadaDisponibles}"
+                          SelectedItem="{Binding BitsDeParada}"
+                          Width="60"
+                          AutomationProperties.Name="{loc:Texto Cabina.Rtty.BitsDeParada}" />
+            </StackPanel>
+
+            <!-- Invertido (reversa): el tono de marca es el más bajo de los dos. -->
+            <CheckBox Content="{loc:Texto Cabina.Rtty.Invertido}" IsChecked="{Binding Invertido}"
+                      Margin="4,0,10,4" VerticalAlignment="Center"
+                      ToolTip="{loc:Texto Cabina.Rtty.InvertidoAyuda}" />
+        </WrapPanel>
+
+        <!-- ══ Texto recibido, en terminal ══ -->
+        <Grid Grid.Row="2" Margin="0,4,0,0">
+            <Border Background="{DynamicResource FondoCampo}"
+                    BorderBrush="{DynamicResource BordeSuave}"
+                    BorderThickness="1"
+                    Padding="6,4">
+                <Grid>
+                    <TextBox x:Name="Terminal"
+                             Text="{Binding TextoRecibido, Mode=OneWay}"
+                             FontFamily="Consolas"
+                             FontSize="15"
+                             IsReadOnly="True"
+                             BorderThickness="0"
+                             Background="Transparent"
+                             TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Disabled"
+                             AutomationProperties.Name="{loc:Texto Cabina.Rtty.TextoNombre}" />
+                    <TextBlock Text="{loc:Texto Cabina.Rtty.Esperando}"
+                               Style="{StaticResource TextoTenueEstilo}"
+                               TextWrapping="Wrap"
+                               IsHitTestVisible="False"
+                               Visibility="{Binding SinTexto, Converter={StaticResource BooleanoAVisible}}" />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ══ Transmisión ══ -->
+        <Grid Grid.Row="3" Margin="0,6,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBox x:Name="CasillaDeTexto"
+                     Grid.Column="0"
+                     Text="{Binding TextoAEmitir, UpdateSourceTrigger=PropertyChanged}"
+                     KeyDown="AlTeclearElTextoAEmitir"
+                     Margin="0,0,6,0"
+                     VerticalContentAlignment="Center"
+                     AutomationProperties.Name="{loc:Texto Cabina.Rtty.TextoAEmitirNombre}" />
+
+            <Button Grid.Column="1" Content="{loc:Texto Cabina.Rtty.Emitir}" Command="{Binding EmitirCommand}"
+                    Padding="10,2" Margin="0,0,6,0" VerticalAlignment="Center"
+                    ToolTip="{loc:Texto Cabina.Rtty.EmitirAyuda}" />
+
+            <Button Grid.Column="2" Content="{loc:Texto Cabina.Rtty.Parar}" Command="{Binding PararCommand}"
+                    Padding="10,2" Margin="0,0,10,0" VerticalAlignment="Center" />
+
+            <Border Grid.Column="3" CornerRadius="3" Padding="8,2" VerticalAlignment="Center" BorderThickness="1">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding EnAntena}" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ErrorFondo}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorde}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="{Binding EstadoTx}" />
+            </Border>
+        </Grid>
+
+        <!-- ══ Avisos ══ -->
+        <TextBlock Grid.Row="4"
+                   Text="{Binding Aviso}"
+                   Foreground="{DynamicResource AvisoTexto}"
+                   TextWrapping="Wrap"
+                   Margin="0,4,0,0"
+                   Visibility="{Binding HayAviso, Converter={StaticResource BooleanoAVisible}}" />
+    </Grid>
+</UserControl>

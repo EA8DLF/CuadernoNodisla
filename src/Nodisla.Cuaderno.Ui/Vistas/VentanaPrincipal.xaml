@@ -286,6 +286,8 @@
                                 Command="{Binding VerLoDigitalCommand}" ToolTip="{loc:Texto Principal.Nav.DigitalConsejo}" />
                         <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="12" Content="{loc:Texto Principal.Nav.Cw}"
                                 Command="{Binding VerLaCwCommand}" ToolTip="{loc:Texto Principal.Nav.CwConsejo}" />
+                        <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="13" Content="{loc:Texto Principal.Nav.Rtty}"
+                                Command="{Binding VerLaRttyCommand}" ToolTip="{loc:Texto Principal.Nav.RttyConsejo}" />
                         <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="6" Content="{loc:Texto Principal.Nav.Satelites}"
                                 Command="{Binding VerLosSatelitesCommand}" ToolTip="{loc:Texto Principal.Nav.SatelitesConsejo}" />
                         <Button Style="{StaticResource SubentradaDeNavegacion}" Tag="8" Content="{loc:Texto Principal.Nav.Ronda}"
@@ -401,6 +403,13 @@
             <!-- 12 · Operar → CW (telegrafía: decodificador, glosario y hueco de transmisión) -->
             <TabItem Header="{loc:Texto Principal.Nav.Cw}">
                 <vistas:PestanaCw x:Name="PaginaCw" />
+            </TabItem>
+
+            <!-- 13 · Operar → RTTY (decodificador y emisor propios, AFSK) -->
+            <TabItem Header="{loc:Texto Principal.Nav.Rtty}">
+                <Border Style="{StaticResource Tarjeta}" Margin="0">
+                    <vistas:PanelRtty x:Name="PaginaRtty" DataContext="{Binding Rtty}" />
+                </Border>
             </TabItem>
         </TabControl>
 

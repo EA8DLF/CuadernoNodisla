@@ -191,6 +191,24 @@ public sealed partial class VistaModeloCw : ObservableObject
     private bool _escuchando;
     private int _canalPrincipal = -1;
 
+    /// <summary>
+    /// Ya se ha pedido la entrada compartida sin haberla soltado todavía. Se marca antes de
+    /// esperar la apertura (no al terminarla) para que un «Escuchar» a mano y el cambio de
+    /// visibilidad casi a la vez no la pidan dos veces: la entrada la comparten CW, el módem
+    /// propio y la fonía por recuento de referencias, y una referencia de más que nadie suelta se
+    /// queda la tarjeta abierta para siempre aunque todo el mundo se calle.
+    /// </summary>
+    private bool _audioAdquirida;
+
+    /// <summary>
+    /// El operador ha pulsado «Escuchar» alguna vez en esta sesión. Antes de eso, hacerse visible
+    /// (cambiar de pestaña, «Ver en la cabina»…) no tiene por qué abrir el micrófono por su cuenta
+    /// —abrir la tarjeta es una acción que pide el operador, no un efecto secundario de mirar la
+    /// pantalla—; después, si se pasa a pausa y se vuelve a seguir, sí hay que pedirla y soltarla
+    /// otra vez con <see cref="Pausado"/>, que es el fallo que se arregla aquí.
+    /// </summary>
+    private bool _usuarioQuiereEscuchar;
+
     // Medida de la entrada (hilo del audio): energía y recortes de los últimos bloques.
     private double _energia;
     private long _muestras;
@@ -590,31 +608,62 @@ public sealed partial class VistaModeloCw : ObservableObject
     public async Task EscucharAsync()
     {
         if (_entrada is null) return;
+        _usuarioQuiereEscuchar = true;
+        await AdquirirEntradaAsync().ConfigureAwait(true);
+        MirarLaEscucha();
+    }
+
+    /// <summary>
+    /// Pide la entrada compartida (si no se tenía ya pedida) y la abre si hiciera falta.
+    /// </summary>
+    /// <remarks>
+    /// Es la única puerta de entrada a <see cref="IEntradaDeAudio.AbrirAsync"/> desde aquí: la
+    /// llaman tanto el botón «Escuchar» como <see cref="MirarLaEscucha"/> al dejar la pausa, y
+    /// <see cref="_audioAdquirida"/> hace que una sola de las dos llamadas llegue a pedir de
+    /// verdad, aunque las dos se disparen casi a la vez.
+    /// </remarks>
+    private async Task AdquirirEntradaAsync()
+    {
+        if (_entrada is null || _audioAdquirida) return;
+        _audioAdquirida = true;
+
         try
         {
-            if (_entrada.Abierto is null)
+            var guardado = _ajustes.Digital.DispositivoDeEntrada;
+            var dispositivo = _entrada.Dispositivos.FirstOrDefault(d => d.Id == guardado)
+                ?? _entrada.Dispositivos.FirstOrDefault(d => d.EsDelEquipo);
+            if (dispositivo is null)
             {
-                var guardado = _ajustes.Digital.DispositivoDeEntrada;
-                var dispositivo = _entrada.Dispositivos.FirstOrDefault(d => d.Id == guardado)
-                    ?? _entrada.Dispositivos.FirstOrDefault(d => d.EsDelEquipo);
-                if (dispositivo is null)
-                {
-                    Aviso = Textos.T("Cabina.Cw.SinEntrada");
-                    return;
-                }
-
-                await _entrada.AbrirAsync(dispositivo.Id, _ajustes.Digital.FrecuenciaDeMuestreo).ConfigureAwait(true);
+                Aviso = Textos.T("Cabina.Cw.SinEntrada");
+                _audioAdquirida = false; // no se ha pedido de verdad: se puede reintentar
+                return;
             }
 
+            await _entrada.AbrirAsync(dispositivo.Id, _ajustes.Digital.FrecuenciaDeMuestreo).ConfigureAwait(true);
             Aviso = string.Empty;
         }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido abrir la entrada de audio para la telegrafía.");
             Aviso = Textos.F("Cabina.Cw.NoSeAbre", ex.Message);
+            _audioAdquirida = false; // tampoco aquí: el fallo no deja nada pedido
         }
+    }
 
-        MirarLaEscucha();
+    /// <summary>Suelta la entrada compartida, si se tenía pedida.</summary>
+    private async Task SoltarEntradaAsync()
+    {
+        if (_entrada is null || !_audioAdquirida) return;
+        _audioAdquirida = false;
+
+        try
+        {
+            await _entrada.CerrarAsync().ConfigureAwait(true);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "No se ha podido cerrar la entrada de audio de la telegrafía.");
+        }
     }
 
     /// <summary>Vuelca en pantalla lo decodificado y el estado (hilo de la interfaz).</summary>
@@ -712,7 +761,11 @@ public sealed partial class VistaModeloCw : ObservableObject
         }
     }
 
-    /// <summary>Se escucha mientras se ve (cabina o página) y no está en pausa.</summary>
+    /// <summary>
+    /// Se escucha mientras se ve (cabina o página) y no está en pausa. Al entrar, pide la entrada
+    /// compartida; al salir —incluida la pausa—, la suelta de verdad: es lo que hace que «Pausa»
+    /// deje de consumir CPU en vez de quedarse enganchada a una tarjeta que ya no mira nadie.
+    /// </summary>
     private void MirarLaEscucha()
     {
         var quiere = (Visible || PaginaVisible) && !Pausado && _entrada is not null;
@@ -728,11 +781,13 @@ public sealed partial class VistaModeloCw : ObservableObject
             if (Fijo) _decodificador.FijarTono(TonoHz);
             _entrada!.BloqueCapturado += AlCapturar;
             _reloj?.Start();
+            if (_usuarioQuiereEscuchar) _ = AdquirirEntradaAsync();
         }
         else
         {
             _entrada!.BloqueCapturado -= AlCapturar;
             _reloj?.Stop();
+            if (_usuarioQuiereEscuchar) _ = SoltarEntradaAsync();
         }
 
         _escuchando = quiere;

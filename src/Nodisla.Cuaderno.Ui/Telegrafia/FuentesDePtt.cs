@@ -28,7 +28,8 @@ public static class FuentesDePtt
             proveedor.GetService<VistaModeloEquipo>(),
             proveedor.GetService<VistaModeloModemPropio>(),
             proveedor.GetService<VistaModeloFonia>(),
-            proveedor.GetService<VistaModeloTransmisionCw>());
+            proveedor.GetService<VistaModeloTransmisionCw>(),
+            proveedor.GetService<VistaModeloRtty>());
     }
 
     /// <summary>Da de alta las fuentes que se le den.</summary>
@@ -37,13 +38,15 @@ public static class FuentesDePtt
     /// <param name="modem">El modem propio.</param>
     /// <param name="fonia">La fonia.</param>
     /// <param name="telegrafia">La transmision de CW.</param>
+    /// <param name="rtty">La transmision de RTTY.</param>
     /// <returns>Las altas, para darlas de baja (las pruebas).</returns>
     public static IReadOnlyList<IDisposable> Conectar(
         IVigilantePtt vigilante,
         VistaModeloEquipo? equipo,
         VistaModeloModemPropio? modem,
         VistaModeloFonia? fonia,
-        VistaModeloTransmisionCw? telegrafia)
+        VistaModeloTransmisionCw? telegrafia,
+        VistaModeloRtty? rtty = null)
     {
         ArgumentNullException.ThrowIfNull(vigilante);
         var altas = new List<IDisposable>();
@@ -54,6 +57,8 @@ public static class FuentesDePtt
         {
             altas.Add(vigilante.RegistrarFuente("Telegrafía", () => telegrafia.Automatico || telegrafia.Emisor.Enviando));
         }
+
+        if (rtty is not null) altas.Add(vigilante.RegistrarFuente("RTTY", () => rtty.Transmitiendo));
 
         lock (Altas) Altas.AddRange(altas);
         return altas;

@@ -595,6 +595,12 @@ No se transmite nada, pero lo que tenía el otro VFO puede perderse.</value>
   <data name="Principal.Nav.CwConsejo" xml:space="preserve">
     <value>Telegrafía: el decodificador de CW a lo grande y el glosario (Ctrl+Mayús+1)</value>
   </data>
+  <data name="Principal.Nav.Rtty" xml:space="preserve">
+    <value>RTTY</value>
+  </data>
+  <data name="Principal.Nav.RttyConsejo" xml:space="preserve">
+    <value>RTTY: decodificador y emisor propios (AFSK)</value>
+  </data>
   <data name="Principal.Nav.Digital" xml:space="preserve">
     <value>Digital</value>
   </data>
