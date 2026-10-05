@@ -56,6 +56,7 @@ public class SalidaDeAudioCompartidaPruebas
         {
             VecesCerrada++;
             Abierto = null;
+            lock (Orden) Orden.Add("cierra");
             return Task.CompletedTask;
         }
 
@@ -141,6 +142,48 @@ public class SalidaDeAudioCompartidaPruebas
 
         interior.Solapes.Should().Be(0, "una emisión entera tiene que acabar antes de que empiece la otra");
         interior.Orden.Should().Equal("empieza:100", "acaba:100", "empieza:200", "acaba:200");
+    }
+
+    [Fact]
+    public async Task AbrirConOtroDispositivoMientrasHayReferenciasLanzaYNoTocaLaTarjeta()
+    {
+        // El fallo de verdad tras meter RTTY (confirmado el 05-10-2026, el mismo "pum pum" que
+        // 0ef66f5 no llegó a tapar del todo): antes, pedir la salida con un dispositivo o una
+        // frecuencia distintos de los que ya tenía otro módulo la reabría de verdad y pisaba
+        // _referencias a 1, perdiendo sin avisar la referencia de quien ya la tenía. Ahora tiene
+        // que avisar con una excepción y dejar la tarjeta tal cual estaba.
+        var interior = new SalidaDeMentira();
+        var compartida = new SalidaDeAudioCompartida(interior);
+        await compartida.AbrirAsync("tarjeta-del-modem", 48000); // el módem propio, escuchando
+
+        var abrirConOtra = async () => await compartida.AbrirAsync("otra-tarjeta", 48000); // RTTY
+        await abrirConOtra.Should().ThrowAsync<InvalidOperationException>();
+
+        interior.VecesAbierta.Should().Be(1, "no se reabre de verdad con lo nuevo");
+        interior.VecesCerrada.Should().Be(0, "no se cierra la que ya estaba en uso");
+        compartida.Referencias.Should().Be(1, "la referencia de quien ya la tenía no se pierde");
+        interior.Abierto!.Id.Should().Be("tarjeta-del-modem", "la tarjeta sigue siendo la de quien la abrió primero");
+    }
+
+    [Fact]
+    public async Task CerrarEsperaAQueTermineUnaReproduccionEnCursoAntesDeApagarLaTarjeta()
+    {
+        // El fallo de verdad: abrir/cerrar y reproducir tenían cerrojos distintos, así que cerrar
+        // la salida (p. ej. RTTY al terminar su transmisión, si eso dejaba el recuento a cero)
+        // podía parar y desechar el dispositivo real MIENTRAS el módem propio todavía le estaba
+        // metiendo muestras en medio de sus trece segundos de FT8. Ahora cerrar tiene que esperar
+        // a que la reproducción en marcha termine antes de tocar el dispositivo de verdad.
+        var interior = new SalidaDeMentira { DuracionDeCadaEmision = TimeSpan.FromMilliseconds(200) };
+        var compartida = new SalidaDeAudioCompartida(interior);
+        await compartida.AbrirAsync("tarjeta", 48000);
+
+        var reproduciendo = compartida.ReproducirAsync(new float[10]);
+        await Task.Delay(30); // le da tiempo a que de verdad esté "sonando"
+
+        var cerrando = compartida.CerrarAsync();
+        await Task.WhenAll(reproduciendo, cerrando);
+
+        interior.Orden.Should().Equal("empieza:10", "acaba:10", "cierra");
     }
 
     [Fact]
