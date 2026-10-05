@@ -1725,11 +1725,23 @@
   <data name="Cabina.TxCw.CerrarAviso" xml:space="preserve">
     <value>Cerrar</value>
   </data>
+  <data name="Cabina.TxCw.Conversacion" xml:space="preserve">
+    <value>Conversación</value>
+  </data>
+  <data name="Cabina.TxCw.Conversacion.Ayuda" xml:space="preserve">
+    <value>Juego de macros con charla: nombre, QTH y confirmación con repeticiones para señal débil.</value>
+  </data>
+  <data name="Cabina.TxCw.Contactos" xml:space="preserve">
+    <value>Contactos</value>
+  </data>
+  <data name="Cabina.TxCw.Contactos.Ayuda" xml:space="preserve">
+    <value>Juego de macros para contactos normales, sin concurso: ocupar la banda lo menos posible, sin charla.</value>
+  </data>
   <data name="Cabina.TxCw.Concurso" xml:space="preserve">
     <value>Concurso</value>
   </data>
   <data name="Cabina.TxCw.Concurso.Ayuda" xml:space="preserve">
-    <value>Juego de macros de concurso: CQ TEST, 5NN y número de serie, TU.</value>
+    <value>Juego de macros de concurso: CQ, 599 y número de serie, TU 73.</value>
   </data>
   <data name="Cabina.TxCw.Confirmar.Detalle" xml:space="preserve">
     <value>El equipo va a salir al aire y manipular: «{0}». Esc o «PARAR CW» lo cortan en el acto.</value>

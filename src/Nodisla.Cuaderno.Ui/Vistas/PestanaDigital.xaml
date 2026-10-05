@@ -46,7 +46,7 @@
                     Padding="5"
                     DataContext="{Binding Equipo}"
                     Visibility="{Binding DataContext.FrontalDibujadoVisible, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanoAVisible}}">
-                <vistas:FrontalConBotonera x:Name="Frontal" AltoMaximoDelFrontal="300" />
+                <vistas:FrontalConBotonera x:Name="Frontal" AltoMaximoDelFrontal="300" MostrarCb="False" />
             </Border>
         </Grid>
 

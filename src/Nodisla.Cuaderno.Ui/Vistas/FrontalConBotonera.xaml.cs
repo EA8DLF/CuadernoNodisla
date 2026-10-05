@@ -22,6 +22,17 @@ public partial class FrontalConBotonera : UserControl
         nameof(AltoMaximoDelFrontal), typeof(double), typeof(FrontalConBotonera),
         new PropertyMetadata(370d, (d, e) => ((FrontalConBotonera)d).Frontal.MaxHeight = (double)e.NewValue));
 
+    /// <summary>
+    /// Se ensena la botonera de canales CB al lado del frontal. Por omision, si: en Operar hace
+    /// falta para operar CB desde la cabina. En Digital y en CW no tiene sentido (no se opera CB
+    /// en modos digitales ni en telegrafia) y, sobre todo, le quitaba ancho de verdad al panel
+    /// lateral (en Operar, la fonia): «Repartir» media su ancho aunque estuviera oculta a ojos
+    /// del operador.
+    /// </summary>
+    public static readonly DependencyProperty MostrarCbProperty = DependencyProperty.Register(
+        nameof(MostrarCb), typeof(bool), typeof(FrontalConBotonera),
+        new PropertyMetadata(true, (d, _) => ((FrontalConBotonera)d).AlCambiarMostrarCb()));
+
     /// <summary>Proporcion ancho/alto del dibujo del frontal (lienzo de 1040 × 335).</summary>
     public const double ProporcionDelFrontal = 1040d / 335d;
 
@@ -82,6 +93,19 @@ public partial class FrontalConBotonera : UserControl
         set => SetValue(AltoMaximoDelFrontalProperty, value);
     }
 
+    /// <summary>Se ensena la botonera de canales CB. Por omision, si (como siempre hasta ahora).</summary>
+    public bool MostrarCb
+    {
+        get => (bool)GetValue(MostrarCbProperty);
+        set => SetValue(MostrarCbProperty, value);
+    }
+
+    private void AlCambiarMostrarCb()
+    {
+        LadoCb.Visibility = MostrarCb ? Visibility.Visible : Visibility.Collapsed;
+        Repartir();
+    }
+
     /// <summary>Los dos paneles no caben y comparten el lado izquierdo.</summary>
     public bool Estrecho { get; private set; }
 
@@ -100,16 +124,17 @@ public partial class FrontalConBotonera : UserControl
         LadoCb.Measure(medida);
         HuecoLateral.Measure(medida);
         var lateral = Lateral is null ? 0 : HuecoLateral.DesiredSize.Width;
+        var anchoCb = MostrarCb ? LadoCb.DesiredSize.Width : 0;
 
-        var necesario = (alto * ProporcionDelFrontal) + LadoHam.DesiredSize.Width + LadoCb.DesiredSize.Width + lateral;
+        var necesario = (alto * ProporcionDelFrontal) + LadoHam.DesiredSize.Width + anchoCb + lateral;
         Estrecho = necesario > ActualWidth;
 
-        Ham.MostrarCambio = Estrecho;
+        Ham.MostrarCambio = MostrarCb && Estrecho;
         Cb.MostrarCambio = Estrecho;
         DockPanel.SetDock(LadoCb, Estrecho ? Dock.Left : Dock.Right);
         LadoCb.Margin = Estrecho ? new Thickness(0, 0, 8, 0) : new Thickness(8, 0, 0, 0);
-        LadoHam.Visibility = Estrecho && _verCbEnVezDeHam ? Visibility.Collapsed : Visibility.Visible;
-        LadoCb.Visibility = Estrecho && !_verCbEnVezDeHam ? Visibility.Collapsed : Visibility.Visible;
+        LadoHam.Visibility = MostrarCb && Estrecho && _verCbEnVezDeHam ? Visibility.Collapsed : Visibility.Visible;
+        LadoCb.Visibility = !MostrarCb ? Visibility.Collapsed : Estrecho && !_verCbEnVezDeHam ? Visibility.Collapsed : Visibility.Visible;
     }
 
     private void AlCambiarDeTamano(object sender, SizeChangedEventArgs e) => Repartir();

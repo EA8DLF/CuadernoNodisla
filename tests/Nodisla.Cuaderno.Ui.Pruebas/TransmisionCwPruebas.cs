@@ -74,20 +74,21 @@ public sealed class TransmisionCwPruebas
     }
 
     [Fact]
-    public void Los_juegos_de_fabrica_tienen_doce_macros_y_se_guardan_y_leen()
+    public void Los_tres_juegos_de_fabrica_se_guardan_y_leen()
     {
         var carpeta = Path.Combine(Path.GetTempPath(), "cuaderno-txcw-" + Guid.NewGuid().ToString("N"));
         try
         {
             var ajustes = new AjustesDeTransmisionCw().Acotar();
-            ajustes.Normal.Macros.Should().HaveCount(12);
-            ajustes.Concurso.Macros.Should().HaveCount(12);
-            ajustes.Normal.Macros[0] = new MacroGuardada("CQ", "CQ DE {MICALL} K");
+            ajustes.Conversacion.Macros.Should().HaveCount(12, "el de charla trae los doce de siempre");
+            ajustes.Contactos.Macros.Should().HaveCount(8, "sin concurso pero sin charla: menos que el de charla");
+            ajustes.Concurso.Macros.Should().HaveCount(5, "reducido a las cinco teclas de toda la vida");
+            ajustes.Conversacion.Macros[0] = new MacroGuardada("CQ", "CQ DE {MICALL} K");
             ajustes.Wpm = 99;
             ajustes.Acotar().Guardar(carpeta);
 
             var leidos = AjustesDeTransmisionCw.Leer(carpeta);
-            leidos.Normal.Macros[0].Texto.Should().Be("CQ DE {MICALL} K");
+            leidos.Conversacion.Macros[0].Texto.Should().Be("CQ DE {MICALL} K");
             leidos.Wpm.Should().Be(60);
             File.ReadAllText(Path.Combine(carpeta, AjustesDeTransmisionCw.Fichero)).Should().NotContain("Permitir", "el pestillo no se guarda nunca");
         }
@@ -106,12 +107,14 @@ public sealed class TransmisionCwPruebas
         {
             var fichero = Path.Combine(carpeta, "mis-macros.json");
             var (vm, _, _, _) = Montar(carpeta);
+            vm.Perfil = PerfilDeMacrosCw.Conversacion;
             vm.Macros[11].Texto = "QRL? DE {MICALL}";
             vm.ElegirFicheroParaExportar = () => fichero;
             vm.Exportar();
             File.Exists(fichero).Should().BeTrue();
 
             var (otro, _, _, _) = Montar(Path.Combine(carpeta, "otra"));
+            otro.Perfil = PerfilDeMacrosCw.Conversacion;
             otro.Macros[11].Texto.Should().Be("QRL?");
             otro.ElegirFicheroParaImportar = () => fichero;
             otro.Importar();
@@ -369,7 +372,7 @@ public sealed class TransmisionCwPruebas
         // Con «no volver a preguntar» (el mismo ajuste del modem) ya no se pregunta.
         ajustes.Digital.PedirConfirmacionAlTransmitir = false;
         await vm.EnviarMacroAsync(vm.Macros[0]);
-        Manipulado(piezas.Equipo).Should().ContainSingle().Which.Should().StartWith("CQ CQ CQ DE EA8DLF");
+        Manipulado(piezas.Equipo).Should().ContainSingle().Which.Should().StartWith("CQ DE EA8DLF");
     }
 
     [Fact]
@@ -412,6 +415,7 @@ public sealed class TransmisionCwPruebas
     {
         var (vm, piezas, _, adelantar) = Montar();
         vm.PermitirTransmitir = true;
+        vm.Perfil = PerfilDeMacrosCw.Conversacion;
         vm.MiNombre = "JOSE";
         vm.MiQth = "TENERIFE";
         vm.Automatico = true;
@@ -449,7 +453,7 @@ public sealed class TransmisionCwPruebas
     {
         var (vm, piezas, _, adelantar) = Montar();
         vm.PermitirTransmitir = true;
-        vm.UsarConcurso = true;
+        vm.Perfil = PerfilDeMacrosCw.Concurso;
         vm.Busco = true;
         vm.Numero = 41;
         vm.Automatico = true;

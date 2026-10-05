@@ -123,7 +123,8 @@ public sealed partial class VistaModeloTransmisionCw : ObservableObject, IDispos
         _guardado = AjustesDeTransmisionCw.Leer(carpeta);
 
         _wpm = _guardado.Wpm;
-        _usarConcurso = _guardado.UsarConcurso;
+        _perfil = _guardado.Perfil;
+        _perfilAnterior = _perfil;
         _escribirMientrasSeEnvia = _guardado.EscribirMientrasSeEnvia;
         _miNombre = _guardado.MiNombre;
         _miQth = _guardado.MiQth;
@@ -224,9 +225,12 @@ public sealed partial class VistaModeloTransmisionCw : ObservableObject, IDispos
     [NotifyPropertyChangedFor(nameof(EstadoDeLaSecuencia))]
     private bool _automatico;
 
-    /// <summary>Juego de concurso (si no, el de QSO normal).</summary>
+    /// <summary>Juego de macros en uso: conversacion, contactos o concurso.</summary>
     [ObservableProperty]
-    private bool _usarConcurso;
+    private PerfilDeMacrosCw _perfil;
+
+    /// <summary>El perfil que estaba puesto antes del cambio, para volcar sus macros al salir de el.</summary>
+    private PerfilDeMacrosCw _perfilAnterior;
 
     /// <summary>Busco y contesto (S&amp;P) en vez de llamar CQ.</summary>
     [ObservableProperty]
@@ -421,12 +425,21 @@ public sealed partial class VistaModeloTransmisionCw : ObservableObject, IDispos
         Aviso = Textos.T("Cabina.TxCw.Guardado");
     }
 
+    /// <summary>Cambia el juego de macros en uso.</summary>
+    [RelayCommand]
+    public void ElegirPerfil(PerfilDeMacrosCw perfil) => Perfil = perfil;
+
     /// <summary>Vuelve a las macros de fabrica del juego en uso.</summary>
     [RelayCommand]
     public void RestaurarFabrica()
     {
-        if (UsarConcurso) _guardado.Concurso = JuegosDeFabrica.Concurso();
-        else _guardado.Normal = JuegosDeFabrica.Normal();
+        switch (Perfil)
+        {
+            case PerfilDeMacrosCw.Contactos: _guardado.Contactos = JuegosDeFabrica.Contactos(); break;
+            case PerfilDeMacrosCw.Concurso: _guardado.Concurso = JuegosDeFabrica.Concurso(); break;
+            default: _guardado.Conversacion = JuegosDeFabrica.Conversacion(); break;
+        }
+
         CargarJuego();
         Guardar();
     }
@@ -456,7 +469,8 @@ public sealed partial class VistaModeloTransmisionCw : ObservableObject, IDispos
         try
         {
             var leidos = AjustesDeTransmisionCw.Desde(File.ReadAllText(ruta, Encoding.UTF8));
-            _guardado.Normal = leidos.Normal;
+            _guardado.Conversacion = leidos.Conversacion;
+            _guardado.Contactos = leidos.Contactos;
             _guardado.Concurso = leidos.Concurso;
             CargarJuego();
             Guardar();
@@ -720,18 +734,25 @@ public sealed partial class VistaModeloTransmisionCw : ObservableObject, IDispos
             MiNombre,
             MiQth,
             miLoc,
-            UsarConcurso);
+            Perfil == PerfilDeMacrosCw.Concurso);
     }
 
     // ── Macros y secuencia ──────────────────────────────────────────────────────────────────
 
-    private JuegoDeMacrosGuardado JuegoEnUso => UsarConcurso ? _guardado.Concurso : _guardado.Normal;
+    private JuegoDeMacrosGuardado JuegoDe(PerfilDeMacrosCw perfil) => perfil switch
+    {
+        PerfilDeMacrosCw.Contactos => _guardado.Contactos,
+        PerfilDeMacrosCw.Concurso => _guardado.Concurso,
+        _ => _guardado.Conversacion,
+    };
+
+    private JuegoDeMacrosGuardado JuegoEnUso => JuegoDe(Perfil);
 
     private void CargarJuego()
     {
         Macros.Clear();
         var juego = JuegoEnUso;
-        for (var i = 0; i < 12; i++) Macros.Add(new MacroCw(i + 1, juego.Macros[i].Rotulo, juego.Macros[i].Texto));
+        for (var i = 0; i < juego.Macros.Count; i++) Macros.Add(new MacroCw(i + 1, juego.Macros[i].Rotulo, juego.Macros[i].Texto));
         _secuencia.Concurso = juego.Concurso;
         _secuencia.CierraConElInforme = juego.Pasos.SetentaYTres.Length == 0;
         MirarLaSecuencia();
@@ -741,7 +762,7 @@ public sealed partial class VistaModeloTransmisionCw : ObservableObject, IDispos
     {
         JuegoEnUso.Macros = Macros.Select(m => new MacroGuardada(m.Rotulo, m.Texto)).ToList();
         _guardado.Wpm = Wpm;
-        _guardado.UsarConcurso = UsarConcurso;
+        _guardado.Perfil = Perfil;
         _guardado.EscribirMientrasSeEnvia = EscribirMientrasSeEnvia;
         _guardado.MiNombre = MiNombre;
         _guardado.MiQth = MiQth;
@@ -837,7 +858,7 @@ public sealed partial class VistaModeloTransmisionCw : ObservableObject, IDispos
         {
             AlRecibirDatos(origen, EventArgs.Empty);
             var numeroEnviado = Numero;
-            if (UsarConcurso)
+            if (Perfil == PerfilDeMacrosCw.Concurso)
             {
                 Numero = Math.Min(9999, Numero + 1);
                 VolcarAlGuardado();
@@ -846,7 +867,7 @@ public sealed partial class VistaModeloTransmisionCw : ObservableObject, IDispos
 
             if (_entrada is null) return;
             _entrada.InformeEnviado = RstDeCw(_entrada.InformeEnviado);
-            if (UsarConcurso)
+            if (Perfil == PerfilDeMacrosCw.Concurso)
             {
                 var nota = Textos.F("Cabina.TxCw.NotaConcurso", numeroEnviado.ToString("000", System.Globalization.CultureInfo.InvariantCulture), datos.NumeroRecibido);
                 _entrada.Comentario = string.IsNullOrWhiteSpace(_entrada.Comentario) ? nota : _entrada.Comentario + " · " + nota;
@@ -937,19 +958,19 @@ public sealed partial class VistaModeloTransmisionCw : ObservableObject, IDispos
         }
     }
 
-    partial void OnUsarConcursoChanged(bool value)
+    partial void OnPerfilChanged(PerfilDeMacrosCw value)
     {
-        VolcarJuegoAnterior(!value);
+        VolcarJuegoAnterior(_perfilAnterior);
+        _perfilAnterior = value;
         CargarJuego();
-        _guardado.UsarConcurso = value;
+        _guardado.Perfil = value;
         Guardar();
     }
 
-    private void VolcarJuegoAnterior(bool eraConcurso)
+    private void VolcarJuegoAnterior(PerfilDeMacrosCw perfilAnterior)
     {
-        if (Macros.Count != 12) return;
-        var juego = eraConcurso ? _guardado.Concurso : _guardado.Normal;
-        juego.Macros = Macros.Select(m => new MacroGuardada(m.Rotulo, m.Texto)).ToList();
+        if (Macros.Count == 0) return;
+        JuegoDe(perfilAnterior).Macros = Macros.Select(m => new MacroGuardada(m.Rotulo, m.Texto)).ToList();
     }
 
     partial void OnBuscoChanged(bool value)

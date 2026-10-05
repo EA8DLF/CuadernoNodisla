@@ -77,7 +77,7 @@
                     Padding="5"
                     DataContext="{Binding Equipo}"
                     Visibility="{Binding DataContext.FrontalDibujadoVisible, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanoAVisible}}">
-                <vistas:FrontalConBotonera x:Name="Frontal" AltoMaximoDelFrontal="300" />
+                <vistas:FrontalConBotonera x:Name="Frontal" AltoMaximoDelFrontal="300" MostrarCb="False" />
             </Border>
         </Grid>
 
@@ -86,9 +86,14 @@
                 <ColumnDefinition Width="*" MinWidth="420" />
                 <ColumnDefinition Width="360" />
             </Grid.ColumnDefinitions>
+            <!--
+                El decodificador (con su propio scroll interno) cede antes que el hueco de
+                transmision: ahi es donde se lee si se esta saliendo al aire y que se esta
+                mandando (EstadoTx), y eso tiene que verse SIEMPRE, no solo cuando sobra alto.
+            -->
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" MinHeight="240" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" MinHeight="120" />
+                <RowDefinition Height="Auto" MinHeight="230" />
             </Grid.RowDefinitions>
 
             <!-- ══ El decodificador a lo grande ══ -->

@@ -39,6 +39,21 @@ public sealed partial class MacroCw : ObservableObject
     private bool _esLaQueToca;
 }
 
+/// <summary>
+/// El juego de macros con el que se transmite: cuanto se habla, no solo cuanto se tarda.
+/// </summary>
+public enum PerfilDeMacrosCw
+{
+    /// <summary>QSO con charla: nombre, QTH y confirmacion con repeticiones para senal debil.</summary>
+    Conversacion,
+
+    /// <summary>Contacto normal sin concurso: ocupar la banda lo menos posible, sin charla.</summary>
+    Contactos,
+
+    /// <summary>Concurso: llamada, intercambio con numero y cierre, sin nada de mas.</summary>
+    Concurso,
+}
+
 /// <summary>El paso de un contacto en el que se esta.</summary>
 public enum PasoCw
 {
@@ -136,11 +151,14 @@ public sealed class AjustesDeTransmisionCw
     /// <summary>Velocidad de partida (WPM).</summary>
     public int Wpm { get; set; } = 22;
 
-    /// <summary>Juego en uso: falso el de QSO normal, verdadero el de concurso.</summary>
-    public bool UsarConcurso { get; set; }
+    /// <summary>Juego en uso: conversacion, contactos o concurso.</summary>
+    public PerfilDeMacrosCw Perfil { get; set; } = PerfilDeMacrosCw.Contactos;
 
-    /// <summary>El juego de QSO normal.</summary>
-    public JuegoDeMacrosGuardado Normal { get; set; } = JuegosDeFabrica.Normal();
+    /// <summary>El juego de QSO con charla (nombre, QTH).</summary>
+    public JuegoDeMacrosGuardado Conversacion { get; set; } = JuegosDeFabrica.Conversacion();
+
+    /// <summary>El juego de contacto normal, sin charla.</summary>
+    public JuegoDeMacrosGuardado Contactos { get; set; } = JuegosDeFabrica.Contactos();
 
     /// <summary>El juego de concurso.</summary>
     public JuegoDeMacrosGuardado Concurso { get; set; } = JuegosDeFabrica.Concurso();
@@ -175,7 +193,8 @@ public sealed class AjustesDeTransmisionCw
         TiempoMaximoSegundos = Math.Clamp(TiempoMaximoSegundos, 10, 180);
         SegundosSinRespuesta = Math.Clamp(SegundosSinRespuesta, 4, 60);
         RepeticionesMaximas = Math.Clamp(RepeticionesMaximas, 1, 10);
-        Normal = Completar(Normal, JuegosDeFabrica.Normal());
+        Conversacion = Completar(Conversacion, JuegosDeFabrica.Conversacion());
+        Contactos = Completar(Contactos, JuegosDeFabrica.Contactos());
         Concurso = Completar(Concurso, JuegosDeFabrica.Concurso());
         MiNombre ??= string.Empty;
         MiQth ??= string.Empty;
@@ -226,7 +245,9 @@ public sealed class AjustesDeTransmisionCw
     {
         if (juego is null) return fabrica;
         juego.Macros ??= [];
-        for (var i = juego.Macros.Count; i < 12; i++) juego.Macros.Add(fabrica.Macros[i]);
+        // Un juego de fabrica puede tener menos de doce a proposito (el de Concurso, reducido a
+        // cinco): no hay con que rellenar mas alla de lo que la fabrica trae.
+        for (var i = juego.Macros.Count; i < 12 && i < fabrica.Macros.Count; i++) juego.Macros.Add(fabrica.Macros[i]);
         if (juego.Macros.Count > 12) juego.Macros = juego.Macros.Take(12).ToList();
         juego.Macros = juego.Macros.Select(m => new MacroGuardada(m?.Rotulo ?? string.Empty, m?.Texto ?? string.Empty)).ToList();
         juego.Pasos ??= fabrica.Pasos.Copiar();
@@ -241,16 +262,16 @@ public sealed class AjustesDeTransmisionCw
     }
 }
 
-/// <summary>Los dos juegos de macros de fabrica.</summary>
+/// <summary>Los tres juegos de macros de fabrica.</summary>
 /// <remarks>
 /// Los rotulos de fabrica son los de la telegrafia, que no se traducen: CQ, TU, 73, AGN… Los
 /// textos siguen la costumbre de la banda; se pueden cambiar todos.
 /// </remarks>
 public static class JuegosDeFabrica
 {
-    /// <summary>QSO normal, el de siempre: CQ, respuesta, informe con nombre y QTH, confirmacion y 73.</summary>
+    /// <summary>Con charla: CQ, respuesta, informe con nombre y QTH, confirmacion y 73.</summary>
     /// <returns>El juego.</returns>
-    public static JuegoDeMacrosGuardado Normal() => new()
+    public static JuegoDeMacrosGuardado Conversacion() => new()
     {
         Concurso = false,
         Macros =
@@ -279,31 +300,58 @@ public static class JuegosDeFabrica
         },
     };
 
-    /// <summary>Concurso, al estilo de N1MM: CQ TEST, intercambio con 5NN y numero, TU.</summary>
+    /// <summary>
+    /// Contacto normal sin concurso: ocupar la banda lo menos posible. Llamada, informe con RST
+    /// y nombre (sin QTH ni repeticiones), confirmacion y 73, mas lo imprescindible para
+    /// defenderse de un pileup (AGN, QRL?).
+    /// </summary>
+    /// <returns>El juego.</returns>
+    public static JuegoDeMacrosGuardado Contactos() => new()
+    {
+        Concurso = false,
+        Macros =
+        [
+            new("CQ", "CQ DE {MICALL} {MICALL} K"),
+            new("DE", "{CALL} DE {MICALL} K"),
+            new("RST", "{CALL} DE {MICALL} UR RST {RST} NAME {MINOMBRE} {CALL} DE {MICALL} K"),
+            new("TU", "R TNX 73 {CALL} DE {MICALL} <SK>"),
+            new("MI", "{MICALL}"),
+            new("QRZ?", "QRZ? DE {MICALL} K"),
+            new("AGN", "{AGN}"),
+            new("QRL?", "QRL?"),
+        ],
+        Pasos = new PasosDeMacros
+        {
+            Cq = [1],
+            Respuesta = [2],
+            InformeLlamando = [3],
+            InformeBuscando = [3],
+            Confirmacion = [4],
+            SetentaYTres = [],
+        },
+    };
+
+    /// <summary>
+    /// Concurso, reducido a las cinco teclas de toda la vida: llamada, intercambio, cierre,
+    /// indicativo propio y preguntar por el indicativo. Rapido de teclear y sin nada de mas.
+    /// </summary>
     /// <returns>El juego.</returns>
     public static JuegoDeMacrosGuardado Concurso() => new()
     {
         Concurso = true,
         Macros =
         [
-            new("CQ", "{CQ} {MICALL} {MICALL} TEST"),
+            new("CQ", "CQ DE {MICALL} {MICALL} K"),
             new("EXCH", "{RST} {NR}"),
-            new("TU", "{TU} {MICALL}"),
+            new("TU", "TU 73"),
             new("MI", "{MICALL}"),
-            new("CALL", "{CALL}"),
-            new("RPT", "{RST} {NR} {NR}"),
-            new("?", "{?}"),
-            new("AGN", "{AGN}"),
-            new("NR?", "NR?"),
-            new("CL?", "CL?"),
-            new("QRL?", "QRL?"),
-            new("QRS", "<WPM 18>{MICALL} {MICALL}"),
+            new("QRZ?", "QRZ?"),
         ],
         Pasos = new PasosDeMacros
         {
             Cq = [1],
             Respuesta = [4],
-            InformeLlamando = [5, 2],
+            InformeLlamando = [2],
             InformeBuscando = [2],
             Confirmacion = [3],
             SetentaYTres = [],
