@@ -59,10 +59,29 @@ public class PistaApPruebas
         const double Decibelios = -19.5;
         const int Ventanas = 60;
 
-        var (sinPista, conPista) = Comparar("EA1ABC EA8DLF -09", "EA8DLF", "EA1ABC", Decibelios, Ventanas);
+        var (sinPista, conPista) = Comparar(ModoDelModem.Ft8, "EA1ABC EA8DLF -09", "EA8DLF", "EA1ABC", Decibelios, Ventanas);
 
         conPista.Should().BeGreaterThan(sinPista,
             $"con la pista del QSO en curso tiene que recuperar más que a ciegas a {Decibelios} dB " +
+            $"(a ciegas: {sinPista}/{Ventanas}, con pista: {conPista}/{Ventanas})");
+    }
+
+    [Fact]
+    public void LaPistaRecuperaSenalesQueSinEllaSePierden_Ft4()
+    {
+        // FT4 revuelve los 77 bits del mensaje (Codificador.AplicarMezclaDeFt4) antes de entrar
+        // al LDPC; la pista tiene que revolverse igual o fija los bits que no son. Comprobado en
+        // auditoria el 05-10-2026: sin este cuidado, con pista y sin ella salia exactamente el
+        // mismo numero de ventanas en FT4 (la pista no ayudaba nada). FT4 es menos sensible que
+        // FT8 (ventanas mas cortas): el banco de medida (resultados-banco.md) da 100 % a -12 dB,
+        // 50 % a -15 dB y 0 % a -18 dB, asi que el filo esta ahi, no donde esta el de FT8.
+        const double Decibelios = -15.5;
+        const int Ventanas = 60;
+
+        var (sinPista, conPista) = Comparar(ModoDelModem.Ft4, "EA1ABC EA8DLF -09", "EA8DLF", "EA1ABC", Decibelios, Ventanas);
+
+        conPista.Should().BeGreaterThan(sinPista,
+            $"con la pista del QSO en curso tiene que recuperar más que a ciegas en FT4 a {Decibelios} dB " +
             $"(a ciegas: {sinPista}/{Ventanas}, con pista: {conPista}/{Ventanas})");
     }
 
@@ -71,13 +90,23 @@ public class PistaApPruebas
     {
         // El caso que de verdad importa: si una pista (de un QSO con quien no esta transmitiendo)
         // pudiera colar algo con solo ruido, el programa mentiria sobre con quien se ha hablado.
+        //
+        // La via de la pista, a diferencia de la recuperacion profunda, no tiene ninguna puerta
+        // de sincronismo (candidata.Puntuacion): se intenta en las ~200 candidatas de cada
+        // ventana sin filtrar. La recuperacion profunda sin esa puerta daba 12 falsos por cada
+        // 1000 ventanas (ver Decodificador.SincronismoMinimoParaLaProfunda); con solo 40 ventanas
+        // no se puede descartar una tasa parecida con seriedad -40 tiradas pueden salir limpias
+        // por puro azar aunque la tasa real no sea cero-. 500 ventanas (100.000 candidatas con
+        // pista) siguen sin ser una cota dura, pero es mas de diez veces la muestra anterior, y
+        // una auditoria independiente corrio 300 ventanas aparte sin ver ninguna tampoco.
         var p = ParametrosDelModo.Ft8;
         const int Frecuencia = 48000;
+        const int Ventanas = 500;
         PistaAp.TryDesde("EA8DLF", "EA1ABC", out var pista).Should().BeTrue();
         var decodificador = new Decodificador(Tablas);
         var inventadas = 0;
 
-        for (var v = 0; v < 40; v++)
+        for (var v = 0; v < Ventanas; v++)
         {
             var azar = new Random(2000 + v);
             var ventana = new float[(int)(p.PeriodoSegundos * Frecuencia)];
@@ -87,7 +116,7 @@ public class PistaApPruebas
                 .Decodificaciones.Count;
         }
 
-        inventadas.Should().Be(0, "cuarenta ventanas de ruido puro no pueden producir ni un solo mensaje, con pista o sin ella");
+        inventadas.Should().Be(0, $"{Ventanas} ventanas de ruido puro no pueden producir ni un solo mensaje, con pista o sin ella");
     }
 
     [Fact]
@@ -115,13 +144,13 @@ public class PistaApPruebas
 
     /// <summary>Decodifica la misma señal sintética con y sin la pista, para comparar.</summary>
     private static (int SinPista, int ConPista) Comparar(
-        string texto, string miIndicativo, string dxCall, double decibelios, int ventanas)
+        ModoDelModem modo, string texto, string miIndicativo, string dxCall, double decibelios, int ventanas)
     {
         PistaAp.TryDesde(miIndicativo, dxCall, out var pista).Should().BeTrue();
 
-        var p = ParametrosDelModo.Ft8;
+        var p = ParametrosDelModo.De(modo);
         var codificador = new Codificador(Tablas);
-        codificador.TryCodificar(texto, ModoDelModem.Ft8, out var tonos, out var motivo).Should().BeTrue(motivo);
+        codificador.TryCodificar(texto, modo, out var tonos, out var motivo).Should().BeTrue(motivo);
         const int Frecuencia = 48000;
 
         int sinPista = 0, conPista = 0;
@@ -133,11 +162,11 @@ public class PistaApPruebas
             var desfase = (azar.NextDouble() - 0.5) * 0.6;
             var ventana = GeneradorDeSenal.Ventana(p, tonos, tono, desfase, decibelios, Frecuencia, azar);
 
-            if (decodificador.Decodificar(ventana, Frecuencia, ModoDelModem.Ft8, DateTimeOffset.UnixEpoch, new CatalogoDeIndicativos())
+            if (decodificador.Decodificar(ventana, Frecuencia, modo, DateTimeOffset.UnixEpoch, new CatalogoDeIndicativos())
                 .Decodificaciones.Any(d => d.Texto == texto)) sinPista++;
 
             if (decodificador.Decodificar(
-                ventana, Frecuencia, ModoDelModem.Ft8, DateTimeOffset.UnixEpoch, new CatalogoDeIndicativos(), pista: pista)
+                ventana, Frecuencia, modo, DateTimeOffset.UnixEpoch, new CatalogoDeIndicativos(), pista: pista)
                 .Decodificaciones.Any(d => d.Texto == texto)) conPista++;
         }
 

@@ -1822,10 +1822,10 @@
     <value>Stoppen fehlgeschlagen: {0}. Wenn das Gerät noch sendet, von Hand ausschalten.</value>
   </data>
   <data name="Cabina.TxCw.FaltaIndicativo" xml:space="preserve">
-    <value>Das Makro verwendet {{CALL}} und die neue Verbindung hat kein Rufzeichen.</value>
+    <value>Das Makro verwendet {CALL} und die neue Verbindung hat kein Rufzeichen.</value>
   </data>
   <data name="Cabina.TxCw.FaltaMiIndicativo" xml:space="preserve">
-    <value>Das Makro verwendet {{MICALL}} und das aktive Stationsprofil hat kein Rufzeichen.</value>
+    <value>Das Makro verwendet {MICALL} und das aktive Stationsprofil hat kein Rufzeichen.</value>
   </data>
   <data name="Cabina.TxCw.Fichero.Filtro" xml:space="preserve">
     <value>CW-Makros (*.json)|*.json|Alle Dateien (*.*)|*.*</value>
@@ -1948,7 +1948,7 @@
     <value>Freier CW-Text</value>
   </data>
   <data name="Cabina.TxCw.TextoLibre.Ayuda" xml:space="preserve">
-    <value>Eingabe mit Text sendet ihn; leere Eingabe sendet den nächsten Schritt. Variablen wie {{CALL}} gehen.</value>
+    <value>Eingabe mit Text sendet ihn; leere Eingabe sendet den nächsten Schritt. Variablen wie {CALL} gehen.</value>
   </data>
   <data name="Cabina.TxCw.TiempoAgotado" xml:space="preserve">
     <value>Abgebrochen: maximale Sendezeit erreicht ({0} s).</value>

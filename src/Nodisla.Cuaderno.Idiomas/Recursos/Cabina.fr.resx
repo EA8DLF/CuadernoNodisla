@@ -1822,10 +1822,10 @@
     <value>Échec de l'arrêt : {0}. Si la radio émet encore, éteignez-la à la main.</value>
   </data>
   <data name="Cabina.TxCw.FaltaIndicativo" xml:space="preserve">
-    <value>La macro utilise {{CALL}} et le nouveau contact n'a pas d'indicatif.</value>
+    <value>La macro utilise {CALL} et le nouveau contact n'a pas d'indicatif.</value>
   </data>
   <data name="Cabina.TxCw.FaltaMiIndicativo" xml:space="preserve">
-    <value>La macro utilise {{MICALL}} et le profil de station actif n'a pas d'indicatif.</value>
+    <value>La macro utilise {MICALL} et le profil de station actif n'a pas d'indicatif.</value>
   </data>
   <data name="Cabina.TxCw.Fichero.Filtro" xml:space="preserve">
     <value>Macros CW (*.json)|*.json|Tous les fichiers (*.*)|*.*</value>
@@ -1948,7 +1948,7 @@
     <value>Texte CW libre</value>
   </data>
   <data name="Cabina.TxCw.TextoLibre.Ayuda" xml:space="preserve">
-    <value>Entrée avec du texte l'envoie ; Entrée à vide envoie l'étape suivante. Les variables comme {{CALL}} marchent.</value>
+    <value>Entrée avec du texte l'envoie ; Entrée à vide envoie l'étape suivante. Les variables comme {CALL} marchent.</value>
   </data>
   <data name="Cabina.TxCw.TiempoAgotado" xml:space="preserve">
     <value>Coupé : durée maximale d'émission atteinte ({0} s).</value>

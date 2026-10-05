@@ -1822,10 +1822,10 @@
     <value>Falha ao parar: {0}. Se o equipamento continuar a transmitir, desligue-o à mão.</value>
   </data>
   <data name="Cabina.TxCw.FaltaIndicativo" xml:space="preserve">
-    <value>A macro usa {{CALL}} e o contacto novo não tem indicativo.</value>
+    <value>A macro usa {CALL} e o contacto novo não tem indicativo.</value>
   </data>
   <data name="Cabina.TxCw.FaltaMiIndicativo" xml:space="preserve">
-    <value>A macro usa {{MICALL}} e o perfil de estação ativo não tem indicativo.</value>
+    <value>A macro usa {MICALL} e o perfil de estação ativo não tem indicativo.</value>
   </data>
   <data name="Cabina.TxCw.Fichero.Filtro" xml:space="preserve">
     <value>Macros de CW (*.json)|*.json|Todos os ficheiros (*.*)|*.*</value>
@@ -1948,7 +1948,7 @@
     <value>Texto livre de CW</value>
   </data>
   <data name="Cabina.TxCw.TextoLibre.Ayuda" xml:space="preserve">
-    <value>Enter com texto envia-o; Enter vazio envia o passo seguinte da sequência. Admite variáveis como {{CALL}}.</value>
+    <value>Enter com texto envia-o; Enter vazio envia o passo seguinte da sequência. Admite variáveis como {CALL}.</value>
   </data>
   <data name="Cabina.TxCw.TiempoAgotado" xml:space="preserve">
     <value>Cortado: atingiu-se o tempo máximo de transmissão ({0} s).</value>

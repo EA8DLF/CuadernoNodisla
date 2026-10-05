@@ -190,6 +190,21 @@ public sealed class Decodificador
         var palabra = new byte[_tablas.Ldpc.Longitud];
         var bits77 = new byte[MensajeDe77Bits.Bits];
         var confianzasConPista = pista is null ? null : new float[_tablas.Ldpc.Longitud];
+
+        // En FT4 los 77 bits del mensaje se revuelven con una mezcla fija antes de entrar al
+        // LDPC (Codificador.AplicarMezclaDeFt4), así que lo que ocupa esas posiciones en la
+        // palabra de código no son los bits del texto, son los bits YA revueltos. La pista los
+        // calcula con MensajeDe77Bits.TryEmpaquetar, que no revuelve nada: sin este paso, en FT4
+        // se fijaban los bits que no eran, y la pista no rescataba ni una señal de más (medido
+        // en auditoría el 05-10-2026, comparando con y sin pista: cero diferencia).
+        var pistaEfectiva = pista;
+        if (pista is { } pistaSinRevolver && modo == ModoDelModem.Ft4)
+        {
+            var bits77Revueltos = (byte[])pistaSinRevolver.Bits77.Clone();
+            _codificador.AplicarMezclaDeFt4(bits77Revueltos);
+            pistaEfectiva = pistaSinRevolver with { Bits77 = bits77Revueltos };
+        }
+
         var palabrasValidas = 0;
         var rechazadasPorElCrc = 0;
 
@@ -214,7 +229,7 @@ public sealed class Decodificador
 
             if (!_corrector.TryDecodificar(demodulador.Confianzas, palabra, VueltasDelCorrector))
             {
-                if (pista is { } pistaDelQso && confianzasConPista is not null)
+                if (pistaEfectiva is { } pistaDelQso && confianzasConPista is not null)
                 {
                     AplicarPista(demodulador.Confianzas, pistaDelQso, _corrector.TopeDeConfianza, confianzasConPista);
                     porEstaPista = _corrector.TryDecodificar(confianzasConPista, palabra, VueltasDelCorrector);

@@ -1822,10 +1822,10 @@
     <value>Failed to stop: {0}. If the radio is still transmitting, switch it off by hand.</value>
   </data>
   <data name="Cabina.TxCw.FaltaIndicativo" xml:space="preserve">
-    <value>The macro uses {{CALL}} and the new contact has no callsign.</value>
+    <value>The macro uses {CALL} and the new contact has no callsign.</value>
   </data>
   <data name="Cabina.TxCw.FaltaMiIndicativo" xml:space="preserve">
-    <value>The macro uses {{MICALL}} and the active station profile has no callsign.</value>
+    <value>The macro uses {MICALL} and the active station profile has no callsign.</value>
   </data>
   <data name="Cabina.TxCw.Fichero.Filtro" xml:space="preserve">
     <value>CW macros (*.json)|*.json|All files (*.*)|*.*</value>
@@ -1948,7 +1948,7 @@
     <value>Free CW text</value>
   </data>
   <data name="Cabina.TxCw.TextoLibre.Ayuda" xml:space="preserve">
-    <value>Enter with text sends it; Enter when empty sends the next step of the sequence. Variables like {{CALL}} work.</value>
+    <value>Enter with text sends it; Enter when empty sends the next step of the sequence. Variables like {CALL} work.</value>
   </data>
   <data name="Cabina.TxCw.TiempoAgotado" xml:space="preserve">
     <value>Cut: the maximum transmit time ({0} s) was reached.</value>

@@ -2,7 +2,7 @@
 
 Clon en español de Log4OM NextGen 2.40.0.0, para uso particular de EA8DLF.
 
-## Estado — 25-09-2026
+## Estado — 05-10-2026
 
 **Fases 1 a 4 hechas.** La aplicación guarda el cuaderno de verdad: **1.795 contactos de EA8DLF**
 importados de Log4OM y viviendo en `%AppData%\CuadernoNodisla\cuaderno.sqlite`.
@@ -10,17 +10,22 @@ importados de Log4OM y viviendo en `%AppData%\CuadernoNodisla\cuaderno.sqlite`.
 | Capa | Pruebas |
 |---|---:|
 | Dominio y DXCC | 567 |
-| Aplicación | 177 |
+| Aplicación | 253 |
 | Integraciones (cluster, bandplan, FLDigi, WSJT-X/JTDX, N1MM) | 169 |
 | Servicios de QSL | 98 |
 | Propagación | 95 |
-| Módem propio de FT8 y FT4 | 94 |
+| Módem propio de FT8 y FT4 | 94+ |
 | ADIF | 91 |
-| Radio (FT-710 y vigilante de PTT) | 90 |
+| Radio (FT-710 y vigilante de PTT) | 376 |
 | Diplomas | 80 |
 | Audio | 60 |
 | Datos | 59 |
-| **Total** | **1.680** |
+| Ui (vistas y modelos de vista) | 629 |
+
+Las filas de Aplicación y Radio son del 05-10-2026 (confirmadas con `dotnet test`); el resto de la
+tabla no se ha vuelto a contar desde el 25-09-2026 y puede estar bajo de cifra (hallazgo de la
+auditoría del 05-10-2026: no se mantuvo al día pese a tocarse varias veces). No se suma un total
+mientras la tabla no esté recontada entera.
 
 Compilación de la solución: **0 avisos, 0 errores**.
 

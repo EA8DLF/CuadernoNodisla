@@ -67,6 +67,26 @@ public sealed partial class TextosEnSeisIdiomasPruebas
             .Should().BeEmpty("la clave dice en qué fichero está");
     }
 
+    /// <summary>
+    /// Claves que se leen siempre con <see cref="Textos.T"/> (nunca con <see cref="Textos.F"/>) y
+    /// cuyo texto nombra a propósito una variable de macro entre llaves —«{CALL}», «{MICALL}»—
+    /// como lo escribiría el operador, no como un hueco de formato de verdad.
+    /// </summary>
+    /// <remarks>
+    /// <c>Textos.T</c> no pasa el texto por <c>string.Format</c>, así que esas llaves se ven tal
+    /// cual en pantalla. El 05-10-2026 se «arregló» esto escapándolas a <c>{{CALL}}</c> para que
+    /// pasara la comprobación de más abajo, y lo que hizo fue poner llaves dobles literales en la
+    /// pantalla del operador en los seis idiomas: la comprobación no distingue una clave que de
+    /// verdad se formatea de una que solo se lee tal cual, así que aquí se dice a mano cuáles son
+    /// estas últimas en vez de deformar el texto para complacer una prueba que no les toca.
+    /// </remarks>
+    private static readonly HashSet<string> ClavesConLlavesLiterales = new(StringComparer.Ordinal)
+    {
+        "Cabina.TxCw.FaltaIndicativo",
+        "Cabina.TxCw.FaltaMiIndicativo",
+        "Cabina.TxCw.TextoLibre.Ayuda",
+    };
+
     [Theory]
     [MemberData(nameof(Apartados))]
     public void Los_huecos_son_los_mismos_en_todos_los_idiomas_y_el_formato_es_valido(string apartado)
@@ -79,6 +99,7 @@ public sealed partial class TextosEnSeisIdiomasPruebas
             foreach (var (clave, texto) in Textos.TextosDe(apartado, codigo))
             {
                 if (!referencia.TryGetValue(clave, out var espanol)) continue;
+                if (ClavesConLlavesLiterales.Contains(clave)) continue;
                 if (Huecos(texto) != Huecos(espanol)) mal.Add($"{codigo}: {clave} «{texto}»");
 
                 try

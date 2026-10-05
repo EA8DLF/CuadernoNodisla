@@ -1822,10 +1822,10 @@
     <value>Errore nel fermare: {0}. Se la radio trasmette ancora, spegnerla a mano.</value>
   </data>
   <data name="Cabina.TxCw.FaltaIndicativo" xml:space="preserve">
-    <value>La macro usa {{CALL}} e il nuovo contatto non ha nominativo.</value>
+    <value>La macro usa {CALL} e il nuovo contatto non ha nominativo.</value>
   </data>
   <data name="Cabina.TxCw.FaltaMiIndicativo" xml:space="preserve">
-    <value>La macro usa {{MICALL}} e il profilo di stazione attivo non ha nominativo.</value>
+    <value>La macro usa {MICALL} e il profilo di stazione attivo non ha nominativo.</value>
   </data>
   <data name="Cabina.TxCw.Fichero.Filtro" xml:space="preserve">
     <value>Macro CW (*.json)|*.json|Tutti i file (*.*)|*.*</value>
@@ -1948,7 +1948,7 @@
     <value>Testo CW libero</value>
   </data>
   <data name="Cabina.TxCw.TextoLibre.Ayuda" xml:space="preserve">
-    <value>Invio con testo lo invia; Invio a vuoto invia il passo successivo. Accetta variabili come {{CALL}}.</value>
+    <value>Invio con testo lo invia; Invio a vuoto invia il passo successivo. Accetta variabili come {CALL}.</value>
   </data>
   <data name="Cabina.TxCw.TiempoAgotado" xml:space="preserve">
     <value>Interrotto: raggiunto il tempo massimo di trasmissione ({0} s).</value>
