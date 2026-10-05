@@ -53,8 +53,18 @@ El audio y el módem se registran sin abrir ningún dispositivo.
    que está honestamente etiquetada como tal.
 2. **Dos escrituras en el FT-710** para resolver las tablas de ancho de filtro y retardo de VOX.
    Hoy se muestran como índice en vez de en hercios y milisegundos.
+3. **Calibrar la ROE del FT-710 con una carga artificial y Jose delante.** Hoy `RM6;` se lee y se
+   deja en el registro, pero no se traduce a un número: la escala que había (`ControlFt710.EscalaRoe`)
+   era la de otro equipo (FTDX10/FTDX101 por Hamlib) y el 05-10-2026 dio ROE 10 con la antena
+   buena, cortando la transmisión sin motivo. El corte de antena real sigue en pie por la alarma
+   «Hi-SWR» del propio equipo (`RI0;`), calibrada por Yaesu.
 
 **Resuelto:**
+- El vigilante de PTT ya no corta por «antena abierta o en corto» a partir de la ROE numérica de
+  `RM6;`: esa escala nunca se calibró en el FT-710 (venía prestada de otro equipo) y el 05-10-2026
+  cortó una transmisión real de Jose sin que hubiera ningún fallo de antena. Ahora solo corta la
+  alarma «Hi-SWR» del propio equipo (`RI0;`), que sí está calibrada de fábrica. Ver
+  `src/Nodisla.Cuaderno.Radio/Control/Ft710/ControlFt710.cs`, `LeerRoeAsync`.
 - La tabla del LDPC(174,91) real de FT8/FT4 (`ft8_lib`, licencia MIT) ya está en producción desde
   `tablas-ft8.txt`, con `TablasDelProtocolo.EsElCodigoReal=true`. Ver `TERCEROS.md` y
   `src/Nodisla.Cuaderno.Modos/Tablas/LEEME.md`.

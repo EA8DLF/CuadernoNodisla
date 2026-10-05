@@ -94,6 +94,45 @@ public class ControlFt710Pruebas
     }
 
     [Fact]
+    public async Task La_roe_cruda_sin_calibrar_no_se_entrega_como_numero()
+    {
+        var (equipo, control) = await MontarAsync();
+        await using var _ = equipo;
+        await using var __ = control;
+
+        // RM6 a tope (255): con la escala tomada prestada de otro equipo esto salia como ROE 10,
+        // y es justo la lectura que le hizo creer al vigilante que la antena de Jose estaba en
+        // corto estando buena (comprobado el 05-10-2026). Sin alarma del propio equipo (RI0 en
+        // cero), no hay antena mala que avisar.
+        equipo.Responder("RM6;", "RM6255000;");
+        equipo.Responder("RI0;", "RI00000000;");
+
+        var lectura = await control.LeerRoeAsync();
+
+        lectura.Should().NotBeNull();
+        lectura!.Roe.Should().BeNull("la escala de RM6 no esta calibrada en el FT-710 y no se le puede pedir que decida si hay una antena mala");
+        lectura.AlarmaDelEquipo.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task La_alarma_de_roe_del_propio_equipo_si_se_entrega()
+    {
+        var (equipo, control) = await MontarAsync();
+        await using var _ = equipo;
+        await using var __ = control;
+
+        // RI0, P2 (cuarta cifra) a 1: Hi-SWR de verdad, calibrada por Yaesu en su firmware. Esta
+        // es la unica que tiene que poder cortar la antena.
+        equipo.Responder("RI0;", "RI01000000;");
+
+        var lectura = await control.LeerRoeAsync();
+
+        lectura.Should().NotBeNull();
+        lectura!.AlarmaDelEquipo.Should().BeTrue();
+        lectura.Roe.Should().BeNull();
+    }
+
+    [Fact]
     public async Task Hay_mandos_que_solo_existen_en_el_vfo_principal()
     {
         var (equipo, control) = await MontarAsync();

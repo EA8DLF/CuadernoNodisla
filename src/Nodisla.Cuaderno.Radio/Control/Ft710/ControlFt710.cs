@@ -2243,9 +2243,17 @@ public sealed class ControlFt710
 
     /// <summary>
     /// RM6 (0-255) a ROE. El manual CAT (pag. 19) da la escala cruda sin curva; esta es la de
-    /// Hamlib para FTDX10/FTDX101, de la misma familia. <b>Sin calibrar en el FT-710</b>: hay que
-    /// comprobarla con una carga artificial y Jose delante.
+    /// Hamlib para FTDX10/FTDX101, de la misma familia, <b>no la del FT-710</b>.
     /// </summary>
+    /// <remarks>
+    /// <b>No se usa todavia.</b> Comprobado el 05-10-2026 con la estacion de Jose, sin ninguna
+    /// protección de antena real puesta por medio: esta escala tomada prestada hizo que
+    /// <see cref="LeerRoeAsync"/> devolviera ROE 10 (su ultimo escalon, de un RM6 crudo a tope)
+    /// con la antena en buen estado, y el vigilante cortó la transmisión por «antena abierta o
+    /// en corto» sin que lo hubiera. Se deja la tabla escrita para el dia que se calibre de
+    /// verdad con una carga artificial, pero hasta entonces no se le puede pedir a un numero sin
+    /// medir que decida si se corta la antena.
+    /// </remarks>
     public static IReadOnlyList<(int Crudo, double Valor)> EscalaRoe { get; } =
         [(0, 1.0), (26, 1.2), (52, 1.5), (89, 2.0), (126, 3.0), (173, 4.0), (236, 5.0), (255, 10.0)];
 
@@ -2254,9 +2262,12 @@ public sealed class ControlFt710
 
     /// <inheritdoc />
     /// <remarks>
-    /// <c>RM5;</c> (potencia) y <c>RM6;</c> (ROE), las dos «RM P1 P2P2P2 P3P3P3», y
-    /// <c>RI0;</c>, cuyo P2 (cuarto caracter) es 1 con «Hi-SWR»: la alarma de ROE del propio
-    /// equipo (manual CAT, pag. 19). La alarma corta aunque la escala de RM6 no este calibrada.
+    /// <c>RM5;</c> (potencia) y <c>RI0;</c>, cuyo P2 (cuarto caracter) es 1 con «Hi-SWR»: la
+    /// alarma de ROE del propio equipo (manual CAT, pag. 19), calibrada por Yaesu en su propio
+    /// firmware. Es la unica que corta la antena. <c>RM6;</c> (ROE cruda) se sigue leyendo y se
+    /// deja en el registro para cuando se calibre <see cref="EscalaRoe"/>, pero no se traduce a
+    /// un numero de ROE: con la escala de otro equipo sin comprobar, ese numero mentiria con la
+    /// misma seguridad que uno medido de verdad, y el vigilante no distingue entre los dos.
     /// </remarks>
     public async Task<LecturaDeRoe?> LeerRoeAsync(CancellationToken ct = default)
     {
@@ -2265,9 +2276,10 @@ public sealed class ControlFt710
         var swr = Medidor(await PreguntarAsync("RM6;", ct).ConfigureAwait(false), "RM6");
         var ri = await PreguntarAsync("RI0;", ct).ConfigureAwait(false);
         var alarma = ri is { Length: > 3 } r && r.StartsWith("RI0", StringComparison.Ordinal) && r[3] == '1';
+        if (swr is { } crudo) _registro.LogDebug("CAT RM6; -> {Crudo} (ROE cruda, sin calibrar, no se usa para cortar)", crudo);
         if (po is null && swr is null && !alarma) return null;
         return new LecturaDeRoe(
-            swr is { } s ? Icom.ControlIcom.Interpolar(s, [.. EscalaRoe]) : null,
+            Roe: null,
             HayPotencia: po is >= PotenciaCrudaConPortadora || alarma,
             AlarmaDelEquipo: alarma);
 
