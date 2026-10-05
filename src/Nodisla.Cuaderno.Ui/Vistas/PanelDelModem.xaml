@@ -502,7 +502,27 @@
                         <TextBlock Text="{loc:Texto Digital.Modem.Intercambio}" Style="{StaticResource Etiqueta}" />
                         <TextBox Text="{Binding IntercambioDeConcurso, UpdateSourceTrigger=PropertyChanged}" Width="96" Style="{StaticResource CampoCorto}" CharacterCasing="Upper" ToolTip="{loc:Texto Digital.Modem.Intercambio.Ayuda}" AutomationProperties.Name="{loc:Texto Digital.Modem.Intercambio.Nombre}" />
                     </WrapPanel>
-                    <TextBlock Text="{Binding EstadoDeLaSecuencia}" Style="{StaticResource TextoTenueEstilo}" TextWrapping="Wrap" Margin="0,0,0,6" />
+                    <TextBlock Text="{Binding EstadoDeLaSecuencia}" TextWrapping="Wrap" Margin="0,0,0,6"
+                               ToolTip="{loc:Texto Digital.Modem.TxNoHabilitado.Ayuda}" ToolTipService.ShowOnDisabled="True">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource TextoTenueEstilo}">
+                                <Style.Triggers>
+                                    <!--
+                                        La secuencia en marcha sin Tx habilitado no se distingue de
+                                        cualquier otra frase del estado si no se destaca: tras un
+                                        reinicio los dos candados (el pestillo y este) empiezan
+                                        cerrados a proposito, y el pestillo ya tiene su propio aviso
+                                        vistoso; a este se le olvido (visto el 05-10-2026: mas de
+                                        cinco minutos sin salir nada solo, creyendo que no emitia).
+                                    -->
+                                    <DataTrigger Binding="{Binding AvisoDeSecuenciaSinTx}" Value="True">
+                                        <Setter Property="Foreground" Value="{DynamicResource AvisoTexto}" />
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
 
                     <!-- ── Frecuencias de trabajo ── -->
                     <Expander Header="{loc:Texto Digital.Modem.FrecuenciasDeTrabajo.Titulo}" IsExpanded="False" Margin="0,2,0,2">

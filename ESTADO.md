@@ -60,6 +60,28 @@ El audio y el módem se registran sin abrir ningún dispositivo.
    «Hi-SWR» del propio equipo (`RI0;`), calibrada por Yaesu.
 
 **Resuelto:**
+- El panel de Fonía «minúsculo»: los avisos de texto (p. ej. «el equipo está en RTTY: el PTT de
+  fonía solo va en SSB, AM y FM») se envolvían en varias líneas en la columna estrecha junto al
+  frontal, y eso subía el alto natural del panel por encima del que le da el frontal: el Viewbox
+  exterior encogía TODO el panel —letra, PTT, medidores— para que cupiera. Confirmado el
+  05-10-2026 con capturas reales al tamaño exacto de la ventana de Jose. En columna los avisos
+  van ahora en una sola línea con puntos suspensivos (el texto completo sigue en el `ToolTip`).
+  Ver `src/Nodisla.Cuaderno.Ui/Vistas/PanelDeFonia.xaml(.cs)`.
+- «No emite en FT8 ni en digitales» (05-10-2026): no era un fallo nuevo. Los dos candados de
+  transmisión (`PermitirTransmitir` y `TxHabilitado`) se cierran siempre al arrancar, a
+  propósito; tras el reinicio por la actualización a 0.2.5, Jose volvió a abrir el pestillo pero
+  no volvió a marcar «Tx habilitado», y la secuencia no salió sola durante varios minutos.
+  Confirmado con PTT reales de FT8 antes y después de ese hueco, en el mismo registro. Como el
+  pestillo ya tiene su propio aviso destacado y «Tx habilitado» no tenía ninguno, se añadió uno
+  igual de vistoso (`VistaModeloModemPropio.AvisoDeSecuenciaSinTx`, con su texto en
+  `PanelDelModem.xaml`) para que no se repita la confusión.
+- Dos sitios donde un fallo real podía desaparecer sin dejar ni una línea en el registro (hallazgo
+  de la misma auditoría, no la causa de lo de arriba, pero el mismo síntoma que preocupaba):
+  una tarea que se dispara y se olvida (`_ = EmitirSiEsSuVentanaAsync()`) sin que nadie observara
+  sus fallos, y un `catch` que registraba a `Debug` con el nivel mínimo en `Information` (o sea,
+  nunca llegaba al fichero). Arreglado con un `ContinueWith` que registra el fallo a `Error`, el
+  propio `catch` subido a `Error`, y un `TaskScheduler.UnobservedTaskException` global en
+  `App.xaml.cs` como red de seguridad para cualquier otro caso parecido.
 - El vigilante de PTT ya no corta por «antena abierta o en corto» a partir de la ROE numérica de
   `RM6;`: esa escala nunca se calibró en el FT-710 (venía prestada de otro equipo) y el 05-10-2026
   cortó una transmisión real de Jose sin que hubiera ningún fallo de antena. Ahora solo corta la

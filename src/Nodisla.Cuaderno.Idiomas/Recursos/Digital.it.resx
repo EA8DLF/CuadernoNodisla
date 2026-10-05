@@ -801,6 +801,9 @@
   <data name="Digital.Modem.Secuencia.Parada" xml:space="preserve">
     <value>Sequenza ferma.</value>
   </data>
+  <data name="Digital.Modem.TxNoHabilitado.Ayuda" xml:space="preserve">
+    <value>La sequenza è in corso ma Tx non è abilitato: non uscirà nulla da solo. Spunti «Tx abilitato» perché la sequenza trasmetta da sé.</value>
+  </data>
   <data name="Digital.Modem.Secuencia.TxSinSecuencia" xml:space="preserve">
     <value>Tx abilitato, nessuna sequenza in corso.</value>
   </data>

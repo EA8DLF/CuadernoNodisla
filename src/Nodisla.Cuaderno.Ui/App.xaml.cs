@@ -116,6 +116,18 @@ public partial class App : Application
             args.Handled = false;
         };
 
+        // Red de seguridad para las tareas que se disparan y se olvidan (_ = AlgoAsync()): si
+        // nadie las espera y fallan, por omision la excepcion desaparece sin dejar ni una linea
+        // en el registro hasta que el recolector de basura las recoge. Confirmado en auditoria
+        // el 05-10-2026 con un «no emite y no se explica por que» que podria haber sido esto.
+        // No arregla el sitio concreto -eso se hace con su propio try/catch, como ya tiene
+        // VistaModeloModemPropio- pero deja constancia de cualquier otro que se escape.
+        TaskScheduler.UnobservedTaskException += (_, args) =>
+        {
+            Log.Error(args.Exception, "Tarea sin observar fallida (disparada y olvidada).");
+            args.SetObserved();
+        };
+
         AjustarDibujado();
 
         Log.Information(

@@ -860,6 +860,26 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             (true, false) => Textos.F("Digital.Modem.Secuencia.EnMarchaConSinTx", _secuenciador.TxActual, _secuenciador.DxCall),
         };
 
+    /// <summary>
+    /// La secuencia esta en marcha pero Tx no esta habilitado: no va a salir nada solo.
+    /// </summary>
+    /// <remarks>
+    /// Pasa siempre tras un reinicio (los dos candados empiezan cerrados a proposito) y es facil
+    /// no darse cuenta: a diferencia del pestillo (<see cref="PermitirTransmitir"/>), que tiene
+    /// su propio aviso destacado, esto solo se veia como una frase mas en el texto tenue del
+    /// estado de la secuencia. Confirmado el 05-10-2026: tras actualizar de version, Jose volvio
+    /// a abrir el pestillo pero no volvio a marcar Tx habilitado, y estuvo mas de cinco minutos
+    /// sin que saliera nada solo, creyendo que el programa no emitia.
+    /// </remarks>
+    public bool AvisoDeSecuenciaSinTx => _secuenciador.Activo && !TxHabilitado;
+
+    /// <summary>Avisa de los dos a la vez: son el mismo cambio para quien mira la pantalla.</summary>
+    private void NotificarEstadoDeLaSecuencia()
+    {
+        OnPropertyChanged(nameof(EstadoDeLaSecuencia));
+        OnPropertyChanged(nameof(AvisoDeSecuenciaSinTx));
+    }
+
     /// <summary>La frecuencia de trabajo del modo para la banda del dial, en letras.</summary>
     public string FrecuenciaDelModoTexto
     {
@@ -1214,7 +1234,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         TxSiguiente = mensaje.Numero;
         _secuenciador.ElegirSiguiente(mensaje.Numero);
         MarcarElSiguiente(TxSiguiente);
-        OnPropertyChanged(nameof(EstadoDeLaSecuencia));
+        NotificarEstadoDeLaSecuencia();
     }
 
     /// <summary>
@@ -1229,7 +1249,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
         TxSiguiente = mensaje.Numero;
         _secuenciador.Enviar(mensaje.Numero, Reloj.Ahora);
-        OnPropertyChanged(nameof(EstadoDeLaSecuencia));
+        NotificarEstadoDeLaSecuencia();
 
         if (!TxHabilitado && !IntentarHabilitarTx()) return;
         await EmitirSiEsSuVentanaAsync().ConfigureAwait(true);
@@ -1248,7 +1268,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         OlvidarContacto();
         _secuenciador.LlamarCq(Reloj.Ahora);
         TxSiguiente = 6;
-        OnPropertyChanged(nameof(EstadoDeLaSecuencia));
+        NotificarEstadoDeLaSecuencia();
 
         if (!TxHabilitado && !IntentarHabilitarTx()) return;
         Informar(Textos.F("Digital.Modem.Aviso.LlamandoCq", ProximaVentanaTexto(_secuenciador.Paridad)));
@@ -1289,7 +1309,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         {
             // La casilla se vuelve a pintar con lo que de verdad hay, aunque se haya negado.
             OnPropertyChanged(nameof(TxHabilitado));
-            OnPropertyChanged(nameof(EstadoDeLaSecuencia));
+            NotificarEstadoDeLaSecuencia();
         }
     }
 
@@ -1326,7 +1346,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     {
         _secuenciador.Parar();
         TxHabilitado = false;
-        OnPropertyChanged(nameof(EstadoDeLaSecuencia));
+        NotificarEstadoDeLaSecuencia();
         MarcarElSiguiente(TxSiguiente);
     }
 
@@ -1389,7 +1409,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             MensajeAEmitir = Mensajes[TxSiguiente - 1].Texto;
         }
 
-        OnPropertyChanged(nameof(EstadoDeLaSecuencia));
+        NotificarEstadoDeLaSecuencia();
         Aviso = Textos.F("Digital.Modem.Aviso.ContactoPreparado", suyo, TxSiguiente);
 
         if (decision.ContactoCompleto)
@@ -1934,7 +1954,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             MensajeAEmitir = Mensajes[TxSiguiente - 1].Texto;
         }
 
-        OnPropertyChanged(nameof(EstadoDeLaSecuencia));
+        NotificarEstadoDeLaSecuencia();
     }
 
     private void MarcarElSiguiente(int tx)
@@ -1966,7 +1986,11 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         }
         catch (Exception ex)
         {
-            Log.Debug(ex, "No se ha podido procesar una ventana del módem propio.");
+            // A Information, no a Debug: una ventana que no se procesa puede ser una emision
+            // perdida, y eso tiene que quedar en el registro de verdad, no solo si alguien
+            // hubiera subido el nivel a mano. Confirmado el 05-10-2026 en auditoria: con el
+            // registro a Information (de serie), esto no dejaba ni una linea.
+            Log.Error(ex, "No se ha podido procesar una ventana del módem propio.");
         }
     }
 
@@ -2061,7 +2085,17 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
                 // Se emite solo si ahora empieza una ventana propia y se llega a tiempo. Si el
                 // decodificador tardo mas de la cuenta, se pierde este turno en vez de salir
                 // tarde encima de la ventana de otro.
-                _ = EmitirSiEsSuVentanaAsync();
+                //
+                // Esto se dispara y se olvida dentro de un delegado sincrono (Hilo.EnLaVentana):
+                // una excepcion que saltara dentro, pasado el primer await, no la coge ningun
+                // try/catch de los de alrededor ni el manejador de excepciones del Dispatcher, y
+                // se perdia sin dejar ni una linea en el registro (visto en auditoria el
+                // 05-10-2026). El ContinueWith es la red: si falla, al menos queda apuntado.
+                _ = EmitirSiEsSuVentanaAsync().ContinueWith(
+                    t => Log.Error(t.Exception, "No se ha podido emitir al terminar la ventana."),
+                    CancellationToken.None,
+                    TaskContinuationOptions.OnlyOnFaulted,
+                    TaskScheduler.Default);
             }
 
             if (alimentarLaSecuencia && _librePendiente is { } libre && EsMomentoDeEmitir(libre.Paridad))
@@ -2270,7 +2304,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     {
         _secuenciador.CambiarPeriodo(DescripcionDelModo.Periodo(value));
         TxHabilitado = false;
-        OnPropertyChanged(nameof(EstadoDeLaSecuencia));
+        NotificarEstadoDeLaSecuencia();
 
         var opcion = Modos.FirstOrDefault(o => o.Valor == value);
         if (opcion is not null && !ReferenceEquals(ModoElegido, opcion)) ModoElegido = opcion;
@@ -2314,7 +2348,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     partial void OnTxHabilitadoChanged(bool value)
     {
         if (value) Log.Warning("Tx habilitado en el módem propio: la secuencia emitirá sola.");
-        OnPropertyChanged(nameof(EstadoDeLaSecuencia));
+        NotificarEstadoDeLaSecuencia();
     }
 
     partial void OnTxSiguienteChanged(int value) => MarcarElSiguiente(value);

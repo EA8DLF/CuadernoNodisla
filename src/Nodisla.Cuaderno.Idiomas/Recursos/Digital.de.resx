@@ -801,6 +801,9 @@
   <data name="Digital.Modem.Secuencia.Parada" xml:space="preserve">
     <value>Ablauf gestoppt.</value>
   </data>
+  <data name="Digital.Modem.TxNoHabilitado.Ayuda" xml:space="preserve">
+    <value>Der Ablauf läuft, aber Tx ist nicht aktiviert: es geht nichts von selbst raus. „Tx aktiviert" ankreuzen, damit der Ablauf von sich aus sendet.</value>
+  </data>
   <data name="Digital.Modem.Secuencia.TxSinSecuencia" xml:space="preserve">
     <value>Tx aktiv, kein Ablauf in Gang.</value>
   </data>
