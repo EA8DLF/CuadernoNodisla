@@ -69,6 +69,9 @@ public sealed class ModoFt8 : IModoDigital
     public int FrecuenciaDeAnalisis => (int)Math.Round(_parametros.FrecuenciaDeAnalisis);
 
     /// <inheritdoc/>
+    public PistaDeQso PistaDeQso { get; set; }
+
+    /// <inheritdoc/>
     public void Reiniciar() => Catalogo.Olvidar();
 
     /// <inheritdoc/>
@@ -82,8 +85,11 @@ public sealed class ModoFt8 : IModoDigital
 
     /// <summary>Lo mismo que <see cref="DecodificarVentana"/>, con las cuentas del decodificador.</summary>
     public ResultadoDeVentana DecodificarConCuentas(
-        ReadOnlySpan<float> audio, int frecuenciaDeMuestreo, DateTimeOffset ventanaUtc, double segundosDelPrimerMuestreo) =>
-        _decodificador.Decodificar(audio, frecuenciaDeMuestreo, Modo, ventanaUtc, Catalogo, segundosDelPrimerMuestreo);
+        ReadOnlySpan<float> audio, int frecuenciaDeMuestreo, DateTimeOffset ventanaUtc, double segundosDelPrimerMuestreo)
+    {
+        var pista = PistaAp.TryDesde(PistaDeQso.MiIndicativo, PistaDeQso.DxCall, out var p) ? p : (PistaAp?)null;
+        return _decodificador.Decodificar(audio, frecuenciaDeMuestreo, Modo, ventanaUtc, Catalogo, segundosDelPrimerMuestreo, pista);
+    }
 
     /// <inheritdoc/>
     public float[] Generar(string mensaje, int tonoHz, int frecuenciaDeMuestreo)

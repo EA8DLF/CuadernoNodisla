@@ -396,6 +396,123 @@
   <data name="Cabina.Cw.WpmSinDato" xml:space="preserve">
     <value>— WPM</value>
   </data>
+  <data name="Cabina.Rtty.Borrar" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="Cabina.Rtty.BitsDeParada" xml:space="preserve">
+    <value>Stoppbits</value>
+  </data>
+  <data name="Cabina.Rtty.Confirmar.Detalle" xml:space="preserve">
+    <value>Das Gerät sendet jetzt RTTY: «{0}». «Stopp» bricht sofort ab.</value>
+  </data>
+  <data name="Cabina.Rtty.Confirmar.Titulo" xml:space="preserve">
+    <value>RTTY senden?</value>
+  </data>
+  <data name="Cabina.Rtty.Desplazamiento" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="Cabina.Rtty.Invertido" xml:space="preserve">
+    <value>Invertiert</value>
+  </data>
+  <data name="Cabina.Rtty.InvertidoAyuda" xml:space="preserve">
+    <value>Der Markierungston ist der tiefere der beiden («Reverse»). Gilt gleich für Empfang und Senden.</value>
+  </data>
+  <data name="Cabina.Rtty.Emitir" xml:space="preserve">
+    <value>Senden</value>
+  </data>
+  <data name="Cabina.Rtty.EmitirAyuda" xml:space="preserve">
+    <value>Sendet den eingegebenen Text. Läuft schon eine Sendung, wird er dahinter eingereiht.</value>
+  </data>
+  <data name="Cabina.Rtty.EnAntena" xml:space="preserve">
+    <value>AUF SENDUNG</value>
+  </data>
+  <data name="Cabina.Rtty.EnEscucha" xml:space="preserve">
+    <value>Im Empfang</value>
+  </data>
+  <data name="Cabina.Rtty.Enganchado" xml:space="preserve">
+    <value>Eingerastet</value>
+  </data>
+  <data name="Cabina.Rtty.Buscando" xml:space="preserve">
+    <value>Suche …</value>
+  </data>
+  <data name="Cabina.Rtty.Escuchar" xml:space="preserve">
+    <value>Empfangen</value>
+  </data>
+  <data name="Cabina.Rtty.EscucharAyuda" xml:space="preserve">
+    <value>Öffnet den in Einstellungen › Audio und Digitalmodi gewählten Audioeingang des Geräts. Sendet nichts.</value>
+  </data>
+  <data name="Cabina.Rtty.Esperando" xml:space="preserve">
+    <value>Warten auf ein RTTY-Signal … Der Text erscheint, wenn mehrere Zeichen hintereinander erkannt werden; Rauschen schreibt nichts.</value>
+  </data>
+  <data name="Cabina.Rtty.Fallo" xml:space="preserve">
+    <value>RTTY-Fehler: {0}</value>
+  </data>
+  <data name="Cabina.Rtty.Motivo" xml:space="preserve">
+    <value>RTTY: {0}</value>
+  </data>
+  <data name="Cabina.Rtty.Nivel" xml:space="preserve">
+    <value>Signal {0} dB</value>
+  </data>
+  <data name="Cabina.Rtty.NoSeAbre" xml:space="preserve">
+    <value>Der Audioeingang konnte nicht geöffnet werden: {0}</value>
+  </data>
+  <data name="Cabina.Rtty.NoSeAbreLaSalida" xml:space="preserve">
+    <value>Der Audioausgang konnte nicht geöffnet werden: {0}</value>
+  </data>
+  <data name="Cabina.Rtty.Pais" xml:space="preserve">
+    <value>Land: {0}</value>
+  </data>
+  <data name="Cabina.Rtty.Parado" xml:space="preserve">
+    <value>RTTY-Sendung gestoppt.</value>
+  </data>
+  <data name="Cabina.Rtty.Parar" xml:space="preserve">
+    <value>Stopp</value>
+  </data>
+  <data name="Cabina.Rtty.Pausa" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Cabina.Rtty.PausaNombre" xml:space="preserve">
+    <value>RTTY-Decoder pausieren oder fortsetzen</value>
+  </data>
+  <data name="Cabina.Rtty.Seguir" xml:space="preserve">
+    <value>Fortsetzen</value>
+  </data>
+  <data name="Cabina.Rtty.SinDispositivoDeSalida" xml:space="preserve">
+    <value>Es gibt keinen Audioausgang zum Öffnen. Wählen Sie einen in Einstellungen › Audio und Digitalmodi.</value>
+  </data>
+  <data name="Cabina.Rtty.SinEntrada" xml:space="preserve">
+    <value>Es gibt keinen Audioeingang zum Öffnen. Wählen Sie einen in Einstellungen › Audio und Digitalmodi.</value>
+  </data>
+  <data name="Cabina.Rtty.SinSalida" xml:space="preserve">
+    <value>Kein Audioausgang: RTTY kann nicht senden.</value>
+  </data>
+  <data name="Cabina.Rtty.TextoAEmitirNombre" xml:space="preserve">
+    <value>Zu sendender RTTY-Text</value>
+  </data>
+  <data name="Cabina.Rtty.TextoNombre" xml:space="preserve">
+    <value>Dekodierter RTTY-Text</value>
+  </data>
+  <data name="Cabina.Rtty.TiempoAgotado" xml:space="preserve">
+    <value>Die maximale Sendezeit ist erreicht.</value>
+  </data>
+  <data name="Cabina.Rtty.Titulo" xml:space="preserve">
+    <value>RTTY</value>
+  </data>
+  <data name="Cabina.Rtty.Tono" xml:space="preserve">
+    <value>Ton {0} Hz</value>
+  </data>
+  <data name="Cabina.Rtty.TonoEscrito" xml:space="preserve">
+    <value>Ton</value>
+  </data>
+  <data name="Cabina.Rtty.TonoEscritoAyuda" xml:space="preserve">
+    <value>Geben Sie den Markierungston ein (300 bis 3000 Hz) und drücken Sie Enter, um ihn zu setzen. Pfeile oder Rad: ±10 Hz. Gilt für Empfang und Senden.</value>
+  </data>
+  <data name="Cabina.Rtty.Traduccion" xml:space="preserve">
+    <value>Übersetzung</value>
+  </data>
+  <data name="Cabina.Rtty.TraduccionAyuda" xml:space="preserve">
+    <value>Unter dem Text die Bedeutung der erkannten Abkürzungen und Q-Codes.</value>
+  </data>
   <data name="Cabina.Encendido.Apagada" xml:space="preserve">
     <value>Funkgerät aus. Lang auf LOCK drücken zum Einschalten.</value>
   </data>
@@ -1608,6 +1725,18 @@
   <data name="Cabina.TxCw.CerrarAviso" xml:space="preserve">
     <value>Schließen</value>
   </data>
+  <data name="Cabina.TxCw.Conversacion" xml:space="preserve">
+    <value>Unterhaltung</value>
+  </data>
+  <data name="Cabina.TxCw.Conversacion.Ayuda" xml:space="preserve">
+    <value>Makrosatz mit Plausch: Name, QTH und Bestätigung mit Wiederholungen bei schwachem Signal.</value>
+  </data>
+  <data name="Cabina.TxCw.Contactos" xml:space="preserve">
+    <value>Kontakte</value>
+  </data>
+  <data name="Cabina.TxCw.Contactos.Ayuda" xml:space="preserve">
+    <value>Makrosatz für normale Verbindungen, kein Contest: möglichst wenig Bandbreite belegen, ohne Plausch.</value>
+  </data>
   <data name="Cabina.TxCw.Concurso" xml:space="preserve">
     <value>Contest</value>
   </data>
@@ -1693,10 +1822,10 @@
     <value>Stoppen fehlgeschlagen: {0}. Wenn das Gerät noch sendet, von Hand ausschalten.</value>
   </data>
   <data name="Cabina.TxCw.FaltaIndicativo" xml:space="preserve">
-    <value>Das Makro verwendet {CALL} und die neue Verbindung hat kein Rufzeichen.</value>
+    <value>Das Makro verwendet {{CALL}} und die neue Verbindung hat kein Rufzeichen.</value>
   </data>
   <data name="Cabina.TxCw.FaltaMiIndicativo" xml:space="preserve">
-    <value>Das Makro verwendet {MICALL} und das aktive Stationsprofil hat kein Rufzeichen.</value>
+    <value>Das Makro verwendet {{MICALL}} und das aktive Stationsprofil hat kein Rufzeichen.</value>
   </data>
   <data name="Cabina.TxCw.Fichero.Filtro" xml:space="preserve">
     <value>CW-Makros (*.json)|*.json|Alle Dateien (*.*)|*.*</value>
@@ -1819,7 +1948,7 @@
     <value>Freier CW-Text</value>
   </data>
   <data name="Cabina.TxCw.TextoLibre.Ayuda" xml:space="preserve">
-    <value>Eingabe mit Text sendet ihn; leere Eingabe sendet den nächsten Schritt. Variablen wie {CALL} gehen.</value>
+    <value>Eingabe mit Text sendet ihn; leere Eingabe sendet den nächsten Schritt. Variablen wie {{CALL}} gehen.</value>
   </data>
   <data name="Cabina.TxCw.TiempoAgotado" xml:space="preserve">
     <value>Abgebrochen: maximale Sendezeit erreicht ({0} s).</value>

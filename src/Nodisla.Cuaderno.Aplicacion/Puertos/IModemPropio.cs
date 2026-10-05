@@ -32,6 +32,34 @@ public enum ModoDelModem
     Fst4w,
 }
 
+/// <summary>
+/// Lo que el secuenciador de QSO ya sabe con certeza del contacto en curso, para que el
+/// decodificador lo use como pista (decodificación AP, «a priori»).
+/// </summary>
+/// <remarks>
+/// <para>
+/// Mientras se está en QSO con un corresponsal conocido, quién llama y quién contesta ya no es
+/// una incógnita: solo falta el informe de señal, que es justo lo único que el ruido puede
+/// estropear. Darle esa certeza al decodificador reduce el problema a resolver únicamente el
+/// campo que de verdad hace falta leer de la señal real, igual que hace JTDX (documentado en su
+/// opción de «AP decoding», sin copiar ni una línea de su código: ver <c>TERCEROS.md</c>).
+/// </para>
+/// <para>
+/// <b>No es adivinar.</b> El CRC de 14 bits y el campo del informe siguen sacándose de la señal
+/// de verdad; la pista solo fija los bits de los indicativos, que ya se conocían de antes. Si la
+/// pista fuera la del corresponsal equivocado, las ecuaciones de paridad no cuadrarían con la
+/// señal real y el intento fallaría igual que si no hubiera pista: no hay manera de que esto
+/// cuele un contacto falso, solo de que recupere uno de verdad que si no se perdería.
+/// </para>
+/// </remarks>
+/// <param name="MiIndicativo">El propio, tal como viaja en el mensaje.</param>
+/// <param name="DxCall">El corresponsal con el que se está en QSO. Vacío si no hay pista.</param>
+public readonly record struct PistaDeQso(string MiIndicativo, string DxCall)
+{
+    /// <summary>Sin pista: el decodificador trabaja a ciegas, como siempre.</summary>
+    public static PistaDeQso Ninguna => default;
+}
+
 /// <summary>Una columna de la cascada: el espectro de un instante.</summary>
 /// <param name="Magnitudes">
 /// Magnitud por cada casilla de frecuencia, ya en decibelios y lista para pintar.
@@ -75,6 +103,16 @@ public sealed record DecodificacionPropia(
     /// falsas. Conviene poder distinguirlas, aunque sea solo para afinar el decodificador.
     /// </remarks>
     public bool EsRecuperacionProfunda { get; init; }
+
+    /// <summary>
+    /// La decodificacion salio usando la pista del QSO en curso (decodificacion AP) y no de la
+    /// pasada a ciegas.
+    /// </summary>
+    /// <remarks>
+    /// Como con <see cref="EsRecuperacionProfunda"/>, es para poder distinguirlas y medir si
+    /// compensan; el CRC que las valida es el mismo para las dos.
+    /// </remarks>
+    public bool EsPorPista { get; init; }
 }
 
 /// <summary>Como fue una ventana completa.</summary>
@@ -212,6 +250,16 @@ public interface IModemPropio : IAsyncDisposable
 
     /// <summary>Corta la emision en curso y suelta el PTT.</summary>
     Task AbortarEmisionAsync(CancellationToken ct = default);
+
+    /// <summary>
+    /// Le dice al modo que esta escuchando lo que el secuenciador de QSO ya sabe, para la
+    /// decodificacion AP. Por omision no hace nada: solo lo aprovechan los modos que lo declaren.
+    /// </summary>
+    /// <param name="miIndicativo">El propio.</param>
+    /// <param name="dxCall">El corresponsal del QSO en curso; vacio si no hay ninguno fijado.</param>
+    void FijarPistaDeQso(string miIndicativo, string dxCall)
+    {
+    }
 
     /// <summary>
     /// Decodifica un fichero de audio, para probar el decodificador contra grabaciones.

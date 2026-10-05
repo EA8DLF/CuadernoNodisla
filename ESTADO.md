@@ -34,6 +34,13 @@ Compilación de la solución: **0 avisos, 0 errores**.
   553.064 referencias, **ajustes** con credenciales cifradas.
 - **Módem propio de FT8/FT4**: modula, sincroniza y decodifica. Recupera el 100 % hasta −15 dB y
   el 91,7 % a −18 dB, **con cero decodificaciones falsas en todas las franjas**.
+- **Decodificación AP** (05-10-2026): mientras hay un QSO en marcha con un corresponsal conocido,
+  el decodificador fija los bits de los dos indicativos (ya sabidos por el secuenciador) y solo
+  deja por leer de la señal real el campo del informe, igual que hace JTDX con su «AP decoding»
+  — idea tomada de su comportamiento publicado, **sin mirar ni una línea de su código** (ver
+  `TERCEROS.md`). Medido en `PistaApPruebas.cs`: recupera señales a −19,5 dB que a ciegas se
+  pierden, y una pista equivocada —QSO con otro corresponsal, o solo ruido— no inventa ningún
+  contacto: las ecuaciones de paridad no cuadran y la decodificación falla igual que sin pista.
 
 ### Nada se conecta solo
 
@@ -42,12 +49,19 @@ El audio y el módem se registran sin abrir ningún dispositivo.
 
 ## Pendiente de decisión de Jose
 
-1. **Tabla del LDPC(174,91) real** (`ft8_lib`, licencia MIT). Sin ella el módem se queda donde
-   está; con ella debería alcanzar la sensibilidad de FT8 de verdad.
-2. **Motor de propagación real** (ITURHFProp o el paquete VOACAP) o seguir con la aproximación,
+1. **Motor de propagación real** (ITURHFProp o el paquete VOACAP) o seguir con la aproximación,
    que está honestamente etiquetada como tal.
-3. **Dos escrituras en el FT-710** para resolver las tablas de ancho de filtro y retardo de VOX.
+2. **Dos escrituras en el FT-710** para resolver las tablas de ancho de filtro y retardo de VOX.
    Hoy se muestran como índice en vez de en hercios y milisegundos.
+
+**Resuelto:**
+- La tabla del LDPC(174,91) real de FT8/FT4 (`ft8_lib`, licencia MIT) ya está en producción desde
+  `tablas-ft8.txt`, con `TablasDelProtocolo.EsElCodigoReal=true`. Ver `TERCEROS.md` y
+  `src/Nodisla.Cuaderno.Modos/Tablas/LEEME.md`.
+- MSK144, MSK40 y Q65 leen sus tablas del código corrector directamente del código fuente GPLv3
+  de WSJT-X, a falta de una fuente independiente con licencia permisiva (buscada y no encontrada
+  el 05-10-2026). Decisión de Jose: mantener la excepción documentada tal cual en vez de retirar
+  los tres modos. Detalle completo en `TERCEROS.md`, «Modos digitales».
 
 ## Lo que Jose debería arreglar en su estación
 

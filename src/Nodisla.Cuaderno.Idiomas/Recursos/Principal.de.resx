@@ -635,6 +635,12 @@ Es wird nichts gesendet, aber der Inhalt des anderen VFO kann verloren gehen.</v
   <data name="Principal.Nav.QslConsejo" xml:space="preserve">
     <value>QSL: die Karte und ihr Versand per E-Mail (Strg 8), die Büro-Etiketten und der Diplom-Designer (Strg Umschalt 5)</value>
   </data>
+  <data name="Principal.Nav.Rtty" xml:space="preserve">
+    <value>RTTY</value>
+  </data>
+  <data name="Principal.Nav.RttyConsejo" xml:space="preserve">
+    <value>RTTY: eigener Decoder und Sender (AFSK)</value>
+  </data>
   <data name="Principal.Nav.Ronda" xml:space="preserve">
     <value>Funkrunde</value>
   </data>

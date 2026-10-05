@@ -1143,6 +1143,12 @@ Parabéns e 73,
   <data name="Servicios.Modos.NoPuedeEmitir" xml:space="preserve">
     <value>Este modem não pode transmitir: não lhe foi dada saída de áudio nem vigilante de PTT.</value>
   </data>
+  <data name="Servicios.Modos.Rtty.NoPuedeEmitir" xml:space="preserve">
+    <value>O RTTY não pode transmitir: não lhe foi dada saída de áudio nem vigilante de PTT.</value>
+  </data>
+  <data name="Servicios.Modos.Rtty.YaEnviando" xml:space="preserve">
+    <value>Já há uma transmissão de RTTY em curso.</value>
+  </data>
   <data name="Servicios.Modos.Wspr.Forma" xml:space="preserve">
     <value>Uma mensagem de WSPR é «indicativo locator potência», «indicativo/sufixo potência» ou «&lt;indicativo&gt; locator6 potência».</value>
   </data>

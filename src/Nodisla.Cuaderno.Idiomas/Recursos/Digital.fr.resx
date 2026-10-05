@@ -774,6 +774,12 @@
   <data name="Digital.Modem.Rescatada.Ayuda" xml:space="preserve">
     <value>Récupéré par correction approfondie : signal très faible récupéré avec plus d’effort. Risque un peu plus élevé d’être faux ; vérifiez-le avant de le noter.</value>
   </data>
+  <data name="Digital.Modem.PorPista" xml:space="preserve">
+    <value>AVEC INDICE</value>
+  </data>
+  <data name="Digital.Modem.PorPista.Ayuda" xml:space="preserve">
+    <value>Décodé en utilisant ce qui était déjà connu du QSO en cours (décodage AP) : les indicatifs étaient déjà connus, il ne restait qu’à lire le rapport dans le signal réel.</value>
+  </data>
   <data name="Digital.Modem.SaltarTx1" xml:space="preserve">
     <value>Sauter Tx1</value>
   </data>

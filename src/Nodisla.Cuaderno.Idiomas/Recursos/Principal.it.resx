@@ -635,6 +635,12 @@ Non viene trasmesso nulla, ma il contenuto dell’altro VFO può andare perso.</
   <data name="Principal.Nav.QslConsejo" xml:space="preserve">
     <value>QSL: la cartolina e il suo invio per e-mail (Ctrl 8), le etichette del bureau e l’editor dei diplomi (Ctrl Maiusc 5)</value>
   </data>
+  <data name="Principal.Nav.Rtty" xml:space="preserve">
+    <value>RTTY</value>
+  </data>
+  <data name="Principal.Nav.RttyConsejo" xml:space="preserve">
+    <value>RTTY: decodificatore e trasmettitore propri (AFSK)</value>
+  </data>
   <data name="Principal.Nav.Ronda" xml:space="preserve">
     <value>Net di controllo</value>
   </data>

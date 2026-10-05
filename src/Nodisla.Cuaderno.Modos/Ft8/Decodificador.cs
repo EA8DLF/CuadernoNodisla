@@ -25,6 +25,9 @@ public sealed record ResultadoDeVentana(
 {
     /// <summary>Decodificaciones que salieron por la recuperacion profunda y no por la pasada normal.</summary>
     public int PorRecuperacionProfunda { get; init; }
+
+    /// <summary>Decodificaciones que salieron gracias a la pista del QSO en curso (AP).</summary>
+    public int PorPista { get; init; }
 }
 
 /// <summary>
@@ -154,13 +157,18 @@ public sealed class Decodificador
     /// Instante, respecto al comienzo de la ventana, de la primera muestra. Negativo si el audio
     /// empieza antes de la ventana, que es lo que permite pillar a quien transmite adelantado.
     /// </param>
+    /// <param name="pista">
+    /// Lo que ya se sabe del QSO en curso, para la decodificacion AP. Nula si no hay QSO en
+    /// marcha o el corresponsal no se conoce todavia: la decodificacion sigue siendo a ciegas.
+    /// </param>
     public ResultadoDeVentana Decodificar(
         ReadOnlySpan<float> audio,
         int frecuenciaDeMuestreo,
         ModoDelModem modo,
         DateTimeOffset ventanaUtc,
         CatalogoDeIndicativos catalogo,
-        double segundosDelPrimerMuestreo = 0)
+        double segundosDelPrimerMuestreo = 0,
+        PistaAp? pista = null)
     {
         ArgumentNullException.ThrowIfNull(catalogo);
         var reloj = Stopwatch.StartNew();
@@ -181,30 +189,45 @@ public sealed class Decodificador
         var vistas = new List<(string Texto, double Tono)>();
         var palabra = new byte[_tablas.Ldpc.Longitud];
         var bits77 = new byte[MensajeDe77Bits.Bits];
+        var confianzasConPista = pista is null ? null : new float[_tablas.Ldpc.Longitud];
         var palabrasValidas = 0;
         var rechazadasPorElCrc = 0;
 
         var porRecuperacionProfunda = 0;
+        var porPista = 0;
 
         foreach (var candidata in candidatas)
         {
             var medida = demodulador.Medir(candidata, segundosDelPrimerMuestreo);
 
-            // Primero la pasada normal. Si no cuaja, y solo si en ese sitio hay sincronismo de
-            // verdad, se reconstruye a partir de los bits mas fiables. Las dos condiciones de mas
-            // abajo —el corte de sincronismo y el de errores duros dentro de la recuperacion— son
-            // lo que impide que esta vuelta de tuerca llene el cuaderno de contactos inventados;
-            // estan explicadas y medidas en sus propias paginas.
+            // Primero la pasada normal. Si no cuaja y hay una pista del QSO en curso, se repite
+            // la misma propagacion de creencias pero dando por ciertos los bits de los dos
+            // indicativos: lo unico que le falta de verdad a la señal es el campo del informe. Si
+            // tampoco asi cuaja, y solo si en ese sitio hay sincronismo de verdad, se reconstruye
+            // a partir de los bits mas fiables. Las dos condiciones de mas abajo —el corte de
+            // sincronismo y el de errores duros dentro de la recuperacion— son lo que impide que
+            // esta vuelta de tuerca llene el cuaderno de contactos inventados; estan explicadas y
+            // medidas en sus propias paginas.
             var profunda = false;
+            var porEstaPista = false;
             var cuantosMirar = 1;
 
             if (!_corrector.TryDecodificar(demodulador.Confianzas, palabra, VueltasDelCorrector))
             {
-                if (!UsarRecuperacionProfunda) continue;
-                if (candidata.Puntuacion < SincronismoMinimoParaLaProfunda) continue;
-                if (!_recuperacionProfunda.TryRecuperar(demodulador.Confianzas, palabra)) continue;
-                profunda = true;
-                cuantosMirar = _recuperacionProfunda.CandidatosEncontrados;
+                if (pista is { } pistaDelQso && confianzasConPista is not null)
+                {
+                    AplicarPista(demodulador.Confianzas, pistaDelQso, _corrector.TopeDeConfianza, confianzasConPista);
+                    porEstaPista = _corrector.TryDecodificar(confianzasConPista, palabra, VueltasDelCorrector);
+                }
+
+                if (!porEstaPista)
+                {
+                    if (!UsarRecuperacionProfunda) continue;
+                    if (candidata.Puntuacion < SincronismoMinimoParaLaProfunda) continue;
+                    if (!_recuperacionProfunda.TryRecuperar(demodulador.Confianzas, palabra)) continue;
+                    profunda = true;
+                    cuantosMirar = _recuperacionProfunda.CandidatosEncontrados;
+                }
             }
 
             // De la recuperacion profunda pueden salir varias reconstrucciones, ordenadas de la
@@ -229,6 +252,7 @@ public sealed class Decodificador
                 vistas.Add((mensaje.Texto, tonoHz));
 
                 if (profunda) porRecuperacionProfunda++;
+                if (porEstaPista) porPista++;
                 salida.Add(new DecodificacionPropia(
                     mensaje.Texto,
                     Informe(medida, p),
@@ -242,6 +266,7 @@ public sealed class Decodificador
                     Locator = mensaje.Locator,
                     EsCq = mensaje.EsCq,
                     EsRecuperacionProfunda = profunda,
+                    EsPorPista = porEstaPista,
                 });
                 break;
             }
@@ -249,13 +274,30 @@ public sealed class Decodificador
 
         salida.Sort(static (x, y) => x.TonoHz.CompareTo(y.TonoHz));
         _registro.LogDebug(
-            "Ventana {Ventana}: {Candidatas} candidatas, {Validas} palabras válidas, {Rechazadas} rechazadas por el CRC, {Salieron} decodificaciones ({Profundas} por recuperación profunda) en {Milisegundos} ms.",
-            ventanaUtc, candidatas.Count, palabrasValidas, rechazadasPorElCrc, salida.Count, porRecuperacionProfunda, reloj.ElapsedMilliseconds);
+            "Ventana {Ventana}: {Candidatas} candidatas, {Validas} palabras válidas, {Rechazadas} rechazadas por el CRC, {Salieron} decodificaciones ({Profundas} por recuperación profunda, {PorPista} por pista) en {Milisegundos} ms.",
+            ventanaUtc, candidatas.Count, palabrasValidas, rechazadasPorElCrc, salida.Count, porRecuperacionProfunda, porPista, reloj.ElapsedMilliseconds);
 
         return new ResultadoDeVentana(salida, candidatas.Count, palabrasValidas, rechazadasPorElCrc, reloj.Elapsed)
         {
             PorRecuperacionProfunda = porRecuperacionProfunda,
+            PorPista = porPista,
         };
+    }
+
+    /// <summary>
+    /// Combina las confianzas medidas con la pista del QSO: en los bits de los indicativos se
+    /// impone la maxima confianza en el valor que diga la pista; el resto —acuse, informe y los
+    /// bits de paridad— se deja exactamente como lo midio el demodulador.
+    /// </summary>
+    private static void AplicarPista(ReadOnlySpan<float> confianzas, PistaAp pista, float topeDeConfianza, Span<float> destino)
+    {
+        confianzas.CopyTo(destino);
+        for (var i = 0; i < MensajeDe77Bits.Bits; i++)
+        {
+            if (!pista.Conocido77[i]) continue;
+            // Mismo convenio que el corrector: positivo es que el bit parece un cero.
+            destino[i] = pista.Bits77[i] == 0 ? topeDeConfianza : -topeDeConfianza;
+        }
     }
 
     /// <summary>

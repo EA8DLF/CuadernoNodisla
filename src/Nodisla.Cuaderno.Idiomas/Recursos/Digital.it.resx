@@ -774,6 +774,12 @@
   <data name="Digital.Modem.Rescatada.Ayuda" xml:space="preserve">
     <value>Recuperata con correzione profonda: segnale molto debole recuperato con più sforzo. Rischio un po’ maggiore che sia falsa; la verifichi prima di registrarla.</value>
   </data>
+  <data name="Digital.Modem.PorPista" xml:space="preserve">
+    <value>CON INDIZIO</value>
+  </data>
+  <data name="Digital.Modem.PorPista.Ayuda" xml:space="preserve">
+    <value>Decodificata usando ciò che già si sapeva del QSO in corso (decodifica AP): i nominativi erano già noti, è bastato leggere il rapporto dal segnale reale.</value>
+  </data>
   <data name="Digital.Modem.SaltarTx1" xml:space="preserve">
     <value>Salta Tx1</value>
   </data>

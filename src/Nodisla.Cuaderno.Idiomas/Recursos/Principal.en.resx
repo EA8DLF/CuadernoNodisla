@@ -635,6 +635,12 @@ Nothing is transmitted, but whatever the other VFO held may be lost.</value>
   <data name="Principal.Nav.QslConsejo" xml:space="preserve">
     <value>QSL: the card and sending it by email (Ctrl 8), bureau labels and the award designer (Ctrl Shift 5)</value>
   </data>
+  <data name="Principal.Nav.Rtty" xml:space="preserve">
+    <value>RTTY</value>
+  </data>
+  <data name="Principal.Nav.RttyConsejo" xml:space="preserve">
+    <value>RTTY: own decoder and transmitter (AFSK)</value>
+  </data>
   <data name="Principal.Nav.Ronda" xml:space="preserve">
     <value>Net control</value>
   </data>

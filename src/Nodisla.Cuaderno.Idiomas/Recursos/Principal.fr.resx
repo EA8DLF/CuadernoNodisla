@@ -635,6 +635,12 @@ Rien n’est émis, mais le contenu de l’autre VFO peut être perdu.</value>
   <data name="Principal.Nav.QslConsejo" xml:space="preserve">
     <value>QSL : la carte et son envoi par courriel (Ctrl 8), les étiquettes du bureau et l’éditeur de diplômes (Ctrl Maj 5)</value>
   </data>
+  <data name="Principal.Nav.Rtty" xml:space="preserve">
+    <value>RTTY</value>
+  </data>
+  <data name="Principal.Nav.RttyConsejo" xml:space="preserve">
+    <value>RTTY : décodeur et émetteur propres (AFSK)</value>
+  </data>
   <data name="Principal.Nav.Ronda" xml:space="preserve">
     <value>Réseau dirigé</value>
   </data>

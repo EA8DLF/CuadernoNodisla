@@ -1143,6 +1143,12 @@ Herzlichen Glückwunsch und 73,
   <data name="Servicios.Modos.NoPuedeEmitir" xml:space="preserve">
     <value>Dieses Modem kann nicht senden: Es hat weder Audioausgang noch PTT-Wächter.</value>
   </data>
+  <data name="Servicios.Modos.Rtty.NoPuedeEmitir" xml:space="preserve">
+    <value>RTTY kann nicht senden: Es wurde kein Audioausgang und kein PTT-Wächter übergeben.</value>
+  </data>
+  <data name="Servicios.Modos.Rtty.YaEnviando" xml:space="preserve">
+    <value>Es läuft bereits eine RTTY-Übertragung.</value>
+  </data>
   <data name="Servicios.Modos.Wspr.Forma" xml:space="preserve">
     <value>Eine WSPR-Meldung ist „Rufzeichen Locator Leistung“, „Rufzeichen/Suffix Leistung“ oder „&lt;Rufzeichen&gt; Locator6 Leistung“.</value>
   </data>

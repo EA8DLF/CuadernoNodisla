@@ -248,6 +248,15 @@ public sealed class FilaDeDecodificacionPropia
     /// </remarks>
     public bool EsRescatada => Decodificacion.EsRecuperacionProfunda;
 
+    /// <summary>
+    /// Salio gracias a la pista del QSO en curso (decodificacion AP) y no a la pasada a ciegas.
+    /// </summary>
+    /// <remarks>
+    /// Igual que con <see cref="EsRescatada"/>: el operador tiene que poder ver que esta
+    /// decodificacion se apoyo en lo que ya se sabia del corresponsal.
+    /// </remarks>
+    public bool EsPorPista => Decodificacion.EsPorPista;
+
     /// <summary>Tono en hercios, como numero, para poder sintonizar ahi.</summary>
     public int TonoHz => Decodificacion.TonoHz;
 }
@@ -2068,6 +2077,11 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     /// <summary>Lo que el secuenciador ha aprendido del DX pasa a los campos del contacto.</summary>
     private void RecogerLoQueDijoElDx()
     {
+        // El decodificador aprovecha lo que ya se sabe del QSO (decodificacion AP) aunque el
+        // secuenciador este parado: si se acaba de completar un contacto y DxCall queda vacio,
+        // esto lo apaga solo en la siguiente llamada.
+        _modem?.FijarPistaDeQso(_secuenciador.MiIndicativo, _secuenciador.DxCall);
+
         if (!_secuenciador.Activo && _secuenciador.DxCall.Length == 0) return;
 
         var cambia = false;

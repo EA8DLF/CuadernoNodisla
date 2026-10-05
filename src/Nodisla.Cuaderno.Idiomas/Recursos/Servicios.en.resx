@@ -1143,6 +1143,12 @@ Congratulations and 73,
   <data name="Servicios.Modos.NoPuedeEmitir" xml:space="preserve">
     <value>This modem cannot transmit: it has no audio output and no PTT watchdog.</value>
   </data>
+  <data name="Servicios.Modos.Rtty.NoPuedeEmitir" xml:space="preserve">
+    <value>RTTY cannot transmit: it has not been given an audio output or a PTT watchdog.</value>
+  </data>
+  <data name="Servicios.Modos.Rtty.YaEnviando" xml:space="preserve">
+    <value>An RTTY transmission is already under way.</value>
+  </data>
   <data name="Servicios.Modos.Wspr.Forma" xml:space="preserve">
     <value>A WSPR message is “callsign locator power”, “callsign/suffix power” or “&lt;callsign&gt; locator6 power”.</value>
   </data>

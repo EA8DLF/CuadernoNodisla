@@ -178,6 +178,12 @@ public sealed class ModemPropio : IModemPropio
     public Frecuencia FrecuenciaDelDial { get; set; }
 
     /// <inheritdoc/>
+    public void FijarPistaDeQso(string miIndicativo, string dxCall)
+    {
+        if (_modos.TryObtener(Modo, out var implementacion)) implementacion.PistaDeQso = new PistaDeQso(miIndicativo, dxCall);
+    }
+
+    /// <inheritdoc/>
     public event EventHandler<ColumnaDeCascada>? CascadaActualizada;
 
     /// <inheritdoc/>

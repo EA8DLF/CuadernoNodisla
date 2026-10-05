@@ -774,6 +774,12 @@
   <data name="Digital.Modem.Rescatada.Ayuda" xml:space="preserve">
     <value>Mit Tiefenkorrektur gerettet: sehr schwaches Signal, mit mehr Aufwand zurückgewonnen. Etwas höheres Risiko einer Falschdekodierung; bitte vor dem Loggen prüfen.</value>
   </data>
+  <data name="Digital.Modem.PorPista" xml:space="preserve">
+    <value>MIT HINWEIS</value>
+  </data>
+  <data name="Digital.Modem.PorPista.Ayuda" xml:space="preserve">
+    <value>Dekodiert mit dem, was vom laufenden QSO schon bekannt war (AP-Dekodierung): die Rufzeichen waren schon bekannt, es musste nur noch der Rapport aus dem echten Signal gelesen werden.</value>
+  </data>
   <data name="Digital.Modem.SaltarTx1" xml:space="preserve">
     <value>Tx1 überspringen</value>
   </data>

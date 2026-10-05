@@ -70,6 +70,15 @@ public interface IModoDigital
     int FrecuenciaDeAnalisis { get; }
 
     /// <summary>
+    /// Lo que el secuenciador de QSO ya sabe del contacto en curso, para la decodificacion AP.
+    /// </summary>
+    /// <remarks>
+    /// Por omision no hay pista y no cambia nada: solo los modos que la aprovechen (FT8 y FT4,
+    /// de momento) la guardan de verdad. Ver <see cref="PistaDeQso"/>.
+    /// </remarks>
+    PistaDeQso PistaDeQso { get => default; set { } }
+
+    /// <summary>
     /// Decodifica una ventana completa de audio, ya a <see cref="FrecuenciaDeAnalisis"/>.
     /// </summary>
     /// <param name="audio">Muestras de la ventana entera, mono, normalizadas a [-1, 1].</param>

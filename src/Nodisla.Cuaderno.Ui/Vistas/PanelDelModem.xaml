@@ -340,6 +340,22 @@
                                         <TextBlock Text="{loc:Texto Digital.Modem.Rescatada}" Foreground="{DynamicResource AvisoTexto}" FontSize="10" FontWeight="Bold" TextTrimming="None" />
                                     </Border>
 
+                                    <Border CornerRadius="8" Padding="6,0" Margin="0,0,6,0" VerticalAlignment="Center"
+                                            Background="{DynamicResource AvisoFondo}" BorderBrush="{DynamicResource AvisoBorde}" BorderThickness="1"
+                                            ToolTip="{loc:Texto Digital.Modem.PorPista.Ayuda}">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding EsPorPista}" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{loc:Texto Digital.Modem.PorPista}" Foreground="{DynamicResource AvisoTexto}" FontSize="10" FontWeight="Bold" TextTrimming="None" />
+                                    </Border>
+
                                     <Border Padding="6,0" VerticalAlignment="Center">
                                         <Border.Style>
                                             <Style TargetType="Border" BasedOn="{StaticResource MarcaDeNovedad}">

@@ -774,6 +774,12 @@
   <data name="Digital.Modem.Rescatada.Ayuda" xml:space="preserve">
     <value>Recovered by deep decoding: a very weak signal recovered with extra effort. Slightly higher risk of being false; check it before logging it.</value>
   </data>
+  <data name="Digital.Modem.PorPista" xml:space="preserve">
+    <value>AP-ASSISTED</value>
+  </data>
+  <data name="Digital.Modem.PorPista.Ayuda" xml:space="preserve">
+    <value>Decoded using what was already known about the ongoing QSO (AP decoding): the callsigns were already known, so only the signal report had to be read from the real signal.</value>
+  </data>
   <data name="Digital.Modem.SaltarTx1" xml:space="preserve">
     <value>Skip Tx1</value>
   </data>
