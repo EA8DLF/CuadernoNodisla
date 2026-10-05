@@ -86,6 +86,41 @@ public sealed class VistaModeloModemPropioPruebas
     }
 
     [Fact]
+    public async Task ApagarElModoImpideEmitirYSueltaLaSalida()
+    {
+        var modelo = Montar(out _);
+        modelo.PermitirTransmitir = true;
+        await modelo.EscucharCommand.ExecuteAsync(null);
+        modelo.SePuedeEmitir.Should().BeTrue("antes de apagar el modo, todo lo demas ya lo permite");
+
+        modelo.ModoApagado = true;
+
+        modelo.SePuedeEmitir.Should().BeFalse("el modo apagado tiene que ganar a todo lo demas");
+        modelo.EmitirCommand.CanExecute(null).Should().BeFalse();
+        modelo.EscucharCommand.CanExecute(null).Should().BeFalse("apagado no se puede volver a escuchar");
+        modelo.AvisoDeLaTransmision.Should().Contain("apagado");
+
+        // Apagar el modo no solo bloquea el boton: suelta de verdad la salida compartida, para
+        // no disputarla con RTTY mientras esta "apagado" pero sigue escuchando por detras.
+        // OnModoApagadoChanged dispara el parón en segundo plano (como EmitirSiEsSuVentanaAsync),
+        // así que se espera un poco a que termine en vez de comprobarlo en el acto.
+        for (var intentos = 0; modelo.Escuchando && intentos < 100; intentos++)
+        {
+            await Task.Delay(20);
+        }
+
+        modelo.Escuchando.Should().BeFalse("apagar el modo para de verdad el modem, no solo bloquea el boton");
+    }
+
+    [Fact]
+    public void ElModoApagadoEmpiezaEncendido()
+    {
+        var modelo = Montar(out _);
+
+        modelo.ModoApagado.Should().BeFalse("apagar un modo es una decision explicita del operador, nunca el valor de fabrica");
+    }
+
+    [Fact]
     public void SinLaTablaDelCorrectorSeDice()
     {
         var modelo = Montar(out _, corrector: new EstadoDelCorrector(false, "código de pruebas"));

@@ -396,6 +396,15 @@
   <data name="Cabina.Cw.WpmSinDato" xml:space="preserve">
     <value>— WPM</value>
   </data>
+  <data name="Cabina.Rtty.ApagarRtty" xml:space="preserve">
+    <value>Désactiver RTTY</value>
+  </data>
+  <data name="Cabina.Rtty.ApagarRtty.Ayuda" xml:space="preserve">
+    <value>Désactive RTTY : il n'écoute plus et ne peut pas émettre, et libère la carte son si elle était ouverte</value>
+  </data>
+  <data name="Cabina.Rtty.ModoApagado" xml:space="preserve">
+    <value>RTTY est désactivé : activez-le pour émettre.</value>
+  </data>
   <data name="Cabina.Rtty.Borrar" xml:space="preserve">
     <value>Effacer</value>
   </data>
@@ -1700,6 +1709,15 @@
   </data>
   <data name="Cabina.Spot.SinEquipo" xml:space="preserve">
     <value>Sans radio : seul le contact est rempli.</value>
+  </data>
+  <data name="Cabina.TxCw.ApagarCw" xml:space="preserve">
+    <value>Désactiver la CW</value>
+  </data>
+  <data name="Cabina.TxCw.ApagarCw.Ayuda" xml:space="preserve">
+    <value>Désactive la CW : impossible d'émettre avec elle</value>
+  </data>
+  <data name="Cabina.TxCw.ModoApagado" xml:space="preserve">
+    <value>La CW est désactivée : activez-la pour émettre.</value>
   </data>
   <data name="Cabina.TxCw.Automatico" xml:space="preserve">
     <value>Automatique</value>

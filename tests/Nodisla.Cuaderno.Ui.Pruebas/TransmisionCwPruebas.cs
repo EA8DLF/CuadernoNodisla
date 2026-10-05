@@ -358,6 +358,22 @@ public sealed class TransmisionCwPruebas
     }
 
     [Fact]
+    public async Task Con_CW_apagado_no_sale_nada_aunque_el_pestillo_este_abierto()
+    {
+        var (vm, piezas, _, _) = Montar();
+        vm.ModoApagado.Should().BeFalse("apagar un modo es una decision explicita, nunca el valor de fabrica");
+        vm.PermitirTransmitir = true;
+        vm.ModoApagado = true;
+
+        vm.SePuedeTransmitir.Should().BeFalse("apagado gana al pestillo");
+
+        await vm.EnviarMacroAsync(vm.Macros[0]);
+
+        Manipulado(piezas.Equipo).Should().BeEmpty();
+        vm.Aviso.Should().Be(Textos.T("Cabina.TxCw.ModoApagado"));
+    }
+
+    [Fact]
     public async Task Sin_la_pregunta_o_diciendo_que_no_no_se_transmite()
     {
         var (vm, piezas, ajustes, _) = Montar();

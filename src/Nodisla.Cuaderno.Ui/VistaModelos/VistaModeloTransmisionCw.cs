@@ -56,7 +56,8 @@ public sealed partial class PasoEnPantalla : ObservableObject
 /// </summary>
 /// <remarks>
 /// <para>
-/// <b>Nada sale al aire sin pasar por cinco puertas</b>, y en este orden: el pestillo
+/// <b>Nada sale al aire sin pasar por seis puertas</b>, y en este orden: que el operador no haya
+/// apagado CW a mano (<see cref="ModoApagado"/>, independiente de los otros modos), el pestillo
 /// «Permitir transmitir en esta sesion» (el mismo del modem; no se guarda), que el equipo sepa
 /// manipular por CAT, que este en CW (si no, se pregunta antes de cambiarlo), la pregunta de
 /// transmitir (con su «no volver a preguntar», el mismo de siempre) y el vigilante del PTT, que
@@ -220,6 +221,16 @@ public sealed partial class VistaModeloTransmisionCw : ObservableObject, IDispos
     [NotifyPropertyChangedFor(nameof(Motivo))]
     private bool _permitirTransmitir;
 
+    /// <summary>
+    /// El operador ha apagado CW a propósito: no se puede transmitir con él. Independiente del
+    /// pestillo y de los otros modos (FT8/digital, RTTY): cada uno se apaga por su cuenta. No se
+    /// guarda entre sesiones, igual que el pestillo.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SePuedeTransmitir))]
+    [NotifyPropertyChangedFor(nameof(Motivo))]
+    private bool _modoApagado;
+
     /// <summary>Secuencia automatica: contesta sola a lo que lee el decodificador. Empieza apagada siempre.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EstadoDeLaSecuencia))]
@@ -305,12 +316,13 @@ public sealed partial class VistaModeloTransmisionCw : ObservableObject, IDispos
     /// <summary>Hay aviso.</summary>
     public bool HayAviso => Aviso.Length > 0;
 
-    /// <summary>Por que no se puede transmitir ahora (equipo o pestillo), o vacio.</summary>
-    public string Motivo => _emisor.PorQueNoPuede
-        ?? (PermitirTransmitir ? string.Empty : Textos.T("Cabina.TxCw.PestilloCerrado"));
+    /// <summary>Por que no se puede transmitir ahora (modo apagado, equipo o pestillo), o vacio.</summary>
+    public string Motivo => ModoApagado
+        ? Textos.T("Cabina.TxCw.ModoApagado")
+        : _emisor.PorQueNoPuede ?? (PermitirTransmitir ? string.Empty : Textos.T("Cabina.TxCw.PestilloCerrado"));
 
     /// <summary>Se puede pulsar una macro.</summary>
-    public bool SePuedeTransmitir => PermitirTransmitir && _emisor.PorQueNoPuede is null;
+    public bool SePuedeTransmitir => !ModoApagado && PermitirTransmitir && _emisor.PorQueNoPuede is null;
 
     /// <summary>«22 WPM».</summary>
     public string WpmTexto => Textos.F("Cabina.TxCw.Wpm", Wpm);
@@ -648,9 +660,15 @@ public sealed partial class VistaModeloTransmisionCw : ObservableObject, IDispos
         }
     }
 
-    /// <summary>Pestillo, equipo, modo CW y pregunta, en este orden.</summary>
+    /// <summary>Modo apagado, pestillo, equipo, modo CW y pregunta, en este orden.</summary>
     private async Task<bool> PasarLasPuertasAsync(string texto)
     {
+        if (ModoApagado)
+        {
+            Aviso = Textos.T("Cabina.TxCw.ModoApagado");
+            return false;
+        }
+
         if (!PermitirTransmitir)
         {
             Aviso = Textos.T("Cabina.TxCw.PestilloCerrado");

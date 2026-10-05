@@ -165,6 +165,17 @@ public sealed partial class VistaModeloRtty : ObservableObject
     [NotifyPropertyChangedFor(nameof(RotuloDePausa))]
     private bool _pausado;
 
+    /// <summary>
+    /// El operador ha apagado RTTY a propósito: no se puede transmitir con él ni se escucha,
+    /// así que tampoco disputa la entrada ni la salida de audio compartidas mientras esté así.
+    /// Independiente de CW y del módem propio (FT8/digital): cada modo se apaga por su cuenta.
+    /// No se guarda entre sesiones.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SePuedeTransmitir))]
+    [NotifyCanExecuteChangedFor(nameof(EscucharCommand))]
+    private bool _modoApagado;
+
     /// <summary>Tono de marca, para escuchar y para transmitir (Hz).</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TonoTexto))]
@@ -246,8 +257,8 @@ public sealed partial class VistaModeloRtty : ObservableObject
     /// <summary>Hay una transmisión en marcha.</summary>
     public bool Transmitiendo => _emisor?.Enviando ?? false;
 
-    /// <summary>Se puede transmitir: hay emisor y salida de audio.</summary>
-    public bool SePuedeTransmitir => _emisor is not null && _salida is not null;
+    /// <summary>Se puede transmitir: el modo no está apagado y hay emisor y salida de audio.</summary>
+    public bool SePuedeTransmitir => !ModoApagado && _emisor is not null && _salida is not null;
 
     /// <summary>Tono para leer.</summary>
     public string TonoTexto => Textos.F("Cabina.Rtty.Tono", Math.Round(TonoHz));
@@ -334,10 +345,10 @@ public sealed partial class VistaModeloRtty : ObservableObject
     }
 
     /// <summary>Abre la entrada de audio si estaba cerrada.</summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(SePuedeEscuchar))]
     public async Task EscucharAsync()
     {
-        if (_entrada is null) return;
+        if (_entrada is null || ModoApagado) return;
         _usuarioQuiereEscuchar = true;
         await AdquirirEntradaAsync().ConfigureAwait(true);
         MirarLaEscucha();
@@ -352,6 +363,12 @@ public sealed partial class VistaModeloRtty : ObservableObject
     {
         var texto = TextoAEmitir.Trim();
         if (texto.Length == 0 || _emisor is null) return;
+
+        if (ModoApagado)
+        {
+            Aviso = Textos.T("Cabina.Rtty.ModoApagado");
+            return;
+        }
 
         if (_emisor.Enviando)
         {
@@ -494,6 +511,19 @@ public sealed partial class VistaModeloRtty : ObservableObject
 
     partial void OnPausadoChanged(bool value) => MirarLaEscucha();
 
+    partial void OnModoApagadoChanged(bool value)
+    {
+        MirarLaEscucha();
+        if (!value || _emisor is null || !_emisor.Enviando) return;
+
+        // Apagar el modo en medio de una transmision la corta en el acto: no se deja sonando.
+        _ = _emisor.PararAsync().ContinueWith(
+            t => Log.Error(t.Exception, "No se ha podido parar RTTY al apagar el modo."),
+            CancellationToken.None,
+            TaskContinuationOptions.OnlyOnFaulted,
+            TaskScheduler.Default);
+    }
+
     partial void OnTonoHzChanged(double value) => _canal.Afinar(value);
 
     partial void OnDesplazamientoHzChanged(int value) => _canal.Configurar(ParametrosDeLinea());
@@ -530,6 +560,8 @@ public sealed partial class VistaModeloRtty : ObservableObject
             return null;
         }
     }
+
+    private bool SePuedeEscuchar() => _entrada is not null && !ModoApagado;
 
     private DispositivoDeAudio? ElegirLaSalida()
     {
@@ -599,7 +631,7 @@ public sealed partial class VistaModeloRtty : ObservableObject
     /// </summary>
     private void MirarLaEscucha()
     {
-        var quiere = PaginaVisible && !Pausado && _entrada is not null;
+        var quiere = PaginaVisible && !Pausado && !ModoApagado && _entrada is not null;
         if (quiere == _escuchando)
         {
             HayAudio = _entrada?.Abierto is not null;

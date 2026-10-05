@@ -339,6 +339,12 @@
   <data name="Digital.Modem.Anadir.Ayuda" xml:space="preserve">
     <value>Ajoute une ligne avec le mode et le cadran actuels</value>
   </data>
+  <data name="Digital.Modem.ApagarModo" xml:space="preserve">
+    <value>Désactiver le numérique</value>
+  </data>
+  <data name="Digital.Modem.ApagarModo.Ayuda" xml:space="preserve">
+    <value>Désactive le mode numérique (FT8/FT4 et les autres) : il n'écoute plus et ne peut pas émettre, et libère la carte son si elle était ouverte</value>
+  </data>
   <data name="Digital.Modem.Ancho" xml:space="preserve">
     <value>Largeur</value>
   </data>
@@ -845,6 +851,9 @@
   </data>
   <data name="Digital.Modem.Transmision.Cerrada" xml:space="preserve">
     <value>L’émission est verrouillée. Ne la déverrouillez qu’avec l’antenne ou la charge fictive branchée.</value>
+  </data>
+  <data name="Digital.Modem.Transmision.ModoApagado" xml:space="preserve">
+    <value>Le mode numérique est désactivé : activez-le pour émettre.</value>
   </data>
   <data name="Digital.Modem.Transmision.Permitida" xml:space="preserve">
     <value>ÉMISSION AUTORISÉE. Chaque envoi met le poste en émission treize secondes.</value>

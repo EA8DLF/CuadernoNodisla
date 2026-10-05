@@ -339,6 +339,12 @@
   <data name="Digital.Modem.Anadir.Ayuda" xml:space="preserve">
     <value>Añade una fila con el modo y el dial actuales</value>
   </data>
+  <data name="Digital.Modem.ApagarModo" xml:space="preserve">
+    <value>Apagar digital</value>
+  </data>
+  <data name="Digital.Modem.ApagarModo.Ayuda" xml:space="preserve">
+    <value>Apaga el modo digital (FT8/FT4 y demás): no escucha ni puede transmitir, y suelta la tarjeta de sonido si la tenía abierta</value>
+  </data>
   <data name="Digital.Modem.Ancho" xml:space="preserve">
     <value>Ancho</value>
   </data>
@@ -845,6 +851,9 @@
   </data>
   <data name="Digital.Modem.Transmision.Cerrada" xml:space="preserve">
     <value>La transmisión está cerrada con pestillo. Ábralo sólo con la antena o la carga artificial puestas.</value>
+  </data>
+  <data name="Digital.Modem.Transmision.ModoApagado" xml:space="preserve">
+    <value>El modo digital está apagado: enciéndalo para poder transmitir.</value>
   </data>
   <data name="Digital.Modem.Transmision.Permitida" xml:space="preserve">
     <value>TRANSMISIÓN PERMITIDA. Cada envío son trece segundos con el equipo en antena.</value>

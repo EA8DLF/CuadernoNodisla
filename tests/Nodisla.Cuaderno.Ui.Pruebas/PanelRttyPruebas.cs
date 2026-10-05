@@ -58,6 +58,48 @@ public sealed class PanelRttyPruebas
     }
 
     [Fact]
+    public async Task ApagarRttyImpideEmitirAunqueTodoLoDemasLoPermita()
+    {
+        var ajustes = new AjustesDelPrograma();
+        var salida = new SalidaDeAudioSimulada();
+        var vigilante = new VigilanteDeMentira();
+        var emisor = new EmisorRtty(salida, vigilante);
+        var modelo = new VistaModeloRtty(ajustes, emisor: emisor, salida: salida, conReloj: false)
+        {
+            TextoAEmitir = "CQ CQ DE EA8DLF",
+        };
+
+        modelo.ModoApagado.Should().BeFalse("apagar un modo es una decision explicita, nunca el valor de fabrica");
+        modelo.SePuedeTransmitir.Should().BeTrue("antes de apagarlo, todo lo demas ya lo permite");
+
+        modelo.ModoApagado = true;
+        modelo.SePuedeTransmitir.Should().BeFalse();
+
+        await modelo.EmitirCommand.ExecuteAsync(null);
+
+        vigilante.Pedidas.Should().Be(0, "apagado no debe ni pedir la antena");
+        modelo.Aviso.Should().Be(Textos.T("Cabina.Rtty.ModoApagado"));
+        modelo.TextoAEmitir.Should().Be("CQ CQ DE EA8DLF", "no se ha tocado: no se ha mandado nada");
+    }
+
+    [Fact]
+    public async Task ApagarRttyMientrasEscuchaSueltaLaEntradaDeVerdad()
+    {
+        var entrada = new EntradaDeAudioSimulada();
+        var modelo = new VistaModeloRtty(new AjustesDelPrograma(), entrada, conReloj: false) { PaginaVisible = true };
+
+        await modelo.EscucharCommand.ExecuteAsync(null);
+        entrada.Abierto.Should().NotBeNull("al escuchar se pide la entrada compartida");
+
+        modelo.ModoApagado = true;
+        await Task.Delay(50); // soltar la entrada es en segundo plano; se espera a que termine
+
+        modelo.Escuchando.Should().BeFalse("apagado no escucha");
+        entrada.Abierto.Should().BeNull("apagado suelta la entrada de verdad, no solo deja de decodificar");
+        modelo.EscucharCommand.CanExecute(null).Should().BeFalse("apagado no se puede volver a escuchar");
+    }
+
+    [Fact]
     public void ClasificaIndicativosLlamadaPropioYAbreviaturasComoEnCw()
     {
         var modelo = new VistaModeloRtty(new AjustesDelPrograma(), conReloj: false) { MiIndicativo = "EA8DLF" };

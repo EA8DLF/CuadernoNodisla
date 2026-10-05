@@ -67,6 +67,13 @@
                       Margin="8,0,0,0"
                       ToolTip="{loc:Texto Cabina.TxCw.Pestillo.Ayuda}" />
 
+            <CheckBox DockPanel.Dock="Right"
+                      Content="{loc:Texto Cabina.TxCw.ApagarCw}"
+                      IsChecked="{Binding ModoApagado}"
+                      VerticalAlignment="Center"
+                      Margin="8,0,0,0"
+                      ToolTip="{loc:Texto Cabina.TxCw.ApagarCw.Ayuda}" />
+
             <Border CornerRadius="3" Padding="10,6" VerticalAlignment="Center">
                 <Border.Style>
                     <Style TargetType="Border">

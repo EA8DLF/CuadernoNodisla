@@ -733,6 +733,19 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     [NotifyPropertyChangedFor(nameof(EstadoDeLaSecuencia))]
     private bool _txHabilitado;
 
+    /// <summary>
+    /// El operador ha apagado el modo digital (FT8/FT4 y demás) a propósito: ni escucha ni puede
+    /// transmitir, así que tampoco disputa la entrada ni la salida de audio compartidas mientras
+    /// esté así. Independiente de CW y de RTTY: cada modo se apaga por su cuenta. No se guarda
+    /// entre sesiones, igual que el pestillo.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(EscucharCommand))]
+    [NotifyCanExecuteChangedFor(nameof(EmitirCommand))]
+    [NotifyPropertyChangedFor(nameof(SePuedeEmitir))]
+    [NotifyPropertyChangedFor(nameof(AvisoDeLaTransmision))]
+    private bool _modoApagado;
+
     // El DX.
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HayContactoEnCurso))]
@@ -951,17 +964,19 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     public bool HayContactoEnCurso => !string.IsNullOrWhiteSpace(Corresponsal);
 
     /// <summary>
-    /// Se puede emitir: hay modem, la salida de audio esta REALMENTE abierta y el pestillo lo
-    /// esta tambien.
+    /// Se puede emitir: el modo no esta apagado, hay modem, la salida de audio esta REALMENTE
+    /// abierta y el pestillo lo esta tambien.
     /// </summary>
-    public bool SePuedeEmitir => HayModem && _salida?.Abierto is not null && PermitirTransmitir;
+    public bool SePuedeEmitir => !ModoApagado && HayModem && _salida?.Abierto is not null && PermitirTransmitir;
 
     /// <summary>Por que el botón de emitir está como está.</summary>
-    public string AvisoDeLaTransmision => _salida?.Abierto is null
-        ? Textos.T("Digital.Modem.Transmision.SinSalida")
-        : PermitirTransmitir
-            ? Textos.T("Digital.Modem.Transmision.Permitida")
-            : Textos.T("Digital.Modem.Transmision.Cerrada");
+    public string AvisoDeLaTransmision => ModoApagado
+        ? Textos.T("Digital.Modem.Transmision.ModoApagado")
+        : _salida?.Abierto is null
+            ? Textos.T("Digital.Modem.Transmision.SinSalida")
+            : PermitirTransmitir
+                ? Textos.T("Digital.Modem.Transmision.Permitida")
+                : Textos.T("Digital.Modem.Transmision.Cerrada");
 
     /// <summary>El secuenciador, para que las pruebas lo miren.</summary>
     public SecuenciadorDeQso Secuenciador => _secuenciador;
@@ -1059,7 +1074,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     [RelayCommand(CanExecute = nameof(SePuedeEscuchar))]
     public async Task EscucharAsync()
     {
-        if (_modem is null) return;
+        if (_modem is null || ModoApagado) return;
 
         // Dos «Escuchar» seguidos (el botón de aquí, el del visor de VFO, el arranque
         // automático) abrían la tarjeta dos veces: el segundo espera fuera.
@@ -2244,7 +2259,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
     // ── Pequeños ──────────────────────────────────────────────────────────
 
-    private bool SePuedeEscuchar() => HayModem && !Escuchando;
+    private bool SePuedeEscuchar() => HayModem && !Escuchando && !ModoApagado;
 
     private bool SePuedeParar() => Escuchando;
 
@@ -2349,6 +2364,21 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     {
         if (value) Log.Warning("Tx habilitado en el módem propio: la secuencia emitirá sola.");
         NotificarEstadoDeLaSecuencia();
+    }
+
+    partial void OnModoApagadoChanged(bool value)
+    {
+        if (!value || !Escuchando) return;
+
+        // Apagar el modo para de verdad: suelta la entrada y la salida compartidas en vez de
+        // dejarlas abiertas sin usarlas (que es justo lo que no se puede permitir con RTTY
+        // disputando la misma salida).
+        Log.Warning("El operador ha apagado el modo digital: se deja de escuchar.");
+        _ = PararAsync().ContinueWith(
+            t => Log.Error(t.Exception, "No se ha podido parar el módem propio al apagar el modo."),
+            CancellationToken.None,
+            TaskContinuationOptions.OnlyOnFaulted,
+            TaskScheduler.Default);
     }
 
     partial void OnTxSiguienteChanged(int value) => MarcarElSiguiente(value);

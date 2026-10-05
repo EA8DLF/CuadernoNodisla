@@ -642,6 +642,13 @@
                     <TextBlock DockPanel.Dock="Right" Text="{loc:Texto Digital.Modem.MensajeLibre}" Style="{StaticResource EtiquetaDeCampo}" VerticalAlignment="Center" Margin="0,0,6,0" />
 
                     <CheckBox DockPanel.Dock="Left"
+                              Content="{loc:Texto Digital.Modem.ApagarModo}"
+                              IsChecked="{Binding ModoApagado}"
+                              VerticalAlignment="Center"
+                              Margin="0,0,12,0"
+                              ToolTip="{loc:Texto Digital.Modem.ApagarModo.Ayuda}" />
+
+                    <CheckBox DockPanel.Dock="Left"
                               Content="{loc:Texto Digital.Modem.PermitirTransmitir}"
                               IsChecked="{Binding PermitirTransmitir}"
                               FontWeight="Bold"

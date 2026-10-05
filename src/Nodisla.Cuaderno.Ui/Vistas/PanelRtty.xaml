@@ -143,6 +143,12 @@
                     Visibility="{Binding SinAudio, Converter={StaticResource BooleanoAVisible}}"
                     ToolTip="{loc:Texto Cabina.Rtty.EscucharAyuda}" />
 
+            <CheckBox Content="{loc:Texto Cabina.Rtty.ApagarRtty}"
+                      IsChecked="{Binding ModoApagado}"
+                      VerticalAlignment="Center"
+                      Margin="0,0,10,4"
+                      ToolTip="{loc:Texto Cabina.Rtty.ApagarRtty.Ayuda}" />
+
             <!-- El tono (marca): sirve para escuchar y para transmitir. Intro lo fija; flechas o rueda, ±10 Hz. -->
             <StackPanel Orientation="Horizontal" Margin="0,0,10,4" VerticalAlignment="Center"
                         ToolTip="{loc:Texto Cabina.Rtty.TonoEscritoAyuda}">

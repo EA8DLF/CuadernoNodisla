@@ -339,6 +339,12 @@
   <data name="Digital.Modem.Anadir.Ayuda" xml:space="preserve">
     <value>Adiciona uma linha com o modo e o dial atuais</value>
   </data>
+  <data name="Digital.Modem.ApagarModo" xml:space="preserve">
+    <value>Desligar digital</value>
+  </data>
+  <data name="Digital.Modem.ApagarModo.Ayuda" xml:space="preserve">
+    <value>Desliga o modo digital (FT8/FT4 e os demais): deixa de escutar e não pode transmitir, e liberta a placa de som se estivesse aberta</value>
+  </data>
   <data name="Digital.Modem.Ancho" xml:space="preserve">
     <value>Largura</value>
   </data>
@@ -845,6 +851,9 @@
   </data>
   <data name="Digital.Modem.Transmision.Cerrada" xml:space="preserve">
     <value>A transmissão está fechada com trinco. Abra-o só com a antena ou a carga artificial ligadas.</value>
+  </data>
+  <data name="Digital.Modem.Transmision.ModoApagado" xml:space="preserve">
+    <value>O modo digital está desligado: ligue-o para poder transmitir.</value>
   </data>
   <data name="Digital.Modem.Transmision.Permitida" xml:space="preserve">
     <value>TRANSMISSÃO PERMITIDA. Cada envio são treze segundos com o rádio no ar.</value>

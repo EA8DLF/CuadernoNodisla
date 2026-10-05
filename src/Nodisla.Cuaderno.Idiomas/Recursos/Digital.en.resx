@@ -339,6 +339,12 @@
   <data name="Digital.Modem.Anadir.Ayuda" xml:space="preserve">
     <value>Adds a row with the current mode and dial</value>
   </data>
+  <data name="Digital.Modem.ApagarModo" xml:space="preserve">
+    <value>Turn off digital</value>
+  </data>
+  <data name="Digital.Modem.ApagarModo.Ayuda" xml:space="preserve">
+    <value>Turns off the digital mode (FT8/FT4 and the rest): it stops listening and cannot transmit, and releases the sound card if it had it open</value>
+  </data>
   <data name="Digital.Modem.Ancho" xml:space="preserve">
     <value>Width</value>
   </data>
@@ -845,6 +851,9 @@
   </data>
   <data name="Digital.Modem.Transmision.Cerrada" xml:space="preserve">
     <value>Transmitting is locked. Only unlock it with the antenna or a dummy load connected.</value>
+  </data>
+  <data name="Digital.Modem.Transmision.ModoApagado" xml:space="preserve">
+    <value>The digital mode is off: turn it on to transmit.</value>
   </data>
   <data name="Digital.Modem.Transmision.Permitida" xml:space="preserve">
     <value>TRANSMITTING ALLOWED. Each send puts the rig on air for thirteen seconds.</value>

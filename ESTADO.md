@@ -18,11 +18,11 @@ importados de Log4OM y viviendo en `%AppData%\CuadernoNodisla\cuaderno.sqlite`.
 | ADIF | 91 |
 | Radio (FT-710 y vigilante de PTT) | 376 |
 | Diplomas | 80 |
-| Audio | 60 |
+| Audio | 131 |
 | Datos | 59 |
-| Ui (vistas y modelos de vista) | 629 |
+| Ui (vistas y modelos de vista) | 635 |
 
-Las filas de Aplicación y Radio son del 05-10-2026 (confirmadas con `dotnet test`); el resto de la
+Las filas de Aplicación, Radio, Audio y Ui son del 05-10-2026 (confirmadas con `dotnet test`); el resto de la
 tabla no se ha vuelto a contar desde el 25-09-2026 y puede estar bajo de cifra (hallazgo de la
 auditoría del 05-10-2026: no se mantuvo al día pese a tocarse varias veces). No se suma un total
 mientras la tabla no esté recontada entera.
@@ -39,6 +39,13 @@ Compilación de la solución: **0 avisos, 0 errores**.
   553.064 referencias, **ajustes** con credenciales cifradas.
 - **Módem propio de FT8/FT4**: modula, sincroniza y decodifica. Recupera el 100 % hasta −15 dB y
   el 91,7 % a −18 dB, **con cero decodificaciones falsas en todas las franjas**.
+- **Apagar un modo a mano** (05-10-2026): tres interruptores independientes, uno por modo —«Apagar
+  CW» en la zona de transmisión de telegrafía, «Apagar digital» junto al pestillo del módem propio
+  y «Apagar RTTY» junto a «Escuchar»—. Apagado, ese modo no puede transmitir (el mismo mecanismo
+  que el pestillo, con su propio aviso) y, si estaba escuchando, suelta de verdad la entrada y la
+  salida de audio compartidas en vez de dejarlas abiertas sin usarlas. Empiezan encendidos siempre;
+  no se guardan entre sesiones, igual que el pestillo. Ver `ModoApagado` en
+  `VistaModeloTransmisionCw`, `VistaModeloModemPropio` y `VistaModeloRtty`.
 - **Decodificación AP** (05-10-2026): mientras hay un QSO en marcha con un corresponsal conocido,
   el decodificador fija los bits de los dos indicativos (ya sabidos por el secuenciador) y solo
   deja por leer de la señal real el campo del informe, igual que hace JTDX con su «AP decoding»
@@ -65,6 +72,20 @@ El audio y el módem se registran sin abrir ningún dispositivo.
    «Hi-SWR» del propio equipo (`RI0;`), calibrada por Yaesu.
 
 **Resuelto:**
+- El «pum pum» en FT8 seguía sin arreglarse del todo tras la 0.2.9 (05-10-2026, confirmado por
+  Jose tras probarla): esa versión solo tapó dos de los tres fallos. El tercero estaba en
+  `SalidaDeAudioCompartida`: `AbrirAsync`/`CerrarAsync` (abrir y cerrar de verdad el dispositivo)
+  tenían un cerrojo distinto del de `ReproducirAsync`, así que nada impedía que RTTY —que abre la
+  salida compartida justo antes de cada transmisión y la cierra justo después (`EmisorRtty.
+  TransmitirAsync`), a diferencia del módem propio, que la abre una vez al empezar a escuchar y la
+  deja abierta— cerrara de verdad el dispositivo mientras el módem propio todavía le estaba
+  metiendo muestras en medio de sus trece segundos de FT8. CW nunca lo notó porque no toca esta
+  salida: nada abría ni cerraba la tarjeta mientras el módem reproducía, hasta que llegó RTTY. De
+  paso, pedir la salida con un dispositivo o una frecuencia distintos de los que ya tenía otro
+  módulo la reabría pisando el recuento sin avisar a quien la tenía ya abierta; ahora lanza una
+  excepción clara en vez de robarle la tarjeta a quien la está usando. Un único cerrojo para abrir,
+  cerrar y reproducir (y pruebas nuevas que reproducen ambos fallos) en
+  `src/Nodisla.Cuaderno.Audio/Reproduccion/SalidaDeAudioCompartida.cs`.
 - El panel de Fonía «minúsculo»: los avisos de texto (p. ej. «el equipo está en RTTY: el PTT de
   fonía solo va en SSB, AM y FM») se envolvían en varias líneas en la columna estrecha junto al
   frontal, y eso subía el alto natural del panel por encima del que le da el frontal: el Viewbox

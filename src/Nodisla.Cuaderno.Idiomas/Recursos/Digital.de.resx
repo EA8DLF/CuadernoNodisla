@@ -339,6 +339,12 @@
   <data name="Digital.Modem.Anadir.Ayuda" xml:space="preserve">
     <value>Fügt eine Zeile mit aktueller Betriebsart und Frequenz hinzu</value>
   </data>
+  <data name="Digital.Modem.ApagarModo" xml:space="preserve">
+    <value>Digitalmodus ausschalten</value>
+  </data>
+  <data name="Digital.Modem.ApagarModo.Ayuda" xml:space="preserve">
+    <value>Schaltet den Digitalmodus (FT8/FT4 und die anderen) aus: er hört nicht mehr zu und kann nicht senden, und gibt die Soundkarte frei, falls sie geöffnet war</value>
+  </data>
   <data name="Digital.Modem.Ancho" xml:space="preserve">
     <value>Breite</value>
   </data>
@@ -845,6 +851,9 @@
   </data>
   <data name="Digital.Modem.Transmision.Cerrada" xml:space="preserve">
     <value>Senden ist gesperrt. Nur mit angeschlossener Antenne oder Kunstlast entsperren.</value>
+  </data>
+  <data name="Digital.Modem.Transmision.ModoApagado" xml:space="preserve">
+    <value>Der Digitalmodus ist ausgeschaltet: schalten Sie ihn ein, um zu senden.</value>
   </data>
   <data name="Digital.Modem.Transmision.Permitida" xml:space="preserve">
     <value>SENDEN ERLAUBT. Jede Aussendung sind dreizehn Sekunden auf Sendung.</value>

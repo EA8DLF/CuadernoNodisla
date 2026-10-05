@@ -396,6 +396,15 @@
   <data name="Cabina.Cw.WpmSinDato" xml:space="preserve">
     <value>— WPM</value>
   </data>
+  <data name="Cabina.Rtty.ApagarRtty" xml:space="preserve">
+    <value>Disattiva RTTY</value>
+  </data>
+  <data name="Cabina.Rtty.ApagarRtty.Ayuda" xml:space="preserve">
+    <value>Disattiva RTTY: non ascolta e non può trasmettere, e rilascia la scheda audio se era aperta</value>
+  </data>
+  <data name="Cabina.Rtty.ModoApagado" xml:space="preserve">
+    <value>RTTY è disattivato: attivalo per trasmettere.</value>
+  </data>
   <data name="Cabina.Rtty.Borrar" xml:space="preserve">
     <value>Cancella</value>
   </data>
@@ -1700,6 +1709,15 @@
   </data>
   <data name="Cabina.Spot.SinEquipo" xml:space="preserve">
     <value>Senza radio: si compila solo il collegamento.</value>
+  </data>
+  <data name="Cabina.TxCw.ApagarCw" xml:space="preserve">
+    <value>Disattiva CW</value>
+  </data>
+  <data name="Cabina.TxCw.ApagarCw.Ayuda" xml:space="preserve">
+    <value>Disattiva il CW: non si può trasmettere con esso</value>
+  </data>
+  <data name="Cabina.TxCw.ModoApagado" xml:space="preserve">
+    <value>Il CW è disattivato: attivalo per trasmettere.</value>
   </data>
   <data name="Cabina.TxCw.Automatico" xml:space="preserve">
     <value>Automatico</value>
