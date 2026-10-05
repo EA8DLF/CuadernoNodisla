@@ -251,28 +251,46 @@
             </StackPanel>
         </WrapPanel>
 
-        <!-- Avisos -->
-        <TextBlock Margin="0,4,0,0" TextWrapping="Wrap" Style="{StaticResource TextoTenueEstilo}"
-                   Text="{Binding MotivoDeNoPoder}"
-                   Visibility="{Binding MotivoDeNoPoder, Converter={StaticResource NoEsVacio}}" />
-        <TextBlock Margin="0,2,0,0" TextWrapping="Wrap" Foreground="{DynamicResource AvisoTexto}" FontWeight="Bold"
-                   Text="{Binding AvisoDeFuente}"
-                   Visibility="{Binding AvisoDeFuente, Converter={StaticResource NoEsVacio}}" />
-        <TextBlock Margin="0,2,0,0" TextWrapping="Wrap" Foreground="{DynamicResource AvisoTexto}" FontWeight="Bold"
-                   Text="{Binding AvisoDeEscucha}"
-                   Visibility="{Binding AvisoDeEscucha, Converter={StaticResource NoEsVacio}}" />
-        <TextBlock Margin="0,2,0,0" TextWrapping="Wrap" Foreground="{DynamicResource AvisoTexto}"
-                   Text="{Binding Ajustes.AvisoDeDispositivos}"
-                   Visibility="{Binding Ajustes.AvisoDeDispositivos, Converter={StaticResource NoEsVacio}}" />
-        <TextBlock Margin="0,2,0,0" TextWrapping="Wrap" Foreground="{DynamicResource AvisoTexto}"
-                   Text="{Binding Aviso}"
-                   Visibility="{Binding Aviso, Converter={StaticResource NoEsVacio}}" />
-        <TextBlock Margin="0,2,0,0" TextWrapping="Wrap" Foreground="{DynamicResource AvisoTexto}"
-                   Text="{Binding Mensajes.Aviso}"
-                   Visibility="{Binding Mensajes.Aviso, Converter={StaticResource NoEsVacio}}" />
-        <TextBlock Margin="0,2,0,0" TextWrapping="Wrap" Style="{StaticResource TextoTenueEstilo}"
-                   Text="{Binding Grabacion.Aviso}"
-                   Visibility="{Binding Grabacion.Aviso, Converter={StaticResource NoEsVacio}}" />
+        <!--
+            Avisos: en franja (horizontal) se despliegan en varias lineas, que no cuesta nada.
+            En columna (Vertical="True", al lado del frontal) van dentro de un Viewbox que solo
+            encoge para caber en el alto del frontal (FrontalConBotonera.Repartir): un aviso
+            largo -el tipico «el equipo esta en RTTY, el PTT de fonia solo va en SSB/AM/FM»-
+            envuelto en varias lineas sube el alto natural del panel por encima de ese tope y el
+            Viewbox encoge TODO -el boton del PTT, los medidores, las letras- para que quepa,
+            dejandolo minusculo. Disponer() pone aqui una sola linea con puntos suspensivos y el
+            texto completo en el ToolTip, igual que ya tiene el propio boton del PTT.
+        -->
+        <StackPanel x:Name="Avisos">
+            <TextBlock x:Name="AvisoMotivo" Margin="0,4,0,0" TextWrapping="Wrap" Style="{StaticResource TextoTenueEstilo}"
+                       Text="{Binding MotivoDeNoPoder}"
+                       ToolTip="{Binding MotivoDeNoPoder}"
+                       Visibility="{Binding MotivoDeNoPoder, Converter={StaticResource NoEsVacio}}" />
+            <TextBlock x:Name="AvisoFuente" Margin="0,2,0,0" TextWrapping="Wrap" Foreground="{DynamicResource AvisoTexto}" FontWeight="Bold"
+                       Text="{Binding AvisoDeFuente}"
+                       ToolTip="{Binding AvisoDeFuente}"
+                       Visibility="{Binding AvisoDeFuente, Converter={StaticResource NoEsVacio}}" />
+            <TextBlock x:Name="AvisoEscucha" Margin="0,2,0,0" TextWrapping="Wrap" Foreground="{DynamicResource AvisoTexto}" FontWeight="Bold"
+                       Text="{Binding AvisoDeEscucha}"
+                       ToolTip="{Binding AvisoDeEscucha}"
+                       Visibility="{Binding AvisoDeEscucha, Converter={StaticResource NoEsVacio}}" />
+            <TextBlock x:Name="AvisoDispositivos" Margin="0,2,0,0" TextWrapping="Wrap" Foreground="{DynamicResource AvisoTexto}"
+                       Text="{Binding Ajustes.AvisoDeDispositivos}"
+                       ToolTip="{Binding Ajustes.AvisoDeDispositivos}"
+                       Visibility="{Binding Ajustes.AvisoDeDispositivos, Converter={StaticResource NoEsVacio}}" />
+            <TextBlock x:Name="AvisoGeneral" Margin="0,2,0,0" TextWrapping="Wrap" Foreground="{DynamicResource AvisoTexto}"
+                       Text="{Binding Aviso}"
+                       ToolTip="{Binding Aviso}"
+                       Visibility="{Binding Aviso, Converter={StaticResource NoEsVacio}}" />
+            <TextBlock x:Name="AvisoMensajes" Margin="0,2,0,0" TextWrapping="Wrap" Foreground="{DynamicResource AvisoTexto}"
+                       Text="{Binding Mensajes.Aviso}"
+                       ToolTip="{Binding Mensajes.Aviso}"
+                       Visibility="{Binding Mensajes.Aviso, Converter={StaticResource NoEsVacio}}" />
+            <TextBlock x:Name="AvisoGrabacion" Margin="0,2,0,0" TextWrapping="Wrap" Style="{StaticResource TextoTenueEstilo}"
+                       Text="{Binding Grabacion.Aviso}"
+                       ToolTip="{Binding Grabacion.Aviso}"
+                       Visibility="{Binding Grabacion.Aviso, Converter={StaticResource NoEsVacio}}" />
+        </StackPanel>
 
         <!-- Procesado: en una ventanita, lo mismo que Configuración › Fonía -->
         <Popup x:Name="PopupProcesado" PlacementTarget="{Binding ElementName=DesplegarProcesado}"

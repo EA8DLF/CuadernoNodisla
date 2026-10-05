@@ -80,6 +80,19 @@ public partial class PanelDeFonia : UserControl
         // Viewbox exterior (Stretch="Uniform") a encoger TODO el panel para que quepa junto al
         // frontal, dejando el texto ilegible. En franja (Vertical=False) vuelve a verse.
         Extras.Visibility = Vertical ? Visibility.Collapsed : Visibility.Visible;
+
+        // Los avisos (el tipico «el equipo esta en RTTY, el PTT de fonia solo va en SSB/AM/FM»)
+        // hacen EXACTAMENTE lo mismo que Extras si se dejan envolver en varias lineas: suben el
+        // alto natural del panel por encima del que le da el frontal y el Viewbox exterior
+        // encoge TODO -el PTT, los medidores, las letras- para que quepa. En columna van en una
+        // sola linea con puntos suspensivos (el texto completo sigue en el ToolTip); en franja,
+        // sin el Viewbox de por medio, se quedan como siempre.
+        foreach (var aviso in Avisos.Children.OfType<TextBlock>())
+        {
+            aviso.TextWrapping = Vertical ? TextWrapping.NoWrap : TextWrapping.Wrap;
+            aviso.TextTrimming = Vertical ? TextTrimming.CharacterEllipsis : TextTrimming.None;
+            aviso.Width = Vertical ? 240 : double.NaN;
+        }
     }
 
     private async void AlCargar(object sender, RoutedEventArgs e)
