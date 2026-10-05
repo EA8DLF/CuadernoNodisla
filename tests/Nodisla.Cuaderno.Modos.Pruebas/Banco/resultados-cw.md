@@ -1,6 +1,6 @@
 # Banco de medida del decodificador de CW
 
-Generado por `BancoCwPruebas` el 2026-10-02 (UTC). **No editar a mano.**
+Generado por `BancoCwPruebas` el 2026-10-05 (UTC). **No editar a mano.**
 
 Telegrafía sintética (`SintetizadorCw`, rampas de 5 ms) sobre ruido blanco gaussiano. La relación
 señal-ruido es la potencia **con la llave abajo** frente al ruido en 2500 Hz, como en el resto de
@@ -12,7 +12,7 @@ los prosignos <KN>, <BT>, <SK> y <AR>) con un tono al azar entre 600 y 800 Hz y 
 de 5 a 60 WPM. El **CER** es la distancia de edición entre lo enviado y lo leído (espacios
 incluidos, cada prosigno cuenta uno) entre los caracteres enviados. Semilla fija.
 
-Compilación **de publicación (Release)**; el banco entero tardó 54 s.
+Compilación **de publicación (Release)**; el banco entero tardó 27 s.
 
 ### Manipulador electrónico, por velocidad y relación señal-ruido
 
