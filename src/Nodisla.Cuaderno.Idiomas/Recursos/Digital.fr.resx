@@ -714,6 +714,15 @@
   <data name="Digital.Modem.Nivel.Saturando" xml:space="preserve">
     <value>{0:0.00} — SATURATION</value>
   </data>
+  <data name="Digital.Modem.NivelDeSalida" xml:space="preserve">
+    <value>Puissance</value>
+  </data>
+  <data name="Digital.Modem.NivelDeSalida.Ayuda" xml:space="preserve">
+    <value>Amplitude du signal envoyé à la carte son à l'émission. Réglage d'usine prudent (0,30) : à augmenter si l'appareil l'accepte sans saturer.</value>
+  </data>
+  <data name="Digital.Modem.NivelDeSalida.Nombre" xml:space="preserve">
+    <value>Puissance d'émission numérique</value>
+  </data>
   <data name="Digital.Modem.NombreDelCorresponsal.Ayuda" xml:space="preserve">
     <value>Nom du correspondant selon sa fiche QRZ.com</value>
   </data>

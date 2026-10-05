@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Modos.Ft8;
+using Nodisla.Cuaderno.Modos.Marco;
 using Nodisla.Cuaderno.Modos.Q65;
 using Nodisla.Cuaderno.Modos.Senal;
 
@@ -286,7 +287,9 @@ public class CadenaDeQ65Pruebas
         var modo = new ModoQ65(ParametrosDeQ65.De(30, SubmodoDeQ65.A), Tablas) { UsarPromediado = false };
         var senal = modo.Generar("EA8DLF K1ABC FN42", 1500, 48000);
         senal.Length.Should().Be((int)Math.Round(85 * 0.3 * 48000));
-        ((double)senal.Max()).Should().BeApproximately(0.5, 0.01);
+        // El pico de fábrica es el conservador compartido por todos los modos (0,3), no el 0,5
+        // de antes de que existiera el nivel de salida ajustable (ver NivelDeSalidaPruebas).
+        ((double)senal.Max()).Should().BeApproximately(IModoDigital.AmplitudDeSalidaPorDefecto, 0.01);
 
         var ventana = new float[30 * 48000];
         var comienzo = (int)Math.Round(modo.ComienzoNominalSegundos * 48000);

@@ -72,6 +72,9 @@ public sealed class ModoFt8 : IModoDigital
     public PistaDeQso PistaDeQso { get; set; }
 
     /// <inheritdoc/>
+    public double AmplitudDeSalida { get; set; } = IModoDigital.AmplitudDeSalidaPorDefecto;
+
+    /// <inheritdoc/>
     public void Reiniciar() => Catalogo.Olvidar();
 
     /// <inheritdoc/>
@@ -98,6 +101,6 @@ public sealed class ModoFt8 : IModoDigital
         // Lo que uno emite, lo sabe: se apunta para resolver los resumenes con que le contesten
         // (el propio indicativo en «<EA8DLF> HB10GBT RRR», el del DX en «EA8DLF <HB10GBT> -14»).
         foreach (var indicativo in MensajeDe77Bits.IndicativosQueViajan(mensaje)) Catalogo.Fijar(indicativo);
-        return Modulador.Sintetizar(_parametros, tonos, tonoHz, frecuenciaDeMuestreo, amplitud: 0.5);
+        return Modulador.Sintetizar(_parametros, tonos, tonoHz, frecuenciaDeMuestreo, amplitud: AmplitudDeSalida);
     }
 }

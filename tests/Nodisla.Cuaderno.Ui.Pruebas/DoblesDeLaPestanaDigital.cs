@@ -94,6 +94,8 @@ internal sealed class ModemApuntador : IModemPropio
 
     public Frecuencia FrecuenciaDelDial { get; set; }
 
+    public double NivelDeSalida { get; set; } = Nodisla.Cuaderno.Modos.Marco.IModoDigital.AmplitudDeSalidaPorDefecto;
+
     public IReadOnlyList<ModoDelModem> ModosDisponibles =>
     [
         ModoDelModem.Ft8, ModoDelModem.Ft4, ModoDelModem.Wspr, ModoDelModem.Jt65, ModoDelModem.Jt9,

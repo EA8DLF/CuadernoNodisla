@@ -56,6 +56,9 @@ public sealed class ModoMsk144 : IModoDigital
     public bool EsElCodigoReal => _codificador.EsElCodigoReal;
 
     /// <inheritdoc/>
+    public double AmplitudDeSalida { get; set; } = IModoDigital.AmplitudDeSalidaPorDefecto;
+
+    /// <inheritdoc/>
     public ModoDelModem Modo => ModoDelModem.Msk144;
 
     /// <inheritdoc/>
@@ -101,6 +104,6 @@ public sealed class ModoMsk144 : IModoDigital
     public float[] Generar(string mensaje, int tonoHz, int frecuenciaDeMuestreo)
     {
         if (!_codificador.TryCodificar(mensaje, out var trama, out var motivo)) throw new FormatException(motivo);
-        return ModuladorMsk.Sintetizar(trama, tonoHz, frecuenciaDeMuestreo, SegundosDeEmision, amplitud: 0.5);
+        return ModuladorMsk.Sintetizar(trama, tonoHz, frecuenciaDeMuestreo, SegundosDeEmision, amplitud: AmplitudDeSalida);
     }
 }

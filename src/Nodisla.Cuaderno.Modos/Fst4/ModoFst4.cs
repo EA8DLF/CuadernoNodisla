@@ -63,6 +63,9 @@ public sealed class ModoFst4 : IModoDigital
     /// <summary>Se trabaja con el codigo de verdad.</summary>
     public bool EsElCodigoReal => _tabla.EsElCodigoReal;
 
+    /// <inheritdoc/>
+    public double AmplitudDeSalida { get; set; } = IModoDigital.AmplitudDeSalidaPorDefecto;
+
     /// <summary>Catalogo de indicativos con el que se resuelven los resumidos.</summary>
     public CatalogoDeIndicativos Catalogo => _catalogo;
 
@@ -104,6 +107,6 @@ public sealed class ModoFst4 : IModoDigital
     public float[] Generar(string mensaje, int tonoHz, int frecuenciaDeMuestreo)
     {
         if (!_codificador.TryCodificar(mensaje, out var tonos, out var motivo)) throw new FormatException(motivo);
-        return ModuladorFst4.Sintetizar(Parametros, tonos, tonoHz, frecuenciaDeMuestreo, amplitud: 0.5);
+        return ModuladorFst4.Sintetizar(Parametros, tonos, tonoHz, frecuenciaDeMuestreo, amplitud: AmplitudDeSalida);
     }
 }

@@ -714,6 +714,15 @@
   <data name="Digital.Modem.Nivel.Saturando" xml:space="preserve">
     <value>{0:0.00} — CLIPPING</value>
   </data>
+  <data name="Digital.Modem.NivelDeSalida" xml:space="preserve">
+    <value>Power</value>
+  </data>
+  <data name="Digital.Modem.NivelDeSalida.Ayuda" xml:space="preserve">
+    <value>Amplitude of the signal sent to the sound card when transmitting. Conservative by default (0.30): raise it if the radio takes it without overloading.</value>
+  </data>
+  <data name="Digital.Modem.NivelDeSalida.Nombre" xml:space="preserve">
+    <value>Digital transmit power</value>
+  </data>
   <data name="Digital.Modem.NombreDelCorresponsal.Ayuda" xml:space="preserve">
     <value>Other station’s name from their QRZ.com page</value>
   </data>

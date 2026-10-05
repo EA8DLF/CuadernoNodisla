@@ -298,6 +298,36 @@ public sealed class VistaModeloModemPropioPruebas
         modelo.Aviso.Should().Contain("fuera de ventana");
     }
 
+    [Fact]
+    public void AlMontarSeLeDaAlModemElNivelDeSalidaDeLosAjustes()
+    {
+        var ajustes = new AjustesDelPrograma();
+        ajustes.Digital.NivelDeSalida = 0.42;
+        var modem = new ModemDeMentira();
+
+        _ = new VistaModeloModemPropio(
+            new VistaModeloRelojDigital(new RelojParado()),
+            ajustes,
+            new ConsultarTrabajadoAntes(new RepositorioQsoEnMemoria([])),
+            new RegistrarQso(new RepositorioQsoEnMemoria([]), new RepositorioEstacionEnMemoria()),
+            EstadoDelCorrector.NoProcede,
+            modem,
+            entrada: null,
+            salida: new SalidaDeAudioSimulada());
+
+        modem.NivelDeSalida.Should().Be(0.42, "el modem tiene que arrancar con lo que hubiera guardado, no con el de fabrica");
+    }
+
+    [Fact]
+    public void CambiarElNivelDeSalidaLoAplicaAlModemSinReiniciarNada()
+    {
+        var modelo = Montar(out var modem);
+
+        modelo.NivelDeSalida = 0.75;
+
+        modem.NivelDeSalida.Should().Be(0.75, "el cambio tiene que llegar al modem en caliente, para la siguiente emision");
+    }
+
     private static DecodificacionPropia Decodificacion(
         string texto, int db, int tono, bool profunda, string? llamado = null)
     {
@@ -440,6 +470,8 @@ public sealed class VistaModeloModemPropioPruebas
         public bool EstaEmitiendo => false;
 
         public Frecuencia FrecuenciaDelDial { get; set; }
+
+        public double NivelDeSalida { get; set; } = Nodisla.Cuaderno.Modos.Marco.IModoDigital.AmplitudDeSalidaPorDefecto;
 
         public event EventHandler<ColumnaDeCascada>? CascadaActualizada;
 

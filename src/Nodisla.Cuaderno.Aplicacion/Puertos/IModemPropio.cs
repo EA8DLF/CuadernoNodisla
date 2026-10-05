@@ -195,6 +195,15 @@ public interface IModemPropio : IAsyncDisposable
     Frecuencia FrecuenciaDelDial { get; set; }
 
     /// <summary>
+    /// Amplitud de pico (0 a 1) con la que se sintetiza la señal digital al emitir: el «Pwr» de
+    /// JTDX. Se aplica al modo en curso justo antes de generar cada señal, así que cambiarlo
+    /// surte efecto en la siguiente emisión, sin reiniciar el programa ni reabrir la salida de
+    /// audio. Por omision, el mismo valor conservador de todos los modos
+    /// (<c>IModoDigital.AmplitudDeSalidaPorDefecto</c>).
+    /// </summary>
+    double NivelDeSalida { get; set; }
+
+    /// <summary>
     /// Como esta el codigo corrector con el que trabaja este modem.
     /// </summary>
     /// <remarks>

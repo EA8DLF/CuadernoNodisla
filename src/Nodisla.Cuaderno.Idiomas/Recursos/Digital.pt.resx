@@ -714,6 +714,15 @@
   <data name="Digital.Modem.Nivel.Saturando" xml:space="preserve">
     <value>{0:0.00} — A SATURAR</value>
   </data>
+  <data name="Digital.Modem.NivelDeSalida" xml:space="preserve">
+    <value>Potência</value>
+  </data>
+  <data name="Digital.Modem.NivelDeSalida.Ayuda" xml:space="preserve">
+    <value>Amplitude do sinal enviado à placa de som ao transmitir. De fábrica, conservadora (0,30): pode subir se o equipamento aguentar sem saturar.</value>
+  </data>
+  <data name="Digital.Modem.NivelDeSalida.Nombre" xml:space="preserve">
+    <value>Potência de transmissão digital</value>
+  </data>
   <data name="Digital.Modem.NombreDelCorresponsal.Ayuda" xml:space="preserve">
     <value>Nome do correspondente segundo a sua ficha no QRZ.com</value>
   </data>

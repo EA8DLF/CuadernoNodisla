@@ -70,6 +70,9 @@ public sealed class ModemPropioSimulado : IModemPropio
     /// <inheritdoc />
     public Frecuencia FrecuenciaDelDial { get; set; } = Frecuencia.DesdeMegahercios(14.074m);
 
+    /// <inheritdoc/>
+    public double NivelDeSalida { get; set; } = Modos.Marco.IModoDigital.AmplitudDeSalidaPorDefecto;
+
     /// <inheritdoc />
     public event EventHandler<ColumnaDeCascada>? CascadaActualizada;
 

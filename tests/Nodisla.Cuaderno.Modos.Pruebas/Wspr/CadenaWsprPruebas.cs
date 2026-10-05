@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
+using Nodisla.Cuaderno.Modos.Marco;
 using Nodisla.Cuaderno.Modos.Pruebas.Banco;
 using Nodisla.Cuaderno.Modos.Wspr;
 
@@ -96,7 +97,9 @@ public class CadenaWsprPruebas
 
         var audio = modo.Generar("EA8DLF IL18 37", 1500, 12000);
         audio.Length.Should().Be((int)Math.Round(162 * 8192.0));
-        ((double)audio.Max()).Should().BeApproximately(0.5, 0.02);
+        // El pico de fábrica es el conservador compartido por todos los modos (0,3), no el 0,5
+        // de antes de que existiera el nivel de salida ajustable (ver NivelDeSalidaPruebas).
+        ((double)audio.Max()).Should().BeApproximately(IModoDigital.AmplitudDeSalidaPorDefecto, 0.02);
 
         var ventana = new float[120 * 12000];
         audio.CopyTo(ventana, 12000);

@@ -74,6 +74,7 @@ public sealed class ModemPropio : IModemPropio
 
     private readonly List<float> _acumuladoDeCascada = [];
     private int _frecuenciaDeLaCascada;
+    private double _nivelDeSalida = IModoDigital.AmplitudDeSalidaPorDefecto;
 
     /// <summary>Crea el modem.</summary>
     /// <param name="tablas">Tablas del protocolo.</param>
@@ -112,6 +113,19 @@ public sealed class ModemPropio : IModemPropio
 
     /// <summary>Tablas del protocolo con las que trabaja.</summary>
     public TablasDelProtocolo Tablas { get; }
+
+    /// <inheritdoc/>
+    /// <remarks>
+    /// No se guarda por modo: se fija al que este en uso justo antes de generar cada señal
+    /// (<see cref="EmitirAsync"/>, <see cref="GuardarEmisionEnFichero"/>), asi que un cambio de
+    /// nivel se nota en la siguiente emision sin tener que reiniciar nada.
+    /// </remarks>
+    public double NivelDeSalida
+    {
+        get => _nivelDeSalida;
+        // Igual que exige Modulador.Sintetizar de cada modo: por encima de cero y hasta 1.
+        set => _nivelDeSalida = Math.Clamp(value, 0.01, 1.0);
+    }
 
     /// <inheritdoc/>
     public EstadoDeLasTablas EstadoDeLasTablas => new(Tablas.EsElCodigoReal, Tablas.Procedencia);
@@ -372,6 +386,9 @@ public sealed class ModemPropio : IModemPropio
         // de 48.000, y el resultado era un destrozo de aliasing —el equipo transmitía, pero en
         // vez de un tono limpio salían golpes de ruido—.
         var frecuenciaDeSalida = _salida.FrecuenciaDeMuestreo;
+        // Igual que la frecuencia de salida, el nivel se lee en el momento de generar: si el
+        // operador lo ha tocado en los ajustes desde la ultima emision, esta ya sale con el nuevo.
+        modo.AmplitudDeSalida = _nivelDeSalida;
         float[] mensaje;
         try
         {
@@ -445,6 +462,7 @@ public sealed class ModemPropio : IModemPropio
     public void GuardarEmisionEnFichero(string ruta, string texto, int tonoHz, ModoDelModem modo, int frecuenciaDeMuestreo = 48000)
     {
         var implementacion = ModoRegistrado(modo);
+        implementacion.AmplitudDeSalida = _nivelDeSalida;
         float[] senal;
         try
         {

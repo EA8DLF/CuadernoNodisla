@@ -39,6 +39,9 @@ public sealed class ModoJt65 : IModoDigital
     public DecodificadorJt65 Decodificador { get; }
 
     /// <inheritdoc/>
+    public double AmplitudDeSalida { get; set; } = IModoDigital.AmplitudDeSalidaPorDefecto;
+
+    /// <inheritdoc/>
     public ModoDelModem Modo => ModoDelModem.Jt65;
 
     /// <inheritdoc/>
@@ -62,6 +65,6 @@ public sealed class ModoJt65 : IModoDigital
     {
         if (!_codificador.TryCodificar(mensaje, out var tonos, out var motivo))
             throw new FormatException(motivo);
-        return ModuladorJt65.Sintetizar(Parametros, tonos, tonoHz, frecuenciaDeMuestreo);
+        return ModuladorJt65.Sintetizar(Parametros, tonos, tonoHz, frecuenciaDeMuestreo, amplitud: AmplitudDeSalida);
     }
 }

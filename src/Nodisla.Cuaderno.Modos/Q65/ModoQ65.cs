@@ -137,6 +137,9 @@ public sealed class ModoQ65 : IModoDigital
     public CuentasDeQ65 UltimasCuentas { get; private set; } = new(0, 0, 0, 0, 0, 0);
 
     /// <inheritdoc/>
+    public double AmplitudDeSalida { get; set; } = IModoDigital.AmplitudDeSalidaPorDefecto;
+
+    /// <inheritdoc/>
     public ModoDelModem Modo => ModoDelModem.Q65;
 
     /// <inheritdoc/>
@@ -316,7 +319,7 @@ public sealed class ModoQ65 : IModoDigital
     {
         if (!MensajeDeQ65.TryTonosDe(mensaje, _codigo, out var tonos, out var motivo))
             throw new FormatException(motivo);
-        return GeneradorDeSenalDeQ65.Sintetizar(Parametros, tonos, tonoHz, frecuenciaDeMuestreo, amplitud: 0.5);
+        return GeneradorDeSenalDeQ65.Sintetizar(Parametros, tonos, tonoHz, frecuenciaDeMuestreo, amplitud: AmplitudDeSalida);
     }
 
     /// <summary>Los 85 tonos de un mensaje, para el banco y las pruebas.</summary>

@@ -27,6 +27,9 @@ public sealed class ModoJt9 : IModoDigital
     public DecodificadorJt9 Decodificador { get; }
 
     /// <inheritdoc/>
+    public double AmplitudDeSalida { get; set; } = IModoDigital.AmplitudDeSalidaPorDefecto;
+
+    /// <inheritdoc/>
     public ModoDelModem Modo => ModoDelModem.Jt9;
 
     /// <inheritdoc/>
@@ -50,6 +53,6 @@ public sealed class ModoJt9 : IModoDigital
     {
         if (!_codificador.TryCodificar(mensaje, out var tonos, out var motivo))
             throw new FormatException(motivo);
-        return ModuladorJt9.Sintetizar(tonos, tonoHz, frecuenciaDeMuestreo);
+        return ModuladorJt9.Sintetizar(tonos, tonoHz, frecuenciaDeMuestreo, amplitud: AmplitudDeSalida);
     }
 }

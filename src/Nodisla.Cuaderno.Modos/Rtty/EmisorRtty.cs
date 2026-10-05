@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Idiomas;
+using Nodisla.Cuaderno.Modos.Marco;
 
 namespace Nodisla.Cuaderno.Modos.Rtty;
 
@@ -46,8 +47,12 @@ public sealed class OpcionesDelEmisorRtty
     /// <summary>Muestras por segundo del audio que se genera.</summary>
     public int FrecuenciaDeMuestreo { get; set; } = 48000;
 
-    /// <summary>Amplitud de pico del tono generado.</summary>
-    public double Amplitud { get; set; } = 0.5;
+    /// <summary>
+    /// Amplitud de pico del tono generado. Por omision, el mismo nivel conservador que el resto
+    /// de modos digitales (<see cref="IModoDigital.AmplitudDeSalidaPorDefecto"/>): lo conecta a
+    /// un ajuste real <c>VistaModeloRtty</c>, con <c>AjustesDeDigital.NivelDeSalida</c>.
+    /// </summary>
+    public double Amplitud { get; set; } = IModoDigital.AmplitudDeSalidaPorDefecto;
 }
 
 /// <summary>

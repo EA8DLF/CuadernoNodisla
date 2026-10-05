@@ -417,6 +417,9 @@ public sealed partial class VistaModeloRtty : ObservableObject
         {
             _emisor.TonoDeMarcaHz = TonoHz;
             _emisor.Parametros = ParametrosDeLinea();
+            // Mismo ajuste que el modem propio (AjustesDeDigital.NivelDeSalida): un solo mando
+            // para el nivel de salida de todo lo digital, leido al vuelo en cada transmision.
+            _emisor.Opciones.Amplitud = _ajustes.Digital.NivelDeSalida;
             var fin = await _emisor.TransmitirAsync(texto, Textos.F("Cabina.Rtty.Motivo", Resumen(texto))).ConfigureAwait(true);
             Aviso = fin switch
             {

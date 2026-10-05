@@ -42,6 +42,9 @@ public sealed class ModoWspr : IModoDigital
     public DecodificadorWspr Decodificador => _decodificador;
 
     /// <inheritdoc/>
+    public double AmplitudDeSalida { get; set; } = IModoDigital.AmplitudDeSalidaPorDefecto;
+
+    /// <inheritdoc/>
     public ModoDelModem Modo => ModoDelModem.Wspr;
 
     /// <inheritdoc/>
@@ -80,6 +83,6 @@ public sealed class ModoWspr : IModoDigital
     {
         if (!MensajeWspr.TryAnalizar(mensaje, out var m, out var motivo)) throw new FormatException(motivo);
         var tonos = CodificadorWspr.Tonos(m);
-        return ModuladorWspr.Sintetizar(tonos, tonoHz, frecuenciaDeMuestreo, amplitud: 0.5);
+        return ModuladorWspr.Sintetizar(tonos, tonoHz, frecuenciaDeMuestreo, amplitud: AmplitudDeSalida);
     }
 }

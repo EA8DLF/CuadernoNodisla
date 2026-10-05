@@ -714,6 +714,15 @@
   <data name="Digital.Modem.Nivel.Saturando" xml:space="preserve">
     <value>{0:0.00} — SATURA</value>
   </data>
+  <data name="Digital.Modem.NivelDeSalida" xml:space="preserve">
+    <value>Potenza</value>
+  </data>
+  <data name="Digital.Modem.NivelDeSalida.Ayuda" xml:space="preserve">
+    <value>Ampiezza del segnale inviato alla scheda audio in trasmissione. Di fabbrica è prudente (0,30): si può alzare se l'apparato la accetta senza saturare.</value>
+  </data>
+  <data name="Digital.Modem.NivelDeSalida.Nombre" xml:space="preserve">
+    <value>Potenza di trasmissione digitale</value>
+  </data>
   <data name="Digital.Modem.NombreDelCorresponsal.Ayuda" xml:space="preserve">
     <value>Nome del corrispondente secondo la sua scheda su QRZ.com</value>
   </data>

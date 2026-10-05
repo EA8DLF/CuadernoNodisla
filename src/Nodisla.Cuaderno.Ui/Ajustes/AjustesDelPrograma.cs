@@ -436,6 +436,22 @@ public sealed class AjustesDeDigital
     /// <summary>El tono de transmision no sigue a los clics ni al doble clic («Hold Tx Freq»).</summary>
     public bool MantenerTx { get; set; }
 
+    /// <summary>
+    /// Amplitud de pico (0 a 1) de la señal digital que se manda a la tarjeta de sonido al
+    /// transmitir: el «Pwr» de JTDX. Vale para todos los modos (FT8, FT4, FST4, JT65, JT9,
+    /// MSK144, Q65, WSPR) y para RTTY.
+    /// </summary>
+    /// <remarks>
+    /// De fabrica, 0,3: deliberadamente conservador, no el maximo razonable (0,5, -6 dBFS) que
+    /// llevaba el programa escrito a fuego antes de que existiera este ajuste. Una grabacion en
+    /// bruto (WASAPI loopback) del audio que este programa manda a la tarjeta salio limpia para
+    /// una transmision que en el aire sonaba a «golpes de ruido»: la señal en el ordenador era
+    /// perfecta, y lo que esa grabacion no puede ver es que, ya en analogico, ese nivel sature la
+    /// entrada de datos o la interfaz del equipo. Quien tenga una entrada que admita mas, puede
+    /// subirlo; quien la tenga mas sensible, bajarlo mas todavia.
+    /// </remarks>
+    public double NivelDeSalida { get; set; } = 0.3;
+
     // ── La secuencia del contacto ──────────────────────────────────────────
 
     /// <summary>La secuencia del contacto va sola: CQ, localizador, informe, R+informe, RR73, 73.</summary>
@@ -522,6 +538,8 @@ public sealed class AjustesDeDigital
         // El tono se acota al ancho util de audio: por debajo de 200 Hz y por encima de 3.000
         // el filtro del equipo se lo come, y transmitir ahi es transmitir para nadie.
         TonoDeTransmisionHz = Math.Clamp(TonoDeTransmisionHz, 200, 3000);
+        // Igual que exige Modulador.Sintetizar de cada modo: por encima de cero y hasta 1.
+        NivelDeSalida = Math.Clamp(NivelDeSalida, 0.01, 1.0);
         TonoDeRecepcionHz = Math.Clamp(TonoDeRecepcionHz, 200, 5000);
         CiclosSinRespuesta = Math.Clamp(CiclosSinRespuesta, 1, 100);
         GananciaDeLaCascadaDb = Math.Clamp(GananciaDeLaCascadaDb, -30, 30);

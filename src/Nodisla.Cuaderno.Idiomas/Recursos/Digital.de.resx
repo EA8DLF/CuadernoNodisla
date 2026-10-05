@@ -714,6 +714,15 @@
   <data name="Digital.Modem.Nivel.Saturando" xml:space="preserve">
     <value>{0:0.00} — ÜBERSTEUERT</value>
   </data>
+  <data name="Digital.Modem.NivelDeSalida" xml:space="preserve">
+    <value>Leistung</value>
+  </data>
+  <data name="Digital.Modem.NivelDeSalida.Ayuda" xml:space="preserve">
+    <value>Amplitude des Signals, das beim Senden an die Soundkarte geschickt wird. Werkseitig vorsichtig eingestellt (0,30): erhöhen, wenn das Gerät es ohne Übersteuerung verträgt.</value>
+  </data>
+  <data name="Digital.Modem.NivelDeSalida.Nombre" xml:space="preserve">
+    <value>Digitale Sendeleistung</value>
+  </data>
   <data name="Digital.Modem.NombreDelCorresponsal.Ayuda" xml:space="preserve">
     <value>Name der Gegenstation laut ihrem QRZ.com-Eintrag</value>
   </data>

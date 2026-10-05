@@ -395,6 +395,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         _tonoDeTransmision = digital.TonoDeTransmisionHz;
         _tonoDeRecepcion = digital.TonoDeRecepcionHz;
         _mantenerTx = digital.MantenerTx;
+        _nivelDeSalida = digital.NivelDeSalida;
         _secuenciaAutomatica = digital.SecuenciaAutomatica;
         _saltarTx1 = digital.SaltarTx1;
         _llamarAlPrimero = digital.LlamarAlPrimero;
@@ -445,6 +446,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         {
             _modem.CascadaActualizada += AlLlegarUnaColumna;
             _modem.VentanaLista += AlTerminarUnaVentana;
+            _modem.NivelDeSalida = _nivelDeSalida;
         }
 
         if (_entrada is not null)
@@ -710,6 +712,14 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
     [ObservableProperty]
     private bool _mantenerTx;
+
+    /// <summary>
+    /// Amplitud de pico (0 a 1) de la señal digital al transmitir: el «Pwr» de JTDX. Se aplica al
+    /// modem en caliente (<see cref="OnNivelDeSalidaChanged"/>): el cambio se nota en la siguiente
+    /// emision, sin reiniciar el programa.
+    /// </summary>
+    [ObservableProperty]
+    private double _nivelDeSalida = Nodisla.Cuaderno.Modos.Marco.IModoDigital.AmplitudDeSalidaPorDefecto;
 
     /// <summary>
     /// El pestillo de la transmision.
@@ -1037,6 +1047,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         d.TonoDeTransmisionHz = TonoDeTransmision;
         d.TonoDeRecepcionHz = TonoDeRecepcion;
         d.MantenerTx = MantenerTx;
+        d.NivelDeSalida = NivelDeSalida;
         d.SecuenciaAutomatica = SecuenciaAutomatica;
         d.SaltarTx1 = SaltarTx1;
         d.LlamarAlPrimero = LlamarAlPrimero;
@@ -2478,6 +2489,11 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     {
         if (value && Escuchando) _relojDePsk.Start();
         if (!value) _relojDePsk.Stop();
+    }
+
+    partial void OnNivelDeSalidaChanged(double value)
+    {
+        if (_modem is not null) _modem.NivelDeSalida = value;
     }
 
     partial void OnGananciaDeLaCascadaChanged(double value) => Pintor.GananciaDb = value;

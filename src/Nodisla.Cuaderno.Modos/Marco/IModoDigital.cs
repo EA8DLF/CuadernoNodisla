@@ -28,8 +28,31 @@ namespace Nodisla.Cuaderno.Modos.Marco;
 /// </remarks>
 public interface IModoDigital
 {
+    /// <summary>
+    /// Nivel de fabrica de <see cref="AmplitudDeSalida"/>: conservador (-10,5 dBFS), no el maximo
+    /// razonable (0,5, -6 dBFS) que llevaba escrito a fuego antes de que existiera este ajuste.
+    /// </summary>
+    /// <remarks>
+    /// Una grabacion en bruto del audio que este programa manda a la tarjeta, hecha con WASAPI
+    /// loopback, salio limpia -envolvente constante, pico fijo, tono correcto- para un «golpes de
+    /// ruido» que se oia de verdad en el aire. La señal en el ordenador era perfecta; lo que esa
+    /// grabacion no puede ver es que, pasado el PC, el nivel sature la entrada de datos o la
+    /// interfaz del equipo en analogico, algo muy real si esa entrada espera menos de -6 dBFS.
+    /// JTDX tiene para esto su «Pwr»; este nivel por omision es deliberadamente mas bajo que el
+    /// 0,5 de antes para no partir ya saturando a quien lo pruebe por primera vez.
+    /// </remarks>
+    public const double AmplitudDeSalidaPorDefecto = 0.3;
+
     /// <summary>Modo que implementa.</summary>
     ModoDelModem Modo { get; }
+
+    /// <summary>
+    /// Amplitud de pico (0 a 1) con la que <see cref="Generar"/> sintetiza la señal. El operador
+    /// la sube o la baja desde los ajustes de digital (<c>AjustesDeDigital.NivelDeSalida</c>) y
+    /// el modem se la fija a este modo justo antes de cada emision: el cambio surte efecto en la
+    /// siguiente transmision, sin reiniciar nada ni reabrir la salida de audio.
+    /// </summary>
+    double AmplitudDeSalida { get; set; }
 
     /// <summary>
     /// Duracion de la ventana de transmision: 15 s en FT8, 7,5 s en FT4, 120 s en WSPR, 60 s en

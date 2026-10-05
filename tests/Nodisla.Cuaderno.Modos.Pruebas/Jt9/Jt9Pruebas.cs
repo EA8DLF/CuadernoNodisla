@@ -2,6 +2,7 @@ using FluentAssertions;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
 using Nodisla.Cuaderno.Modos.Banco;
 using Nodisla.Cuaderno.Modos.Jt9;
+using Nodisla.Cuaderno.Modos.Marco;
 
 namespace Nodisla.Cuaderno.Modos.Pruebas.Jt9;
 
@@ -101,6 +102,8 @@ public class Jt9Pruebas
         senal.Length.Should().Be((int)Math.Round(85 * 6912.0 / 12000 * 48000));
         Math.Abs(senal[0]).Should().BeLessThan(0.01f);
         Math.Abs(senal[^1]).Should().BeLessThan(0.01f);
-        senal.Max().Should().BeApproximately(0.5f, 0.01f);
+        // El pico de fábrica es el conservador compartido por todos los modos (0,3), no el 0,5
+        // de antes de que existiera el nivel de salida ajustable (ver NivelDeSalidaPruebas).
+        senal.Max().Should().BeApproximately((float)IModoDigital.AmplitudDeSalidaPorDefecto, 0.01f);
     }
 }
