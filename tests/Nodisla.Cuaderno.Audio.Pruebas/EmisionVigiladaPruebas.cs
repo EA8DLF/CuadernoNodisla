@@ -96,6 +96,8 @@ public class EmisionVigiladaPruebas
 
         public DispositivoDeAudio? Abierto => null;
 
+        public int FrecuenciaDeMuestreo => 48000;
+
         public DateTimeOffset? UltimoAvanceUtc =>
             new DateTimeOffset(Volatile.Read(ref _ultimoAvance), TimeSpan.Zero);
 
@@ -260,6 +262,8 @@ public class EmisionVigiladaPruebas
 
         public DispositivoDeAudio? Abierto => null;
 
+        public int FrecuenciaDeMuestreo => 48000;
+
         public void QuedarseCiega() => Volatile.Write(ref _ciega, 1);
 
         public Task AbrirAsync(string idDispositivo, int frecuenciaDeMuestreo = 48000, CancellationToken ct = default) =>
@@ -283,6 +287,8 @@ public class EmisionVigiladaPruebas
         public IReadOnlyList<DispositivoDeAudio> Dispositivos => Array.Empty<DispositivoDeAudio>();
 
         public DispositivoDeAudio? Abierto => null;
+
+        public int FrecuenciaDeMuestreo => 48000;
 
         public Task AbrirAsync(string idDispositivo, int frecuenciaDeMuestreo = 48000, CancellationToken ct = default) =>
             Task.CompletedTask;

@@ -364,11 +364,18 @@ public sealed class ModemPropio : IModemPropio
             throw new InvalidOperationException(
                 Textos.T("Servicios.Modos.NoPuedeEmitir"));
         var modo = ModoRegistrado(Modo);
-        const int FrecuenciaDeSalida = 48000;
+
+        // La señal se sintetiza a la misma frecuencia con la que se abrió la salida —casi
+        // siempre 48.000, pero el operador puede haber puesto otra en los ajustes—. Antes aquí
+        // había un 48.000 fijo: si la salida se abría a otra frecuencia (por ejemplo 96.000), la
+        // salida remuestreaba esta señal como si fuera de esa frecuencia cuando en realidad era
+        // de 48.000, y el resultado era un destrozo de aliasing —el equipo transmitía, pero en
+        // vez de un tono limpio salían golpes de ruido—.
+        var frecuenciaDeSalida = _salida.FrecuenciaDeMuestreo;
         float[] mensaje;
         try
         {
-            mensaje = modo.Generar(texto, tonoHz, FrecuenciaDeSalida);
+            mensaje = modo.Generar(texto, tonoHz, frecuenciaDeSalida);
         }
         catch (FormatException ex)
         {
@@ -382,7 +389,7 @@ public sealed class ModemPropio : IModemPropio
         // en cuanto se puede.
         var ventana = IModoDigital.ComienzoDeVentana(_reloj.Ahora, modo.Periodo, modo.ArranqueDentroDelPeriodo);
         var espera = ventana + modo.ComienzoDeLaSenal - _reloj.Ahora;
-        var silencio = espera > TimeSpan.Zero ? (int)Math.Round(espera.TotalSeconds * FrecuenciaDeSalida) : 0;
+        var silencio = espera > TimeSpan.Zero ? (int)Math.Round(espera.TotalSeconds * frecuenciaDeSalida) : 0;
         var senal = new float[silencio + mensaje.Length];
         mensaje.CopyTo(senal, silencio);
 

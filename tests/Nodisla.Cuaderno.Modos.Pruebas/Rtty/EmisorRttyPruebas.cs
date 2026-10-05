@@ -51,7 +51,13 @@ public class EmisorRttyPruebas
 
         public DispositivoDeAudio? Abierto { get; private set; }
 
-        public Task AbrirAsync(string idDispositivo, int frecuenciaDeMuestreo = 48000, CancellationToken ct = default) => Task.CompletedTask;
+        public int FrecuenciaDeMuestreo { get; private set; } = 48000;
+
+        public Task AbrirAsync(string idDispositivo, int frecuenciaDeMuestreo = 48000, CancellationToken ct = default)
+        {
+            FrecuenciaDeMuestreo = frecuenciaDeMuestreo;
+            return Task.CompletedTask;
+        }
 
         public Task CerrarAsync(CancellationToken ct = default) => Task.CompletedTask;
 

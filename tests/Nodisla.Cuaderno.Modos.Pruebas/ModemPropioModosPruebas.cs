@@ -126,6 +126,39 @@ public class ModemPropioModosPruebas
     }
 
     /// <summary>
+    /// Si la salida se abrió a otra frecuencia que 48.000 (p. ej. 96.000, puesta en Ajustes), la
+    /// señal tiene que generarse a ESA frecuencia, no a un 48.000 fijo.
+    /// </summary>
+    /// <remarks>
+    /// Comprobado el 05-10-2026: antes de este arreglo, <c>EmitirAsync</c> generaba siempre a
+    /// 48.000 sin mirar a qué frecuencia se había abierto la salida de verdad. Si la salida
+    /// estaba a 96.000, la salida de audio remuestreaba una señal de 48.000 como si fuera de
+    /// 96.000: la mitad de las muestras que tocaban, al doble de velocidad de la que tocaba, y lo
+    /// que sonaba era un destrozo de aliasing, no un tono limpio.
+    /// </remarks>
+    [Fact]
+    public async Task LaSenalSeGeneraALaFrecuenciaConLaQueSeAbrioLaSalida()
+    {
+        var ventana = DateTimeOffset.Parse("2026-09-27T10:00:00Z");
+        var salida = new SalidaDeMentira();
+        await salida.AbrirAsync("tarjeta", 96000);
+        var vigilante = new VigilanteDeMentira();
+        await using var modem = new ModemPropio(Tablas, new RelojParado(ventana), new EntradaDeMentira(), salida, vigilante);
+        await modem.EscucharAsync(ModoDelModem.Ft8);
+        await modem.PararAsync();
+
+        await modem.EmitirAsync("CQ EA8DLF IL18", 1500);
+
+        var muestras = salida.Reproducido!;
+        // Medio segundo de silencio A 96.000, no a 48.000: con el fallo de antes salian la mitad
+        // de muestras (el silencio en 48.000) y el mensaje quedaba comprimido al doble de tono.
+        var silencioA96000 = (int)Math.Round(0.5 * 96000);
+        muestras.Length.Should().BeGreaterThan(silencioA96000, "a 96.000 el mensaje entero ocupa muchas mas muestras que a 48.000");
+        muestras.AsSpan(0, silencioA96000).ToArray().Should().OnlyContain(m => m == 0f);
+        muestras.AsSpan(silencioA96000, 9600).ToArray().Should().Contain(m => Math.Abs(m) > 0.05f);
+    }
+
+    /// <summary>
     /// Pasa por el modem, en bloques de 50 ms a 96000 Hz subidos desde 44100 como hace la captura,
     /// cinco segundos de ruido, una ventana con la senal y unos segundos de la siguiente.
     /// </summary>
@@ -197,7 +230,13 @@ public class ModemPropioModosPruebas
 
         public DispositivoDeAudio? Abierto => null;
 
-        public Task AbrirAsync(string idDispositivo, int frecuenciaDeMuestreo = 48000, CancellationToken ct = default) => Task.CompletedTask;
+        public int FrecuenciaDeMuestreo { get; private set; } = 48000;
+
+        public Task AbrirAsync(string idDispositivo, int frecuenciaDeMuestreo = 48000, CancellationToken ct = default)
+        {
+            FrecuenciaDeMuestreo = frecuenciaDeMuestreo;
+            return Task.CompletedTask;
+        }
 
         public Task CerrarAsync(CancellationToken ct = default) => Task.CompletedTask;
 

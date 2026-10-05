@@ -83,7 +83,7 @@ public sealed class SalidaDeAudioWasapi : ISalidaDeAudio
     /// <summary>Hay audio sonando ahora mismo.</summary>
     public bool EstaSonando => Volatile.Read(ref _sonando);
 
-    /// <summary>Muestras por segundo con las que se le habla a esta salida.</summary>
+    /// <inheritdoc />
     public int FrecuenciaDeMuestreo => _frecuenciaDelModem;
 
     /// <summary>Vuelve a mirar que dispositivos hay.</summary>

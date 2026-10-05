@@ -85,6 +85,19 @@ public interface ISalidaDeAudio : IAsyncDisposable
     /// <summary>Dispositivo abierto, o nulo si no hay ninguno.</summary>
     DispositivoDeAudio? Abierto { get; }
 
+    /// <summary>
+    /// Muestras por segundo con las que hay que entregarle el audio a <see cref="ReproducirAsync"/>.
+    /// </summary>
+    /// <remarks>
+    /// Es el valor con el que se abrió —el parámetro <c>frecuenciaDeMuestreo</c> de
+    /// <see cref="AbrirAsync"/>—, no la frecuencia real de la tarjeta: la conversión a esa última
+    /// se hace aquí dentro. Quien sintetiza el audio tiene que generarlo a esta frecuencia y
+    /// ninguna otra; generarlo a una frecuencia fija y distinta de esta hace que la salida
+    /// remuestree con el factor equivocado, y lo que suena no es la señal limpia sino un
+    /// destrozo de aliasing.
+    /// </remarks>
+    int FrecuenciaDeMuestreo { get; }
+
     Task AbrirAsync(string idDispositivo, int frecuenciaDeMuestreo = 48000, CancellationToken ct = default);
 
     Task CerrarAsync(CancellationToken ct = default);

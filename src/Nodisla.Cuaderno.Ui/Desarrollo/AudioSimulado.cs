@@ -154,9 +154,13 @@ public sealed class SalidaDeAudioSimulada : ISalidaDeAudio
     public DispositivoDeAudio? Abierto { get; private set; }
 
     /// <inheritdoc />
+    public int FrecuenciaDeMuestreo { get; private set; } = 48000;
+
+    /// <inheritdoc />
     public Task AbrirAsync(string idDispositivo, int frecuenciaDeMuestreo = 48000, CancellationToken ct = default)
     {
         Abierto = Inventados.FirstOrDefault(d => d.Id == idDispositivo) ?? Inventados[0];
+        FrecuenciaDeMuestreo = frecuenciaDeMuestreo;
         return Task.CompletedTask;
     }
 

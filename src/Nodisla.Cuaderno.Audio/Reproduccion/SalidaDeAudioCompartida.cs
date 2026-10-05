@@ -14,6 +14,24 @@ public sealed class SalidaDeAudioCompartida : ISalidaDeAudio
 {
     private readonly ISalidaDeAudio _interior;
     private readonly SemaphoreSlim _cerrojo = new(1, 1);
+
+    /// <summary>
+    /// Cerrojo aparte, solo para <see cref="ReproducirAsync"/>.
+    /// </summary>
+    /// <remarks>
+    /// Comprobado el 05-10-2026: CW, RTTY y el módem propio comparten esta misma instancia sin
+    /// conocerse entre sí, pero <see cref="ReproducirAsync"/> llamaba a la de verdad tal cual,
+    /// sin ningún turno. Si dos de ellos emitían a la vez —por ejemplo, al cambiar de pestaña con
+    /// una transmisión todavía apurando el colchón de la tarjeta—, sus muestras se intercalaban
+    /// en el mismo <c>BufferedWaveProvider</c>: uno limpiaba el búfer del otro a medio mensaje y
+    /// las dos emisiones salían mezcladas, que es justo el «pum pum» en vez de un tono limpio que
+    /// se oyó en la antena. Con este cerrojo, una emisión entera (de principio a fin, con su
+    /// silencio final incluido) tiene que acabar antes de que empiece la siguiente, sea de quien
+    /// sea. No es el mismo cerrojo que <see cref="AbrirAsync"/>: <see cref="SilenciarAsync"/>
+    /// tiene que poder cortar una emisión en marcha sin esperar a que termine ella sola.
+    /// </remarks>
+    private readonly SemaphoreSlim _cerrojoDeReproduccion = new(1, 1);
+
     private int _referencias;
     private string? _idAbierto;
     private int _frecuenciaAbierta;
@@ -37,6 +55,9 @@ public sealed class SalidaDeAudioCompartida : ISalidaDeAudio
 
     /// <inheritdoc />
     public DispositivoDeAudio? Abierto => _interior.Abierto;
+
+    /// <inheritdoc />
+    public int FrecuenciaDeMuestreo => _interior.FrecuenciaDeMuestreo;
 
     /// <summary>Vuelve a mirar qué dispositivos hay, si la implementación real sabe hacerlo.</summary>
     public void Refrescar()
@@ -91,8 +112,18 @@ public sealed class SalidaDeAudioCompartida : ISalidaDeAudio
     }
 
     /// <inheritdoc />
-    public Task ReproducirAsync(ReadOnlyMemory<float> muestras, CancellationToken ct = default) =>
-        _interior.ReproducirAsync(muestras, ct);
+    public async Task ReproducirAsync(ReadOnlyMemory<float> muestras, CancellationToken ct = default)
+    {
+        await _cerrojoDeReproduccion.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            await _interior.ReproducirAsync(muestras, ct).ConfigureAwait(false);
+        }
+        finally
+        {
+            _cerrojoDeReproduccion.Release();
+        }
+    }
 
     /// <inheritdoc />
     public Task SilenciarAsync(CancellationToken ct = default) => _interior.SilenciarAsync(ct);
@@ -113,5 +144,6 @@ public sealed class SalidaDeAudioCompartida : ISalidaDeAudio
 
         await _interior.DisposeAsync().ConfigureAwait(false);
         _cerrojo.Dispose();
+        _cerrojoDeReproduccion.Dispose();
     }
 }
