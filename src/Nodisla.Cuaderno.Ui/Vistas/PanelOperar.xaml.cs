@@ -11,10 +11,25 @@ namespace Nodisla.Cuaderno.Ui.Vistas;
 /// </summary>
 /// <remarks>
 /// El reparto del alto lo manda lo de abajo, como en Digital: primero se garantiza a contacto +
-/// cluster <see cref="AltoMinimoDeAbajo"/> y el frontal (con la fonia al lado, que escala con
-/// el) se queda con lo que sobre, hasta <see cref="AltoMaximoDelFrontal"/>. Por debajo de
-/// <see cref="AltoMinimoDelFrontal"/> se pliega solo, sin tocar la preferencia guardada del
-/// operador: cuando vuelve a haber sitio, vuelve.
+/// cluster <see cref="AltoMinimoDeAbajo"/> y el frontal se queda con lo que sobre, hasta
+/// <see cref="AltoMaximoDelFrontal"/>. Por debajo de <see cref="AltoMinimoDelFrontal"/> se pliega
+/// solo, sin tocar la preferencia guardada del operador: cuando vuelve a haber sitio, vuelve.
+/// </remarks>
+/// <remarks>
+/// La fonia en columna (junto al frontal, <c>FrontalConBotonera.Lateral</c> en este XAML) vive
+/// dentro de un Viewbox que solo encoge. Medida sin avisos activos, esa columna (PTT, EN
+/// RECEPCION, dos deslizadores, «Escuchar por el PC», «Dispositivos...») pide de forma natural
+/// unos 330 puntos de alto: dandole el mismo alto que al dibujo del frontal (que puede bajar
+/// hasta <see cref="AltoMinimoDelFrontal"/>, 150) el Viewbox la encogia a menos de la mitad —el
+/// boton del PTT y los deslizadores quedaban practicamente impulsables, aunque el frontal en si
+/// siguiera leyendose bien—. <see cref="Repartir"/> le da a esa columna un suelo propio
+/// (<see cref="AltoMinimoDeFoniaEnColumna"/>), por encima del que le toque al dibujo del frontal
+/// cuando haga falta: el frontal no crece ni un punto por esto (sigue en su <c>alto</c>, via
+/// <c>CajaDelFrontal.AltoMaximoDelFrontal</c>), solo el hueco lateral que ocupa la fonia a su
+/// lado. Que esa columna sea un poco mas alta que el dibujo, ocasionalmente, no pliega nada ni
+/// le quita su minimo a contacto+cluster salvo en el caso mas extremo (frontal justo en su suelo
+/// de 150): ahi la fonia toma los puntos de mas y el formulario/cluster, que tienen scroll
+/// propio, se quedan un poco mas apretados en vez de dejar el PTT inservible.
 /// </remarks>
 public partial class PanelOperar : UserControl
 {
@@ -23,6 +38,15 @@ public partial class PanelOperar : UserControl
 
     /// <summary>Alto por debajo del cual el frontal no se lee y se pliega solo.</summary>
     public const double AltoMinimoDelFrontal = 150;
+
+    /// <summary>
+    /// Suelo propio del alto que recibe la columna de fonia (lateral del frontal): unos 330
+    /// puntos le bastan sin avisos activos, y por debajo de eso el Viewbox que la escala la deja
+    /// con el PTT y los deslizadores dificiles de pulsar. Se le da este alto aunque al dibujo del
+    /// frontal le toque menos (hasta <see cref="AltoMinimoDelFrontal"/>): el frontal no crece por
+    /// esto, solo el hueco lateral a su lado.
+    /// </summary>
+    public const double AltoMinimoDeFoniaEnColumna = 300;
 
     /// <summary>Tope de alto del frontal cuando sobra sitio.</summary>
     public const double AltoMaximoDelFrontal = 370;
@@ -89,12 +113,20 @@ public partial class PanelOperar : UserControl
 
         HuecoDelFrontal.Visibility = plegadoSolo ? Visibility.Collapsed : Visibility.Visible;
         LineaDePlegadoAutomatico.Visibility = plegadoSolo ? Visibility.Visible : Visibility.Collapsed;
-        CajaDelFrontal.MaxHeight = alto > 0 ? alto : AltoMinimoDelFrontal;
+
+        var altoDelDibujo = alto > 0 ? alto : AltoMinimoDelFrontal;
+        var hayFonia = DataContext is VistaModeloPrincipal { Fonia: not null };
+
+        // El dibujo del frontal se queda exactamente en «altoDelDibujo» (nunca crece por la
+        // fonia); el hueco entero (que es tambien el alto disponible para la columna de fonia a
+        // su lado) puede ser un poco mas alto que eso cuando hace falta, para que esa columna no
+        // quede diminuta.
+        CajaDelFrontal.AltoMaximoDelFrontal = altoDelDibujo;
+        CajaDelFrontal.MaxHeight = hayFonia ? Math.Max(altoDelDibujo, AltoMinimoDeFoniaEnColumna) : altoDelDibujo;
         CajaDelFrontal.Repartir();
 
         // Con el frontal plegado solo, la fonia vuelve a su franja bajo la barra (el estilo la
         // esconde porque cree que va al lado del frontal).
-        var hayFonia = DataContext is VistaModeloPrincipal { Fonia: not null };
         if (plegadoSolo && hayFonia) FranjaDeFonia.Visibility = Visibility.Visible;
         else FranjaDeFonia.ClearValue(VisibilityProperty);
     }

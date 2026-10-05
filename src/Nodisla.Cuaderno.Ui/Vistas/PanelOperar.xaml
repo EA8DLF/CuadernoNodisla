@@ -91,6 +91,13 @@
                 Botonera HAM a la izquierda y canales CB a la derecha del frontal; la fonía, en
                 columna a la derecha del todo: el frontal va con tope de alto y a su lado sobra
                 ancho, así que nada de esto quita alto al contacto ni al cluster.
+
+                AltoMaximoDelFrontal aquí (370) es solo el valor inicial: PanelOperar.xaml.cs lo
+                recalcula en cada reparto (CajaDelFrontal.AltoMaximoDelFrontal), y es lo único que
+                limita al DIBUJO. CajaDelFrontal.MaxHeight (el control entero, incluido el hueco
+                lateral de la fonía) puede quedar un poco más alto que eso cuando hace falta —ver
+                PanelOperar.AltoMinimoDeFoniaEnColumna— para que la columna de fonía no quede
+                diminuta aunque el dibujo del frontal esté en su mínimo.
             -->
             <vistas:FrontalConBotonera x:Name="CajaDelFrontal" AltoMaximoDelFrontal="370">
                 <vistas:FrontalConBotonera.Lateral>
@@ -98,7 +105,13 @@
                             BorderThickness="1,0,0,0"
                             BorderBrush="{DynamicResource BordeSuave}"
                             VerticalAlignment="Top">
-                        <!-- Escala con el frontal cuando falta alto; nunca crece. -->
+                        <!--
+                            Escala con el alto disponible cuando falta; nunca crece. Ese alto
+                            disponible es CajaDelFrontal.MaxHeight (el del hueco lateral, no
+                            necesariamente el del dibujo): con AltoMinimoDeFoniaEnColumna como
+                            suelo, este Viewbox apenas llega a encoger de verdad incluso con el
+                            frontal en su mínimo legible.
+                        -->
                         <Viewbox Stretch="Uniform" StretchDirection="DownOnly" VerticalAlignment="Top">
                             <vistas:PanelDeFonia Vertical="True"
                                                  DataContext="{Binding DataContext.Fonia, RelativeSource={RelativeSource AncestorType=vistas:PanelOperar}}" />

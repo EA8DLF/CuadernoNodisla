@@ -113,12 +113,22 @@ public partial class FrontalConBotonera : UserControl
     /// Decide si caben los dos paneles a los lados. Lo llama quien cambia el alto
     /// (<c>MaxHeight</c>) y cada cambio de tamaño.
     /// </summary>
+    /// <remarks>
+    /// <c>MaxHeight</c> (el alto de TODO este control) puede venir un poco mas alto que
+    /// <see cref="AltoMaximoDelFrontal"/> (el que le toca solo al dibujo): quien lo pone
+    /// (<c>PanelOperar</c>) le da ese extra al hueco lateral -la fonia en columna- para que no
+    /// quede diminuta, sin que el dibujo del frontal crezca por ello. HAM, CB y el lateral miden
+    /// con ese alto real (<c>altoAmbiente</c>): es el que de verdad van a recibir al repartirse
+    /// el ancho. El dibujo, en cambio, solo cuenta con el suyo (<c>altoDelDibujo</c>) para lo que
+    /// aporta a <c>necesario</c>.
+    /// </remarks>
     public void Repartir()
     {
         if (ActualWidth <= 0) return;
 
-        var alto = Math.Min(double.IsInfinity(MaxHeight) ? AltoMaximoDelFrontal : MaxHeight, AltoMaximoDelFrontal);
-        var medida = new Size(double.PositiveInfinity, alto);
+        var altoAmbiente = double.IsInfinity(MaxHeight) ? AltoMaximoDelFrontal : MaxHeight;
+        var altoDelDibujo = Math.Min(altoAmbiente, AltoMaximoDelFrontal);
+        var medida = new Size(double.PositiveInfinity, altoAmbiente);
 
         LadoHam.Measure(medida);
         LadoCb.Measure(medida);
@@ -126,7 +136,7 @@ public partial class FrontalConBotonera : UserControl
         var lateral = Lateral is null ? 0 : HuecoLateral.DesiredSize.Width;
         var anchoCb = MostrarCb ? LadoCb.DesiredSize.Width : 0;
 
-        var necesario = (alto * ProporcionDelFrontal) + LadoHam.DesiredSize.Width + anchoCb + lateral;
+        var necesario = (altoDelDibujo * ProporcionDelFrontal) + LadoHam.DesiredSize.Width + anchoCb + lateral;
         Estrecho = necesario > ActualWidth;
 
         Ham.MostrarCambio = MostrarCb && Estrecho;
