@@ -79,7 +79,14 @@ if (-not $Subir) {
 # ── Release en GitHub ──────────────────────────────────────────────────
 if (-not (Get-Command gh -ErrorAction SilentlyContinue)) { throw 'Falta GitHub CLI (gh).' }
 
+# "gh" escribe en stderr cuando la release no existe (caso normal la primera vez). Con
+# $ErrorActionPreference = 'Stop' a nivel de script, redirigir ese stderr lo convierte en un
+# NativeCommandError que para el script en vez de dejar mirar $LASTEXITCODE: se baja la
+# severidad solo para esta llamada.
+$anterior = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
 gh release view $etiqueta --repo $Repositorio *> $null
+$ErrorActionPreference = $anterior
 if ($LASTEXITCODE -eq 0) {
     Write-Host "La release $etiqueta ya existe: se reemplazan los adjuntos."
     gh release upload $etiqueta $instalador $ficheroSuma --repo $Repositorio --clobber
