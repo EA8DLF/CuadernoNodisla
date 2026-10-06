@@ -397,7 +397,7 @@
     <value>— WPM</value>
   </data>
   <data name="Cabina.Rtty.ApagarRtty" xml:space="preserve">
-    <value>Desligar RTTY</value>
+    <value>RTTY</value>
   </data>
   <data name="Cabina.Rtty.ApagarRtty.Ayuda" xml:space="preserve">
     <value>Desliga o RTTY: deixa de escutar e não pode transmitir, e liberta a placa de som se estivesse aberta</value>
@@ -1711,7 +1711,7 @@
     <value>Sem rádio: só se preenche o contacto.</value>
   </data>
   <data name="Cabina.TxCw.ApagarCw" xml:space="preserve">
-    <value>Desligar CW</value>
+    <value>CW</value>
   </data>
   <data name="Cabina.TxCw.ApagarCw.Ayuda" xml:space="preserve">
     <value>Desliga o CW: não é possível transmitir com ele</value>

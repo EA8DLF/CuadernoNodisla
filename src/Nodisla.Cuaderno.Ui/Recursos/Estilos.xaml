@@ -280,6 +280,110 @@
         </Setter>
     </Style>
 
+    <!-- ── Interruptor deslizante ────────────────────────────────────────── -->
+
+    <!--
+        Un interruptor de verdad —una píldora con una bolita que se desliza—, no una casilla
+        con letras pequeñas. Nació para los tres apagados de modo (CW, digital, RTTY): como
+        casillas se perdían mezcladas entre otros mandos y el operador no veía de un vistazo si
+        el modo estaba encendido o apagado (feedback directo, 2026-10-06). Se deja en este
+        diccionario compartido para poder usarlo en cualquier otro interruptor de dos estados
+        que necesite el programa.
+
+        El riel se tiñe de ámbar al activarse —el mismo color que usa el pestillo de «Permitir
+        transmitir» cuando está abierto—: apagar un modo es un estado fuera de lo normal y debe
+        llamar la atención igual que abrir un pestillo. En reposo el riel es gris neutro, sin
+        significado especial. La bolita no cambia de color: es el riel el que habla.
+    -->
+    <Style x:Key="InterruptorDeslizante" TargetType="ToggleButton">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Width" Value="44" />
+        <Setter Property="Height" Value="24" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border x:Name="riel"
+                            CornerRadius="12"
+                            Background="{DynamicResource Borde}"
+                            BorderBrush="{DynamicResource Borde}"
+                            BorderThickness="1">
+                        <Border x:Name="bolita"
+                                Width="18"
+                                Height="18"
+                                CornerRadius="9"
+                                Background="{DynamicResource FondoPanel}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Margin="3,0,0,0">
+                            <Border.RenderTransform>
+                                <TranslateTransform x:Name="desplazamiento" X="0" />
+                            </Border.RenderTransform>
+                        </Border>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="riel" Property="Background" Value="{DynamicResource AvisoFondo}" />
+                            <Setter TargetName="riel" Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="desplazamiento"
+                                                          Storyboard.TargetProperty="X"
+                                                          To="20"
+                                                          Duration="0:0:0.12" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="desplazamiento"
+                                                          Storyboard.TargetProperty="X"
+                                                          To="0"
+                                                          Duration="0:0:0.12" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="riel" Property="BorderBrush" Value="{DynamicResource Acento}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="riel" Property="BorderBrush" Value="{DynamicResource Acento}" />
+                            <Setter TargetName="riel" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        Etiqueta corta («CW», «Digital», «RTTY») más el interruptor, dentro de una tarjetita que
+        se tiñe de ámbar entera cuando el modo está apagado: así se ve de un vistazo sin tener
+        que fijarse en la posición exacta de la bolita. Lleva su propio DataTrigger sobre
+        ModoApagado en cada sitio donde se usa (no aquí, porque el nombre del binding es siempre
+        el mismo pero el DataContext cambia).
+    -->
+    <Style x:Key="TarjetaDeApagado" TargetType="Border">
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="8,4" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BordeSuave}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ModoApagado}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <!-- ── Paneles ───────────────────────────────────────────────────────── -->
 
     <Style x:Key="Tarjeta" TargetType="Border">

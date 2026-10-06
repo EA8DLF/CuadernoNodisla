@@ -397,7 +397,7 @@
     <value>— WPM</value>
   </data>
   <data name="Cabina.Rtty.ApagarRtty" xml:space="preserve">
-    <value>RTTY ausschalten</value>
+    <value>RTTY</value>
   </data>
   <data name="Cabina.Rtty.ApagarRtty.Ayuda" xml:space="preserve">
     <value>Schaltet RTTY aus: es hört nicht mehr zu und kann nicht senden, und gibt die Soundkarte frei, falls sie geöffnet war</value>
@@ -1711,7 +1711,7 @@
     <value>Kein Funkgerät: nur die Verbindung wird ausgefüllt.</value>
   </data>
   <data name="Cabina.TxCw.ApagarCw" xml:space="preserve">
-    <value>CW ausschalten</value>
+    <value>CW</value>
   </data>
   <data name="Cabina.TxCw.ApagarCw.Ayuda" xml:space="preserve">
     <value>Schaltet CW aus: damit kann nicht gesendet werden</value>

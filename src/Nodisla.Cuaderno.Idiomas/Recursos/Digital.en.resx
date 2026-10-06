@@ -340,7 +340,7 @@
     <value>Adds a row with the current mode and dial</value>
   </data>
   <data name="Digital.Modem.ApagarModo" xml:space="preserve">
-    <value>Turn off digital</value>
+    <value>Digital</value>
   </data>
   <data name="Digital.Modem.ApagarModo.Ayuda" xml:space="preserve">
     <value>Turns off the digital mode (FT8/FT4 and the rest): it stops listening and cannot transmit, and releases the sound card if it had it open</value>

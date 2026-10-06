@@ -397,7 +397,7 @@
     <value>— WPM</value>
   </data>
   <data name="Cabina.Rtty.ApagarRtty" xml:space="preserve">
-    <value>Turn off RTTY</value>
+    <value>RTTY</value>
   </data>
   <data name="Cabina.Rtty.ApagarRtty.Ayuda" xml:space="preserve">
     <value>Turns off RTTY: it stops listening and cannot transmit, and releases the sound card if it had it open</value>
@@ -1711,7 +1711,7 @@
     <value>No radio: only the contact is filled in.</value>
   </data>
   <data name="Cabina.TxCw.ApagarCw" xml:space="preserve">
-    <value>Turn off CW</value>
+    <value>CW</value>
   </data>
   <data name="Cabina.TxCw.ApagarCw.Ayuda" xml:space="preserve">
     <value>Turns off CW: it cannot be used to transmit</value>

@@ -67,12 +67,24 @@
                       Margin="8,0,0,0"
                       ToolTip="{loc:Texto Cabina.TxCw.Pestillo.Ayuda}" />
 
-            <CheckBox DockPanel.Dock="Right"
-                      Content="{loc:Texto Cabina.TxCw.ApagarCw}"
-                      IsChecked="{Binding ModoApagado}"
-                      VerticalAlignment="Center"
-                      Margin="8,0,0,0"
-                      ToolTip="{loc:Texto Cabina.TxCw.ApagarCw.Ayuda}" />
+            <!--
+                Interruptor deslizante y no casilla: lo pidió el operador (feedback directo,
+                2026-10-06) tras probar la 0.2.11 — la casilla con letras quedaba "escondida y
+                liosa" mezclada con el resto de mandos de esta fila.
+            -->
+            <Border DockPanel.Dock="Right"
+                    Style="{StaticResource TarjetaDeApagado}"
+                    VerticalAlignment="Center"
+                    Margin="8,0,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{loc:Texto Cabina.TxCw.ApagarCw}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <ToggleButton Style="{StaticResource InterruptorDeslizante}"
+                                  IsChecked="{Binding ModoApagado}"
+                                  VerticalAlignment="Center"
+                                  ToolTip="{loc:Texto Cabina.TxCw.ApagarCw.Ayuda}"
+                                  AutomationProperties.Name="{loc:Texto Cabina.TxCw.ApagarCw.Ayuda}" />
+                </StackPanel>
+            </Border>
 
             <Border CornerRadius="3" Padding="10,6" VerticalAlignment="Center">
                 <Border.Style>

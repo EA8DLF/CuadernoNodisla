@@ -340,7 +340,7 @@
     <value>Aggiunge una riga con il modo e il dial attuali</value>
   </data>
   <data name="Digital.Modem.ApagarModo" xml:space="preserve">
-    <value>Disattiva digitale</value>
+    <value>Digitale</value>
   </data>
   <data name="Digital.Modem.ApagarModo.Ayuda" xml:space="preserve">
     <value>Disattiva la modalità digitale (FT8/FT4 e le altre): non ascolta e non può trasmettere, e rilascia la scheda audio se era aperta</value>

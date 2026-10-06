@@ -340,7 +340,7 @@
     <value>Ajoute une ligne avec le mode et le cadran actuels</value>
   </data>
   <data name="Digital.Modem.ApagarModo" xml:space="preserve">
-    <value>Désactiver le numérique</value>
+    <value>Numérique</value>
   </data>
   <data name="Digital.Modem.ApagarModo.Ayuda" xml:space="preserve">
     <value>Désactive le mode numérique (FT8/FT4 et les autres) : il n'écoute plus et ne peut pas émettre, et libère la carte son si elle était ouverte</value>

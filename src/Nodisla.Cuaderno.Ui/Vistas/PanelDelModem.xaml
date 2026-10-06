@@ -70,6 +70,25 @@
         <!-- ══ Cabecera: qué es esto, el modo y los dos botones ══ -->
         <DockPanel Grid.Row="0" Margin="0,0,0,6">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <!--
+                    Interruptor deslizante y no casilla: lo pidió el operador (feedback directo,
+                    2026-10-06) tras probar la 0.2.11 — la casilla con letras, abajo junto a
+                    Emitir/Cortar PTT/Permitir transmitir, quedaba "escondida y liosa". Aquí
+                    arriba, junto al modo y a Escuchar/Parar, es lo primero que se ve al abrir la
+                    pestaña y además descongestiona la barra de transmisión de abajo.
+                -->
+                <Border Style="{StaticResource TarjetaDeApagado}"
+                        VerticalAlignment="Center"
+                        Margin="0,0,12,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{loc:Texto Digital.Modem.ApagarModo}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <ToggleButton Style="{StaticResource InterruptorDeslizante}"
+                                      IsChecked="{Binding ModoApagado}"
+                                      VerticalAlignment="Center"
+                                      ToolTip="{loc:Texto Digital.Modem.ApagarModo.Ayuda}"
+                                      AutomationProperties.Name="{loc:Texto Digital.Modem.ApagarModo.Ayuda}" />
+                    </StackPanel>
+                </Border>
                 <TextBlock Text="{loc:Texto Comun.Modo}" Style="{StaticResource Etiqueta}" Margin="0,0,6,0" />
                 <ComboBox ItemsSource="{Binding Modos}"
                           SelectedItem="{Binding ModoElegido}"
@@ -644,13 +663,6 @@
                              FontFamily="Consolas, Cascadia Mono, Courier New"
                              AutomationProperties.Name="{loc:Texto Digital.Modem.MensajeAEmitir.Nombre}" />
                     <TextBlock DockPanel.Dock="Right" Text="{loc:Texto Digital.Modem.MensajeLibre}" Style="{StaticResource EtiquetaDeCampo}" VerticalAlignment="Center" Margin="0,0,6,0" />
-
-                    <CheckBox DockPanel.Dock="Left"
-                              Content="{loc:Texto Digital.Modem.ApagarModo}"
-                              IsChecked="{Binding ModoApagado}"
-                              VerticalAlignment="Center"
-                              Margin="0,0,12,0"
-                              ToolTip="{loc:Texto Digital.Modem.ApagarModo.Ayuda}" />
 
                     <CheckBox DockPanel.Dock="Left"
                               Content="{loc:Texto Digital.Modem.PermitirTransmitir}"

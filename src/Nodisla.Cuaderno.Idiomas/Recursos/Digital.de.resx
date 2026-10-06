@@ -340,7 +340,7 @@
     <value>Fügt eine Zeile mit aktueller Betriebsart und Frequenz hinzu</value>
   </data>
   <data name="Digital.Modem.ApagarModo" xml:space="preserve">
-    <value>Digitalmodus ausschalten</value>
+    <value>Digital</value>
   </data>
   <data name="Digital.Modem.ApagarModo.Ayuda" xml:space="preserve">
     <value>Schaltet den Digitalmodus (FT8/FT4 und die anderen) aus: er hört nicht mehr zu und kann nicht senden, und gibt die Soundkarte frei, falls sie geöffnet war</value>

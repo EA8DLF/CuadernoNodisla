@@ -397,7 +397,7 @@
     <value>— WPM</value>
   </data>
   <data name="Cabina.Rtty.ApagarRtty" xml:space="preserve">
-    <value>Apagar RTTY</value>
+    <value>RTTY</value>
   </data>
   <data name="Cabina.Rtty.ApagarRtty.Ayuda" xml:space="preserve">
     <value>Apaga RTTY: no escucha ni puede transmitir, y suelta la tarjeta de sonido si la tenía abierta</value>
@@ -1711,7 +1711,7 @@
     <value>Sin equipo: solo se rellena el contacto.</value>
   </data>
   <data name="Cabina.TxCw.ApagarCw" xml:space="preserve">
-    <value>Apagar CW</value>
+    <value>CW</value>
   </data>
   <data name="Cabina.TxCw.ApagarCw.Ayuda" xml:space="preserve">
     <value>Apaga CW: no se puede transmitir con él</value>

@@ -39,13 +39,17 @@ Compilación de la solución: **0 avisos, 0 errores**.
   553.064 referencias, **ajustes** con credenciales cifradas.
 - **Módem propio de FT8/FT4**: modula, sincroniza y decodifica. Recupera el 100 % hasta −15 dB y
   el 91,7 % a −18 dB, **con cero decodificaciones falsas en todas las franjas**.
-- **Apagar un modo a mano** (05-10-2026): tres interruptores independientes, uno por modo —«Apagar
-  CW» en la zona de transmisión de telegrafía, «Apagar digital» junto al pestillo del módem propio
-  y «Apagar RTTY» junto a «Escuchar»—. Apagado, ese modo no puede transmitir (el mismo mecanismo
-  que el pestillo, con su propio aviso) y, si estaba escuchando, suelta de verdad la entrada y la
-  salida de audio compartidas en vez de dejarlas abiertas sin usarlas. Empiezan encendidos siempre;
-  no se guardan entre sesiones, igual que el pestillo. Ver `ModoApagado` en
-  `VistaModeloTransmisionCw`, `VistaModeloModemPropio` y `VistaModeloRtty`.
+- **Apagar un modo a mano** (05-10-2026, interruptor deslizante desde el 06-10-2026): tres
+  interruptores independientes, uno por modo —«CW» en la zona de transmisión de telegrafía,
+  «Digital» en la cabecera del módem propio (junto al selector de modo y a Escuchar/Parar) y
+  «RTTY» junto a «Escuchar»—. Antes eran casillas con el texto «Apagar X»: el operador las vio
+  escondidas y liosas (feedback directo, 06-10-2026), así que ahora son un interruptor de verdad
+  —riel que se tiñe de ámbar y bolita que se desliza, estilo `InterruptorDeslizante` en
+  `Estilos.xaml`— con la etiqueta corta del modo al lado. Apagado, ese modo no puede transmitir
+  (el mismo mecanismo que el pestillo, con su propio aviso) y, si estaba escuchando, suelta de
+  verdad la entrada y la salida de audio compartidas en vez de dejarlas abiertas sin usarlas.
+  Empiezan encendidos siempre; no se guardan entre sesiones, igual que el pestillo. Ver
+  `ModoApagado` en `VistaModeloTransmisionCw`, `VistaModeloModemPropio` y `VistaModeloRtty`.
 - **Decodificación AP** (05-10-2026): mientras hay un QSO en marcha con un corresponsal conocido,
   el decodificador fija los bits de los dos indicativos (ya sabidos por el secuenciador) y solo
   deja por leer de la señal real el campo del informe, igual que hace JTDX con su «AP decoding»

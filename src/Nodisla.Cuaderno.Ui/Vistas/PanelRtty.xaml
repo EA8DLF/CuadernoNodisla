@@ -143,11 +143,23 @@
                     Visibility="{Binding SinAudio, Converter={StaticResource BooleanoAVisible}}"
                     ToolTip="{loc:Texto Cabina.Rtty.EscucharAyuda}" />
 
-            <CheckBox Content="{loc:Texto Cabina.Rtty.ApagarRtty}"
-                      IsChecked="{Binding ModoApagado}"
-                      VerticalAlignment="Center"
-                      Margin="0,0,10,4"
-                      ToolTip="{loc:Texto Cabina.Rtty.ApagarRtty.Ayuda}" />
+            <!--
+                Interruptor deslizante y no casilla: lo pidió el operador (feedback directo,
+                2026-10-06) tras probar la 0.2.11 — la casilla con letras quedaba "escondida y
+                liosa" mezclada con el resto de mandos de esta fila.
+            -->
+            <Border Style="{StaticResource TarjetaDeApagado}"
+                    VerticalAlignment="Center"
+                    Margin="0,0,10,4">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{loc:Texto Cabina.Rtty.ApagarRtty}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <ToggleButton Style="{StaticResource InterruptorDeslizante}"
+                                  IsChecked="{Binding ModoApagado}"
+                                  VerticalAlignment="Center"
+                                  ToolTip="{loc:Texto Cabina.Rtty.ApagarRtty.Ayuda}"
+                                  AutomationProperties.Name="{loc:Texto Cabina.Rtty.ApagarRtty.Ayuda}" />
+                </StackPanel>
+            </Border>
 
             <!-- El tono (marca): sirve para escuchar y para transmitir. Intro lo fija; flechas o rueda, ±10 Hz. -->
             <StackPanel Orientation="Horizontal" Margin="0,0,10,4" VerticalAlignment="Center"
