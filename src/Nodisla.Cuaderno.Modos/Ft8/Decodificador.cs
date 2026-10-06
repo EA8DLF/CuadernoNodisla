@@ -116,6 +116,34 @@ public sealed class Decodificador
     /// </remarks>
     public double SincronismoMinimoParaLaProfunda { get; set; } = 2.0;
 
+    /// <summary>
+    /// En cuantos hilos se reparte el repaso de las candidatas de una ventana.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Demodular una candidata y corregirla con el LDPC —y, si hace falta, con la recuperacion
+    /// profunda— es trabajo de CPU puro e independiente de las demas candidatas: nada de eso
+    /// mira lo que hicieron las otras. Repartirlo entre hilos no cambia una coma de la cuenta,
+    /// solo la hace mas rapida mientras la maquina tenga nucleos libres.
+    /// </para>
+    /// <para>
+    /// <b>Lo que no se reparte</b> es la decision final de cada candidata: si su mensaje ya
+    /// habia salido por otra candidata vecina (<see cref="YaEstaba"/>) y el catalogo de
+    /// indicativos, que aprende indicativos nuevos a la vez que resuelve los resumidos y por eso
+    /// tiene que verlos en el mismo orden de siempre, de la candidata con mejor sincronismo a la
+    /// peor. Por eso <see cref="Decodificar"/> reparte entre hilos solo hasta tener la palabra de
+    /// codigo corregida; el CRC, el catalogo y el descarte de duplicados se hacen despues, en un
+    /// solo hilo y en ese mismo orden, asi que el resultado final —que es lo que mide el banco de
+    /// medida— no cambia ni un bit por decodificar en paralelo.
+    /// </para>
+    /// <para>
+    /// De serie, los nucleos de la maquina sin pasar de ocho: mas que eso no ha medido ninguna
+    /// ganancia porque ya no quedan bastantes candidatas por hilo, y en una maquina modesta deja
+    /// nucleos libres para la captura de audio y la pantalla.
+    /// </para>
+    /// </remarks>
+    public int GradoDeParalelismo { get; set; } = Math.Clamp(Environment.ProcessorCount, 1, 8);
+
     /// <summary>Crea el decodificador.</summary>
     /// <param name="tablas">Tablas del protocolo.</param>
     /// <param name="registro">Para dejar constancia; por omision no se traza nada.</param>
@@ -183,13 +211,10 @@ public sealed class Decodificador
 
         var analisis = AnalisisDeVentana.Calcular(muestras, p);
         var candidatas = Sincronizador.Buscar(analisis, CandidatasPorVentana);
-        var demodulador = new Demodulador(analisis);
 
         var salida = new List<DecodificacionPropia>();
         var vistas = new List<(string Texto, double Tono)>();
-        var palabra = new byte[_tablas.Ldpc.Longitud];
         var bits77 = new byte[MensajeDe77Bits.Bits];
-        var confianzasConPista = pista is null ? null : new float[_tablas.Ldpc.Longitud];
 
         // En FT4 los 77 bits del mensaje se revuelven con una mezcla fija antes de entrar al
         // LDPC (Codificador.AplicarMezclaDeFt4), así que lo que ocupa esas posiciones en la
@@ -211,46 +236,47 @@ public sealed class Decodificador
         var porRecuperacionProfunda = 0;
         var porPista = 0;
 
-        foreach (var candidata in candidatas)
+        // Fase 1, repartida entre hilos: para cada candidata, demodular, corregir con el LDPC y,
+        // si hace falta, intentar la recuperacion profunda. Cada hilo trabaja con su propio
+        // espacio (su demodulador, su corrector y su recuperacion profunda): ninguno de los tres
+        // se puede compartir entre candidatas que se miran a la vez, porque los tres reutilizan
+        // su propia memoria de trabajo de una llamada a la siguiente. El resultado de cada
+        // candidata es, como mucho, un puñado de palabras de código por las que merece la pena
+        // probar despues el sello, en el mismo orden en que se probarian en secuencial.
+        var resultados = new ResultadoCandidata[candidatas.Count];
+        var necesitaPista = pistaEfectiva is not null;
+        if (candidatas.Count > 0)
         {
-            var medida = demodulador.Medir(candidata, segundosDelPrimerMuestreo);
-
-            // Primero la pasada normal. Si no cuaja y hay una pista del QSO en curso, se repite
-            // la misma propagacion de creencias pero dando por ciertos los bits de los dos
-            // indicativos: lo unico que le falta de verdad a la señal es el campo del informe. Si
-            // tampoco asi cuaja, y solo si en ese sitio hay sincronismo de verdad, se reconstruye
-            // a partir de los bits mas fiables. Las dos condiciones de mas abajo —el corte de
-            // sincronismo y el de errores duros dentro de la recuperacion— son lo que impide que
-            // esta vuelta de tuerca llene el cuaderno de contactos inventados; estan explicadas y
-            // medidas en sus propias paginas.
-            var profunda = false;
-            var porEstaPista = false;
-            var cuantosMirar = 1;
-
-            if (!_corrector.TryDecodificar(demodulador.Confianzas, palabra, VueltasDelCorrector))
-            {
-                if (pistaEfectiva is { } pistaDelQso && confianzasConPista is not null)
+            Parallel.For(
+                0, candidatas.Count,
+                new ParallelOptions { MaxDegreeOfParallelism = Math.Max(1, GradoDeParalelismo) },
+                () => new EspacioDeTrabajo(analisis, _tablas, _corrector, _recuperacionProfunda, necesitaPista),
+                (i, _, espacio) =>
                 {
-                    AplicarPista(demodulador.Confianzas, pistaDelQso, _corrector.TopeDeConfianza, confianzasConPista);
-                    porEstaPista = _corrector.TryDecodificar(confianzasConPista, palabra, VueltasDelCorrector);
-                }
+                    resultados[i] = MirarDeCerca(
+                        candidatas[i], espacio, segundosDelPrimerMuestreo, pistaEfectiva,
+                        UsarRecuperacionProfunda, SincronismoMinimoParaLaProfunda, VueltasDelCorrector);
+                    return espacio;
+                },
+                static _ => { });
+        }
 
-                if (!porEstaPista)
-                {
-                    if (!UsarRecuperacionProfunda) continue;
-                    if (candidata.Puntuacion < SincronismoMinimoParaLaProfunda) continue;
-                    if (!_recuperacionProfunda.TryRecuperar(demodulador.Confianzas, palabra)) continue;
-                    profunda = true;
-                    cuantosMirar = _recuperacionProfunda.CandidatosEncontrados;
-                }
-            }
+        // Fase 2, en un solo hilo y en el mismo orden que antes —de la candidata con mejor
+        // sincronismo a la peor, que es como las devuelve Sincronizador.Buscar—: el CRC, el
+        // catalogo de indicativos (que aprende indicativos nuevos a la vez que resuelve los
+        // resumidos) y el descarte de duplicados. Es trabajo barato comparado con la fase 1, y
+        // hacerlo en este orden y en un solo hilo es lo que garantiza que el resultado no cambie
+        // ni un bit por haber demodulado y corregido en paralelo.
+        for (var i = 0; i < candidatas.Count; i++)
+        {
+            var resultado = resultados[i];
+            var medida = resultado.Medida;
 
             // De la recuperacion profunda pueden salir varias reconstrucciones, ordenadas de la
             // mas creible a la menos. Se le da a cada una su oportunidad ante el CRC y se para en
             // cuanto una lo pasa: la buena suele ser la primera, pero no siempre.
-            for (var c = 0; c < cuantosMirar; c++)
+            foreach (var palabra in resultado.Palabras)
             {
-                if (profunda && c > 0) _recuperacionProfunda.CopiarCandidato(c, palabra);
                 palabrasValidas++;
 
                 var conCrc = palabra.AsSpan(0, Crc14.BitsConCrc);
@@ -266,8 +292,8 @@ public sealed class Decodificador
                 if (YaEstaba(vistas, mensaje.Texto, tonoHz)) break;
                 vistas.Add((mensaje.Texto, tonoHz));
 
-                if (profunda) porRecuperacionProfunda++;
-                if (porEstaPista) porPista++;
+                if (resultado.Profunda) porRecuperacionProfunda++;
+                if (resultado.PorPista) porPista++;
                 salida.Add(new DecodificacionPropia(
                     mensaje.Texto,
                     Informe(medida, p),
@@ -280,8 +306,8 @@ public sealed class Decodificador
                     Llamado = mensaje.Llamado,
                     Locator = mensaje.Locator,
                     EsCq = mensaje.EsCq,
-                    EsRecuperacionProfunda = profunda,
-                    EsPorPista = porEstaPista,
+                    EsRecuperacionProfunda = resultado.Profunda,
+                    EsPorPista = resultado.PorPista,
                 });
                 break;
             }
@@ -297,6 +323,113 @@ public sealed class Decodificador
             PorRecuperacionProfunda = porRecuperacionProfunda,
             PorPista = porPista,
         };
+    }
+
+    /// <summary>
+    /// Lo que un hilo necesita para repasar candidatas sin pisar la memoria de trabajo de otro.
+    /// </summary>
+    /// <remarks>
+    /// El demodulador, el corrector de creencia y la recuperacion profunda reutilizan sus propios
+    /// vectores de una candidata a la siguiente: son rapidos precisamente por eso, pero por eso
+    /// mismo no se pueden compartir entre dos candidatas que se esten mirando a la vez. Cada hilo
+    /// de <see cref="Decodificar"/> tiene el suyo, copiado de los ajustes del decodificador
+    /// (<see cref="Corrector"/> y <see cref="Profunda"/>) en el momento de crearse.
+    /// </remarks>
+    private sealed class EspacioDeTrabajo
+    {
+        public readonly Demodulador Demodulador;
+        public readonly DecodificadorDeCreencia Corrector;
+        public readonly RecuperacionProfunda Profunda;
+        public readonly byte[] Palabra;
+        public readonly float[]? ConfianzasConPista;
+
+        public EspacioDeTrabajo(
+            AnalisisDeVentana analisis,
+            TablasDelProtocolo tablas,
+            DecodificadorDeCreencia plantillaCorrector,
+            RecuperacionProfunda plantillaProfunda,
+            bool necesitaPista)
+        {
+            Demodulador = new Demodulador(analisis);
+            Corrector = new DecodificadorDeCreencia(tablas.Ldpc)
+            {
+                TopeDeConfianza = plantillaCorrector.TopeDeConfianza,
+                Atenuacion = plantillaCorrector.Atenuacion,
+            };
+            Profunda = new RecuperacionProfunda(tablas.Ldpc)
+            {
+                ErroresDurosMaximos = plantillaProfunda.ErroresDurosMaximos,
+                FraccionDeSeguridadMaxima = plantillaProfunda.FraccionDeSeguridadMaxima,
+                Orden = plantillaProfunda.Orden,
+                ProfundidadDeLaBusqueda = plantillaProfunda.ProfundidadDeLaBusqueda,
+                CombinacionesPorOrden = plantillaProfunda.CombinacionesPorOrden,
+                MaximoDeCandidatos = plantillaProfunda.MaximoDeCandidatos,
+            };
+            Palabra = new byte[tablas.Ldpc.Longitud];
+            ConfianzasConPista = necesitaPista ? new float[tablas.Ldpc.Longitud] : null;
+        }
+    }
+
+    /// <summary>
+    /// Lo que sale de mirar de cerca una candidata, antes del CRC y del catalogo de indicativos:
+    /// cero, una o varias palabras de codigo —de la recuperacion profunda— por las que merece la
+    /// pena probar el sello despues, en el mismo orden en que se probarian en secuencial.
+    /// </summary>
+    private readonly record struct ResultadoCandidata(
+        MedidaDeCandidata Medida,
+        bool Profunda,
+        bool PorPista,
+        IReadOnlyList<byte[]> Palabras);
+
+    /// <summary>
+    /// La parte de una candidata que es pura CPU e independiente de las demas: demodular,
+    /// corregir con el LDPC y, si no cuaja, intentar la pista del QSO o la recuperacion profunda.
+    /// </summary>
+    /// <remarks>
+    /// No toca el CRC ni el catalogo de indicativos a proposito: esos dos pasos tienen que verse
+    /// en el mismo orden de siempre (ver <see cref="GradoDeParalelismo"/>), asi que se dejan para
+    /// la fase secuencial de <see cref="Decodificar"/>.
+    /// </remarks>
+    private static ResultadoCandidata MirarDeCerca(
+        Candidata candidata,
+        EspacioDeTrabajo espacio,
+        double segundosDelPrimerMuestreo,
+        PistaAp? pistaEfectiva,
+        bool usarRecuperacionProfunda,
+        double sincronismoMinimoParaLaProfunda,
+        int vueltasDelCorrector)
+    {
+        var medida = espacio.Demodulador.Medir(candidata, segundosDelPrimerMuestreo);
+        var confianzas = espacio.Demodulador.Confianzas;
+        var palabra = espacio.Palabra;
+
+        if (espacio.Corrector.TryDecodificar(confianzas, palabra, vueltasDelCorrector))
+            return new ResultadoCandidata(medida, false, false, new[] { (byte[])palabra.Clone() });
+
+        if (pistaEfectiva is { } pistaDelQso && espacio.ConfianzasConPista is not null)
+        {
+            AplicarPista(confianzas, pistaDelQso, espacio.Corrector.TopeDeConfianza, espacio.ConfianzasConPista);
+            if (espacio.Corrector.TryDecodificar(espacio.ConfianzasConPista, palabra, vueltasDelCorrector))
+                return new ResultadoCandidata(medida, false, true, new[] { (byte[])palabra.Clone() });
+        }
+
+        if (!usarRecuperacionProfunda) return new ResultadoCandidata(medida, false, false, []);
+        if (candidata.Puntuacion < sincronismoMinimoParaLaProfunda) return new ResultadoCandidata(medida, false, false, []);
+        if (!espacio.Profunda.TryRecuperar(confianzas, palabra)) return new ResultadoCandidata(medida, false, false, []);
+
+        // TryRecuperar ya dejo el mejor candidato (el numero cero) en "palabra"; los demas, si
+        // los hay, se copian aqui porque el espacio de trabajo se reutiliza en la siguiente
+        // candidata que toque este mismo hilo.
+        var cuantos = espacio.Profunda.CandidatosEncontrados;
+        var palabras = new byte[cuantos][];
+        for (var c = 0; c < cuantos; c++)
+        {
+            var copia = new byte[palabra.Length];
+            if (c == 0) palabra.CopyTo(copia, 0);
+            else espacio.Profunda.CopiarCandidato(c, copia);
+            palabras[c] = copia;
+        }
+        return new ResultadoCandidata(medida, true, false, palabras);
     }
 
     /// <summary>

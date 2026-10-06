@@ -89,6 +89,26 @@ public interface IModoDigital
     TimeSpan ComienzoDeLaSenal =>
         Periodo >= TimeSpan.FromSeconds(60) ? TimeSpan.FromSeconds(1) : TimeSpan.FromSeconds(0.5);
 
+    /// <summary>
+    /// Si tiene sentido lanzarle una decodificacion de adelanto sobre un prefijo de la ventana,
+    /// antes de que se cierre del todo.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Por omision, no: solo lo aprovechan FT8 y FT4 (<see cref="Ft8.ModoFt8"/>), cuyo periodo es
+    /// tan corto —15 y 7,5 s— que todo el trabajo de decodificar cae, hoy, despues de que la
+    /// ventana cierre, comiendose el poco margen de reaccion que queda para evaluar novedad,
+    /// avanzar la secuencia del QSO y emitir a tiempo.
+    /// </para>
+    /// <para>
+    /// Los demas modos de serie —WSPR, JT65, JT9, Q65, FST4 y MSK144— tienen periodos de sesenta
+    /// segundos o mas (MSK144 es la excepcion de periodo corto, pero decodifica ahi por ventana
+    /// completa de una sola vez y no se ha medido ni pedido forzarle esto): no les hace falta
+    /// este adelanto y nadie lo ha medido para ellos, asi que no se les aplica sin pedirlo.
+    /// </para>
+    /// </remarks>
+    bool SoportaDecodificacionProgresiva => false;
+
     /// <summary>Muestras por segundo a las que quiere el audio para analizarlo.</summary>
     int FrecuenciaDeAnalisis { get; }
 

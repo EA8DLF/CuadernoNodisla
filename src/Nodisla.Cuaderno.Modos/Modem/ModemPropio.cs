@@ -50,6 +50,18 @@ public sealed class ModemPropio : IModemPropio
     /// </remarks>
     public const double SegundosDePreludio = 1.0;
 
+    /// <summary>
+    /// Fraccion del periodo a partir de la que se lanza la decodificacion de adelanto, en los
+    /// modos que la soportan (<see cref="IModoDigital.SoportaDecodificacionProgresiva"/>).
+    /// </summary>
+    /// <remarks>
+    /// Ochenta y cinco por ciento, igual de orden de magnitud que las pasadas progresivas de
+    /// JTDX (a los 11,8 s de una ventana de 15 s son el 79 %; a los 13,5 s, el 90 %): bastante
+    /// tarde para que la señal ya este casi entera en el audio acumulado, y bastante pronto para
+    /// que quede un hueco de verdad antes de que la ventana cierre.
+    /// </remarks>
+    public const double FraccionDelPrefijoProgresivo = 0.85;
+
     /// <summary>Muestras de cada columna de la cascada.</summary>
     private const int MuestrasDeCascada = 16384;
 
@@ -248,9 +260,32 @@ public sealed class ModemPropio : IModemPropio
     /// Va juntando los bloques de audio, corta por ventanas y decodifica cada una.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// Se trabaja sobre una copia propia del audio y no sobre los bloques que llegan: quien
     /// captura puede reutilizar sus vectores en cuanto suelta el evento, y leer de ahi mas tarde
     /// daria audio revuelto sin que nada avisara.
+    /// </para>
+    /// <para>
+    /// <b>Dos adelantos sobre el disparo de antes, los dos conservadores.</b> El primero: antes,
+    /// la ventana no se daba por cerrada hasta que llegaba un bloque de la <i>siguiente</i>, asi
+    /// que si el bloque dura, pongamos, cien milisegundos, esos cien milisegundos se perdian sin
+    /// motivo entre que la ventana termina de verdad y que se nota. Ahora se nota en cuanto lo
+    /// acumulado ya cubre el periodo entero, sin esperar a que la pinte un bloque de mas alla.
+    /// </para>
+    /// <para>
+    /// El segundo, solo para los modos que lo piden (<see cref="IModoDigital.SoportaDecodificacionProgresiva"/>,
+    /// hoy FT8 y FT4): al llegar a <see cref="FraccionDelPrefijoProgresivo"/> de la ventana se
+    /// lanza, en segundo plano y sin esperarla, una decodificacion de adelanto sobre lo
+    /// acumulado hasta ese instante. No decide nada por su cuenta ni se anuncia por
+    /// <see cref="VentanaLista"/> —eso lo sigue haciendo, una sola vez por ventana, la
+    /// decodificacion completa de siempre, que es la unica que cuenta para la fiabilidad y para
+    /// quien escucha el evento—; lo que hace es adelantar el trabajo caro (demodular y corregir
+    /// con el LDPC) al hueco de CPU que, si no, se queda ocioso mientras llegan los ultimos
+    /// segundos de la ventana, y de paso le deja al catalogo de indicativos lo que haya podido
+    /// resolver antes de que le toque el turno a la decodificacion completa. Por eso se espera a
+    /// que termine (si no ha terminado ya) justo antes de esa decodificacion completa: las dos
+    /// comparten el mismo decodificador del modo y no pueden correr a la vez.
+    /// </para>
     /// </remarks>
     private async Task MolerAsync(IModoDigital modo, CancellationToken ct)
     {
@@ -261,6 +296,8 @@ public sealed class ModemPropio : IModemPropio
         var frecuencia = 0;
         DateTimeOffset? instanteDelPrimero = null;
         DateTimeOffset? ventanaEnCurso = null;
+        Task? progresivaEnCurso = null;
+        var progresivaYaLanzada = false;
 
         try
         {
@@ -277,10 +314,41 @@ public sealed class ModemPropio : IModemPropio
 
                 var ventana = IModoDigital.ComienzoDeVentana(bloque.InstanteUtc, periodo, modo.ArranqueDentroDelPeriodo);
                 ventanaEnCurso ??= ventana;
-                if (ventana == ventanaEnCurso) continue;
 
-                // Cambio de ventana: lo acumulado ya contiene la anterior entera.
-                await DecodificarLoAcumuladoAsync(modo, audio, frecuencia, instanteDelPrimero.Value, ventanaEnCurso.Value, ct)
+                // Cuanto se lleva ya de la ventana en curso, contando desde su comienzo: el
+                // preludio que se conservo de la ventana anterior no cuenta como suyo.
+                var finDeLoAcumulado = instanteDelPrimero.Value.AddSeconds((double)audio.Count / frecuencia);
+                var acumuladoDeEstaVentana = finDeLoAcumulado - ventanaEnCurso.Value;
+
+                if (modo.SoportaDecodificacionProgresiva && !progresivaYaLanzada && progresivaEnCurso is null
+                    && acumuladoDeEstaVentana.Ticks >= periodo.Ticks * FraccionDelPrefijoProgresivo)
+                {
+                    progresivaYaLanzada = true;
+                    progresivaEnCurso = LanzarDecodificacionProgresiva(modo, audio, frecuencia, instanteDelPrimero.Value, ventanaEnCurso.Value, ct);
+                }
+
+                // Cambio de ventana, o lo acumulado ya cubre el periodo entero sin necesitar un
+                // bloque de la siguiente para notarlo.
+                var cambioDeVentana = ventana != ventanaEnCurso.Value;
+                if (!cambioDeVentana && acumuladoDeEstaVentana < periodo) continue;
+
+                var ventanaQueCierra = ventanaEnCurso.Value;
+                // Si hubo un hueco de audio tan grande como para saltarse una ventana entera, se
+                // salta a la que diga el bloque que acaba de llegar; si no, es sencillamente la
+                // siguiente de la que se estaba llenando.
+                var proximaVentana = cambioDeVentana ? ventana : ventanaQueCierra + periodo;
+
+                // La decodificacion de adelanto y la completa comparten el decodificador del
+                // modo: no pueden correr a la vez, asi que si la de adelanto sigue viva se espera
+                // aqui, justo antes de necesitarlo de verdad.
+                if (progresivaEnCurso is not null)
+                {
+                    await progresivaEnCurso.ConfigureAwait(false);
+                    progresivaEnCurso = null;
+                }
+
+                // Lo acumulado ya contiene la ventana que cierra entera.
+                await DecodificarLoAcumuladoAsync(modo, audio, frecuencia, instanteDelPrimero.Value, ventanaQueCierra, ct)
                     .ConfigureAwait(false);
 
                 // Se conserva el preludio de la ventana nueva y se tira lo demas.
@@ -291,7 +359,8 @@ public sealed class ModemPropio : IModemPropio
                     audio.RemoveRange(0, sobran);
                     instanteDelPrimero = instanteDelPrimero.Value.AddSeconds((double)sobran / frecuencia);
                 }
-                ventanaEnCurso = ventana;
+                ventanaEnCurso = proximaVentana;
+                progresivaYaLanzada = false;
             }
         }
         catch (OperationCanceledException)
@@ -302,6 +371,45 @@ public sealed class ModemPropio : IModemPropio
         {
             _registro.LogError(ex, "La decodificación se paró por un fallo inesperado.");
         }
+    }
+
+    /// <summary>
+    /// Lanza en segundo plano una decodificacion de adelanto sobre el audio acumulado hasta
+    /// ahora, sin que nadie la espere todavia.
+    /// </summary>
+    /// <remarks>
+    /// Se le pasa una copia del audio acumulado (<see cref="List{T}.ToArray"/>): la lista sigue
+    /// creciendo en el hilo de <see cref="MolerAsync"/> mientras esta tarea trabaja, y leer de
+    /// ella a la vez que se escribe daria, en el mejor de los casos, una excepcion, y en el peor,
+    /// audio revuelto. No se anuncia nada con lo que salga de aqui: su unico efecto util, aparte
+    /// de adelantar el trabajo caro, es lo que <see cref="IModoDigital.DecodificarVentana"/> deje
+    /// aprendido en el catalogo de indicativos del modo, que si es compartido y si le sirve
+    /// luego a la decodificacion completa.
+    /// </remarks>
+    private Task LanzarDecodificacionProgresiva(
+        IModoDigital modo, List<float> audio, int frecuencia,
+        DateTimeOffset instanteDelPrimero, DateTimeOffset ventana, CancellationToken ct)
+    {
+        var prefijo = audio.ToArray();
+        var desfase = (instanteDelPrimero - ventana).TotalSeconds;
+        return Task.Run(() =>
+        {
+            if (ct.IsCancellationRequested) return;
+            try
+            {
+                modo.DecodificarVentana(prefijo, frecuencia, ventana, desfase, ct);
+            }
+            catch (OperationCanceledException)
+            {
+                // Se pidio parar mientras adelantaba. No es un error: la completa no llegara a
+                // lanzarse si la parada ya esta en marcha.
+            }
+            catch (Exception ex)
+            {
+                _registro.LogDebug(
+                    ex, "La decodificación de adelanto de la ventana {Ventana} falló; no afecta a la decodificación completa.", ventana);
+            }
+        }, CancellationToken.None);
     }
 
     private async Task DecodificarLoAcumuladoAsync(

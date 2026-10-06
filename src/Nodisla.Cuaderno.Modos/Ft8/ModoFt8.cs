@@ -72,6 +72,14 @@ public sealed class ModoFt8 : IModoDigital
     public PistaDeQso PistaDeQso { get; set; }
 
     /// <inheritdoc/>
+    /// <remarks>
+    /// FT8 y FT4 son, de los modos de serie, los de periodo mas corto (15 y 7,5 s): son los que
+    /// mas se benefician de adelantar el trabajo caro —demodular y corregir con el LDPC— al rato
+    /// en que todavia esta llegando el resto de la ventana, en vez de esperar a que cierre.
+    /// </remarks>
+    public bool SoportaDecodificacionProgresiva => true;
+
+    /// <inheritdoc/>
     public double AmplitudDeSalida { get; set; } = IModoDigital.AmplitudDeSalidaPorDefecto;
 
     /// <inheritdoc/>
