@@ -153,10 +153,39 @@
             </StackPanel>
         </Border>
 
-        <!-- ══ El reloj, antes de operar ══ -->
-        <ContentControl Grid.Row="2" Margin="0,0,0,6">
+        <!-- ══ El reloj, antes de operar; y cuanto queda de la ventana en curso ══ -->
+        <DockPanel Grid.Row="2" Margin="0,0,0,6">
+            <!--
+                La cuenta atras, a la derecha del reloj: cuanto queda de la ventana en curso (el
+                «TX 0/15» de JTDX). Vale para cualquier periodo —15 s en FT8, 7,5 s en FT4, 120 s
+                en WSPR…—, no solo para FT8: lo decide el modo elegido, no esta tira.
+            -->
+            <Border DockPanel.Dock="Right"
+                    Padding="8,3"
+                    CornerRadius="4"
+                    BorderThickness="1"
+                    Background="{DynamicResource FondoAlterno}"
+                    BorderBrush="{DynamicResource BordeSuave}"
+                    Margin="6,0,0,0">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding SegundosRestantesEnVentanaTexto}"
+                               FontFamily="Consolas, Cascadia Mono, Courier New"
+                               FontSize="14"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               AutomationProperties.Name="{loc:Texto Digital.Modem.Ventana.Nombre}"
+                               ToolTip="{loc:Texto Digital.Modem.Ventana.Ayuda}" />
+                    <ProgressBar Minimum="0"
+                                 Maximum="1"
+                                 Value="{Binding ProgresoDeVentana, Mode=OneWay}"
+                                 Width="70"
+                                 Height="6"
+                                 Margin="0,2,0,0" />
+                </StackPanel>
+            </Border>
+
             <vistas:TiraDelReloj DataContext="{Binding Reloj}" />
-        </ContentControl>
+        </DockPanel>
 
         <!-- ══ Cascada y lista a la izquierda; la operación a la derecha ══ -->
         <Grid Grid.Row="3">
@@ -512,6 +541,8 @@
                     <WrapPanel Margin="0,0,0,2">
                         <CheckBox Content="{loc:Texto Digital.Modem.SaltarTx1}" IsChecked="{Binding SaltarTx1}" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="{loc:Texto Digital.Modem.SaltarTx1.Ayuda}" />
                         <CheckBox Content="{loc:Texto Digital.Modem.LlamarAlPrimero}" IsChecked="{Binding LlamarAlPrimero}" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="{loc:Texto Digital.Modem.LlamarAlPrimero.Ayuda}" />
+                        <CheckBox Content="{loc:Texto Digital.Modem.AnsB4}" IsChecked="{Binding AnsB4}" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="{loc:Texto Digital.Modem.AnsB4.Ayuda}" />
+                        <CheckBox Content="{loc:Texto Digital.Modem.UnSoloQso}" IsChecked="{Binding UnSoloQso}" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="{loc:Texto Digital.Modem.UnSoloQso.Ayuda}" />
                         <CheckBox Content="{loc:Texto Digital.Modem.Tx4ConRrr}" IsChecked="{Binding Tx4ConRrr}" VerticalAlignment="Center" Margin="0,0,10,4" />
                         <TextBlock Text="{loc:Texto Digital.Modem.PararTras}" Style="{StaticResource Etiqueta}" />
                         <TextBox Text="{Binding CiclosSinRespuesta, UpdateSourceTrigger=PropertyChanged}" Width="34" Style="{StaticResource CampoCorto}" Margin="0,0,4,4" AutomationProperties.Name="{loc:Texto Digital.Modem.CiclosSinRespuesta.Nombre}" />

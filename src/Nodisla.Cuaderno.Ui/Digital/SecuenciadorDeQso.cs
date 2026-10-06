@@ -6,7 +6,8 @@ namespace Nodisla.Cuaderno.Ui.Digital;
 /// <param name="Mensaje">El mensaje entendido.</param>
 /// <param name="Decibelios">Con cuanta señal se oyo: es el informe que se le manda.</param>
 /// <param name="TonoHz">Donde estaba: en hound es donde hay que ir a contestar al fox.</param>
-public readonly record struct MensajeOido(MensajeEstandar Mensaje, int Decibelios, int TonoHz);
+/// <param name="TrabajadoAntes">Ya se ha trabajado a ese indicativo: para el filtro de «AnsB4».</param>
+public readonly record struct MensajeOido(MensajeEstandar Mensaje, int Decibelios, int TonoHz, bool TrabajadoAntes = false);
 
 /// <summary>Lo que el secuenciador decide tras una ventana o una accion del operador.</summary>
 /// <param name="Tx">Mensaje que toca emitir en la proxima ventana propia (1 a 6), o nulo si nada.</param>
@@ -63,6 +64,28 @@ public sealed class SecuenciadorDeQso
 
     /// <summary>Llamando CQ, contestar solo al primero que llame.</summary>
     public bool LlamarAlPrimero { get; set; }
+
+    /// <summary>
+    /// Llamando CQ con <see cref="LlamarAlPrimero"/>, no elegir automaticamente a una estacion ya
+    /// trabajada antes («Ans B4» de JTDX). No afecta a la respuesta a mano (doble clic): eso lo
+    /// sigue decidiendo el operador, vea la lista como la vea.
+    /// </summary>
+    public bool AnsB4 { get; set; }
+
+    /// <summary>
+    /// Al completar un contacto que vino de llamar CQ con <see cref="LlamarAlPrimero"/>, parar del
+    /// todo en vez de seguir llamando CQ solo para el siguiente que conteste («Enable Tx» de JTDX
+    /// durante un pileup, si esto no esta marcado). De fabrica, a true: no cambiar de la noche a
+    /// la mañana el comportamiento de siempre (pararse tras cada contacto) sin que el operador lo
+    /// pida.
+    /// </summary>
+    public bool UnSoloQso { get; set; } = true;
+
+    /// <summary>
+    /// La sesion en marcha viene de un «Llamar CQ» (<see cref="LlamarCq"/>) y no se ha estrechado
+    /// a un contacto elegido a mano: es la que puede seguir sola de un contacto al siguiente.
+    /// </summary>
+    private bool _llamandoCqSolo;
 
     /// <summary>Emisiones seguidas sin noticias del corresponsal tras las que se para.</summary>
     public int CiclosSinRespuesta { get; set; } = 5;
@@ -121,6 +144,7 @@ public sealed class SecuenciadorDeQso
         Activo = true;
         TxActual = 6;
         Paridad = ParidadDeLaSiguiente(ahora, Periodo);
+        _llamandoCqSolo = true;
         return new DecisionDelSecuenciador(6, null, false, null);
     }
 
@@ -134,6 +158,8 @@ public sealed class SecuenciadorDeQso
         TxActual = tx;
         if (Paridad < 0) Paridad = ParidadDeLaSiguiente(ahora, Periodo);
         EmisionesSinNoticias = 0;
+        // Es una orden a mano del operador, no la continuacion de un «Llamar CQ» en marcha.
+        _llamandoCqSolo = false;
         return new DecisionDelSecuenciador(tx, null, false, null);
     }
 
@@ -155,6 +181,9 @@ public sealed class SecuenciadorDeQso
 
         Limpiar();
         Activo = true;
+        // Es el operador quien ha elegido a mano con el doble clic: no es la continuacion de un
+        // «Llamar CQ», asi que al completarse no sigue llamando CQ solo.
+        _llamandoCqSolo = false;
         DxCall = m.Llamante;
         DxGrid = m.Locator;
         InformeEnviado = oido.Decibelios;
@@ -238,7 +267,10 @@ public sealed class SecuenciadorDeQso
         {
             if (LlamarAlPrimero && paraMi.Count > 0)
             {
-                var primero = paraMi.FirstOrDefault(o => o.Mensaje.Clase is ClaseDeMensaje.Llamada or ClaseDeMensaje.Informe);
+                // AnsB4: no se elige a quien ya se ha trabajado. Sigue en la lista y se le puede
+                // contestar a mano, pero la seleccion automatica lo salta.
+                var candidatos = AnsB4 ? paraMi.Where(o => !o.TrabajadoAntes).ToList() : paraMi;
+                var primero = candidatos.FirstOrDefault(o => o.Mensaje.Clase is ClaseDeMensaje.Llamada or ClaseDeMensaje.Informe);
                 if (primero.Mensaje is not null)
                 {
                     DxCall = primero.Mensaje.Llamante;
@@ -337,12 +369,33 @@ public sealed class SecuenciadorDeQso
 
         if (tx == 5)
         {
+            // Capturado ANTES de terminar: Terminar/Parar apaga _llamandoCqSolo al parar, y aqui
+            // hace falta saber como estaba la sesion justo antes de cerrarse.
+            var veniaDeCqSolo = _llamandoCqSolo;
             var completoAntes = _completado;
             _completado = true;
-            return Terminar(Textos.T("Digital.Secuencia.Enviado73"), completoAntes);
+            var decision = Terminar(Textos.T("Digital.Secuencia.Enviado73"), completoAntes);
+            return SeguirLlamandoCqSiToca(decision, veniaDeCqSolo);
         }
 
         return DecisionDelSecuenciador.Nada;
+    }
+
+    /// <summary>
+    /// Si el contacto que acaba de cerrarse venia de un «Llamar CQ» con <see cref="LlamarAlPrimero"/>
+    /// y <see cref="UnSoloQso"/> no esta marcado, en vez de pararse del todo se vuelve a Tx6 y se
+    /// sigue llamando CQ solo, lista para el siguiente que conteste. Con <see cref="UnSoloQso"/>
+    /// marcado (de fabrica), o si el contacto venia de una respuesta a mano, se para como siempre.
+    /// </summary>
+    private DecisionDelSecuenciador SeguirLlamandoCqSiToca(DecisionDelSecuenciador decision, bool veniaDeCqSolo)
+    {
+        if (!veniaDeCqSolo || UnSoloQso || decision.Parada is null) return decision;
+
+        Limpiar();
+        Activo = true;
+        TxActual = 6;
+        _llamandoCqSolo = true;
+        return decision with { Tx = 6, Parada = null };
     }
 
     /// <summary>
@@ -360,6 +413,7 @@ public sealed class SecuenciadorDeQso
     {
         Activo = false;
         TxActual = 0;
+        _llamandoCqSolo = false;
     }
 
     /// <summary>Cambia de modo: el periodo es otro y la paridad no vale.</summary>
@@ -374,6 +428,7 @@ public sealed class SecuenciadorDeQso
     {
         Activo = false;
         TxActual = 0;
+        _llamandoCqSolo = false;
         return new DecisionDelSecuenciador(null, null, _completado && !completoAntes, motivo);
     }
 

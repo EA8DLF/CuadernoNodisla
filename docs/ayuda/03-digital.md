@@ -50,6 +50,10 @@ en Configuración.
 - **Configurar el servicio de hora** deja el servicio de Windows apuntando a un buen servidor,
   que arregla el problema para siempre y no solo por hoy.
 
+Junto al reloj, una cuenta atrás con su propia barra dice cuánto queda de la ventana en curso
+(los segundos del período del modo elegido, no solo en FT8: 7,5 s en FT4, 2 min en WSPR…), para
+saber de un vistazo si hay tiempo de sobra o si está a punto de cerrarse.
+
 ### La cascada
 
 El espectro de audio en el tiempo, con la frecuencia en el eje horizontal. Pinchar en la cascada
@@ -119,6 +123,11 @@ para. Con **Secuencia automática**, al contestar alguien se pasa solo al mensaj
 
 - **Saltar Tx1** — al contestar a un CQ se empieza por el informe (Tx2).
 - **Llamar al primero** — llamando CQ, se contesta solo al primero que llame.
+- **AnsB4** — llamando CQ, no se elige automáticamente a quien ya se ha trabajado antes (se le
+  puede seguir contestando a mano con el doble clic; apagada de fábrica).
+- **1 QSO** — al completar un contacto que venía de llamar CQ con «Llamar al primero», se para
+  del todo en vez de seguir llamando CQ solo para el siguiente que conteste (encendida de
+  fábrica: es como se ha comportado siempre el programa).
 - **Tx4 con RRR** — en vez de RR73.
 - **Parar tras** *n* **ciclos sin respuesta** — deja de insistir.
 

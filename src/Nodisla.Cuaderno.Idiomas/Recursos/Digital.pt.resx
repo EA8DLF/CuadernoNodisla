@@ -339,6 +339,12 @@
   <data name="Digital.Modem.Anadir.Ayuda" xml:space="preserve">
     <value>Adiciona uma linha com o modo e o dial atuais</value>
   </data>
+  <data name="Digital.Modem.AnsB4" xml:space="preserve">
+    <value>AnsB4</value>
+  </data>
+  <data name="Digital.Modem.AnsB4.Ayuda" xml:space="preserve">
+    <value>A chamar CQ, não escolhe automaticamente quem já foi trabalhado antes (ainda se pode responder à mão)</value>
+  </data>
   <data name="Digital.Modem.ApagarModo" xml:space="preserve">
     <value>Digital</value>
   </data>
@@ -881,6 +887,21 @@
   </data>
   <data name="Digital.Modem.UltimaVentana" xml:space="preserve">
     <value>{0} UTC · {1} descodificações em {2:0.0} s</value>
+  </data>
+  <data name="Digital.Modem.UnSoloQso" xml:space="preserve">
+    <value>1 QSO</value>
+  </data>
+  <data name="Digital.Modem.UnSoloQso.Ayuda" xml:space="preserve">
+    <value>Ao completar um contacto que veio de uma chamada CQ com «Chamar o primeiro», para por completo em vez de continuar a chamar CQ sozinho</value>
+  </data>
+  <data name="Digital.Modem.Ventana.Ayuda" xml:space="preserve">
+    <value>Quanto falta do período em curso antes de a janela fechar</value>
+  </data>
+  <data name="Digital.Modem.Ventana.Nombre" xml:space="preserve">
+    <value>Janela em curso</value>
+  </data>
+  <data name="Digital.Modem.Ventana.Restantes" xml:space="preserve">
+    <value>{0} s</value>
   </data>
   <data name="Digital.Modem.Wav.Ayuda" xml:space="preserve">
     <value>Descodifica um ficheiro de áudio e põe o resultado na lista</value>

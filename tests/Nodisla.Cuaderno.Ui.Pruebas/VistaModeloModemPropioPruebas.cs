@@ -1,4 +1,5 @@
 using System.Collections.Specialized;
+using System.IO;
 using FluentAssertions;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
 using Nodisla.Cuaderno.Aplicacion.Puertos;
@@ -326,6 +327,101 @@ public sealed class VistaModeloModemPropioPruebas
         modelo.NivelDeSalida = 0.75;
 
         modem.NivelDeSalida.Should().Be(0.75, "el cambio tiene que llegar al modem en caliente, para la siguiente emision");
+    }
+
+    [Fact]
+    public void AnsB4YUnSoloQsoEmpiezanConLosValoresDeFabricaYLlegaAlSecuenciador()
+    {
+        var modelo = Montar(out _);
+
+        modelo.AnsB4.Should().BeFalse("no sorprender cambiando a quien se contesta solo sin que se pida");
+        modelo.UnSoloQso.Should().BeTrue("de fabrica se para tras cada contacto, como siempre");
+        modelo.Secuenciador.AnsB4.Should().BeFalse();
+        modelo.Secuenciador.UnSoloQso.Should().BeTrue();
+
+        modelo.AnsB4 = true;
+        modelo.UnSoloQso = false;
+
+        modelo.Secuenciador.AnsB4.Should().BeTrue("la casilla tiene que llegar al secuenciador en caliente");
+        modelo.Secuenciador.UnSoloQso.Should().BeFalse();
+    }
+
+    [Fact]
+    public void AnsB4YUnSoloQsoSeGuardanYSeVuelvenALeer()
+    {
+        var carpeta = Path.Combine(Path.GetTempPath(), "CuadernoNodislaPruebas", Guid.NewGuid().ToString("N"));
+        try
+        {
+            var modelo = Montar(out _);
+            modelo.AnsB4 = true;
+            modelo.UnSoloQso = false;
+
+            modelo.GuardarLoElegido(carpeta);
+
+            var leidos = AjustesDelPrograma.Leer(carpeta);
+            leidos.Digital.AnsB4.Should().BeTrue();
+            leidos.Digital.UnSoloQso.Should().BeFalse();
+        }
+        finally
+        {
+            if (Directory.Exists(carpeta)) Directory.Delete(carpeta, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void LaCuentaAtrasEmpiezaEnElPeriodoEnteroAlAbrirseLaVentana()
+    {
+        var periodo = TimeSpan.FromSeconds(15);
+        var inicioDeVentana = VistaModeloModemPropio.ComienzoDeVentana(DateTimeOffset.UtcNow, periodo);
+        var reloj = new RelojManual(inicioDeVentana);
+        var modelo = Montar(out _, out _, reloj: reloj);
+
+        modelo.SegundosRestantesEnVentana.Should().Be(15, "la ventana acaba de empezar: quedan los 15 s enteros");
+        modelo.ProgresoDeVentana.Should().Be(0);
+        modelo.SegundosRestantesEnVentanaTexto.Should().Be("15 s");
+    }
+
+    [Fact]
+    public void LaCuentaAtrasBajaSegunPasaElTiempoDentroDeLaVentana()
+    {
+        var periodo = TimeSpan.FromSeconds(15);
+        var inicioDeVentana = VistaModeloModemPropio.ComienzoDeVentana(DateTimeOffset.UtcNow, periodo);
+
+        // 7,3 s dentro de la ventana: quedan 7,7 s, que al redondear hacia arriba son «8 s» y no
+        // «7 s»: con 0,x segundos de margen todavia no hay que decir que no queda nada.
+        var reloj = new RelojManual(inicioDeVentana.AddSeconds(7.3));
+        var modelo = Montar(out _, out _, reloj: reloj);
+
+        modelo.SegundosRestantesEnVentana.Should().BeApproximately(7.7, 0.001);
+        modelo.ProgresoDeVentana.Should().BeApproximately(7.3 / 15.0, 0.001);
+        modelo.SegundosRestantesEnVentanaTexto.Should().Be("8 s");
+    }
+
+    [Fact]
+    public void ElProgresoDeVentanaSeAcercaA1CuandoEstaAPuntoDeCerrar()
+    {
+        var periodo = TimeSpan.FromSeconds(15);
+        var inicioDeVentana = VistaModeloModemPropio.ComienzoDeVentana(DateTimeOffset.UtcNow, periodo);
+        var reloj = new RelojManual(inicioDeVentana.AddSeconds(14.5));
+        var modelo = Montar(out _, out _, reloj: reloj);
+
+        modelo.SegundosRestantesEnVentana.Should().BeApproximately(0.5, 0.001);
+        modelo.ProgresoDeVentana.Should().BeApproximately(14.5 / 15.0, 0.001);
+    }
+
+    [Fact]
+    public void LaCuentaAtrasSigueElPeriodoDelModoElegidoYNoSoloElDeFt8()
+    {
+        var periodoFt4 = TimeSpan.FromSeconds(7.5);
+        var inicioDeVentana = VistaModeloModemPropio.ComienzoDeVentana(DateTimeOffset.UtcNow, periodoFt4);
+        var reloj = new RelojManual(inicioDeVentana.AddSeconds(3));
+        var modelo = Montar(out _, out _, reloj: reloj);
+
+        modelo.EsFt4 = true;
+
+        // FT4 dura 7,5 s, no 15: a los 3 s dentro de su ventana quedan 4,5, no 12.
+        modelo.SegundosRestantesEnVentana.Should().Be(4.5);
+        modelo.ProgresoDeVentana.Should().BeApproximately(3.0 / 7.5, 0.001);
     }
 
     private static DecodificacionPropia Decodificacion(

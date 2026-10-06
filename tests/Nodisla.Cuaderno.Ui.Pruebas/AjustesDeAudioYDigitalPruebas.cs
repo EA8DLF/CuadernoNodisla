@@ -42,6 +42,11 @@ public sealed class AjustesDeAudioYDigitalPruebas : IDisposable
 
         ajustes.Digital.FrecuenciaDeMuestreo.Should().Be(48000);
         ajustes.Digital.Modo.Should().Be(ModoDelModem.Ft8);
+
+        // AnsB4 cambia a quien se contesta solo: no se enciende sin que el operador lo pida.
+        // «1 QSO» no: de fabrica se para tras cada contacto, como ha hecho siempre el programa.
+        ajustes.Digital.AnsB4.Should().BeFalse();
+        ajustes.Digital.UnSoloQso.Should().BeTrue();
     }
 
     [Fact]
@@ -68,6 +73,8 @@ public sealed class AjustesDeAudioYDigitalPruebas : IDisposable
         ajustes.Digital.Modo = ModoDelModem.Ft4;
         ajustes.Digital.TonoDeTransmisionHz = 1200;
         ajustes.Digital.SaltarTx1 = true;
+        ajustes.Digital.AnsB4 = true;
+        ajustes.Digital.UnSoloQso = false;
         ajustes.Digital.PskReporter = true;
         ajustes.Digital.Operacion = Nodisla.Cuaderno.Ui.Digital.TipoDeOperacion.Hound;
         ajustes.Digital.FrecuenciasDeTrabajo.Add(new Nodisla.Cuaderno.Ui.Digital.FrecuenciaDeTrabajo { Modo = ModoDelModem.Ft8, Megahercios = 14.090m, Nota = "propia" });
@@ -76,6 +83,8 @@ public sealed class AjustesDeAudioYDigitalPruebas : IDisposable
         var leidos = AjustesDelPrograma.Leer(_carpeta);
 
         leidos.Digital.SaltarTx1.Should().BeTrue();
+        leidos.Digital.AnsB4.Should().BeTrue();
+        leidos.Digital.UnSoloQso.Should().BeFalse();
         leidos.Digital.PskReporter.Should().BeTrue();
         leidos.Digital.Operacion.Should().Be(Nodisla.Cuaderno.Ui.Digital.TipoDeOperacion.Hound);
         leidos.Digital.FrecuenciasDeTrabajo.Should().Contain(f => f.Megahercios == 14.090m && f.Nota == "propia");

@@ -299,6 +299,12 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     /// <summary>Cada cuanto se manda lo pendiente a PSK Reporter.</summary>
     private static readonly TimeSpan RitmoDePskReporter = TimeSpan.FromMinutes(5);
 
+    /// <summary>
+    /// Cada cuanto se repinta la cuenta atras de la ventana en curso. Mas corto que el resto de
+    /// relojes de la pantalla: es justo lo que se mira a ojo para saber si queda tiempo de sobra.
+    /// </summary>
+    private static readonly TimeSpan RitmoDeLaCuentaAtras = TimeSpan.FromMilliseconds(100);
+
     private readonly IModemPropio? _modem;
     private readonly IEntradaDeAudio? _entrada;
     private readonly ISalidaDeAudio? _salida;
@@ -308,6 +314,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     private readonly EvaluadorDeNovedad _novedad;
     private readonly DispatcherTimer _medidor;
     private readonly DispatcherTimer _relojDePsk;
+    private readonly DispatcherTimer _cuentaAtras;
     private readonly SecuenciadorDeQso _secuenciador = new();
     private readonly ReportadorPskReporter _psk;
     private readonly GrabadorDeVentanas _grabador = new();
@@ -399,6 +406,8 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         _secuenciaAutomatica = digital.SecuenciaAutomatica;
         _saltarTx1 = digital.SaltarTx1;
         _llamarAlPrimero = digital.LlamarAlPrimero;
+        _ansB4 = digital.AnsB4;
+        _unSoloQso = digital.UnSoloQso;
         _tx4ConRrr = digital.Tx4ConRrr;
         _ciclosSinRespuesta = digital.CiclosSinRespuesta;
         _cqDirigido = digital.CqDirigido;
@@ -440,6 +449,8 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         _secuenciador.Operacion = digital.Operacion;
         _secuenciador.SaltarTx1 = _saltarTx1;
         _secuenciador.LlamarAlPrimero = _llamarAlPrimero;
+        _secuenciador.AnsB4 = _ansB4;
+        _secuenciador.UnSoloQso = _unSoloQso;
         _secuenciador.CiclosSinRespuesta = _ciclosSinRespuesta;
 
         if (_modem is not null)
@@ -460,6 +471,12 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
         _relojDePsk = new DispatcherTimer(DispatcherPriority.Background) { Interval = RitmoDePskReporter };
         _relojDePsk.Tick += async (_, _) => await EnviarAPskReporterAsync().ConfigureAwait(true);
+
+        // Arranca con la pantalla, no con «Escuchar»: saber cuanto queda de ventana sirve tambien
+        // antes de pulsarlo, igual que el reloj de desvio ya se vigila solo.
+        _cuentaAtras = new DispatcherTimer(DispatcherPriority.Background) { Interval = RitmoDeLaCuentaAtras };
+        _cuentaAtras.Tick += (_, _) => NotificarLaCuentaAtras();
+        _cuentaAtras.Start();
 
         _caducidadDelAviso = new DispatcherTimer(DispatcherPriority.Background) { Interval = DuracionDeUnAvisoInformativo };
         _caducidadDelAviso.Tick += (_, _) =>
@@ -656,6 +673,9 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     [NotifyPropertyChangedFor(nameof(EsFt4))]
     [NotifyPropertyChangedFor(nameof(FrecuenciaDelModoTexto))]
     [NotifyPropertyChangedFor(nameof(EsBaliza))]
+    [NotifyPropertyChangedFor(nameof(SegundosRestantesEnVentana))]
+    [NotifyPropertyChangedFor(nameof(SegundosRestantesEnVentanaTexto))]
+    [NotifyPropertyChangedFor(nameof(ProgresoDeVentana))]
     private ModoDelModem _modo;
 
     [ObservableProperty]
@@ -794,6 +814,23 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     [ObservableProperty]
     private bool _llamarAlPrimero;
 
+    /// <summary>
+    /// «AnsB4»: llamando CQ con <see cref="LlamarAlPrimero"/>, no elegir automaticamente a quien
+    /// ya se ha trabajado antes. Sigue en la lista, coloreada igual que siempre, y se le puede
+    /// contestar a mano con el doble clic; esto solo afecta a la seleccion automatica. De fabrica,
+    /// desactivada: no cambiar sin que el operador lo pida a quien se contesta solo.
+    /// </summary>
+    [ObservableProperty]
+    private bool _ansB4;
+
+    /// <summary>
+    /// «1 QSO»: al completar un contacto que vino de llamar CQ con <see cref="LlamarAlPrimero"/>,
+    /// parar del todo en vez de seguir llamando CQ solo para el siguiente que conteste. De
+    /// fabrica, activada: es el comportamiento de siempre (pararse tras cada contacto).
+    /// </summary>
+    [ObservableProperty]
+    private bool _unSoloQso = true;
+
     [ObservableProperty]
     private bool _tx4ConRrr;
 
@@ -871,6 +908,55 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
     /// <summary>Lo que dura una ventana del modo elegido.</summary>
     public string PeriodoTexto => DescripcionDelModo.PeriodoTexto(Modo);
+
+    /// <summary>
+    /// Cuanto queda de la ventana en curso, en segundos: el «TX 0/15» de JTDX. Vale para
+    /// cualquier periodo (15 s en FT8, 7,5 s en FT4, 120 s en WSPR…), no solo para FT8.
+    /// </summary>
+    /// <remarks>
+    /// Se apoya en <see cref="ComienzoDeVentana"/>, la misma alineacion que ya usa el resto del
+    /// modem para decidir cuando emitir: no hay una segunda cuenta de ventanas por su cuenta.
+    /// </remarks>
+    public double SegundosRestantesEnVentana
+    {
+        get
+        {
+            var periodo = DescripcionDelModo.Periodo(Modo);
+            if (periodo <= TimeSpan.Zero) return 0;
+
+            var ahora = Reloj.Ahora;
+            var inicio = ComienzoDeVentana(ahora, periodo);
+            var restante = periodo - (ahora - inicio);
+            return Math.Clamp(restante.TotalSeconds, 0, periodo.TotalSeconds);
+        }
+    }
+
+    /// <summary>La cuenta atras, en letras: «7 s».</summary>
+    public string SegundosRestantesEnVentanaTexto =>
+        Textos.F("Digital.Modem.Ventana.Restantes", (int)Math.Ceiling(SegundosRestantesEnVentana));
+
+    /// <summary>
+    /// Cuanto se ha consumido de la ventana en curso: 0 nada mas empezar, 1 a punto de cerrar.
+    /// Para la barra de progreso: va llenandose segun se acaba el tiempo.
+    /// </summary>
+    public double ProgresoDeVentana
+    {
+        get
+        {
+            var periodo = DescripcionDelModo.Periodo(Modo);
+            return periodo <= TimeSpan.Zero
+                ? 0
+                : Math.Clamp(1 - (SegundosRestantesEnVentana / periodo.TotalSeconds), 0, 1);
+        }
+    }
+
+    /// <summary>Refresca la cuenta atras de la ventana. La llama el reloj interno, cada poco.</summary>
+    private void NotificarLaCuentaAtras()
+    {
+        OnPropertyChanged(nameof(SegundosRestantesEnVentana));
+        OnPropertyChanged(nameof(SegundosRestantesEnVentanaTexto));
+        OnPropertyChanged(nameof(ProgresoDeVentana));
+    }
 
     /// <summary>La secuencia, en una linea.</summary>
     public string EstadoDeLaSecuencia => !_secuenciador.Activo
@@ -1023,6 +1109,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     {
         _medidor.Stop();
         _relojDePsk.Stop();
+        _cuentaAtras.Stop();
 
         if (_modem is not null)
         {
@@ -1051,6 +1138,8 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         d.SecuenciaAutomatica = SecuenciaAutomatica;
         d.SaltarTx1 = SaltarTx1;
         d.LlamarAlPrimero = LlamarAlPrimero;
+        d.AnsB4 = AnsB4;
+        d.UnSoloQso = UnSoloQso;
         d.Tx4ConRrr = Tx4ConRrr;
         d.CiclosSinRespuesta = CiclosSinRespuesta;
         d.CqDirigido = CqDirigido;
@@ -2042,7 +2131,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
             var novedad = await _novedad.EvaluarAsync(llamante, locator, banda, modoAdif).ConfigureAwait(false);
             filas.Add(new FilaDeDecodificacionPropia(decodificacion, novedad, mi, mensaje, tonoRx));
-            oidos.Add(new MensajeOido(mensaje, decodificacion.Decibelios, decodificacion.TonoHz));
+            oidos.Add(new MensajeOido(mensaje, decodificacion.Decibelios, decodificacion.TonoHz, novedad.TrabajadoAntes));
 
             if (PskReporterActivo && !llamante.EsVacio && !locator.EsVacio && !_dial.EsCero)
             {
@@ -2403,6 +2492,10 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     partial void OnSaltarTx1Changed(bool value) => _secuenciador.SaltarTx1 = value;
 
     partial void OnLlamarAlPrimeroChanged(bool value) => _secuenciador.LlamarAlPrimero = value;
+
+    partial void OnAnsB4Changed(bool value) => _secuenciador.AnsB4 = value;
+
+    partial void OnUnSoloQsoChanged(bool value) => _secuenciador.UnSoloQso = value;
 
     partial void OnCiclosSinRespuestaChanged(int value) => _secuenciador.CiclosSinRespuesta = Math.Clamp(value, 1, 100);
 

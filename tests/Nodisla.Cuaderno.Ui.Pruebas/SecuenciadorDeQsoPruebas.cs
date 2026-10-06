@@ -203,4 +203,122 @@ public sealed class SecuenciadorDeQsoPruebas
         d.Tx.Should().Be(3);
         s.IntercambioRecibido.Should().Be("2A EMA");
     }
+
+    // ── AnsB4: no elegir automaticamente a quien ya se ha trabajado ─────────
+
+    [Fact]
+    public void AnsB4NoEligeAutomaticamenteAQuienYaSeHaTrabajado()
+    {
+        var s = Nuevo();
+        s.LlamarAlPrimero = true;
+        s.AnsB4 = true;
+        s.LlamarCq(Par + TimeSpan.FromSeconds(1));
+        s.EmisionHecha(6);
+
+        // IZ2ABC ya esta trabajado y llama primero; K1ABC es nuevo. AnsB4 tiene que saltar al
+        // primero y elegir al segundo.
+        var yaTrabajado = new MensajeOido(InterpreteDeMensajes.Analizar("EA8DLF IZ2ABC JN45"), -3, 1500, TrabajadoAntes: true);
+        var nuevo = new MensajeOido(InterpreteDeMensajes.Analizar("EA8DLF K1ABC FN42"), -9, 1500);
+
+        var decision = s.Procesar(Par + (2 * Periodo), [yaTrabajado, nuevo]);
+
+        decision.Tx.Should().Be(2);
+        s.DxCall.Should().Be("K1ABC", "IZ2ABC ya esta trabajado: AnsB4 lo salta aunque llame primero");
+    }
+
+    [Fact]
+    public void SinAnsB4SeEligeAlPrimeroAunqueYaEsteTrabajado()
+    {
+        var s = Nuevo();
+        s.LlamarAlPrimero = true;
+        s.LlamarCq(Par + TimeSpan.FromSeconds(1));
+        s.EmisionHecha(6);
+
+        var yaTrabajado = new MensajeOido(InterpreteDeMensajes.Analizar("EA8DLF IZ2ABC JN45"), -3, 1500, TrabajadoAntes: true);
+
+        s.Procesar(Par + (2 * Periodo), [yaTrabajado]).Tx.Should().Be(2);
+        s.DxCall.Should().Be("IZ2ABC", "sin AnsB4 se contesta al primero, trabajado o no");
+    }
+
+    [Fact]
+    public void AnsB4SigueLlamandoCqSiNoHayNadieNuevoQueContesteLaLlamada()
+    {
+        var s = Nuevo();
+        s.LlamarAlPrimero = true;
+        s.AnsB4 = true;
+        s.LlamarCq(Par + TimeSpan.FromSeconds(1));
+        s.EmisionHecha(6);
+
+        var yaTrabajado = new MensajeOido(InterpreteDeMensajes.Analizar("EA8DLF IZ2ABC JN45"), -3, 1500, TrabajadoAntes: true);
+
+        var decision = s.Procesar(Par + (2 * Periodo), [yaTrabajado]);
+
+        decision.Tx.Should().Be(6, "nadie nuevo que elegir: se sigue llamando CQ");
+        s.DxCall.Should().BeEmpty();
+    }
+
+    // ── «1 QSO»: parar tras completar un contacto, en vez de seguir solo ────
+
+    [Fact]
+    public void ConUnSoloQsoTrasCompletarUnContactoDelPileupSeParaDelTodo()
+    {
+        var s = Nuevo();
+        s.LlamarAlPrimero = true;
+        s.LlamarCq(Par + TimeSpan.FromSeconds(1));
+        s.EmisionHecha(6);
+
+        s.Procesar(Par + (2 * Periodo), [Oido("EA8DLF EA5XYZ IM98", db: -7)]).Tx.Should().Be(2);
+        s.EmisionHecha(2);
+        s.Procesar(Par + (4 * Periodo), [Oido("EA8DLF EA5XYZ -12")]).Tx.Should().Be(3);
+        s.EmisionHecha(3);
+        s.Procesar(Par + (6 * Periodo), [Oido("EA8DLF EA5XYZ RR73")]).Tx.Should().Be(5);
+
+        var tras73 = s.EmisionHecha(5);
+
+        tras73.Parada.Should().NotBeNull("de fabrica «1 QSO» esta activo: se para como siempre");
+        tras73.Tx.Should().BeNull();
+        s.Activo.Should().BeFalse();
+    }
+
+    [Fact]
+    public void SinUnSoloQsoSigueLlamandoCqTrasCompletarUnContactoDelPileup()
+    {
+        var s = Nuevo();
+        s.LlamarAlPrimero = true;
+        s.UnSoloQso = false;
+        s.LlamarCq(Par + TimeSpan.FromSeconds(1));
+        s.EmisionHecha(6);
+
+        s.Procesar(Par + (2 * Periodo), [Oido("EA8DLF EA5XYZ IM98", db: -7)]).Tx.Should().Be(2);
+        s.EmisionHecha(2);
+        s.Procesar(Par + (4 * Periodo), [Oido("EA8DLF EA5XYZ -12")]).Tx.Should().Be(3);
+        s.EmisionHecha(3);
+        s.Procesar(Par + (6 * Periodo), [Oido("EA8DLF EA5XYZ RR73")]).Tx.Should().Be(5);
+
+        var tras73 = s.EmisionHecha(5);
+
+        tras73.Tx.Should().Be(6, "sin «1 QSO» se vuelve a llamar CQ solo, para el siguiente del pileup");
+        tras73.Parada.Should().BeNull();
+        s.Activo.Should().BeTrue();
+        s.TxActual.Should().Be(6);
+        s.DxCall.Should().BeEmpty("listo para el siguiente, sin arrastrar al anterior");
+    }
+
+    [Fact]
+    public void SinUnSoloQsoUnContactoContestadoAManoSeParaIgual()
+    {
+        var s = Nuevo();
+        s.UnSoloQso = false; // no deberia importar: este contacto no vino de «Llamar CQ»
+
+        s.Iniciar(Oido("CQ EA5XYZ IM98", db: -7), Par, Par + TimeSpan.FromSeconds(2));
+        s.EmisionHecha(1);
+        s.Procesar(Par + (2 * Periodo), [Oido("EA8DLF EA5XYZ -12")]).Tx.Should().Be(3);
+        s.EmisionHecha(3);
+        s.Procesar(Par + (4 * Periodo), [Oido("EA8DLF EA5XYZ RR73")]).Tx.Should().Be(5);
+
+        var tras73 = s.EmisionHecha(5);
+
+        tras73.Parada.Should().NotBeNull("una respuesta a mano se para igual, lo diga «1 QSO» o no");
+        s.Activo.Should().BeFalse();
+    }
 }

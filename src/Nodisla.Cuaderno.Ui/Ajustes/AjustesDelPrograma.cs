@@ -463,6 +463,18 @@ public sealed class AjustesDeDigital
     /// <summary>Llamando CQ, se contesta solo al primero que llame («Call 1st»).</summary>
     public bool LlamarAlPrimero { get; set; }
 
+    /// <summary>
+    /// Llamando CQ con <see cref="LlamarAlPrimero"/>, no elegir automaticamente a quien ya se ha
+    /// trabajado antes («Ans B4»). No afecta a la respuesta a mano.
+    /// </summary>
+    public bool AnsB4 { get; set; }
+
+    /// <summary>
+    /// Al completar un contacto que vino de llamar CQ con <see cref="LlamarAlPrimero"/>, parar del
+    /// todo en vez de seguir llamando CQ solo para el siguiente que conteste («1 QSO»).
+    /// </summary>
+    public bool UnSoloQso { get; set; } = true;
+
     /// <summary>Tx4 va con <c>RRR</c> en vez de <c>RR73</c>.</summary>
     public bool Tx4ConRrr { get; set; }
 
