@@ -1149,4 +1149,67 @@
   <data name="Digital.Vaciar" xml:space="preserve">
     <value>Leeren</value>
   </data>
+  <data name="Digital.Modem.Decodificador" xml:space="preserve">
+    <value>Decoder</value>
+  </data>
+  <data name="Digital.Modem.AgcC" xml:space="preserve">
+    <value>AGCc</value>
+  </data>
+  <data name="Digital.Modem.AgcC.Ayuda" xml:space="preserve">
+    <value>Verstärkungs-/Kompressionsregelung des Decoders selbst, auf dem echten Audio vor der Dekodierung. Nicht die AGC des Geräts, die weiterhin über CAT läuft.</value>
+  </data>
+  <data name="Digital.Modem.Filtrar" xml:space="preserve">
+    <value>Filtern</value>
+  </data>
+  <data name="Digital.Modem.Filtrar.Ayuda" xml:space="preserve">
+    <value>Filtert das echte Audio -nicht nur das, was im Wasserfall gezeichnet wird- vor der Dekodierung, zwischen den beiden nebenstehenden Frequenzen.</value>
+  </data>
+  <data name="Digital.Modem.Filtrar.Desde.Nombre" xml:space="preserve">
+    <value>Filter, von, in Hertz</value>
+  </data>
+  <data name="Digital.Modem.Filtrar.Hasta.Nombre" xml:space="preserve">
+    <value>Filter, bis, in Hertz</value>
+  </data>
+  <data name="Digital.Modem.ModoSwl" xml:space="preserve">
+    <value>SWL-Modus</value>
+  </data>
+  <data name="Digital.Modem.ModoSwl.Ayuda" xml:space="preserve">
+    <value>Hört nur zu und protokolliert, was gehört wird, ohne Antwortabsicht: Der Sequenzer reagiert nicht, und nichts Richtung Tx wird aktiviert.</value>
+  </data>
+  <data name="Digital.Modem.Bypass" xml:space="preserve">
+    <value>Bypass</value>
+  </data>
+  <data name="Digital.Modem.Bypass.Ayuda" xml:space="preserve">
+    <value>Ignoriert den Dial des Geräts und arbeitet stattdessen auf dieser festen Frequenz, ohne dem CAT zu folgen.</value>
+  </data>
+  <data name="Digital.Modem.Bypass.Nombre" xml:space="preserve">
+    <value>Feste Bypass-Frequenz, in Megahertz</value>
+  </data>
+  <data name="Digital.Modem.Tune" xml:space="preserve">
+    <value>Tune</value>
+  </data>
+  <data name="Digital.Modem.Tune.Parar" xml:space="preserve">
+    <value>Tune stoppen</value>
+  </data>
+  <data name="Digital.Modem.Tune.Ayuda" xml:space="preserve">
+    <value>Reiner, kontinuierlicher Ton, um die Antenne oder einen externen Tuner abzugleichen</value>
+  </data>
+  <data name="Digital.Modem.Tune.Confirmar" xml:space="preserve">
+    <value>Einen kontinuierlichen Ton senden und das Gerät auf Sendung lassen, bis es gestoppt wird?</value>
+  </data>
+  <data name="Digital.Modem.Sincronizar" xml:space="preserve">
+    <value>Synchronisieren</value>
+  </data>
+  <data name="Digital.Modem.Sincronizar.Ayuda" xml:space="preserve">
+    <value>Feinabgleich des Fensters anhand des Versatzes der gewählten Dekodierung. Rührt nicht an die Systemuhr: dafür ist „Uhrzeit stellen“ da.</value>
+  </data>
+  <data name="Digital.Modem.Sincronizar.Hecho" xml:space="preserve">
+    <value>Synchronisiert: Versatz korrigiert ({0} s)</value>
+  </data>
+  <data name="Digital.Modem.Transmision.ModoSwl" xml:space="preserve">
+    <value>SWL-Modus: keine Übertragung</value>
+  </data>
+  <data name="Digital.Modem.Transmision.Tune" xml:space="preserve">
+    <value>Ein Abgleichton (Tune) läuft gerade</value>
+  </data>
 </root>

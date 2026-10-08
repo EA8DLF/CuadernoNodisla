@@ -96,6 +96,19 @@ internal sealed class ModemApuntador : IModemPropio
 
     public double NivelDeSalida { get; set; } = Nodisla.Cuaderno.Modos.Marco.IModoDigital.AmplitudDeSalidaPorDefecto;
 
+    public bool AgcActivo { get; set; }
+
+    public bool FiltroActivo { get; set; }
+
+    public int FiltroDesdeHz { get; set; } = 200;
+
+    public int FiltroHastaHz { get; set; } = 2900;
+
+    public TimeSpan AjusteDeVentana { get; set; }
+
+    /// <summary>Tonos pedidos a «Tune», en el orden en que se pidieron.</summary>
+    public List<int> TonosDeAjustePedidos { get; } = [];
+
     public IReadOnlyList<ModoDelModem> ModosDisponibles =>
     [
         ModoDelModem.Ft8, ModoDelModem.Ft4, ModoDelModem.Wspr, ModoDelModem.Jt65, ModoDelModem.Jt9,
@@ -135,6 +148,28 @@ internal sealed class ModemApuntador : IModemPropio
         Abortos++;
         EstaEmitiendo = false;
         return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Como el «Tune» de verdad: se queda «sonando» (sin tocar nada de audio real) hasta que se
+    /// cancela el testigo, momento en el que sale sin lanzar la cancelacion hacia fuera.
+    /// </summary>
+    public async Task EmitirTonoAsync(int tonoHz, CancellationToken ct = default)
+    {
+        TonosDeAjustePedidos.Add(tonoHz);
+        EstaEmitiendo = true;
+        try
+        {
+            await Task.Delay(Timeout.Infinite, ct).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            // Es como se para un tono continuo: cancelando el testigo.
+        }
+        finally
+        {
+            EstaEmitiendo = false;
+        }
     }
 
     public Task<IReadOnlyList<DecodificacionPropia>> DecodificarFicheroAsync(

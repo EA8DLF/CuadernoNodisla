@@ -330,6 +330,7 @@
                             <CheckBox Content="{loc:Texto Digital.Modem.SoloCq}" IsChecked="{Binding SoloCq}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="{loc:Texto Digital.Modem.SoloCq.Ayuda}" />
                             <CheckBox Content="{loc:Texto Digital.Modem.SoloAMi}" IsChecked="{Binding SoloMeLlaman}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="{loc:Texto Digital.Modem.SoloAMi.Ayuda}" />
                             <CheckBox Content="{loc:Texto Digital.Modem.SoloNuevos}" IsChecked="{Binding SoloNuevos}" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="{loc:Texto Digital.Modem.SoloNuevos.Ayuda}" />
+                            <Button Content="{loc:Texto Digital.Modem.Sincronizar}" Command="{Binding SincronizarConLaDecodificacionCommand}" Margin="0,0,6,0" ToolTip="{loc:Texto Digital.Modem.Sincronizar.Ayuda}" />
                             <Button Content="{loc:Texto Digital.Vaciar}" Command="{Binding LimpiarCommand}" Margin="0,0,6,0" />
                             <Button Content="WAV…" Command="{Binding DecodificarFicheroCommand}" ToolTip="{loc:Texto Digital.Modem.Wav.Ayuda}" />
                         </WrapPanel>
@@ -559,6 +560,15 @@
                     <WrapPanel Margin="0,6,0,2">
                         <Button Content="{loc:Texto Digital.Modem.LlamarCq}" Command="{Binding LlamarCqCommand}" Style="{StaticResource BotonPrincipal}" Margin="0,0,6,4" ToolTip="{loc:Texto Digital.Modem.LlamarCq.Ayuda}" />
                         <Button Content="{loc:Texto Digital.Modem.Detener}" Command="{Binding DetenerTxCommand}" Margin="0,0,6,4" ToolTip="{loc:Texto Digital.Modem.Detener.Ayuda}" />
+
+                        <!-- «Tune»: tono puro y continuo, para la antena o el acoplador. Mismo par de botones que Escuchar/Parar: uno tapa al otro segun si esta sonando. -->
+                        <Button Content="{loc:Texto Digital.Modem.Tune}" Command="{Binding AlternarTonoDeAjusteCommand}" Margin="0,0,6,4"
+                                Visibility="{Binding TonoDeAjusteActivo, Converter={StaticResource VisibleSiEsFalso}}"
+                                ToolTip="{loc:Texto Digital.Modem.Tune.Ayuda}" />
+                        <Button Content="{loc:Texto Digital.Modem.Tune.Parar}" Command="{Binding AlternarTonoDeAjusteCommand}" Style="{StaticResource BotonDePanico}" Margin="0,0,6,4"
+                                Visibility="{Binding TonoDeAjusteActivo, Converter={StaticResource BooleanoAVisible}}"
+                                ToolTip="{loc:Texto Digital.Modem.Tune.Ayuda}" />
+
                         <!--
                             Por orden y no enlazada a dos bandas: antes la casilla escribía
                             TxHabilitado a pelo, saltándose la pregunta de antes de transmitir,
@@ -567,6 +577,7 @@
                         <CheckBox Content="{loc:Texto Digital.Modem.TxHabilitado}" IsChecked="{Binding TxHabilitado, Mode=OneWay}" Command="{Binding AlternarTxHabilitadoCommand}" IsEnabled="{Binding SePuedeEmitir}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,4"
                                   ToolTip="{loc:Texto Digital.Modem.TxHabilitado.Ayuda}" />
                         <CheckBox Content="{loc:Texto Digital.Modem.SecuenciaAutomatica}" IsChecked="{Binding SecuenciaAutomatica}" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="{loc:Texto Digital.Modem.SecuenciaAutomatica.Ayuda}" />
+                        <CheckBox Content="{loc:Texto Digital.Modem.ModoSwl}" IsChecked="{Binding ModoSwl}" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="{loc:Texto Digital.Modem.ModoSwl.Ayuda}" />
                     </WrapPanel>
                     <WrapPanel Margin="0,0,0,2">
                         <CheckBox Content="{loc:Texto Digital.Modem.SaltarTx1}" IsChecked="{Binding SaltarTx1}" VerticalAlignment="Center" Margin="0,0,10,4" ToolTip="{loc:Texto Digital.Modem.SaltarTx1.Ayuda}" />
@@ -635,6 +646,12 @@
                                 <Button Content="{loc:Texto Digital.Modem.IrALaFrecuenciaDelModo}" Command="{Binding IrALaFrecuenciaDelModoCommand}" Style="{StaticResource BotonPrincipal}" Margin="0,0,6,4" ToolTip="{loc:Texto Digital.Modem.IrALaFrecuenciaDelModo.Ayuda}" />
                                 <TextBlock Text="{Binding FrecuenciaDelModoTexto}" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="0,0,0,4" />
                             </WrapPanel>
+                            <WrapPanel Margin="0,0,0,4">
+                                <CheckBox Content="{loc:Texto Digital.Modem.Bypass}" IsChecked="{Binding BypassDeCat}" VerticalAlignment="Center" Margin="0,0,8,4" ToolTip="{loc:Texto Digital.Modem.Bypass.Ayuda}" />
+                                <TextBox Text="{Binding FrecuenciaDeBypassMhz, UpdateSourceTrigger=PropertyChanged, StringFormat=0.000###}" Width="80" Style="{StaticResource CampoCorto}"
+                                         IsEnabled="{Binding BypassDeCat}" AutomationProperties.Name="{loc:Texto Digital.Modem.Bypass.Nombre}" ToolTip="{loc:Texto Digital.Modem.Bypass.Ayuda}" />
+                                <TextBlock Text="MHz" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="0,0,0,4" />
+                            </WrapPanel>
                             <DataGrid ItemsSource="{Binding FrecuenciasDeTrabajo}"
                                       SelectedItem="{Binding FrecuenciaElegida}"
                                       AutoGenerateColumns="False"
@@ -671,6 +688,22 @@
                             <ComboBox ItemsSource="{Binding Paletas}" SelectedItem="{Binding PaletaElegida}" DisplayMemberPath="Nombre" MinWidth="90" Margin="0,0,10,4" VerticalAlignment="Center" AutomationProperties.Name="{loc:Texto Digital.Modem.Paleta}" />
                             <TextBlock Text="{loc:Texto Digital.Modem.Ancho}" Style="{StaticResource Etiqueta}" />
                             <TextBox Text="{Binding AnchoVisibleHz, UpdateSourceTrigger=PropertyChanged}" Width="46" Style="{StaticResource CampoCorto}" Margin="0,0,4,4" ToolTip="{loc:Texto Digital.Modem.Ancho.Ayuda}" AutomationProperties.Name="{loc:Texto Digital.Modem.Ancho.Nombre}" />
+                            <TextBlock Text="Hz" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="0,0,0,4" />
+                        </WrapPanel>
+                    </Expander>
+
+                    <!-- ── El decodificador propio: AGCc y Filtrar, sobre el audio real ── -->
+                    <Expander Header="{loc:Texto Digital.Modem.Decodificador}" IsExpanded="False" Margin="0,2,0,2">
+                        <WrapPanel Margin="0,6,0,0">
+                            <CheckBox Content="{loc:Texto Digital.Modem.AgcC}" IsChecked="{Binding AgcActivo}" VerticalAlignment="Center" Margin="0,0,10,4"
+                                      ToolTip="{loc:Texto Digital.Modem.AgcC.Ayuda}" />
+                            <CheckBox Content="{loc:Texto Digital.Modem.Filtrar}" IsChecked="{Binding FiltroActivo}" VerticalAlignment="Center" Margin="0,0,6,4"
+                                      ToolTip="{loc:Texto Digital.Modem.Filtrar.Ayuda}" />
+                            <TextBox Text="{Binding FiltroDesdeHz, UpdateSourceTrigger=PropertyChanged}" Width="46" Style="{StaticResource CampoCorto}" Margin="0,0,4,4"
+                                     AutomationProperties.Name="{loc:Texto Digital.Modem.Filtrar.Desde.Nombre}" ToolTip="{loc:Texto Digital.Modem.Filtrar.Desde.Nombre}" />
+                            <TextBlock Text="-" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="0,0,4,4" />
+                            <TextBox Text="{Binding FiltroHastaHz, UpdateSourceTrigger=PropertyChanged}" Width="46" Style="{StaticResource CampoCorto}" Margin="0,0,4,4"
+                                     AutomationProperties.Name="{loc:Texto Digital.Modem.Filtrar.Hasta.Nombre}" ToolTip="{loc:Texto Digital.Modem.Filtrar.Hasta.Nombre}" />
                             <TextBlock Text="Hz" Style="{StaticResource TextoTenueEstilo}" VerticalAlignment="Center" Margin="0,0,0,4" />
                         </WrapPanel>
                     </Expander>

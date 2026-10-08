@@ -1149,4 +1149,67 @@
   <data name="Digital.Vaciar" xml:space="preserve">
     <value>Vaciar</value>
   </data>
+  <data name="Digital.Modem.Decodificador" xml:space="preserve">
+    <value>Decodificador</value>
+  </data>
+  <data name="Digital.Modem.AgcC" xml:space="preserve">
+    <value>AGCc</value>
+  </data>
+  <data name="Digital.Modem.AgcC.Ayuda" xml:space="preserve">
+    <value>Control de ganancia/compresión del propio decodificador, sobre el audio real antes de decodificar. No es el AGC del equipo, que sigue por CAT.</value>
+  </data>
+  <data name="Digital.Modem.Filtrar" xml:space="preserve">
+    <value>Filtrar</value>
+  </data>
+  <data name="Digital.Modem.Filtrar.Ayuda" xml:space="preserve">
+    <value>Filtra el audio real -no solo lo que se pinta en la cascada- antes de decodificar, entre las dos frecuencias de al lado.</value>
+  </data>
+  <data name="Digital.Modem.Filtrar.Desde.Nombre" xml:space="preserve">
+    <value>Filtro, desde, en hercios</value>
+  </data>
+  <data name="Digital.Modem.Filtrar.Hasta.Nombre" xml:space="preserve">
+    <value>Filtro, hasta, en hercios</value>
+  </data>
+  <data name="Digital.Modem.ModoSwl" xml:space="preserve">
+    <value>Modo SWL</value>
+  </data>
+  <data name="Digital.Modem.ModoSwl.Ayuda" xml:space="preserve">
+    <value>Solo escucha y registra lo oído, sin intención de contestar: el secuenciador no reacciona y no se activa nada de Tx.</value>
+  </data>
+  <data name="Digital.Modem.Bypass" xml:space="preserve">
+    <value>Bypass</value>
+  </data>
+  <data name="Digital.Modem.Bypass.Ayuda" xml:space="preserve">
+    <value>Ignora el dial del equipo y opera a esta frecuencia fija, sin seguir al CAT.</value>
+  </data>
+  <data name="Digital.Modem.Bypass.Nombre" xml:space="preserve">
+    <value>Frecuencia fija de bypass, en megahercios</value>
+  </data>
+  <data name="Digital.Modem.Tune" xml:space="preserve">
+    <value>Tune</value>
+  </data>
+  <data name="Digital.Modem.Tune.Parar" xml:space="preserve">
+    <value>Parar Tune</value>
+  </data>
+  <data name="Digital.Modem.Tune.Ayuda" xml:space="preserve">
+    <value>Tono puro y continuo para ajustar la antena o el acoplador externo</value>
+  </data>
+  <data name="Digital.Modem.Tune.Confirmar" xml:space="preserve">
+    <value>¿Sacar un tono continuo y dejar el equipo en antena hasta que se pare?</value>
+  </data>
+  <data name="Digital.Modem.Sincronizar" xml:space="preserve">
+    <value>Sincronizar</value>
+  </data>
+  <data name="Digital.Modem.Sincronizar.Ayuda" xml:space="preserve">
+    <value>Ajuste fino de la ventana a partir del desfase de la decodificación elegida. No toca el reloj del sistema: para eso está «Poner en hora».</value>
+  </data>
+  <data name="Digital.Modem.Sincronizar.Hecho" xml:space="preserve">
+    <value>Sincronizado: desfase corregido ({0} s)</value>
+  </data>
+  <data name="Digital.Modem.Transmision.ModoSwl" xml:space="preserve">
+    <value>En modo SWL: no se transmite</value>
+  </data>
+  <data name="Digital.Modem.Transmision.Tune" xml:space="preserve">
+    <value>Sonando un tono de ajuste (Tune)</value>
+  </data>
 </root>

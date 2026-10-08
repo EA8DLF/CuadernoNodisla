@@ -88,6 +88,17 @@ public sealed class ModemPropio : IModemPropio
     private int _frecuenciaDeLaCascada;
     private double _nivelDeSalida = IModoDigital.AmplitudDeSalidaPorDefecto;
 
+    // ── AGCc y Filtrar: se aplican al audio real, antes de acumularlo para decodificar ──────
+    private readonly FiltroPasoBanda _filtro = new();
+    private readonly AgcDigital _agc = new();
+    private bool _filtroActivo;
+    private int _filtroDesdeHz = 200;
+    private int _filtroHastaHz = 2900;
+    private bool _agcActivo;
+
+    /// <summary>Ajuste manual de la alineacion de ventana («Sincronizar»). Cero: sin efecto.</summary>
+    private TimeSpan _ajusteDeVentana = TimeSpan.Zero;
+
     /// <summary>Crea el modem.</summary>
     /// <param name="tablas">Tablas del protocolo.</param>
     /// <param name="reloj">Reloj corregido que dice donde caen las ventanas.</param>
@@ -204,6 +215,43 @@ public sealed class ModemPropio : IModemPropio
     public Frecuencia FrecuenciaDelDial { get; set; }
 
     /// <inheritdoc/>
+    public bool AgcActivo
+    {
+        get => _agcActivo;
+        set => _agcActivo = value;
+    }
+
+    /// <inheritdoc/>
+    public bool FiltroActivo
+    {
+        get => _filtroActivo;
+        set => _filtroActivo = value;
+    }
+
+    /// <inheritdoc/>
+    public int FiltroDesdeHz
+    {
+        get => _filtroDesdeHz;
+        set => _filtroDesdeHz = Math.Clamp(value, 50, 4500);
+    }
+
+    /// <inheritdoc/>
+    public int FiltroHastaHz
+    {
+        get => _filtroHastaHz;
+        set => _filtroHastaHz = Math.Clamp(value, 100, 5000);
+    }
+
+    /// <inheritdoc/>
+    public TimeSpan AjusteDeVentana
+    {
+        get => _ajusteDeVentana;
+        // Un desajuste mayor que esto ya no es «fino»: algo mas gordo esta pasando (el reloj del
+        // sistema, no la ventana) y corresponde a «Poner en hora», no a este ajuste.
+        set => _ajusteDeVentana = TimeSpan.FromSeconds(Math.Clamp(value.TotalSeconds, -5, 5));
+    }
+
+    /// <inheritdoc/>
     public void FijarPistaDeQso(string miIndicativo, string dxCall)
     {
         if (_modos.TryObtener(Modo, out var implementacion)) implementacion.PistaDeQso = new PistaDeQso(miIndicativo, dxCall);
@@ -226,6 +274,8 @@ public sealed class ModemPropio : IModemPropio
         Modo = modo;
         implementacion.Reiniciar();
         _acumuladoDeCascada.Clear();
+        _filtro.Reiniciar();
+        _agc.Reiniciar();
         _cola = Channel.CreateUnbounded<BloqueDeAudio>(new UnboundedChannelOptions { SingleReader = true });
         _paradaDeEscucha = CancellationTokenSource.CreateLinkedTokenSource(ct);
         _entrada.BloqueCapturado += AlLlegarUnBloque;
@@ -255,6 +305,31 @@ public sealed class ModemPropio : IModemPropio
     }
 
     private void AlLlegarUnBloque(object? origen, BloqueDeAudio bloque) => _cola?.Writer.TryWrite(bloque);
+
+    /// <summary>
+    /// Aplica «Filtrar» (paso de banda) y «AGCc» (compresor) al audio de un bloque, si estan
+    /// encendidos. Trabaja sobre una copia: quien capturo el bloque puede reutilizar su vector en
+    /// cuanto suelta el evento.
+    /// </summary>
+    /// <remarks>
+    /// Si ninguno de los dos esta encendido, devuelve el mismo bloque sin copiar nada: el camino
+    /// de siempre (Normal/Hound/Fox, sin estas dos funciones) no gasta ni una copia de mas.
+    /// </remarks>
+    private BloqueDeAudio AplicarCadenaDeAudio(BloqueDeAudio bloque)
+    {
+        if (!_filtroActivo && !_agcActivo) return bloque;
+
+        var muestras = bloque.Muestras.ToArray();
+        if (_filtroActivo)
+        {
+            _filtro.AsegurarAjuste(_filtroDesdeHz, _filtroHastaHz, bloque.FrecuenciaDeMuestreo);
+            _filtro.Procesar(muestras);
+        }
+
+        if (_agcActivo) _agc.Procesar(muestras, bloque.FrecuenciaDeMuestreo);
+
+        return bloque with { Muestras = muestras };
+    }
 
     /// <summary>
     /// Va juntando los bloques de audio, corta por ventanas y decodifica cada una.
@@ -309,10 +384,15 @@ public sealed class ModemPropio : IModemPropio
                     _frecuenciaDeLaCascada = frecuencia;
                 }
                 instanteDelPrimero ??= bloque.InstanteUtc;
-                audio.AddRange(bloque.Muestras.Span);
-                PintarCascada(bloque);
 
-                var ventana = IModoDigital.ComienzoDeVentana(bloque.InstanteUtc, periodo, modo.ArranqueDentroDelPeriodo);
+                // AGCc y Filtrar tocan el audio DE VERDAD, no solo lo que se pinta: por eso se
+                // aplican aqui, antes de que nada -ni la cascada ni el acumulado que se va a
+                // decodificar- vea una sola muestra sin procesar.
+                var bloqueProcesado = AplicarCadenaDeAudio(bloque);
+                audio.AddRange(bloqueProcesado.Muestras.Span);
+                PintarCascada(bloqueProcesado);
+
+                var ventana = IModoDigital.ComienzoDeVentana(bloque.InstanteUtc + _ajusteDeVentana, periodo, modo.ArranqueDentroDelPeriodo);
                 ventanaEnCurso ??= ventana;
 
                 // Cuanto se lleva ya de la ventana en curso, contando desde su comienzo: el
@@ -559,7 +639,7 @@ public sealed class ModemPropio : IModemPropio
         // ventana, que es lo que hace la pantalla, se antepone ese silencio para que la primera
         // muestra salga donde el otro lado la espera. Si se llama tarde, no se inventa nada: sale
         // en cuanto se puede.
-        var ventana = IModoDigital.ComienzoDeVentana(_reloj.Ahora, modo.Periodo, modo.ArranqueDentroDelPeriodo);
+        var ventana = IModoDigital.ComienzoDeVentana(_reloj.Ahora + _ajusteDeVentana, modo.Periodo, modo.ArranqueDentroDelPeriodo);
         var espera = ventana + modo.ComienzoDeLaSenal - _reloj.Ahora;
         var silencio = espera > TimeSpan.Zero ? (int)Math.Round(espera.TotalSeconds * frecuenciaDeSalida) : 0;
         var senal = new float[silencio + mensaje.Length];
@@ -599,6 +679,73 @@ public sealed class ModemPropio : IModemPropio
         if (_paradaDeEmision is not null) await _paradaDeEmision.CancelAsync().ConfigureAwait(false);
         if (_salida is not null) await _salida.SilenciarAsync(ct).ConfigureAwait(false);
         if (_vigilante is not null) await _vigilante.SoltarYaAsync(MotivoDeSuelta.Cancelado).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
+    /// <remarks>
+    /// Mismo cerrojo, mismo vigilante y mismo latido que <see cref="EmitirAsync"/>: mientras suena
+    /// el tono no se puede emitir un mensaje, y al reves. El tono es un seno puro de un segundo
+    /// exacto, que se repite sin cortes -un numero entero de ciclos en cada segundo no deja
+    /// costura- hasta que <paramref name="ct"/> se cancela; entonces se corta y se suelta el PTT
+    /// igual que <see cref="AbortarEmisionAsync"/>.
+    /// </remarks>
+    public async Task EmitirTonoAsync(int tonoHz, CancellationToken ct = default)
+    {
+        if (_salida is null || _vigilante is null)
+            throw new InvalidOperationException(Textos.T("Servicios.Modos.NoPuedeEmitir"));
+
+        var frecuenciaDeSalida = _salida.FrecuenciaDeMuestreo;
+        var amplitud = _nivelDeSalida;
+        var trozo = GenerarTonoContinuo(tonoHz, frecuenciaDeSalida, amplitud);
+
+        await _cerrojoDeEmision.WaitAsync(ct).ConfigureAwait(false);
+        try
+        {
+            _paradaDeEmision = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            var testigo = _paradaDeEmision.Token;
+            EstaEmitiendo = true;
+
+            await using var transmision = await _vigilante.PedirAntenaAsync($"TUNE: tono continuo en {tonoHz} Hz", testigo).ConfigureAwait(false);
+            using var latido = new Timer(_ => transmision.Latir(), null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
+            try
+            {
+                while (!testigo.IsCancellationRequested)
+                {
+                    await _salida.ReproducirAsync(trozo, testigo).ConfigureAwait(false);
+                    // Ceder el hilo entre vuelta y vuelta: si la salida de audio completara la
+                    // reproduccion en el acto (de mentira, en pruebas; nunca con audio real),
+                    // esto evita un bucle apretado que nunca deje paso a la cancelacion.
+                    await Task.Yield();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Se pidio parar el tono. No es un error.
+            }
+            finally
+            {
+                await _salida.SilenciarAsync(CancellationToken.None).ConfigureAwait(false);
+            }
+        }
+        finally
+        {
+            EstaEmitiendo = false;
+            _paradaDeEmision?.Dispose();
+            _paradaDeEmision = null;
+            _cerrojoDeEmision.Release();
+        }
+    }
+
+    /// <summary>
+    /// Un segundo exacto de un seno puro a <paramref name="tonoHz"/>: al llevar un numero entero
+    /// de ciclos en ese segundo, repetirlo sin mas no deja costura ni clic.
+    /// </summary>
+    internal static float[] GenerarTonoContinuo(int tonoHz, int frecuenciaDeMuestreo, double amplitud)
+    {
+        var muestras = new float[frecuenciaDeMuestreo];
+        for (var i = 0; i < muestras.Length; i++)
+            muestras[i] = (float)(amplitud * Math.Sin(2.0 * Math.PI * tonoHz * i / frecuenciaDeMuestreo));
+        return muestras;
     }
 
     /// <summary>

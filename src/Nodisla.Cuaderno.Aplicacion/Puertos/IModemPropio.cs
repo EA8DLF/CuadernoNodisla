@@ -283,6 +283,54 @@ public interface IModemPropio : IAsyncDisposable
     Task AbortarEmisionAsync(CancellationToken ct = default);
 
     /// <summary>
+    /// «AGCc»: control de ganancia/compresion del propio decodificador, aplicado al audio real
+    /// antes de decodificar. Distinto del AGC del equipo, que sigue siendo cosa del CAT.
+    /// </summary>
+    /// <remarks>
+    /// Por omision, apagado y sin efecto: los modems que no lo implementen (simulados, de
+    /// pruebas) no tienen que declararlo, y el camino de decodificacion de siempre no cambia
+    /// para nadie que no lo encienda.
+    /// </remarks>
+    bool AgcActivo { get => false; set { } }
+
+    /// <summary>
+    /// «Filtrar»: aplica un filtro de paso de banda al audio real antes de decodificar, entre
+    /// <see cref="FiltroDesdeHz"/> y <see cref="FiltroHastaHz"/>. Distinto del ancho visible de
+    /// la cascada, que solo pinta.
+    /// </summary>
+    /// <remarks>Por omision, apagado y sin efecto, igual que <see cref="AgcActivo"/>.</remarks>
+    bool FiltroActivo { get => false; set { } }
+
+    /// <summary>Limite inferior del filtro de paso de banda, en hercios.</summary>
+    int FiltroDesdeHz { get => 200; set { } }
+
+    /// <summary>Limite superior del filtro de paso de banda, en hercios.</summary>
+    int FiltroHastaHz { get => 2900; set { } }
+
+    /// <summary>
+    /// Ajuste manual, fino, de donde se cree que empiezan las ventanas: lo que deja «Sincronizar»
+    /// tras elegir una decodificacion concreta. <b>No toca el reloj del sistema</b> -eso es
+    /// «Poner en hora», por NTP-: solo corrige, un poco, la alineacion de ventana que usa este
+    /// modem para decodificar y para emitir.
+    /// </summary>
+    /// <remarks>Por omision, cero: sin efecto para quien no lo use.</remarks>
+    TimeSpan AjusteDeVentana { get => TimeSpan.Zero; set { } }
+
+    /// <summary>
+    /// «Tune»: emite un tono puro y continuo (sin modulacion), para ajustar la antena o el
+    /// acoplador externo, hasta que se cancele <paramref name="ct"/>.
+    /// </summary>
+    /// <remarks>
+    /// Pone el equipo en antena igual que <see cref="EmitirAsync"/> -mismo vigilante, mismo
+    /// latido, misma salida compartida-, solo que no hay mensaje ni ventana: suena hasta que se
+    /// pide parar. Por omision no lo sabe hacer ningun modem.
+    /// </remarks>
+    /// <param name="tonoHz">Tono dentro del ancho de banda de audio.</param>
+    /// <param name="ct">Testigo de cancelacion; al cancelarse, se corta el tono y se suelta el PTT.</param>
+    Task EmitirTonoAsync(int tonoHz, CancellationToken ct = default) =>
+        throw new NotSupportedException("Este módem no sabe emitir un tono continuo de sintonía.");
+
+    /// <summary>
     /// Le dice al modo que esta escuchando lo que el secuenciador de QSO ya sabe, para la
     /// decodificacion AP. Por omision no hace nada: solo lo aprovechan los modos que lo declaren.
     /// </summary>

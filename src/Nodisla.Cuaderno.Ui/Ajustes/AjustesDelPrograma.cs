@@ -504,6 +504,31 @@ public sealed class AjustesDeDigital
     /// <summary>Apuntar solo en el cuaderno el contacto que la secuencia da por completo.</summary>
     public bool RegistrarAlCompletar { get; set; } = true;
 
+    // ── El decodificador propio: AGCc y Filtrar ─────────────────────────────
+
+    /// <summary>
+    /// «AGCc»: control de ganancia/compresion del propio decodificador, aplicado al audio antes
+    /// de decodificar. Distinto del AGC del equipo, que sigue siendo cosa del CAT.
+    /// </summary>
+    public bool AgcActivo { get; set; }
+
+    /// <summary>«Filtrar»: filtra el audio real (no solo lo que se pinta) antes de decodificar.</summary>
+    public bool FiltroActivo { get; set; }
+
+    /// <summary>Limite inferior del filtro de paso de banda, en hercios.</summary>
+    public int FiltroDesdeHz { get; set; } = 200;
+
+    /// <summary>Limite superior del filtro de paso de banda, en hercios.</summary>
+    public int FiltroHastaHz { get; set; } = 2900;
+
+    // ── Modo SWL ─────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Modo SWL: solo escucha y registra lo oido, sin intencion de contestar. El secuenciador no
+    /// reacciona y no se activa nada de Tx mientras este encendido.
+    /// </summary>
+    public bool ModoSwl { get; set; }
+
     // ── Red y ficheros ─────────────────────────────────────────────────────
 
     /// <summary>
@@ -558,6 +583,8 @@ public sealed class AjustesDeDigital
         CeroDeLaCascadaDb = Math.Clamp(CeroDeLaCascadaDb, -30, 30);
         PromedioDeColumnas = Math.Clamp(PromedioDeColumnas, 1, 10);
         AnchoVisibleHz = Math.Clamp(AnchoVisibleHz, 1000, 5000);
+        FiltroDesdeHz = Math.Clamp(FiltroDesdeHz, 50, 4500);
+        FiltroHastaHz = Math.Clamp(FiltroHastaHz, FiltroDesdeHz + 50, 5000);
         CqDirigido ??= string.Empty;
         IntercambioDeConcurso ??= string.Empty;
         PaletaDeLaCascada = string.IsNullOrWhiteSpace(PaletaDeLaCascada) ? "Nodisla" : PaletaDeLaCascada;

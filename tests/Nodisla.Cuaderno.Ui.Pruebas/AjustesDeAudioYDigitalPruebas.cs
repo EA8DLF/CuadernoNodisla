@@ -65,6 +65,37 @@ public sealed class AjustesDeAudioYDigitalPruebas : IDisposable
     }
 
     [Fact]
+    public void AcotarDejaElFiltroDeFiltrarConUnHuecoDeAlMenos50Hz()
+    {
+        var digital = new AjustesDeDigital { FiltroDesdeHz = -10, FiltroHastaHz = 9000 }.Acotar();
+        digital.FiltroDesdeHz.Should().Be(50);
+        digital.FiltroHastaHz.Should().Be(5000);
+
+        // Si piden Desde por encima de Hasta, se deja un hueco minimo en vez de un filtro invertido.
+        new AjustesDeDigital { FiltroDesdeHz = 3000, FiltroHastaHz = 3010 }.Acotar().FiltroHastaHz.Should().Be(3050);
+    }
+
+    [Fact]
+    public void LoQueSeGuardaDeLasSeisFuncionesNuevasSeVuelveALeer()
+    {
+        var ajustes = new AjustesDelPrograma();
+        ajustes.Digital.AgcActivo = true;
+        ajustes.Digital.FiltroActivo = true;
+        ajustes.Digital.FiltroDesdeHz = 300;
+        ajustes.Digital.FiltroHastaHz = 2500;
+        ajustes.Digital.ModoSwl = true;
+        ajustes.Guardar(_carpeta);
+
+        var leidos = AjustesDelPrograma.Leer(_carpeta);
+
+        leidos.Digital.AgcActivo.Should().BeTrue();
+        leidos.Digital.FiltroActivo.Should().BeTrue();
+        leidos.Digital.FiltroDesdeHz.Should().Be(300);
+        leidos.Digital.FiltroHastaHz.Should().Be(2500);
+        leidos.Digital.ModoSwl.Should().BeTrue();
+    }
+
+    [Fact]
     public void LoQueSeGuardaSeVuelveALeer()
     {
         var ajustes = new AjustesDelPrograma();

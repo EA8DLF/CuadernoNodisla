@@ -403,6 +403,9 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     /// <summary>El contacto en curso ya esta en el cuaderno: no se vuelve a meter.</summary>
     private bool _contactoYaGuardado;
 
+    /// <summary>Cancela el tono continuo de «Tune» en curso, si lo hay.</summary>
+    private CancellationTokenSource? _cancelacionDelTono;
+
     /// <summary>
     /// Los mensajes que el secuenciador de fox ha decidido para la proxima ventana propia, a la
     /// espera de que llegue el momento de emitirlos mezclados.
@@ -489,6 +492,11 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         _ceroDeLaCascada = digital.CeroDeLaCascadaDb;
         _promedioDeColumnas = digital.PromedioDeColumnas;
         _anchoVisibleHz = digital.AnchoVisibleHz;
+        _agcActivo = digital.AgcActivo;
+        _filtroActivo = digital.FiltroActivo;
+        _filtroDesdeHz = digital.FiltroDesdeHz;
+        _filtroHastaHz = digital.FiltroHastaHz;
+        _modoSwl = digital.ModoSwl;
 
         // Solo si el operador lo ha pedido en Ajustes: de fabrica, el pestillo arranca cerrado.
         _permitirTransmitir = digital.RecordarPermisoDeTransmitir;
@@ -531,6 +539,10 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             _modem.CascadaActualizada += AlLlegarUnaColumna;
             _modem.VentanaLista += AlTerminarUnaVentana;
             _modem.NivelDeSalida = _nivelDeSalida;
+            _modem.AgcActivo = _agcActivo;
+            _modem.FiltroActivo = _filtroActivo;
+            _modem.FiltroDesdeHz = _filtroDesdeHz;
+            _modem.FiltroHastaHz = _filtroHastaHz;
         }
 
         if (_entrada is not null)
@@ -799,6 +811,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PrepararRespuestaCommand))]
     [NotifyCanExecuteChangedFor(nameof(SintonizarEnLaDecodificacionCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SincronizarConLaDecodificacionCommand))]
     private FilaDeDecodificacionPropia? _decodificacionElegida;
 
     // Rx y Tx.
@@ -819,6 +832,28 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     [ObservableProperty]
     private double _nivelDeSalida = Nodisla.Cuaderno.Modos.Marco.IModoDigital.AmplitudDeSalidaPorDefecto;
 
+    // ── El decodificador propio: AGCc y Filtrar ──────────────────────────
+
+    /// <summary>
+    /// «AGCc»: control de ganancia/compresion del propio decodificador, sobre el audio real,
+    /// antes de decodificar. Distinto del AGC del equipo, que sigue siendo cosa del CAT.
+    /// </summary>
+    [ObservableProperty]
+    private bool _agcActivo;
+
+    /// <summary>
+    /// «Filtrar»: aplica el paso de banda al audio real (no solo a lo que se pinta) antes de
+    /// decodificar, entre <see cref="FiltroDesdeHz"/> y <see cref="FiltroHastaHz"/>.
+    /// </summary>
+    [ObservableProperty]
+    private bool _filtroActivo;
+
+    [ObservableProperty]
+    private int _filtroDesdeHz = 200;
+
+    [ObservableProperty]
+    private int _filtroHastaHz = 2900;
+
     /// <summary>
     /// El pestillo de la transmision.
     /// </summary>
@@ -829,6 +864,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     /// </remarks>
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(EmitirCommand))]
+    [NotifyCanExecuteChangedFor(nameof(AlternarTonoDeAjusteCommand))]
     [NotifyPropertyChangedFor(nameof(AvisoDeLaTransmision))]
     [NotifyPropertyChangedFor(nameof(SePuedeEmitir))]
     private bool _permitirTransmitir;
@@ -850,9 +886,52 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(EscucharCommand))]
     [NotifyCanExecuteChangedFor(nameof(EmitirCommand))]
+    [NotifyCanExecuteChangedFor(nameof(AlternarTonoDeAjusteCommand))]
     [NotifyPropertyChangedFor(nameof(SePuedeEmitir))]
     [NotifyPropertyChangedFor(nameof(AvisoDeLaTransmision))]
     private bool _modoApagado;
+
+    /// <summary>
+    /// Modo SWL: solo se escucha y se puede registrar lo oido, sin intencion de contestar. El
+    /// secuenciador no reacciona y no se activa nada de Tx mientras este encendido.
+    /// </summary>
+    /// <remarks>
+    /// Al encenderlo se para la secuencia en curso (si la habia) y se apaga «Tx habilitado»: no
+    /// basta con negar la activacion nueva, lo que ya estuviera en marcha tambien se para.
+    /// </remarks>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(EmitirCommand))]
+    [NotifyCanExecuteChangedFor(nameof(AlternarTonoDeAjusteCommand))]
+    [NotifyPropertyChangedFor(nameof(SePuedeEmitir))]
+    [NotifyPropertyChangedFor(nameof(AvisoDeLaTransmision))]
+    private bool _modoSwl;
+
+    /// <summary>
+    /// «Bypass»: el modem ignora el dial del equipo y opera a una frecuencia de trabajo fija,
+    /// <see cref="FrecuenciaDeBypassMhz"/>, en vez de seguir al CAT.
+    /// </summary>
+    /// <remarks>
+    /// No se guarda entre sesiones, igual que el pestillo: un bypass que sobreviviera a un
+    /// reinicio sin que el operador se acuerde de que esta puesto acabaria apuntando contactos a
+    /// la frecuencia equivocada.
+    /// </remarks>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(FrecuenciaDelModoTexto))]
+    private bool _bypassDeCat;
+
+    /// <summary>La frecuencia de trabajo fija cuando <see cref="BypassDeCat"/> esta encendido, en MHz.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(FrecuenciaDelModoTexto))]
+    private double _frecuenciaDeBypassMhz;
+
+    /// <summary>
+    /// «Tune»: hay un tono puro y continuo sonando, para ajustar la antena o el acoplador.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(EmitirCommand))]
+    [NotifyPropertyChangedFor(nameof(SePuedeEmitir))]
+    [NotifyPropertyChangedFor(nameof(AvisoDeLaTransmision))]
+    private bool _tonoDeAjusteActivo;
 
     // El DX.
     [ObservableProperty]
@@ -1157,19 +1236,25 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     public bool HayContactoEnCurso => !string.IsNullOrWhiteSpace(Corresponsal);
 
     /// <summary>
-    /// Se puede emitir: el modo no esta apagado, hay modem, la salida de audio esta REALMENTE
-    /// abierta y el pestillo lo esta tambien.
+    /// Se puede emitir: el modo no esta apagado, no esta en SWL, no hay un tono de ajuste
+    /// sonando, hay modem, la salida de audio esta REALMENTE abierta y el pestillo lo esta
+    /// tambien.
     /// </summary>
-    public bool SePuedeEmitir => !ModoApagado && HayModem && _salida?.Abierto is not null && PermitirTransmitir;
+    public bool SePuedeEmitir => !ModoApagado && !ModoSwl && !TonoDeAjusteActivo
+                                  && HayModem && _salida?.Abierto is not null && PermitirTransmitir;
 
     /// <summary>Por que el botón de emitir está como está.</summary>
-    public string AvisoDeLaTransmision => ModoApagado
-        ? Textos.T("Digital.Modem.Transmision.ModoApagado")
-        : _salida?.Abierto is null
-            ? Textos.T("Digital.Modem.Transmision.SinSalida")
-            : PermitirTransmitir
-                ? Textos.T("Digital.Modem.Transmision.Permitida")
-                : Textos.T("Digital.Modem.Transmision.Cerrada");
+    public string AvisoDeLaTransmision => ModoSwl
+        ? Textos.T("Digital.Modem.Transmision.ModoSwl")
+        : TonoDeAjusteActivo
+            ? Textos.T("Digital.Modem.Transmision.Tune")
+            : ModoApagado
+                ? Textos.T("Digital.Modem.Transmision.ModoApagado")
+                : _salida?.Abierto is null
+                    ? Textos.T("Digital.Modem.Transmision.SinSalida")
+                    : PermitirTransmitir
+                        ? Textos.T("Digital.Modem.Transmision.Permitida")
+                        : Textos.T("Digital.Modem.Transmision.Cerrada");
 
     /// <summary>El secuenciador, para que las pruebas lo miren.</summary>
     public SecuenciadorDeQso Secuenciador => _secuenciador;
@@ -1202,6 +1287,11 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     /// </param>
     public void PonerElDial(Frecuencia frecuencia, Frecuencia? frecuenciaRx = null)
     {
+        // «Bypass»: el modem ignora lo que diga el CAT y se queda en la frecuencia fija que
+        // eligio el operador. Lo que siga al dial de verdad (el panel de entrada, el bandmap) no
+        // pasa por aqui: esto es solo la idea que tiene el modem de donde esta trabajando.
+        if (BypassDeCat) return;
+
         _dial = frecuencia;
         _dialRx = frecuenciaRx is { EsCero: false } rx && rx != frecuencia ? rx : null;
         if (_modem is not null) _modem.FrecuenciaDelDial = frecuencia;
@@ -1227,6 +1317,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         _medidor.Stop();
         _relojDePsk.Stop();
         _cuentaAtras.Stop();
+        _cancelacionDelTono?.Cancel();
 
         if (_modem is not null)
         {
@@ -1271,6 +1362,11 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         d.PaletaDeLaCascada = PaletaElegida.Valor.ToString();
         d.AnchoVisibleHz = AnchoVisibleHz;
         d.FrecuenciasDeTrabajo = FrecuenciasDeTrabajo.ToList();
+        d.AgcActivo = AgcActivo;
+        d.FiltroActivo = FiltroActivo;
+        d.FiltroDesdeHz = FiltroDesdeHz;
+        d.FiltroHastaHz = FiltroHastaHz;
+        d.ModoSwl = ModoSwl;
         d.Acotar();
         _ajustes.Guardar(carpeta);
     }
@@ -1350,6 +1446,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             OnPropertyChanged(nameof(SePuedeEmitir));
             OnPropertyChanged(nameof(AvisoDeLaTransmision));
             EmitirCommand.NotifyCanExecuteChanged();
+            AlternarTonoDeAjusteCommand.NotifyCanExecuteChanged();
         }
         catch (Exception ex)
         {
@@ -1409,6 +1506,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         OnPropertyChanged(nameof(SePuedeEmitir));
         OnPropertyChanged(nameof(AvisoDeLaTransmision));
         EmitirCommand.NotifyCanExecuteChanged();
+        AlternarTonoDeAjusteCommand.NotifyCanExecuteChanged();
     }
 
     /// <summary>Vacia la lista de decodificaciones y limpia la cascada.</summary>
@@ -1690,6 +1788,27 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     public void SintonizarEnLaDecodificacion()
     {
         if (DecodificacionElegida is { } fila) SintonizarEn(fila.TonoHz);
+    }
+
+    /// <summary>
+    /// «Sincronizar»: ajuste fino, manual, de la alineacion de ventana a partir de la
+    /// decodificacion elegida.
+    /// </summary>
+    /// <remarks>
+    /// <b>No toca el reloj del sistema.</b> Es distinto de «Poner en hora» (NTP, en la tira del
+    /// reloj): aquello corrige la hora de todo el ordenador; esto solo corrige, dentro del
+    /// modem, donde se cree que empiezan las ventanas, a partir del desfase con el que se oyo
+    /// esta señal en concreto. Si llega sistematicamente adelantada o atrasada, esto lo compensa
+    /// sin pedir permisos de administrador ni cambiar la hora de nadie.
+    /// </remarks>
+    [RelayCommand(CanExecute = nameof(HayDecodificacionElegida))]
+    public void SincronizarConLaDecodificacion()
+    {
+        if (_modem is null || DecodificacionElegida is not { EsTx: false } fila) return;
+
+        var desfase = fila.Decodificacion.DesfaseSegundos;
+        _modem.AjusteDeVentana -= TimeSpan.FromSeconds(desfase);
+        Informar(Textos.F("Digital.Modem.Sincronizar.Hecho", desfase.ToString("+0.00;-0.00;0.00", Textos.Cultura)));
     }
 
     /// <summary>Olvida el contacto a medias.</summary>
@@ -2006,7 +2125,55 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             Log.Error(ex, "No se ha podido abortar la emisión.");
             Aviso = Textos.F("Digital.Modem.Aviso.NoSePudoCortar", ex.Message);
         }
+
+        if (_cancelacionDelTono is { } tono) await tono.CancelAsync().ConfigureAwait(true);
     }
+
+    /// <summary>
+    /// «Tune»: empieza o para un tono puro y continuo, para ajustar la antena o el acoplador
+    /// externo. Es un interruptor: pulsado una vez empieza, pulsado otra vez para.
+    /// </summary>
+    /// <remarks>
+    /// Pasa por el mismo pestillo, la misma pregunta y el mismo vigilante que cualquier otra
+    /// emision: «Tune» tambien pone el equipo en antena. Mientras suena no se puede llamar CQ ni
+    /// emitir un mensaje (<see cref="SePuedeEmitir"/>), y «Cortar y soltar PTT» tambien lo para.
+    /// </remarks>
+    [RelayCommand(CanExecute = nameof(SePuedeAlternarElTonoDeAjuste))]
+    public async Task AlternarTonoDeAjusteAsync()
+    {
+        if (TonoDeAjusteActivo)
+        {
+            if (_cancelacionDelTono is { } enCurso) await enCurso.CancelAsync().ConfigureAwait(true);
+            return;
+        }
+
+        if (_modem is null || !SePuedeEmitir) return;
+        if (!OperadorConforme(Textos.T("Digital.Modem.Tune.Confirmar"))) return;
+
+        _cancelacionDelTono = new CancellationTokenSource();
+        TonoDeAjusteActivo = true;
+        try
+        {
+            await _modem.EmitirTonoAsync(TonoDeTransmision, _cancelacionDelTono.Token).ConfigureAwait(true);
+        }
+        catch (OperationCanceledException)
+        {
+            // Parado a proposito, por el propio boton o por «Cortar y soltar PTT».
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Falló el tono de ajuste (Tune).");
+            Aviso = Textos.F("Digital.Modem.Aviso.NoSePudoCortar", ex.Message);
+        }
+        finally
+        {
+            TonoDeAjusteActivo = false;
+            _cancelacionDelTono?.Dispose();
+            _cancelacionDelTono = null;
+        }
+    }
+
+    private bool SePuedeAlternarElTonoDeAjuste() => TonoDeAjusteActivo || SePuedeEmitir;
 
     // ── Frecuencias de trabajo ────────────────────────────────────────────
 
@@ -2954,4 +3121,51 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     partial void OnPromedioDeColumnasChanged(int value) => Pintor.PromedioDeColumnas = Math.Clamp(value, 1, 10);
 
     partial void OnAnchoVisibleHzChanged(int value) => Pintor.AnchoVisibleHz = Math.Clamp(value, 1000, 5000);
+
+    partial void OnAgcActivoChanged(bool value)
+    {
+        if (_modem is not null) _modem.AgcActivo = value;
+    }
+
+    partial void OnFiltroActivoChanged(bool value)
+    {
+        if (_modem is not null) _modem.FiltroActivo = value;
+    }
+
+    partial void OnFiltroDesdeHzChanged(int value)
+    {
+        if (_modem is not null) _modem.FiltroDesdeHz = value;
+    }
+
+    partial void OnFiltroHastaHzChanged(int value)
+    {
+        if (_modem is not null) _modem.FiltroHastaHz = value;
+    }
+
+    /// <summary>
+    /// Modo SWL encendido: se para la secuencia (y el pileup de fox) y se apaga «Tx habilitado»,
+    /// ademas de que nadie pueda volver a encenderlos mientras siga encendido
+    /// (<see cref="SePuedeEmitir"/>, <see cref="IntentarHabilitarTx"/>).
+    /// </summary>
+    partial void OnModoSwlChanged(bool value)
+    {
+        if (value) DetenerTx();
+    }
+
+    /// <summary>
+    /// Al encender el bypass, se parte de la frecuencia del dial de ahora mismo: es mas util
+    /// empezar de donde se estaba que de cero, y el operador la corrige si no es la que quiere.
+    /// </summary>
+    partial void OnBypassDeCatChanged(bool value)
+    {
+        if (value && FrecuenciaDeBypassMhz <= 0) FrecuenciaDeBypassMhz = (double)_dial.Megahercios;
+    }
+
+    partial void OnFrecuenciaDeBypassMhzChanged(double value)
+    {
+        if (!BypassDeCat) return;
+        _dial = Frecuencia.DesdeMegahercios((decimal)Math.Max(0, value));
+        if (_modem is not null) _modem.FrecuenciaDelDial = _dial;
+        OnPropertyChanged(nameof(FrecuenciaDelModoTexto));
+    }
 }
