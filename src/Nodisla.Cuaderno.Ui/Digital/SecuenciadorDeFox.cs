@@ -23,8 +23,16 @@ public sealed class EstadoDeCazador
     /// <summary>Su indicativo.</summary>
     public required string Indicativo { get; init; }
 
-    /// <summary>Tono asignado dentro de la mezcla, en hercios.</summary>
+    /// <summary>Tono asignado dentro de la mezcla, en hercios: donde SE LE TRANSMITE a el.</summary>
     public int TonoHz { get; set; }
+
+    /// <summary>
+    /// Tono en el que de verdad se le ha oido la ultima vez, en hercios: el suyo propio, no el de
+    /// la mezcla. No tiene por que coincidir con <see cref="TonoHz"/> —ese es solo donde encaja
+    /// su mensaje dentro de la transmision del fox—, y es el que hace falta para saber en que
+    /// frecuencia de audio de <b>recepcion</b> estaba su señal de verdad.
+    /// </summary>
+    public int TonoRxHz { get; set; }
 
     /// <summary>En que paso del intercambio va.</summary>
     public PasoDeCazador Paso { get; set; } = PasoDeCazador.EsperandoInforme;
@@ -53,12 +61,14 @@ public readonly record struct TransmisionDeFox(string Indicativo, string Texto, 
 /// <param name="ContactosCompletados">
 /// Cazadores a los que se les acaba de poner en cola el <c>RR73</c>: el fox no espera
 /// confirmacion (igual que en <see cref="TipoDeOperacion.Hound"/>), asi que se dan por completos
-/// y su tono queda libre para el siguiente de la cola.
+/// y su tono queda libre para el siguiente de la cola. Es su <see cref="EstadoDeCazador"/>
+/// entero —no solo el indicativo— porque quien recibe la decision (el registro automatico en el
+/// cuaderno) necesita su localizador, su tono y los informes cruzados con el.
 /// </param>
 /// <param name="CazadoresAbandonados">Cazadores que se han quitado por no responder.</param>
 public sealed record DecisionDelFox(
     IReadOnlyList<TransmisionDeFox> Transmisiones,
-    IReadOnlyList<string> ContactosCompletados,
+    IReadOnlyList<EstadoDeCazador> ContactosCompletados,
     IReadOnlyList<string> CazadoresAbandonados)
 {
     /// <summary>No hay nada que hacer.</summary>
@@ -222,6 +232,7 @@ public sealed class SecuenciadorDeFox
 
             vistos.Add(m.Llamante);
             cazador.CiclosSinRespuesta = 0;
+            cazador.TonoRxHz = oido.TonoHz;
 
             switch (m.Clase)
             {
@@ -246,7 +257,7 @@ public sealed class SecuenciadorDeFox
         }
 
         var transmisiones = new List<TransmisionDeFox>();
-        var completados = new List<string>();
+        var completados = new List<EstadoDeCazador>();
         var abandonados = new List<string>();
 
         // 2) A los que ya tienen el RR73 en cola no se les espera mas (ver comentario de la
@@ -256,7 +267,7 @@ public sealed class SecuenciadorDeFox
             if (cazador.Paso != PasoDeCazador.EsperandoRr73) continue;
 
             transmisiones.Add(new TransmisionDeFox(cazador.Indicativo, ComponerRr73(cazador), cazador.TonoHz));
-            completados.Add(cazador.Indicativo);
+            completados.Add(cazador);
             _cazadores.Remove(cazador.Indicativo);
         }
 
@@ -290,6 +301,7 @@ public sealed class SecuenciadorDeFox
                 Indicativo = m.Llamante,
                 Grid = m.Locator,
                 TonoHz = tono.Value,
+                TonoRxHz = oido.TonoHz,
                 InformeAEnviar = oido.Decibelios,
             };
         }

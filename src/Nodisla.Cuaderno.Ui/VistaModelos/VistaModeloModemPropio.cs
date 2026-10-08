@@ -418,6 +418,15 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     /// <summary>Tiempo en el que otro «completo» con la misma estacion, banda y modo es el mismo contacto.</summary>
     private static readonly TimeSpan MargenDeRepeticion = TimeSpan.FromMinutes(10);
 
+    /// <summary>
+    /// Cazadores de fox ya registrados en este pileup, por indicativo+banda+modo, con la hora a
+    /// la que se guardaron. Evita apuntar dos veces al mismo si el evento de completado se
+    /// repitiera (vease <see cref="GuardarCazadoresDeFoxAsync"/>): el mismo cuidado que
+    /// <see cref="_ultimoGuardadoSolo"/> hace para el QSO de uno a uno, pero llevando varios a la
+    /// vez, que es lo propio de un pileup.
+    /// </summary>
+    private readonly Dictionary<string, DateTimeOffset> _cazadoresDeFoxGuardados = new(StringComparer.Ordinal);
+
     /// <summary>Monta el panel del modem propio.</summary>
     /// <param name="reloj">La tira del reloj, que va dentro de esta pantalla.</param>
     /// <param name="ajustes">Ajustes del programa, de donde salen los dispositivos elegidos.</param>
@@ -1815,6 +1824,84 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         return qso;
     }
 
+    /// <summary>
+    /// El contacto con un cazador del pileup de fox, con los mismos campos que
+    /// <see cref="ConstruirElContacto"/> pero tomados del propio cazador y no del contacto de uno
+    /// a uno en pantalla (que en una sesion de fox no se esta usando): su indicativo, su
+    /// localizador si lo dijo, el tono que de verdad le toco a el —no el fijo de
+    /// <see cref="TonoDeTransmision"/>— y los informes que de verdad se cruzaron con el.
+    /// </summary>
+    private Qso ConstruirElContactoDeCazador(EstadoDeCazador cazador, Indicativo suyo, DateTimeOffset cuando)
+    {
+        var qso = new Qso
+        {
+            Call = suyo,
+            Mode = DescripcionDelModo.ModoAdif(Modo),
+            Freq = FrecuenciaDelContacto(cazador.TonoHz),
+
+            // Con split, la de recepcion real en el tono en que de verdad se le oyo a el.
+            FreqRx = FrecuenciaRxDelContacto(cazador.TonoRxHz),
+            InicioUtc = cuando,
+            FinUtc = cuando,
+            RstSent = cazador.InformeAEnviar is { } enviado ? Informe.DesdeDecibelios(enviado) : Informe.Ninguno,
+            RstRcvd = cazador.InformeRecibido is { } recibido ? Informe.DesdeDecibelios(recibido) : Informe.Ninguno,
+
+            // Distingue de donde vino: un pileup de fox no es un contacto de uno a uno.
+            Origen = "módem propio (fox)",
+        };
+
+        if (Locator.TryParse(cazador.Grid, out var rejilla)) qso.Gridsquare = rejilla;
+        return qso;
+    }
+
+    /// <summary>
+    /// Apunta en el cuaderno, uno por uno, a los cazadores que el pileup de fox acaba de dar por
+    /// completos (recibieron su RR73): mismo camino que «Guardar en el cuaderno»
+    /// (<see cref="MeterEnElCuadernoAsync"/>) y que el guardado solo del QSO normal
+    /// (<see cref="GuardarElContactoCompletoAsync"/>), pero con los datos propios de cada cazador.
+    /// No pide confirmacion al operador: ese es justo el punto de que sea automatico. Se guarda
+    /// solo si <see cref="RegistrarAlCompletar"/> esta activo, la misma casilla que gobierna el
+    /// guardado solo del QSO de uno a uno.
+    /// </summary>
+    private async Task GuardarCazadoresDeFoxAsync(IReadOnlyList<EstadoDeCazador> completados, DateTimeOffset cuando)
+    {
+        if (!RegistrarAlCompletar) return;
+
+        foreach (var cazador in completados)
+        {
+            if (!Indicativo.TryParse(cazador.Indicativo, out var suyo)) continue;
+
+            var qso = ConstruirElContactoDeCazador(cazador, suyo, cuando);
+            var banda = qso.Freq.EsCero ? string.Empty : Banda.DesdeFrecuencia(qso.Freq).Nombre ?? string.Empty;
+            var modo = DescripcionDelModo.Nombre(Modo);
+            var clave = $"{suyo.Valor}|{banda}|{modo}";
+
+            if (_cazadoresDeFoxGuardados.TryGetValue(clave, out var ultimo))
+            {
+                if ((cuando - ultimo).Duration() < MargenDeRepeticion) continue;
+                _cazadoresDeFoxGuardados.Remove(clave);
+            }
+
+            // Se marca antes de esperar: un segundo «completo» del mismo cazador que llegue
+            // mientras tanto no duplica (igual cuidado que GuardarElContactoCompletoAsync).
+            _cazadoresDeFoxGuardados[clave] = cuando;
+
+            if (!await MeterEnElCuadernoAsync(qso).ConfigureAwait(true))
+            {
+                _cazadoresDeFoxGuardados.Remove(clave);
+                continue;
+            }
+
+            Log.Information(
+                "Contacto de fox con {Indicativo} guardado solo al completarse ({Banda} {Modo}).",
+                suyo.Valor, banda, modo);
+            Informar(banda.Length > 0
+                ? Textos.F("Digital.Modem.Aviso.GuardadoSolo", suyo.Valor, banda, modo)
+                : Textos.F("Digital.Modem.Aviso.GuardadoSoloSinBanda", suyo.Valor, modo));
+            CuadernoCambiado?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
     private async Task<bool> MeterEnElCuadernoAsync(Qso qso)
     {
         try
@@ -2385,7 +2472,16 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
                 ActualizarCazadores();
 
                 if (decisionFox.ContactosCompletados.Count > 0)
-                    Informar(Textos.F("Digital.Modem.Fox.Completados", string.Join(", ", decisionFox.ContactosCompletados)));
+                {
+                    Informar(Textos.F(
+                        "Digital.Modem.Fox.Completados",
+                        string.Join(", ", decisionFox.ContactosCompletados.Select(c => c.Indicativo))));
+
+                    // Se registran solos, sin preguntar: es el punto de un pileup automatico. El
+                    // mismo cuidado de siempre con lo que se dispara y se olvida: GuardadoEnCurso
+                    // es lo que esperan las pruebas, y un fallo deja rastro en el registro.
+                    GuardadoEnCurso = GuardarCazadoresDeFoxAsync(decisionFox.ContactosCompletados, ventana.VentanaUtc);
+                }
 
                 // Mismo cuidado que en el QSO normal: se dispara y se olvida dentro de un
                 // delegado sincrono, con el ContinueWith como red para que un fallo no se pierda
@@ -2585,17 +2681,28 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
     private bool HayFrecuenciaElegida() => FrecuenciaElegida is not null;
 
-    private Frecuencia FrecuenciaDelContacto() => _dial.EsCero
+    private Frecuencia FrecuenciaDelContacto() => FrecuenciaDelContacto(TonoDeTransmision);
+
+    /// <summary>
+    /// La frecuencia de un contacto: el VFO de transmision mas el tono de audio con el que de
+    /// verdad se le hablo a ese corresponsal. Generalizada sobre un tono explicito (y no sobre
+    /// <see cref="TonoDeTransmision"/> fijo) porque en un pileup de fox cada cazador tiene el
+    /// suyo propio dentro de la misma mezcla: comparten VFO, pero no tono.
+    /// </summary>
+    private Frecuencia FrecuenciaDelContacto(int tonoHz) => _dial.EsCero
         ? Frecuencia.Cero
-        : Frecuencia.DesdeHercios(_dial.Hercios + TonoDeTransmision);
+        : Frecuencia.DesdeHercios(_dial.Hercios + tonoHz);
+
+    private Frecuencia? FrecuenciaRxDelContacto() => FrecuenciaRxDelContacto(TonoDeRecepcion);
 
     /// <summary>
     /// La frecuencia de recepcion del contacto, con split: el VFO de escucha mas el tono de
-    /// audio de recepcion, igual que <see cref="FrecuenciaDelContacto"/> hace con el de
-    /// transmision. Nula sin split, que es el caso normal y no cambia en nada.
+    /// audio de recepcion en el que de verdad se oyo a ese corresponsal, igual que
+    /// <see cref="FrecuenciaDelContacto(int)"/> hace con el de transmision. Nula sin split, que
+    /// es el caso normal y no cambia en nada.
     /// </summary>
-    private Frecuencia? FrecuenciaRxDelContacto() => _dialRx is { } rx
-        ? Frecuencia.DesdeHercios(rx.Hercios + TonoDeRecepcion)
+    private Frecuencia? FrecuenciaRxDelContacto(int tonoRxHz) => _dialRx is { } rx
+        ? Frecuencia.DesdeHercios(rx.Hercios + tonoRxHz)
         : null;
 
     private DispositivoDeAudio? ElegirLaEntrada()

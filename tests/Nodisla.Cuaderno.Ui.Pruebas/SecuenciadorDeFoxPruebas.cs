@@ -75,6 +75,9 @@ public sealed class SecuenciadorDeFoxPruebas
         tx.Indicativo.Should().Be("EA5XYZ");
         tx.Texto.Should().Be("EA5XYZ EA8DLF -07");
         tx.TonoHz.Should().Be(cazador.TonoHz);
+
+        // El tono en el que de verdad se le oyo es el suyo, no el que le toca en la mezcla.
+        cazador.TonoRxHz.Should().Be(1200);
     }
 
     [Fact]
@@ -92,7 +95,8 @@ public sealed class SecuenciadorDeFoxPruebas
         // confirmacion).
         var d2 = f.Procesar(Par + (2 * Periodo), [Oido("EA8DLF EA5XYZ R-12")]);
         d2.Transmisiones.Should().ContainSingle(t => t.Texto == "EA5XYZ EA8DLF RR73");
-        d2.ContactosCompletados.Should().ContainSingle("EA5XYZ");
+        d2.ContactosCompletados.Should().ContainSingle(c => c.Indicativo == "EA5XYZ");
+        d2.ContactosCompletados[0].InformeRecibido.Should().Be(-12);
         f.Cazadores.Should().NotContainKey("EA5XYZ", "el tono queda libre en cuanto se pone en cola el RR73");
     }
 
@@ -147,7 +151,7 @@ public sealed class SecuenciadorDeFoxPruebas
 
         // EA1AAA completa su contacto: se libera el hueco.
         var completa = f.Procesar(Par + (2 * Periodo), [Oido("EA8DLF EA1AAA R-07")]);
-        completa.ContactosCompletados.Should().Contain("EA1AAA");
+        completa.ContactosCompletados.Should().Contain(c => c.Indicativo == "EA1AAA");
         f.Cazadores.Should().BeEmpty();
 
         // Ahora, con el hueco libre, EA2BBB por fin entra.
