@@ -73,7 +73,11 @@ public partial class PanelDeFonia : UserControl
         }
 
         BotonPtt.Height = Vertical ? 64 : 46;
-        MaxWidth = Vertical ? 250 : double.PositiveInfinity;
+
+        // 240 de cada fila + 18 de la tarjeta que ahora envuelve el panel entero (8 de relleno
+        // y 1 de borde a cada lado, como las de HAM y Canales CB): sin sumarlos aqui, el propio
+        // borde se comia esos 18 puntos y «Silencio» salia cortado a mitad de palabra.
+        MaxWidth = Vertical ? 258 : double.PositiveInfinity;
 
         // En columna no hay sitio para NR/notch/limitador, mensajes de voz ni grabador: esa fila
         // se queda a su ancho horizontal de siempre y es ella la que, sin tocar, obliga al

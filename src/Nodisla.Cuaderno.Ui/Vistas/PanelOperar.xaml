@@ -208,13 +208,18 @@
             </StackPanel>
         </Border>
 
-        <!-- ══ Fonía por el PC: una franja con el PTT, bajo el frontal ══ -->
+        <!--
+            ══ Fonía por el PC: una franja con el PTT, bajo el frontal ══
+
+            Sin Style propio: PanelDeFonia ya lleva su propia tarjeta (mismo contorno que HAM y
+            Canales CB), y ponerle aquí OTRA alrededor dejaría un borde dentro de otro borde. Este
+            Border solo existe para la visibilidad condicional y el hueco con la fila siguiente.
+        -->
         <Border Grid.Row="3"
-                x:Name="FranjaDeFonia"
-                Margin="0,0,0,5"
-                Padding="8,4">
+                x:Name="FranjaDeFonia">
             <Border.Style>
-                <Style TargetType="Border" BasedOn="{StaticResource Tarjeta}">
+                <Style TargetType="Border">
+                    <Setter Property="Visibility" Value="Visible" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Fonia}" Value="{x:Null}">
                             <Setter Property="Visibility" Value="Collapsed" />

@@ -21,6 +21,7 @@
         <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
         <conversores:NoEsVacio x:Key="NoEsVacio" />
         <conversores:MarcaDelEquipo x:Key="DelEquipo" />
+        <conversores:ProporcionAEstrellas x:Key="ProporcionAEstrellas" />
 
         <DataTemplate x:Key="Dispositivo">
             <TextBlock>
@@ -28,8 +29,98 @@
                 <Run Text="{Binding EsDelEquipo, Mode=OneWay, Converter={StaticResource DelEquipo}}" Foreground="{DynamicResource TextoTenue}" />
             </TextBlock>
         </DataTemplate>
+
+        <!--
+            MEDIDOR DE NIVEL: tres zonas de color -verde, ambar, rojo cerca de SATURA- pintadas a
+            todo el ancho de la pista, SIEMPRE en el mismo sitio (por eso no es un
+            LinearGradientBrush sobre el propio relleno: ese comprime el verde-ambar-rojo entero
+            dentro de lo que haya de relleno y miente con el nivel bajo). Lo unico que se mueve es
+            una mascara que tapa lo que el nivel aun no ha alcanzado; lo ya alcanzado se ve a todo
+            color, con una rayita clara en el borde que marca el nivel actual, como la aguja de un
+            medidor de verdad. Antes era un ProgressBar liso, sin escala ni zonas: un bloque de
+            color sin terminar (feedback de Jose, 2026-10-08).
+        -->
+        <Style x:Key="MedidorDeNivel" TargetType="ProgressBar">
+            <Setter Property="Height" Value="10" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Border CornerRadius="3" BorderBrush="{DynamicResource Borde}" BorderThickness="1" ClipToBounds="True">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="68*" />
+                                    <ColumnDefinition Width="20*" />
+                                    <ColumnDefinition Width="12*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Background="{DynamicResource CorrectoBorde}" />
+                                <Border Grid.Column="1" Background="{DynamicResource AvisoBorde}" />
+                                <Border Grid.Column="2" Background="{DynamicResource ErrorBorde}" />
+
+                                <Grid Grid.ColumnSpan="3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{Binding Value, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource ProporcionAEstrellas}}" />
+                                        <ColumnDefinition Width="{Binding Value, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource ProporcionAEstrellas}, ConverterParameter=Inverso}" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="1" Background="{DynamicResource FondoCampo}" Opacity="0.82" />
+                                    <Border Grid.Column="0" HorizontalAlignment="Right" Width="2" Background="{DynamicResource Texto}" Opacity="0.9" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--
+            DESLIZADOR DE FONÍA: el mismo deslizador de los mandos del equipo (mismo pulgar, mismo
+            alto), pero con la pista a mayor contraste -fondo de campo con borde, no una simple
+            linea gris sobre el fondo oscuro- y con relleno desde el mínimo hasta el valor: se ve
+            de un vistazo cuánto hay puesto, no solo dónde está el pulgar (feedback de Jose:
+            "track muy poco visible", 2026-10-08).
+        -->
+        <Style x:Key="DeslizadorDeFonia" TargetType="Slider" BasedOn="{StaticResource {x:Type Slider}}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid VerticalAlignment="Center" Background="Transparent">
+                            <Border Height="6" CornerRadius="3" Background="{DynamicResource FondoCampo}"
+                                    BorderBrush="{DynamicResource Borde}" BorderThickness="1" VerticalAlignment="Center" />
+                            <Track x:Name="PART_Track">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="Slider.DecreaseLarge" Focusable="False">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Border Height="6" CornerRadius="3" Background="{DynamicResource Acento}" VerticalAlignment="Center" />
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="Slider.IncreaseLarge" Opacity="0" Focusable="False" />
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource PulgarDeDeslizador}" />
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.45" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
+    <!--
+        TARJETA: el mismo contorno que agrupa a HAM y a Canales CB a los lados del frontal (y al
+        resto de bloques de la ventana -barra del equipo, contacto, cluster-), para que de un
+        vistazo se vea como un panel hermano y no como un añadido suelto flotando sobre el fondo
+        (feedback de Jose, 2026-10-08: era el único de los tres sin borde ni fondo propio).
+    -->
+    <Border Style="{StaticResource Tarjeta}">
     <StackPanel>
         <WrapPanel x:Name="Fila" Orientation="Horizontal">
 
@@ -119,20 +210,29 @@
 
             <!-- Micro: medidor y ganancia -->
             <StackPanel Margin="12,0,0,0" VerticalAlignment="Center" Width="150">
-                <DockPanel>
-                    <TextBlock DockPanel.Dock="Right"
+                <TextBlock Style="{StaticResource TextoTenueEstilo}">
+                    <Run Text="{loc:Texto Cabina.Fonia.Micro}" />
+                    <Run Text="{Binding Ajustes.GananciaTxDb, StringFormat={}{0:+0;-0;0} dB, Mode=OneWay}" />
+                </TextBlock>
+                <Grid Margin="0,2,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ProgressBar Grid.Column="0" Style="{StaticResource MedidorDeNivel}"
+                                 Minimum="0" Maximum="1" Value="{Binding NivelMicro, Mode=OneWay}"
+                                 AutomationProperties.Name="{loc:Texto Cabina.Fonia.NivelMicro}" />
+                    <TextBlock Grid.Column="1"
                                Text="{loc:Texto Cabina.Fonia.Satura}"
                                FontWeight="Bold"
+                               FontSize="10"
+                               Margin="4,0,0,0"
+                               VerticalAlignment="Center"
                                Foreground="{DynamicResource ErrorTexto}"
                                Visibility="{Binding MicroSatura, Converter={StaticResource BooleanoAVisible}}" />
-                    <TextBlock Style="{StaticResource TextoTenueEstilo}">
-                        <Run Text="{loc:Texto Cabina.Fonia.Micro}" />
-                        <Run Text="{Binding Ajustes.GananciaTxDb, StringFormat={}{0:+0;-0;0} dB, Mode=OneWay}" />
-                    </TextBlock>
-                </DockPanel>
-                <ProgressBar Minimum="0" Maximum="1" Height="7" Value="{Binding NivelMicro, Mode=OneWay}"
-                             AutomationProperties.Name="{loc:Texto Cabina.Fonia.NivelMicro}" />
-                <Slider Minimum="-20" Maximum="20" SmallChange="1" LargeChange="3" IsSnapToTickEnabled="True" TickFrequency="1"
+                </Grid>
+                <Slider Style="{StaticResource DeslizadorDeFonia}" Margin="0,2,0,0"
+                        Minimum="-20" Maximum="20" SmallChange="1" LargeChange="3" IsSnapToTickEnabled="True" TickFrequency="1"
                         Value="{Binding Ajustes.GananciaTxDb}"
                         ToolTip="{loc:Texto Cabina.Fonia.GananciaMicroAyuda}"
                         AutomationProperties.Name="{loc:Texto Cabina.Fonia.GananciaMicro}" />
@@ -140,20 +240,23 @@
 
             <!-- Escucha: medidor, volumen y silencio -->
             <StackPanel Margin="12,0,0,0" VerticalAlignment="Center" Width="175">
-                <DockPanel>
-                    <CheckBox DockPanel.Dock="Right" Content="{loc:Texto Cabina.Fonia.Silencio}" IsChecked="{Binding Ajustes.SilencioRx}"
-                              AutomationProperties.Name="{loc:Texto Cabina.Fonia.Silenciar}" />
-                    <TextBlock Style="{StaticResource TextoTenueEstilo}">
-                        <Run Text="{loc:Texto Cabina.Fonia.Escucha}" />
-                        <Run Text="{Binding Ajustes.VolumenRx, StringFormat={}{0} %, Mode=OneWay}" />
-                    </TextBlock>
-                </DockPanel>
-                <ProgressBar Minimum="0" Maximum="1" Height="7" Value="{Binding NivelRx, Mode=OneWay}"
+                <TextBlock Style="{StaticResource TextoTenueEstilo}">
+                    <Run Text="{loc:Texto Cabina.Fonia.Escucha}" />
+                    <Run Text="{Binding Ajustes.VolumenRx, StringFormat={}{0} %, Mode=OneWay}" />
+                </TextBlock>
+                <ProgressBar Style="{StaticResource MedidorDeNivel}" Margin="0,2,0,0"
+                             Minimum="0" Maximum="1" Value="{Binding NivelRx, Mode=OneWay}"
                              AutomationProperties.Name="{loc:Texto Cabina.Fonia.NivelEscucha}" />
-                <Slider Minimum="0" Maximum="200" SmallChange="5" LargeChange="10" IsSnapToTickEnabled="True" TickFrequency="5"
-                        Value="{Binding Ajustes.VolumenRx}"
-                        ToolTip="{loc:Texto Cabina.Fonia.VolumenAyuda}"
-                        AutomationProperties.Name="{loc:Texto Cabina.Fonia.Volumen}" />
+                <DockPanel Margin="0,2,0,0">
+                    <CheckBox DockPanel.Dock="Right" Content="{loc:Texto Cabina.Fonia.Silencio}" IsChecked="{Binding Ajustes.SilencioRx}"
+                              Margin="8,0,0,0"
+                              AutomationProperties.Name="{loc:Texto Cabina.Fonia.Silenciar}" />
+                    <Slider Style="{StaticResource DeslizadorDeFonia}"
+                            Minimum="0" Maximum="200" SmallChange="5" LargeChange="10" IsSnapToTickEnabled="True" TickFrequency="5"
+                            Value="{Binding Ajustes.VolumenRx}"
+                            ToolTip="{loc:Texto Cabina.Fonia.VolumenAyuda}"
+                            AutomationProperties.Name="{loc:Texto Cabina.Fonia.Volumen}" />
+                </DockPanel>
             </StackPanel>
 
             <Button Margin="12,0,0,0"
@@ -350,7 +453,7 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <ProgressBar Minimum="0" Maximum="1" Height="6" Margin="0,4,0,0"
+                    <ProgressBar Style="{StaticResource MedidorDeNivel}" Minimum="0" Maximum="1" Margin="0,4,0,0"
                                  Value="{Binding Mensajes.NivelDeGrabacion, Mode=OneWay}"
                                  Visibility="{Binding Mensajes.Grabando, Converter={StaticResource BooleanoAVisible}}"
                                  AutomationProperties.Name="{loc:Texto Cabina.Fonia.NivelMicro}" />
@@ -412,4 +515,5 @@
         </Border>
         </Popup>
     </StackPanel>
+    </Border>
 </UserControl>

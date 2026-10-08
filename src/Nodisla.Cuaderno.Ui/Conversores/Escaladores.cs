@@ -216,6 +216,36 @@ public sealed class Negacion : IValueConverter
         value is bool cierto && !cierto;
 }
 
+/// <summary>
+/// Convierte una fraccion de cero a uno en una columna de rejilla a estrellas, para repartir
+/// el relleno de un medidor sin que el color de cada zona cambie de sitio al crecer o encoger.
+/// </summary>
+/// <remarks>
+/// Un LinearGradientBrush normal reparte sus colores sobre el propio ancho del relleno: si el
+/// relleno mide poco, el verde-ambar-rojo entero se aprieta en esa franja estrecha y el medidor
+/// miente -parece a punto de saturar con el nivel bajisimo-. Aqui las zonas de color se quedan
+/// pintadas a todo el ancho de la pista, siempre en el mismo sitio, y lo unico que crece con el
+/// nivel es una mascara que tapa lo que aun no se ha alcanzado: dos columnas a estrellas, el
+/// nivel y su resto, y con el parametro «Inverso» se pide la segunda.
+/// </remarks>
+public sealed class ProporcionAEstrellas : IValueConverter
+{
+    /// <inheritdoc />
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        var nivel = value is double d && !double.IsNaN(d) ? Math.Clamp(d, 0, 1) : 0;
+        if (string.Equals(parameter as string, "Inverso", StringComparison.OrdinalIgnoreCase)) nivel = 1 - nivel;
+
+        // Una estrella en cero desaparece de la rejilla: con un minimo practico la columna sigue
+        // existiendo -y midiendose- aunque el medidor este a tope o completamente vacio.
+        return new System.Windows.GridLength(Math.Max(nivel, 0.0001), System.Windows.GridUnitType.Star);
+    }
+
+    /// <inheritdoc />
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}
+
 /// <summary>Lo mismo que <see cref="AnchoEnLetras"/>, pero para el ancho de una columna.</summary>
 public sealed class AnchoDeColumnaEnLetras : IValueConverter
 {
