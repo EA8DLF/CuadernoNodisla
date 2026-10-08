@@ -464,10 +464,22 @@
         <!-- Solo en las capturas de la ayuda: las ventanitas no salen en el retrato, se ponen aqui. -->
         <StackPanel x:Name="EnLineaParaCaptura" Orientation="Horizontal" />
 
-        <!-- Dispositivos: en una ventana emergente, para no quitar sitio a nadie -->
+        <!--
+            Dispositivos: en una ventana emergente, para no quitar sitio a nadie.
+
+            StaysOpen="True": con los cuatro ComboBox de aqui dentro, "False" cerraba esta
+            ventanita SOLA en cuanto se elegia algo. Un ComboBox abre su propio Popup para la
+            lista; al cerrarse ese Popup interno (al elegir un elemento, tambien al pulsar fuera
+            o Escape) el foco se queda un instante fuera del arbol de este Popup exterior, y con
+            StaysOpen="False" eso se lee como un clic fuera: se cerraba el desplegable entero
+            justo al elegir, antes de que el operador pudiera tocar el siguiente campo. Asi es
+            como Jose se encontro "no puedo elegir los dispositivos" en la 0.2.17. Confirmado con
+            una prueba que abre y cierra el desplegable del combo de verdad
+            (PanelDeFoniaDispositivosPruebas). Se cierra pulsando «Dispositivos...» otra vez.
+        -->
         <Popup PlacementTarget="{Binding ElementName=Desplegar}"
                Placement="Bottom"
-               StaysOpen="False"
+               StaysOpen="True"
                AllowsTransparency="True"
                IsOpen="{Binding IsChecked, ElementName=Desplegar, Mode=TwoWay}">
         <Border Style="{StaticResource Tarjeta}" Padding="10,8" MinWidth="520" MaxWidth="820">
