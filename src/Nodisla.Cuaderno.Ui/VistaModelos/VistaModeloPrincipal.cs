@@ -162,8 +162,10 @@ public sealed partial class VistaModeloPrincipal : ObservableObject
             Bandmap.PonerElDial(dial.FrecuenciaRx ?? dial.Frecuencia, dial.Modo.NombreUsual);
 
             // El modem propio necesita el dial para poder componer el contacto: lo que se
-            // apunta es el dial mas el tono de audio, no el dial a secas.
-            Modem.PonerElDial(dial.Frecuencia);
+            // apunta es el dial mas el tono de audio, no el dial a secas. Y con el equipo en
+            // split de verdad, tambien la frecuencia de recepcion: antes se descartaba a
+            // proposito y el modem no se enteraba de que el VFO de escucha era otro.
+            Modem.PonerElDial(dial.Frecuencia, dial.FrecuenciaRx);
         };
 
         // Tocar un anuncio del bandmap hace lo mismo que tocarlo en la lista: llevar el equipo

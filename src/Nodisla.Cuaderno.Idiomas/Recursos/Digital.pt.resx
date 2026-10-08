@@ -858,6 +858,12 @@
   <data name="Digital.Modem.SoloNuevos.Ayuda" xml:space="preserve">
     <value>Mostra só o que acrescenta algo: indicativo, entidade, banda ou quadrícula novos</value>
   </data>
+  <data name="Digital.Modem.Split" xml:space="preserve">
+    <value>SPLIT</value>
+  </data>
+  <data name="Digital.Modem.Split.Ayuda" xml:space="preserve">
+    <value>O equipamento está em split real: escuta em {0} MHz, transmite em {1} MHz</value>
+  </data>
   <data name="Digital.Modem.TablasCargadasDe" xml:space="preserve">
     <value>Tabelas carregadas de:</value>
   </data>

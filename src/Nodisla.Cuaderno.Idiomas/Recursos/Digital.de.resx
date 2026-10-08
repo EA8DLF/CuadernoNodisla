@@ -858,6 +858,12 @@
   <data name="Digital.Modem.SoloNuevos.Ayuda" xml:space="preserve">
     <value>Zeigt nur, was etwas bringt: neues Rufzeichen, neues Gebiet, neues Band oder neues Planquadrat</value>
   </data>
+  <data name="Digital.Modem.Split" xml:space="preserve">
+    <value>SPLIT</value>
+  </data>
+  <data name="Digital.Modem.Split.Ayuda" xml:space="preserve">
+    <value>Das Gerät arbeitet im echten Split-Betrieb: Empfang auf {0} MHz, Sendung auf {1} MHz</value>
+  </data>
   <data name="Digital.Modem.TablasCargadasDe" xml:space="preserve">
     <value>Tabellen geladen aus:</value>
   </data>

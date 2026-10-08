@@ -326,6 +326,17 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     private readonly DispatcherTimer _caducidadDelAviso;
 
     private Frecuencia _dial;
+
+    /// <summary>
+    /// Frecuencia de recepcion cuando el equipo esta en split de verdad (VFO A y B en
+    /// frecuencias distintas), o nulo en el caso normal de una sola frecuencia. La manda
+    /// <see cref="PonerElDial"/>, que es por donde llega <c>dial.FrecuenciaRx</c> desde el
+    /// equipo (vease <c>VistaModeloPrincipal.DialCambiado</c>). No tiene nada que ver con
+    /// <see cref="MantenerTx"/>: eso es un detalle de audio (si el tono de Tx sigue al clic de
+    /// la cascada o no); esto es la radio operando de verdad en dos frecuencias.
+    /// </summary>
+    private Frecuencia? _dialRx;
+
     private bool _emitiendo;
     private bool _generando;
     private bool _arrancando;
@@ -1001,6 +1012,25 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         }
     }
 
+    /// <summary>
+    /// El equipo esta en split de verdad: VFO de recepcion distinto del de transmision.
+    /// </summary>
+    /// <remarks>
+    /// Esto NO es <see cref="MantenerTx"/>: aquello es un detalle de audio (si el tono de Tx
+    /// sigue al clic de la cascada), esto es la radio en dos frecuencias de verdad, como en una
+    /// DXpedicion que pide «QSX» o «sube X kHz». Con split, el contacto se compone con la
+    /// frecuencia de recepcion, no con la de transmision a secas.
+    /// </remarks>
+    public bool EnSplit => _dialRx is not null;
+
+    /// <summary>El aviso de split para el panel: las dos frecuencias, Rx y Tx.</summary>
+    public string SplitTexto => _dialRx is { } rx
+        ? Textos.F(
+            "Digital.Modem.Split.Ayuda",
+            rx.Megahercios.ToString("0.000###", CultureInfo.CurrentCulture),
+            _dial.Megahercios.ToString("0.000###", CultureInfo.CurrentCulture))
+        : string.Empty;
+
     /// <summary>Distancia y acimut al corresponsal, si hay los dos localizadores.</summary>
     public string DistanciaYAcimut
     {
@@ -1086,11 +1116,25 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     /// El equipo ha cambiado de frecuencia: el modem necesita el dial para poder componer el
     /// contacto.
     /// </summary>
-    public void PonerElDial(Frecuencia frecuencia)
+    /// <remarks>
+    /// Con <paramref name="frecuenciaRx"/> puesta y distinta de <paramref name="frecuencia"/>,
+    /// el equipo esta en split de verdad (VFO A de escucha, VFO B de transmision: lo tipico en
+    /// una DXpedicion con «QSX» o «sube X kHz»). El contacto se compone entonces con la
+    /// frecuencia de recepcion, no solo con la de transmision, y el panel lo avisa
+    /// (<see cref="EnSplit"/>).
+    /// </remarks>
+    /// <param name="frecuencia">Frecuencia de transmision (el VFO activo).</param>
+    /// <param name="frecuenciaRx">
+    /// Frecuencia de recepcion si el equipo esta en split, o nulo en el caso normal.
+    /// </param>
+    public void PonerElDial(Frecuencia frecuencia, Frecuencia? frecuenciaRx = null)
     {
         _dial = frecuencia;
+        _dialRx = frecuenciaRx is { EsCero: false } rx && rx != frecuencia ? rx : null;
         if (_modem is not null) _modem.FrecuenciaDelDial = frecuencia;
         OnPropertyChanged(nameof(FrecuenciaDelModoTexto));
+        OnPropertyChanged(nameof(EnSplit));
+        OnPropertyChanged(nameof(SplitTexto));
     }
 
     /// <summary>El operador ha entrado en la pestana Digital: se empieza a mirar el reloj.</summary>
@@ -1670,6 +1714,9 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             Call = suyo,
             Mode = DescripcionDelModo.ModoAdif(Modo),
             Freq = FrecuenciaDelContacto(),
+
+            // Con split, la de recepcion real (VFO A); BandRx la deriva RegistrarQso solo.
+            FreqRx = FrecuenciaRxDelContacto(),
             InicioUtc = inicio,
             FinUtc = fin,
             RstSent = Informe.Parse(InformeEnviado),
@@ -2372,6 +2419,15 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     private Frecuencia FrecuenciaDelContacto() => _dial.EsCero
         ? Frecuencia.Cero
         : Frecuencia.DesdeHercios(_dial.Hercios + TonoDeTransmision);
+
+    /// <summary>
+    /// La frecuencia de recepcion del contacto, con split: el VFO de escucha mas el tono de
+    /// audio de recepcion, igual que <see cref="FrecuenciaDelContacto"/> hace con el de
+    /// transmision. Nula sin split, que es el caso normal y no cambia en nada.
+    /// </summary>
+    private Frecuencia? FrecuenciaRxDelContacto() => _dialRx is { } rx
+        ? Frecuencia.DesdeHercios(rx.Hercios + TonoDeRecepcion)
+        : null;
 
     private DispositivoDeAudio? ElegirLaEntrada()
     {

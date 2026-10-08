@@ -122,6 +122,27 @@
             <!-- En una línea: el alto es para la cascada y la lista. -->
             <DockPanel VerticalAlignment="Center">
                 <TextBlock DockPanel.Dock="Left" Text="{loc:Texto Digital.Modem.Titulo}" Style="{StaticResource TituloDeSeccion}" Margin="0,0,10,0" VerticalAlignment="Center" />
+
+                <!--
+                    El aviso de split: SOLO sale si el equipo está de verdad en dos frecuencias
+                    (VFO de Rx distinto del de Tx), nunca por MantenerTx -que es un detalle de
+                    audio de la cascada, no esto-. Mismo estilo ámbar que «EL ORDENADOR NO DA
+                    ABASTO», más abajo: es la misma familia de aviso, algo que hay que ver sin
+                    tener que leer una frase.
+                -->
+                <Border DockPanel.Dock="Left"
+                        CornerRadius="8"
+                        Padding="7,1"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        Background="{DynamicResource AvisoFondo}"
+                        BorderBrush="{DynamicResource AvisoBorde}"
+                        BorderThickness="1"
+                        Visibility="{Binding EnSplit, Converter={StaticResource BooleanoAVisible}}"
+                        ToolTip="{Binding SplitTexto}">
+                    <TextBlock Text="{loc:Texto Digital.Modem.Split}" Foreground="{DynamicResource AvisoTexto}" FontSize="10" FontWeight="Bold" TextTrimming="None" />
+                </Border>
+
                 <TextBlock Text="{Binding EstadoTexto}" Style="{StaticResource TextoTenueEstilo}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
             </DockPanel>
         </DockPanel>
@@ -281,6 +302,15 @@
                                   IsChecked="{Binding MantenerTx}"
                                   VerticalAlignment="Center"
                                   ToolTip="{loc:Texto Digital.Modem.MantenerTx.Ayuda}" />
+
+                        <!-- Las dos frecuencias del split, en letras, junto a los tonos de Rx y Tx. -->
+                        <Border CornerRadius="8" Padding="7,1" Margin="10,0,0,0" VerticalAlignment="Center"
+                                Background="{DynamicResource AvisoFondo}" BorderBrush="{DynamicResource AvisoBorde}" BorderThickness="1"
+                                Visibility="{Binding EnSplit, Converter={StaticResource BooleanoAVisible}}"
+                                ToolTip="{Binding SplitTexto}">
+                            <TextBlock Text="{Binding SplitTexto}" Foreground="{DynamicResource AvisoTexto}" FontSize="10" FontWeight="Bold" TextTrimming="None" />
+                        </Border>
+
                         <TextBlock Text="{loc:Texto Digital.Modem.NivelDeSalida}" Style="{StaticResource Etiqueta}" Margin="12,0,4,0" />
                         <Slider Value="{Binding NivelDeSalida}" Minimum="0.05" Maximum="1.0" TickFrequency="0.05" Width="90" VerticalAlignment="Center"
                                 ToolTip="{loc:Texto Digital.Modem.NivelDeSalida.Ayuda}" AutomationProperties.Name="{loc:Texto Digital.Modem.NivelDeSalida.Nombre}" />

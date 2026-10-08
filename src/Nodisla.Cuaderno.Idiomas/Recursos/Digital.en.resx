@@ -858,6 +858,12 @@
   <data name="Digital.Modem.SoloNuevos.Ayuda" xml:space="preserve">
     <value>Shows only what adds something: a new call sign, entity, band or grid square</value>
   </data>
+  <data name="Digital.Modem.Split" xml:space="preserve">
+    <value>SPLIT</value>
+  </data>
+  <data name="Digital.Modem.Split.Ayuda" xml:space="preserve">
+    <value>The rig is in real split: listening on {0} MHz, transmitting on {1} MHz</value>
+  </data>
   <data name="Digital.Modem.TablasCargadasDe" xml:space="preserve">
     <value>Tables loaded from:</value>
   </data>

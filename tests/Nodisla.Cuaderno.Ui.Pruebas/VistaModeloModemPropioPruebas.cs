@@ -1,4 +1,5 @@
 using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using FluentAssertions;
 using Nodisla.Cuaderno.Aplicacion.CasosDeUso;
@@ -247,6 +248,99 @@ public sealed class VistaModeloModemPropioPruebas
         // contacto fuera de los diplomas que cuentan por modo.
         guardados.Elementos[0].Mode.Principal.Should().Be("MFSK");
         guardados.Elementos[0].Mode.Submodo.Should().Be("FT4");
+    }
+
+    // ── Split real (VFO A de Rx distinto del de Tx) ──────────────────────────
+    //
+    // El panel Digital descartaba a proposito la FrecuenciaRx que ya traia el dial del equipo
+    // (VistaModeloPrincipal.DialCambiado ponia Modem.PonerElDial(dial.Frecuencia) sin más, aunque
+    // el Bandmap y el formulario de entrada manual ya la usaban). Estas pruebas cubren que ahora
+    // SI se entera, sin romper el caso normal de una sola frecuencia.
+
+    [Fact]
+    public void SinSplitElPanelNoLoAvisa()
+    {
+        var modelo = Montar(out _);
+
+        modelo.PonerElDial(Frecuencia.DesdeMegahercios(14.074m));
+
+        modelo.EnSplit.Should().BeFalse("una sola frecuencia no es split");
+        modelo.SplitTexto.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ElMismoVfoEnRxYTxNoEsSplitAunqueElEquipoLoMande()
+    {
+        var modelo = Montar(out _);
+
+        modelo.PonerElDial(Frecuencia.DesdeMegahercios(14.074m), Frecuencia.DesdeMegahercios(14.074m));
+
+        modelo.EnSplit.Should().BeFalse("Rx y Tx en la misma frecuencia no es split de verdad");
+    }
+
+    [Fact]
+    public void ConVfosDistintosElPanelAvisaDeSplitConLasDosFrecuencias()
+    {
+        var modelo = Montar(out _);
+
+        // Como en una DXpedicion: escucha en 14.080 (VFO A), transmite en 7.100 (VFO B, «QSX»).
+        modelo.PonerElDial(Frecuencia.DesdeMegahercios(7.100m), Frecuencia.DesdeMegahercios(14.080m));
+
+        modelo.EnSplit.Should().BeTrue("VFO de Rx distinto del de Tx es split real");
+
+        // El formato sigue a la cultura en uso (igual que FrecuenciaDelModoTexto), asi que la
+        // prueba no asume el punto decimal: compara con lo que saldria en esta misma cultura.
+        modelo.SplitTexto.Should().Contain(14.080m.ToString("0.000###", CultureInfo.CurrentCulture));
+        modelo.SplitTexto.Should().Contain(7.100m.ToString("0.000###", CultureInfo.CurrentCulture));
+    }
+
+    [Fact]
+    public async Task ConSplitElContactoSeGuardaConFreqRxDeRecepcionYFreqDeTransmision()
+    {
+        var modelo = Montar(out _, out var cuaderno);
+
+        // VFO A (recepcion) en 14.080, VFO B (transmision) en 7.100: justo lo que pide una
+        // DXpedicion con «QSX». El modem sigue escuchando y decodificando en el VFO de Rx; la
+        // emision propia va por el de Tx.
+        modelo.PonerElDial(Frecuencia.DesdeMegahercios(7.100m), Frecuencia.DesdeMegahercios(14.080m));
+
+        modelo.Corresponsal = "EA5XYZ";
+        modelo.TonoDeTransmision = 1500;
+        modelo.TonoDeRecepcion = 800;
+
+        await modelo.RegistrarContactoCommand.ExecuteAsync(null);
+
+        var guardados = await cuaderno.BuscarAsync(new CriterioQso(), 0, 10);
+        var qso = guardados.Elementos.Should().ContainSingle().Subject;
+
+        // Freq sigue siendo el VFO de Tx mas el tono de Tx: el caso normal no cambia en nada.
+        qso.Freq.Hercios.Should().Be(7_101_500);
+
+        // Y FreqRx es el VFO de Rx mas el tono de Rx: donde de verdad estaba la señal que se oyo.
+        qso.FreqRx.Should().NotBeNull();
+        qso.FreqRx!.Value.Hercios.Should().Be(14_080_800);
+
+        // RegistrarQso deriva la banda de recepcion sola, a partir de FreqRx.
+        qso.BandRx.EsVacia.Should().BeFalse();
+        qso.BandRx.Nombre.Should().Be("20m");
+    }
+
+    [Fact]
+    public async Task SinSplitElContactoNoLlevaFreqRx()
+    {
+        var modelo = Montar(out _, out var cuaderno);
+        modelo.PonerElDial(Frecuencia.DesdeMegahercios(14.074m));
+
+        modelo.Corresponsal = "EA5XYZ";
+        modelo.TonoDeTransmision = 1500;
+
+        await modelo.RegistrarContactoCommand.ExecuteAsync(null);
+
+        var guardados = await cuaderno.BuscarAsync(new CriterioQso(), 0, 10);
+        var qso = guardados.Elementos.Should().ContainSingle().Subject;
+
+        qso.FreqRx.Should().BeNull("sin split, el caso de siempre no tiene que cambiar en nada");
+        qso.BandRx.EsVacia.Should().BeTrue();
     }
 
     [Fact]
