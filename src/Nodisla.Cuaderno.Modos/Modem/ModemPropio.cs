@@ -480,6 +480,55 @@ public sealed class ModemPropio : IModemPropio
     /// <inheritdoc/>
     public async Task EmitirAsync(string texto, int tonoHz, CancellationToken ct = default)
     {
+        var modo = PrepararModoParaEmitir();
+        float[] mensaje;
+        try
+        {
+            mensaje = modo.Generar(texto, tonoHz, _salida!.FrecuenciaDeMuestreo);
+        }
+        catch (FormatException ex)
+        {
+            throw new ArgumentException(ex.Message, nameof(texto), ex);
+        }
+
+        await EmitirSenalAsync(modo, mensaje, $"{Modo}: {texto}", ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc/>
+    /// <remarks>
+    /// Mismo camino que <see cref="EmitirAsync"/> —mismo pestillo, mismo vigilante, misma salida
+    /// compartida—, solo que el audio que se reproduce de una sola vez es la mezcla de todos los
+    /// mensajes (<c>IModoDigital.GenerarMezcla</c>), no la de uno solo.
+    /// </remarks>
+    public async Task EmitirVariosAsync(IReadOnlyList<(string Texto, int TonoHz)> mensajes, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(mensajes);
+        if (mensajes.Count == 0) throw new ArgumentException("Hace falta al menos un mensaje para emitir.", nameof(mensajes));
+
+        var modo = PrepararModoParaEmitir();
+        float[] mezcla;
+        try
+        {
+            mezcla = modo.GenerarMezcla(
+                mensajes.Select(m => (m.Texto, m.TonoHz)).ToList(),
+                _salida!.FrecuenciaDeMuestreo);
+        }
+        catch (FormatException ex)
+        {
+            throw new ArgumentException(ex.Message, nameof(mensajes), ex);
+        }
+
+        var etiqueta = string.Join("; ", mensajes.Select(m => $"{m.Texto}"));
+        await EmitirSenalAsync(modo, mezcla, $"{Modo} (fox, {mensajes.Count}): {etiqueta}", ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Comprueba que se puede emitir, resuelve el modo en curso y le fija el nivel de salida del
+    /// momento. Es lo primero que hacen <see cref="EmitirAsync"/> y <see cref="EmitirVariosAsync"/>,
+    /// antes de generar nada.
+    /// </summary>
+    private IModoDigital PrepararModoParaEmitir()
+    {
         // Sin salida de audio y sin vigilante no se emite. No se busca una alternativa ni se
         // avisa con un registro y se sigue: se para aqui.
         if (_salida is null || _vigilante is null)
@@ -487,25 +536,23 @@ public sealed class ModemPropio : IModemPropio
                 Textos.T("Servicios.Modos.NoPuedeEmitir"));
         var modo = ModoRegistrado(Modo);
 
-        // La señal se sintetiza a la misma frecuencia con la que se abrió la salida —casi
-        // siempre 48.000, pero el operador puede haber puesto otra en los ajustes—. Antes aquí
-        // había un 48.000 fijo: si la salida se abría a otra frecuencia (por ejemplo 96.000), la
-        // salida remuestreaba esta señal como si fuera de esa frecuencia cuando en realidad era
-        // de 48.000, y el resultado era un destrozo de aliasing —el equipo transmitía, pero en
-        // vez de un tono limpio salían golpes de ruido—.
-        var frecuenciaDeSalida = _salida.FrecuenciaDeMuestreo;
         // Igual que la frecuencia de salida, el nivel se lee en el momento de generar: si el
         // operador lo ha tocado en los ajustes desde la ultima emision, esta ya sale con el nuevo.
         modo.AmplitudDeSalida = _nivelDeSalida;
-        float[] mensaje;
-        try
-        {
-            mensaje = modo.Generar(texto, tonoHz, frecuenciaDeSalida);
-        }
-        catch (FormatException ex)
-        {
-            throw new ArgumentException(ex.Message, nameof(texto), ex);
-        }
+        return modo;
+    }
+
+    /// <summary>
+    /// Antepone el silencio de comienzo de ventana y reproduce la señal ya sintetizada, con el
+    /// vigilante de PTT y el latido de siempre. Lo comparten <see cref="EmitirAsync"/> y
+    /// <see cref="EmitirVariosAsync"/>: a partir de aqui da igual que la señal sea de un mensaje o
+    /// de varios mezclados, es la misma antena y el mismo cuidado.
+    /// </summary>
+    private async Task EmitirSenalAsync(IModoDigital modo, float[] mensaje, string etiquetaPtt, CancellationToken ct)
+    {
+        // La frecuencia de salida ya se tuvo en cuenta al generar: aqui solo hace falta para el
+        // silencio de comienzo de ventana, calculado a la misma frecuencia que la señal.
+        var frecuenciaDeSalida = _salida!.FrecuenciaDeMuestreo;
 
         // La senal empieza por convenio un rato despues del comienzo de la ventana: medio
         // segundo en FT8 y FT4, uno en WSPR y en Q65 largo. Si se llama al principio de la
@@ -525,7 +572,7 @@ public sealed class ModemPropio : IModemPropio
             var testigo = _paradaDeEmision.Token;
             EstaEmitiendo = true;
 
-            await using var transmision = await _vigilante.PedirAntenaAsync($"{Modo}: {texto}", testigo).ConfigureAwait(false);
+            await using var transmision = await _vigilante!.PedirAntenaAsync(etiquetaPtt, testigo).ConfigureAwait(false);
             using var latido = new Timer(_ => transmision.Latir(), null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
             try
             {

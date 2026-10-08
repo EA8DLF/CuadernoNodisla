@@ -608,6 +608,26 @@
                         </TextBlock.Style>
                     </TextBlock>
 
+                    <!-- ── Cazadores del pileup (fox) ── -->
+                    <Expander Header="{loc:Texto Digital.Modem.Fox.Titulo}" IsExpanded="True" Margin="0,2,0,2"
+                              Visibility="{Binding EsFox, Converter={StaticResource BooleanoAVisible}}">
+                        <DataGrid ItemsSource="{Binding Cazadores}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  IsReadOnly="True"
+                                  HeadersVisibility="Column"
+                                  MaxHeight="220"
+                                  Margin="0,6,0,0"
+                                  AutomationProperties.Name="{loc:Texto Digital.Modem.Fox.Nombre}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{loc:Texto Comun.Indicativo}" Binding="{Binding Indicativo}" Width="Auto" MinWidth="80" />
+                                <DataGridTextColumn Header="{loc:Texto Digital.Modem.Fox.Grid}" Binding="{Binding Grid}" Width="Auto" MinWidth="60" />
+                                <DataGridTextColumn Header="{loc:Texto Digital.Modem.Fox.Tono}" Binding="{Binding Tono}" Width="Auto" MinWidth="60" />
+                                <DataGridTextColumn Header="{loc:Texto Digital.Modem.Fox.Paso}" Binding="{Binding Paso}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Expander>
+
                     <!-- ── Frecuencias de trabajo ── -->
                     <Expander Header="{loc:Texto Digital.Modem.FrecuenciasDeTrabajo.Titulo}" IsExpanded="False" Margin="0,2,0,2">
                         <StackPanel Margin="0,6,0,0">

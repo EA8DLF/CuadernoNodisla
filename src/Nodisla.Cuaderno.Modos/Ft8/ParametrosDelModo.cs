@@ -181,6 +181,30 @@ public sealed class ParametrosDelModo
     public double AnchoDeBandaHz => Tonos * EspaciadoDeTonosHz;
 
     /// <summary>
+    /// Separacion minima razonable entre los tonos base de varias senales de este modo mezcladas
+    /// en un mismo audio (el fox de fox/hound: varias senales a la vez, cada una a su cazador).
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Cada senal ocupa de verdad <see cref="AnchoDeBandaHz"/> (los <see cref="Tonos"/> tonos,
+    /// separados <see cref="EspaciadoDeTonosHz"/>), pero el filtro gaussiano del modulador
+    /// (<see cref="Ft8.Modulador"/>) la ensancha un poco mas: el pulso de cada cambio de tono dura
+    /// tres simbolos, asi que la campana del primero sobresale medio simbolo antes del comienzo
+    /// nominal y la del ultimo, medio simbolo despues del final. Dejar un simbolo entero de margen
+    /// a cada lado del ancho nominal —dos veces <see cref="EspaciadoDeTonosHz"/>— es una cifra
+    /// conservadora y razonada a partir de ese ensanche, no un valor copiado de WSJT-X ni de JTDX
+    /// (que no se han mirado para esto, por licencia).
+    /// </para>
+    /// <para>
+    /// No es una medida validada con un receptor de verdad: es lo que garantiza, sobre el papel,
+    /// que dos senales mezcladas con esta separacion no se pisan en frecuencia. La unica prueba
+    /// que hay de que ademas <b>se decodifican</b> bien mezcladas es el banco de pruebas contra el
+    /// propio decodificador (vease <c>MezclaDeSenalesPruebas</c>).
+    /// </para>
+    /// </remarks>
+    public double SeparacionMinimaDeTonosHz => AnchoDeBandaHz + (2 * EspaciadoDeTonosHz);
+
+    /// <summary>
     /// FT8: 8 tonos separados 6,25 Hz, 79 simbolos de 0,16 s, ventana de 15 segundos.
     /// </summary>
     public static ParametrosDelModo Ft8 { get; } = new(

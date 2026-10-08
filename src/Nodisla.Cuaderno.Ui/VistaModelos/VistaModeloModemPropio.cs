@@ -261,6 +261,49 @@ public sealed class FilaDeDecodificacionPropia
     public int TonoHz => Decodificacion.TonoHz;
 }
 
+/// <summary>Un cazador del pileup de fox, tal y como se ve en la lista.</summary>
+/// <remarks>
+/// Es una foto de <see cref="EstadoDeCazador"/> en el momento de pintarla, no un objeto vivo: la
+/// lista entera se rehace cada vez que el secuenciador de fox procesa una ventana
+/// (<see cref="VistaModeloModemPropio.ActualizarCazadores"/>), que es mucho menos frecuente que
+/// cualquier otra cosa que cambie en pantalla y no merece la ceremonia de un
+/// <c>ObservableObject</c> propio.
+/// </remarks>
+public sealed class FilaDeCazador
+{
+    /// <summary>Monta la fila a partir del estado del secuenciador de fox.</summary>
+    public FilaDeCazador(EstadoDeCazador cazador)
+    {
+        ArgumentNullException.ThrowIfNull(cazador);
+        Indicativo = cazador.Indicativo;
+        Grid = cazador.Grid;
+        TonoHz = cazador.TonoHz;
+        Tono = cazador.TonoHz.ToString("N0", Textos.Cultura);
+        Paso = cazador.Paso == PasoDeCazador.EsperandoRr73
+            ? Textos.T("Digital.Modem.Fox.EsperandoRr73")
+            : Textos.T("Digital.Modem.Fox.EsperandoInforme");
+        CiclosSinRespuesta = cazador.CiclosSinRespuesta;
+    }
+
+    /// <summary>Su indicativo.</summary>
+    public string Indicativo { get; }
+
+    /// <summary>Su localizador, si lo ha dicho.</summary>
+    public string Grid { get; }
+
+    /// <summary>Tono asignado, en hercios, como numero.</summary>
+    public int TonoHz { get; }
+
+    /// <summary>Tono asignado, para mostrar.</summary>
+    public string Tono { get; }
+
+    /// <summary>En que paso de la conversacion va, en el idioma en uso.</summary>
+    public string Paso { get; }
+
+    /// <summary>Emisiones seguidas sin que se le oiga.</summary>
+    public int CiclosSinRespuesta { get; }
+}
+
 /// <summary>
 /// El modem propio de modos digitales en pantalla: cascada, decodificaciones, reloj y la
 /// secuencia del contacto.
@@ -316,6 +359,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     private readonly DispatcherTimer _relojDePsk;
     private readonly DispatcherTimer _cuentaAtras;
     private readonly SecuenciadorDeQso _secuenciador = new();
+    private readonly SecuenciadorDeFox _secuenciadorDeFox = new();
     private readonly ReportadorPskReporter _psk;
     private readonly GrabadorDeVentanas _grabador = new();
     private readonly List<FilaDeDecodificacionPropia> _todas = [];
@@ -358,6 +402,12 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
     /// <summary>El contacto en curso ya esta en el cuaderno: no se vuelve a meter.</summary>
     private bool _contactoYaGuardado;
+
+    /// <summary>
+    /// Los mensajes que el secuenciador de fox ha decidido para la proxima ventana propia, a la
+    /// espera de que llegue el momento de emitirlos mezclados.
+    /// </summary>
+    private IReadOnlyList<TransmisionDeFox> _transmisionesFoxPendientes = [];
 
     /// <summary>
     /// El ultimo contacto guardado solo. Si el corresponsal repite el 73 y se le vuelve a
@@ -464,6 +514,9 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         _secuenciador.UnSoloQso = _unSoloQso;
         _secuenciador.CiclosSinRespuesta = _ciclosSinRespuesta;
 
+        _secuenciadorDeFox.Periodo = DescripcionDelModo.Periodo(_modo);
+        ActualizarParametrosDeFoxParaElModo(_modo);
+
         if (_modem is not null)
         {
             _modem.CascadaActualizada += AlLlegarUnaColumna;
@@ -537,6 +590,9 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     /// <summary>Las frecuencias de trabajo, editables.</summary>
     public ObservableCollection<FrecuenciaDeTrabajo> FrecuenciasDeTrabajo { get; } = [];
 
+    /// <summary>Los cazadores en curso del pileup de fox, de menor a mayor tono.</summary>
+    public ObservableCollection<FilaDeCazador> Cazadores { get; } = [];
+
     /// <summary>Los modos que sabe hacer el modem, con su periodo.</summary>
     public IReadOnlyList<Opcion<ModoDelModem>> Modos { get; }
 
@@ -566,6 +622,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         {
             _miIndicativo = value;
             _secuenciador.MiIndicativo = value.EsVacio ? string.Empty : value.Valor;
+            _secuenciadorDeFox.MiIndicativo = value.EsVacio ? string.Empty : value.Valor;
             _psk.MiIndicativo = value.EsVacio ? string.Empty : value.Valor;
             GenerarMensajes();
         }
@@ -693,6 +750,7 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     private Opcion<ModoDelModem> _modoElegido;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(EsFox))]
     private Opcion<TipoDeOperacion> _operacionElegida;
 
     [ObservableProperty]
@@ -1107,6 +1165,12 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     /// <summary>El secuenciador, para que las pruebas lo miren.</summary>
     public SecuenciadorDeQso Secuenciador => _secuenciador;
 
+    /// <summary>El secuenciador del pileup de fox, para que las pruebas lo miren.</summary>
+    public SecuenciadorDeFox SecuenciadorDeFox => _secuenciadorDeFox;
+
+    /// <summary>Se opera como fox de fox/hound: varios cazadores a la vez, no un QSO de uno a uno.</summary>
+    public bool EsFox => OperacionElegida.Valor == TipoDeOperacion.Fox;
+
     /// <summary>El reportador de PSK Reporter, para que las pruebas lo miren.</summary>
     public ReportadorPskReporter PskReporter => _psk;
 
@@ -1424,6 +1488,17 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             return;
         }
 
+        if (EsFox)
+        {
+            _secuenciadorDeFox.Empezar(Reloj.Ahora);
+            ActualizarCazadores();
+
+            if (!TxHabilitado && !IntentarHabilitarTx()) return;
+            Informar(Textos.F("Digital.Modem.Aviso.LlamandoCq", ProximaVentanaTexto(_secuenciadorDeFox.Paridad)));
+            await EmitirFoxSiEsSuVentanaAsync().ConfigureAwait(true);
+            return;
+        }
+
         OlvidarContacto();
         _secuenciador.LlamarCq(Reloj.Ahora);
         TxSiguiente = 6;
@@ -1457,6 +1532,15 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             }
 
             if (!IntentarHabilitarTx()) return;
+
+            if (EsFox)
+            {
+                if (!_secuenciadorDeFox.Activo) _secuenciadorDeFox.Empezar(Reloj.Ahora);
+                ActualizarCazadores();
+                Informar(Textos.F("Digital.Modem.Aviso.LlamandoCq", ProximaVentanaTexto(_secuenciadorDeFox.Paridad)));
+                await EmitirFoxSiEsSuVentanaAsync().ConfigureAwait(true);
+                return;
+            }
 
             if (!_secuenciador.Activo) _secuenciador.Enviar(TxSiguiente, Reloj.Ahora);
             else _secuenciador.ElegirSiguiente(TxSiguiente);
@@ -1500,10 +1584,13 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         Informar(Textos.T(habiaEmision ? "Digital.Modem.Aviso.DetenidoConEmision" : "Digital.Modem.Aviso.DetenidoSinEmision"));
     }
 
-    /// <summary>Para la secuencia y deshabilita Tx, sin tocar lo que ya esta sonando.</summary>
+    /// <summary>Para la secuencia (y el pileup de fox, si lo hubiera) y deshabilita Tx, sin tocar lo que ya esta sonando.</summary>
     public void DetenerTx()
     {
         _secuenciador.Parar();
+        _secuenciadorDeFox.Parar();
+        Cazadores.Clear();
+        _transmisionesFoxPendientes = [];
         TxHabilitado = false;
         NotificarEstadoDeLaSecuencia();
         MarcarElSiguiente(TxSiguiente);
@@ -2070,6 +2157,67 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         if (tx is >= 1 and <= 6) await EmitirTxAsync(tx).ConfigureAwait(true);
     }
 
+    /// <summary>
+    /// Si el pileup de fox esta en marcha con Tx habilitado y AHORA empieza una ventana propia,
+    /// emite mezclados todos los mensajes que el secuenciador de fox dejo pendientes. Mismo
+    /// camino que <see cref="EmitirSiEsSuVentanaAsync"/> —mismo pestillo, mismo reloj, mismo
+    /// modem—, solo que en vez de un mensaje sale la mezcla de varios.
+    /// </summary>
+    private async Task EmitirFoxSiEsSuVentanaAsync()
+    {
+        if (!TxHabilitado || !_secuenciadorDeFox.Activo || _emitiendo) return;
+        if (!EsMomentoDeEmitir(_secuenciadorDeFox.Paridad)) return;
+        if (_transmisionesFoxPendientes.Count == 0) return;
+
+        if (_modem is null || !SePuedeEmitir)
+        {
+            Aviso = AvisoDeLaTransmision;
+            return;
+        }
+
+        if (Reloj.RelojFueraDeVentana)
+        {
+            Aviso = Textos.T("Digital.Modem.Aviso.RelojMal");
+            return;
+        }
+
+        _emitiendo = true;
+        try
+        {
+            var mensajes = _transmisionesFoxPendientes;
+            _transmisionesFoxPendientes = [];
+            var ventana = Reloj.Ahora;
+
+            await _modem.EmitirVariosAsync(mensajes.Select(t => (t.Texto, t.TonoHz)).ToList()).ConfigureAwait(true);
+
+            foreach (var t in mensajes)
+            {
+                AnadirALaLista(FilaDeDecodificacionPropia.DeTransmision(t.Texto, t.TonoHz, ventana, Modo));
+                ApuntarEnElRegistro(ventana, "Tx", t.Texto, 0, 0, t.TonoHz);
+            }
+
+            Informar(Textos.F("Digital.Modem.Fox.Emitido", mensajes.Count));
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "No se ha podido emitir el pileup de fox con el módem propio.");
+            var motivo = ex is ArgumentException { InnerException: FormatException f } ? f.Message : ex.Message;
+            Aviso = Textos.F("Digital.Modem.Aviso.NoSePudoEmitir", motivo);
+        }
+        finally
+        {
+            _emitiendo = false;
+        }
+    }
+
+    /// <summary>Rehace la lista de cazadores en pantalla con lo que lleva ahora el secuenciador de fox.</summary>
+    private void ActualizarCazadores()
+    {
+        Cazadores.Clear();
+        foreach (var cazador in _secuenciadorDeFox.Cazadores.Values.OrderBy(c => c.TonoHz))
+            Cazadores.Add(new FilaDeCazador(cazador));
+    }
+
     /// <summary>Un aviso que solo cuenta algo ya hecho: se va solo al rato.</summary>
     private void Informar(string texto)
     {
@@ -2227,7 +2375,28 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
             OnPropertyChanged(nameof(PskReporterTexto));
 
-            if (alimentarLaSecuencia && !EsBaliza)
+            if (alimentarLaSecuencia && !EsBaliza && EsFox)
+            {
+                // El pileup de fox es un modelo mental distinto del QSO de uno a uno: lleva su
+                // propio secuenciador y no toca nada de lo de arriba (Corresponsal, Mensajes,
+                // TxSiguiente...), que es estado de un solo corresponsal a la vez.
+                var decisionFox = _secuenciadorDeFox.Procesar(ventana.VentanaUtc, oidos);
+                _transmisionesFoxPendientes = decisionFox.Transmisiones;
+                ActualizarCazadores();
+
+                if (decisionFox.ContactosCompletados.Count > 0)
+                    Informar(Textos.F("Digital.Modem.Fox.Completados", string.Join(", ", decisionFox.ContactosCompletados)));
+
+                // Mismo cuidado que en el QSO normal: se dispara y se olvida dentro de un
+                // delegado sincrono, con el ContinueWith como red para que un fallo no se pierda
+                // sin dejar ni una linea en el registro.
+                _ = EmitirFoxSiEsSuVentanaAsync().ContinueWith(
+                    t => Log.Error(t.Exception, "No se ha podido emitir el pileup de fox al terminar la ventana."),
+                    CancellationToken.None,
+                    TaskContinuationOptions.OnlyOnFaulted,
+                    TaskScheduler.Default);
+            }
+            else if (alimentarLaSecuencia && !EsBaliza)
             {
                 // Con la secuencia automatica apagada no se avanza sola: se repite el mensaje
                 // que haya marcado el operador en cada ventana propia, como en WSJT-X.
@@ -2474,6 +2643,9 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     partial void OnModoChanged(ModoDelModem value)
     {
         _secuenciador.CambiarPeriodo(DescripcionDelModo.Periodo(value));
+        _secuenciadorDeFox.CambiarPeriodo(DescripcionDelModo.Periodo(value));
+        ActualizarParametrosDeFoxParaElModo(value);
+        Cazadores.Clear();
         TxHabilitado = false;
         NotificarEstadoDeLaSecuencia();
 
@@ -2497,6 +2669,29 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         if (value is null) return;
         _secuenciador.Operacion = value.Valor;
         GenerarMensajes();
+
+        // Cambiar de operacion con un QSO o un pileup a medias deja en marcha el secuenciador que
+        // ya no toca: se para, y es el operador quien arranca el que corresponda (Llamar CQ, Tx
+        // habilitado), no este cambio por su cuenta.
+        if (value.Valor == TipoDeOperacion.Fox)
+        {
+            DetenerTx();
+        }
+        else if (_secuenciadorDeFox.Activo)
+        {
+            _secuenciadorDeFox.Parar();
+            Cazadores.Clear();
+        }
+    }
+
+    /// <summary>
+    /// Le pasa al secuenciador de fox la separacion minima de tonos que le hace falta al modem
+    /// para mezclar sin solapar (solo tiene sentido en FT8 y FT4, los unicos que saben mezclar).
+    /// </summary>
+    private void ActualizarParametrosDeFoxParaElModo(ModoDelModem modo)
+    {
+        if (modo is not (ModoDelModem.Ft8 or ModoDelModem.Ft4)) return;
+        _secuenciadorDeFox.SeparacionMinimaDeTonosHz = Nodisla.Cuaderno.Modos.Ft8.ParametrosDelModo.De(modo).SeparacionMinimaDeTonosHz;
     }
 
     partial void OnPaletaElegidaChanged(Opcion<PaletaDeCascada> value)

@@ -102,6 +102,78 @@ public static class Modulador
     }
 
     /// <summary>
+    /// Sintetiza y mezcla varias senales en una sola, cada una con su propio tono base.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Es lo que hace falta para el lado fox de fox/hound: atender a varios cazadores a la vez
+    /// dentro de la misma ventana de transmision, cada uno en su propio tono, pero el equipo solo
+    /// puede emitir un audio. Cada senal se sintetiza por separado con <see cref="Sintetizar"/>
+    /// —sin reescribir ni un calculo de la modulacion— a amplitud unidad, y luego se suman
+    /// muestra a muestra.
+    /// </para>
+    /// <para>
+    /// <b>Por que normalizar por el pico de verdad y no por «amplitud entre N».</b> Las senales se
+    /// sintetizan todas con la fase arrancando en cero, asi que en algunos instantes sus senos
+    /// pueden sumar casi en fase (el pico sale mas alto que una sola) y en otros casi se cancelan
+    /// (sale mas bajo). Dividir sin mas entre el numero de senales dejaria casi siempre un pico muy
+    /// por debajo de <paramref name="amplitudDePico"/> —volumen desperdiciado, igual de malo que
+    /// saturar— salvo en el peor caso, que seguiria pudiendo saturar si N es pequeño y la
+    /// coincidencia de fase es alta. Medir el pico real de la mezcla y escalar para que ese pico
+    /// sea exactamente <paramref name="amplitudDePico"/> no satura nunca —es una escala lineal,
+    /// no un recorte— y aprovecha todo el margen disponible pase lo que pase con las fases.
+    /// </para>
+    /// </remarks>
+    /// <param name="parametros">Parametros del modo; todas las senales tienen que ser del mismo.</param>
+    /// <param name="senales">Tonos (ya codificados) y tono base de cada senal a mezclar.</param>
+    /// <param name="frecuenciaDeMuestreo">Muestras por segundo del audio de salida.</param>
+    /// <param name="amplitudDePico">
+    /// Amplitud de pico (0 a 1) de la <b>mezcla entera</b>, no de cada senal suelta: es el mismo
+    /// significado que tiene <paramref name="amplitudDePico"/> para una senal sola, asi que el
+    /// nivel de salida del operador (<c>IModemPropio.NivelDeSalida</c>) sigue queriendo decir lo
+    /// mismo haya una senal o varias.
+    /// </param>
+    /// <returns>El audio mezclado, de la misma duracion que una senal sola.</returns>
+    public static float[] SintetizarMezcla(
+        ParametrosDelModo parametros,
+        IReadOnlyList<(byte[] Tonos, double TonoBaseHz)> senales,
+        int frecuenciaDeMuestreo,
+        double amplitudDePico = 0.5)
+    {
+        ArgumentNullException.ThrowIfNull(parametros);
+        ArgumentNullException.ThrowIfNull(senales);
+        if (senales.Count == 0) throw new ArgumentException("Hace falta al menos una senal para mezclar.", nameof(senales));
+        if (amplitudDePico is <= 0 or > 1) throw new ArgumentOutOfRangeException(nameof(amplitudDePico));
+
+        float[]? mezcla = null;
+        foreach (var (tonos, tonoBaseHz) in senales)
+        {
+            // Amplitud unidad: la de verdad se aplica una sola vez, al final, sobre la mezcla.
+            var individual = Sintetizar(parametros, tonos, tonoBaseHz, frecuenciaDeMuestreo, amplitud: 1.0);
+            if (mezcla is null)
+            {
+                mezcla = individual;
+                continue;
+            }
+
+            if (individual.Length != mezcla.Length)
+                throw new ArgumentException("Todas las senales a mezclar tienen que durar lo mismo.", nameof(senales));
+            for (var i = 0; i < mezcla.Length; i++) mezcla[i] += individual[i];
+        }
+
+        var pico = 0f;
+        for (var i = 0; i < mezcla!.Length; i++) pico = Math.Max(pico, Math.Abs(mezcla[i]));
+
+        if (pico > 0)
+        {
+            var factor = (float)(amplitudDePico / pico);
+            for (var i = 0; i < mezcla.Length; i++) mezcla[i] *= factor;
+        }
+
+        return mezcla;
+    }
+
+    /// <summary>
     /// La campana con la que se suaviza cada cambio de tono, de tres simbolos de ancha.
     /// </summary>
     /// <remarks>

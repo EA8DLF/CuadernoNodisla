@@ -919,10 +919,37 @@
     <value>Concurso EU VHF</value>
   </data>
   <data name="Digital.Operacion.Fox" xml:space="preserve">
-    <value>Fox (ser o DX) — só gramática</value>
+    <value>Fox (ser o DX)</value>
   </data>
   <data name="Digital.Operacion.Hound" xml:space="preserve">
     <value>Hound (chamar um fox)</value>
+  </data>
+  <data name="Digital.Modem.Fox.Titulo" xml:space="preserve">
+    <value>Caçadores em curso (fox)</value>
+  </data>
+  <data name="Digital.Modem.Fox.Nombre" xml:space="preserve">
+    <value>Caçadores do pileup</value>
+  </data>
+  <data name="Digital.Modem.Fox.Paso" xml:space="preserve">
+    <value>Passo</value>
+  </data>
+  <data name="Digital.Modem.Fox.Tono" xml:space="preserve">
+    <value>Tom</value>
+  </data>
+  <data name="Digital.Modem.Fox.Grid" xml:space="preserve">
+    <value>Locator</value>
+  </data>
+  <data name="Digital.Modem.Fox.EsperandoInforme" xml:space="preserve">
+    <value>Aguardando o relatório</value>
+  </data>
+  <data name="Digital.Modem.Fox.EsperandoRr73" xml:space="preserve">
+    <value>Enviando RR73</value>
+  </data>
+  <data name="Digital.Modem.Fox.Completados" xml:space="preserve">
+    <value>Contato feito com: {0}</value>
+  </data>
+  <data name="Digital.Modem.Fox.Emitido" xml:space="preserve">
+    <value>Enviadas {0} mensagens do pileup.</value>
   </data>
   <data name="Digital.Operacion.NaVhf" xml:space="preserve">
     <value>Concurso NA VHF</value>

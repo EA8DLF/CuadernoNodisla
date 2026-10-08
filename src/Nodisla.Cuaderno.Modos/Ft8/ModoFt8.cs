@@ -111,4 +111,28 @@ public sealed class ModoFt8 : IModoDigital
         foreach (var indicativo in MensajeDe77Bits.IndicativosQueViajan(mensaje)) Catalogo.Fijar(indicativo);
         return Modulador.Sintetizar(_parametros, tonos, tonoHz, frecuenciaDeMuestreo, amplitud: AmplitudDeSalida);
     }
+
+    /// <inheritdoc/>
+    /// <remarks>
+    /// Codifica cada mensaje por separado con el mismo codificador de siempre —ningun mensaje
+    /// sabe que va a sonar junto a otros— y le pasa a <see cref="Modulador.SintetizarMezcla"/> los
+    /// tonos ya listos de todos. Igual que <see cref="Generar"/>, apunta en el catalogo los
+    /// indicativos de cada mensaje que se emite.
+    /// </remarks>
+    public float[] GenerarMezcla(IReadOnlyList<(string Mensaje, int TonoHz)> mensajes, int frecuenciaDeMuestreo)
+    {
+        ArgumentNullException.ThrowIfNull(mensajes);
+        if (mensajes.Count == 0) throw new ArgumentException("Hace falta al menos un mensaje para mezclar.", nameof(mensajes));
+
+        var senales = new (byte[] Tonos, double TonoBaseHz)[mensajes.Count];
+        for (var i = 0; i < mensajes.Count; i++)
+        {
+            var (texto, tonoHz) = mensajes[i];
+            if (!_codificador.TryCodificar(texto, Modo, out var tonos, out var motivo)) throw new FormatException(motivo);
+            foreach (var indicativo in MensajeDe77Bits.IndicativosQueViajan(texto)) Catalogo.Fijar(indicativo);
+            senales[i] = (tonos, tonoHz);
+        }
+
+        return Modulador.SintetizarMezcla(_parametros, senales, frecuenciaDeMuestreo, amplitudDePico: AmplitudDeSalida);
+    }
 }

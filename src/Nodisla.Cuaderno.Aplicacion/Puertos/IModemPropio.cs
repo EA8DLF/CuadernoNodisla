@@ -257,6 +257,28 @@ public interface IModemPropio : IAsyncDisposable
     /// </remarks>
     Task EmitirAsync(string texto, int tonoHz, CancellationToken ct = default);
 
+    /// <summary>
+    /// Emite varios mensajes a la vez, cada uno en su propio tono, mezclados en una sola señal de
+    /// audio dentro de la misma ventana de transmisión.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Es lo que hace falta para el lado fox de fox/hound: varios cazadores en curso, cada uno con
+    /// su propio tono, y el equipo solo puede emitir un audio. Pone el equipo en antena igual que
+    /// <see cref="EmitirAsync"/> —mismo vigilante, mismo latido, misma salida compartida— solo que
+    /// el audio que suena es la mezcla de todos los mensajes.
+    /// </para>
+    /// <para>
+    /// Por omisión no lo sabe hacer ningún módem: solo tiene sentido en los modos que lo declaren
+    /// (<c>IModoDigital.GenerarMezcla</c>, en <c>Nodisla.Cuaderno.Modos</c>), que hoy son FT8 y FT4.
+    /// </para>
+    /// </remarks>
+    /// <param name="mensajes">Mensaje y tono de cada señal a mezclar; al menos una.</param>
+    /// <param name="ct">Testigo de cancelación; al cancelarse, se corta y se suelta el PTT.</param>
+    /// <exception cref="NotSupportedException">Si el modo en curso no sabe mezclar señales.</exception>
+    Task EmitirVariosAsync(IReadOnlyList<(string Texto, int TonoHz)> mensajes, CancellationToken ct = default) =>
+        throw new NotSupportedException("Este módem no sabe emitir varias señales a la vez.");
+
     /// <summary>Corta la emision en curso y suelta el PTT.</summary>
     Task AbortarEmisionAsync(CancellationToken ct = default);
 

@@ -144,6 +144,23 @@ public interface IModoDigital
     float[] Generar(string mensaje, int tonoHz, int frecuenciaDeMuestreo);
 
     /// <summary>
+    /// Genera, mezcladas en una sola senal, las muestras de varios mensajes a la vez, cada uno en
+    /// su propio tono. No pone nada en antena.
+    /// </summary>
+    /// <remarks>
+    /// Es lo que hace falta para el lado fox de fox/hound: varios cazadores en la misma ventana de
+    /// transmision, cada uno oyendo su propio tono dentro de la misma senal de audio. Por omision
+    /// ningun modo sabe hacerlo —no tiene sentido en un QSO normal de uno a uno—; solo lo
+    /// sobreescribe <see cref="Ft8.ModoFt8"/>, que es donde se opera fox/hound.
+    /// </remarks>
+    /// <param name="mensajes">Mensaje y tono base de cada senal a mezclar.</param>
+    /// <param name="frecuenciaDeMuestreo">Muestras por segundo de la salida.</param>
+    /// <exception cref="NotSupportedException">Si el modo no sabe mezclar senales.</exception>
+    /// <exception cref="FormatException">Si algun mensaje no cabe en la gramatica del modo.</exception>
+    float[] GenerarMezcla(IReadOnlyList<(string Mensaje, int TonoHz)> mensajes, int frecuenciaDeMuestreo) =>
+        throw new NotSupportedException($"El modo {Modo} no sabe mezclar varias senales en una sola emision.");
+
+    /// <summary>
     /// Se llama al empezar a escuchar: el modo olvida lo que aprendio de la escucha anterior
     /// (indicativos vistos, promedios). Por omision no hace nada.
     /// </summary>
