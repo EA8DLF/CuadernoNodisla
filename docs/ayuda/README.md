@@ -19,7 +19,7 @@ volver a ella se vuelve a la página que se vio la última vez.
 
 | Entrada | Páginas |
 |---|---|
-| **Operar** | Cabina (`Ctrl` `1`) · Digital (`Ctrl` `2`) · CW (`Ctrl` `Mayús` `1`) · Satélites (`Ctrl` `7`) · Ronda de control (`Ctrl` `9`) |
+| **Operar** | Cabina (`Ctrl` `1`) · Digital (`Ctrl` `2`) · CW (`Ctrl` `Mayús` `1`) · RTTY · Satélites (`Ctrl` `7`) · Ronda de control (`Ctrl` `9`) |
 | **Libro** | Contactos (`Ctrl` `3`) · Mapa (`Ctrl` `4`) |
 | **QSL** | Tarjeta QSL (`Ctrl` `8`) · Etiquetas · Diplomas (`Ctrl` `Mayús` `5`) |
 | **Diplomas** | El seguimiento de diplomas (`Ctrl` `5`) |
@@ -33,7 +33,7 @@ volver a ella se vuelve a la página que se vio la última vez.
 2. [Operar](02-operar.md) — la cabina: el frontal, el contacto nuevo, el retrato del indicativo,
    el cluster y el bandmap.
 3. [Digital](03-digital.md) — el módem propio: FT8, FT4, WSPR, JT65, JT9, Q65, MSK144, FST4 y
-   FST4W; el reloj, la cascada y la secuencia automática.
+   FST4W; el reloj, la cascada, la secuencia automática y el pileup de Fox/Hound.
 4. [Contactos](04-cuaderno.md) — la rejilla del libro: buscar, editar y fundir duplicados.
 5. [Diplomas](05-diplomas.md) — NEW, BAND y MODE, las vías de confirmación y cuándo una cifra
    no es firme.
@@ -61,6 +61,8 @@ volver a ella se vuelve a la página que se vio la última vez.
 20. [Conectar otros programas](20-conectar-otros-programas.md) — los servidores rigctld y TCI:
     WSJT-X, JTDX, GridTracker y otros usan la radio a través del Cuaderno, con las mismas
     salvaguardas de transmisión.
+21. [RTTY](21-rtty.md) — decodificador y transmisor propios (AFSK/Baudot): tono, desplazamiento,
+    parada e inversión.
 
 ## Antes de nada
 

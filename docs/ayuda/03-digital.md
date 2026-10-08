@@ -9,7 +9,9 @@ cascada se calcula aquí y las decodificaciones salen tal cual se ven en pantall
 
 ## Los modos
 
-Se eligen en el desplegable **Modo**, arriba a la derecha, con su período al lado.
+Se eligen en el desplegable **Modo**, arriba a la derecha, con su período al lado. Junto a él, el
+interruptor **Digital** apaga el modo entero —no escucha ni puede transmitir, y suelta la tarjeta
+de sonido si la tenía abierta— sin tocar CW ni RTTY, que se apagan cada uno por su cuenta.
 
 | Modo | Para qué | Ventana | Cómo se apunta en ADIF |
 |---|---|---|---|
@@ -29,8 +31,10 @@ JT9 y MSK144 son modos principales; FT4, Q65, FST4 y FST4W son submodos de MFSK.
 **Ir a la frecuencia del modo** mueve el equipo por CAT a la frecuencia de ese modo en la banda
 del dial. La tabla de frecuencias de trabajo se puede retocar: **Añadir** (el modo y el dial
 actuales), **Quitar**, **Ir a la elegida** y **Las de WSJT-X**, que vuelve a la tabla de
-fábrica con las frecuencias habituales. En **Operación** se elige cómo se opera: *Normal*, *Hound* (llamar a una
-expedición en modo fox/hound), *Fox* y los concursos *NA VHF*, *EU VHF*, *Field Day*, *RTTY
+fábrica con las frecuencias habituales. **Bypass** ignora el dial del equipo y opera a una
+frecuencia fija en MHz, sin seguir al CAT. En **Operación** se elige cómo se opera: *Normal*,
+*Hound* (llamar a una expedición en modo fox/hound: por encima de 1000 Hz, o se avisa), *Fox* (ver
+«Fox: cazadores en curso», más abajo) y los concursos *NA VHF*, *EU VHF*, *Field Day*, *RTTY
 Roundup* y *WW Digi*, con su **Intercambio**.
 
 ## El módem propio
@@ -60,6 +64,13 @@ El espectro de audio en el tiempo, con la frecuencia en el eje horizontal. Pinch
 pone ahí el **tono de transmisión**. Debajo, el medidor de **nivel de entrada** avisa y no solo
 pinta: por encima de 0,90 el codec recorta y las señales débiles se pierden — la barra se pone
 roja y lo dice con letras — y lo bueno está entre 0,20 y 0,60.
+
+Al lado, **Rx** y **Tx** son los tonos de audio en hercios; **Potencia** ajusta la amplitud de la
+señal que se manda a la tarjeta de sonido al transmitir (0,30 de fábrica, conservadora: se puede
+subir si el equipo la admite sin saturar). Si el equipo está en **split de verdad** —VFO de
+recepción distinto del de transmisión, como pide una DXpedición con «QSX» o «sube X kHz»— sale un
+aviso ámbar **SPLIT** con las dos frecuencias, y el contacto se guarda con la de recepción, no con
+la de transmisión.
 
 ### Decodificación normal y decodificación «rescatada»
 
@@ -91,6 +102,13 @@ antena, suelta si se pierde el latido o se cierra el programa), la negativa a em
 fuera de ventana y la negativa a emitir sin salida de audio siguen siempre.
 
 ![El diálogo de transmitir con la casilla «No volver a preguntar»](../capturas/ayuda/dialogo-transmitir.png)
+
+**Tune** saca un tono puro y continuo para ajustar la antena o el acoplador: pide confirmación y
+pasa por las mismas puertas que «Emitir» (pestillo abierto, salida de audio, modo no apagado);
+«Cortar y soltar PTT» también lo corta.
+
+**Modo SWL** deja solo escuchando y registrando lo oído, sin intención de contestar: para la
+secuencia y apaga «Tx habilitado», y mientras esté encendido no se activa nada de Tx.
 
 El bloque «Contacto y transmisión» tiene además los datos del corresponsal — indicativo,
 localizador, informes enviado y recibido — y el botón «Guardar en el cuaderno», que apunta el
@@ -138,9 +156,27 @@ Tx** deja quieto el tono de transmisión (solo se mueve con `Mayús` + clic o es
 **Sólo a mí** y **Sólo nuevos** aclaran la lista cuando la banda está llena, y **Vaciar** la
 limpia. **WAV…** decodifica una grabación.
 
+**Sincronizar**, con una decodificación elegida, ajusta fino dónde cree el módem que empiezan las
+ventanas a partir de su desfase. No toca el reloj del sistema — para eso está «Poner el reloj en
+hora», en la tira del reloj.
+
+### Fox: cazadores en curso (pileup)
+
+Con **Operación › Fox** se opera como el DX de una expedición: se atiende a varios cazadores a la
+vez, no un contacto de uno a uno, como el lado fox del fox/hound de WSJT-X. Bajo la secuencia se
+abre la lista **«Cazadores en curso»**, con el indicativo, el localizador, el tono y el paso de
+cada uno (esperando informe o terminando con RR73), ordenados por tono.
+
+Los contactos se **registran solos** en el cuaderno en cuanto cada cazador se da por completado
+—sin pulsar «Guardar en el cuaderno»—, con su frecuencia, su tono y la hora; si uno repite el 73
+no se apunta dos veces.
+
 ### Más opciones
 
 - **Paleta**, **Ganancia**, **Cero**, **Promedio** y **Ancho** ajustan cómo se pinta la cascada.
+- **AGCc** y **Filtrar** actúan sobre el audio real antes de decodificar, no solo sobre lo que se
+  pinta: AGCc es un control de ganancia/compresión del propio decodificador (distinto del AGC del
+  equipo, que sigue por CAT); Filtrar aplica un paso de banda entre las dos frecuencias de al lado.
 - **Mandar lo que se oye a PSK Reporter** (apagado de fábrica): envía cada 5 minutos lo
   decodificado, con su indicativo y su localizador.
 - **Guardar un WAV de cada ventana** y **Apuntar todas las decodificaciones en

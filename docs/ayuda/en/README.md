@@ -36,7 +36,7 @@ back to it, you return to the page you last saw.
 2. [Operar](02-operar.md) (Operating) — the shack: the front panel, the new QSO entry, the call
    sign portrait, the DX cluster and the bandmap.
 3. [Digital](03-digital.md) — the built-in modem: FT8, FT4, WSPR, JT65, JT9, Q65, MSK144, FST4 and
-   FST4W; the clock, the waterfall and the automatic sequence.
+   FST4W; the clock, the waterfall, the automatic sequence and the Fox/Hound pileup.
 4. [Contactos](04-cuaderno.md) (QSOs) — the log grid: searching, editing and merging duplicates.
 5. [Diplomas](05-diplomas.md) (Awards) — NEW, BAND and MODE, the confirmation paths and when a
    figure is not final.

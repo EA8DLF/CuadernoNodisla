@@ -41,7 +41,9 @@ Autor: **EA8DLF** · Proyecto NODISLA · Contacto: nodisla@nodisla.org · Licenc
 - **Cluster de DX** por Telnet, con **varios nodos a la vez** (el mismo anuncio llegado por varios
   sale una sola vez) y reconexión automática de cada uno, con bandmap, filtros y aviso de entidad, banda o modo nuevos.
 - **Módem digital propio**: FT8, FT4, FST4/FST4W, JT65, JT9, Q65, MSK144 y WSPR, sin depender de
-  WSJT-X. También puede escuchar a WSJT-X/JTDX por UDP si se prefiere.
+  WSJT-X ni de JTDX, con split real, modo **Fox/Hound** para DXpediciones (pileup con registro
+  automático de los cazadores) y modo SWL. También puede escuchar a WSJT-X/JTDX por UDP si se
+  prefiere.
 - **Fonía por el PC**: PTT desde el programa, con el micrófono y los altavoces del ordenador.
 - **Diplomas**: progreso y lo que falta de 87 diplomas (DXCC, WAZ, WPX, IOTA, POTA, SOTA,
   WWFF…). El catálogo de referencias se instala aparte: ver más abajo.
@@ -136,9 +138,10 @@ La lista completa de componentes ajenos, con su licencia y procedencia, está en
 
 ## Estado del proyecto
 
-Versión **0.1.0**, en desarrollo activo y en uso diario por su autor. Hecho y probado:
-cuaderno, ADIF, control del FT-710 validado contra la radio real, cluster, módem digital propio,
-diplomas, mapa, satélites, impresión y QSL por correo. Más de 2.400 pruebas automáticas.
+Versión **0.2.15**, en desarrollo activo y en uso diario por su autor. Hecho y probado:
+cuaderno, ADIF, control del FT-710 validado contra la radio real, cluster, módem digital propio
+(con Fox/Hound), diplomas, mapa, satélites, impresión y QSL por correo. Más de 2.400 pruebas
+automáticas.
 
 Lo que falta o está a medias:
 

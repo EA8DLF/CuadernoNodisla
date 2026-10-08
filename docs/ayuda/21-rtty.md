@@ -13,7 +13,9 @@ el mismo vigilante que usan el módem digital y la fonía.
 ## Dónde está
 
 La página entera: arriba el estado y los mandos, en medio el texto recibido (como una terminal,
-con desplazamiento), y abajo la línea de transmisión.
+con desplazamiento), y abajo la línea de transmisión. El interruptor **RTTY** apaga el modo
+entero —no escucha ni puede transmitir, y suelta la tarjeta de sonido si la tenía abierta— sin
+tocar CW ni Digital.
 
 Escucha mientras se ve la página y no está en pausa, por la entrada elegida en
 **Configuración › Audio y digitales**. Si esa entrada está cerrada, ofrece **Escuchar**, que la

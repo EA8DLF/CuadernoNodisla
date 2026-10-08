@@ -17,18 +17,20 @@ equipo que sepa manipular por CAT:
 | **Hamlib** (rigctld) | `send_morse`; `stop_morse` para. Depende de que Hamlib sepa hacerlo con su equipo. |
 | Los demás Yaesu, OmniRig | No: el botón queda apagado y se dice por qué. |
 
-## Antes de transmitir: las cinco puertas
+## Antes de transmitir: las seis puertas
 
 Nada sale al aire sin pasar por todas, en este orden:
 
-1. **Permitir transmitir en esta sesión** marcado. Es el mismo pestillo del módem digital:
+1. **El interruptor CW** no apagado. Apaga la transmisión en telegrafía, independiente de Digital
+   y RTTY; no afecta al decodificador de [Telegrafía (CW)](17-cw.md), que sigue escuchando.
+2. **Permitir transmitir en esta sesión** marcado. Es el mismo pestillo del módem digital:
    empieza cerrado en cada arranque y no se guarda.
-2. **Un equipo que manipule por CAT**, conectado. Si no, la línea amarilla dice por qué.
-3. **El equipo en CW.** Si está en otro modo, se pregunta antes de cambiarlo; si dice que no,
+3. **Un equipo que manipule por CAT**, conectado. Si no, la línea amarilla dice por qué.
+4. **El equipo en CW.** Si está en otro modo, se pregunta antes de cambiarlo; si dice que no,
    no se transmite.
-4. **La pregunta de transmitir**, con el texto que va a salir. Tiene el mismo «No volver a
+5. **La pregunta de transmitir**, con el texto que va a salir. Tiene el mismo «No volver a
    preguntar» que el módem (se vuelve a encender en **Configuración › Audio y digitales**).
-5. **El vigilante del PTT**, que es quien sube y baja la antena, como en todo el programa, con
+6. **El vigilante del PTT**, que es quien sube y baja la antena, como en todo el programa, con
    sus [salvaguardas](19-seguridad-de-transmision.md): plan de banda, ROE y potencia por banda.
 
 **Nunca se transmite al arrancar ni al conectar**: solo con una tecla o un botón suyo, o con el
