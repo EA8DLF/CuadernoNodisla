@@ -102,6 +102,47 @@ public sealed class PanelDeFoniaDispositivosPruebas
         }
     });
 
+    /// <summary>
+    /// Jose probo la 0.2.18 con dispositivos reales y no le gusta que el Popup se quede fijo
+    /// hasta pulsar «Dispositivos...» otra vez: pide que se cierre solo al tocar fuera, como
+    /// cualquier desplegable, sin que vuelva el fallo de cerrarse de mas al elegir un combo (la
+    /// prueba de arriba). Aqui se comprueba el cierre de verdad: un clic simulado claramente
+    /// fuera del Popup y del boton tiene que cerrarlo.
+    /// </summary>
+    [Fact]
+    public Task UnClicFueraDelPopupLoCierra() => HiloDeVentana.Ejecutar(async () =>
+    {
+        var (ventana, panel, _) = Montar();
+        try
+        {
+            await Asentar();
+
+            var desplegar = (ToggleButton)panel.FindName("Desplegar");
+            var popup = TodosEnLogico<Popup>(panel).Single(p => ReferenceEquals(p.PlacementTarget, desplegar));
+
+            desplegar.IsChecked = true;
+            await Asentar();
+            popup.IsOpen.Should().BeTrue("el boton tiene que abrir el Popup");
+
+            // Un clic claramente fuera: directamente en la ventana, nada que ver con el Popup
+            // ni con el boton que lo abre.
+            var clicFuera = new System.Windows.Input.MouseButtonEventArgs(
+                System.Windows.Input.Mouse.PrimaryDevice, 0, System.Windows.Input.MouseButton.Left)
+            {
+                RoutedEvent = UIElement.PreviewMouseDownEvent,
+            };
+            ventana.RaiseEvent(clicFuera);
+            await Asentar();
+
+            popup.IsOpen.Should().BeFalse("un clic de verdad fuera del Popup y del boton tiene que cerrarlo");
+            desplegar.IsChecked.Should().Be(false);
+        }
+        finally
+        {
+            ventana.Close();
+        }
+    });
+
     // ── Montaje ──────────────────────────────────────────────────────────
 
     private static (Window Ventana, PanelDeFonia Panel, VistaModeloFonia Fonia) Montar()

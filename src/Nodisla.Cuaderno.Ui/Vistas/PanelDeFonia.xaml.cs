@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.VistaModelos;
@@ -107,6 +108,7 @@ public partial class PanelDeFonia : UserControl
             _ventana.PreviewKeyDown += AlPulsarTecla;
             _ventana.PreviewKeyUp += AlSoltarTecla;
             _ventana.Deactivated += AlPerderElFoco;
+            _ventana.PreviewMouseDown += AlClicFueraDelPopupDeDispositivos;
         }
 
         _refresco.Start();
@@ -193,6 +195,7 @@ public partial class PanelDeFonia : UserControl
             _ventana.PreviewKeyDown -= AlPulsarTecla;
             _ventana.PreviewKeyUp -= AlSoltarTecla;
             _ventana.Deactivated -= AlPerderElFoco;
+            _ventana.PreviewMouseDown -= AlClicFueraDelPopupDeDispositivos;
             _ventana = null;
         }
 
@@ -221,6 +224,39 @@ public partial class PanelDeFonia : UserControl
     {
         _teclaAbajo = false;
         if (Modelo is { } modelo) await modelo.AlPerderElFocoAsync();
+    }
+
+    /// <summary>
+    /// Cierra el Popup de Dispositivos al primer clic de verdad fuera de el, como un
+    /// desplegable normal. Un Popup con AllowsTransparency se pinta en su propia raiz de
+    /// presentacion: un clic dentro de el (o dentro del Popup interno de uno de sus cuatro
+    /// ComboBox mientras elige) nunca pasa por este manejador de la ventana, asi que elegir un
+    /// dispositivo no lo toca -ni hace falta mirar si algun combo tiene el desplegable abierto-.
+    /// Solo llega aqui un clic que SI vive en el arbol de la ventana: fuera del todo. El boton
+    /// "Desplegar" se excluye aparte porque su propio Click ya abre y cierra el Popup; si este
+    /// manejador tambien lo cerrase, el toggle del boton (que corre despues, al soltar) lo
+    /// reabriria enseguida.
+    /// </summary>
+    private void AlClicFueraDelPopupDeDispositivos(object sender, MouseButtonEventArgs e)
+    {
+        if (!PopupDispositivos.IsOpen) return;
+        if (e.OriginalSource is not DependencyObject origen) return;
+        if (EsODesciendeDe(origen, Desplegar)) return;
+        if (PopupDispositivos.Child is DependencyObject contenido && EsODesciendeDe(origen, contenido)) return;
+
+        Desplegar.IsChecked = false;
+    }
+
+    private static bool EsODesciendeDe(DependencyObject nodo, DependencyObject posibleAncestro)
+    {
+        var actual = (DependencyObject?)nodo;
+        while (actual is not null)
+        {
+            if (ReferenceEquals(actual, posibleAncestro)) return true;
+            actual = actual is Visual or System.Windows.Media.Media3D.Visual3D ? VisualTreeHelper.GetParent(actual) : LogicalTreeHelper.GetParent(actual);
+        }
+
+        return false;
     }
 
     private async void AlPulsarTecla(object sender, KeyEventArgs e)
