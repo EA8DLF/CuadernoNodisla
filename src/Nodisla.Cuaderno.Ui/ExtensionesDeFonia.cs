@@ -55,8 +55,12 @@ internal static class ExtensionesDeFonia
             }
             else
             {
-                entradas = () => CatalogoDeDispositivos.Entradas();
-                salidas = () => CatalogoDeDispositivos.Salidas();
+                // Sin logger aqui, un fallo al enumerar los dispositivos de Windows
+                // desaparecia sin dejar rastro: los desplegables salian vacios y no habia
+                // forma de saber por que. Con el registro, al menos queda en el log.
+                var registro = proveedor.GetService<ILoggerFactory>()?.CreateLogger("Nodisla.Cuaderno.Audio.Dispositivos.CatalogoDeDispositivos");
+                entradas = () => CatalogoDeDispositivos.Entradas(registro);
+                salidas = () => CatalogoDeDispositivos.Salidas(registro);
                 porOmision = DispositivosPorOmision.Id;
             }
 

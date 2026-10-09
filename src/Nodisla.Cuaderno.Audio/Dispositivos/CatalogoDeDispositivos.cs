@@ -97,7 +97,21 @@ public static class CatalogoDeDispositivos
             {
                 using (dispositivo)
                 {
-                    encontrados.Add((dispositivo.ID, dispositivo.FriendlyName));
+                    // Un dispositivo fantasma —controlador desinstalado a medias, entrada
+                    // huerfana que Windows nunca limpio del registro— puede negarse a abrir
+                    // su almacen de propiedades y FriendlyName salta una excepcion de COM.
+                    // En una maquina con mas de veinte dispositivos de sonido, uno solo asi
+                    // tiraba la lista entera: el operador veia los desplegables vacios y la
+                    // excepcion se perdia sin registro porque aqui se llamaba sin logger. Se
+                    // descarta solo ese dispositivo y se sigue con el resto.
+                    try
+                    {
+                        encontrados.Add((dispositivo.ID, dispositivo.FriendlyName));
+                    }
+                    catch (Exception fallo)
+                    {
+                        anotador.LogWarning(fallo, "Se descarta un dispositivo de sonido que no se ha podido leer.");
+                    }
                 }
             }
 
