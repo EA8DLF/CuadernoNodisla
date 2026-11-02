@@ -8,7 +8,7 @@
 
 #define MyAppName "Cuaderno NODISLA"
 #define MyAppPublisher "NODISLA"
-#define MyAppURL "https://nodisla.org"
+#define MyAppURL "https://ea8dlf.nodisla.org"
 #define MyAppExeName "Nodisla.Cuaderno.Ui.exe"
 #define MyPublishDir "publicar\win-x64"
 #define MyAppVersion GetVersionNumbersString(MyPublishDir + "\" + MyAppExeName)

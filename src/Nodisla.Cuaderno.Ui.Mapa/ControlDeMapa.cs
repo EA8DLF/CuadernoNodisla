@@ -428,7 +428,7 @@ public class ControlDeMapa : UserControl, IDisposable
 
         try
         {
-            var capa = OpenStreetMap.CreateTileLayer("CuadernoNodisla/0.1 (+https://nodisla.org)");
+            var capa = OpenStreetMap.CreateTileLayer("CuadernoNodisla/0.1 (+https://ea8dlf.nodisla.org)");
 
             // El motor de mapas pinta su propia atribucion, en ingles y encima de la nuestra.
             // Se apaga la suya y se deja la de este control, que esta en espanol y dice lo
