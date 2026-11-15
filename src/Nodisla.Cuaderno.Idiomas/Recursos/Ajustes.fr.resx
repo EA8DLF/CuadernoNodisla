@@ -845,8 +845,17 @@ Vos QSO et vos paramètres ne sont pas modifiés. Si vous êtes en train d'émet
   <data name="Ajustes.Fonia.Aviso.AltavocesSonSalida" xml:space="preserve">
     <value>Les haut-parleurs choisis sont la sortie vers le poste : l'écoute serait émise.</value>
   </data>
+  <data name="Ajustes.Fonia.Aviso.EntradaNoEsDelEquipo" xml:space="preserve">
+    <value>L'entrée du poste n'est pas celle du codec du poste : on n'entendrait pas le poste par le PC.</value>
+  </data>
   <data name="Ajustes.Fonia.Aviso.MicrofonoEsEntrada" xml:space="preserve">
     <value>Le micro choisi est l'entrée du poste : ce qui est reçu serait réémis.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.MismaEntrada" xml:space="preserve">
+    <value>L'entrée du poste et le micro du PC sont le même périphérique : choisissez le codec du poste comme entrée du poste et votre micro comme micro du PC.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.MismaSalida" xml:space="preserve">
+    <value>Les haut-parleurs du PC et la sortie vers le poste sont le même périphérique : choisissez votre casque ou vos haut-parleurs comme haut-parleurs du PC et le codec du poste comme sortie vers le poste.</value>
   </data>
   <data name="Ajustes.Fonia.Aviso.SalidaNoEsDelEquipo" xml:space="preserve">
     <value>La sortie vers le poste n'est pas celle du codec du poste : la voix n'atteindrait pas le poste.</value>

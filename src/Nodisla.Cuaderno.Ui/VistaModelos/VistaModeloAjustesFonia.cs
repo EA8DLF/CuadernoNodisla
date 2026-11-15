@@ -247,6 +247,7 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
     {
         get
         {
+            // Primero lo que sale al aire por donde no debe (hace falta saber cual es el codec).
             if (SalidaAlEquipo is { EsDelEquipo: false } && Salidas.Any(s => s.EsDelEquipo))
             {
                 return Textos.T("Ajustes.Fonia.Aviso.SalidaNoEsDelEquipo");
@@ -260,6 +261,25 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
             if (Altavoces is { EsDelEquipo: true })
             {
                 return Textos.T("Ajustes.Fonia.Aviso.AltavocesSonSalida");
+            }
+
+            // Luego lo que esta mal sin necesidad de saber cual es el codec: el mismo
+            // dispositivo en los dos huecos de entrada o en los dos de salida. Asi se quedo
+            // guardado el 2026-11-15 (eligiendo a ciegas, con el codec sin reconocer) y no
+            // avisaba de nada.
+            if (EntradaDelEquipo is not null && Microfono is not null && MismoId(EntradaDelEquipo, Microfono))
+            {
+                return Textos.T("Ajustes.Fonia.Aviso.MismaEntrada");
+            }
+
+            if (Altavoces is not null && SalidaAlEquipo is not null && MismoId(Altavoces, SalidaAlEquipo))
+            {
+                return Textos.T("Ajustes.Fonia.Aviso.MismaSalida");
+            }
+
+            if (EntradaDelEquipo is { EsDelEquipo: false } && Entradas.Any(e => e.EsDelEquipo))
+            {
+                return Textos.T("Ajustes.Fonia.Aviso.EntradaNoEsDelEquipo");
             }
 
             return string.Empty;
@@ -514,6 +534,9 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
         destino.Clear();
         foreach (var d in origen) destino.Add(d);
     }
+
+    private static bool MismoId(DispositivoDeAudio uno, DispositivoDeAudio otro) =>
+        string.Equals(uno.Id, otro.Id, StringComparison.OrdinalIgnoreCase);
 
     private static DispositivoDeAudio? Buscar(IEnumerable<DispositivoDeAudio> lista, string? id) =>
         string.IsNullOrEmpty(id)

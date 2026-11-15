@@ -848,8 +848,17 @@ Sus contactos y ajustes no se tocan. Si está transmitiendo o a mitad de un cont
   <data name="Ajustes.Fonia.Aviso.AltavocesSonSalida" xml:space="preserve">
     <value>Los altavoces elegidos son la salida al equipo: la escucha se transmitiría.</value>
   </data>
+  <data name="Ajustes.Fonia.Aviso.EntradaNoEsDelEquipo" xml:space="preserve">
+    <value>La entrada del equipo no es la del codec del equipo: por el PC no se oiría la radio.</value>
+  </data>
   <data name="Ajustes.Fonia.Aviso.MicrofonoEsEntrada" xml:space="preserve">
     <value>El micrófono elegido es la entrada del equipo: se retransmitiría lo que se recibe.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.MismaEntrada" xml:space="preserve">
+    <value>La entrada del equipo y el micrófono del PC son el mismo dispositivo: elija el codec del equipo como entrada del equipo y su micrófono como micrófono del PC.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.MismaSalida" xml:space="preserve">
+    <value>Los altavoces del PC y la salida al equipo son el mismo dispositivo: elija sus cascos o altavoces como altavoces del PC y el codec del equipo como salida al equipo.</value>
   </data>
   <data name="Ajustes.Fonia.Aviso.SalidaNoEsDelEquipo" xml:space="preserve">
     <value>La salida al equipo no es la del codec del equipo: la voz no llegaría a la radio.</value>

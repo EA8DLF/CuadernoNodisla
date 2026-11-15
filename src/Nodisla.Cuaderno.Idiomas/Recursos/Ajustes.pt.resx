@@ -845,8 +845,17 @@ Os seus contactos e definições não são alterados. Se estiver a transmitir ou
   <data name="Ajustes.Fonia.Aviso.AltavocesSonSalida" xml:space="preserve">
     <value>Os altifalantes escolhidos são a saída para o rádio: a escuta seria transmitida.</value>
   </data>
+  <data name="Ajustes.Fonia.Aviso.EntradaNoEsDelEquipo" xml:space="preserve">
+    <value>A entrada do rádio não é a do codec do rádio: pelo PC não se ouviria o rádio.</value>
+  </data>
   <data name="Ajustes.Fonia.Aviso.MicrofonoEsEntrada" xml:space="preserve">
     <value>O microfone escolhido é a entrada do rádio: retransmitir-se-ia o que se recebe.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.MismaEntrada" xml:space="preserve">
+    <value>A entrada do rádio e o microfone do PC são o mesmo dispositivo: escolha o codec do rádio como entrada do rádio e o seu microfone como microfone do PC.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.MismaSalida" xml:space="preserve">
+    <value>Os altifalantes do PC e a saída para o rádio são o mesmo dispositivo: escolha os seus auscultadores ou altifalantes como altifalantes do PC e o codec do rádio como saída para o rádio.</value>
   </data>
   <data name="Ajustes.Fonia.Aviso.SalidaNoEsDelEquipo" xml:space="preserve">
     <value>A saída para o rádio não é a do codec do rádio: a voz não chegaria ao rádio.</value>
