@@ -60,6 +60,7 @@ public static class PerfilesYaesu
         OrdenDeSintonia = "AC003;",
         PosicionDeSintoniaEnRi = 7,
         CodecDelFt710 = true,
+        LineasEnAltoAlAbrir = false,
         AnalizadorFt4222 = true,
         ManipulaPorMemoriaDeTexto = true,
     };

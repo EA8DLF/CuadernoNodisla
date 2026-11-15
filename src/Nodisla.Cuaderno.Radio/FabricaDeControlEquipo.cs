@@ -1,4 +1,3 @@
-using System.IO.Ports;
 using System.Runtime.Versioning;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -113,13 +112,74 @@ public static class FabricaDeControlEquipo
     /// <param name="registro">Donde anotar.</param>
     /// <param name="ct">Testigo de cancelacion.</param>
     /// <returns>Lo encontrado, o nulo.</returns>
-    public static async Task<EquipoIdentificado?> BuscarEquipoAsync(
+    public static Task<EquipoIdentificado?> BuscarEquipoAsync(
         OpcionesDeRadio ajustes,
         IProgress<string>? aviso,
         ILogger? registro,
         CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(ajustes);
+
+        // Las lineas solo se levantan al buscar si el operador ha ELEGIDO un modelo que lo pide
+        // (menu CAT RTS). En automatico o con el FT-710, abren en falso: se abren puertos que
+        // no se sabe de quien son.
+        var lineasEnAlto = PerfilesYaesu.De(CatalogoDeModelos.Buscar(ajustes.Modelo)) is { LineasEnAltoAlAbrir: true };
+        return BuscarEquipoAsync(
+            ajustes,
+            aviso,
+            registro,
+            PuertosSerieDelSistema.Listar(),
+            AutodeteccionFt710.SondeadorReal(registro, lineasEnAlto),
+            (proveedor, puerto, velocidades, corte) => proveedor.IdentificarAsync(puerto, velocidades, ajustes, registro, corte),
+            ct);
+    }
+
+    /// <summary>
+    /// Como se le pregunta a un puerto si hay un equipo de otro protocolo (ICOM por CI-V...).
+    /// </summary>
+    /// <remarks>
+    /// De verdad, es <see cref="IProveedorDeModelos.IdentificarAsync"/>, que <b>abre el puerto
+    /// serie</b>. Va aparte para que las pruebas de la busqueda no puedan abrir puertos de la
+    /// maquina donde corren: el 15-11-2026 una prueba con el modelo en automatico llego hasta
+    /// aqui y pregunto por CI-V a los puertos de verdad.
+    /// </remarks>
+    /// <param name="proveedor">El protocolo.</param>
+    /// <param name="puerto">Puerto.</param>
+    /// <param name="velocidades">Velocidades a probar (vacio: las del protocolo).</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>Lo identificado, o nulo.</returns>
+    public delegate Task<EquipoIdentificado?> IdentificadorDeOtrosProtocolos(
+        IProveedorDeModelos proveedor,
+        string puerto,
+        IReadOnlyList<int> velocidades,
+        CancellationToken ct);
+
+    /// <summary>
+    /// <see cref="BuscarEquipoAsync(OpcionesDeRadio, IProgress{string}?, ILogger?, CancellationToken)"/>
+    /// con los puertos y el sondeador dados, para poder probarlo sin tocar la maquina.
+    /// </summary>
+    /// <param name="ajustes">Ajustes de radio.</param>
+    /// <param name="aviso">Por donde se cuenta por donde va, o nulo.</param>
+    /// <param name="registro">Donde anotar.</param>
+    /// <param name="puertos">Los puertos de la maquina, con su descripcion.</param>
+    /// <param name="sondear">Como se prueba un puerto Yaesu de CAT nuevo.</param>
+    /// <param name="identificar">
+    /// Como se pregunta por los demas protocolos; nulo para no buscarlos (nada abre un puerto).
+    /// </param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>Lo encontrado, o nulo.</returns>
+    public static async Task<EquipoIdentificado?> BuscarEquipoAsync(
+        OpcionesDeRadio ajustes,
+        IProgress<string>? aviso,
+        ILogger? registro,
+        IReadOnlyList<PuertoSerieDeLaMaquina> puertos,
+        SondeadorDePuertos sondear,
+        IdentificadorDeOtrosProtocolos? identificar,
+        CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(ajustes);
+        ArgumentNullException.ThrowIfNull(puertos);
+        ArgumentNullException.ThrowIfNull(sondear);
         var anotador = registro ?? NullLogger.Instance;
         var elegido = CatalogoDeModelos.Buscar(ajustes.Modelo);
         var puertoGuardado = ajustes.Ft710.Puerto;
@@ -127,17 +187,17 @@ public static class FabricaDeControlEquipo
         if (elegido is not null && elegido.Protocolo != ProtocoloCat.YaesuAscii)
         {
             var proveedor = CatalogoDeModelos.ProveedorDe(elegido);
-            if (proveedor is null) return null;
+            if (proveedor is null || identificar is null) return null;
             if (!string.IsNullOrWhiteSpace(puertoGuardado))
             {
                 aviso?.Report(Textos.F("Servicios.Radio.ProbandoModelo", elegido.Nombre, puertoGuardado));
-                var alli = await proveedor.IdentificarAsync(
-                    puertoGuardado, [ajustes.Ft710.Baudios, .. elegido.Velocidades], ajustes, registro, ct).ConfigureAwait(false);
+                var alli = await identificar(
+                    proveedor, puertoGuardado, [ajustes.Ft710.Baudios, .. elegido.Velocidades], ct).ConfigureAwait(false);
                 if (alli is not null) return alli with { Modelo = elegido };
             }
 
             aviso?.Report(Textos.F("Servicios.Radio.BuscandoModelo", elegido.Nombre));
-            var visto = await BuscarConAsync(proveedor, elegido, ajustes, registro, ct).ConfigureAwait(false);
+            var visto = await BuscarConAsync(proveedor, elegido, puertos, identificar, registro, ct).ConfigureAwait(false);
             return visto is null ? null : visto with { Modelo = elegido };
         }
 
@@ -147,28 +207,48 @@ public static class FabricaDeControlEquipo
         // de velocidad a la vez entre dos encendidos —de COM3 a 115200 a COM15 a 38400—. Se
         // prueba primero por donde estaba, que es lo rápido, y si ya no contesta se barre en vez
         // de darse por vencido.
-        if (!string.IsNullOrWhiteSpace(puertoGuardado))
+        // Pero la pista solo vale si es un puerto que la busqueda abriria: si lo guardado es el
+        // puerto Standard del equipo (el del control de transmision; pasaba tras la busqueda
+        // del 15-11-2026) y hay un Enhanced, no se abre.
+        var guardado = puertos.FirstOrDefault(p => string.Equals(p.Nombre, puertoGuardado, StringComparison.OrdinalIgnoreCase));
+        var laPistaVale = !string.IsNullOrWhiteSpace(puertoGuardado)
+            && (guardado is null || AutodeteccionFt710.PuertosCandidatos(puertos).Contains(guardado));
+        if (!string.IsNullOrWhiteSpace(puertoGuardado) && !laPistaVale)
+        {
+            anotador.LogInformation(
+                "El puerto guardado, {Puerto} ({Descripcion}), no es el del CAT: no se abre y se busca el equipo.",
+                puertoGuardado,
+                guardado?.Descripcion ?? "sin descripción");
+        }
+
+        if (laPistaVale)
         {
             aviso?.Report(Textos.F("Servicios.Radio.ProbandoPuerto", puertoGuardado, ajustes.Ft710.Baudios));
-            var dondeEstaba = await AutodeteccionFt710.ComprobarAsync(
-                puertoGuardado,
-                ajustes.Ft710.Baudios,
-                registro,
-                ct).ConfigureAwait(false);
-
-            if (dondeEstaba is not null)
+            var sonda = await sondear(puertoGuardado!, ajustes.Ft710.Baudios, ct).ConfigureAwait(false);
+            if (sonda.Identificador is not null)
             {
-                return Yaesu(dondeEstaba, perfilElegido);
+                return Yaesu(new EquipoEncontrado(puertoGuardado!, ajustes.Ft710.Baudios, sonda.Identificador), perfilElegido);
             }
 
-            anotador.LogInformation(
-                "Por {Puerto} a {Baudios} ya no contesta el equipo; se buscan todos los puertos.",
-                puertoGuardado,
-                ajustes.Ft710.Baudios);
+            if (sonda.SeAbrio)
+            {
+                anotador.LogInformation(
+                    "Por {Puerto} a {Baudios} ya no contesta el equipo; se buscan todos los puertos.",
+                    puertoGuardado,
+                    ajustes.Ft710.Baudios);
+            }
+            else
+            {
+                // No es que el equipo se haya ido: es que el puerto no se puede abrir. Antes
+                // esto se tomaba por «ya no contesta» y se acababa en otro puerto.
+                anotador.LogWarning(
+                    "{Puerto} no se puede abrir (lo tiene otro programa o ya no existe); se mira en los demás puertos del CAT.",
+                    puertoGuardado);
+            }
         }
 
         aviso?.Report(Textos.T("Servicios.Radio.BuscandoEquipo"));
-        var equipos = await AutodeteccionFt710.BuscarAsync(registro, ct).ConfigureAwait(false);
+        var equipos = await AutodeteccionFt710.BuscarEnAsync(puertos, sondear, registro, ct).ConfigureAwait(false);
         var yaesu = perfilElegido is not null
             ? equipos.FirstOrDefault(e => PerfilesYaesu.PorIdentificador(e.Identificador) == perfilElegido)
               ?? equipos.FirstOrDefault()
@@ -180,13 +260,13 @@ public static class FabricaDeControlEquipo
             return Yaesu(yaesu, perfilElegido);
         }
 
-        if (elegido is null)
+        if (elegido is null && identificar is not null)
         {
             // Automatico y ningun Yaesu: los demas protocolos que sepan identificarse.
             foreach (var proveedor in CatalogoDeModelos.Proveedores.Where(p => p.Protocolo is not ProtocoloCat.YaesuAscii and not ProtocoloCat.YaesuBinario))
             {
                 aviso?.Report(Textos.F("Servicios.Radio.BuscandoProtocolo", proveedor.Protocolo));
-                var encontrado = await BuscarConAsync(proveedor, null, ajustes, registro, ct).ConfigureAwait(false);
+                var encontrado = await BuscarConAsync(proveedor, null, puertos, identificar, registro, ct).ConfigureAwait(false);
                 if (encontrado?.Modelo is not null)
                 {
                     anotador.LogInformation("Encontrado: {Equipo}.", encontrado.Descripcion);
@@ -227,17 +307,20 @@ public static class FabricaDeControlEquipo
     private static async Task<EquipoIdentificado?> BuscarConAsync(
         IProveedorDeModelos proveedor,
         ModeloDeEquipo? modelo,
-        OpcionesDeRadio ajustes,
+        IReadOnlyList<PuertoSerieDeLaMaquina> puertos,
+        IdentificadorDeOtrosProtocolos identificar,
         ILogger? registro,
         CancellationToken ct)
     {
         var velocidades = modelo?.Velocidades ?? [];
-        foreach (var puerto in SerialPort.GetPortNames().Distinct(StringComparer.OrdinalIgnoreCase).Order())
+
+        // El puerto Standard de un Yaesu (el del control de transmision) tampoco se abre aqui.
+        foreach (var puerto in puertos.Where(p => !AutodeteccionFt710.EsElPuertoDeTransmision(p)).Select(p => p.Nombre))
         {
             ct.ThrowIfCancellationRequested();
             try
             {
-                var encontrado = await proveedor.IdentificarAsync(puerto, velocidades, ajustes, registro, ct).ConfigureAwait(false);
+                var encontrado = await identificar(proveedor, puerto, velocidades, ct).ConfigureAwait(false);
                 if (encontrado is not null && (modelo is null || encontrado.Modelo is null || encontrado.Modelo == modelo))
                 {
                     return encontrado;
@@ -259,7 +342,8 @@ public static class FabricaDeControlEquipo
             baudios,
             ajustes.Ft710.EsperaDeOrden,
             registro,
-            ajustes.Ft710.ViaDePtt);
+            ajustes.Ft710.ViaDePtt,
+            (perfil ?? PerfilesYaesu.Ft710).LineasEnAltoAlAbrir);
         return new ControlFt710(canal, ajustes.Ft710, registro, perfil);
     }
 }

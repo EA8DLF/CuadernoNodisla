@@ -27,7 +27,7 @@ public sealed class ProveedorYaesuAscii : IProveedorDeModelos
         var perfil = PerfilesYaesu.De(modelo)
             ?? throw new ArgumentException($"{modelo} no es un Yaesu de CAT nuevo.", nameof(modelo));
         var ajustes = opciones.Cat;
-        var canal = new CanalSerieCat(puerto, baudios, ajustes.EsperaDeOrden, registro, ajustes.ViaDePtt);
+        var canal = new CanalSerieCat(puerto, baudios, ajustes.EsperaDeOrden, registro, ajustes.ViaDePtt, perfil.LineasEnAltoAlAbrir);
         return new ControlFt710(canal, ajustes, registro, perfil);
     }
 

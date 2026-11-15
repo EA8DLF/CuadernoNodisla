@@ -55,6 +55,15 @@ public sealed class OpcionesFt710
     public ViaDePtt ViaDePtt { get; set; } = ViaDePtt.Cat;
 
     /// <summary>
+    /// Lo que vale una sintonia pedida con <c>PrepararSintonia</c> sin que llegue la subida de PTT.
+    /// </summary>
+    /// <remarks>
+    /// Se pide «justo antes» de pedir antena al vigilante. Si la antena se deniega, el apunte no
+    /// puede quedarse esperando a la siguiente transmision, que seria de otra cosa.
+    /// </remarks>
+    public TimeSpan ValidezDeLaSintoniaPedida { get; set; } = TimeSpan.FromSeconds(5);
+
+    /// <summary>
     /// Usar el codec de audio USB del equipo para saber si esta encendido antes de reintentar
     /// la conexion. Solo se aplica cuando se habla por su puerto serie.
     /// </summary>
@@ -168,6 +177,8 @@ public sealed class ControlFt710
             }
         }
 
+        // No ha arrancado: el puerto que se abrio para encenderla no se deja cogido.
+        CerrarSiNoHaySondeo();
         return Textos.T("Servicios.Radio.EncendidoSinRespuesta");
     }
 
@@ -188,8 +199,15 @@ public sealed class ControlFt710
     private bool _pttPedido;
     private bool _desechado;
     private bool _canalAbiertoAlgunaVez;
+
+    /// <summary>
+    /// Mayor que cero mientras se esta conectando (o encendiendo): entonces, y con el sondeo en
+    /// marcha, una consulta puede volver a abrir un canal que se haya roto. Fuera de eso, no.
+    /// </summary>
+    private int _conectando;
     private string? _modoDelEquipo;
-    private int _sintoniaPedida;
+    /// <summary>Marca de reloj de la ultima sintonia pedida y sin gastar; cero si no hay.</summary>
+    private long _sintoniaPedida;
     private bool _sintonizando;
     private bool _enMemoria;
 
@@ -240,8 +258,17 @@ public sealed class ControlFt710
                 async ct =>
                 {
                     await _canal.AbrirAsync(ct).ConfigureAwait(false);
-                    await PararElManipuladorSiHaceFaltaAsync(ct).ConfigureAwait(false);
-                    await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false);
+                    try
+                    {
+                        await PararElManipuladorSiHaceFaltaAsync(ct).ConfigureAwait(false);
+                        await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        // Si no hay conexion pedida, el puerto que se ha abierto solo para
+                        // bajar el PTT se vuelve a cerrar: una suelta no deja puertos cogidos.
+                        if (!PuedeReabrirElCanal()) _canal.Cerrar();
+                    }
                 }),
         ]);
 
@@ -250,6 +277,9 @@ public sealed class ControlFt710
 
     /// <inheritdoc />
     public ViaDeControl Via => ViaDeControl.CatNativo;
+
+    /// <summary>El canal por el que habla este control. Solo para las pruebas.</summary>
+    internal ICanalCat Canal => _canal;
 
     /// <inheritdoc />
     public string NombreDelEquipo { get; private set; } = "Yaesu FT-710";
@@ -323,6 +353,47 @@ public sealed class ControlFt710
     {
         ObjectDisposedException.ThrowIf(_desechado, this);
 
+        // Si es esta llamada la que abre el puerto y la conexion no llega a buen fin, el puerto
+        // se cierra antes de salir. Antes se quedaba abierto (15-11-2026): con el puerto
+        // equivocado guardado, cada «Conectar» fallido dejaba cogido un puerto que no era el
+        // del CAT, y lo que ese puerto hiciera con sus lineas duraba hasta cerrar el programa.
+        var abiertoAqui = !_canal.Abierto;
+        Interlocked.Increment(ref _conectando);
+        try
+        {
+            await ConectarNucleoAsync(ct).ConfigureAwait(false);
+        }
+        catch when (abiertoAqui && CerrarSiNoHaySondeo())
+        {
+            throw;
+        }
+        finally
+        {
+            Interlocked.Decrement(ref _conectando);
+        }
+    }
+
+    /// <summary>
+    /// Cierra el canal si no hay sondeo en marcha. Devuelve siempre falso: se usa como filtro
+    /// de excepcion, para cerrar sin tocar el fallo que va de camino.
+    /// </summary>
+    private bool CerrarSiNoHaySondeo()
+    {
+        lock (_candado)
+        {
+            if (_sondeo is not null) return false;
+        }
+
+        _canal.Cerrar();
+        Volatile.Write(ref _canalAbiertoAlgunaVez, false);
+        _registro.LogInformation(
+            "Cerrado {Canal}: la conexión no ha llegado a buen fin y el puerto no se deja abierto.",
+            _canal.Descripcion);
+        return false;
+    }
+
+    private async Task ConectarNucleoAsync(CancellationToken ct)
+    {
         if (!_canal.Abierto)
         {
             await _canal.AbrirAsync(ct).ConfigureAwait(false);
@@ -404,9 +475,22 @@ public sealed class ControlFt710
 
         cts?.Dispose();
 
-        await BajarElPttComoSeaAsync(ct).ConfigureAwait(false);
+        var bajado = await BajarElPttComoSeaAsync(ct).ConfigureAwait(false);
 
         _canal.Cerrar();
+        if (bajado)
+        {
+            // PTT abajo y puerto cerrado a proposito: a partir de aqui no queda nada que bajar
+            // ni puerto que reabrir hasta que se vuelva a conectar. Sin esto, la desconexion
+            // siguiente —la de desechar el control tras «Probar», o la de cambiar de control—
+            // recorria las vias de emergencia y volvia a abrir el puerto para mandar otro TX0;
+            // (15-11-2026). Si NO se ha podido bajar, todo se queda como estaba y la proxima
+            // bajada lo intenta otra vez por todas las vias.
+            Volatile.Write(ref _pttPedido, false);
+            Volatile.Write(ref _sintonizando, false);
+            Volatile.Write(ref _canalAbiertoAlgunaVez, false);
+        }
+
         lock (_candado)
         {
             _vfos = EstadoDeLosVfos.SinDatos;
@@ -834,7 +918,7 @@ public sealed class ControlFt710
     /// <c>AC003;</c> (el TUNE mantenido del equipo) y al soltar se manda <c>TX0;</c> y, si el
     /// acoplador sigue sintonizando, se para.
     /// </remarks>
-    public void PrepararSintonia() => Volatile.Write(ref _sintoniaPedida, 1);
+    public void PrepararSintonia() => Volatile.Write(ref _sintoniaPedida, System.Diagnostics.Stopwatch.GetTimestamp());
 
     /// <summary>
     /// Lo que se deja sintonizando un modelo que no dice por CAT cuando acaba (todos menos el
@@ -997,6 +1081,18 @@ public sealed class ControlFt710
     /// <inheritdoc />
     async Task IPttDirecto.PonerPttDirectoAsync(bool transmitir, CancellationToken ct)
     {
+        // La sintonia pedida se gasta con la subida siguiente: si llega a tiempo es un TUNE, y
+        // si llega tarde se olvida. Antes se quedaba apuntada hasta la siguiente subida, fuera
+        // cuando fuera y de quien fuera (15-11-2026). Una bajada no la toca: puede ser la cola
+        // de la transmision anterior, cruzandose con un TUNE recien pedido.
+        var pedidaEn = transmitir ? Interlocked.Exchange(ref _sintoniaPedida, 0) : 0;
+        var esSintonia = pedidaEn != 0
+            && System.Diagnostics.Stopwatch.GetElapsedTime(pedidaEn) <= _opciones.ValidezDeLaSintoniaPedida;
+        if (pedidaEn != 0 && !esSintonia)
+        {
+            _registro.LogInformation("Se olvida una sintonía del acoplador que se pidió y no llegó a salir.");
+        }
+
         if (!transmitir && NoHayNadaQueBajar())
         {
             _registro.LogDebug(
@@ -1005,7 +1101,7 @@ public sealed class ControlFt710
             return;
         }
 
-        if (transmitir && Interlocked.Exchange(ref _sintoniaPedida, 0) == 1)
+        if (transmitir && esSintonia)
         {
             // La transmision vigilada de TUNE: el que emite es el propio acoplador («Tuning
             // Start», AC003), no el CAT. El vigilante la trata como cualquier otra: tope de
@@ -2195,16 +2291,18 @@ public sealed class ControlFt710
         && !Volatile.Read(ref _sintonizando)
         && (Volatile.Read(ref _desechado) || !Volatile.Read(ref _canalAbiertoAlgunaVez));
 
-    private async Task BajarElPttComoSeaAsync(CancellationToken ct)
+    /// <returns>Verdadero si el PTT ha quedado abajo (o no habia nada que bajar).</returns>
+    private async Task<bool> BajarElPttComoSeaAsync(CancellationToken ct)
     {
         if (!_canal.Abierto
             && !Volatile.Read(ref _canalAbiertoAlgunaVez)
-            && !Volatile.Read(ref _pttPedido))
+            && !Volatile.Read(ref _pttPedido)
+            && !Volatile.Read(ref _sintonizando))
         {
             _registro.LogDebug(
-                "{Canal} no se llegó a abrir y no hay PTT pedido: no se toca el puerto al desconectar.",
+                "{Canal} está cerrado sin PTT pedido (no se llegó a abrir, o ya se bajó y se cerró): no se toca el puerto al desconectar.",
                 _canal.Descripcion);
-            return;
+            return true;
         }
 
         try
@@ -2213,7 +2311,7 @@ public sealed class ControlFt710
             {
                 await PararElManipuladorSiHaceFaltaAsync(ct).ConfigureAwait(false);
                 await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false);
-                return;
+                return true;
             }
         }
         catch (Exception ex)
@@ -2228,7 +2326,7 @@ public sealed class ControlFt710
                 using var espera = new CancellationTokenSource(_opciones.EsperaDeOrden);
                 await via.SoltarAsync(espera.Token).ConfigureAwait(false);
                 _registro.LogInformation("PTT abajo antes de desconectar por «{Via}».", via.Nombre);
-                return;
+                return true;
             }
             catch (Exception ex)
             {
@@ -2237,6 +2335,7 @@ public sealed class ControlFt710
         }
 
         _registro.LogError("No se ha podido bajar el PTT antes de desconectar por ninguna vía.");
+        return false;
     }
 
     // ── ROE durante la transmision (IMedidorDeRoe) ───────────────────────────────────────────
@@ -2452,6 +2551,17 @@ public sealed class ControlFt710
         // de verdad: cuenta el mismo canal roto tres veces.
         if (!_canal.Abierto)
         {
+            if (!PuedeReabrirElCanal())
+            {
+                // Sin conexion pedida no se abre el puerto por una consulta: quien abre es
+                // «Conectar». Antes, cualquier pregunta de la pantalla a un control recien
+                // puesto â€”o ya desconectadoâ€” abria el puerto por su cuenta (15-11-2026).
+                _registro.LogDebug(
+                    "CAT {Orden}: {Canal} está cerrado y no hay conexión pedida; no se abre.",
+                    orden,
+                    _canal.Descripcion);
+                return null;
+            }
             await _canal.AbrirAsync(ct).ConfigureAwait(false);
             Volatile.Write(ref _canalAbiertoAlgunaVez, true);
             _registro.LogDebug("Se ha vuelto a abrir {Canal} antes de preguntar.", _canal.Descripcion);
@@ -2460,6 +2570,16 @@ public sealed class ControlFt710
         var respuesta = await _canal.PreguntarAsync(orden, ct).ConfigureAwait(false);
         _registro.LogDebug("CAT {Orden} -> {Respuesta}", orden, respuesta ?? "(sin respuesta)");
         return respuesta;
+    }
+
+    /// <summary>Hay una conexion pedida: se esta conectando o el sondeo esta en marcha.</summary>
+    private bool PuedeReabrirElCanal()
+    {
+        if (Volatile.Read(ref _conectando) > 0) return true;
+        lock (_candado)
+        {
+            return _sondeo is not null;
+        }
     }
 
     private async Task MandarAsync(string orden, CancellationToken ct)
