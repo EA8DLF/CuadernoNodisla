@@ -112,9 +112,20 @@
                             suelo, este Viewbox apenas llega a encoger de verdad incluso con el
                             frontal en su mínimo legible.
                         -->
+                        <!--
+                            El contexto de datos de esta copia lo pone PanelOperar.xaml.cs
+                            (EnlazarLaFoniaEnColumna), NO un enlace: lo que cuelga de «Lateral» no
+                            es hijo logico de nadie, y el enlace que habia aqui (RelativeSource
+                            AncestorType=PanelOperar) se resolvia antes de que este hueco tuviera
+                            padre visual cuando el programa arrancaba en otra pestana. WPF lo daba
+                            por perdido («Cannot find source for binding») y no lo reintentaba: el
+                            panel se quedaba SIN modelo -desplegables de dispositivos vacios, PTT
+                            que no hace nada, escucha que no se abre- hasta reiniciar en Operar.
+                            (No lleva x:Name porque dentro de otro UserControl no se puede:
+                            el codigo lo busca bajando por Lateral.)
+                        -->
                         <Viewbox Stretch="Uniform" StretchDirection="DownOnly" VerticalAlignment="Top">
-                            <vistas:PanelDeFonia Vertical="True"
-                                                 DataContext="{Binding DataContext.Fonia, RelativeSource={RelativeSource AncestorType=vistas:PanelOperar}}" />
+                            <vistas:PanelDeFonia Vertical="True" />
                         </Viewbox>
                     </Border>
                 </vistas:FrontalConBotonera.Lateral>
