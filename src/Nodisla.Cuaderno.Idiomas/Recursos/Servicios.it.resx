@@ -1221,11 +1221,14 @@ Congratulazioni e 73,
   <data name="Servicios.Qrz.ClaveNoAceptada" xml:space="preserve">
     <value>QRZ.com non ha accettato la chiave del log.</value>
   </data>
+  <data name="Servicios.Qrz.ClaveRechazada" xml:space="preserve">
+    <value>QRZ non riconosce questa chiave API. La copi di nuovo dalla tabella dei suoi log su qrz.com (colonna «API Key») e controlli che non sia la password del sito.</value>
+  </data>
   <data name="Servicios.Qrz.ComprobarCuaderno" xml:space="preserve">
     <value>controllare il log di QRZ.com</value>
   </data>
   <data name="Servicios.Qrz.CredencialesRechazadas" xml:space="preserve">
-    <value>QRZ.com ha rifiutato l'utente o la password. Non si riproverà finché non li cambia nelle impostazioni.</value>
+    <value>QRZ.com ha rifiutato l'utente o la password. Non si riproverà finché non li cambia in Impostazioni › Caricamenti e QRZ.</value>
   </data>
   <data name="Servicios.Qrz.Descargando" xml:space="preserve">
     <value>Download dal log di QRZ.com (pagina {0})…</value>
@@ -1236,6 +1239,18 @@ Congratulazioni e 73,
   <data name="Servicios.Qrz.Devolvio" xml:space="preserve">
     <value>QRZ.com ha restituito {0} conferme.</value>
   </data>
+  <data name="Servicios.Qrz.DiceQrz" xml:space="preserve">
+    <value>QRZ dice: «{0}».</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.Correcta" xml:space="preserve">
+    <value>Accesso corretto: QRZ.com ha aperto la sessione come {0}.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.SinDatos" xml:space="preserve">
+    <value>Manca l'utente o la password del sito QRZ.com.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.SinRed" xml:space="preserve">
+    <value>Impossibile raggiungere QRZ.com ({0}). Utente e password non sono stati verificati: controlli la connessione e riprovi.</value>
+  </data>
   <data name="Servicios.Qrz.NoDevolvioCuaderno" xml:space="preserve">
     <value>QRZ.com non ha restituito il log: {0}</value>
   </data>
@@ -1245,11 +1260,29 @@ Congratulazioni e 73,
   <data name="Servicios.Qrz.NoSeEntiende" xml:space="preserve">
     <value>QRZ.com ha risposto qualcosa di incomprensibile.</value>
   </data>
+  <data name="Servicios.Qrz.Prueba.Correcta" xml:space="preserve">
+    <value>Chiave valida: QRZ la accetta.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaConContactos" xml:space="preserve">
+    <value>Chiave valida: il log ha {0:N0} contatti su QRZ.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaConLibro" xml:space="preserve">
+    <value>Chiave valida: dà accesso al log di {0}, che ha {1:N0} contatti su QRZ.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaDe" xml:space="preserve">
+    <value>Chiave valida: dà accesso al log di {0}.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.SinRed" xml:space="preserve">
+    <value>Impossibile raggiungere QRZ.com ({0}). La chiave non è stata verificata: controlli la connessione e riprovi.</value>
+  </data>
   <data name="Servicios.Qrz.RespondioTexto" xml:space="preserve">
     <value>QRZ.com ha risposto «{0}».</value>
   </data>
   <data name="Servicios.Qrz.SinClaveDeCuaderno" xml:space="preserve">
-    <value>Non c'è nessuna chiave del log di QRZ.com salvata. Si genera sul sito di QRZ e non è la password dell'account.</value>
+    <value>Nessuna chiave API del log di QRZ salvata. Si inserisce in Impostazioni › Caricamenti e QRZ e non è la password del sito.</value>
+  </data>
+  <data name="Servicios.Qrz.SinSuscripcion" xml:space="preserve">
+    <value>QRZ riconosce la chiave ma non le permette di usare l'API del log. Il proprietario del log deve avere un abbonamento QRZ attivo di livello «XML» o superiore.</value>
   </data>
   <data name="Servicios.Qrz.SubiendoContacto" xml:space="preserve">
     <value>Caricamento del collegamento con {0}…</value>

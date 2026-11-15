@@ -209,4 +209,86 @@ public class QrzCredencialesRechazadasPruebas
         manejador.Direcciones.Should().HaveCount(1);
         registro.Entradas.Where(e => e.Nivel >= LogLevel.Information).Should().BeEmpty();
     }
+
+    // ── El boton «Probar el acceso» ──────────────────────────────────────────
+
+    private const string SesionConAviso = """
+        <?xml version="1.0" encoding="utf-8" ?>
+        <QRZDatabase version="1.34" xmlns="http://xmldata.qrz.com">
+          <Session><Key>CLAVE-1</Key><Message>A subscription is required to access the complete record.</Message></Session>
+        </QRZDatabase>
+        """;
+
+    [Fact]
+    public async Task Probar_el_acceso_con_buenas_credenciales_dice_correcto_y_trae_el_aviso_de_qrz()
+    {
+        var (consulta, _, _, _) = Montar(ManejadorFalso.ConTexto(SesionConAviso));
+
+        var prueba = await consulta.ProbarAsync();
+
+        prueba.Veredicto.Should().Be(VeredictoDeQrz.Correcto);
+        prueba.Aviso.Should().Contain("subscription");
+    }
+
+    [Fact]
+    public async Task Probar_el_acceso_con_la_contrasena_mala_lo_dice_y_no_insiste_con_la_misma()
+    {
+        var manejador = ManejadorFalso.ConTexto(Rechazo);
+        var (consulta, _, _, _) = Montar(manejador);
+
+        (await consulta.ProbarAsync()).Veredicto.Should().Be(VeredictoDeQrz.ClaveRechazada);
+        (await consulta.ProbarAsync()).Veredicto.Should().Be(VeredictoDeQrz.ClaveRechazada);
+
+        // El freno vale tambien para el boton: la segunda pulsacion no sale a la red.
+        manejador.Direcciones.Should().HaveCount(1);
+    }
+
+    [Fact]
+    public async Task Probar_el_acceso_tras_cambiar_la_contrasena_si_vuelve_a_intentarlo()
+    {
+        var manejador = ManejadorFalso.PorTurnos(Rechazo, Sesion);
+        var (consulta, credenciales, _, _) = Montar(manejador);
+        (await consulta.ProbarAsync()).Veredicto.Should().Be(VeredictoDeQrz.ClaveRechazada);
+
+        credenciales.Guardar(ClavesDeCredencial.QrzContrasena, "buena");
+
+        (await consulta.ProbarAsync()).Veredicto.Should().Be(VeredictoDeQrz.Correcto);
+        manejador.Direcciones.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public async Task Probar_el_acceso_con_la_cuenta_bloqueada_dice_hasta_cuando()
+    {
+        var (consulta, _, _, _) = Montar(ManejadorFalso.ConTexto(Bloqueo));
+
+        var prueba = await consulta.ProbarAsync();
+
+        prueba.Veredicto.Should().Be(VeredictoDeQrz.Bloqueada);
+        prueba.BloqueadaHasta.Should().Be(new DateTimeOffset(2026, 10, 4, 19, 20, 8, TimeSpan.Zero));
+    }
+
+    [Fact]
+    public async Task Probar_el_acceso_sin_red_no_apunta_ningun_rechazo()
+    {
+        var falla = true;
+        var manejador = new ManejadorFalso((_, _) =>
+            falla ? throw new HttpRequestException("sin red") : ManejadorFalso.Respuesta(Sesion));
+        var (consulta, _, _, _) = Montar(manejador);
+
+        (await consulta.ProbarAsync()).Veredicto.Should().Be(VeredictoDeQrz.SinRed);
+
+        falla = false;
+        (await consulta.ProbarAsync()).Veredicto.Should().Be(VeredictoDeQrz.Correcto);
+    }
+
+    [Fact]
+    public async Task Probar_el_acceso_sin_contrasena_guardada_no_llama_a_nadie()
+    {
+        var manejador = ManejadorFalso.ConTexto(Sesion);
+        var (consulta, credenciales, _, _) = Montar(manejador);
+        credenciales.Borrar(ClavesDeCredencial.QrzContrasena);
+
+        (await consulta.ProbarAsync()).Veredicto.Should().Be(VeredictoDeQrz.SinDato);
+        manejador.Direcciones.Should().BeEmpty();
+    }
 }

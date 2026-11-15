@@ -272,8 +272,14 @@ public sealed class SubidaAutomaticaPruebas : IDisposable
         await cola.EncolarAsync(qso, false);
         (await cola.ProcesarAsync()).Should().Be(1);
 
-        manejador.Cuerpos.Single().Should().Contain("OPTION=REPLACE", "un reenvío tras F2 sustituye en vez de dar duplicado");
+        manejador.Cuerpos.Single().Should().NotContain("REPLACE", "la primera subida no pisa lo que QRZ ya tenga confirmado");
+        manejador.Cuerpos.Single().Should().Contain("ADIF=%3CCALL", "el registro va solo, sin cabecera, como en la guía de QRZ");
         Estado(qso, MedioDeConfirmacion.QrzCom)!.Enviado.Should().Be(EstadoDeConfirmacion.Confirmado);
+
+        // Corregido con F2 despues de subirlo: ahora si va con REPLACE.
+        await cola.EncolarAsync(qso, modificado: true);
+        (await cola.ProcesarAsync()).Should().Be(1);
+        manejador.Cuerpos[1].Should().Contain("OPTION=REPLACE", "un reenvío tras F2 sustituye en vez de dar duplicado");
     }
 
     [Fact]

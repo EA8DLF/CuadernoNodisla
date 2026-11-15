@@ -51,6 +51,9 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
     private string? _huellaRechazada;
     private DateTimeOffset? _bloqueadoHasta;
 
+    // Lo que QRZ dijo al abrir la ultima sesion (suscripcion parcial…), para «Probar».
+    private string? _avisoDeSesion;
+
     /// <summary>Crea la consulta.</summary>
     /// <param name="fabrica">Fabrica de clientes HTTP.</param>
     /// <param name="credenciales">Almacen de secretos.</param>
@@ -103,6 +106,54 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
         }
 
         return Interpretar(documento, indicativo, _log);
+    }
+
+    /// <summary>
+    /// Prueba el usuario y la contrasena abriendo una sesion nueva, sin consultar a nadie.
+    /// </summary>
+    /// <remarks>
+    /// Respeta el freno de los rechazos: con el mismo usuario y la misma contrasena que QRZ ya
+    /// rechazo no se sale a la red (cada intento fallido acerca el bloqueo de la cuenta), y
+    /// con la cuenta bloqueada no se pide hasta que pase la hora. En cuanto cambia cualquiera
+    /// de los dos datos, se prueba de verdad.
+    /// </remarks>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    public async Task<PruebaDeLaFichaQrz> ProbarAsync(CancellationToken ct = default)
+    {
+        if (!EstaDisponible)
+        {
+            return new PruebaDeLaFichaQrz(VeredictoDeQrz.SinDato, Textos.T("Servicios.Qrz.Ficha.SinDatos"));
+        }
+
+        try
+        {
+            await ObtenerClaveAsync(renovar: true, ct).ConfigureAwait(false);
+            return new PruebaDeLaFichaQrz(
+                VeredictoDeQrz.Correcto, Textos.F("Servicios.Qrz.Ficha.Correcta", _opciones.Usuario))
+            {
+                Aviso = _avisoDeSesion,
+            };
+        }
+        catch (SesionRechazadaException ex)
+        {
+            return new PruebaDeLaFichaQrz(
+                ex.BloqueadoHasta is null ? VeredictoDeQrz.ClaveRechazada : VeredictoDeQrz.Bloqueada, ex.Message)
+            {
+                BloqueadaHasta = ex.BloqueadoHasta,
+            };
+        }
+        catch (ServicioNoDisponibleException ex)
+        {
+            return new PruebaDeLaFichaQrz(VeredictoDeQrz.SinRed, Textos.F("Servicios.Qrz.Ficha.SinRed", ex.Message));
+        }
+        catch (RespuestaDelServicioException ex)
+        {
+            return new PruebaDeLaFichaQrz(VeredictoDeQrz.RespuestaNoEntendida, ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return new PruebaDeLaFichaQrz(VeredictoDeQrz.SinDato, ex.Message);
+        }
     }
 
     /// <summary>Traduce la respuesta XML de QRZ.com a una ficha.</summary>
@@ -217,7 +268,8 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
             _bloqueadoHasta = null;
 
             // El aviso de suscripcion no impide consultar, pero el operador debe verlo.
-            if (LecturaXml.Texto(sesion, "Message") is { } mensaje)
+            _avisoDeSesion = LecturaXml.Texto(sesion, "Message");
+            if (_avisoDeSesion is { } mensaje)
             {
                 _log.LogInformation("QRZ.com avisa: {Mensaje}", mensaje);
             }

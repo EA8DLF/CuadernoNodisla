@@ -1221,11 +1221,14 @@ Herzlichen Glückwunsch und 73,
   <data name="Servicios.Qrz.ClaveNoAceptada" xml:space="preserve">
     <value>QRZ.com hat den Logbuch-Schlüssel nicht akzeptiert.</value>
   </data>
+  <data name="Servicios.Qrz.ClaveRechazada" xml:space="preserve">
+    <value>QRZ erkennt diesen API-Schlüssel nicht. Kopieren Sie ihn erneut aus der Tabelle Ihrer Logbücher auf qrz.com (Spalte „API Key“) und prüfen Sie, dass es nicht das Passwort der Website ist.</value>
+  </data>
   <data name="Servicios.Qrz.ComprobarCuaderno" xml:space="preserve">
     <value>QRZ.com-Logbuch prüfen</value>
   </data>
   <data name="Servicios.Qrz.CredencialesRechazadas" xml:space="preserve">
-    <value>QRZ.com hat Benutzername oder Passwort abgelehnt. Es wird erst wieder versucht, wenn Sie sie in den Einstellungen ändern.</value>
+    <value>QRZ.com hat Benutzername oder Passwort abgelehnt. Es wird erst wieder versucht, wenn Sie sie unter Einstellungen › Uploads und QRZ ändern.</value>
   </data>
   <data name="Servicios.Qrz.Descargando" xml:space="preserve">
     <value>Download aus dem QRZ.com-Logbuch (Seite {0})…</value>
@@ -1236,6 +1239,18 @@ Herzlichen Glückwunsch und 73,
   <data name="Servicios.Qrz.Devolvio" xml:space="preserve">
     <value>QRZ.com lieferte {0} Bestätigungen.</value>
   </data>
+  <data name="Servicios.Qrz.DiceQrz" xml:space="preserve">
+    <value>QRZ meldet: „{0}“.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.Correcta" xml:space="preserve">
+    <value>Zugang in Ordnung: QRZ.com hat eine Sitzung als {0} geöffnet.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.SinDatos" xml:space="preserve">
+    <value>Benutzername oder Passwort der QRZ.com-Website fehlt.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.SinRed" xml:space="preserve">
+    <value>QRZ.com ist nicht erreichbar ({0}). Benutzername und Passwort konnten nicht geprüft werden: Verbindung prüfen und erneut versuchen.</value>
+  </data>
   <data name="Servicios.Qrz.NoDevolvioCuaderno" xml:space="preserve">
     <value>QRZ.com lieferte das Logbuch nicht: {0}</value>
   </data>
@@ -1245,11 +1260,29 @@ Herzlichen Glückwunsch und 73,
   <data name="Servicios.Qrz.NoSeEntiende" xml:space="preserve">
     <value>QRZ.com antwortete mit etwas Unverständlichem.</value>
   </data>
+  <data name="Servicios.Qrz.Prueba.Correcta" xml:space="preserve">
+    <value>Schlüssel gültig: QRZ akzeptiert ihn.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaConContactos" xml:space="preserve">
+    <value>Schlüssel gültig: Das Logbuch enthält {0:N0} Kontakte bei QRZ.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaConLibro" xml:space="preserve">
+    <value>Schlüssel gültig: Er öffnet das Logbuch von {0} mit {1:N0} Kontakten bei QRZ.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaDe" xml:space="preserve">
+    <value>Schlüssel gültig: Er öffnet das Logbuch von {0}.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.SinRed" xml:space="preserve">
+    <value>QRZ.com ist nicht erreichbar ({0}). Der Schlüssel konnte nicht geprüft werden: Verbindung prüfen und erneut versuchen.</value>
+  </data>
   <data name="Servicios.Qrz.RespondioTexto" xml:space="preserve">
     <value>QRZ.com antwortete „{0}“.</value>
   </data>
   <data name="Servicios.Qrz.SinClaveDeCuaderno" xml:space="preserve">
-    <value>Es ist kein QRZ.com-Logbuch-Schlüssel gespeichert. Er wird auf der QRZ-Website erzeugt und ist nicht das Kontopasswort.</value>
+    <value>Kein API-Schlüssel des QRZ-Logbuchs gespeichert. Er wird unter Einstellungen › Uploads und QRZ eingetragen und ist nicht das Passwort der Website.</value>
+  </data>
+  <data name="Servicios.Qrz.SinSuscripcion" xml:space="preserve">
+    <value>QRZ erkennt den Schlüssel, erlaubt ihm aber nicht die Nutzung der Logbuch-API. Der Besitzer des Logbuchs braucht ein aktives QRZ-Abonnement der Stufe „XML“ oder höher.</value>
   </data>
   <data name="Servicios.Qrz.SubiendoContacto" xml:space="preserve">
     <value>Verbindung mit {0} wird hochgeladen…</value>
