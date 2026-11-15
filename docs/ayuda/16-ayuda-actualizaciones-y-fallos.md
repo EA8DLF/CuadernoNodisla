@@ -31,9 +31,10 @@ la página, sin ventanas ni robar el foco:
 ![La barra del aviso de versión nueva, encima de la página (versión inventada para la captura)](../capturas/ayuda/aviso-de-version.png)
 
 - **Novedades de esta versión** despliega las notas.
-- **Descargar e instalar** baja el instalador, **comprueba su suma SHA-256** y, si cuadra, cierra
-  el programa de forma ordenada y lo instala. Si la suma no cuadra o falta, borra lo descargado
-  y no instala nada.
+- **Descargar e instalar** baja el instalador, **comprueba su suma SHA-256 y que lleva la firma
+  digital de NODISLA** y, si todo cuadra, cierra el programa de forma ordenada y lo instala. Si
+  la suma no cuadra o falta, o el instalador no está firmado por NODISLA (o se ha alterado
+  después de firmarlo), borra lo descargado y no instala nada.
 - **Ver en GitHub** abre la página de la versión.
 - **✕** oculta el aviso; de esa versión no se vuelve a avisar al arrancar.
 

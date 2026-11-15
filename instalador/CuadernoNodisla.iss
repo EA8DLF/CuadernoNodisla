@@ -53,6 +53,18 @@ PrivilegesRequiredOverridesAllowed=dialog
 ; con el ingles marcado (el mismo criterio que el programa).
 ShowLanguageDialog=auto
 LanguageDetectionMethod=uilanguage
+; Firma Authenticode. La orden de firma («nodisla») y el simbolo Firmar los pone
+; herramientas\publicacion\Publicar-Version.ps1 al llamar a ISCC (/DFirmar /Snodisla=...):
+; aqui no hay rutas, huellas ni contrasenas. Con SignTool, Inno Setup firma el desinstalador
+; (SignedUninstaller) y el propio instalador, y si la firma falla NO genera nada.
+; Compilado a mano sin /DFirmar sale un instalador SIN firma: vale para probar en casa, pero
+; el programa instalado se niega a actualizarse con el (ver docs\20-firma-de-codigo.md).
+#ifdef Firmar
+SignTool=nodisla
+SignedUninstaller=yes
+SignToolRetryCount=2
+SignToolRunMinimized=yes
+#endif
 
 [Languages]
 ; Los seis idiomas del programa, con los textos que trae Inno Setup. El ingles va primero:

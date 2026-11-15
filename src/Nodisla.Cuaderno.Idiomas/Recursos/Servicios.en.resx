@@ -18,6 +18,9 @@
   <data name="Servicios.Actualizaciones.DemasiadoGrande" xml:space="preserve">
     <value>The announced installer is too large.</value>
   </data>
+  <data name="Servicios.Actualizaciones.FirmaNoValida" xml:space="preserve">
+    <value>The downloaded installer does not carry the NODISLA signature (it is unsigned, has been altered or was signed by someone else). It has been deleted and will not be installed. Download it manually from the releases page.</value>
+  </data>
   <data name="Servicios.Actualizaciones.NoCoincide" xml:space="preserve">
     <value>The downloaded installer does not match the published SHA-256 checksum. It has been deleted and will not be installed.</value>
   </data>

@@ -204,8 +204,8 @@ public sealed partial class VistaModeloActualizaciones : ObservableObject
     private bool PuedeDescargar() => Nueva is not null && !Descargando;
 
     /// <summary>
-    /// Descarga el instalador, comprueba su SHA-256 y, si casa y el operador confirma, lo lanza y
-    /// cierra el programa.
+    /// Descarga el instalador, comprueba su SHA-256 y que lleva la firma de NODISLA y, si todo
+    /// casa y el operador confirma, lo lanza y cierra el programa.
     /// </summary>
     [RelayCommand(CanExecute = nameof(PuedeDescargar))]
     private async Task DescargarEInstalarAsync()
