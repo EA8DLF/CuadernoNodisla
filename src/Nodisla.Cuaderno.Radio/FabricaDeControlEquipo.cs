@@ -259,7 +259,8 @@ public static class FabricaDeControlEquipo
             baudios,
             ajustes.Ft710.EsperaDeOrden,
             registro,
-            ajustes.Ft710.ViaDePtt);
+            ajustes.Ft710.ViaDePtt,
+            (perfil ?? PerfilesYaesu.Ft710).LineasEnAltoAlAbrir);
         return new ControlFt710(canal, ajustes.Ft710, registro, perfil);
     }
 }

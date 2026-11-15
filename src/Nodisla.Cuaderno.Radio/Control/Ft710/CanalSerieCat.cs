@@ -16,7 +16,17 @@ namespace Nodisla.Cuaderno.Radio.Control.Ft710;
 /// El FT-710 se presenta con un CP2105 doble: el <i>Enhanced</i> es el que se usa y el
 /// <i>Standard</i> tambien habla. <b>La velocidad la manda el menu del equipo</b> (CAT RATE),
 /// no el cable: el de Jose esta a 38400. Por eso la velocidad no se negocia, se prueba.
-/// <c>DTR</c> y <c>RTS</c> van en cierto salvo que el PTT vaya por una de esas lineas.
+/// <para>
+/// <b><c>DTR</c> y <c>RTS</c> abren en falso.</b> Segun el manual CAT del FT-710 (2306-C,
+/// pags. 1-2) el <i>Enhanced</i> (CAT-1) es solo CAT, y el <i>Standard</i> (CAT-2) es el de
+/// «TX Controls (PTT control, CW Keying, Digital Mode Operation)»: ahi <c>RTS</c> y <c>DTR</c>
+/// ponen la radio en antena segun los menus RPTT SELECT y PC KEYING. El FT-710 no tiene menu
+/// «CAT RTS» y el CAT no usa control de flujo, asi que no hay motivo para levantarlas, y si
+/// uno muy bueno para no hacerlo: hasta el 15-11-2026 abrian en cierto, y abrir el
+/// <i>Standard</i> —al buscar el equipo o por tenerlo guardado— dejaba la radio transmitiendo.
+/// Solo los modelos cuyo perfil lo pide (<see cref="Yaesu.PerfilYaesu.LineasEnAltoAlAbrir"/>,
+/// por su menu CAT RTS) las siguen abriendo en cierto.
+/// </para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
 public sealed class CanalSerieCat : ICanalCat
@@ -25,6 +35,7 @@ public sealed class CanalSerieCat : ICanalCat
     private readonly int _baudios;
     private readonly TimeSpan _espera;
     private readonly ViaDePtt _viaDePtt;
+    private readonly bool _lineasEnAlto;
     private readonly ILogger _registro;
     private readonly SemaphoreSlim _puerta = new(1, 1);
 
@@ -36,23 +47,45 @@ public sealed class CanalSerieCat : ICanalCat
     /// <param name="espera">Lo que se espera por cada respuesta.</param>
     /// <param name="registro">Donde anotar el ir y venir.</param>
     /// <param name="viaDePtt">
-    /// Por donde se sube el PTT. Con <see cref="ViaDePtt.Cat"/> —lo de partida— las dos lineas
-    /// van en cierto, como pide el cable del equipo. Con <c>RTS</c> o <c>DTR</c>, la linea que
-    /// hace de PTT <b>abre en falso</b>: abrir el puerto no puede poner la radio en antena.
+    /// Por donde se sube el PTT. Con <c>RTS</c> o <c>DTR</c>, esa linea es la que se levanta
+    /// para transmitir; <b>siempre abre en falso</b>: abrir el puerto no puede poner la radio
+    /// en antena.
+    /// </param>
+    /// <param name="lineasEnAlto">
+    /// Abrir con <c>DTR</c> y <c>RTS</c> en cierto (salvo la que haga de PTT). Solo para los
+    /// modelos con menu CAT RTS, que no contestan sin <c>RTS</c>; en el FT-710, nunca.
     /// </param>
     public CanalSerieCat(
         string puerto,
         int baudios = 115200,
         TimeSpan? espera = null,
         ILogger? registro = null,
-        ViaDePtt viaDePtt = ViaDePtt.Cat)
+        ViaDePtt viaDePtt = ViaDePtt.Cat,
+        bool lineasEnAlto = false)
     {
         _puerto = puerto;
         _baudios = baudios;
         _espera = espera ?? TimeSpan.FromMilliseconds(350);
         _viaDePtt = viaDePtt;
+        _lineasEnAlto = lineasEnAlto;
         _registro = registro ?? NullLogger.Instance;
     }
+
+    /// <summary>
+    /// Como quedan <c>DTR</c> y <c>RTS</c> al abrir el puerto.
+    /// </summary>
+    /// <remarks>
+    /// Es una funcion aparte para poder probarla sin abrir un puerto de verdad. La linea que
+    /// hace de PTT abre siempre en falso; las demas, solo en cierto si el modelo lo pide.
+    /// </remarks>
+    /// <param name="viaDePtt">Por donde se sube el PTT.</param>
+    /// <param name="lineasEnAlto">El modelo pide las lineas en cierto (menu CAT RTS).</param>
+    /// <returns>El estado de cada linea al abrir.</returns>
+    internal static (bool Dtr, bool Rts) LineasAlAbrir(ViaDePtt viaDePtt, bool lineasEnAlto) =>
+        (Dtr: lineasEnAlto && viaDePtt != ViaDePtt.Dtr, Rts: lineasEnAlto && viaDePtt != ViaDePtt.Rts);
+
+    /// <summary>Como va a dejar este canal <c>DTR</c> y <c>RTS</c> al abrir.</summary>
+    internal (bool Dtr, bool Rts) LineasDeApertura => LineasAlAbrir(_viaDePtt, _lineasEnAlto);
 
     /// <inheritdoc />
     public bool Abierto => _serie is { IsOpen: true };
@@ -68,12 +101,13 @@ public sealed class CanalSerieCat : ICanalCat
         {
             CerrarSinCandado();
 
+            // Las lineas abren en falso (ver el comentario de la clase): un puerto que se abre
+            // con RTS o DTR levantados puede poner la radio en antena con solo abrirlo.
+            var (dtr, rts) = LineasDeApertura;
             var serie = new SerialPort(_puerto, _baudios, Parity.None, 8, StopBits.One)
             {
-                // Si el PTT va por una linea, esa linea abre en falso. Un puerto que se abre
-                // con el PTT levantado pone la radio en antena al arrancar el programa.
-                DtrEnable = _viaDePtt != ViaDePtt.Dtr,
-                RtsEnable = _viaDePtt != ViaDePtt.Rts,
+                DtrEnable = dtr,
+                RtsEnable = rts,
                 Handshake = Handshake.None,
                 ReadTimeout = (int)_espera.TotalMilliseconds,
                 WriteTimeout = (int)_espera.TotalMilliseconds,

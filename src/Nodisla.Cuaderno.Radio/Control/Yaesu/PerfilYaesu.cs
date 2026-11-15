@@ -29,6 +29,19 @@ public sealed class PerfilYaesu
     /// <summary>El modelo del catalogo.</summary>
     public required ModeloDeEquipo Modelo { get; init; }
 
+    /// <summary>
+    /// Abrir el puerto con <c>DTR</c> y <c>RTS</c> en cierto, como se hacia con todos hasta el
+    /// 15-11-2026.
+    /// </summary>
+    /// <remarks>
+    /// Falso en el FT-710: su manual CAT (2306-C, pags. 1-2) dice que por el puerto
+    /// <i>Standard</i> esas lineas son el control de transmision (RPTT SELECT, PC KEYING), y no
+    /// tiene menu CAT RTS. Los demas modelos —FT-991A, FT-891, FTDX…— traen un menu «CAT RTS»
+    /// que, activado, exige <c>RTS</c> en cierto para contestar: se les deja como estaban.
+    /// <b>Sin probar con esas radios</b>: en su puerto <i>Standard</i> tienen el mismo riesgo.
+    /// </remarks>
+    public bool LineasEnAltoAlAbrir { get; init; } = true;
+
     /// <summary>Cifras de la frecuencia en <c>FA</c>/<c>FB</c>/<c>IF</c>/<c>MR</c>: 9, u 8 en FTDX3000/1200/5000.</summary>
     public int CifrasDeFrecuencia { get; init; } = 9;
 

@@ -251,6 +251,9 @@ public sealed class ControlFt710
     /// <inheritdoc />
     public ViaDeControl Via => ViaDeControl.CatNativo;
 
+    /// <summary>El canal por el que habla este control. Solo para las pruebas.</summary>
+    internal ICanalCat Canal => _canal;
+
     /// <inheritdoc />
     public string NombreDelEquipo { get; private set; } = "Yaesu FT-710";
 
