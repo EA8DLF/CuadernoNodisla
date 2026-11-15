@@ -1,5 +1,6 @@
 using System.Windows.Controls;
 using System.Windows.Input;
+using Nodisla.Cuaderno.Ui.Soporte;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 
 namespace Nodisla.Cuaderno.Ui.Vistas;
@@ -28,30 +29,33 @@ public partial class FrontalFt710 : UserControl
 
     private VistaModeloEquipo? Equipo => DataContext as VistaModeloEquipo;
 
-    private async void AlGirarElDial(object sender, MouseWheelEventArgs e)
-    {
-        e.Handled = true;
-        if (Equipo is { } equipo) await equipo.GirarDialAsync(e.Delta > 0 ? 1 : -1).ConfigureAwait(true);
-    }
-
-    private async void AlTeclearElDial(object sender, KeyEventArgs e)
-    {
-        var muescas = e.Key switch
+    private async void AlGirarElDial(object sender, MouseWheelEventArgs e) =>
+        await ManejadorSeguro.EjecutarAsync(async () =>
         {
-            Key.Up or Key.Right => 1,
-            Key.Down or Key.Left => -1,
-            _ => 0,
-        };
+            e.Handled = true;
+            if (Equipo is { } equipo) await equipo.GirarDialAsync(e.Delta > 0 ? 1 : -1).ConfigureAwait(true);
+        });
 
-        if (muescas == 0 || Equipo is not { } equipo) return;
-        e.Handled = true;
-        await equipo.GirarDialAsync(muescas).ConfigureAwait(true);
-    }
+    private async void AlTeclearElDial(object sender, KeyEventArgs e) =>
+        await ManejadorSeguro.EjecutarAsync(async () =>
+        {
+            var muescas = e.Key switch
+            {
+                Key.Up or Key.Right => 1,
+                Key.Down or Key.Left => -1,
+                _ => 0,
+            };
 
-    private async void AlGirarLosPasos(object? sender, int muescas)
-    {
-        if (Equipo is { } equipo) await equipo.GirarPasosAsync(muescas).ConfigureAwait(true);
-    }
+            if (muescas == 0 || Equipo is not { } equipo) return;
+            e.Handled = true;
+            await equipo.GirarDialAsync(muescas).ConfigureAwait(true);
+        });
+
+    private async void AlGirarLosPasos(object? sender, int muescas) =>
+        await ManejadorSeguro.EjecutarAsync(async () =>
+        {
+            if (Equipo is { } equipo) await equipo.GirarPasosAsync(muescas).ConfigureAwait(true);
+        });
 
     // ── ⏻LOCK: corta = bloqueo, larga = encender/apagar ─────────────────
     private System.Windows.Threading.DispatcherTimer? _pulsacionLarga;

@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Nodisla.Cuaderno.Ui.Soporte;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 
 namespace Nodisla.Cuaderno.Ui.Vistas.Frontales;
@@ -56,10 +57,11 @@ public class FrontalDibujado : UserControl
     /// <summary>La tecla de encendido: enciende o apaga (apagar pide confirmación).</summary>
     /// <param name="sender">La tecla.</param>
     /// <param name="e">El clic.</param>
-    protected async void AlEncender(object sender, RoutedEventArgs e)
-    {
-        if (Equipo is { PuedeEncenderOApagar: true } equipo) await equipo.EncenderOApagarAsync().ConfigureAwait(true);
-    }
+    protected async void AlEncender(object sender, RoutedEventArgs e) =>
+        await ManejadorSeguro.EjecutarAsync(async () =>
+        {
+            if (Equipo is { PuedeEncenderOApagar: true } equipo) await equipo.EncenderOApagarAsync().ConfigureAwait(true);
+        });
 
     /// <summary>La rueda sobre la tecla del clarificador (RIT): ±1 paso por muesca.</summary>
     /// <param name="sender">La tecla.</param>
@@ -74,20 +76,22 @@ public class FrontalDibujado : UserControl
     /// <summary>Un mando de pasos o canales (STEP/MCH, M.CH): saltos de canal del dial.</summary>
     /// <param name="sender">El mando.</param>
     /// <param name="muescas">Muescas giradas.</param>
-    protected async void AlGirarLosPasos(object? sender, int muescas)
-    {
-        if (Equipo is { } equipo) await equipo.GirarPasosAsync(muescas).ConfigureAwait(true);
-    }
+    protected async void AlGirarLosPasos(object? sender, int muescas) =>
+        await ManejadorSeguro.EjecutarAsync(async () =>
+        {
+            if (Equipo is { } equipo) await equipo.GirarPasosAsync(muescas).ConfigureAwait(true);
+        });
 
     /// <summary>La rueda sobre un anillo de pasos dibujado (MPVD del FTDX): saltos de canal.</summary>
     /// <param name="sender">El anillo.</param>
     /// <param name="e">La rueda.</param>
-    protected async void AlGirarElAnillo(object sender, MouseWheelEventArgs e)
-    {
-        ArgumentNullException.ThrowIfNull(e);
-        e.Handled = true;
-        if (Equipo is { } equipo) await equipo.GirarPasosAsync(e.Delta > 0 ? 1 : -1).ConfigureAwait(true);
-    }
+    protected async void AlGirarElAnillo(object sender, MouseWheelEventArgs e) =>
+        await ManejadorSeguro.EjecutarAsync(async () =>
+        {
+            ArgumentNullException.ThrowIfNull(e);
+            e.Handled = true;
+            if (Equipo is { } equipo) await equipo.GirarPasosAsync(e.Delta > 0 ? 1 : -1).ConfigureAwait(true);
+        });
 
     private void Escuchar()
     {

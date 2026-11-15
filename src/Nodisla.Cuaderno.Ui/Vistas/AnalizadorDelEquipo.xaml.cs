@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Nodisla.Cuaderno.Idiomas;
 using Nodisla.Cuaderno.Ui.Recursos;
+using Nodisla.Cuaderno.Ui.Soporte;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 
 namespace Nodisla.Cuaderno.Ui.Vistas;
@@ -302,25 +303,27 @@ public partial class AnalizadorDelEquipo : UserControl
         Canvas.SetTop(CajaDelRaton, Math.Max(0, alto - 17));
     }
 
-    private async void AlHacerClic(object remitente, MouseButtonEventArgs e)
-    {
-        if (_modelo is not { ClicParaSintonizar: true, Sintonia: not null } modelo || Lienzo.ActualWidth <= 0) return;
-        e.Handled = true;
-        var fino = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
-        await modelo.ClicAsync(e.GetPosition(Lienzo).X / Lienzo.ActualWidth, fino).ConfigureAwait(true);
-    }
+    private async void AlHacerClic(object remitente, MouseButtonEventArgs e) =>
+        await ManejadorSeguro.EjecutarAsync(async () =>
+        {
+            if (_modelo is not { ClicParaSintonizar: true, Sintonia: not null } modelo || Lienzo.ActualWidth <= 0) return;
+            e.Handled = true;
+            var fino = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+            await modelo.ClicAsync(e.GetPosition(Lienzo).X / Lienzo.ActualWidth, fino).ConfigureAwait(true);
+        });
 
-    private async void AlGirarLaRueda(object remitente, MouseWheelEventArgs e)
-    {
-        if (_modelo is not { ClicParaSintonizar: true, Sintonia: not null } modelo || e.Delta == 0) return;
+    private async void AlGirarLaRueda(object remitente, MouseWheelEventArgs e) =>
+        await ManejadorSeguro.EjecutarAsync(async () =>
+        {
+            if (_modelo is not { ClicParaSintonizar: true, Sintonia: not null } modelo || e.Delta == 0) return;
 
-        // Se queda con la rueda: girarla encima del analizador mueve el VFO, no la pagina.
-        e.Handled = true;
-        var muescas = e.Delta / 120;
-        if (muescas == 0) muescas = Math.Sign(e.Delta);
-        await modelo.RuedaAsync(muescas, Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)).ConfigureAwait(true);
-        SeguirAlRaton(e.GetPosition(Lienzo).X);
-    }
+            // Se queda con la rueda: girarla encima del analizador mueve el VFO, no la pagina.
+            e.Handled = true;
+            var muescas = e.Delta / 120;
+            if (muescas == 0) muescas = Math.Sign(e.Delta);
+            await modelo.RuedaAsync(muescas, Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)).ConfigureAwait(true);
+            SeguirAlRaton(e.GetPosition(Lienzo).X);
+        });
 
     /// <summary>Un rotulo de spot con su raya: se crea una vez y se reutiliza.</summary>
     private sealed class RotuloDeSpot
