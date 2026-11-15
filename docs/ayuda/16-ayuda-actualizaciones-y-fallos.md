@@ -69,6 +69,22 @@ sale un formulario nuevo, con el entorno de ese momento.
 Si el informe es muy largo para la dirección, el cuerpo va al portapapeles y la página le dice
 que lo pegue.
 
+## Lo que el programa hace solo para cuidar sus datos
+
+- **Una sola copia abierta.** Si abre el programa estando ya abierto, no arranca otra copia:
+  trae al frente la que hay. Dos copias a la vez competían por el puerto de la radio, el audio
+  y los ajustes.
+- **Copia diaria del cuaderno.** Como mucho una vez al día, poco después de arrancar y en
+  segundo plano, se guarda una copia de `cuaderno.sqlite` en la carpeta `copias` de los datos
+  del programa. Se conservan las diez últimas (contando las que se hacen antes de una
+  migración).
+- **Ajustes protegidos.** Si `ajustes.json` no se puede leer, el programa no lo machaca: lo
+  aparta con el nombre `ajustes.json.dañado-<fecha>`, arranca con los ajustes de fábrica y se
+  lo dice en un cartel. Si un cambio no se puede guardar, queda como error en el registro.
+- **Cierre con plazo.** Al cerrar se libera la radio y el audio; si algo se queda colgado más
+  de cinco segundos, el programa sale igualmente, soltando antes el PTT.
+- **Registros.** Se conservan los de los últimos 31 días.
+
 ## Acerca de
 
 **Ayuda › Acerca de** enseña la versión instalada, la licencia, el repositorio y el contacto.

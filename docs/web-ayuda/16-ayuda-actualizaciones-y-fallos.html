@@ -72,6 +72,14 @@
 <li><strong>Abrir en GitHub para enviar</strong> abre en el navegador la p&#225;gina de nueva incidencia del repositorio con todo relleno. Se env&#237;a con su cuenta de GitHub; el programa no lleva ninguna clave y no manda nada por su cuenta.</li>
 </ol>
 <p>Si el informe es muy largo para la direcci&#243;n, el cuerpo va al portapapeles y la p&#225;gina le dice que lo pegue.</p>
+<h2 id="lo-que-el-programa-hace-solo-para-cuidar-sus-datos">Lo que el programa hace solo para cuidar sus datos</h2>
+<ul>
+<li><strong>Una sola copia abierta.</strong> Si abre el programa estando ya abierto, no arranca otra copia: trae al frente la que hay. Dos copias a la vez compet&#237;an por el puerto de la radio, el audio y los ajustes.</li>
+<li><strong>Copia diaria del cuaderno.</strong> Como mucho una vez al d&#237;a, poco despu&#233;s de arrancar y en segundo plano, se guarda una copia de <code>cuaderno.sqlite</code> en la carpeta <code>copias</code> de los datos del programa. Se conservan las diez &#250;ltimas (contando las que se hacen antes de una migraci&#243;n).</li>
+<li><strong>Ajustes protegidos.</strong> Si <code>ajustes.json</code> no se puede leer, el programa no lo machaca: lo aparta con el nombre <code>ajustes.json.da&#241;ado-&lt;fecha&gt;</code>, arranca con los ajustes de f&#225;brica y se lo dice en un cartel. Si un cambio no se puede guardar, queda como error en el registro.</li>
+<li><strong>Cierre con plazo.</strong> Al cerrar se libera la radio y el audio; si algo se queda colgado m&#225;s de cinco segundos, el programa sale igualmente, soltando antes el PTT.</li>
+<li><strong>Registros.</strong> Se conservan los de los &#250;ltimos 31 d&#237;as.</li>
+</ul>
 <h2 id="acerca-de">Acerca de</h2>
 <p><strong>Ayuda › Acerca de</strong> ense&#241;a la versi&#243;n instalada, la licencia, el repositorio y el contacto.</p>
 <figure><a href="capturas/ayuda-acerca-de.png"><img src="capturas/ayuda-acerca-de.png" alt="Acerca de: versi&#243;n, licencia GPL-3.0, repositorio y correo de contacto" loading="lazy"></a><figcaption>Acerca de: versi&#243;n, licencia GPL-3.0, repositorio y correo de contacto</figcaption></figure>

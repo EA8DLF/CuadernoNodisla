@@ -29,6 +29,12 @@ una décima de segundo).
 - Si la radio se apaga o se desenchufa el USB, el panel lo dice («No llega audio del equipo…» o
   «La escucha por el PC se ha cortado») y la escucha se cierra sola; vuelva a pulsar cuando el
   equipo esté otra vez encendido.
+- Con **«Escuchar al arrancar»** marcado (Configuración › Fonía), la escucha se abre sola al
+  iniciar el programa, esté en la pestaña que esté. Si la radio está apagada no se abre, y al
+  elegir después el dispositivo que faltaba se abre entonces. Si usted la para a mano, no se
+  vuelve a abrir sola al cambiar de pestaña.
+- Cuando no se puede escuchar o el PTT se niega, el motivo queda anotado en el registro del
+  programa (qué dispositivos hay, cuáles están elegidos y qué falta).
 
 ## Hablar: el PTT de fonía
 
@@ -158,8 +164,17 @@ para modificarlo, si tiene audio, se escucha igual. El audio es del cuaderno: no
 | Entrada del equipo | «Micrófono (USB Audio Device)», marcado «del equipo» |
 | Salida al equipo | «Altavoces (USB Audio Device)», marcado «del equipo» |
 
-Los del equipo se reconocen solos. Si algo está cruzado —el micro es la entrada del equipo, o los
-altavoces son la salida al equipo— el panel avisa en naranja.
+Los del equipo se reconocen solos y salen los primeros de la lista, aunque Windows guarde
+instancias viejas del mismo aparato de otros puertos USB. El panel avisa en naranja si algo
+está cruzado:
+
+- el micro es la entrada del equipo, o los altavoces son la salida al equipo;
+- **«Micrófono del PC» y «Entrada del equipo» son el mismo dispositivo**, o **«Altavoces del
+  PC» y «Salida al equipo» son el mismo**: así se oiría a usted mismo en vez de a la radio, y
+  su voz no llegaría al equipo;
+- la entrada elegida no es la del equipo habiendo una que sí lo es.
+
+Son avisos: no impiden transmitir.
 
 ![Configuración de la fonía](../capturas/ayuda/configuracion-fonia.png)
 
