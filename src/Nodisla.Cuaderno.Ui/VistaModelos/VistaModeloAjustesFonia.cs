@@ -50,7 +50,12 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
     private readonly Func<IReadOnlyList<DispositivoDeAudio>> _entradas;
     private readonly Func<IReadOnlyList<DispositivoDeAudio>> _salidas;
     private readonly Func<bool, string?> _idPorOmision;
+    private readonly Serilog.ILogger? _registro;
     private bool _cargando;
+    private string _dispositivosAnotados = string.Empty;
+
+    /// <summary>El registro: el que se dio al montar o, si no, el del programa.</summary>
+    private Serilog.ILogger Registro => _registro ?? Serilog.Log.Logger;
 
     /// <summary>Monta el apartado.</summary>
     /// <param name="ajustes">Ajustes del programa.</param>
@@ -61,17 +66,20 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
     /// Dispositivo de Windows por omision: verdadero para el de captura, falso para el de
     /// reproduccion. Nulo si no se sabe.
     /// </param>
+    /// <param name="registro">Donde se anota que dispositivos hay y cuales se eligen; nulo es el registro del programa.</param>
     public VistaModeloAjustesFonia(
         AjustesDelPrograma ajustes,
         string? carpeta,
         Func<IReadOnlyList<DispositivoDeAudio>> entradas,
         Func<IReadOnlyList<DispositivoDeAudio>> salidas,
-        Func<bool, string?>? idPorOmision = null)
+        Func<bool, string?>? idPorOmision = null,
+        Serilog.ILogger? registro = null)
     {
         ArgumentNullException.ThrowIfNull(ajustes);
         ArgumentNullException.ThrowIfNull(entradas);
         ArgumentNullException.ThrowIfNull(salidas);
 
+        _registro = registro;
         _ajustes = ajustes;
         _ajustes.Fonia ??= new AjustesDeFonia();
         _carpeta = carpeta;
@@ -263,6 +271,7 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
     public void RefrescarDispositivos()
     {
         var anterior = _cargando;
+        var antes = (Entrada: EntradaDelEquipo?.Id, Altavoces: Altavoces?.Id, Microfono: Microfono?.Id, Salida: SalidaAlEquipo?.Id);
         _cargando = true;
         try
         {
@@ -288,6 +297,20 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
 
         Guardar();
         AvisarDeDispositivos();
+
+        // Si la busqueda ha cambiado lo elegido —la radio se acaba de encender y aparece su
+        // codec, o se ha ido un dispositivo—, la fonia en marcha tiene que enterarse igual que
+        // si lo hubiera cambiado el operador. Un aviso por pareja, no uno por dispositivo.
+        if (anterior) return;
+        if (antes.Entrada != EntradaDelEquipo?.Id || antes.Altavoces != Altavoces?.Id)
+        {
+            Cambiado?.Invoke(this, nameof(EntradaDelEquipo));
+        }
+
+        if (antes.Microfono != Microfono?.Id || antes.Salida != SalidaAlEquipo?.Id)
+        {
+            Cambiado?.Invoke(this, nameof(Microfono));
+        }
     }
 
     private void Cargar()
