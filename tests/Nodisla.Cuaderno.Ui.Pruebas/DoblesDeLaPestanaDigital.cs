@@ -137,8 +137,17 @@ internal sealed class ModemApuntador : IModemPropio
         return Task.CompletedTask;
     }
 
+    /// <summary>Si se pone, la proxima emision falla con esto en vez de apuntarse (y se quita solo).</summary>
+    public Exception? FalloAlEmitir { get; set; }
+
     public Task EmitirAsync(string texto, int tonoHz, CancellationToken ct = default)
     {
+        if (FalloAlEmitir is { } fallo)
+        {
+            FalloAlEmitir = null;
+            return Task.FromException(fallo);
+        }
+
         Emisiones.Add((texto, _reloj.Ahora));
         return Task.CompletedTask;
     }

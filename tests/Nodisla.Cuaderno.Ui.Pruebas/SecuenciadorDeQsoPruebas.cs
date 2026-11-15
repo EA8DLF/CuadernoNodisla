@@ -73,6 +73,7 @@ public sealed class SecuenciadorDeQsoPruebas
     public void LlamandoCqSeContestaAlPrimeroSoloSiSePide()
     {
         var s = Nuevo();
+        s.LlamarAlPrimero = false; // de fabrica viene puesto: aqui se quita para ver la diferencia
         s.LlamarCq(Par + TimeSpan.FromSeconds(1)).Tx.Should().Be(6);
         s.Paridad.Should().Be(1);
         s.EmisionHecha(6);
@@ -93,11 +94,19 @@ public sealed class SecuenciadorDeQsoPruebas
         r.ContactoCompleto.Should().BeTrue();
         s.InformeRecibido.Should().Be(-5);
 
-        // Y con su 73 se acaba sin mandar nada mas.
-        s.EmisionHecha(4);
-        var fin = s.Procesar(Par + (8 * Periodo), [Oido("EA8DLF IZ2ABC 73")]);
-        fin.Tx.Should().BeNull();
-        fin.Parada.Should().Contain("terminado");
+        // Al salir el RR73 propio el contacto esta acabado (no se espera su 73), y como K1ABC
+        // tambien habia llamado y esperaba en la cola, se le atiende a el sin volver a CQ.
+        var fin = s.EmisionHecha(4);
+        fin.Parada.Should().BeNull();
+        fin.Tx.Should().Be(2);
+        s.DxCall.Should().Be("K1ABC");
+
+        // Con el ya no queda nadie: al salir su RR73 se para («1 QSO» de fabrica).
+        s.EmisionHecha(2);
+        s.Procesar(Par + (8 * Periodo), [Oido("EA8DLF K1ABC R-09")]).Tx.Should().Be(4);
+        var ultimo = s.EmisionHecha(4);
+        ultimo.Tx.Should().BeNull();
+        ultimo.Parada.Should().Contain("terminado");
         s.Activo.Should().BeFalse();
     }
 

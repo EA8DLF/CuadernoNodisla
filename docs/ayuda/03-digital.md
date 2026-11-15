@@ -140,12 +140,15 @@ envía; la marca redonda dice cuál es el siguiente. **Llamar CQ** empieza a lla
 para. Con **Secuencia automática**, al contestar alguien se pasa solo al mensaje que toca:
 
 - **Saltar Tx1** — al contestar a un CQ se empieza por el informe (Tx2).
-- **Llamar al primero** — llamando CQ, se contesta solo al primero que llame.
+- **Contestar al que llame** — llamando CQ, se elige solo a quien conteste y se le responde en
+  la siguiente ventana propia, sin tener que hacer doble clic (encendida de fábrica; antes se
+  llamaba «Llamar al primero»). Si llaman varios, se contesta al primero y los demás quedan
+  **en espera** (véase más abajo). Apagada, hay que elegir a mano a cada uno.
 - **AnsB4** — llamando CQ, no se elige automáticamente a quien ya se ha trabajado antes (se le
-  puede seguir contestando a mano con el doble clic; apagada de fábrica).
-- **1 QSO** — al completar un contacto que venía de llamar CQ con «Llamar al primero», se para
-  del todo en vez de seguir llamando CQ solo para el siguiente que conteste (encendida de
-  fábrica: es como se ha comportado siempre el programa).
+  puede seguir contestando a mano; apagada de fábrica).
+- **1 QSO** — al completar un contacto que venía de llamar CQ, y si no hay nadie en espera, se
+  para del todo en vez de seguir llamando CQ solo para el siguiente que conteste (encendida de
+  fábrica). Con alguien en espera se le contesta igualmente.
 - **Tx4 con RRR** — en vez de RR73.
 - **Parar tras** *n* **ciclos sin respuesta** — deja de insistir.
 
@@ -155,6 +158,47 @@ Tx** deja quieto el tono de transmisión (solo se mueve con `Mayús` + clic o es
 **Tx**). Los filtros **Sólo CQ**,
 **Sólo a mí** y **Sólo nuevos** aclaran la lista cuando la banda está llena, y **Vaciar** la
 limpia. **WAV…** decodifica una grabación.
+
+### Llamar CQ: a quién se contesta y la lista «En espera»
+
+Al pulsar **Llamar CQ** (o al mandar el Tx6 a mano) y con **Contestar al que llame** encendida,
+en cuanto alguien le llama —con su localizador o directamente con el informe— el programa lo pone
+de corresponsal y le contesta en la siguiente ventana propia. No hay que hacer nada.
+
+Si le llaman **varios**, se contesta al primero y los demás aparecen bajo la secuencia en la
+lista **«En espera»**, que solo se ve cuando hay alguien: una ficha por estación, con su
+indicativo y los dB con que se le oye, en el orden del turno. También entra en la lista quien
+llame mientras está usted a medio contacto.
+
+- **Al acabar un contacto** se pasa directamente al primero de la lista —con su informe, sin
+  volver a llamar CQ—, aunque **1 QSO** esté marcada. El contacto que acaba queda apuntado en el
+  cuaderno como siempre, con sus propios datos.
+- **Cuándo acaba un contacto.** Con **RR73** (lo normal), en cuanto sale su RR73: es «recibido y
+  adiós», no se espera el 73 del otro ni se repite a ciegas. Si el otro no lo copió y repite su
+  R+informe mientras usted llama CQ, se le vuelve a mandar el RR73 (y no se apunta dos veces).
+  Con **Tx4 con RRR** sí se espera su 73. Y si fue él quien cerró con RR73, acaba al salir el 73
+  de usted.
+- **Sin nadie en espera**: con **1 QSO** marcada se para; sin marcar, vuelve a llamar CQ.
+- **Clic en una ficha** contesta ya a esa estación, sin esperar a que le toque; la **✕** la quita
+  de la lista. Es la forma de elegir entre los que esperan sin salirse de la tanda.
+- **Sale sola de la lista** la estación que se pone a llamar o a contestar a otro, la que llama
+  CQ, la que lleva tres ventanas suyas seguidas sin oírse (90 segundos en FT8, 45 en FT4) y
+  aquella con la que ya se ha completado el contacto. Con **AnsB4**, las ya trabajadas se quedan
+  a la vista (en gris) pero no se les contesta solas: hace falta el clic.
+- **Si el corresponsal desaparece** a medio contacto y hay alguien en espera, se pasa al
+  siguiente en vez de pararse.
+- **Usted manda.** El **doble clic** en una línea de la lista de decodificaciones sigue eligiendo
+  a esa estación como siempre: vacía la espera y, al acabar, se para. **Detener**, cambiar de
+  modo y cambiar de banda o de frecuencia vacían la lista. Sin **Tx habilitado** no se transmite
+  nunca, aunque la lista se siga llenando.
+- Para pasar solo al siguiente hace falta que los contactos se apunten solos («Guardar solo en
+  el cuaderno el contacto completo»). Si los guarda usted a mano, al acabar cada uno se para
+  —para no borrarle de la pantalla un contacto sin guardar— y los que esperan siguen en la lista.
+- La lista de espera es de la operación **Normal**; en Fox, Hound y concursos no se usa.
+
+Lo que el receptor oiga de **su propia señal** (su CQ decodificado mientras transmite) sale en la
+lista con la marca «Propia», sin colores de novedad: no cuenta como estación oída, no se le puede
+contestar y no se manda a PSK Reporter.
 
 **Sincronizar**, con una decodificación elegida, ajusta fino dónde cree el módem que empiezan las
 ventanas a partir de su desfase. No toca el reloj del sistema — para eso está «Poner el reloj en

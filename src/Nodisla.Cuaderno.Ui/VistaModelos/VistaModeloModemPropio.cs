@@ -123,8 +123,14 @@ public sealed class FilaDeDecodificacionPropia
         ArgumentNullException.ThrowIfNull(decodificacion);
 
         Decodificacion = decodificacion;
-        Novedad = novedad ?? NovedadDelIndicativo.Desconocida;
         Mensaje = mensaje ?? InterpreteDeMensajes.Analizar(decodificacion.Texto);
+
+        // Lo que manda uno mismo y vuelve por el receptor (el propio CQ, oido al transmitir o
+        // por un monitor) no es una estacion oida: ni es «nuevo», ni entidad, ni cuadricula, ni
+        // «trabajado antes», lo diga quien lo diga.
+        var suyo = !decodificacion.Llamante.EsVacio ? decodificacion.Llamante.Valor : Mensaje.Llamante;
+        EsPropia = !miIndicativo.EsVacio && MismoIndicativo.Son(suyo, miIndicativo.Valor);
+        Novedad = EsPropia ? NovedadDelIndicativo.Desconocida : novedad ?? NovedadDelIndicativo.Desconocida;
 
         // OJO: «me llaman» NO es «el mensaje va dirigido a alguien». Casi todos los mensajes
         // de FT8 van dirigidos a alguien, y pintarlos todos de color acento dejaria la lista
@@ -210,6 +216,12 @@ public sealed class FilaDeDecodificacionPropia
 
     /// <summary>Es una linea de lo que se emitio, no una decodificacion.</summary>
     public bool EsTx { get; }
+
+    /// <summary>
+    /// Es una decodificacion de la señal propia: el receptor ha oido lo que uno mismo emitia. No
+    /// cuenta como estacion oida ni se le puede contestar.
+    /// </summary>
+    public bool EsPropia { get; }
 
     /// <summary>El indicativo seria nuevo en el cuaderno.</summary>
     public bool EsNuevo => Novedad.IndicativoNuevo;
@@ -304,6 +316,50 @@ public sealed class FilaDeCazador
     public int CiclosSinRespuesta { get; }
 }
 
+/// <summary>Uno de los que esperan en la cola del CQ, tal y como se ve en la lista «En espera».</summary>
+/// <remarks>
+/// Igual que <see cref="FilaDeCazador"/>, es una foto y no un objeto vivo: la lista se rehace
+/// entera cada vez que la cola cambia.
+/// </remarks>
+public sealed class FilaDeLlamante
+{
+    /// <summary>Monta la fila.</summary>
+    /// <param name="llamante">El que espera.</param>
+    /// <param name="turno">Su puesto en la cola, empezando por 1.</param>
+    public FilaDeLlamante(LlamanteEnEspera llamante, int turno)
+    {
+        ArgumentNullException.ThrowIfNull(llamante);
+        Indicativo = llamante.Indicativo;
+        Localizador = llamante.Localizador;
+        Turno = turno;
+        Decibelios = llamante.Decibelios.ToString("+00;-00;+00", CultureInfo.InvariantCulture);
+        Texto = $"{Indicativo} {Decibelios}";
+        TrabajadoAntes = llamante.TrabajadoAntes;
+        Hora = llamante.OidoEn.UtcDateTime.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>Su indicativo.</summary>
+    public string Indicativo { get; }
+
+    /// <summary>Su localizador, si lo ha dicho.</summary>
+    public string Localizador { get; }
+
+    /// <summary>Su puesto en la cola, empezando por 1.</summary>
+    public int Turno { get; }
+
+    /// <summary>Con cuanta señal se le oyo la ultima vez, con signo.</summary>
+    public string Decibelios { get; }
+
+    /// <summary>Indicativo y señal, que es lo que se lee en la lista.</summary>
+    public string Texto { get; }
+
+    /// <summary>Ya esta en el cuaderno.</summary>
+    public bool TrabajadoAntes { get; }
+
+    /// <summary>Hora UTC de la ventana en la que se le oyo por ultima vez.</summary>
+    public string Hora { get; }
+}
+
 /// <summary>
 /// El modem propio de modos digitales en pantalla: cascada, decodificaciones, reloj y la
 /// secuencia del contacto.
@@ -335,6 +391,13 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
     /// <summary>En hound se llama por encima de esto, por regla.</summary>
     public const int TonoMinimoDeHound = 1000;
+
+    /// <summary>
+    /// Cuanto tiene que moverse el dial, en hercios, para dar por cambiada la frecuencia y vaciar
+    /// la cola de los que esperaban. Medio kilohercio: por debajo es un retoque (RIT, deriva del
+    /// CAT), no irse a otro sitio.
+    /// </summary>
+    public const long CambioDeDialQueVaciaLaCola = 500;
 
     /// <summary>Cada cuanto se relee el nivel de entrada para el medidor.</summary>
     private static readonly TimeSpan RitmoDelMedidor = TimeSpan.FromMilliseconds(150);
@@ -529,7 +592,9 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         _secuenciador.LlamarAlPrimero = _llamarAlPrimero;
         _secuenciador.AnsB4 = _ansB4;
         _secuenciador.UnSoloQso = _unSoloQso;
+        _secuenciador.Tx4ConRrr = _tx4ConRrr;
         _secuenciador.CiclosSinRespuesta = _ciclosSinRespuesta;
+        _secuenciador.Cola.Cambiada += (_, _) => ActualizarLosQueEsperan();
 
         _secuenciadorDeFox.Periodo = DescripcionDelModo.Periodo(_modo);
         ActualizarParametrosDeFoxParaElModo(_modo);
@@ -613,6 +678,15 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
     /// <summary>Los cazadores en curso del pileup de fox, de menor a mayor tono.</summary>
     public ObservableCollection<FilaDeCazador> Cazadores { get; } = [];
+
+    /// <summary>
+    /// Los que han contestado al CQ y esperan a que se les atienda, por orden de turno. La lleva
+    /// la secuencia (<see cref="SecuenciadorDeQso.Cola"/>); esto es solo lo que se pinta.
+    /// </summary>
+    public ObservableCollection<FilaDeLlamante> EnEspera { get; } = [];
+
+    /// <summary>Hay alguien esperando: la lista «En espera» solo se ve entonces.</summary>
+    public bool HayEnEspera => EnEspera.Count > 0;
 
     /// <summary>Los modos que sabe hacer el modem, con su periodo.</summary>
     public IReadOnlyList<Opcion<ModoDelModem>> Modos { get; }
@@ -968,8 +1042,12 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     [ObservableProperty]
     private bool _saltarTx1;
 
+    /// <summary>
+    /// Llamando CQ, elegir solo a quien conteste y contestarle; si son varios, al primero, y los
+    /// demas a la lista «En espera». De fabrica, puesto.
+    /// </summary>
     [ObservableProperty]
-    private bool _llamarAlPrimero;
+    private bool _llamarAlPrimero = true;
 
     /// <summary>
     /// «AnsB4»: llamando CQ con <see cref="LlamarAlPrimero"/>, no elegir automaticamente a quien
@@ -1291,6 +1369,9 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         // eligio el operador. Lo que siga al dial de verdad (el panel de entrada, el bandmap) no
         // pasa por aqui: esto es solo la idea que tiene el modem de donde esta trabajando.
         if (BypassDeCat) return;
+
+        // Otra banda u otra frecuencia: los que esperaban en la cola del CQ ya no estan ahi.
+        if (Math.Abs(frecuencia.Hercios - _dial.Hercios) > CambioDeDialQueVaciaLaCola) _secuenciador.OlvidarLaSesion();
 
         _dial = frecuencia;
         _dialRx = frecuenciaRx is { EsCero: false } rx && rx != frecuencia ? rx : null;
@@ -1718,6 +1799,12 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     public async Task PrepararRespuestaAsync()
     {
         if (DecodificacionElegida is not { } fila || fila.EsTx) return;
+
+        if (fila.EsPropia)
+        {
+            Aviso = Textos.T("Digital.Modem.Aviso.EsSuPropiaSenal");
+            return;
+        }
 
         var mensaje = fila.Mensaje;
         var suyo = mensaje.Llamante.Length > 0 ? mensaje.Llamante : fila.Indicativo;
@@ -2284,15 +2371,124 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         var salio = await EmitirTextoAsync(texto, tx).ConfigureAwait(true);
         if (!salio) return;
 
+        // El aviso del guardado («Guardado: EA1ABC 20m FT8») es lo que el operador quiere leer
+        // si justo despues la secuencia se para sola: que no lo tape el motivo de la parada.
+        var avisoDelGuardado = string.Empty;
         if (_guardarTrasElRr73 && tx is 4 or 5)
         {
             _guardarTrasElRr73 = false;
             GuardadoEnCurso = GuardarElContactoCompletoAsync();
             await GuardadoEnCurso.ConfigureAwait(true);
+            if (_contactoYaGuardado) avisoDelGuardado = Aviso;
         }
 
+        _secuenciador.PasarSoloAlSiguiente = SePuedePasarSoloAlSiguiente();
         var tras = _secuenciador.EmisionHecha(tx);
+
+        // El contacto que acaba ya esta guardado (arriba, con SUS datos, y esperando a que
+        // termine): solo ahora se toman los del siguiente de la cola.
+        if (tras.PasaA is not null) tras = CerrarElAnteriorYEmpezarElSiguiente(tras, null);
         AplicarLaDecision(tras);
+
+        if (avisoDelGuardado.Length > 0 && tras.Parada is not null) Informar(avisoDelGuardado);
+    }
+
+    /// <summary>
+    /// Al acabar un contacto nacido del CQ se puede pasar solo al siguiente de la cola: hace
+    /// falta que los contactos se apunten solos y que el que acaba, si esta completo, haya
+    /// quedado de verdad en el cuaderno.
+    /// </summary>
+    /// <remarks>
+    /// Pasar al siguiente pone sus datos en pantalla encima de los del anterior. Si el anterior
+    /// no esta guardado —porque el operador guarda a mano, o porque el guardado ha fallado (sin
+    /// dial no hay banda)—, eso seria perder un contacto hecho. Entonces no se pasa solo: se hace
+    /// lo de siempre, y los que esperan siguen en la lista para atenderlos con un clic.
+    /// </remarks>
+    private bool SePuedePasarSoloAlSiguiente() =>
+        RegistrarAlCompletar && (!ContactoCompleto || _contactoYaGuardado);
+
+    /// <summary>
+    /// La secuencia deja a un corresponsal y pasa a otro sin parar (<see cref="DecisionDelSecuenciador.PasaA"/>):
+    /// primero se cierra lo del que se deja <b>con sus datos</b>, y solo despues se toman los del nuevo.
+    /// </summary>
+    /// <param name="decision">Lo decidido por la secuencia, con <c>PasaA</c>.</param>
+    /// <param name="ventana">Ventana en la que se oyo al nuevo, si se sabe: es el inicio de su contacto.</param>
+    /// <returns>La decision, ya sin lo que aqui queda atendido.</returns>
+    private DecisionDelSecuenciador CerrarElAnteriorYEmpezarElSiguiente(DecisionDelSecuenciador decision, DateTimeOffset? ventana)
+    {
+        var anterior = Corresponsal;
+        var siguiente = decision.PasaA ?? string.Empty;
+
+        // 1. El que se deja. El contacto se compone en el acto, con lo que hay en pantalla ahora
+        //    mismo (GuardarElContactoCompletoAsync lo arma antes de su primera espera), asi que
+        //    lo que se cambie despues ya no le afecta.
+        if (decision.ContactoCompleto)
+        {
+            ContactoCompleto = true;
+            _guardarTrasElRr73 = false;
+            GuardadoEnCurso = GuardarElContactoCompletoAsync();
+        }
+        else if (_guardarTrasElRr73 && decision.AnteriorTerminado)
+        {
+            // Se esperaba el cierre propio para apuntarlo, pero el corresponsal ha cerrado antes.
+            _guardarTrasElRr73 = false;
+            GuardadoEnCurso = GuardarElContactoCompletoAsync();
+        }
+
+        // 2. El nuevo. Si es el mismo (no copio el RR73 y se le repite), no hay nada que limpiar:
+        //    su contacto sigue siendo el que ya esta apuntado.
+        if (!string.Equals(anterior, siguiente, StringComparison.Ordinal))
+        {
+            ContactoCompleto = false;
+            LocalizadorDelCorresponsal = string.Empty;
+            InformeRecibido = string.Empty;
+        }
+
+        RecogerLoQueDijoElDx();
+        if (!string.Equals(anterior, siguiente, StringComparison.Ordinal))
+        {
+            _inicioDelContacto = ventana;
+            Log.Information("Secuencia: se deja a {Anterior} y se atiende a {Siguiente}, que esperaba.", anterior, siguiente);
+        }
+
+        return decision with { ContactoCompleto = false, PasaA = null };
+    }
+
+    /// <summary>
+    /// Clic en uno de la lista «En espera»: se le contesta ya, sin esperar a que le toque. La
+    /// sesion sigue siendo la del CQ: al acabar con el se sigue con los demas.
+    /// </summary>
+    [RelayCommand]
+    public async Task AtenderAlLlamanteAsync(FilaDeLlamante? fila)
+    {
+        if (fila is null || EsBaliza || EsFox) return;
+
+        var decision = _secuenciador.AtenderDeLaCola(fila.Indicativo, Reloj.Ahora);
+        if (decision.PasaA is null) return;
+
+        decision = CerrarElAnteriorYEmpezarElSiguiente(decision, null);
+        AplicarLaDecision(decision);
+
+        if (!TxHabilitado && !IntentarHabilitarTx()) return;
+
+        Aviso = Textos.F("Digital.Modem.Aviso.Contestando", fila.Indicativo, TxSiguiente, ProximaVentanaTexto(_secuenciador.Paridad));
+        await EmitirSiEsSuVentanaAsync().ConfigureAwait(true);
+    }
+
+    /// <summary>Quita a uno de la lista «En espera»: no se le contestara solo.</summary>
+    [RelayCommand]
+    public void QuitarAlLlamante(FilaDeLlamante? fila)
+    {
+        if (fila is not null) _secuenciador.Cola.Quitar(fila.Indicativo);
+    }
+
+    /// <summary>Rehace la lista «En espera» con lo que lleva ahora la cola de la secuencia.</summary>
+    private void ActualizarLosQueEsperan()
+    {
+        EnEspera.Clear();
+        var turno = 0;
+        foreach (var llamante in _secuenciador.Cola.EnEspera) EnEspera.Add(new FilaDeLlamante(llamante, ++turno));
+        OnPropertyChanged(nameof(HayEnEspera));
     }
 
     private async Task<bool> EmitirTextoAsync(string texto, int tx)
@@ -2323,6 +2519,16 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             if (tx > 0 && HayContactoEnCurso) _inicioDelContacto ??= ventana;
             ApuntarEnElRegistro(ventana, "Tx", texto, 0, 0, TonoDeTransmision);
             return true;
+        }
+        catch (OperationCanceledException)
+        {
+            // Cancelar una emision (Detener, panico, cambio de modo a media ventana) no es un
+            // fallo: es lo que se ha pedido. Ni error en el registro ni el «A task was canceled.»
+            // en ingles a la vista; el estado queda igual de limpio que con un fallo de verdad.
+            Log.Information("Emisión del módem propio cancelada: {Texto}.", texto);
+            if (tx > 0) DetenerTx();
+            Informar(Textos.T("Digital.Modem.Aviso.EmisionCancelada"));
+            return false;
         }
         catch (Exception ex)
         {
@@ -2452,6 +2658,12 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
             Informar(Textos.F("Digital.Modem.Fox.Emitido", mensajes.Count));
         }
+        catch (OperationCanceledException)
+        {
+            // Igual que en el QSO de uno a uno: cancelar no es un fallo.
+            Log.Information("Emisión del pileup de fox cancelada.");
+            Informar(Textos.T("Digital.Modem.Aviso.EmisionCancelada"));
+        }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido emitir el pileup de fox con el módem propio.");
@@ -2578,6 +2790,15 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
                 ? decodificacion.Locator
                 : Locator.TryParse(mensaje.Locator, out var l) ? l : Locator.Vacio;
 
+            // La señal propia, oida por el receptor: se enseña en la lista (marcada como propia)
+            // y nada mas. No se mira si es «nueva», no llega a la secuencia —ni se elige ni hace
+            // cola— y no se manda a PSK Reporter como si se hubiera oido a alguien.
+            if (!mi.EsVacio && !llamante.EsVacio && MismoIndicativo.Son(llamante.Valor, mi.Valor))
+            {
+                filas.Add(new FilaDeDecodificacionPropia(decodificacion, null, mi, mensaje, tonoRx));
+                continue;
+            }
+
             var novedad = await _novedad.EvaluarAsync(llamante, locator, banda, modoAdif).ConfigureAwait(false);
             filas.Add(new FilaDeDecodificacionPropia(decodificacion, novedad, mi, mensaje, tonoRx));
             oidos.Add(new MensajeOido(mensaje, decodificacion.Decibelios, decodificacion.TonoHz, novedad.TrabajadoAntes));
@@ -2665,12 +2886,37 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
                 // que haya marcado el operador en cada ventana propia, como en WSJT-X.
                 if (SecuenciaAutomatica)
                 {
+                    _secuenciador.PasarSoloAlSiguiente = SePuedePasarSoloAlSiguiente();
                     var decision = _secuenciador.Procesar(ventana.VentanaUtc, oidos);
-                    var antes = Corresponsal;
-                    RecogerLoQueDijoElDx();
-                    if (HayContactoEnCurso && !string.Equals(antes, Corresponsal, StringComparison.Ordinal))
+
+                    if (decision.PasaA is { } siguiente)
                     {
-                        _inicioDelContacto = ventana.VentanaUtc;
+                        // Se deja a un corresponsal y se atiende a otro que esperaba: lo del que
+                        // se deja se cierra ANTES de tomar los datos del nuevo.
+                        var acabado = Corresponsal;
+                        decision = CerrarElAnteriorYEmpezarElSiguiente(decision, ventana.VentanaUtc);
+                        if (!string.Equals(acabado, siguiente, StringComparison.Ordinal))
+                        {
+                            Informar(Textos.F("Digital.Modem.Aviso.SiguienteEnEspera", siguiente));
+                        }
+                    }
+                    else
+                    {
+                        var antes = Corresponsal;
+                        RecogerLoQueDijoElDx();
+                        if (HayContactoEnCurso && !string.Equals(antes, Corresponsal, StringComparison.Ordinal))
+                        {
+                            _inicioDelContacto = ventana.VentanaUtc;
+
+                            // Otro corresponsal, elegido solo al contestar al CQ: lo que quedara
+                            // en pantalla del contacto anterior no es suyo.
+                            ContactoCompleto = false;
+                            if (_secuenciador.DxGrid.Length < 4) LocalizadorDelCorresponsal = string.Empty;
+                            if (_secuenciador.InformeRecibido is null && _secuenciador.IntercambioRecibido.Length == 0)
+                            {
+                                InformeRecibido = string.Empty;
+                            }
+                        }
                     }
 
                     AplicarLaDecision(decision);
@@ -2942,6 +3188,9 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     {
         if (value is null) return;
         _secuenciador.Operacion = value.Valor;
+
+        // La cola de espera es cosa de la operacion normal: en hound, fox y concursos no se usa.
+        _secuenciador.Cola.Vaciar();
         GenerarMensajes();
 
         // Cambiar de operacion con un QSO o un pileup a medias deja en marcha el secuenciador que
@@ -3024,7 +3273,11 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
 
     partial void OnCiclosSinRespuestaChanged(int value) => _secuenciador.CiclosSinRespuesta = Math.Clamp(value, 1, 100);
 
-    partial void OnTx4ConRrrChanged(bool value) => GenerarMensajes();
+    partial void OnTx4ConRrrChanged(bool value)
+    {
+        _secuenciador.Tx4ConRrr = value;
+        GenerarMensajes();
+    }
 
     partial void OnCqDirigidoChanged(string value) => GenerarMensajes();
 
@@ -3164,7 +3417,9 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     partial void OnFrecuenciaDeBypassMhzChanged(double value)
     {
         if (!BypassDeCat) return;
-        _dial = Frecuencia.DesdeMegahercios((decimal)Math.Max(0, value));
+        var fija = Frecuencia.DesdeMegahercios((decimal)Math.Max(0, value));
+        if (Math.Abs(fija.Hercios - _dial.Hercios) > CambioDeDialQueVaciaLaCola) _secuenciador.OlvidarLaSesion();
+        _dial = fija;
         if (_modem is not null) _modem.FrecuenciaDelDial = _dial;
         OnPropertyChanged(nameof(FrecuenciaDelModoTexto));
     }

@@ -661,10 +661,10 @@
     <value>Decodificaciones del módem propio</value>
   </data>
   <data name="Digital.Modem.LlamarAlPrimero" xml:space="preserve">
-    <value>Llamar al primero</value>
+    <value>Contestar al que llame</value>
   </data>
   <data name="Digital.Modem.LlamarAlPrimero.Ayuda" xml:space="preserve">
-    <value>Llamando CQ, se contesta solo al primero que llame</value>
+    <value>Llamando CQ, se elige solo a quien conteste y se le responde en la siguiente ventana propia. Si llaman varios, al primero; los demás quedan «En espera» y se les contesta por turno al acabar cada contacto. Quitada, hay que elegir a mano</value>
   </data>
   <data name="Digital.Modem.LlamarCq" xml:space="preserve">
     <value>Llamar CQ</value>
@@ -898,7 +898,7 @@
     <value>1 QSO</value>
   </data>
   <data name="Digital.Modem.UnSoloQso.Ayuda" xml:space="preserve">
-    <value>Al completar un contacto que venía de llamar CQ con «Llamar al primero», se para del todo en vez de seguir llamando CQ solo</value>
+    <value>Al completar un contacto que venía de llamar CQ, y si no hay nadie en espera, se para del todo en vez de seguir llamando CQ solo. Con alguien en espera se le contesta igualmente</value>
   </data>
   <data name="Digital.Modem.Ventana.Ayuda" xml:space="preserve">
     <value>Cuánto queda del periodo en curso antes de que cierre la ventana</value>
@@ -1211,5 +1211,35 @@
   </data>
   <data name="Digital.Modem.Transmision.Tune" xml:space="preserve">
     <value>Sonando un tono de ajuste (Tune)</value>
+  </data>
+  <data name="Digital.Modem.EnEspera" xml:space="preserve">
+    <value>En espera</value>
+  </data>
+  <data name="Digital.Modem.EnEspera.Ayuda" xml:space="preserve">
+    <value>Han contestado a su CQ y esperan turno, por orden de llegada. Al acabar cada contacto se contesta solo al primero. Clic en uno para contestarle ya; la ✕ lo quita de la lista</value>
+  </data>
+  <data name="Digital.Modem.EnEspera.Nombre" xml:space="preserve">
+    <value>Estaciones en espera de respuesta</value>
+  </data>
+  <data name="Digital.Modem.EnEspera.Atender.Nombre" xml:space="preserve">
+    <value>Contestar ya a {0}</value>
+  </data>
+  <data name="Digital.Modem.EnEspera.Quitar.Nombre" xml:space="preserve">
+    <value>Quitar a {0} de la espera</value>
+  </data>
+  <data name="Digital.Modem.Aviso.SiguienteEnEspera" xml:space="preserve">
+    <value>{0} esperaba su turno: se le contesta ahora.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.EsSuPropiaSenal" xml:space="preserve">
+    <value>Esa línea es su propia señal, oída por el receptor: no hay a quién contestar.</value>
+  </data>
+  <data name="Digital.Modem.Propia" xml:space="preserve">
+    <value>Propia</value>
+  </data>
+  <data name="Digital.Modem.Propia.Ayuda" xml:space="preserve">
+    <value>Es su propia señal, oída por el receptor. No cuenta como estación oída</value>
+  </data>
+  <data name="Digital.Modem.Aviso.EmisionCancelada" xml:space="preserve">
+    <value>Emisión cancelada.</value>
   </data>
 </root>
