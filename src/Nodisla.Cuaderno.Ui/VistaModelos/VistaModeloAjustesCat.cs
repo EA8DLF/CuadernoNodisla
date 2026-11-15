@@ -157,6 +157,13 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
     private readonly TimeSpan _topeDeBusqueda;
 
     /// <summary>
+    /// Puerto y velocidad del control que tiene puesto el programa: los ultimos aplicados. Hacen
+    /// falta para saber si una prueba va contra el mismo puerto que ya esta abierto.
+    /// </summary>
+    private string? _puertoPuesto;
+    private int _baudiosPuestos;
+
+    /// <summary>
     /// Lo que como mucho se pasa buscando el equipo antes de rendirse.
     /// </summary>
     /// <remarks>
@@ -193,6 +200,8 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
         _registro = registro ?? NullLogger.Instance;
         _montador = montador ?? MontarDeVerdadAsync;
         _topeDeBusqueda = topeDeBusqueda ?? TopeDeBusquedaPorOmision;
+        _puertoPuesto = ajustes.Equipo.Puerto;
+        _baudiosPuestos = ajustes.Equipo.Baudios;
 
         Vias =
         [
@@ -469,6 +478,31 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
 
         try
         {
+            // Un puerto serie no se abre dos veces. Si el programa ya esta conectado por el
+            // CAT nativo, montar otro control sobre ese mismo puerto no puede funcionar: la
+            // busqueda lo daba por perdido y acababa en otro puerto (el Standard del equipo, el
+            // 15-11-2026), o la prueba fallaba con «acceso denegado».
+            if (LaConexionDelProgramaEstorba(equipo))
+            {
+                if (!aplicar)
+                {
+                    // Probar no tira la conexion del operador: se cuenta lo que dice ella.
+                    ContarLaConexionAbierta();
+                    return;
+                }
+
+                // Aplicar va a cambiar el control de todas formas: se suelta antes el puerto
+                // para que la busqueda pueda mirarlo.
+                Parte = Textos.T("Ajustes.Equipo.Aplicando");
+                if (_vigilante.EnAntena)
+                {
+                    await _vigilante.SoltarYaAsync(MotivoDeSuelta.Cierre).ConfigureAwait(true);
+                }
+
+                await _conmutable.Actual.DesconectarAsync().ConfigureAwait(true);
+                _registro.LogInformation("Se cierra la conexión con el equipo para poder buscarlo por los puertos.");
+            }
+
             var montaje = await _montador(equipo, aviso, corte.Token).ConfigureAwait(true);
 
             // Lo encontrado se lleva a la pantalla y a los ajustes: el operador tiene que ver
@@ -510,6 +544,53 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
         {
             Ocupado = false;
         }
+    }
+
+    /// <summary>
+    /// Dice si lo que se va a probar o a buscar choca con el puerto que ya tiene abierto el
+    /// programa.
+    /// </summary>
+    /// <remarks>
+    /// Choca cuando el programa esta conectado por el CAT nativo y lo pedido es tambien CAT
+    /// nativo con la deteccion puesta (la busqueda abre el puerto del CAT) o sobre el mismo
+    /// puerto. Con otro puerto dicho a mano no choca, y se monta un control aparte como siempre.
+    /// </remarks>
+    private bool LaConexionDelProgramaEstorba(AjustesDeEquipo equipo)
+    {
+        var actual = _conmutable.Actual;
+        if (equipo.Via != ViaDeControl.CatNativo || actual.Via != ViaDeControl.CatNativo || !actual.Estado.Conectado)
+        {
+            return false;
+        }
+
+        return equipo.DetectarElPuerto
+            || string.IsNullOrWhiteSpace(_puertoPuesto)
+            || string.Equals(equipo.Puerto, _puertoPuesto, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>La «prueba» cuando el programa ya esta conectado: lo que dice la conexion abierta.</summary>
+    private void ContarLaConexionAbierta()
+    {
+        var control = _conmutable.Actual;
+        var estado = control.Estado;
+        var nombre = control is IEquipoAvanzado avanzado ? avanzado.NombreDelEquipo : Textos.T("Ajustes.Equipo.Generico");
+        var donde = string.IsNullOrWhiteSpace(_puertoPuesto)
+            ? string.Empty
+            : " " + Textos.F("Ajustes.Equipo.EnPuerto", _puertoPuesto, _baudiosPuestos);
+
+        if (!string.IsNullOrWhiteSpace(_puertoPuesto))
+        {
+            LlevarALaPantalla(_puertoPuesto, _baudiosPuestos);
+        }
+
+        Resultado = ResultadoDePrueba.Correcto;
+        Parte = Textos.F(
+            "Ajustes.Equipo.Contesta",
+            nombre,
+            donde,
+            TextoDeFrecuencia.Escribir(estado.Frecuencia),
+            estado.Modo.EsVacio ? "—" : estado.Modo.NombreUsual);
+        _registro.LogInformation("Prueba de conexión (sobre la conexión ya abierta, sin abrir otro puerto): {Parte}", Parte);
     }
 
     /// <summary>Abre, lee y cierra, sin tocar el control que esta usando el programa.</summary>
@@ -554,6 +635,8 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
         }
 
         await _conmutable.SustituirAsync(montaje.Control).ConfigureAwait(true);
+        _puertoPuesto = equipo.Puerto;
+        _baudiosPuestos = equipo.Baudios;
         RefrescarViaPuesta();
 
         var sinEquipo = equipo.Via != ViaDeControl.Ninguna && montaje.Control.Via == ViaDeControl.Ninguna;

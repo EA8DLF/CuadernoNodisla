@@ -113,13 +113,49 @@ public static class FabricaDeControlEquipo
     /// <param name="registro">Donde anotar.</param>
     /// <param name="ct">Testigo de cancelacion.</param>
     /// <returns>Lo encontrado, o nulo.</returns>
-    public static async Task<EquipoIdentificado?> BuscarEquipoAsync(
+    public static Task<EquipoIdentificado?> BuscarEquipoAsync(
         OpcionesDeRadio ajustes,
         IProgress<string>? aviso,
         ILogger? registro,
         CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(ajustes);
+
+        // Las lineas solo se levantan al buscar si el operador ha ELEGIDO un modelo que lo pide
+        // (menu CAT RTS). En automatico o con el FT-710, abren en falso: se abren puertos que
+        // no se sabe de quien son.
+        var lineasEnAlto = PerfilesYaesu.De(CatalogoDeModelos.Buscar(ajustes.Modelo)) is { LineasEnAltoAlAbrir: true };
+        return BuscarEquipoAsync(
+            ajustes,
+            aviso,
+            registro,
+            PuertosSerieDelSistema.Listar(),
+            AutodeteccionFt710.SondeadorReal(registro, lineasEnAlto),
+            ct);
+    }
+
+    /// <summary>
+    /// <see cref="BuscarEquipoAsync(OpcionesDeRadio, IProgress{string}?, ILogger?, CancellationToken)"/>
+    /// con los puertos y el sondeador dados, para poder probarlo sin tocar la maquina.
+    /// </summary>
+    /// <param name="ajustes">Ajustes de radio.</param>
+    /// <param name="aviso">Por donde se cuenta por donde va, o nulo.</param>
+    /// <param name="registro">Donde anotar.</param>
+    /// <param name="puertos">Los puertos de la maquina, con su descripcion.</param>
+    /// <param name="sondear">Como se prueba un puerto Yaesu de CAT nuevo.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>Lo encontrado, o nulo.</returns>
+    public static async Task<EquipoIdentificado?> BuscarEquipoAsync(
+        OpcionesDeRadio ajustes,
+        IProgress<string>? aviso,
+        ILogger? registro,
+        IReadOnlyList<PuertoSerieDeLaMaquina> puertos,
+        SondeadorDePuertos sondear,
+        CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(ajustes);
+        ArgumentNullException.ThrowIfNull(puertos);
+        ArgumentNullException.ThrowIfNull(sondear);
         var anotador = registro ?? NullLogger.Instance;
         var elegido = CatalogoDeModelos.Buscar(ajustes.Modelo);
         var puertoGuardado = ajustes.Ft710.Puerto;
@@ -147,28 +183,48 @@ public static class FabricaDeControlEquipo
         // de velocidad a la vez entre dos encendidos —de COM3 a 115200 a COM15 a 38400—. Se
         // prueba primero por donde estaba, que es lo rápido, y si ya no contesta se barre en vez
         // de darse por vencido.
-        if (!string.IsNullOrWhiteSpace(puertoGuardado))
+        // Pero la pista solo vale si es un puerto que la busqueda abriria: si lo guardado es el
+        // puerto Standard del equipo (el del control de transmision; pasaba tras la busqueda
+        // del 15-11-2026) y hay un Enhanced, no se abre.
+        var guardado = puertos.FirstOrDefault(p => string.Equals(p.Nombre, puertoGuardado, StringComparison.OrdinalIgnoreCase));
+        var laPistaVale = !string.IsNullOrWhiteSpace(puertoGuardado)
+            && (guardado is null || AutodeteccionFt710.PuertosCandidatos(puertos).Contains(guardado));
+        if (!string.IsNullOrWhiteSpace(puertoGuardado) && !laPistaVale)
+        {
+            anotador.LogInformation(
+                "El puerto guardado, {Puerto} ({Descripcion}), no es el del CAT: no se abre y se busca el equipo.",
+                puertoGuardado,
+                guardado?.Descripcion ?? "sin descripción");
+        }
+
+        if (laPistaVale)
         {
             aviso?.Report(Textos.F("Servicios.Radio.ProbandoPuerto", puertoGuardado, ajustes.Ft710.Baudios));
-            var dondeEstaba = await AutodeteccionFt710.ComprobarAsync(
-                puertoGuardado,
-                ajustes.Ft710.Baudios,
-                registro,
-                ct).ConfigureAwait(false);
-
-            if (dondeEstaba is not null)
+            var sonda = await sondear(puertoGuardado!, ajustes.Ft710.Baudios, ct).ConfigureAwait(false);
+            if (sonda.Identificador is not null)
             {
-                return Yaesu(dondeEstaba, perfilElegido);
+                return Yaesu(new EquipoEncontrado(puertoGuardado!, ajustes.Ft710.Baudios, sonda.Identificador), perfilElegido);
             }
 
-            anotador.LogInformation(
-                "Por {Puerto} a {Baudios} ya no contesta el equipo; se buscan todos los puertos.",
-                puertoGuardado,
-                ajustes.Ft710.Baudios);
+            if (sonda.SeAbrio)
+            {
+                anotador.LogInformation(
+                    "Por {Puerto} a {Baudios} ya no contesta el equipo; se buscan todos los puertos.",
+                    puertoGuardado,
+                    ajustes.Ft710.Baudios);
+            }
+            else
+            {
+                // No es que el equipo se haya ido: es que el puerto no se puede abrir. Antes
+                // esto se tomaba por «ya no contesta» y se acababa en otro puerto.
+                anotador.LogWarning(
+                    "{Puerto} no se puede abrir (lo tiene otro programa o ya no existe); se mira en los demás puertos del CAT.",
+                    puertoGuardado);
+            }
         }
 
         aviso?.Report(Textos.T("Servicios.Radio.BuscandoEquipo"));
-        var equipos = await AutodeteccionFt710.BuscarAsync(registro, ct).ConfigureAwait(false);
+        var equipos = await AutodeteccionFt710.BuscarEnAsync(puertos, sondear, registro, ct).ConfigureAwait(false);
         var yaesu = perfilElegido is not null
             ? equipos.FirstOrDefault(e => PerfilesYaesu.PorIdentificador(e.Identificador) == perfilElegido)
               ?? equipos.FirstOrDefault()
