@@ -1743,6 +1743,9 @@ Congratulazioni e 73,
   <data name="Servicios.Subidas.NoSeHaPodidoComprobar" xml:space="preserve">
     <value>Impossibile verificare {0}: {1}</value>
   </data>
+  <data name="Servicios.Subidas.Parada" xml:space="preserve">
+    <value>{0}: caricamento fermo. {1} Ci sono {2:N0} contatto/i in attesa; partiranno da soli appena sarà risolto.</value>
+  </data>
   <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
     <value>{0}: {1} collegamento/i da caricare.</value>
   </data>

@@ -41,7 +41,32 @@ public sealed record EstadoDeSubida(
     int Pendientes,
     int Fallidos,
     SemaforoDeSubida Semaforo,
-    string Texto);
+    string Texto)
+{
+    /// <summary>
+    /// Por que el servicio ha dejado de aceptar subidas (clave rechazada, sin suscripcion), o
+    /// nulo si no esta parado. Mientras dure no se reintenta nada.
+    /// </summary>
+    public string? Parada { get; init; }
+
+    /// <summary>El ultimo motivo de fallo de un contacto, o nulo si no ha fallado ninguno.</summary>
+    public string? UltimoError { get; init; }
+}
+
+/// <summary>Cuantos contactos del cuaderno estan en cada situacion respecto a un servicio.</summary>
+/// <param name="Medio">Servicio.</param>
+/// <param name="Total">Contactos del cuaderno (desde la fecha pedida, si se pidio una).</param>
+/// <param name="Subidos">Ya subidos.</param>
+/// <param name="Pendientes">En la cola, esperando turno o reintentando.</param>
+/// <param name="ConError">En la cola, con los reintentos automaticos agotados.</param>
+/// <param name="SinSubir">Ni subidos ni en la cola: los que habia antes de activar la subida.</param>
+public sealed record RecuentoDeSubida(
+    MedioDeConfirmacion Medio,
+    int Total,
+    int Subidos,
+    int Pendientes,
+    int ConError,
+    int SinSubir);
 
 /// <summary>Un contacto esperando a subir a un servicio.</summary>
 public sealed class ElementoDeCola
@@ -72,6 +97,12 @@ public sealed class ElementoDeCola
 
     /// <summary>Agoto los reintentos automaticos; solo se reintenta con «Subir ahora» o al arrancar.</summary>
     public bool Fallido { get; set; }
+
+    /// <summary>
+    /// Viene de «Subir los contactos anteriores» y no de haberlo registrado ahora. Es lo que
+    /// se quita al cancelar esa subida, sin tocar lo que se haya registrado entre tanto.
+    /// </summary>
+    public bool Anterior { get; set; }
 }
 
 /// <summary>
@@ -99,6 +130,18 @@ public sealed class ElementoDeCola
 /// los contactos se quedan esperando, la pastilla se pone roja con el motivo, y en cuanto se
 /// arregla salen solos.
 /// </para>
+/// <para>
+/// <b>Una clave rechazada para el servicio entero.</b> Si el servicio contesta que la clave no
+/// vale o que no tiene permiso (<see cref="ResultadoDeSubida.Parada"/>), sus contactos se
+/// quedan esperando sin gastar reintentos y la pastilla se pone roja con el motivo. Reintentar
+/// contacto a contacto con una clave mala no sube nada.
+/// </para>
+/// <para>
+/// <b>Los contactos de antes.</b> Solo entra solo en la cola lo que se registra con la subida
+/// ya activada. Lo que habia en el cuaderno se cuenta (<see cref="RecuentosAsync"/>) y se
+/// encola a peticion del operador (<see cref="EncolarAnterioresAsync"/>); sube por lotes, del
+/// mas viejo al mas nuevo, y se puede cancelar.
+/// </para>
 /// </remarks>
 public sealed class ColaDeSubidas : IDisposable
 {
@@ -110,6 +153,14 @@ public sealed class ColaDeSubidas : IDisposable
 
     /// <summary>Cada cuanto se vuelve a mirar si un servicio bloqueado ya se puede usar.</summary>
     public static readonly TimeSpan RevisionDeBloqueados = TimeSpan.FromMinutes(5);
+
+    /// <summary>
+    /// Respiro entre lote y lote de un mismo servicio. La guia de QRZ no fija un ritmo maximo;
+    /// es cortesia, para no mandar cientos de peticiones pegadas.
+    /// </summary>
+    public static readonly TimeSpan PausaEntreLotes = TimeSpan.FromSeconds(1);
+
+    private const int PaginaDelCuaderno = 500;
 
     private static readonly TimeSpan PrimeraEspera = TimeSpan.FromMinutes(1);
     private static readonly TimeSpan EsperaMaxima = TimeSpan.FromMinutes(60);
@@ -135,6 +186,7 @@ public sealed class ColaDeSubidas : IDisposable
     private readonly List<ElementoDeCola> _cola = [];
     private readonly System.Collections.Concurrent.ConcurrentDictionary<MedioDeConfirmacion, string> _bloqueos = new();
     private readonly System.Collections.Concurrent.ConcurrentDictionary<MedioDeConfirmacion, string> _ultimosErrores = new();
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<MedioDeConfirmacion, string> _paradas = new();
     private readonly object _senalCerrojo = new();
     private TaskCompletionSource _senal = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private CancellationTokenSource? _parar;
@@ -329,52 +381,249 @@ public sealed class ColaDeSubidas : IDisposable
     public async Task<int> ProcesarAsync(bool forzar = false, CancellationToken ct = default)
     {
         var subidos = 0;
+        var ahora = _ahora();
+        List<ElementoDeCola> tocan;
+        lock (_cola)
+        {
+            if (forzar)
+            {
+                foreach (var e in _cola.Where(e => e.Fallido))
+                {
+                    e.Fallido = false;
+                    e.Intentos = 0;
+                }
+            }
+            tocan = _cola.Where(e => !e.Fallido && (forzar || e.ProximoIntentoUtc <= ahora)).ToList();
+        }
+
+        foreach (var grupo in tocan.GroupBy(e => e.Medio))
+        {
+            // Por lotes, del contacto mas viejo al mas nuevo. El cerrojo se suelta entre lote
+            // y lote: asi un contacto que se registra durante una subida larga entra en la
+            // cola sin esperar a que acabe, el operador ve bajar los pendientes y cancelar
+            // tiene efecto al terminar el lote en marcha.
+            var lotes = grupo.OrderBy(e => e.InicioUtc).Chunk(TamanoDeLote(grupo.Key)).ToList();
+            for (var i = 0; i < lotes.Count; i++)
+            {
+                ct.ThrowIfCancellationRequested();
+                int delLote;
+                bool seguir;
+                await _cerrojo.WaitAsync(ct).ConfigureAwait(false);
+                try
+                {
+                    (delLote, seguir) = await SubirLoteAsync(grupo.Key, lotes[i], ct).ConfigureAwait(false);
+                    Guardar();
+                }
+                finally
+                {
+                    _cerrojo.Release();
+                }
+
+                subidos += delLote;
+                Avisar();
+                if (delLote > 0) CuadernoCambiado?.Invoke(this, EventArgs.Empty);
+                if (!seguir) break;
+                if (i < lotes.Count - 1) await _esperar(PausaEntreLotes, ct).ConfigureAwait(false);
+            }
+        }
+
+        if (tocan.Count == 0) Avisar();
+        return subidos;
+    }
+
+    /// <summary>Cuantos contactos se mandan de una vez a cada servicio.</summary>
+    /// <remarks>
+    /// QRZ admite un contacto por llamada (guia oficial: «inserts one record»), asi que su
+    /// lote es corto: es cada cuanto se guarda la cola y se refresca la pantalla. Los demas
+    /// suben un fichero por lote.
+    /// </remarks>
+    /// <param name="medio">Servicio.</param>
+    public static int TamanoDeLote(MedioDeConfirmacion medio) =>
+        medio == MedioDeConfirmacion.QrzCom ? 25 : 200;
+
+    /// <summary>
+    /// Sube un lote. Devuelve cuantos han subido y si tiene sentido seguir con el servicio.
+    /// </summary>
+    private async Task<(int Subidos, bool Seguir)> SubirLoteAsync(
+        MedioDeConfirmacion medio, IReadOnlyList<ElementoDeCola> lote, CancellationToken ct)
+    {
+        // Lo que se haya cancelado o subido mientras esperaba turno ya no esta en la cola.
+        List<ElementoDeCola> vivos;
+        lock (_cola) vivos = lote.Where(_cola.Contains).ToList();
+        if (vivos.Count == 0) return (0, true);
+
+        var servicio = Servicios().FirstOrDefault(s => s.Medio == medio);
+        if (servicio is null || !EstaActivado(servicio)) return (0, false);
+
+        if (MotivoDeBloqueo(servicio) is { } motivo)
+        {
+            _bloqueos[medio] = motivo;
+            return (0, false);
+        }
+        _bloqueos.TryRemove(medio, out _);
+
+        var bien = await SubirGrupoAsync(servicio, vivos, ct).ConfigureAwait(false);
+
+        // Un lote entero sin subir nada (sin red, servicio caido) no se arregla mandando el
+        // siguiente a continuacion: se deja para la proxima pasada, con sus esperas.
+        return (bien, bien > 0 && !_bloqueos.ContainsKey(medio));
+    }
+
+    /// <summary>
+    /// Quita la parada de un servicio y despierta a la cola: la clave ha cambiado o se ha
+    /// probado con exito, asi que lo que esperaba puede salir ya.
+    /// </summary>
+    /// <param name="medio">Servicio.</param>
+    public void Reanudar(MedioDeConfirmacion medio)
+    {
+        var habia = _paradas.TryRemove(medio, out _);
+        _bloqueos.TryRemove(medio, out _);
+        if (habia) Avisar();
+        Despertar();
+    }
+
+    /// <summary>
+    /// Cuenta, servicio por servicio, cuantos contactos del cuaderno estan subidos, en la cola,
+    /// con error o sin subir.
+    /// </summary>
+    /// <param name="desdeUtc">Contar solo los contactos desde esa fecha; nulo para todos.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    public async Task<IReadOnlyList<RecuentoDeSubida>> RecuentosAsync(
+        DateTimeOffset? desdeUtc = null, CancellationToken ct = default)
+    {
+        Dictionary<(long, MedioDeConfirmacion), bool> enCola;
+        lock (_cola)
+        {
+            enCola = _cola.GroupBy(e => (e.QsoId, e.Medio)).ToDictionary(g => g.Key, g => g.All(e => e.Fallido));
+        }
+
+        var total = 0;
+        var subidos = Medios.ToDictionary(m => m, _ => 0);
+        var pendientes = Medios.ToDictionary(m => m, _ => 0);
+        var conError = Medios.ToDictionary(m => m, _ => 0);
+
+        await foreach (var qso in RecorrerAsync(desdeUtc, ct).ConfigureAwait(false))
+        {
+            total++;
+            foreach (var medio in Medios)
+            {
+                if (enCola.TryGetValue((qso.Id, medio), out var fallido))
+                {
+                    if (fallido) conError[medio]++;
+                    else pendientes[medio]++;
+                }
+                else if (EstaSubido(qso, medio))
+                {
+                    subidos[medio]++;
+                }
+            }
+        }
+
+        return Medios
+            .Select(m => new RecuentoDeSubida(
+                m, total, subidos[m], pendientes[m], conError[m], total - subidos[m] - pendientes[m] - conError[m]))
+            .ToList();
+    }
+
+    /// <summary>
+    /// Mete en la cola los contactos del cuaderno que no estan subidos a ese servicio ni
+    /// esperando en la cola: los de antes de activar la subida.
+    /// </summary>
+    /// <remarks>
+    /// No sube nada por si mismo: los deja en la cola, que es la que sube por lotes, guarda lo
+    /// pendiente en disco y reintenta. Asi una subida de miles de contactos sobrevive a
+    /// cerrar el programa o a quedarse sin red a la mitad.
+    /// </remarks>
+    /// <param name="medio">Servicio.</param>
+    /// <param name="desdeUtc">Solo los contactos desde esa fecha; nulo para todos.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>Cuantos contactos han entrado en la cola.</returns>
+    public async Task<int> EncolarAnterioresAsync(
+        MedioDeConfirmacion medio, DateTimeOffset? desdeUtc = null, CancellationToken ct = default)
+    {
+        var entran = new List<long>();
         await _cerrojo.WaitAsync(ct).ConfigureAwait(false);
         try
         {
-            var ahora = _ahora();
-            List<ElementoDeCola> tocan;
-            lock (_cola)
+            await foreach (var qso in RecorrerAsync(desdeUtc, ct).ConfigureAwait(false))
             {
-                if (forzar)
+                if (qso.Id <= 0 || EstaSubido(qso, medio)) continue;
+                lock (_cola)
                 {
-                    foreach (var e in _cola.Where(e => e.Fallido))
+                    if (_cola.Any(e => e.QsoId == qso.Id && e.Medio == medio)) continue;
+                    _cola.Add(new ElementoDeCola
                     {
-                        e.Fallido = false;
-                        e.Intentos = 0;
-                    }
+                        QsoId = qso.Id,
+                        Medio = medio,
+                        Indicativo = qso.Call.Valor,
+                        InicioUtc = qso.InicioUtc,
+                        ProximoIntentoUtc = _ahora(),
+                        Anterior = true,
+                    });
                 }
-                tocan = _cola.Where(e => !e.Fallido && (forzar || e.ProximoIntentoUtc <= ahora)).ToList();
+                entran.Add(qso.Id);
             }
 
-            var servicios = Servicios();
-            foreach (var grupo in tocan.GroupBy(e => e.Medio))
-            {
-                ct.ThrowIfCancellationRequested();
-                var servicio = servicios.FirstOrDefault(s => s.Medio == grupo.Key);
-                if (servicio is null || !EstaActivado(servicio)) continue;
-
-                if (MotivoDeBloqueo(servicio) is { } motivo)
-                {
-                    _bloqueos[grupo.Key] = motivo;
-                    continue;
-                }
-                _bloqueos.TryRemove(grupo.Key, out _);
-
-                subidos += await SubirGrupoAsync(servicio, grupo.ToList(), ct).ConfigureAwait(false);
-            }
-
+            if (entran.Count == 0) return 0;
             Guardar();
+
+            // LoTW y eQSL llevan en el propio contacto la letra de «en cola».
+            if (medio is MedioDeConfirmacion.Lotw or MedioDeConfirmacion.Eqsl)
+            {
+                foreach (var id in entran) await MarcarAsync(id, [medio], subido: false, ct).ConfigureAwait(false);
+            }
         }
         finally
         {
             _cerrojo.Release();
         }
 
+        _log.LogInformation(
+            "{Servicio}: {Cuantos} contacto(s) anteriores puestos en la cola de subida.", NombreCorto(medio), entran.Count);
         Avisar();
-        if (subidos > 0) CuadernoCambiado?.Invoke(this, EventArgs.Empty);
-        return subidos;
+        CuadernoCambiado?.Invoke(this, EventArgs.Empty);
+        Despertar();
+        return entran.Count;
     }
+
+    /// <summary>
+    /// Cancela la subida de contactos anteriores a ese servicio: saca de la cola los que
+    /// faltaban. Lo ya subido, subido queda; lo registrado entre tanto sigue su curso.
+    /// </summary>
+    /// <param name="medio">Servicio.</param>
+    /// <returns>Cuantos contactos han salido de la cola.</returns>
+    public int CancelarAnteriores(MedioDeConfirmacion medio)
+    {
+        int quitados;
+        lock (_cola) quitados = _cola.RemoveAll(e => e.Medio == medio && e.Anterior);
+        if (quitados == 0) return 0;
+
+        Guardar();
+        _log.LogInformation(
+            "{Servicio}: cancelada la subida de contactos anteriores; {Cuantos} salen de la cola.", NombreCorto(medio), quitados);
+        Avisar();
+        return quitados;
+    }
+
+    private async IAsyncEnumerable<Qso> RecorrerAsync(
+        DateTimeOffset? desdeUtc,
+        [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct)
+    {
+        var criterio = new CriterioQso { DesdeUtc = desdeUtc, OrdenarPor = CampoDeOrden.Fecha, Descendente = false };
+        var desplazamiento = 0;
+        while (true)
+        {
+            ct.ThrowIfCancellationRequested();
+            var pagina = await _cuaderno.BuscarAsync(criterio, desplazamiento, PaginaDelCuaderno, ct).ConfigureAwait(false);
+            foreach (var qso in pagina.Elementos) yield return qso;
+            desplazamiento += pagina.Elementos.Count;
+            if (pagina.Elementos.Count < PaginaDelCuaderno) yield break;
+        }
+    }
+
+    private static bool EstaSubido(Qso qso, MedioDeConfirmacion medio) =>
+        qso.Confirmaciones.Any(c => c.Medio == medio
+            && c.Enviado is EstadoDeConfirmacion.Confirmado or EstadoDeConfirmacion.Verificado);
 
     /// <summary>Estado de cada servicio, para las pastillas y el apartado de Ajustes.</summary>
     public IReadOnlyList<EstadoDeSubida> Estados()
@@ -397,6 +646,7 @@ public sealed class ColaDeSubidas : IDisposable
 
             var activado = servicio is not null && EstaActivado(servicio);
             var bloqueo = servicio is not null && activado ? MotivoDeBloqueo(servicio) : null;
+            var parada = activado && bloqueo is null ? _paradas.GetValueOrDefault(medio) : null;
 
             SemaforoDeSubida semaforo;
             string texto;
@@ -412,6 +662,11 @@ public sealed class ColaDeSubidas : IDisposable
             {
                 semaforo = SemaforoDeSubida.Rojo;
                 texto = pendientes > 0 ? Textos.F("Servicios.Subidas.PendientesYBloqueo", nombre, pendientes, bloqueo) : bloqueo;
+            }
+            else if (parada is not null)
+            {
+                semaforo = SemaforoDeSubida.Rojo;
+                texto = Textos.F("Servicios.Subidas.Parada", nombre, parada, pendientes + fallidos);
             }
             else if (fallidos > 0)
             {
@@ -432,7 +687,11 @@ public sealed class ColaDeSubidas : IDisposable
                 texto = Textos.F("Servicios.Subidas.AlDia", nombre);
             }
 
-            estados.Add(new EstadoDeSubida(medio, nombre, activado, pendientes, fallidos, semaforo, texto));
+            estados.Add(new EstadoDeSubida(medio, nombre, activado, pendientes, fallidos, semaforo, texto)
+            {
+                Parada = parada,
+                UltimoError = error,
+            });
         }
         return estados;
     }
@@ -598,13 +857,33 @@ public sealed class ColaDeSubidas : IDisposable
             return 0;
         }
 
+        // El servicio ha dicho que no acepta mas (clave rechazada, sin suscripcion). No es
+        // culpa de ningun contacto: lo que no ha subido se queda esperando sin gastar
+        // reintentos, y el servicio queda parado hasta que cambie la clave.
+        if (resultado.Parada is { } parada)
+        {
+            if (!_paradas.TryGetValue(servicio.Medio, out var anterior) || anterior != parada)
+            {
+                _log.LogWarning("{Servicio}: subida parada. {Motivo}", servicio.Nombre, parada);
+            }
+            _paradas[servicio.Medio] = parada;
+            _bloqueos[servicio.Medio] = parada;
+        }
+        else
+        {
+            _paradas.TryRemove(servicio.Medio, out _);
+        }
+
         var bien = new List<long>();
         foreach (var qso in qsos)
         {
             var suyos = porClave[qso.ClaveNatural];
             if (resultado.Motivos.TryGetValue(qso.ClaveNatural, out var motivo))
             {
-                foreach (var e in suyos) Aplazar(e, motivo);
+                if (resultado.Parada is null)
+                {
+                    foreach (var e in suyos) Aplazar(e, motivo);
+                }
                 continue;
             }
 
@@ -615,7 +894,7 @@ public sealed class ColaDeSubidas : IDisposable
             bien.Add(qso.Id);
         }
 
-        if (resultado.Motivos.Count == 0) _ultimosErrores.TryRemove(servicio.Medio, out _);
+        if (resultado.Motivos.Count == 0 || resultado.Parada is not null) _ultimosErrores.TryRemove(servicio.Medio, out _);
         foreach (var id in bien)
         {
             await MarcarAsync(id, [servicio.Medio], subido: true, ct).ConfigureAwait(false);
@@ -795,5 +1074,6 @@ public sealed class ColaDeSubidas : IDisposable
         ProximoIntentoUtc = e.ProximoIntentoUtc,
         UltimoError = e.UltimoError,
         Fallido = e.Fallido,
+        Anterior = e.Anterior,
     };
 }

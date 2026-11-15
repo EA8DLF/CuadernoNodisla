@@ -1743,6 +1743,9 @@ Congratulations and 73,
   <data name="Servicios.Subidas.NoSeHaPodidoComprobar" xml:space="preserve">
     <value>Could not check {0}: {1}</value>
   </data>
+  <data name="Servicios.Subidas.Parada" xml:space="preserve">
+    <value>{0}: upload stopped. {1} {2:N0} contact(s) are waiting; they will go out by themselves once this is fixed.</value>
+  </data>
   <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
     <value>{0}: {1} QSO(s) waiting to be uploaded.</value>
   </data>

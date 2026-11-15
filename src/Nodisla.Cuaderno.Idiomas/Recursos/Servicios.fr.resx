@@ -1743,6 +1743,9 @@ Félicitations et 73,
   <data name="Servicios.Subidas.NoSeHaPodidoComprobar" xml:space="preserve">
     <value>Impossible de vérifier {0} : {1}</value>
   </data>
+  <data name="Servicios.Subidas.Parada" xml:space="preserve">
+    <value>{0} : envoi arrêté. {1} {2:N0} contact(s) en attente ; ils partiront seuls dès que ce sera réglé.</value>
+  </data>
   <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
     <value>{0} : {1} QSO en attente d'envoi.</value>
   </data>

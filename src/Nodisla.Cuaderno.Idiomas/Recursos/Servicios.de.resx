@@ -1743,6 +1743,9 @@ Herzlichen Glückwunsch und 73,
   <data name="Servicios.Subidas.NoSeHaPodidoComprobar" xml:space="preserve">
     <value>{0} konnte nicht geprüft werden: {1}</value>
   </data>
+  <data name="Servicios.Subidas.Parada" xml:space="preserve">
+    <value>{0}: Upload angehalten. {1} {2:N0} Kontakt(e) warten; sie gehen von selbst hinaus, sobald das behoben ist.</value>
+  </data>
   <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
     <value>{0}: {1} Verbindung(en) warten auf den Upload.</value>
   </data>

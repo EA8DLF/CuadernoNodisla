@@ -1754,6 +1754,9 @@ Enhorabuena y 73,
   <data name="Servicios.Subidas.NoSeHaPodidoComprobar" xml:space="preserve">
     <value>No se ha podido comprobar {0}: {1}</value>
   </data>
+  <data name="Servicios.Subidas.Parada" xml:space="preserve">
+    <value>{0}: subida parada. {1} Hay {2:N0} contacto(s) esperando; saldrán solos en cuanto se arregle.</value>
+  </data>
   <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
     <value>{0}: {1} contacto(s) pendiente(s) de subir.</value>
   </data>

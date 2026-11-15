@@ -227,9 +227,16 @@ public sealed class ServicioQrzCuaderno : IServicioQsl
                     motivos[qso.ClaveNatural] = Motivo(respuesta);
                 }
             }
-            catch (Exception ex) when (ex is RespuestaDelServicioException or ServicioNoDisponibleException)
+            catch (RespuestaDelServicioException ex)
             {
                 motivos[qso.ClaveNatural] = ex.Message;
+            }
+            catch (ServicioNoDisponibleException ex)
+            {
+                // Sin red, o QRZ caido: los que quedan van a fallar igual y cada uno con sus
+                // reintentos. Se deja aqui; la cola los vuelve a traer mas tarde.
+                for (var i = hechos; i < qsos.Count; i++) motivos[qsos[i].ClaveNatural] = ex.Message;
+                break;
             }
 
             hechos++;

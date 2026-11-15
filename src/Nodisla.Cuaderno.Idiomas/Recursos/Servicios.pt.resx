@@ -1743,6 +1743,9 @@ Parabéns e 73,
   <data name="Servicios.Subidas.NoSeHaPodidoComprobar" xml:space="preserve">
     <value>Não foi possível verificar o {0}: {1}</value>
   </data>
+  <data name="Servicios.Subidas.Parada" xml:space="preserve">
+    <value>{0}: envio parado. {1} Há {2:N0} contacto(s) à espera; saem sozinhos assim que isto se resolver.</value>
+  </data>
   <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
     <value>{0}: {1} contacto(s) por enviar.</value>
   </data>
