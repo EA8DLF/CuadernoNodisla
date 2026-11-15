@@ -419,9 +419,12 @@ public sealed class ColaDeLlamantesCqPruebas
         s.Procesar(Suya(3), [Oido("EA8DLF PY2ZZZ R-05"), Oido("EA8DLF K1ABC FN42")]).Tx.Should().Be(4);
         s.Cola.EnEspera.Should().BeEmpty("un contacto elegido a mano no es del CQ: no hace cola");
 
-        // Y como siempre en un contacto a mano: se espera su 73 y con el se para.
-        s.EmisionHecha(4).Should().Be(DecisionDelSecuenciador.Nada);
-        s.Procesar(Suya(4), [Oido("EA8DLF PY2ZZZ 73")]).Parada.Should().NotBeNull();
+        // El contacto a mano tambien acaba al salir el RR73 propio, y con el se para: ni cola
+        // ni CQ, aunque «1 QSO» este quitado.
+        var fin = s.EmisionHecha(4);
+        fin.Parada.Should().NotBeNull();
+        fin.Tx.Should().BeNull();
+        fin.PasaA.Should().BeNull();
         s.Activo.Should().BeFalse();
     }
 

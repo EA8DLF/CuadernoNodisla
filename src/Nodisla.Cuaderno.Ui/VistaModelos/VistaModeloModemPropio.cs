@@ -2408,6 +2408,34 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         RegistrarAlCompletar && (!ContactoCompleto || _contactoYaGuardado);
 
     /// <summary>
+    /// La secuencia, parada tras cerrar un contacto con el RR73 propio, pide volver a emitirlo
+    /// porque el corresponsal repite su R+informe (<see cref="DecisionDelSecuenciador.ReanudaTx"/>):
+    /// se vuelve a habilitar Tx para esa emision, y al salir se para otra vez.
+    /// </summary>
+    /// <remarks>
+    /// No pasa por la pregunta: es la continuacion del contacto que el operador ya autorizo, a lo
+    /// sumo unas pocas emisiones y en un plazo corto (<see cref="SecuenciadorDeQso.VentanasAtentoALaRepeticion"/>
+    /// y <see cref="SecuenciadorDeQso.ReenviosMaximosDelRr73"/>). Si pasa por el pestillo y por
+    /// todo lo demas que impide emitir (SWL, modo apagado, sin salida de audio), y exige que el
+    /// contacto en pantalla siga siendo el de ese corresponsal. «Detener» lo anula antes de
+    /// llegar aqui. Si no se puede, la secuencia se deja parada del todo.
+    /// </remarks>
+    /// <returns>Si Tx ha quedado habilitado para repetir el RR73.</returns>
+    private bool ReanudarTxParaRepetirElRr73(string? indicativo)
+    {
+        if (SePuedeEmitir && indicativo is not null && string.Equals(Corresponsal, indicativo, StringComparison.Ordinal))
+        {
+            Log.Information("Secuencia: {Indicativo} repite su R+informe; se le repite el RR73.", indicativo);
+            TxHabilitado = true;
+            return true;
+        }
+
+        _secuenciador.Parar();
+        NotificarEstadoDeLaSecuencia();
+        return false;
+    }
+
+    /// <summary>
     /// La secuencia deja a un corresponsal y pasa a otro sin parar (<see cref="DecisionDelSecuenciador.PasaA"/>):
     /// primero se cierra lo del que se deja <b>con sus datos</b>, y solo despues se toman los del nuevo.
     /// </summary>
@@ -2712,6 +2740,14 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
         if (decision.Parada is { } motivo)
         {
             TxHabilitado = false;
+
+            // El vigilante ha parado con el contacto ya hecho (salio el RRR y no llego su 73): si
+            // ademas esta apuntado, se dice, para que nadie crea que se ha perdido.
+            if (decision.CompletoSinSu73 && _contactoYaGuardado)
+            {
+                motivo = Textos.F("Digital.Modem.Aviso.CompletoGuardadoSinSu73", Corresponsal, _secuenciador.EmisionesSinNoticias);
+            }
+
             Aviso = decision.ContactoCompleto ? Aviso : motivo;
 
             // Se esperaba el RR73 propio, pero el corresponsal ha cerrado antes: tambien vale.
@@ -2889,6 +2925,16 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
                     _secuenciador.PasarSoloAlSiguiente = SePuedePasarSoloAlSiguiente();
                     var decision = _secuenciador.Procesar(ventana.VentanaUtc, oidos);
 
+                    // La secuencia estaba parada y quiere repetir el RR73 a quien no lo copio:
+                    // solo si de verdad se puede volver a emitir. Si no, como si no hubiera
+                    // decidido nada.
+                    var repiteElRr73 = decision.ReanudaTx;
+                    if (repiteElRr73 && !ReanudarTxParaRepetirElRr73(decision.PasaA))
+                    {
+                        repiteElRr73 = false;
+                        decision = DecisionDelSecuenciador.Nada;
+                    }
+
                     if (decision.PasaA is { } siguiente)
                     {
                         // Se deja a un corresponsal y se atiende a otro que esperaba: lo del que
@@ -2898,6 +2944,10 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
                         if (!string.Equals(acabado, siguiente, StringComparison.Ordinal))
                         {
                             Informar(Textos.F("Digital.Modem.Aviso.SiguienteEnEspera", siguiente));
+                        }
+                        else if (repiteElRr73)
+                        {
+                            Informar(Textos.F("Digital.Modem.Aviso.RepiteElRr73", siguiente));
                         }
                     }
                     else

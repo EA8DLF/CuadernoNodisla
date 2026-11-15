@@ -441,6 +441,12 @@
   <data name="Digital.Modem.Aviso.RelojMal" xml:space="preserve">
     <value>Mit dieser Uhr wird nicht gesendet: Es würde außerhalb des Fensters gesendet und andere gestört. Stellen Sie zuerst die Uhr.</value>
   </data>
+  <data name="Digital.Modem.Aviso.CompletoGuardadoSinSu73" xml:space="preserve">
+    <value>Verbindung mit {0} komplett und im Logbuch gespeichert; sein 73 kam nach {1} Aussendungen nicht an.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.RepiteElRr73" xml:space="preserve">
+    <value>{0} hat das RR73 nicht aufgenommen: es wird wiederholt.</value>
+  </data>
   <data name="Digital.Modem.Aviso.SeGuardaTrasRr73" xml:space="preserve">
     <value>Verbindung mit {0} komplett: wird gespeichert, sobald RR73 gesendet ist.</value>
   </data>
@@ -1130,6 +1136,9 @@
   </data>
   <data name="Digital.Reloj.NoSePudoPonerEnHora" xml:space="preserve">
     <value>Uhr ließ sich nicht stellen: {0}</value>
+  </data>
+  <data name="Digital.Secuencia.CompletoSinSu73" xml:space="preserve">
+    <value>Verbindung mit {0} komplett: sein 73 kam nach {1} Aussendungen nicht an.</value>
   </data>
   <data name="Digital.Secuencia.ContactoTerminado" xml:space="preserve">
     <value>Verbindung beendet.</value>

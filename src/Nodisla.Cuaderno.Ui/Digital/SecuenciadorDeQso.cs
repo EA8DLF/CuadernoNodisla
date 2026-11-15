@@ -34,6 +34,21 @@ public readonly record struct DecisionDelSecuenciador(
     /// </summary>
     public bool AnteriorTerminado { get; init; }
 
+    /// <summary>
+    /// La secuencia estaba parada tras cerrar un contacto con el RR73 propio y se vuelve a poner
+    /// en marcha sola, una emision, porque el corresponsal no lo copio y repite su R+informe.
+    /// Quien recibe la decision tiene que volver a habilitar Tx (si el pestillo sigue abierto)
+    /// para que ese RR73 salga. Va siempre con <see cref="PasaA"/>.
+    /// </summary>
+    public bool ReanudaTx { get; init; }
+
+    /// <summary>
+    /// Con <c>Parada</c>: el contacto estaba completo y el cierre propio (RRR, o RR73 en concurso)
+    /// salio, pero el 73 del otro no ha llegado. No es un contacto perdido: es un contacto hecho
+    /// al que le falta la despedida.
+    /// </summary>
+    public bool CompletoSinSu73 { get; init; }
+
     /// <summary>No hay nada que hacer.</summary>
     public static DecisionDelSecuenciador Nada => new(null, null, false, null);
 }
@@ -91,6 +106,25 @@ public sealed class SecuenciadorDeQso
     public bool Tx4ConRrr { get; set; }
 
     /// <summary>
+    /// Ventanas del corresponsal durante las que, con la secuencia ya <b>parada</b> tras cerrar un
+    /// contacto con el RR73 propio, se sigue atento a que repita su R+informe (no copio el RR73)
+    /// para volver a mandarselo. Tres, lo mismo que se le perdona a quien espera en la cola
+    /// (<see cref="ColaDeLlamantes.VentanasSinOirloDeFabrica"/>): quien no copio el RR73 repite en
+    /// su ventana siguiente, y dos mas cubren una decodificacion perdida. En FT8 son 90 segundos
+    /// desde el RR73; en FT4, 45. Pasadas, la secuencia parada ya no vuelve a emitir sola.
+    /// </summary>
+    public const int VentanasAtentoALaRepeticion = 3;
+
+    /// <summary>
+    /// Veces que, estando parada, la secuencia se vuelve a poner en marcha sola para repetir el
+    /// RR73 de un mismo contacto. Cada repeticion vuelve a abrir las
+    /// <see cref="VentanasAtentoALaRepeticion"/>; con este tope, un corresponsal que no copia
+    /// nunca no tiene al transmisor arrancando solo sin fin: como mucho salen cuatro RR73 (el
+    /// primero y tres repeticiones).
+    /// </summary>
+    public const int ReenviosMaximosDelRr73 = 3;
+
+    /// <summary>
     /// Al acabar un contacto nacido del CQ, pasar solo al siguiente de la cola. Quien lo apaga es
     /// la pantalla cuando el contacto que acaba no ha quedado apuntado en el cuaderno: pasar al
     /// siguiente borraria de la vista los datos que el operador aun tiene que guardar.
@@ -133,9 +167,13 @@ public sealed class SecuenciadorDeQso
 
     /// <summary>
     /// El ultimo contacto que se cerro al emitir el RR73 propio, sin esperar confirmacion. Si no
-    /// lo copio y repite su R+informe mientras se llama CQ, se le repite el RR73 con estos datos.
+    /// lo copio y repite su R+informe —mientras se llama CQ, o en las primeras ventanas tras
+    /// pararse—, se le repite el RR73 con estos datos. <c>Reenvios</c> cuenta las repeticiones.
     /// </summary>
-    private (string Indicativo, string Grid, int? Enviado, int? Recibido)? _cerradoConRr73;
+    private (string Indicativo, string Grid, int? Enviado, int? Recibido, int Reenvios)? _cerradoConRr73;
+
+    /// <summary>Ventanas del corresponsal que han cerrado, con la secuencia parada, desde el ultimo RR73 propio.</summary>
+    private int _ventanasTrasElRr73;
 
     /// <summary>Emisiones seguidas sin noticias del corresponsal tras las que se para.</summary>
     public int CiclosSinRespuesta { get; set; } = 5;
@@ -328,10 +366,11 @@ public sealed class SecuenciadorDeQso
             AtenderALaCola(ventana, oidos);
         }
 
-        if (!Activo) return DecisionDelSecuenciador.Nada;
-
         // La ventana que acaba de cerrar era la propia: aqui no se decide nada.
         if (esLaPropia) return DecisionDelSecuenciador.Nada;
+
+        // Parada: lo unico que la vuelve a arrancar sola es quien no copio el RR73.
+        if (!Activo) return RepetirElRr73EstandoParada(oidos);
 
         var paraMi = oidos.Where(o => VaDirigidoAMi(o.Mensaje)).ToList();
         var delDx = DxCall.Length > 0
@@ -346,13 +385,7 @@ public sealed class SecuenciadorDeQso
         {
             // Se le repite el RR73. Ese contacto ya se dio por completo en su momento: no se
             // vuelve a anunciar, que seria apuntarlo dos veces.
-            Limpiar();
-            DxCall = repite.Indicativo;
-            DxGrid = repite.Grid;
-            InformeEnviado = repite.Enviado;
-            InformeRecibido = repite.Recibido;
-            TxActual = 4;
-            _completado = true;
+            RetomarParaRepetirElRr73(repite);
             completoAntes = true;
             pasaA = DxCall;
         }
@@ -454,7 +487,13 @@ public sealed class SecuenciadorDeQso
             // ha ido: se pasa al siguiente. Sin nadie esperando se para, como siempre (aqui no se
             // vuelve a CQ solo: a un abandono lo mira el operador).
             var veniaDeCqSolo = _llamandoCqSolo;
-            var parada = Parar(Textos.F("Digital.Secuencia.Desaparecido", DxCall, EmisionesSinNoticias), completoAntes);
+
+            // Con el contacto ya completo no se ha perdido nada: el cierre propio (RRR, o RR73
+            // en concurso) ha salido varias veces y lo que falta es su 73. Se dice asi, y cuenta
+            // como terminado; «desaparecido» queda para el contacto que se quedo a medias.
+            var parada = _completado
+                ? Terminar(Textos.F("Digital.Secuencia.CompletoSinSu73", DxCall, EmisionesSinNoticias), completoAntes) with { CompletoSinSu73 = true }
+                : Parar(Textos.F("Digital.Secuencia.Desaparecido", DxCall, EmisionesSinNoticias), completoAntes);
             return SeguirSiToca(parada, veniaDeCqSolo, volverACq: false);
         }
 
@@ -487,24 +526,32 @@ public sealed class SecuenciadorDeQso
             // RR73 es «recibido y adios»: no pide respuesta. Emitido, el contacto esta acabado por
             // este lado, llegue o no el 73 del otro; ni se le espera ni se repite el RR73 a ciegas.
             // Si no lo copio y repite su R+informe, se le vuelve a mandar (vease Procesar).
-            _cerradoConRr73 = (DxCall, DxGrid, InformeEnviado, InformeRecibido);
+            // Vale igual para el contacto nacido del CQ que para el contestado a mano; lo que
+            // cambia es lo de despues: el del CQ sigue con la cola o con el CQ, el de a mano se para.
+            var veniaDeCqSolo = _llamandoCqSolo;
+            var reenvios = _cerradoConRr73 is { } anterior && string.Equals(anterior.Indicativo, DxCall, StringComparison.Ordinal)
+                ? anterior.Reenvios
+                : 0;
+            _cerradoConRr73 = (DxCall, DxGrid, InformeEnviado, InformeRecibido, reenvios);
+            _ventanasTrasElRr73 = 0;
             var decision = Terminar(Textos.T("Digital.Secuencia.ContactoTerminado"), completoAntes: true);
-            return SeguirSiToca(decision, veniaDeCqSolo: true, volverACq: true);
+            return SeguirSiToca(decision, veniaDeCqSolo, volverACq: true);
         }
 
         return DecisionDelSecuenciador.Nada;
     }
 
     /// <summary>
-    /// El contacto en curso se cierra al emitir el RR73 propio: nacio del CQ, en operacion normal,
-    /// ya esta completo (se recibio su R+informe) y Tx4 es <c>RR73</c> y no <c>RRR</c>.
+    /// El contacto en curso se cierra al emitir el RR73 propio: en operacion normal, ya esta
+    /// completo (se recibio su R+informe) y Tx4 es <c>RR73</c> y no <c>RRR</c>.
     /// </summary>
     /// <remarks>
-    /// Solo se aplica a los contactos nacidos del CQ: el contestado a mano con el doble clic se
-    /// queda como siempre (espera el 73 del otro). Con <c>RRR</c> tambien se espera.
+    /// Da igual que el contacto naciera del CQ o de una respuesta a mano (doble clic): <c>RR73</c>
+    /// no pide respuesta en ninguno de los dos. Con <c>RRR</c> se espera el 73 del otro, y en
+    /// Hound y en los concursos no se aplica.
     /// </remarks>
     private bool ElRr73PropioCierraElContacto =>
-        TxActual == 4 && _completado && _llamandoCqSolo && !Tx4ConRrr && Operacion == TipoDeOperacion.Normal;
+        TxActual == 4 && _completado && !Tx4ConRrr && Operacion == TipoDeOperacion.Normal;
 
     /// <summary>La cola de espera esta en uso: operacion normal y sesion nacida de llamar CQ.</summary>
     private bool HayCola => _llamandoCqSolo && Operacion == TipoDeOperacion.Normal;
@@ -602,13 +649,62 @@ public sealed class SecuenciadorDeQso
     /// <summary>
     /// Llamando CQ, el corresponsal al que se despidio con RR73 repite su R+informe: no lo copio.
     /// </summary>
-    private (string Indicativo, string Grid, int? Enviado, int? Recibido)? RepiteElQueNoCopioElRr73(List<MensajeOido> paraMi)
+    private (string Indicativo, string Grid, int? Enviado, int? Recibido, int Reenvios)? RepiteElQueNoCopioElRr73(List<MensajeOido> paraMi)
     {
         if (_cerradoConRr73 is not { } cerrado || !HayCola) return null;
 
         return paraMi.Any(o => o.Mensaje.Clase == ClaseDeMensaje.InformeConR && o.Mensaje.LoManda(cerrado.Indicativo))
             ? cerrado
             : null;
+    }
+
+    /// <summary>
+    /// Con la secuencia <b>parada</b> tras cerrar un contacto con el RR73 propio (el contestado a
+    /// mano, o el del CQ con «1 QSO»): si en las <see cref="VentanasAtentoALaRepeticion"/>
+    /// ventanas siguientes del corresponsal este repite su R+informe, se le vuelve a mandar el
+    /// RR73 —una emision, y se para otra vez—. Pasadas esas ventanas, o agotados los
+    /// <see cref="ReenviosMaximosDelRr73"/>, la secuencia parada ya no emite sola.
+    /// </summary>
+    /// <remarks>
+    /// No se atiende si el operador paro a mano, eligio a otro, cambio de banda o de modo (todo
+    /// eso olvida el contacto cerrado), ni con <c>RRR</c>, ni fuera de la operacion normal.
+    /// </remarks>
+    private DecisionDelSecuenciador RepetirElRr73EstandoParada(IReadOnlyList<MensajeOido> oidos)
+    {
+        if (_cerradoConRr73 is not { } cerrado) return DecisionDelSecuenciador.Nada;
+
+        if (Tx4ConRrr || Operacion != TipoDeOperacion.Normal
+            || cerrado.Reenvios >= ReenviosMaximosDelRr73
+            || ++_ventanasTrasElRr73 > VentanasAtentoALaRepeticion)
+        {
+            _cerradoConRr73 = null;
+            return DecisionDelSecuenciador.Nada;
+        }
+
+        var repite = oidos.Any(o => o.Mensaje.Clase == ClaseDeMensaje.InformeConR
+                                    && o.Mensaje.VaDirigidoA(MiIndicativo)
+                                    && o.Mensaje.LoManda(cerrado.Indicativo));
+        if (!repite) return DecisionDelSecuenciador.Nada;
+
+        // Ese contacto ya se dio por completo en su momento: no se vuelve a anunciar. Y la
+        // sesion ya no es la del CQ: al salir el RR73 se para otra vez, sin cola ni CQ.
+        RetomarParaRepetirElRr73(cerrado);
+        Activo = true;
+        _llamandoCqSolo = false;
+        return new DecisionDelSecuenciador(4, null, false, null) { PasaA = DxCall, ReanudaTx = true };
+    }
+
+    /// <summary>Vuelve a poner de corresponsal al que se despidio con RR73, listo para repetirselo.</summary>
+    private void RetomarParaRepetirElRr73((string Indicativo, string Grid, int? Enviado, int? Recibido, int Reenvios) cerrado)
+    {
+        Limpiar();
+        DxCall = cerrado.Indicativo;
+        DxGrid = cerrado.Grid;
+        InformeEnviado = cerrado.Enviado;
+        InformeRecibido = cerrado.Recibido;
+        TxActual = 4;
+        _completado = true;
+        _cerradoConRr73 = cerrado with { Reenvios = cerrado.Reenvios + 1 };
     }
 
     /// <summary>Da el contacto por terminado y, si venia del CQ, sigue con la cola o con el CQ.</summary>

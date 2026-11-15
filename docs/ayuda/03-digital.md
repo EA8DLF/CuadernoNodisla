@@ -159,6 +159,28 @@ Tx** deja quieto el tono de transmisión (solo se mueve con `Mayús` + clic o es
 **Sólo a mí** y **Sólo nuevos** aclaran la lista cuando la banda está llena, y **Vaciar** la
 limpia. **WAV…** decodifica una grabación.
 
+### Cuándo se da por terminado un contacto
+
+Vale lo mismo para el contacto que nace de su CQ y para el que contesta usted a mano con el doble
+clic:
+
+- Con **RR73** (lo normal), **en cuanto sale su RR73**: es «recibido y adiós», no se espera el 73
+  del otro ni se repite a ciegas. El contacto queda apuntado y se sigue con lo que toque: si
+  venía de llamar CQ, el siguiente en espera o el CQ; si lo contestó usted a mano, se para.
+- **Si el otro no copió el RR73** y repite su R+informe, se le vuelve a mandar, sin apuntar el
+  contacto dos veces. Llamando CQ se le atiende mientras se siga llamando. Con la secuencia ya
+  parada (contacto a mano, o **1 QSO**) se le atiende durante sus **tres ventanas siguientes**
+  (90 segundos en FT8, 45 en FT4) y hasta **tres repeticiones**: «Tx habilitado» se vuelve a
+  encender solo para ese RR73 y se apaga al salir. Pasado eso, la secuencia parada ya no emite
+  sola. **Detener**, elegir a otra estación, cambiar de banda o de modo, o cerrar el pestillo de
+  la transmisión lo anulan en el acto.
+- Con **Tx4 con RRR** sí se espera su 73, repitiendo el RRR. Si no llega tras los ciclos sin
+  respuesta configurados, la secuencia se para y el aviso dice que el contacto está **completo**
+  —y **guardado**, si se apunta solo— y que lo que no llegó fue su 73: no se ha perdido nada.
+  «Ha desaparecido» queda para el contacto que se quedó a medias, que no se apunta.
+- Si fue él quien cerró con RR73, acaba al salir el 73 de usted.
+- En **Hound** y en los **concursos** el RR73 propio no cierra el contacto: sigue como siempre.
+
 ### Llamar CQ: a quién se contesta y la lista «En espera»
 
 Al pulsar **Llamar CQ** (o al mandar el Tx6 a mano) y con **Contestar al que llame** encendida,
@@ -173,11 +195,8 @@ llame mientras está usted a medio contacto.
 - **Al acabar un contacto** se pasa directamente al primero de la lista —con su informe, sin
   volver a llamar CQ—, aunque **1 QSO** esté marcada. El contacto que acaba queda apuntado en el
   cuaderno como siempre, con sus propios datos.
-- **Cuándo acaba un contacto.** Con **RR73** (lo normal), en cuanto sale su RR73: es «recibido y
-  adiós», no se espera el 73 del otro ni se repite a ciegas. Si el otro no lo copió y repite su
-  R+informe mientras usted llama CQ, se le vuelve a mandar el RR73 (y no se apunta dos veces).
-  Con **Tx4 con RRR** sí se espera su 73. Y si fue él quien cerró con RR73, acaba al salir el 73
-  de usted.
+- **Cuándo acaba un contacto**: al salir su RR73, sin esperar el 73 del otro (con **Tx4 con
+  RRR** sí se espera). Véase «Cuándo se da por terminado un contacto», más arriba.
 - **Sin nadie en espera**: con **1 QSO** marcada se para; sin marcar, vuelve a llamar CQ.
 - **Clic en una ficha** contesta ya a esa estación, sin esperar a que le toque; la **✕** la quita
   de la lista. Es la forma de elegir entre los que esperan sin salirse de la tanda.
@@ -188,7 +207,8 @@ llame mientras está usted a medio contacto.
 - **Si el corresponsal desaparece** a medio contacto y hay alguien en espera, se pasa al
   siguiente en vez de pararse.
 - **Usted manda.** El **doble clic** en una línea de la lista de decodificaciones sigue eligiendo
-  a esa estación como siempre: vacía la espera y, al acabar, se para. **Detener**, cambiar de
+  a esa estación como siempre: vacía la espera y, al acabar —al salir su RR73, igual que en los
+  contactos del CQ—, se para: no pasa a llamar CQ ni a la lista. **Detener**, cambiar de
   modo y cambiar de banda o de frecuencia vacían la lista. Sin **Tx habilitado** no se transmite
   nunca, aunque la lista se siga llenando.
 - Para pasar solo al siguiente hace falta que los contactos se apunten solos («Guardar solo en
