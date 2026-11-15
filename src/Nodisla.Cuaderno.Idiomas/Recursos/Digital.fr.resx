@@ -1239,4 +1239,7 @@
   <data name="Digital.Modem.Propia.Ayuda" xml:space="preserve">
     <value>C’est votre propre signal, entendu par le récepteur. Il ne compte pas comme station entendue</value>
   </data>
+  <data name="Digital.Modem.Aviso.EmisionCancelada" xml:space="preserve">
+    <value>Émission annulée.</value>
+  </data>
 </root>

@@ -1239,4 +1239,7 @@
   <data name="Digital.Modem.Propia.Ayuda" xml:space="preserve">
     <value>Das ist Ihr eigenes Signal, vom Empfänger gehört. Es zählt nicht als gehörte Station</value>
   </data>
+  <data name="Digital.Modem.Aviso.EmisionCancelada" xml:space="preserve">
+    <value>Sendung abgebrochen.</value>
+  </data>
 </root>

@@ -2520,6 +2520,16 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             ApuntarEnElRegistro(ventana, "Tx", texto, 0, 0, TonoDeTransmision);
             return true;
         }
+        catch (OperationCanceledException)
+        {
+            // Cancelar una emision (Detener, panico, cambio de modo a media ventana) no es un
+            // fallo: es lo que se ha pedido. Ni error en el registro ni el «A task was canceled.»
+            // en ingles a la vista; el estado queda igual de limpio que con un fallo de verdad.
+            Log.Information("Emisión del módem propio cancelada: {Texto}.", texto);
+            if (tx > 0) DetenerTx();
+            Informar(Textos.T("Digital.Modem.Aviso.EmisionCancelada"));
+            return false;
+        }
         catch (Exception ex)
         {
             Log.Error(ex, "No se ha podido emitir con el módem propio.");
@@ -2647,6 +2657,12 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             }
 
             Informar(Textos.F("Digital.Modem.Fox.Emitido", mensajes.Count));
+        }
+        catch (OperationCanceledException)
+        {
+            // Igual que en el QSO de uno a uno: cancelar no es un fallo.
+            Log.Information("Emisión del pileup de fox cancelada.");
+            Informar(Textos.T("Digital.Modem.Aviso.EmisionCancelada"));
         }
         catch (Exception ex)
         {
