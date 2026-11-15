@@ -19,6 +19,7 @@ public partial class App : Application
 {
     private IHost? _anfitrion;
     private Soporte.InstanciaUnica? _instancia;
+    private readonly CancellationTokenSource _alCerrar = new();
 
     /// <summary>Carpeta de datos del programa dentro del perfil del usuario.</summary>
     /// <remarks>
@@ -156,6 +157,8 @@ public partial class App : Application
             return;
         }
 
+        LanzarLaCopiaDiaria();
+
         base.OnStartup(e);
 
         // CUADERNO_RASTREO_ENLACES=fichero: cada enlace roto de WPF es un control o un dato
@@ -214,6 +217,55 @@ public partial class App : Application
             Resources.MergedDictionaries.Count,
             TryFindResource("FondoVentana")?.ToString() ?? "no encontrado");
     }
+
+    /// <summary>
+    /// Copia diaria del cuaderno: si la ultima copia tiene mas de un dia, se hace otra.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Hasta ahora el cuaderno solo se copiaba antes de una migracion, es decir, al cambiar de
+    /// version: entre dos versiones podian pasar meses de contactos sin una sola copia.
+    /// </para>
+    /// <para>
+    /// Va en segundo plano y con un rato de margen para no competir con el arranque, con su
+    /// propia conexion (<c>VACUUM INTO</c> copia bien aunque se este operando) y la misma poda
+    /// que las copias de migracion. Si falla, queda un aviso en el registro y nada mas: una
+    /// copia que no sale no puede impedir operar.
+    /// </para>
+    /// </remarks>
+    private void LanzarLaCopiaDiaria()
+    {
+        if (ConfiguracionDeServicios.ConPuertosSimulados) return;
+
+        var anfitrion = _anfitrion!;
+        var alCerrar = _alCerrar.Token;
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(EsperaAntesDeLaCopiaDiaria, alCerrar).ConfigureAwait(false);
+
+                using var ambito = anfitrion.Services.CreateScope();
+                var migrador = ambito.ServiceProvider.GetRequiredService<Nodisla.Cuaderno.Datos.MigradorDeCuaderno>();
+                var copia = await migrador.CrearCopiaSiHaceFaltaAsync(CadaCuantoSeCopiaElCuaderno, ct: alCerrar)
+                    .ConfigureAwait(false);
+
+                if (copia is not null) Log.Information("Copia diaria del cuaderno hecha en {Copia}.", copia);
+            }
+            catch (OperationCanceledException)
+            {
+                // El programa se ha cerrado antes: ya se hara en el proximo arranque.
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "No se ha podido hacer la copia diaria del cuaderno.");
+            }
+        });
+    }
+
+    private static readonly TimeSpan CadaCuantoSeCopiaElCuaderno = TimeSpan.FromHours(24);
+    private static readonly TimeSpan EsperaAntesDeLaCopiaDiaria = TimeSpan.FromSeconds(20);
 
     /// <summary>
     /// Si <c>ajustes.json</c> no se pudo leer, se dice: en el registro y con un cartel.
@@ -329,6 +381,7 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         Log.Information("Cuaderno NODISLA se cierra.");
+        _alCerrar.Cancel();
 
         if (_anfitrion is { } anfitrion)
         {

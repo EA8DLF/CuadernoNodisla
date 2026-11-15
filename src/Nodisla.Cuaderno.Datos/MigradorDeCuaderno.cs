@@ -65,12 +65,80 @@ public sealed class MigradorDeCuaderno(
     /// </summary>
     /// <param name="ct">Testigo de cancelacion.</param>
     /// <returns>Ruta del fichero de copia creado.</returns>
-    public async Task<string> CrearCopiaAsync(CancellationToken ct = default)
+    public Task<string> CrearCopiaAsync(CancellationToken ct = default) =>
+        CrearCopiaAsync(DateTime.UtcNow, ct);
+
+    /// <summary>
+    /// Hace una copia del cuaderno si la ultima tiene mas de <paramref name="cada"/>. Es la
+    /// copia periodica: se llama al arrancar y, como mucho, deja una al dia.
+    /// </summary>
+    /// <remarks>
+    /// Usa el mismo <c>VACUUM INTO</c> y la misma poda que la copia previa a una migracion, asi
+    /// que vale con el cuaderno abierto y en uso. La edad de la ultima copia se saca de la
+    /// fecha que lleva en el nombre, no de la del fichero: una carpeta de copias restaurada
+    /// desde otro disco trae las fechas de fichero cambiadas.
+    /// </remarks>
+    /// <param name="cada">Edad a partir de la cual toca otra copia.</param>
+    /// <param name="ahoraUtc">Hora actual en UTC; sustituible en las pruebas.</param>
+    /// <param name="ct">Testigo de cancelacion.</param>
+    /// <returns>Ruta de la copia creada, o nulo si no tocaba o no hay cuaderno que copiar.</returns>
+    public async Task<string?> CrearCopiaSiHaceFaltaAsync(
+        TimeSpan cada, DateTime? ahoraUtc = null, CancellationToken ct = default)
+    {
+        if (!File.Exists(opciones.Ruta) || new FileInfo(opciones.Ruta).Length == 0)
+        {
+            return null;
+        }
+
+        var ahora = ahoraUtc ?? DateTime.UtcNow;
+        if (UltimaCopiaUtc() is { } ultima && ahora - ultima < cada)
+        {
+            return null;
+        }
+
+        return await CrearCopiaAsync(ahora, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>Cuando se hizo la copia mas reciente, o nulo si no hay ninguna.</summary>
+    public DateTime? UltimaCopiaUtc()
+    {
+        var carpeta = opciones.CarpetaDeCopiasEfectiva;
+        if (!Directory.Exists(carpeta))
+        {
+            return null;
+        }
+
+        var prefijo = Path.GetFileNameWithoutExtension(opciones.Ruta) + "-";
+        DateTime? ultima = null;
+        foreach (var copia in new DirectoryInfo(carpeta).GetFiles(prefijo + "*" + Path.GetExtension(opciones.Ruta)))
+        {
+            // cuaderno-20261115-123907.sqlite o cuaderno-20261115-123907-1.sqlite
+            var resto = Path.GetFileNameWithoutExtension(copia.Name)[prefijo.Length..];
+            var cuando = resto.Length >= 15
+                && DateTime.TryParseExact(
+                    resto[..15],
+                    "yyyyMMdd-HHmmss",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                    out var delNombre)
+                ? delNombre
+                : copia.CreationTimeUtc;
+
+            if (ultima is null || cuando > ultima)
+            {
+                ultima = cuando;
+            }
+        }
+
+        return ultima;
+    }
+
+    private async Task<string> CrearCopiaAsync(DateTime ahoraUtc, CancellationToken ct)
     {
         var carpeta = opciones.CarpetaDeCopiasEfectiva;
         Directory.CreateDirectory(carpeta);
 
-        var marca = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture);
+        var marca = ahoraUtc.ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture);
         var destino = Path.Combine(
             carpeta,
             $"{Path.GetFileNameWithoutExtension(opciones.Ruta)}-{marca}{Path.GetExtension(opciones.Ruta)}");
