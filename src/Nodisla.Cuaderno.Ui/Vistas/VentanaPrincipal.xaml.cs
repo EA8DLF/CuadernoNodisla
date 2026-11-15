@@ -97,6 +97,12 @@ public partial class VentanaPrincipal : Window
         {
             if (!await PedirPerfilSiHaceFaltaAsync().ConfigureAwait(true)) return;
 
+            // «Escuchar al arrancar» de la fonia se atiende aqui, al arrancar el programa, y no
+            // al cargarse el panel: el panel de Operar no se carga hasta que se visita su
+            // pestana, y arrancando en otra la escucha no se abria nunca. Va antes de cargar el
+            // cuaderno (como cuando lo hacia el panel) y sin que un fallo suyo pare el arranque.
+            await EscucharLaFoniaSiSePidioAsync().ConfigureAwait(true);
+
             await OfrecerTraerElCuadernoAsync().ConfigureAwait(true);
 
             await _vistaModelo.InicializarAsync().ConfigureAwait(true);
@@ -116,6 +122,19 @@ public partial class VentanaPrincipal : Window
         catch (Exception ex)
         {
             MostrarFallo(ex);
+        }
+    }
+
+    private async Task EscucharLaFoniaSiSePidioAsync()
+    {
+        if (_vistaModelo.Fonia is not { } fonia) return;
+        try
+        {
+            await fonia.EscucharSiSePidioAsync().ConfigureAwait(true);
+        }
+        catch (Exception fallo)
+        {
+            Log.Warning(fallo, "No se ha podido atender «escuchar al arrancar» de la fonía.");
         }
     }
 

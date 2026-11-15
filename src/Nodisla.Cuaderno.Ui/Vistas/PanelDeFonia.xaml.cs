@@ -115,13 +115,25 @@ public partial class PanelDeFonia : UserControl
         if (Modelo?.Mensajes is { } mensajes) mensajes.ConfirmarQueVaATransmitir ??= PreguntarSiTransmite;
 
         // Hay dos paneles montados —en columna junto al frontal y en franja— y solo uno se ve:
-        // el escondido no abre nada.
+        // el escondido no prepara nada. La escucha «al arrancar» ya no se abre desde aqui: la
+        // pide la ventana una sola vez (VentanaPrincipal.AlCargar), este el programa en la
+        // pestana que este.
         if (!IsVisible) return;
-        if (Modelo is { } modelo)
+
+        // Un panel a la vista y sin modelo es un panel muerto que parece vivo (el PTT se ve
+        // habilitado y no hace nada). Paso el 2026-11-15 y no dejo rastro: ahora queda escrito.
+        // Se mira con la ventana ya asentada, por si el modelo llega justo despues de cargar.
+        _ = Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, () =>
         {
-            await modelo.EscucharSiSePidioAsync();
-            await PrepararCapturaSiSePideAsync(modelo);
-        }
+            if (IsLoaded && IsVisible && Modelo is null)
+            {
+                Serilog.Log.Warning(
+                    "El panel de fonía ({Disposicion:l}) está a la vista sin modelo: ni el PTT ni los dispositivos ni la escucha funcionarán desde él.",
+                    Vertical ? "en columna" : "en franja");
+            }
+        });
+
+        if (Modelo is { } modelo) await PrepararCapturaSiSePideAsync(modelo);
     }
 
     /// <summary>

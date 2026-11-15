@@ -845,8 +845,17 @@ I suoi collegamenti e le impostazioni non vengono toccati. Se sta trasmettendo o
   <data name="Ajustes.Fonia.Aviso.AltavocesSonSalida" xml:space="preserve">
     <value>Gli altoparlanti scelti sono l'uscita verso l'apparato: l'ascolto verrebbe trasmesso.</value>
   </data>
+  <data name="Ajustes.Fonia.Aviso.EntradaNoEsDelEquipo" xml:space="preserve">
+    <value>L'ingresso dell'apparato non è quello del codec dell'apparato: dal PC non si sentirebbe la radio.</value>
+  </data>
   <data name="Ajustes.Fonia.Aviso.MicrofonoEsEntrada" xml:space="preserve">
     <value>Il microfono scelto è l'ingresso dell'apparato: si ritrasmetterebbe ciò che si riceve.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.MismaEntrada" xml:space="preserve">
+    <value>L'ingresso dell'apparato e il microfono del PC sono lo stesso dispositivo: scegliere il codec dell'apparato come ingresso dell'apparato e il proprio microfono come microfono del PC.</value>
+  </data>
+  <data name="Ajustes.Fonia.Aviso.MismaSalida" xml:space="preserve">
+    <value>Gli altoparlanti del PC e l'uscita verso l'apparato sono lo stesso dispositivo: scegliere le cuffie o gli altoparlanti come altoparlanti del PC e il codec dell'apparato come uscita verso l'apparato.</value>
   </data>
   <data name="Ajustes.Fonia.Aviso.SalidaNoEsDelEquipo" xml:space="preserve">
     <value>L'uscita verso l'apparato non è quella del codec dell'apparato: la voce non arriverebbe alla radio.</value>

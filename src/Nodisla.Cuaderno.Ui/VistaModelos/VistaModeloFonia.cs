@@ -37,17 +37,25 @@ public sealed partial class VistaModeloFonia : ObservableObject
     private readonly VistaModeloEquipo _equipo;
     private readonly IControlEquipo? _controlDelEquipo;
     private string _modoComprobado = string.Empty;
+    private readonly ILogger? _registro;
+    private bool _arranqueAtendido;
+    private bool _escuchaParadaPorElOperador;
+
+    /// <summary>El registro: el que se dio al montar o, si no, el del programa.</summary>
+    private ILogger Registro => _registro ?? Log.Logger;
 
     /// <summary>Monta el panel. No abre ningun dispositivo.</summary>
     /// <param name="ajustes">El apartado de ajustes de fonia.</param>
     /// <param name="control">La fonia, con su vigilante.</param>
     /// <param name="equipo">El equipo en pantalla: se mira si esta conectado y en que modo.</param>
     /// <param name="controlDelEquipo">Para leer por CAT la fuente de modulacion; puede ser nulo.</param>
+    /// <param name="registro">Donde se anota por que no se escucha o no se transmite; nulo es el registro del programa.</param>
     public VistaModeloFonia(
         VistaModeloAjustesFonia ajustes,
         ControlDeFonia control,
         VistaModeloEquipo equipo,
-        IControlEquipo? controlDelEquipo = null)
+        IControlEquipo? controlDelEquipo = null,
+        ILogger? registro = null)
     {
         ArgumentNullException.ThrowIfNull(ajustes);
         ArgumentNullException.ThrowIfNull(control);
@@ -57,6 +65,7 @@ public sealed partial class VistaModeloFonia : ObservableObject
         _control = control;
         _equipo = equipo;
         _controlDelEquipo = controlDelEquipo;
+        _registro = registro;
 
         AplicarAjustes();
         Ajustes.Cambiado += (_, que) => AlCambiarLosAjustes(que);
@@ -202,11 +211,14 @@ public sealed partial class VistaModeloFonia : ObservableObject
         {
             if (_control.Escuchando)
             {
+                // Parada a mano: cambiar luego un dispositivo no la reabre por su cuenta.
+                _escuchaParadaPorElOperador = true;
                 await _control.PararEscuchaAsync().ConfigureAwait(true);
                 Aviso = string.Empty;
             }
             else
             {
+                _escuchaParadaPorElOperador = false;
                 await AbrirEscuchaAsync().ConfigureAwait(true);
             }
         }
@@ -217,12 +229,61 @@ public sealed partial class VistaModeloFonia : ObservableObject
         }
     }
 
-    /// <summary>Abre la escucha si el operador lo dejo pedido y hay con que.</summary>
+    /// <summary>
+    /// Abre la escucha si el operador lo dejo pedido y hay con que. Solo cuenta la PRIMERA
+    /// llamada: es «al arrancar el programa», no cada vez que el panel vuelve a cargarse al
+    /// entrar en la pestana (eso reabria la escucha que el operador acababa de parar).
+    /// </summary>
     public async Task EscucharSiSePidioAsync()
     {
-        if (!Ajustes.EscucharAlArrancar || _control.Escuchando || !Ajustes.EscuchaConfigurada) return;
+        if (_arranqueAtendido) return;
+        _arranqueAtendido = true;
+
+        // Cada salida sin abrir deja su motivo en el registro: el 2026-11-15 la escucha no se
+        // abria y no habia ni una linea que dijera por que.
+        if (!Ajustes.EscucharAlArrancar)
+        {
+            Registro.Information("Fonía: no se abre la escucha al arrancar: no está pedida en los ajustes.");
+            return;
+        }
+
+        if (_control.Escuchando) return;
+
+        if (!Ajustes.EscuchaConfigurada)
+        {
+            Registro.Warning(
+                "Fonía: no se abre la escucha al arrancar: falta por elegir {Falta:l}. {Dispositivos:l}",
+                LoQueFaltaParaEscuchar(),
+                Ajustes.DescribirDispositivos());
+            return;
+        }
+
         await AbrirEscuchaAsync().ConfigureAwait(true);
         Escuchando = _control.Escuchando;
+    }
+
+    private string LoQueFaltaParaEscuchar() => (Ajustes.EntradaDelEquipo, Ajustes.Altavoces) switch
+    {
+        (null, null) => "la entrada del equipo y los altavoces del PC",
+        (null, _) => "la entrada del equipo",
+        _ => "los altavoces del PC",
+    };
+
+    /// <summary>Una linea en el registro cada vez que CAMBIA si se puede transmitir, y por que.</summary>
+    partial void OnMotivoDeNoPoderChanged(string value)
+    {
+        if (value.Length == 0)
+        {
+            Registro.Information(
+                "PTT de fonía disponible: equipo en {Modo:l}, micrófono «{Microfono:l}», salida al equipo «{Salida:l}».",
+                _equipo.Modo,
+                Ajustes.Microfono?.Nombre,
+                Ajustes.SalidaAlEquipo?.Nombre);
+        }
+        else
+        {
+            Registro.Information("PTT de fonía no disponible: {Motivo:l}", value);
+        }
     }
 
     /// <summary>Lee por CAT la fuente de modulacion y avisa si no es USB.</summary>
@@ -294,6 +355,9 @@ public sealed partial class VistaModeloFonia : ObservableObject
         RecalcularSiSePuede();
         if (!PuedeTransmitir)
         {
+            // Una linea por pulsacion rechazada (no por refresco): si el operador dice «no
+            // puedo hacer PTT», aqui queda si llego la pulsacion y por que se le dijo que no.
+            Registro.Information("Fonía: PTT pulsado y rechazado: {Motivo:l}", MotivoDeNoPoder);
             Aviso = MotivoDeNoPoder;
             return;
         }
@@ -305,7 +369,11 @@ public sealed partial class VistaModeloFonia : ObservableObject
         }
         catch (Exception fallo)
         {
-            Log.Warning(fallo, "No se ha podido salir al aire en fonía.");
+            Registro.Warning(
+                fallo,
+                "No se ha podido salir al aire en fonía (micrófono «{Microfono:l}», salida al equipo «{Salida:l}»).",
+                Ajustes.Microfono?.Nombre,
+                Ajustes.SalidaAlEquipo?.Nombre);
             Aviso = Textos.F("Cabina.Fonia.NoTransmite", fallo.Message);
         }
         finally
@@ -334,21 +402,40 @@ public sealed partial class VistaModeloFonia : ObservableObject
     {
         if (!Ajustes.EscuchaConfigurada)
         {
+            Registro.Warning(
+                "Fonía: no se puede abrir la escucha: falta por elegir {Falta:l}. {Dispositivos:l}",
+                LoQueFaltaParaEscuchar(),
+                Ajustes.DescribirDispositivos());
             Aviso = Textos.T("Cabina.Fonia.ElijaEscucha");
             return;
         }
 
+        var entrada = Ajustes.EntradaDelEquipo!;
+        var altavoces = Ajustes.Altavoces!;
         try
         {
             _escuchaAbiertaUtc = DateTimeOffset.UtcNow;
-            await _control.EmpezarEscuchaAsync(Ajustes.EntradaDelEquipo!.Id, Ajustes.Altavoces!.Id).ConfigureAwait(true);
+            await _control.EmpezarEscuchaAsync(entrada.Id, altavoces.Id).ConfigureAwait(true);
             Aviso = string.Empty;
+            Registro.Information("Fonía: escucha abierta de «{Entrada:l}» a «{Altavoces:l}».", entrada.Nombre, altavoces.Nombre);
         }
         catch (Exception fallo)
         {
-            Log.Warning(fallo, "No se ha podido abrir la escucha por el PC.");
+            Registro.Warning(
+                fallo,
+                "No se ha podido abrir la escucha por el PC de «{Entrada:l}» ({IdEntrada:l}) a «{Altavoces:l}» ({IdAltavoces:l}).",
+                entrada.Nombre,
+                entrada.Id,
+                altavoces.Nombre,
+                altavoces.Id);
             Aviso = Textos.F("Cabina.Fonia.NoAbreEscucha", fallo.Message);
         }
+    }
+
+    private async Task ReabrirEscuchaAsync()
+    {
+        await AbrirEscuchaAsync().ConfigureAwait(true);
+        Escuchando = _control.Escuchando;
     }
 
     private void AlTerminar(FinDeFonia fin)
@@ -411,10 +498,15 @@ public sealed partial class VistaModeloFonia : ObservableObject
     {
         AplicarAjustes();
 
-        if (que is nameof(VistaModeloAjustesFonia.EntradaDelEquipo) or nameof(VistaModeloAjustesFonia.Altavoces)
-            && _control.Escuchando && Ajustes.EscuchaConfigurada)
+        // Cambia un dispositivo de la escucha. Si estaba abierta, se reabre por el nuevo. Y si no
+        // lo estaba pero el operador la tiene pedida («escuchar al arrancar») y no la ha parado
+        // el a mano, se abre ahora: antes, quien arreglaba aqui un dispositivo mal elegido —o
+        // encendia la radio y volvia a buscar— se quedaba igual, sin oir nada.
+        var esDeLaEscucha = que is nameof(VistaModeloAjustesFonia.EntradaDelEquipo) or nameof(VistaModeloAjustesFonia.Altavoces);
+        if (esDeLaEscucha && Ajustes.EscuchaConfigurada
+            && (_control.Escuchando || (Ajustes.EscucharAlArrancar && !_escuchaParadaPorElOperador)))
         {
-            _ = AbrirEscuchaAsync();
+            _ = ReabrirEscuchaAsync();
         }
 
         if (que is nameof(VistaModeloAjustesFonia.IndiceDeFuenteSsb) or nameof(VistaModeloAjustesFonia.ValorDeFuenteUsb)

@@ -68,8 +68,24 @@ public partial class PanelOperar : UserControl
             if (_modelo is not null) _modelo.PropertyChanged -= AlCambiarElModelo;
             _modelo = DataContext as INotifyPropertyChanged;
             if (_modelo is not null) _modelo.PropertyChanged += AlCambiarElModelo;
+            EnlazarLaFoniaEnColumna();
             Repartir();
         };
+        EnlazarLaFoniaEnColumna();
+    }
+
+    /// <summary>
+    /// Da su modelo a la fonia en columna. Se hace a mano y no con un enlace: esa copia cuelga
+    /// de <c>FrontalConBotonera.Lateral</c>, fuera del arbol logico, y un enlace con
+    /// <c>RelativeSource</c> se quedaba sin resolver para siempre si el programa arrancaba en
+    /// otra pestana (el panel entero sin modelo: sin dispositivos, sin PTT y sin escucha).
+    /// </summary>
+    private void EnlazarLaFoniaEnColumna()
+    {
+        // Borde > Viewbox > PanelDeFonia: se baja por los envoltorios hasta dar con el panel.
+        var nodo = CajaDelFrontal.Lateral;
+        while (nodo is Decorator envoltorio) nodo = envoltorio.Child;
+        if (nodo is PanelDeFonia fonia) fonia.DataContext = (DataContext as VistaModeloPrincipal)?.Fonia;
     }
 
     /// <summary>Trae el foco al indicativo, que es donde se empieza a teclear.</summary>
@@ -87,6 +103,7 @@ public partial class PanelOperar : UserControl
 
     private void AlCambiarElModelo(object? sender, PropertyChangedEventArgs e)
     {
+        if (e.PropertyName is nameof(VistaModeloPrincipal.Fonia)) EnlazarLaFoniaEnColumna();
         if (e.PropertyName is nameof(VistaModeloPrincipal.FrontalDibujadoVisible) or nameof(VistaModeloPrincipal.Fonia))
             Repartir();
     }

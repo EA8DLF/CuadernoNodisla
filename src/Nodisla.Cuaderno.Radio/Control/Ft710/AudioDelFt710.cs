@@ -31,6 +31,11 @@ public sealed record AudioDelEquipo(
     IReadOnlyList<ExtremoDeAudio> Entradas,
     IReadOnlyList<ExtremoDeAudio> Salidas);
 
+/// <summary>Un extremo de audio junto al cacharro fisico del que cuelga.</summary>
+/// <param name="Contenedor">Identificador del contenedor (el cacharro) segun Windows.</param>
+/// <param name="Extremo">El extremo de audio.</param>
+public sealed record ExtremoConContenedor(Guid Contenedor, ExtremoDeAudio Extremo);
+
 /// <summary>
 /// El codec de audio USB que aparece cuando se enciende el FT-710.
 /// </summary>
@@ -72,7 +77,7 @@ public static class AudioDelFt710
     /// El codec del equipo esta presente, es decir, la radio esta encendida y enchufada.
     /// </summary>
     /// <returns>Verdadero si el sistema ve el codec de audio del equipo.</returns>
-    public static bool EquipoEncendido() => BuscarContenedor() is not null;
+    public static bool EquipoEncendido() => ContenedoresDelCodec().Count > 0;
 
     /// <summary>
     /// Busca el audio del equipo y sus extremos de entrada y salida.
@@ -80,33 +85,86 @@ public static class AudioDelFt710
     /// <returns>Lo encontrado, o nulo si la radio no esta encendida.</returns>
     public static AudioDelEquipo? Buscar()
     {
-        var contenedor = BuscarContenedor();
-        if (contenedor is null)
+        var contenedores = ContenedoresDelCodec();
+        if (contenedores.Count == 0)
         {
             return null;
         }
 
-        var entradas = ExtremosDe("Capture", contenedor.Value, esEntrada: true);
-        var salidas = ExtremosDe("Render", contenedor.Value, esEntrada: false);
-        return new AudioDelEquipo(contenedor.Value, entradas, salidas);
+        var extremos = new List<ExtremoConContenedor>();
+        extremos.AddRange(ExtremosDe("Capture", esEntrada: true));
+        extremos.AddRange(ExtremosDe("Render", esEntrada: false));
+        return Elegir(contenedores, extremos);
     }
 
-    private static Guid? BuscarContenedor()
+    /// <summary>
+    /// Decide, de todas las veces que Windows ha visto el codec, cual es la de ahora.
+    /// </summary>
+    /// <param name="contenedores">
+    /// Contenedores USB de todas las instancias del codec que guarda el registro, en su orden.
+    /// </param>
+    /// <param name="extremos">Todos los extremos de audio del sistema, con su contenedor.</param>
+    /// <returns>El audio del equipo, o nulo si no hay ninguna instancia del codec.</returns>
+    /// <remarks>
+    /// Separado de la lectura del registro a proposito: se prueba sin Windows.
+    /// </remarks>
+    public static AudioDelEquipo? Elegir(
+        IReadOnlyList<Guid> contenedores,
+        IReadOnlyList<ExtremoConContenedor> extremos)
     {
+        ArgumentNullException.ThrowIfNull(contenedores);
+        ArgumentNullException.ThrowIfNull(extremos);
+
+        if (contenedores.Count == 0)
+        {
+            return null;
+        }
+
+        // El registro guarda una instancia del codec por cada puerto USB en el que ha estado
+        // enchufado alguna vez (y las que vinieron del PC anterior), y la primera no tiene por
+        // que ser la de ahora: quedarse con ella daba extremos desenchufados y ningun
+        // dispositivo activo salia marcado como del equipo. Gana la que mas extremos ACTIVOS
+        // tenga; a igualdad —la radio apagada: ninguno activo—, la que tenga extremos, y si no
+        // la primera, como antes.
+        var elegido = contenedores
+            .Select((contenedor, orden) => (
+                Contenedor: contenedor,
+                Orden: orden,
+                Activos: extremos.Count(e => e.Contenedor == contenedor && e.Extremo.Activo),
+                Todos: extremos.Count(e => e.Contenedor == contenedor)))
+            .OrderByDescending(c => c.Activos)
+            .ThenByDescending(c => c.Todos > 0)
+            .ThenBy(c => c.Orden)
+            .First()
+            .Contenedor;
+
+        var suyos = extremos.Where(e => e.Contenedor == elegido).Select(e => e.Extremo).ToList();
+        return new AudioDelEquipo(
+            elegido,
+            suyos.Where(e => e.EsEntrada).ToList(),
+            suyos.Where(e => !e.EsEntrada).ToList());
+    }
+
+    private static List<Guid> ContenedoresDelCodec()
+    {
+        var contenedores = new List<Guid>();
+
         try
         {
             using var dispositivo = Registry.LocalMachine.OpenSubKey(RutaDeDispositivosUsb + IdentificadorUsb);
             if (dispositivo is null)
             {
-                return null;
+                return contenedores;
             }
 
             foreach (var instancia in dispositivo.GetSubKeyNames())
             {
                 using var clave = dispositivo.OpenSubKey(instancia);
-                if (clave?.GetValue("ContainerID") is string texto && Guid.TryParse(texto, out var contenedor))
+                if (clave?.GetValue("ContainerID") is string texto
+                    && Guid.TryParse(texto, out var contenedor)
+                    && !contenedores.Contains(contenedor))
                 {
-                    return contenedor;
+                    contenedores.Add(contenedor);
                 }
             }
         }
@@ -115,12 +173,12 @@ public static class AudioDelFt710
             // Si no se puede mirar el registro, es que no se puede saber: se dice que no hay audio.
         }
 
-        return null;
+        return contenedores;
     }
 
-    private static List<ExtremoDeAudio> ExtremosDe(string tipo, Guid contenedor, bool esEntrada)
+    private static List<ExtremoConContenedor> ExtremosDe(string tipo, bool esEntrada)
     {
-        var encontrados = new List<ExtremoDeAudio>();
+        var encontrados = new List<ExtremoConContenedor>();
 
         try
         {
@@ -137,23 +195,20 @@ public static class AudioDelFt710
             {
                 using var extremo = raiz.OpenSubKey(nombreDeClave);
                 using var propiedades = extremo?.OpenSubKey("Properties");
-                if (propiedades is null)
-                {
-                    continue;
-                }
-
-                if (LeerContenedor(propiedades) != contenedor)
+                if (propiedades is null || LeerContenedor(propiedades) is not { } contenedor)
                 {
                     continue;
                 }
 
                 var activo = extremo!.GetValue("DeviceState") is int estado && estado == 1;
-                encontrados.Add(new ExtremoDeAudio(
-                    Identificador: prefijo + nombreDeClave,
-                    Nombre: propiedades.GetValue(PropiedadNombre) as string ?? "sin nombre",
-                    Descripcion: propiedades.GetValue(PropiedadDescripcion) as string,
-                    EsEntrada: esEntrada,
-                    Activo: activo));
+                encontrados.Add(new ExtremoConContenedor(
+                    contenedor,
+                    new ExtremoDeAudio(
+                        Identificador: prefijo + nombreDeClave,
+                        Nombre: propiedades.GetValue(PropiedadNombre) as string ?? "sin nombre",
+                        Descripcion: propiedades.GetValue(PropiedadDescripcion) as string,
+                        EsEntrada: esEntrada,
+                        Activo: activo)));
             }
         }
         catch (Exception)
