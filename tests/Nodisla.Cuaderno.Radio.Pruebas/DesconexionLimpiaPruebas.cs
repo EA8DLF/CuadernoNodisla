@@ -133,6 +133,49 @@ public class DesconexionLimpiaPruebas
     }
 
     [Fact]
+    public async Task La_secuencia_del_dia_no_deja_nada_pegado_y_el_PTT_sube_por_CAT_dos_veces()
+    {
+        // 15-11-2026: panicos sin conexion, cambio de control en los ajustes, Conectar y PTT
+        // por CAT desde Fonia («ahora tampoco puedo hacer PTT»). El mando es TX1; / TX0;
+        // (manual CAT del FT-710, pag. 21: TX SET, 1 = CAT TX ON, 0 = OFF).
+        var registro = new RegistroDeMentira();
+        var viejo = new CanalCatDeCaptura();
+        await using var conmutable = new ControlEquipoConmutable(new ControlFt710(viejo, Opciones(), registro), registro);
+        await using var vigilante = new VigilantePtt(conmutable, OpcionesDelVigilante(), registro);
+
+        for (var i = 0; i < 5; i++) await vigilante.SoltarYaAsync(MotivoDeSuelta.Panico);
+        viejo.Aperturas.Should().Be(0, "el pánico sin conexión no abre el puerto");
+
+        var nuevo = new CanalCatDeCaptura();
+        await conmutable.SustituirAsync(new ControlFt710(nuevo, Opciones(), registro));
+        nuevo.Aperturas.Should().Be(0, "aplicar no abre el puerto: lo abre Conectar");
+        await conmutable.ConectarAsync();
+
+        conmutable.Estado.Conectado.Should().BeTrue();
+        vigilante.EnAntena.Should().BeFalse();
+        vigilante.MotivoDeBloqueo.Should().BeNull();
+
+        for (var pasada = 0; pasada < 2; pasada++)
+        {
+            await using (await vigilante.PedirAntenaAsync("Fonía"))
+            {
+                vigilante.EnAntena.Should().BeTrue();
+                nuevo.Recibidas.Last().Should().Be("TX1;");
+                conmutable.Estado.Transmitiendo.Should().BeTrue();
+            }
+
+            vigilante.EnAntena.Should().BeFalse();
+            nuevo.Recibidas.Last().Should().Be("TX0;");
+            conmutable.Estado.Transmitiendo.Should().BeFalse();
+
+            // Un panico entre pasada y pasada no deja nada pegado.
+            await vigilante.SoltarYaAsync(MotivoDeSuelta.Panico);
+        }
+
+        nuevo.Aperturas.Should().Be(1);
+    }
+
+    [Fact]
     public async Task Si_el_canal_se_rompe_en_antena_desconectar_si_reabre_para_bajar_el_PTT()
     {
         // La red de seguridad no se toca: con PTT pedido y el canal roto, se reabre y se baja.

@@ -55,6 +55,15 @@ public sealed class OpcionesFt710
     public ViaDePtt ViaDePtt { get; set; } = ViaDePtt.Cat;
 
     /// <summary>
+    /// Lo que vale una sintonia pedida con <c>PrepararSintonia</c> sin que llegue la subida de PTT.
+    /// </summary>
+    /// <remarks>
+    /// Se pide «justo antes» de pedir antena al vigilante. Si la antena se deniega, el apunte no
+    /// puede quedarse esperando a la siguiente transmision, que seria de otra cosa.
+    /// </remarks>
+    public TimeSpan ValidezDeLaSintoniaPedida { get; set; } = TimeSpan.FromSeconds(5);
+
+    /// <summary>
     /// Usar el codec de audio USB del equipo para saber si esta encendido antes de reintentar
     /// la conexion. Solo se aplica cuando se habla por su puerto serie.
     /// </summary>
@@ -197,7 +206,8 @@ public sealed class ControlFt710
     /// </summary>
     private int _conectando;
     private string? _modoDelEquipo;
-    private int _sintoniaPedida;
+    /// <summary>Marca de reloj de la ultima sintonia pedida y sin gastar; cero si no hay.</summary>
+    private long _sintoniaPedida;
     private bool _sintonizando;
     private bool _enMemoria;
 
@@ -908,7 +918,7 @@ public sealed class ControlFt710
     /// <c>AC003;</c> (el TUNE mantenido del equipo) y al soltar se manda <c>TX0;</c> y, si el
     /// acoplador sigue sintonizando, se para.
     /// </remarks>
-    public void PrepararSintonia() => Volatile.Write(ref _sintoniaPedida, 1);
+    public void PrepararSintonia() => Volatile.Write(ref _sintoniaPedida, System.Diagnostics.Stopwatch.GetTimestamp());
 
     /// <summary>
     /// Lo que se deja sintonizando un modelo que no dice por CAT cuando acaba (todos menos el
@@ -1071,6 +1081,18 @@ public sealed class ControlFt710
     /// <inheritdoc />
     async Task IPttDirecto.PonerPttDirectoAsync(bool transmitir, CancellationToken ct)
     {
+        // La sintonia pedida se gasta con la subida siguiente: si llega a tiempo es un TUNE, y
+        // si llega tarde se olvida. Antes se quedaba apuntada hasta la siguiente subida, fuera
+        // cuando fuera y de quien fuera (15-11-2026). Una bajada no la toca: puede ser la cola
+        // de la transmision anterior, cruzandose con un TUNE recien pedido.
+        var pedidaEn = transmitir ? Interlocked.Exchange(ref _sintoniaPedida, 0) : 0;
+        var esSintonia = pedidaEn != 0
+            && System.Diagnostics.Stopwatch.GetElapsedTime(pedidaEn) <= _opciones.ValidezDeLaSintoniaPedida;
+        if (pedidaEn != 0 && !esSintonia)
+        {
+            _registro.LogInformation("Se olvida una sintonía del acoplador que se pidió y no llegó a salir.");
+        }
+
         if (!transmitir && NoHayNadaQueBajar())
         {
             _registro.LogDebug(
@@ -1079,7 +1101,7 @@ public sealed class ControlFt710
             return;
         }
 
-        if (transmitir && Interlocked.Exchange(ref _sintoniaPedida, 0) == 1)
+        if (transmitir && esSintonia)
         {
             // La transmision vigilada de TUNE: el que emite es el propio acoplador («Tuning
             // Start», AC003), no el CAT. El vigilante la trata como cualquier otra: tope de

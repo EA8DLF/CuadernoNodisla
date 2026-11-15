@@ -193,6 +193,61 @@ public sealed class OperarFt710Pruebas
     }
 
     /// <summary>
+    /// La secuencia del 15-11-2026 hasta «ahora tampoco puedo hacer PTT»: panico varias veces
+    /// sin conexion, cambio de control en los ajustes, Conectar, y pedir antena por CAT.
+    /// </summary>
+    /// <remarks>
+    /// Comprueba que nada de lo que lleva el CAT se queda pegado: el panel ve el equipo
+    /// conectado y en USB —que es lo que mira el panel de Fonia para dejar transmitir— y el
+    /// vigilante esta libre y sin bloqueo. Que la antena sube con <c>TX1;</c> esta en las
+    /// pruebas de Radio (<c>DesconexionLimpiaPruebas</c>): el canal de mentira de aqui no deja
+    /// pasar un <c>TX1;</c>.
+    /// </remarks>
+    [Fact]
+    public async Task Tras_panicos_y_cambiar_de_control_el_panel_esta_conectado_y_el_vigilante_libre()
+    {
+        var opciones = new OpcionesFt710 { IntervaloDeSondeo = TimeSpan.FromHours(1) };
+        var viejo = new CanalFt710DeMentira();
+        var conmutable = new ControlEquipoConmutable(new ControlFt710(viejo, opciones));
+        await using var _ = conmutable;
+        var vigilante = new VigilantePtt(conmutable, new OpcionesDelVigilante
+        {
+            EngancharseAlCierreDelProceso = false,
+            Seguridad = new OpcionesDeSeguridadDeTx { BloquearFueraDeBanda = false, VigilarRoe = false },
+        });
+        await using var __ = vigilante;
+        // Cinco panicos seguidos sin conexion, como a las 12:47. Van antes de montar el panel
+        // porque la suelta corre en hilo propio y el panel, en las pruebas, vive en el hilo que
+        // lo crea.
+        for (var i = 0; i < 5; i++) await vigilante.SoltarYaAsync(MotivoDeSuelta.Panico);
+        viejo.Abierto.Should().BeFalse("el pánico sin conexión no abre el puerto");
+
+        var equipo = new VistaModeloEquipo(conmutable, vigilante);
+
+        // «Guardado y aplicado … Pulse Conectar»: control nuevo, y Conectar.
+        var nuevo = new CanalFt710DeMentira();
+        await conmutable.SustituirAsync(new ControlFt710(nuevo, opciones));
+        await EsperaALaVentana.DrenarAsync();
+        equipo.Conectado.Should().BeFalse();
+        nuevo.Abierto.Should().BeFalse("aplicar no abre el puerto: lo abre Conectar");
+
+        await equipo.ConectarAsync();
+        await EsperaALaVentana.DrenarAsync();
+
+        equipo.Conectado.Should().BeTrue();
+        equipo.Modo.Should().Be("USB");
+        vigilante.EnAntena.Should().BeFalse();
+        vigilante.MotivoDeBloqueo.Should().BeNull();
+
+        // Otro panico ya conectado: sigue conectado, libre y sin bloqueo.
+        await equipo.SoltarPttAsync();
+        await EsperaALaVentana.DrenarAsync();
+        equipo.Conectado.Should().BeTrue();
+        vigilante.EnAntena.Should().BeFalse();
+        vigilante.MotivoDeBloqueo.Should().BeNull();
+    }
+
+    /// <summary>
     /// Canal CAT en memoria que contesta como el FT-710 de Jose y aplica las ordenes de escritura.
     /// </summary>
     private sealed class CanalFt710DeMentira : ICanalCat
