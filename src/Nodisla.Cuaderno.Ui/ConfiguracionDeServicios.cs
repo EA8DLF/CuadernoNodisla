@@ -417,7 +417,8 @@ public static class ConfiguracionDeServicios
                 proveedor.GetRequiredService<IAlmacenDeCredenciales>(),
                 proveedor.GetRequiredService<System.Net.Http.IHttpClientFactory>(),
                 proveedor.GetRequiredService<Servicios.Red.PoliticaDeReintentos>(),
-                IndicativoDelPerfil(proveedor)));
+                IndicativoDelPerfil(proveedor),
+                proveedor.GetService<ILoggerFactory>()));
 
             servicios.AddSingleton<IConsultaIndicativo>(proveedor =>
             {

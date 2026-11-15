@@ -154,7 +154,7 @@ public sealed class ServicioNoDisponibleException : Exception
 }
 
 /// <summary>El servicio respondio, pero con un error.</summary>
-public sealed class RespuestaDelServicioException : Exception
+public class RespuestaDelServicioException : Exception
 {
     /// <summary>Crea la excepcion.</summary>
     /// <param name="mensaje">Explicacion para el operador.</param>

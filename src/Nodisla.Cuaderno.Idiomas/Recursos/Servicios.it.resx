@@ -1215,11 +1215,17 @@ Congratulazioni e 73,
   <data name="Servicios.Qrz.Acepto" xml:space="preserve">
     <value>QRZ.com ha accettato {0} collegamenti su {1}.</value>
   </data>
+  <data name="Servicios.Qrz.Bloqueado" xml:space="preserve">
+    <value>QRZ.com ha bloccato l'account fino alle {0} UTC per troppi tentativi falliti. Non si riproverà fino ad allora.</value>
+  </data>
   <data name="Servicios.Qrz.ClaveNoAceptada" xml:space="preserve">
     <value>QRZ.com non ha accettato la chiave del log.</value>
   </data>
   <data name="Servicios.Qrz.ComprobarCuaderno" xml:space="preserve">
     <value>controllare il log di QRZ.com</value>
+  </data>
+  <data name="Servicios.Qrz.CredencialesRechazadas" xml:space="preserve">
+    <value>QRZ.com ha rifiutato l'utente o la password. Non si riproverà finché non li cambia nelle impostazioni.</value>
   </data>
   <data name="Servicios.Qrz.Descargando" xml:space="preserve">
     <value>Download dal log di QRZ.com (pagina {0})…</value>

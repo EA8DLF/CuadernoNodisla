@@ -108,6 +108,13 @@ public sealed class ConsultaConCache : IConsultaIndicativo
             {
                 throw;
             }
+            catch (Red.SesionRechazadaException ex)
+            {
+                // La fuente ya lo aviso una vez en el registro y no ha llamado al servicio:
+                // repetirlo aqui con cada indicativo tecleado es lo que llenaba el registro.
+                ultimoFallo = ex;
+                _log.LogDebug("{Servicio} no se consulta: {Motivo}", fuente.Nombre, ex.Message);
+            }
             catch (Exception ex)
             {
                 // Se prueba con la siguiente: para eso esta HamQTH.

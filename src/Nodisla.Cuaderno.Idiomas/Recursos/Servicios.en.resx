@@ -1215,11 +1215,17 @@ Congratulations and 73,
   <data name="Servicios.Qrz.Acepto" xml:space="preserve">
     <value>QRZ.com accepted {0} of {1} QSOs.</value>
   </data>
+  <data name="Servicios.Qrz.Bloqueado" xml:space="preserve">
+    <value>QRZ.com has blocked the account until {0} UTC after too many failed attempts. It will not be tried again until then.</value>
+  </data>
   <data name="Servicios.Qrz.ClaveNoAceptada" xml:space="preserve">
     <value>QRZ.com did not accept the logbook key.</value>
   </data>
   <data name="Servicios.Qrz.ComprobarCuaderno" xml:space="preserve">
     <value>check the QRZ.com logbook</value>
+  </data>
+  <data name="Servicios.Qrz.CredencialesRechazadas" xml:space="preserve">
+    <value>QRZ.com rejected the username or password. It will not be tried again until you change them in Settings › Accounts &amp; services.</value>
   </data>
   <data name="Servicios.Qrz.Descargando" xml:space="preserve">
     <value>Downloading from the QRZ.com logbook (page {0})…</value>
