@@ -9,8 +9,8 @@ Va por apartados, con la lista a la izquierda:
 
 | Apartado | Qué hay |
 |---|---|
-| **Cuentas y servicios** | Una tarjeta por servicio: QRZ.com, LoTW, eQSL.cc, Club Log, HamQTH, el cluster y el correo (SMTP) |
-| **Subidas y QRZ** | Completar con la ficha de QRZ.com y la subida automática, con su cola |
+| **Cuentas y servicios** | Una tarjeta por servicio: LoTW, eQSL.cc, Club Log, HamQTH, el cluster y el correo (SMTP); la de QRZ.com lleva a su apartado |
+| **Subidas y QRZ** | Todo lo de QRZ.com (subir contactos y rellenar la ficha), la subida automática a los demás servicios y la cola |
 | **Equipo (CAT)** | Por dónde habla el cuaderno con la radio y el PTT |
 | **Audio y digitales** | Entrada y salida de sonido del equipo y cómo transmite y apunta el módem |
 | **Fonía** | Altavoces, micrófono y PTT de fonía por el PC |
@@ -29,8 +29,9 @@ cuenta, sus contraseñas o claves, y una pastilla arriba a la derecha con su est
 **Configurada**, ámbar **Incompleta** (o «Falta TQSL», «Falta la contraseña»), gris **Sin
 configurar**—.
 
-- **QRZ.com** — usuario, contraseña (para la ficha del corresponsal) y la *Clave del cuaderno de
-  QRZ* (para subir contactos; la da QRZ en *Logbook → Settings → API*).
+- **QRZ.com** — solo su estado (cómo está la subida de contactos y cómo la ficha del
+  corresponsal) y **Configurar…**, que lleva a **Subidas y QRZ**. La clave de API, el usuario y la
+  contraseña de QRZ se escriben allí, en un solo sitio.
 - **LoTW** — usuario, **ubicación de estación de TQSL** (el nombre que le puso en TQSL, no su
   indicativo), ruta de `tqsl.exe` si no está en su sitio, contraseña de LoTW y frase de paso del
   certificado. La tarjeta dice con toda claridad **por qué** no se puede subir cuando falta algo
@@ -54,19 +55,69 @@ hombro.
 
 ## Subidas y QRZ
 
-![Configuración › Subidas y QRZ: completar con QRZ.com y la subida automática con su cola](../capturas/ayuda/configuracion-subidas.png)
+![Configuración › Subidas y QRZ: los dos recuadros de QRZ.com y la subida automática a los demás servicios](../capturas/ayuda/configuracion-subidas.png)
 
-### Completar con QRZ.com
+### QRZ.com: dos datos distintos para dos cosas distintas
 
-La casilla **Rellenar nombre, QTH, localizador… con la ficha de QRZ.com** está marcada de
-fábrica. Hace falta la contraseña de QRZ.com (tarjeta QRZ.com); con la de **HamQTH** guardada,
-HamQTH hace de reserva. Solo se rellena lo vacío; nunca se pisa lo que usted escriba.
+QRZ.com pide un dato diferente según lo que se quiera hacer, y **tener uno no da el otro**. Por
+eso el apartado abre con dos recuadros, uno por tarea:
 
-### Subida automática
+| Quiero… | Dato que pide QRZ | Dónde se saca |
+|---|---|---|
+| **Subir mis contactos a QRZ** | La **clave de API del libro** (tiene la forma `XXXX-XXXX-XXXX-XXXX`) | Con la sesión iniciada en qrz.com, en la página *QRZ Logbook API Integration* (`qrz.com/docs/logbook30/api`): lista sus libros y la *API Key* de cada uno |
+| **Rellenar la ficha del corresponsal con QRZ** | El **usuario y la contraseña** con los que entra en qrz.com | Son los de su cuenta de la web |
 
-Una casilla por servicio: **LoTW**, **eQSL**, **Club Log** y **QRZ** (el cuaderno de QRZ.com, con
-la *Clave del cuaderno de QRZ*). De fábrica se marcan solas las que tienen credenciales
-guardadas; si toca una casilla, se queda como usted la deje.
+Cada recuadro lleva, de arriba abajo: el dato y de dónde sale, **Probar**, la casilla de activar
+y cómo va. Arriba a la derecha, una chapa: gris **Falta la clave** / **Falta la contraseña**,
+ámbar **Sin activar** o **Con problemas**, verde **En marcha**.
+
+Si pega la clave de API en la casilla de la contraseña, o al revés, **sale un aviso ámbar al
+momento** debajo de la casilla. Avisa, no impide: puede guardar igual.
+
+> QRZ solo deja usar la API del libro si el dueño del libro tiene una **suscripción activa de
+> nivel «XML» o superior**. Para la ficha, sin suscripción XML de pago QRZ solo da una parte.
+
+#### Subir mis contactos a QRZ
+
+1. Pegue la clave en **Clave de API del libro** y pulse **Guardar**.
+2. Pulse **Probar la clave**. No sube ni cambia nada: pregunta a QRZ por el estado del libro y
+   contesta en claro:
+   - verde — *Clave válida: da acceso al libro de EA8XXX, que tiene N contactos en QRZ*;
+   - rojo — *QRZ no reconoce esta clave de API* (cópiela otra vez; compruebe que no es la
+     contraseña), o *QRZ reconoce la clave pero no le deja usar la API del libro* (falta la
+     suscripción);
+   - ámbar — no se ha podido llegar a QRZ (sin red): la clave no se ha comprobado.
+3. Marque **Subir cada contacto a QRZ al registrarlo**.
+4. Si en el cuaderno ya había contactos, debajo se lee cuántos no están en QRZ y aparece
+   **Subir los contactos anteriores…** (más abajo se explica).
+
+Si QRZ rechaza la clave mientras se sube, **la subida a QRZ se para** y lo dice aquí y en la
+pastilla **QRZ** de la barra de estado, en rojo y con el motivo. Los contactos se quedan
+esperando, sin gastar reintentos, y salen solos en cuanto guarde otra clave o **Probar la clave**
+vaya bien.
+
+Un contacto que ya estaba en su libro de QRZ **no se duplica** ni se pisa: QRZ lo devuelve como
+repetido y el cuaderno lo da por subido. Solo los contactos que usted **corrige con F2 después de
+subirlos** se mandan sustituyendo al anterior.
+
+#### Rellenar la ficha del corresponsal con QRZ
+
+1. Escriba el **Usuario de qrz.com** (vacío: el indicativo del perfil de estación) y pulse
+   **Guardar**.
+2. Escriba la **Contraseña de qrz.com** y pulse **Guardar**.
+3. Pulse **Probar el acceso**: abre una sesión en QRZ y dice si la acepta. Si QRZ ya rechazó ese
+   usuario y esa contraseña, **no se repite la prueba hasta que cambie alguno de los dos**: cada
+   intento fallido acerca el bloqueo temporal de la cuenta. Si la cuenta está bloqueada, dice
+   hasta qué hora.
+4. Marque **Rellenar los contactos con la ficha de QRZ** (viene marcada de fábrica).
+
+Solo se rellena lo vacío; nunca se pisa lo que usted escriba. Con la cuenta de **HamQTH** puesta
+en *Cuentas y servicios*, HamQTH hace de reserva cuando QRZ no contesta.
+
+### Subida automática a LoTW, eQSL y Club Log
+
+Una casilla por servicio. De fábrica se marcan solas las que tienen credenciales guardadas; si
+toca una casilla, se queda como usted la deje. Sus cuentas se ponen en *Cuentas y servicios*.
 
 Todo contacto que se guarda (formulario, Digital o ronda) entra en la **cola de subidas**. La
 cola se guarda en disco: sin red, o si el servicio falla, se reintenta sola con espera creciente
@@ -79,17 +130,45 @@ reciben de nuevo un contacto modificado con F2; **LoTW y eQSL no admiten modific
 subido. LoTW necesita **TQSL instalado** con su certificado y la ubicación de estación: si falta,
 la pastilla lo dice y no se reintenta en bucle; en cuanto se arregla, sale todo solo.
 
-La importación de un ADIF **no** sube nada: solo se suben los contactos que se registran o se
-modifican en el programa.
+### Cuántos contactos hay subidos, y los que ya estaban en el cuaderno
+
+Debajo de cada servicio (QRZ incluido) se lee siempre el recuento:
+
+> 1.234 subidos · 3 pendientes · 1 con error · 560 sin subir
+
+- **subidos** — ya están en el servicio;
+- **pendientes** — en la cola, esperando turno o reintentando;
+- **con error** — en la cola, con los reintentos automáticos agotados (el motivo está en la cola,
+  más abajo, con los que fallan delante);
+- **sin subir** — ni subidos ni en la cola.
+
+**Solo sube solo lo que se registra con la subida ya activada.** Si activa un servicio teniendo
+ya contactos en el cuaderno —o importa un ADIF—, esos contactos aparecen como **sin subir** y no
+salen hasta que usted lo pida:
+
+1. Pulse **Subir los contactos anteriores…** debajo del servicio.
+2. Se abre la confirmación en la misma pantalla: dice cuántos se van a subir. Si solo quiere los
+   de una fecha en adelante, escríbala en **Solo desde el día (UTC)**, como `2026-01-31`; vacía,
+   van todos.
+3. Pulse **Subir N contactos**. Entran en la cola y suben solos **por tandas, del más antiguo al
+   más nuevo**; una barra enseña por dónde va. Puede seguir operando y no hace falta dejar la
+   configuración abierta: si cierra el programa, sigue al volver a abrirlo.
+4. **Cancelar la subida** saca de la cola los que faltaban. Lo ya subido, subido queda, y los
+   contactos que registre entre tanto siguen su curso.
+
+A QRZ se le manda un contacto por llamada (su API no admite más), así que un cuaderno grande
+tarda unos minutos. Lo que ya estuviera en QRZ no se duplica.
 
 **La primera vez:**
 
-1. En **Cuentas y servicios**, tarjeta QRZ.com: guarde la contraseña y, si quiere subir al
-   cuaderno de QRZ, la *Clave del cuaderno de QRZ*.
-2. Tarjeta LoTW: instale TQSL con su certificado, guarde la contraseña de LoTW, escriba la
-   ubicación de estación de TQSL y pulse **Guardar la cuenta**.
+1. En **Subidas y QRZ**: en el recuadro *Rellenar la ficha…*, el usuario y la contraseña de
+   qrz.com y **Probar el acceso**; en el recuadro *Subir mis contactos a QRZ*, la clave de API,
+   **Probar la clave** y la casilla de subir.
+2. En **Cuentas y servicios**, tarjeta LoTW: instale TQSL con su certificado, guarde la contraseña
+   de LoTW, escriba la ubicación de estación de TQSL y pulse **Guardar la cuenta**.
 3. Tarjetas eQSL.cc y Club Log: contraseñas, clave de API de Club Log y el correo de la cuenta.
-4. Mire que las pastillas de las tarjetas, y las de la barra de estado, se pongan verdes.
+4. Mire que las chapas y las pastillas de la barra de estado se pongan verdes, y si hay contactos
+   **sin subir**, súbalos con **Subir los contactos anteriores…**.
 
 ## Equipo (CAT)
 
