@@ -248,8 +248,17 @@ public sealed class ControlFt710
                 async ct =>
                 {
                     await _canal.AbrirAsync(ct).ConfigureAwait(false);
-                    await PararElManipuladorSiHaceFaltaAsync(ct).ConfigureAwait(false);
-                    await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false);
+                    try
+                    {
+                        await PararElManipuladorSiHaceFaltaAsync(ct).ConfigureAwait(false);
+                        await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        // Si no hay conexion pedida, el puerto que se ha abierto solo para
+                        // bajar el PTT se vuelve a cerrar: una suelta no deja puertos cogidos.
+                        if (!PuedeReabrirElCanal()) _canal.Cerrar();
+                    }
                 }),
         ]);
 
@@ -456,9 +465,22 @@ public sealed class ControlFt710
 
         cts?.Dispose();
 
-        await BajarElPttComoSeaAsync(ct).ConfigureAwait(false);
+        var bajado = await BajarElPttComoSeaAsync(ct).ConfigureAwait(false);
 
         _canal.Cerrar();
+        if (bajado)
+        {
+            // PTT abajo y puerto cerrado a proposito: a partir de aqui no queda nada que bajar
+            // ni puerto que reabrir hasta que se vuelva a conectar. Sin esto, la desconexion
+            // siguiente —la de desechar el control tras «Probar», o la de cambiar de control—
+            // recorria las vias de emergencia y volvia a abrir el puerto para mandar otro TX0;
+            // (15-11-2026). Si NO se ha podido bajar, todo se queda como estaba y la proxima
+            // bajada lo intenta otra vez por todas las vias.
+            Volatile.Write(ref _pttPedido, false);
+            Volatile.Write(ref _sintonizando, false);
+            Volatile.Write(ref _canalAbiertoAlgunaVez, false);
+        }
+
         lock (_candado)
         {
             _vfos = EstadoDeLosVfos.SinDatos;
@@ -2247,16 +2269,18 @@ public sealed class ControlFt710
         && !Volatile.Read(ref _sintonizando)
         && (Volatile.Read(ref _desechado) || !Volatile.Read(ref _canalAbiertoAlgunaVez));
 
-    private async Task BajarElPttComoSeaAsync(CancellationToken ct)
+    /// <returns>Verdadero si el PTT ha quedado abajo (o no habia nada que bajar).</returns>
+    private async Task<bool> BajarElPttComoSeaAsync(CancellationToken ct)
     {
         if (!_canal.Abierto
             && !Volatile.Read(ref _canalAbiertoAlgunaVez)
-            && !Volatile.Read(ref _pttPedido))
+            && !Volatile.Read(ref _pttPedido)
+            && !Volatile.Read(ref _sintonizando))
         {
             _registro.LogDebug(
-                "{Canal} no se llegó a abrir y no hay PTT pedido: no se toca el puerto al desconectar.",
+                "{Canal} está cerrado sin PTT pedido (no se llegó a abrir, o ya se bajó y se cerró): no se toca el puerto al desconectar.",
                 _canal.Descripcion);
-            return;
+            return true;
         }
 
         try
@@ -2265,7 +2289,7 @@ public sealed class ControlFt710
             {
                 await PararElManipuladorSiHaceFaltaAsync(ct).ConfigureAwait(false);
                 await _canal.MandarAsync("TX0;", ct).ConfigureAwait(false);
-                return;
+                return true;
             }
         }
         catch (Exception ex)
@@ -2280,7 +2304,7 @@ public sealed class ControlFt710
                 using var espera = new CancellationTokenSource(_opciones.EsperaDeOrden);
                 await via.SoltarAsync(espera.Token).ConfigureAwait(false);
                 _registro.LogInformation("PTT abajo antes de desconectar por «{Via}».", via.Nombre);
-                return;
+                return true;
             }
             catch (Exception ex)
             {
@@ -2289,6 +2313,7 @@ public sealed class ControlFt710
         }
 
         _registro.LogError("No se ha podido bajar el PTT antes de desconectar por ninguna vía.");
+        return false;
     }
 
     // ── ROE durante la transmision (IMedidorDeRoe) ───────────────────────────────────────────
