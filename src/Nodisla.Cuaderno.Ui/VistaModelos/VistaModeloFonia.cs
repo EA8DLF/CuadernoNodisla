@@ -239,9 +239,51 @@ public sealed partial class VistaModeloFonia : ObservableObject
         if (_arranqueAtendido) return;
         _arranqueAtendido = true;
 
-        if (!Ajustes.EscucharAlArrancar || _control.Escuchando || !Ajustes.EscuchaConfigurada) return;
+        // Cada salida sin abrir deja su motivo en el registro: el 2026-11-15 la escucha no se
+        // abria y no habia ni una linea que dijera por que.
+        if (!Ajustes.EscucharAlArrancar)
+        {
+            Registro.Information("Fonía: no se abre la escucha al arrancar: no está pedida en los ajustes.");
+            return;
+        }
+
+        if (_control.Escuchando) return;
+
+        if (!Ajustes.EscuchaConfigurada)
+        {
+            Registro.Warning(
+                "Fonía: no se abre la escucha al arrancar: falta por elegir {Falta:l}. {Dispositivos:l}",
+                LoQueFaltaParaEscuchar(),
+                Ajustes.DescribirDispositivos());
+            return;
+        }
+
         await AbrirEscuchaAsync().ConfigureAwait(true);
         Escuchando = _control.Escuchando;
+    }
+
+    private string LoQueFaltaParaEscuchar() => (Ajustes.EntradaDelEquipo, Ajustes.Altavoces) switch
+    {
+        (null, null) => "la entrada del equipo y los altavoces del PC",
+        (null, _) => "la entrada del equipo",
+        _ => "los altavoces del PC",
+    };
+
+    /// <summary>Una linea en el registro cada vez que CAMBIA si se puede transmitir, y por que.</summary>
+    partial void OnMotivoDeNoPoderChanged(string value)
+    {
+        if (value.Length == 0)
+        {
+            Registro.Information(
+                "PTT de fonía disponible: equipo en {Modo:l}, micrófono «{Microfono:l}», salida al equipo «{Salida:l}».",
+                _equipo.Modo,
+                Ajustes.Microfono?.Nombre,
+                Ajustes.SalidaAlEquipo?.Nombre);
+        }
+        else
+        {
+            Registro.Information("PTT de fonía no disponible: {Motivo:l}", value);
+        }
     }
 
     /// <summary>Lee por CAT la fuente de modulacion y avisa si no es USB.</summary>
@@ -313,6 +355,9 @@ public sealed partial class VistaModeloFonia : ObservableObject
         RecalcularSiSePuede();
         if (!PuedeTransmitir)
         {
+            // Una linea por pulsacion rechazada (no por refresco): si el operador dice «no
+            // puedo hacer PTT», aqui queda si llego la pulsacion y por que se le dijo que no.
+            Registro.Information("Fonía: PTT pulsado y rechazado: {Motivo:l}", MotivoDeNoPoder);
             Aviso = MotivoDeNoPoder;
             return;
         }
@@ -324,7 +369,11 @@ public sealed partial class VistaModeloFonia : ObservableObject
         }
         catch (Exception fallo)
         {
-            Log.Warning(fallo, "No se ha podido salir al aire en fonía.");
+            Registro.Warning(
+                fallo,
+                "No se ha podido salir al aire en fonía (micrófono «{Microfono:l}», salida al equipo «{Salida:l}»).",
+                Ajustes.Microfono?.Nombre,
+                Ajustes.SalidaAlEquipo?.Nombre);
             Aviso = Textos.F("Cabina.Fonia.NoTransmite", fallo.Message);
         }
         finally
@@ -353,19 +402,32 @@ public sealed partial class VistaModeloFonia : ObservableObject
     {
         if (!Ajustes.EscuchaConfigurada)
         {
+            Registro.Warning(
+                "Fonía: no se puede abrir la escucha: falta por elegir {Falta:l}. {Dispositivos:l}",
+                LoQueFaltaParaEscuchar(),
+                Ajustes.DescribirDispositivos());
             Aviso = Textos.T("Cabina.Fonia.ElijaEscucha");
             return;
         }
 
+        var entrada = Ajustes.EntradaDelEquipo!;
+        var altavoces = Ajustes.Altavoces!;
         try
         {
             _escuchaAbiertaUtc = DateTimeOffset.UtcNow;
-            await _control.EmpezarEscuchaAsync(Ajustes.EntradaDelEquipo!.Id, Ajustes.Altavoces!.Id).ConfigureAwait(true);
+            await _control.EmpezarEscuchaAsync(entrada.Id, altavoces.Id).ConfigureAwait(true);
             Aviso = string.Empty;
+            Registro.Information("Fonía: escucha abierta de «{Entrada:l}» a «{Altavoces:l}».", entrada.Nombre, altavoces.Nombre);
         }
         catch (Exception fallo)
         {
-            Log.Warning(fallo, "No se ha podido abrir la escucha por el PC.");
+            Registro.Warning(
+                fallo,
+                "No se ha podido abrir la escucha por el PC de «{Entrada:l}» ({IdEntrada:l}) a «{Altavoces:l}» ({IdAltavoces:l}).",
+                entrada.Nombre,
+                entrada.Id,
+                altavoces.Nombre,
+                altavoces.Id);
             Aviso = Textos.F("Cabina.Fonia.NoAbreEscucha", fallo.Message);
         }
     }

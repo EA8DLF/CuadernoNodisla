@@ -317,6 +317,7 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
 
         Guardar();
         AvisarDeDispositivos();
+        AnotarDispositivos();
 
         // Si la busqueda ha cambiado lo elegido —la radio se acaba de encender y aparece su
         // codec, o se ha ido un dispositivo—, la fonia en marcha tiene que enterarse igual que
@@ -455,6 +456,53 @@ public sealed partial class VistaModeloAjustesFonia : ObservableObject
         if (_cargando) return;
         AvisarDeDispositivos();
         AlCambiar(que);
+        AnotarDispositivos();
+    }
+
+    /// <summary>
+    /// Que dispositivos de sonido hay y cuales estan elegidos para la fonia, en una linea: lo
+    /// que hace falta leer en el registro cuando «no se oye» o «no transmite».
+    /// </summary>
+    public string DescribirDispositivos()
+    {
+        var f = Guardado;
+        return string.Join(
+            " ",
+            $"Entradas: {Lista(Entradas)}.",
+            $"Salidas: {Lista(Salidas)}.",
+            $"Entrada del equipo: {Elegido(EntradaDelEquipo, f.EntradaDelEquipo)}.",
+            $"Altavoces del PC: {Elegido(Altavoces, f.Altavoces)}.",
+            $"Micrófono del PC: {Elegido(Microfono, f.Microfono)}.",
+            $"Salida al equipo: {Elegido(SalidaAlEquipo, f.SalidaAlEquipo)}.");
+
+        static string Uno(DispositivoDeAudio d) => $"«{d.Nombre}»{(d.EsDelEquipo ? " (del equipo)" : string.Empty)} {d.Id}";
+
+        static string Lista(IReadOnlyCollection<DispositivoDeAudio> lista) =>
+            lista.Count == 0 ? "ninguna" : string.Join("; ", lista.Select(Uno));
+
+        static string Elegido(DispositivoDeAudio? elegido, string? guardado) => elegido is not null
+            ? Uno(elegido)
+            : string.IsNullOrEmpty(guardado) ? "sin elegir" : $"sin elegir (el guardado, {guardado}, ahora no está)";
+    }
+
+    /// <summary>
+    /// Deja en el registro los dispositivos que hay y los elegidos, solo cuando cambian: buscar
+    /// otra vez y encontrar lo mismo no repite la linea. Aviso si falta alguno por elegir.
+    /// </summary>
+    private void AnotarDispositivos()
+    {
+        var descripcion = DescribirDispositivos();
+        if (string.Equals(descripcion, _dispositivosAnotados, StringComparison.Ordinal)) return;
+        _dispositivosAnotados = descripcion;
+
+        if (EscuchaConfigurada && TransmisionConfigurada)
+        {
+            Registro.Information("Fonía, dispositivos de sonido. {Dispositivos:l}", descripcion);
+        }
+        else
+        {
+            Registro.Warning("Fonía, dispositivos de sonido: falta alguno por elegir. {Dispositivos:l}", descripcion);
+        }
     }
 
     private void AvisarDeDispositivos()
