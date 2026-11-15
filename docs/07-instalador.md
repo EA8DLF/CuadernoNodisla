@@ -30,6 +30,13 @@ dotnet publish "src\Nodisla.Cuaderno.Ui\Nodisla.Cuaderno.Ui.csproj" `
 
 El `.exe` resultante queda en `instalador\salida\CuadernoNodisla-Instalador-<version>.exe`.
 
+Así, a mano, el instalador sale **sin firma**: sirve para probar, no para publicar (un programa
+0.2.19 o posterior no se actualiza con un instalador sin la firma de NODISLA). Para publicar se
+usa siempre `herramientas\publicacion\Publicar-Version.ps1`, que firma; ver más abajo y
+[`20-firma-de-codigo.md`](20-firma-de-codigo.md). En el PC actual Inno Setup está instalado por
+usuario, en `%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe`; el script lo busca ahí y en
+Program Files.
+
 **Importante**: si algún otro proceso tiene abierto `dotnet` o el propio
 programa mientras se compila, el `bin`/`obj` de `src\Nodisla.Cuaderno.Ui`
 puede quedar bloqueado. Si el `dotnet publish` falla por eso, esperar a que
@@ -142,6 +149,12 @@ el botón «Descargar e instalar». Ese botón **solo instala si la release trae
 | `CuadernoNodisla-Instalador-<x.y.z.0>.exe.sha256` | `suma  nombre`, formato `sha256sum` |
 
 Si falta el `.sha256` o la suma no casa, el programa borra lo descargado y no instala nada.
+Desde la 0.2.19, además, el instalador tiene que llevar la **firma Authenticode de NODISLA**
+(firma íntegra y certificado de huella fijada en el programa); si no, también se borra y no se
+instala. El script de publicación firma los binarios propios, el desinstalador y el instalador,
+y se niega a publicar si algo queda sin firmar. Todo lo de la firma (certificado, renovación,
+comprobación a mano, límites de un certificado autofirmado) está en
+[`20-firma-de-codigo.md`](20-firma-de-codigo.md).
 Mientras el repositorio sea privado la API responde 404 y el programa se calla (solo deja
 una línea `Debug` en el registro).
 
@@ -157,7 +170,9 @@ una línea `Debug` en el registro).
    .\herramientas\publicacion\Publicar-Version.ps1
    ```
 
-   Deja en `instalador\salida\` el `.exe` y su `.exe.sha256`.
+   Deja en `instalador\salida\` el `.exe` **firmado** y su `.exe.sha256`. Necesita el
+   certificado de firma en el almacén del usuario, `signtool.exe` (SDK de Windows) y red para
+   el sello de tiempo; si falta algo, falla diciendo qué.
 4. Publicar (necesita `gh auth login` hecho en este PC; **la ficha de GitHub nunca va dentro
    del programa**):
 
@@ -165,7 +180,10 @@ una línea `Debug` en el registro).
    .\herramientas\publicacion\Publicar-Version.ps1 -SinCompilar -Subir -Notas .\notas-0.2.0.md
    ```
 
-   Crea la release `v0.2.0` con los dos adjuntos, o los reemplaza si ya existía.
+   Vuelve a comprobar la firma del instalador y crea la release `v0.2.0` con los dos adjuntos.
+   **No crear la etiqueta a mano antes**: la crea `gh`. Si la etiqueta `v0.2.0` ya existe en
+   git (local o en GitHub) o ya hay una release con ese nombre, el script **se niega**: una
+   versión publicada no se reemplaza, se sube `<Version>` y se publica otra.
 5. Comprobar en `https://github.com/EA8DLF/CuadernoNodisla/releases/latest` que están los dos
    ficheros, y en un programa con la versión anterior: Ajustes › Actualizaciones › «Buscar
    actualizaciones».
