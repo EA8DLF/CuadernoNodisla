@@ -114,6 +114,34 @@ public sealed class SubidaAutomaticaPruebas : IDisposable
     }
 
     [Fact]
+    public async Task Una_cola_danada_se_aparta_y_el_siguiente_guardado_no_la_machaca()
+    {
+        // Lo que queda si el programa muere a mitad de escribir, o si dos copias se pisan.
+        const string loQueHabia = "[ { \"QsoId\": 12, \"Medio\": \"Lotw\", esto se quedo a medias";
+        Directory.CreateDirectory(_carpeta);
+        File.WriteAllText(Ruta, loQueHabia);
+
+        var cola = Cola([new ServicioDoble(MedioDeConfirmacion.Lotw)]);
+        cola.Elementos.Should().BeEmpty();
+        await cola.EncolarAsync(Guardado(), false);
+
+        var apartados = Directory.GetFiles(_carpeta, ColaDeSubidas.NombreDelFichero + ".dañado-*");
+        apartados.Should().ContainSingle();
+        File.ReadAllText(apartados[0]).Should().Be(loQueHabia);
+        Cola([new ServicioDoble(MedioDeConfirmacion.Lotw)]).Elementos.Should().ContainSingle();
+    }
+
+    [Fact]
+    public async Task Guardar_la_cola_no_deja_temporales_por_la_carpeta()
+    {
+        var cola = Cola([new ServicioDoble(MedioDeConfirmacion.Lotw)]);
+        await cola.EncolarAsync(Guardado(), false);
+        await cola.EncolarAsync(Guardado("EA8XYZ"), false);
+
+        Directory.GetFiles(_carpeta).Should().ContainSingle().Which.Should().Be(Ruta);
+    }
+
+    [Fact]
     public async Task Lotw_sin_tqsl_no_se_reintenta_en_bucle_y_la_pastilla_lo_dice()
     {
         var lotw = new ServicioDoble(MedioDeConfirmacion.Lotw) { PuedeSubir = false };

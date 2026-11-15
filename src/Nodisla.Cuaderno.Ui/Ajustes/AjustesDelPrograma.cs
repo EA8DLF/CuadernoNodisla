@@ -8,6 +8,7 @@ using Nodisla.Cuaderno.Radio;
 using Nodisla.Cuaderno.Radio.Control.Ft710;
 using Nodisla.Cuaderno.Radio.Control.Rigctld;
 using Nodisla.Cuaderno.Radio.Ptt;
+using Nodisla.Cuaderno.Servicios.Ficheros;
 using Serilog;
 
 namespace Nodisla.Cuaderno.Ui.Ajustes;
@@ -750,15 +751,25 @@ public sealed class AjustesDelPrograma
     /// <summary>Lee los ajustes guardados, o devuelve los de fabrica si no hay ninguno.</summary>
     /// <param name="carpeta">Carpeta de datos del programa.</param>
     /// <returns>Los ajustes leidos, nunca nulos.</returns>
+    /// <remarks>
+    /// <para>
+    /// <b>Un fichero que no se puede leer no se machaca.</b> Antes se devolvian los de fabrica
+    /// y el siguiente <see cref="Guardar"/> escribia encima: un JSON a medias costaba al
+    /// operador todos sus ajustes sin mas rastro que un aviso en el registro. Ahora el fichero
+    /// danado se aparta como <c>ajustes.json.dañado-AAAAMMDD-HHMMSS</c> y queda apuntado en
+    /// <see cref="FicheroIlegible"/>; si ni siquiera se deja apartar, no se escribe encima.
+    /// </para>
+    /// <para>Se lee igual con BOM que sin el: hay editores que lo ponen al guardar a mano.</para>
+    /// </remarks>
     public static AjustesDelPrograma Leer(string carpeta)
     {
+        var ruta = Path.Combine(carpeta, NombreDelFichero);
         try
         {
-            var ruta = Path.Combine(carpeta, NombreDelFichero);
             if (!File.Exists(ruta)) return new AjustesDelPrograma();
 
-            var leidos = JsonSerializer.Deserialize<AjustesDelPrograma>(File.ReadAllText(ruta), Formato);
-            if (leidos is null) return new AjustesDelPrograma();
+            var leidos = JsonSerializer.Deserialize<AjustesDelPrograma>(FicheroSeguro.Leer(ruta), Formato)
+                ?? throw new JsonException("El fichero de ajustes está vacío.");
 
             // Un fichero a medias —editado a mano, o de una version anterior— deja partes
             // nulas. Se rellenan con las de fabrica en vez de reventar al primer uso.
@@ -782,10 +793,38 @@ public sealed class AjustesDelPrograma
         }
         catch (Exception ex)
         {
-            Log.Warning(ex, "No se han podido leer los ajustes; se usan los de fábrica.");
+            // Apartado si se puede; si no, apuntado para que Guardar no escriba encima.
+            var apartado = FicheroSeguro.ApartarIlegible(ruta);
+            if (apartado is null)
+            {
+                FicheroSeguro.MarcarIlegible(ruta);
+                Log.Error(
+                    ex,
+                    "No se han podido leer los ajustes de {Ruta}; se usan los de fábrica y el fichero no se pisará sin apartarlo antes.",
+                    ruta);
+            }
+            else
+            {
+                Log.Error(
+                    ex,
+                    "El fichero de ajustes estaba dañado; se ha apartado como {Apartado} y se usan los de fábrica.",
+                    apartado);
+            }
+
+            FicheroIlegible = apartado ?? ruta;
             return new AjustesDelPrograma();
         }
     }
+
+    /// <summary>
+    /// El fichero de ajustes que no se pudo leer (ya apartado, o el original si no se dejo
+    /// apartar); nulo si nunca ha fallado la lectura.
+    /// </summary>
+    /// <remarks>
+    /// El arranque lo mira para decirselo al operador: que el programa aparezca con los
+    /// ajustes de fabrica sin explicacion es justo lo que no puede pasar en silencio.
+    /// </remarks>
+    public static string? FicheroIlegible { get; private set; }
 
     /// <summary>
     /// Guarda los ajustes en la carpeta de datos del programa.
@@ -795,24 +834,33 @@ public sealed class AjustesDelPrograma
     /// mitad de la escritura dejaria el fichero a medias, y un fichero de ajustes a medias es
     /// un programa que arranca sin saber por donde esta la radio.
     /// </remarks>
+    /// <remarks>
+    /// Se guarda desde muchos sitios (cada pagina de Ajustes, el cierre de la ventana, las
+    /// subidas…), asi que va con un cerrojo unico para todo el proceso, un temporal de nombre
+    /// que no se repite y un reintento corto: con el temporal fijo <c>ajustes.json.nuevo</c>
+    /// dos guardados seguidos se pisaban («being used by another process», 15-11-2026) y el
+    /// cambio se perdia.
+    /// </remarks>
     /// <param name="carpeta">Carpeta de datos del programa.</param>
-    public void Guardar(string carpeta)
+    /// <returns>Verdadero si los ajustes han quedado escritos.</returns>
+    public bool Guardar(string carpeta)
     {
         try
         {
-            Directory.CreateDirectory(carpeta);
-            Cluster.Migrar();
-
             var ruta = Path.Combine(carpeta, NombreDelFichero);
-            var temporal = ruta + ".nuevo";
-            File.WriteAllText(temporal, JsonSerializer.Serialize(this, Formato));
+            lock (FicheroSeguro.CerrojoDe(ruta))
+            {
+                Cluster.Migrar();
+                FicheroSeguro.Escribir(ruta, JsonSerializer.Serialize(this, Formato));
+            }
 
-            if (File.Exists(ruta)) File.Replace(temporal, ruta, null);
-            else File.Move(temporal, ruta);
+            return true;
         }
         catch (Exception ex)
         {
-            Log.Warning(ex, "No se han podido guardar los ajustes.");
+            // A Error y no a aviso: lo que el operador acaba de cambiar no ha quedado guardado.
+            Log.Error(ex, "No se han podido guardar los ajustes: el cambio NO ha quedado en disco.");
+            return false;
         }
     }
 }

@@ -148,6 +148,8 @@ public partial class App : Application
             CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator,
             CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
 
+        AvisarSiLosAjustesNoSeLeyeron();
+
         PrepararElCuaderno();
 
         base.OnStartup(e);
@@ -207,6 +209,33 @@ public partial class App : Application
             ventana.ActualHeight,
             Resources.MergedDictionaries.Count,
             TryFindResource("FondoVentana")?.ToString() ?? "no encontrado");
+    }
+
+    /// <summary>
+    /// Si <c>ajustes.json</c> no se pudo leer, se dice: en el registro y con un cartel.
+    /// </summary>
+    /// <remarks>
+    /// La lectura que lo descubre es la primera del arranque, la del idioma, y entonces aun no
+    /// hay registro montado. El fichero ya esta apartado (o apuntado para no pisarlo); aqui
+    /// solo se deja constancia y se avisa, para que el operador no se encuentre el programa
+    /// con los ajustes de fabrica sin saber por que ni donde han quedado los suyos.
+    /// </remarks>
+    private static void AvisarSiLosAjustesNoSeLeyeron()
+    {
+        if (Ajustes.AjustesDelPrograma.FicheroIlegible is not { } fichero) return;
+
+        Log.Error(
+            "Los ajustes guardados no se han podido leer; se arranca con los de fábrica. Lo anterior queda en {Fichero}.",
+            fichero);
+
+        // Una verificacion desatendida no se queda esperando a que alguien pulse «Aceptar».
+        if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CUADERNO_APARTADA"))) return;
+
+        MessageBox.Show(
+            Nodisla.Cuaderno.Idiomas.Textos.F("Dialogos.AjustesIlegibles", fichero),
+            Nodisla.Cuaderno.Idiomas.Textos.T("Comun.NombreDelPrograma"),
+            MessageBoxButton.OK,
+            MessageBoxImage.Warning);
     }
 
     /// <summary>

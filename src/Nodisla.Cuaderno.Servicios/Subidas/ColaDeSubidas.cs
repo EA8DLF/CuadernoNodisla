@@ -748,12 +748,20 @@ public sealed class ColaDeSubidas : IDisposable
         if (_ruta is null || !File.Exists(_ruta)) return;
         try
         {
-            var leidos = JsonSerializer.Deserialize<List<ElementoDeCola>>(File.ReadAllText(_ruta), Formato);
-            if (leidos is not null) _cola.AddRange(leidos);
+            var leidos = JsonSerializer.Deserialize<List<ElementoDeCola>>(Ficheros.FicheroSeguro.Leer(_ruta), Formato)
+                ?? throw new JsonException("El fichero de la cola está vacío.");
+            _cola.AddRange(leidos);
         }
         catch (Exception ex)
         {
-            _log.LogWarning(ex, "No se ha podido leer la cola de subidas; se empieza vacía.");
+            // Se empieza vacia, pero lo que habia no se machaca: se aparta con la fecha en el
+            // nombre, y si no se deja apartar queda apuntado para que Guardar no lo pise.
+            var apartado = Ficheros.FicheroSeguro.ApartarIlegible(_ruta);
+            if (apartado is null) Ficheros.FicheroSeguro.MarcarIlegible(_ruta);
+            _log.LogError(
+                ex,
+                "No se ha podido leer la cola de subidas; se empieza vacía. Lo que había queda en {Apartado}.",
+                apartado ?? _ruta);
         }
     }
 
@@ -764,15 +772,15 @@ public sealed class ColaDeSubidas : IDisposable
         {
             string texto;
             lock (_cola) texto = JsonSerializer.Serialize(_cola, Formato);
-            var carpeta = Path.GetDirectoryName(_ruta);
-            if (!string.IsNullOrEmpty(carpeta)) Directory.CreateDirectory(carpeta);
-            var temporal = _ruta + ".nuevo";
-            File.WriteAllText(temporal, texto);
-            File.Move(temporal, _ruta, overwrite: true);
+
+            // Temporal de nombre unico, reemplazo atomico y reintento corto: con el temporal
+            // fijo «cola-subidas.json.nuevo» dos copias del programa se lo pisaban.
+            Ficheros.FicheroSeguro.Escribir(_ruta, texto);
         }
         catch (Exception ex)
         {
-            _log.LogWarning(ex, "No se ha podido guardar la cola de subidas.");
+            // A Error: lo pendiente de subir sigue en memoria, pero un cierre ahora lo pierde.
+            _log.LogError(ex, "No se ha podido guardar la cola de subidas.");
         }
     }
 

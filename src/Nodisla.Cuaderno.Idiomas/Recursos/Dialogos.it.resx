@@ -12,6 +12,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Dialogos.AjustesIlegibles" xml:space="preserve">
+    <value>Non è stato possibile leggere le impostazioni salvate e il programma parte con quelle di fabbrica.
+
+Le impostazioni precedenti non sono state cancellate. Si trovano in:
+{0}</value>
+  </data>
   <data name="Dialogos.Confirmacion.NoVolverAPreguntar" xml:space="preserve">
     <value>Non chiedere più</value>
   </data>
