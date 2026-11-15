@@ -49,11 +49,15 @@ public partial class App : Application
     /// dejar antes una copia con la fecha en el nombre.
     /// </para>
     /// </remarks>
-    private void PrepararElCuaderno()
+    /// <returns>
+    /// Falso si el cuaderno no se ha podido abrir: ya se ha avisado y el arranque no debe
+    /// seguir (no se crea la ventana).
+    /// </returns>
+    private bool PrepararElCuaderno()
     {
-        if (ConfiguracionDeServicios.ConPuertosSimulados) return;
+        if (ConfiguracionDeServicios.ConPuertosSimulados) return true;
 
-        try
+        return ArranqueDelCuaderno.Intentar(() =>
         {
             using var ambito = _anfitrion!.Services.CreateScope();
             var migrador = ambito.ServiceProvider.GetRequiredService<Nodisla.Cuaderno.Datos.MigradorDeCuaderno>();
@@ -70,8 +74,8 @@ public partial class App : Application
                     : "Cuaderno migrado en {Ruta}. Copia previa en {Copia}.",
                 Path.Combine(CarpetaDeDatos, Nodisla.Cuaderno.Datos.OpcionesCuaderno.NombreDelFichero),
                 copia);
-        }
-        catch (Exception ex)
+        },
+        ex =>
         {
             Log.Fatal(ex, "No se ha podido preparar el cuaderno.");
 
@@ -80,9 +84,7 @@ public partial class App : Application
                 Nodisla.Cuaderno.Idiomas.Textos.T("Comun.NombreDelPrograma"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
-
-            Shutdown(1);
-        }
+        });
     }
 
     /// <inheritdoc />
@@ -146,7 +148,13 @@ public partial class App : Application
 
         AvisarSiLosAjustesNoSeLeyeron();
 
-        PrepararElCuaderno();
+        // Sin cuaderno no hay programa. Shutdown solo deja pedido el cierre: si no se corta
+        // aqui, lo de abajo crea y muestra la ventana sobre un cuaderno que no se ha abierto.
+        if (!PrepararElCuaderno())
+        {
+            Shutdown(1);
+            return;
+        }
 
         base.OnStartup(e);
 
