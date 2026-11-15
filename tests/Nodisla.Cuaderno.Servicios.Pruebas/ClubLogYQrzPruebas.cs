@@ -158,16 +158,16 @@ public class ClubLogYQrzPruebas
     }
 
     [Fact]
-    public async Task Un_contacto_repetido_se_cuenta_como_rechazado_con_su_motivo()
+    public async Task Un_contacto_rechazado_se_cuenta_como_rechazado_con_su_motivo()
     {
-        var manejador = ManejadorFalso.ConTexto("RESULT=FAIL&REASON=duplicate%20QSO");
+        var manejador = ManejadorFalso.ConTexto("RESULT=FAIL&REASON=outside%20date%20range");
         var servicio = QrzCuaderno(manejador);
         var qso = CuadernoDePrueba.Contacto("EA1AB", "20m", "CW", "2026-05-01T12:15:00Z");
 
         var resultado = await servicio.SubirAsync([qso]);
 
         resultado.Enviados.Should().Be(0);
-        resultado.Motivos[qso.ClaveNatural].Should().Be("duplicate QSO");
+        resultado.Motivos[qso.ClaveNatural].Should().Contain("outside date range");
     }
 
     [Fact]

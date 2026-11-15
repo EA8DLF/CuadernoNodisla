@@ -24,6 +24,17 @@ public sealed record ResultadoDeSubida(
     /// refieren; aqui salen tal cual y el operador los lee.
     /// </remarks>
     public IReadOnlyList<string> Avisos { get; init; } = [];
+
+    /// <summary>
+    /// Motivo por el que el servicio ha dejado de aceptar subidas, o nulo si no lo ha hecho.
+    /// </summary>
+    /// <remarks>
+    /// Es para los fallos que no son de un contacto sino de todos: la clave no vale, falta la
+    /// suscripcion. Insistir contacto a contacto no arregla nada, asi que quien sube tiene que
+    /// parar y decirselo al operador. Los contactos que no llegaron a subirse van, ademas, en
+    /// <see cref="Motivos"/> con este mismo texto.
+    /// </remarks>
+    public string? Parada { get; init; }
 }
 
 /// <summary>Una confirmacion descargada de un servicio.</summary>

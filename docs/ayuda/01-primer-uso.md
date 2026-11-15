@@ -150,8 +150,10 @@ el reloj va arriba del todo, con **Medir** y **Poner el reloj en hora**. Ver
 Una **tarjeta por servicio**, cada una con su estado arriba a la derecha (verde *Configurada*,
 ámbar *Incompleta*, gris *Sin configurar*):
 
-1. **QRZ.com** — usuario y contraseña (rellena nombre, QTH y localizador del corresponsal) y la
-   *Clave del cuaderno de QRZ* para subir contactos (QRZ › Logbook › Settings › API).
+1. **QRZ.com** — su tarjeta solo enseña el estado y lleva a **Subidas y QRZ**, donde está todo
+   lo suyo en dos recuadros: el **usuario y la contraseña** de la web (rellenan nombre, QTH y
+   localizador del corresponsal) y la **clave de API del libro** para subir contactos (se copia,
+   con la sesión iniciada, de `qrz.com/docs/logbook30/api`). Cada uno tiene su botón **Probar**.
 2. **LoTW** — instale antes **TQSL** con su certificado. Escriba la **ubicación de estación de
    TQSL** (el nombre que le puso en TQSL, no su indicativo), la contraseña de LoTW y la frase de
    paso del certificado, y pulse **Guardar la cuenta**. La tarjeta dice con claridad qué falta.
@@ -159,7 +161,8 @@ Una **tarjeta por servicio**, cada una con su estado arriba a la derecha (verde 
 4. **Cluster de DX** y **Correo (SMTP)** llevan a sus apartados con **Configurar…**.
 
 Las contraseñas se guardan **cifradas con la cuenta de Windows** y no se vuelven a enseñar. Con
-las cuentas puestas, en **Subidas y QRZ** se marca qué servicios reciben cada contacto nuevo.
+las cuentas puestas, en **Subidas y QRZ** se marca qué servicios reciben cada contacto nuevo y,
+si ya tenía contactos en el cuaderno, se suben con **Subir los contactos anteriores…**.
 Detalles en [Configuración](09-ajustes.md).
 
 ## Paso 7 · Listo para operar

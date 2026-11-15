@@ -50,6 +50,7 @@ public sealed partial class SecretoDeServicio : ObservableObject
             s.OnPropertyChanged(nameof(Titulo));
             s.OnPropertyChanged(nameof(Explicacion));
             s.OnPropertyChanged(nameof(Estado));
+            s.OnPropertyChanged(nameof(Aviso));
         });
     }
 
@@ -73,7 +74,28 @@ public sealed partial class SecretoDeServicio : ObservableObject
     /// </remarks>
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(GuardarCommand))]
+    [NotifyPropertyChangedFor(nameof(Aviso))]
+    [NotifyPropertyChangedFor(nameof(HayAviso))]
     private string _nuevo = string.Empty;
+
+    /// <summary>
+    /// Mira lo que se esta tecleando y devuelve un aviso si no parece lo que esta casilla
+    /// espera (una clave de API pegada donde va una contrasena, por ejemplo), o nulo.
+    /// </summary>
+    /// <remarks>Avisa, no impide: el operador puede guardar igual.</remarks>
+    public Func<string, string?>? Avisar { get; set; }
+
+    /// <summary>Limpia lo tecleado antes de guardarlo (los espacios de haberlo pegado). Nulo: tal cual.</summary>
+    public Func<string, string>? Normalizar { get; set; }
+
+    /// <summary>Se ha guardado o borrado el secreto: lo que hubiera detras ha cambiado.</summary>
+    public event EventHandler? SecretoCambiado;
+
+    /// <summary>El aviso sobre lo que se esta tecleando, o vacio.</summary>
+    public string Aviso => string.IsNullOrWhiteSpace(Nuevo) ? string.Empty : Avisar?.Invoke(Nuevo) ?? string.Empty;
+
+    /// <summary>Hay aviso que ensenar.</summary>
+    public bool HayAviso => Aviso.Length > 0;
 
     /// <summary>Hay un secreto guardado con esa clave.</summary>
     [ObservableProperty]
@@ -90,9 +112,10 @@ public sealed partial class SecretoDeServicio : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(Nuevo)) return;
 
-        _almacen.Guardar(Clave, Nuevo);
+        _almacen.Guardar(Clave, Normalizar?.Invoke(Nuevo) ?? Nuevo);
         Nuevo = string.Empty;
         Refrescar();
+        SecretoCambiado?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>Borra el secreto guardado.</summary>
@@ -102,6 +125,7 @@ public sealed partial class SecretoDeServicio : ObservableObject
         _almacen.Borrar(Clave);
         Nuevo = string.Empty;
         Refrescar();
+        SecretoCambiado?.Invoke(this, EventArgs.Empty);
     }
 
     private bool HayAlgoTecleado() => !string.IsNullOrWhiteSpace(Nuevo);
@@ -267,12 +291,26 @@ public sealed partial class VistaModeloAjustes : ObservableObject
         // se pide cada vez que se enseña, para que siga al perfil y al idioma.
         Func<string?> usuarioVacio = () => subidas?.UsuarioPorOmision ?? Textos.T("Ajustes.Cuenta.UsuarioVacio");
 
-        var tarjetas = new List<TarjetaDeServicio>
-        {
-            new("QRZ.com", "Q", "Ajustes.Tarjeta.Qrz.Descripcion",
+        // QRZ.com tiene su sitio propio en «Subidas y QRZ», con un recuadro por tarea. Aqui
+        // queda su tarjeta con el estado y el boton que lleva alli, como el cluster y el
+        // correo. Sin la subida montada (pruebas) se queda la tarjeta de siempre.
+        var tarjetaDeQrz = Qrz is { } apartadoDeQrz
+            ? new TarjetaDeServicio("QRZ.com", "Q", "Ajustes.Tarjeta.Qrz.Descripcion",
+                () => TarjetaDeServicio.PorSecretos(qrz, qrz),
+                aviso: () => Textos.F(
+                    "Ajustes.Tarjeta.Qrz.Resumen", apartadoDeQrz.EstadoDeLaSubidaTexto, apartadoDeQrz.EstadoDeLaFichaTexto),
+                origenes: [qrz[0], qrz[1], apartadoDeQrz])
+            {
+                Configurar = new RelayCommand(() => IndiceDelApartado = ApartadoSubidas),
+            }
+            : new TarjetaDeServicio("QRZ.com", "Q", "Ajustes.Tarjeta.Qrz.Descripcion",
                 () => TarjetaDeServicio.PorSecretos([qrz[0]], qrz), qrz,
                 Campos(("Ajustes.Cuenta.Usuario", s => s.UsuarioQrz, (s, v) => s.UsuarioQrz = v, usuarioVacio)))
-            { GuardarCuenta = guardarCuenta },
+            { GuardarCuenta = guardarCuenta };
+
+        var tarjetas = new List<TarjetaDeServicio>
+        {
+            tarjetaDeQrz,
 
             new("LoTW", "L", "Ajustes.Tarjeta.Lotw.Descripcion",
                 () =>
@@ -376,6 +414,23 @@ public sealed partial class VistaModeloAjustes : ObservableObject
 
     /// <summary>Los secretos de los servicios, por orden.</summary>
     public IReadOnlyList<SecretoDeServicio> Secretos { get; }
+
+    private VistaModeloQrz? _qrz;
+
+    /// <summary>
+    /// Todo lo de QRZ.com junto, dentro de «Subidas y QRZ»: la clave de API para subir y el
+    /// usuario y la contrasena para las fichas. Nulo si la subida no esta montada (pruebas).
+    /// </summary>
+    /// <remarks>
+    /// Usa los MISMOS secretos que la lista <see cref="Secretos"/>: se guardan con las claves
+    /// de siempre y lo que ya habia guardado sigue valiendo.
+    /// </remarks>
+    public VistaModeloQrz? Qrz => _qrz ??= Subidas is null
+        ? null
+        : new VistaModeloQrz(
+            Secretos.Single(s => s.Clave == ClavesDeCredencial.QrzClaveDeCuaderno),
+            Secretos.Single(s => s.Clave == ClavesDeCredencial.QrzContrasena),
+            Subidas);
 
     /// <summary>
     /// El apartado CAT: por donde se habla con el equipo.

@@ -1228,11 +1228,14 @@ Enhorabuena y 73,
   <data name="Servicios.Qrz.ClaveNoAceptada" xml:space="preserve">
     <value>QRZ.com no aceptó la clave del cuaderno.</value>
   </data>
+  <data name="Servicios.Qrz.ClaveRechazada" xml:space="preserve">
+    <value>QRZ no reconoce esta clave de API. Cópiela otra vez de la tabla de sus libros en qrz.com (columna «API Key») y compruebe que no es la contraseña de la web.</value>
+  </data>
   <data name="Servicios.Qrz.ComprobarCuaderno" xml:space="preserve">
     <value>comprobar el cuaderno de QRZ.com</value>
   </data>
   <data name="Servicios.Qrz.CredencialesRechazadas" xml:space="preserve">
-    <value>QRZ.com ha rechazado el usuario o la contraseña. No se volverá a intentar hasta que los cambie en Configuración › Cuentas y servicios.</value>
+    <value>QRZ.com ha rechazado el usuario o la contraseña. No se volverá a intentar hasta que los cambie en Configuración › Subidas y QRZ.</value>
   </data>
   <data name="Servicios.Qrz.Descargando" xml:space="preserve">
     <value>Descargando del cuaderno de QRZ.com (página {0})…</value>
@@ -1243,6 +1246,18 @@ Enhorabuena y 73,
   <data name="Servicios.Qrz.Devolvio" xml:space="preserve">
     <value>QRZ.com devolvió {0} confirmaciones.</value>
   </data>
+  <data name="Servicios.Qrz.DiceQrz" xml:space="preserve">
+    <value>QRZ dice: «{0}».</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.Correcta" xml:space="preserve">
+    <value>Acceso correcto: QRZ.com ha abierto sesión como {0}.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.SinDatos" xml:space="preserve">
+    <value>Falta el usuario o la contraseña de la web de QRZ.com.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.SinRed" xml:space="preserve">
+    <value>No se ha podido llegar a QRZ.com ({0}). El usuario y la contraseña no se han podido comprobar: revise la conexión y pruebe otra vez.</value>
+  </data>
   <data name="Servicios.Qrz.NoDevolvioCuaderno" xml:space="preserve">
     <value>QRZ.com no devolvió el cuaderno: {0}</value>
   </data>
@@ -1252,11 +1267,29 @@ Enhorabuena y 73,
   <data name="Servicios.Qrz.NoSeEntiende" xml:space="preserve">
     <value>QRZ.com respondió algo que no se entiende.</value>
   </data>
+  <data name="Servicios.Qrz.Prueba.Correcta" xml:space="preserve">
+    <value>Clave válida: QRZ la acepta.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaConContactos" xml:space="preserve">
+    <value>Clave válida: el libro tiene {0:N0} contactos en QRZ.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaConLibro" xml:space="preserve">
+    <value>Clave válida: da acceso al libro de {0}, que tiene {1:N0} contactos en QRZ.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaDe" xml:space="preserve">
+    <value>Clave válida: da acceso al libro de {0}.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.SinRed" xml:space="preserve">
+    <value>No se ha podido llegar a QRZ.com ({0}). La clave no se ha podido comprobar: revise la conexión y pruebe otra vez.</value>
+  </data>
   <data name="Servicios.Qrz.RespondioTexto" xml:space="preserve">
     <value>QRZ.com respondió «{0}».</value>
   </data>
   <data name="Servicios.Qrz.SinClaveDeCuaderno" xml:space="preserve">
-    <value>No hay clave del cuaderno de QRZ.com guardada. Se genera en la web de QRZ y no es la contraseña de la cuenta.</value>
+    <value>No hay clave de API del libro de QRZ guardada. Se pone en Configuración › Subidas y QRZ, y no es la contraseña de la web.</value>
+  </data>
+  <data name="Servicios.Qrz.SinSuscripcion" xml:space="preserve">
+    <value>QRZ reconoce la clave pero no le deja usar la API del libro. Hace falta que el dueño del libro tenga una suscripción de QRZ activa de nivel «XML» o superior.</value>
   </data>
   <data name="Servicios.Qrz.SubiendoContacto" xml:space="preserve">
     <value>Subiendo el contacto con {0}…</value>
@@ -1715,17 +1748,26 @@ Enhorabuena y 73,
   <data name="Servicios.Subidas.FallidosYPendientes" xml:space="preserve">
     <value>{0}: {1} contacto(s) no se han podido subir y {2} esperan turno. Último error: {3}. Use «Subir ahora» en Configuración › Subidas y QRZ.</value>
   </data>
+  <data name="Servicios.Subidas.FaltaClaveDeQrz" xml:space="preserve">
+    <value>No se puede subir a QRZ: falta la clave de API del libro en Configuración › Subidas y QRZ.</value>
+  </data>
   <data name="Servicios.Subidas.FaltanCredenciales" xml:space="preserve">
     <value>No se puede subir a {0}: faltan el usuario o las credenciales en Configuración › Cuentas y servicios.</value>
   </data>
   <data name="Servicios.Subidas.NoSeHaPodidoComprobar" xml:space="preserve">
     <value>No se ha podido comprobar {0}: {1}</value>
   </data>
+  <data name="Servicios.Subidas.Parada" xml:space="preserve">
+    <value>{0}: subida parada. {1} Hay {2:N0} contacto(s) esperando; saldrán solos en cuanto se arregle.</value>
+  </data>
   <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
     <value>{0}: {1} contacto(s) pendiente(s) de subir.</value>
   </data>
   <data name="Servicios.Subidas.PendientesYBloqueo" xml:space="preserve">
     <value>{0}: {1} pendiente(s). {2}</value>
+  </data>
+  <data name="Servicios.Subidas.QrzSinConfigurar" xml:space="preserve">
+    <value>QRZ: subida sin configurar. Falta la clave de API del libro en Configuración › Subidas y QRZ.</value>
   </data>
   <data name="Servicios.Subidas.SinConfigurar" xml:space="preserve">
     <value>{0}: subida automática sin configurar (faltan usuario o credenciales en Configuración › Cuentas y servicios).</value>

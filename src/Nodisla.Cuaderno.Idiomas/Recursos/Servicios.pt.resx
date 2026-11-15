@@ -1221,11 +1221,14 @@ Parabéns e 73,
   <data name="Servicios.Qrz.ClaveNoAceptada" xml:space="preserve">
     <value>O QRZ.com não aceitou a chave do logbook.</value>
   </data>
+  <data name="Servicios.Qrz.ClaveRechazada" xml:space="preserve">
+    <value>O QRZ não reconhece esta chave de API. Copie-a outra vez da tabela dos seus logbooks em qrz.com (coluna «API Key») e confirme que não é a palavra-passe do site.</value>
+  </data>
   <data name="Servicios.Qrz.ComprobarCuaderno" xml:space="preserve">
     <value>verificar o logbook do QRZ.com</value>
   </data>
   <data name="Servicios.Qrz.CredencialesRechazadas" xml:space="preserve">
-    <value>O QRZ.com rejeitou o utilizador ou a palavra-passe. Não se voltará a tentar até que os altere na configuração.</value>
+    <value>O QRZ.com rejeitou o utilizador ou a palavra-passe. Não se volta a tentar até os alterar em Definições › Envios e QRZ.</value>
   </data>
   <data name="Servicios.Qrz.Descargando" xml:space="preserve">
     <value>A descarregar do logbook do QRZ.com (página {0})…</value>
@@ -1236,6 +1239,18 @@ Parabéns e 73,
   <data name="Servicios.Qrz.Devolvio" xml:space="preserve">
     <value>O QRZ.com devolveu {0} confirmações.</value>
   </data>
+  <data name="Servicios.Qrz.DiceQrz" xml:space="preserve">
+    <value>O QRZ diz: «{0}».</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.Correcta" xml:space="preserve">
+    <value>Acesso correto: o QRZ.com abriu sessão como {0}.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.SinDatos" xml:space="preserve">
+    <value>Falta o utilizador ou a palavra-passe do site QRZ.com.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.SinRed" xml:space="preserve">
+    <value>Não foi possível chegar ao QRZ.com ({0}). O utilizador e a palavra-passe não foram verificados: reveja a ligação e tente outra vez.</value>
+  </data>
   <data name="Servicios.Qrz.NoDevolvioCuaderno" xml:space="preserve">
     <value>O QRZ.com não devolveu o logbook: {0}</value>
   </data>
@@ -1245,11 +1260,29 @@ Parabéns e 73,
   <data name="Servicios.Qrz.NoSeEntiende" xml:space="preserve">
     <value>O QRZ.com respondeu algo que não se entende.</value>
   </data>
+  <data name="Servicios.Qrz.Prueba.Correcta" xml:space="preserve">
+    <value>Chave válida: o QRZ aceita-a.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaConContactos" xml:space="preserve">
+    <value>Chave válida: o logbook tem {0:N0} contactos no QRZ.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaConLibro" xml:space="preserve">
+    <value>Chave válida: dá acesso ao logbook de {0}, que tem {1:N0} contactos no QRZ.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaDe" xml:space="preserve">
+    <value>Chave válida: dá acesso ao logbook de {0}.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.SinRed" xml:space="preserve">
+    <value>Não foi possível chegar ao QRZ.com ({0}). A chave não foi verificada: reveja a ligação e tente outra vez.</value>
+  </data>
   <data name="Servicios.Qrz.RespondioTexto" xml:space="preserve">
     <value>O QRZ.com respondeu «{0}».</value>
   </data>
   <data name="Servicios.Qrz.SinClaveDeCuaderno" xml:space="preserve">
-    <value>Não há chave do logbook do QRZ.com guardada. Gera-se no site do QRZ e não é a palavra-passe da conta.</value>
+    <value>Não há chave de API do logbook do QRZ guardada. Põe-se em Definições › Envios e QRZ e não é a palavra-passe do site.</value>
+  </data>
+  <data name="Servicios.Qrz.SinSuscripcion" xml:space="preserve">
+    <value>O QRZ reconhece a chave mas não a deixa usar a API do logbook. O dono do logbook precisa de uma subscrição QRZ ativa de nível «XML» ou superior.</value>
   </data>
   <data name="Servicios.Qrz.SubiendoContacto" xml:space="preserve">
     <value>A enviar o contacto com {0}…</value>
@@ -1704,17 +1737,26 @@ Parabéns e 73,
   <data name="Servicios.Subidas.FallidosYPendientes" xml:space="preserve">
     <value>{0}: não foi possível enviar {1} contacto(s) e {2} aguardam a vez. Último erro: {3}. Use «Enviar agora» em Definições › Envios e QRZ.</value>
   </data>
+  <data name="Servicios.Subidas.FaltaClaveDeQrz" xml:space="preserve">
+    <value>Não se pode enviar para o QRZ: falta a chave de API do logbook em Definições › Envios e QRZ.</value>
+  </data>
   <data name="Servicios.Subidas.FaltanCredenciales" xml:space="preserve">
     <value>Não é possível enviar para o {0}: falta o utilizador ou as credenciais em Definições › Contas e serviços.</value>
   </data>
   <data name="Servicios.Subidas.NoSeHaPodidoComprobar" xml:space="preserve">
     <value>Não foi possível verificar o {0}: {1}</value>
   </data>
+  <data name="Servicios.Subidas.Parada" xml:space="preserve">
+    <value>{0}: envio parado. {1} Há {2:N0} contacto(s) à espera; saem sozinhos assim que isto se resolver.</value>
+  </data>
   <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
     <value>{0}: {1} contacto(s) por enviar.</value>
   </data>
   <data name="Servicios.Subidas.PendientesYBloqueo" xml:space="preserve">
     <value>{0}: {1} pendente(s). {2}</value>
+  </data>
+  <data name="Servicios.Subidas.QrzSinConfigurar" xml:space="preserve">
+    <value>QRZ: envio por configurar. Falta a chave de API do logbook em Definições › Envios e QRZ.</value>
   </data>
   <data name="Servicios.Subidas.SinConfigurar" xml:space="preserve">
     <value>{0}: envio automático por configurar (falta utilizador ou credenciais em Definições › Contas e serviços).</value>

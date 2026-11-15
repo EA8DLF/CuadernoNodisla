@@ -1221,11 +1221,14 @@ Félicitations et 73,
   <data name="Servicios.Qrz.ClaveNoAceptada" xml:space="preserve">
     <value>QRZ.com n'a pas accepté la clé du log.</value>
   </data>
+  <data name="Servicios.Qrz.ClaveRechazada" xml:space="preserve">
+    <value>QRZ ne reconnaît pas cette clé d'API. Recopiez-la depuis le tableau de vos logs sur qrz.com (colonne « API Key ») et vérifiez que ce n'est pas le mot de passe du site.</value>
+  </data>
   <data name="Servicios.Qrz.ComprobarCuaderno" xml:space="preserve">
     <value>vérifier le log QRZ.com</value>
   </data>
   <data name="Servicios.Qrz.CredencialesRechazadas" xml:space="preserve">
-    <value>QRZ.com a refusé l'identifiant ou le mot de passe. Aucun nouvel essai tant que vous ne les modifiez pas dans la configuration.</value>
+    <value>QRZ.com a refusé l'identifiant ou le mot de passe. Aucune nouvelle tentative tant que vous ne les changez pas dans Paramètres › Envois et QRZ.</value>
   </data>
   <data name="Servicios.Qrz.Descargando" xml:space="preserve">
     <value>Téléchargement depuis le log QRZ.com (page {0})…</value>
@@ -1236,6 +1239,18 @@ Félicitations et 73,
   <data name="Servicios.Qrz.Devolvio" xml:space="preserve">
     <value>QRZ.com a renvoyé {0} confirmations.</value>
   </data>
+  <data name="Servicios.Qrz.DiceQrz" xml:space="preserve">
+    <value>QRZ répond : « {0} ».</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.Correcta" xml:space="preserve">
+    <value>Accès correct : QRZ.com a ouvert une session en tant que {0}.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.SinDatos" xml:space="preserve">
+    <value>Il manque l'identifiant ou le mot de passe du site QRZ.com.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.SinRed" xml:space="preserve">
+    <value>Impossible de joindre QRZ.com ({0}). L'identifiant et le mot de passe n'ont pas pu être vérifiés : vérifiez la connexion et réessayez.</value>
+  </data>
   <data name="Servicios.Qrz.NoDevolvioCuaderno" xml:space="preserve">
     <value>QRZ.com n'a pas renvoyé le log : {0}</value>
   </data>
@@ -1245,11 +1260,29 @@ Félicitations et 73,
   <data name="Servicios.Qrz.NoSeEntiende" xml:space="preserve">
     <value>QRZ.com a répondu quelque chose d'incompréhensible.</value>
   </data>
+  <data name="Servicios.Qrz.Prueba.Correcta" xml:space="preserve">
+    <value>Clé valide : QRZ l'accepte.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaConContactos" xml:space="preserve">
+    <value>Clé valide : le log contient {0:N0} QSO sur QRZ.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaConLibro" xml:space="preserve">
+    <value>Clé valide : elle donne accès au log de {0}, qui contient {1:N0} QSO sur QRZ.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaDe" xml:space="preserve">
+    <value>Clé valide : elle donne accès au log de {0}.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.SinRed" xml:space="preserve">
+    <value>Impossible de joindre QRZ.com ({0}). La clé n'a pas pu être vérifiée : vérifiez la connexion et réessayez.</value>
+  </data>
   <data name="Servicios.Qrz.RespondioTexto" xml:space="preserve">
     <value>QRZ.com a répondu « {0} ».</value>
   </data>
   <data name="Servicios.Qrz.SinClaveDeCuaderno" xml:space="preserve">
-    <value>Aucune clé de log QRZ.com n'est enregistrée. Elle se génère sur le site de QRZ et ce n'est pas le mot de passe du compte.</value>
+    <value>Aucune clé d'API du log QRZ n'est enregistrée. Elle se saisit dans Paramètres › Envois et QRZ, et ce n'est pas le mot de passe du site.</value>
+  </data>
+  <data name="Servicios.Qrz.SinSuscripcion" xml:space="preserve">
+    <value>QRZ reconnaît la clé mais ne l'autorise pas à utiliser l'API du log. Le propriétaire du log doit avoir un abonnement QRZ actif de niveau « XML » ou supérieur.</value>
   </data>
   <data name="Servicios.Qrz.SubiendoContacto" xml:space="preserve">
     <value>Envoi du QSO avec {0}…</value>
@@ -1704,17 +1737,26 @@ Félicitations et 73,
   <data name="Servicios.Subidas.FallidosYPendientes" xml:space="preserve">
     <value>{0} : {1} QSO n'ont pas pu être envoyés et {2} attendent leur tour. Dernière erreur : {3}. Utilisez « Envoyer maintenant » dans Paramètres › Envois et QRZ.</value>
   </data>
+  <data name="Servicios.Subidas.FaltaClaveDeQrz" xml:space="preserve">
+    <value>Impossible d'envoyer à QRZ : il manque la clé d'API du log dans Paramètres › Envois et QRZ.</value>
+  </data>
   <data name="Servicios.Subidas.FaltanCredenciales" xml:space="preserve">
     <value>Impossible d'envoyer vers {0} : l'utilisateur ou les identifiants manquent dans Paramètres › Comptes et services.</value>
   </data>
   <data name="Servicios.Subidas.NoSeHaPodidoComprobar" xml:space="preserve">
     <value>Impossible de vérifier {0} : {1}</value>
   </data>
+  <data name="Servicios.Subidas.Parada" xml:space="preserve">
+    <value>{0} : envoi arrêté. {1} {2:N0} QSO en attente ; ils partiront seuls dès que ce sera réglé.</value>
+  </data>
   <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
     <value>{0} : {1} QSO en attente d'envoi.</value>
   </data>
   <data name="Servicios.Subidas.PendientesYBloqueo" xml:space="preserve">
     <value>{0} : {1} en attente. {2}</value>
+  </data>
+  <data name="Servicios.Subidas.QrzSinConfigurar" xml:space="preserve">
+    <value>QRZ : envoi non configuré. Il manque la clé d'API du log dans Paramètres › Envois et QRZ.</value>
   </data>
   <data name="Servicios.Subidas.SinConfigurar" xml:space="preserve">
     <value>{0} : envoi automatique non configuré (utilisateur ou identifiants manquants dans Paramètres › Comptes et services).</value>

@@ -272,8 +272,14 @@ public sealed class SubidaAutomaticaPruebas : IDisposable
         await cola.EncolarAsync(qso, false);
         (await cola.ProcesarAsync()).Should().Be(1);
 
-        manejador.Cuerpos.Single().Should().Contain("OPTION=REPLACE", "un reenvío tras F2 sustituye en vez de dar duplicado");
+        manejador.Cuerpos.Single().Should().NotContain("REPLACE", "la primera subida no pisa lo que QRZ ya tenga confirmado");
+        manejador.Cuerpos.Single().Should().Contain("ADIF=%3CCALL", "el registro va solo, sin cabecera, como en la guía de QRZ");
         Estado(qso, MedioDeConfirmacion.QrzCom)!.Enviado.Should().Be(EstadoDeConfirmacion.Confirmado);
+
+        // Corregido con F2 despues de subirlo: ahora si va con REPLACE.
+        await cola.EncolarAsync(qso, modificado: true);
+        (await cola.ProcesarAsync()).Should().Be(1);
+        manejador.Cuerpos[1].Should().Contain("OPTION=REPLACE", "un reenvío tras F2 sustituye en vez de dar duplicado");
     }
 
     [Fact]
@@ -292,6 +298,191 @@ public sealed class SubidaAutomaticaPruebas : IDisposable
     }
 
     /// <summary>Servicio de confirmacion de mentira.</summary>
+    // ── Clave rechazada: la cola se para, no reintenta en silencio ───────────
+
+    [Fact]
+    public async Task Si_el_servicio_dice_que_la_clave_no_vale_la_cola_se_para_sin_gastar_reintentos()
+    {
+        var qrz = new ServicioDoble(MedioDeConfirmacion.QrzCom) { Parar = "QRZ no reconoce esta clave de API." };
+        var cola = Cola([qrz]);
+        await cola.EncolarAsync(Guardado("DL1ABC"), false);
+        await cola.EncolarAsync(Guardado("DL2DEF"), false);
+
+        (await cola.ProcesarAsync()).Should().Be(0);
+
+        cola.Elementos.Should().HaveCount(2);
+        cola.Elementos.Should().OnlyContain(e => e.Intentos == 0 && !e.Fallido, "una clave mala no es culpa del contacto");
+        var estado = cola.Estados().Single(e => e.Medio == MedioDeConfirmacion.QrzCom);
+        estado.Semaforo.Should().Be(SemaforoDeSubida.Rojo);
+        estado.Parada.Should().Be("QRZ no reconoce esta clave de API.");
+        estado.Texto.Should().Contain("QRZ no reconoce esta clave de API.").And.Contain("2");
+    }
+
+    [Fact]
+    public async Task Cuando_la_clave_vuelve_a_valer_lo_parado_sube_y_la_pastilla_se_pone_verde()
+    {
+        var qrz = new ServicioDoble(MedioDeConfirmacion.QrzCom) { Parar = "clave rechazada" };
+        var cola = Cola([qrz]);
+        await cola.EncolarAsync(Guardado(), false);
+        await cola.ProcesarAsync();
+
+        qrz.Parar = null;
+        (await cola.ProcesarAsync()).Should().Be(1);
+
+        var estado = cola.Estados().Single(e => e.Medio == MedioDeConfirmacion.QrzCom);
+        estado.Parada.Should().BeNull();
+        estado.Semaforo.Should().Be(SemaforoDeSubida.Verde);
+    }
+
+    // ── Los contactos que ya estaban en el cuaderno ──────────────────────────
+
+    private Qso GuardadoEl(string indicativo, string cuando) =>
+        _cuaderno.Sembrar(CuadernoDePrueba.Contacto(indicativo, "20m", "FT8", cuando));
+
+    private static void MarcarSubido(Qso qso, MedioDeConfirmacion medio) =>
+        qso.Confirmaciones.Add(new QsoConfirmacion { Medio = medio, QsoId = qso.Id, Enviado = EstadoDeConfirmacion.Confirmado });
+
+    [Fact]
+    public async Task El_recuento_dice_cuantos_estan_subidos_pendientes_con_error_y_sin_subir()
+    {
+        var qrz = new ServicioDoble(MedioDeConfirmacion.QrzCom) { Rechazar = "fuera de fechas" };
+        var cola = Cola([qrz]);
+        MarcarSubido(GuardadoEl("EA1AA", "2026-01-01T10:00:00Z"), MedioDeConfirmacion.QrzCom);
+        MarcarSubido(GuardadoEl("EA1BB", "2026-02-01T10:00:00Z"), MedioDeConfirmacion.QrzCom);
+        GuardadoEl("EA1CC", "2026-03-01T10:00:00Z");
+        GuardadoEl("EA1DD", "2026-04-01T10:00:00Z");
+        var enCola = GuardadoEl("EA1EE", "2026-05-01T10:00:00Z");
+        var conError = GuardadoEl("EA1FF", "2026-06-01T10:00:00Z");
+
+        await cola.EncolarAsync(conError, false);
+        for (var i = 0; i < ColaDeSubidas.IntentosMaximos; i++)
+        {
+            await cola.ProcesarAsync();
+            _ahora += TimeSpan.FromHours(2);
+        }
+        await cola.EncolarAsync(enCola, false);
+
+        var recuento = (await cola.RecuentosAsync()).Single(r => r.Medio == MedioDeConfirmacion.QrzCom);
+
+        recuento.Total.Should().Be(6);
+        recuento.Subidos.Should().Be(2);
+        recuento.Pendientes.Should().Be(1);
+        recuento.ConError.Should().Be(1);
+        recuento.SinSubir.Should().Be(2);
+    }
+
+    [Fact]
+    public async Task Subir_los_anteriores_encola_solo_lo_que_falta_y_no_duplica_lo_ya_subido_ni_lo_ya_en_cola()
+    {
+        var qrz = new ServicioDoble(MedioDeConfirmacion.QrzCom);
+        var cola = Cola([qrz]);
+        MarcarSubido(GuardadoEl("EA1AA", "2026-01-01T10:00:00Z"), MedioDeConfirmacion.QrzCom);
+        GuardadoEl("EA1CC", "2026-03-01T10:00:00Z");
+        GuardadoEl("EA1DD", "2026-04-01T10:00:00Z");
+        var yaEnCola = GuardadoEl("EA1EE", "2026-05-01T10:00:00Z");
+        await cola.EncolarAsync(yaEnCola, false);
+
+        var encolados = await cola.EncolarAnterioresAsync(MedioDeConfirmacion.QrzCom);
+
+        encolados.Should().Be(2);
+        cola.Elementos.Should().HaveCount(3);
+        cola.Elementos.Select(e => e.Indicativo).Should().BeEquivalentTo(["EA1CC", "EA1DD", "EA1EE"]);
+
+        // Pedirlo otra vez no mete nada nuevo.
+        (await cola.EncolarAnterioresAsync(MedioDeConfirmacion.QrzCom)).Should().Be(0);
+
+        (await cola.ProcesarAsync(forzar: true)).Should().Be(3);
+        qrz.Subidos.Select(q => q.Call.Valor).Should().NotContain("EA1AA");
+        (await cola.RecuentosAsync()).Single(r => r.Medio == MedioDeConfirmacion.QrzCom).SinSubir.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task Subir_los_anteriores_desde_una_fecha_deja_fuera_lo_mas_viejo()
+    {
+        var cola = Cola([new ServicioDoble(MedioDeConfirmacion.QrzCom)]);
+        GuardadoEl("EA1AA", "2025-12-31T23:59:00Z");
+        GuardadoEl("EA1BB", "2026-01-01T00:00:00Z");
+        GuardadoEl("EA1CC", "2026-06-01T10:00:00Z");
+        var desde = new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero);
+
+        (await cola.RecuentosAsync(desde)).Single(r => r.Medio == MedioDeConfirmacion.QrzCom).SinSubir.Should().Be(2);
+        (await cola.EncolarAnterioresAsync(MedioDeConfirmacion.QrzCom, desde)).Should().Be(2);
+
+        cola.Elementos.Select(e => e.Indicativo).Should().BeEquivalentTo(["EA1BB", "EA1CC"]);
+    }
+
+    [Fact]
+    public async Task Los_anteriores_suben_por_lotes_del_mas_viejo_al_mas_nuevo_y_la_cola_avisa_en_cada_lote()
+    {
+        var qrz = new ServicioDoble(MedioDeConfirmacion.QrzCom);
+        var cola = Cola([qrz]);
+        var total = ColaDeSubidas.TamanoDeLote(MedioDeConfirmacion.QrzCom) * 2 + 3;
+        for (var i = 0; i < total; i++)
+        {
+            GuardadoEl($"EA1A{i:000}", new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero).AddMinutes(total - i).ToString("o"));
+        }
+        var avisos = 0;
+        cola.EstadoCambiado += (_, _) => avisos++;
+
+        await cola.EncolarAnterioresAsync(MedioDeConfirmacion.QrzCom);
+        avisos = 0;
+        (await cola.ProcesarAsync(forzar: true)).Should().Be(total);
+
+        qrz.Lotes.Should().Equal(
+            ColaDeSubidas.TamanoDeLote(MedioDeConfirmacion.QrzCom), ColaDeSubidas.TamanoDeLote(MedioDeConfirmacion.QrzCom), 3);
+        qrz.Subidos.First().Call.Valor.Should().Be($"EA1A{total - 1:000}", "primero el mas viejo");
+        avisos.Should().BeGreaterThanOrEqualTo(3, "el operador ve bajar los pendientes lote a lote");
+    }
+
+    [Fact]
+    public async Task Cancelar_la_subida_de_anteriores_saca_de_la_cola_lo_que_faltaba_y_respeta_lo_demas()
+    {
+        var qrz = new ServicioDoble(MedioDeConfirmacion.QrzCom);
+        var cola = Cola([qrz]);
+        var lote = ColaDeSubidas.TamanoDeLote(MedioDeConfirmacion.QrzCom);
+        for (var i = 0; i < lote * 3; i++)
+        {
+            GuardadoEl($"EA1A{i:000}", new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero).AddMinutes(i).ToString("o"));
+        }
+        await cola.EncolarAnterioresAsync(MedioDeConfirmacion.QrzCom);
+        var deHoy = Guardado("DL9XYZ");
+        await cola.EncolarAsync(deHoy, false);
+
+        // Se cancela en mitad de la subida: al acabar el primer lote.
+        qrz.AlSubir = () => { if (qrz.Lotes.Count == 1) cola.CancelarAnteriores(MedioDeConfirmacion.QrzCom); };
+        var subidos = await cola.ProcesarAsync(forzar: true);
+
+        subidos.Should().Be(lote + 1, "el lote en marcha se termina, y el contacto de hoy no era de la subida de anteriores");
+        cola.Elementos.Should().BeEmpty();
+        qrz.Subidos.Select(q => q.Call.Valor).Should().Contain("DL9XYZ");
+        (await cola.RecuentosAsync()).Single(r => r.Medio == MedioDeConfirmacion.QrzCom).SinSubir.Should().Be(lote * 2);
+    }
+
+    [Fact]
+    public async Task Los_anteriores_tambien_valen_para_los_demas_servicios_y_se_marcan_en_cola()
+    {
+        var lotw = new ServicioDoble(MedioDeConfirmacion.Lotw);
+        var cola = Cola([lotw]);
+        var qso = GuardadoEl("EA1AA", "2026-01-01T10:00:00Z");
+
+        (await cola.EncolarAnterioresAsync(MedioDeConfirmacion.Lotw)).Should().Be(1);
+
+        Estado(qso, MedioDeConfirmacion.Lotw)!.Enviado.Should().Be(EstadoDeConfirmacion.Pendiente);
+    }
+
+    [Fact]
+    public async Task La_marca_de_anterior_sobrevive_a_cerrar_y_abrir_el_programa()
+    {
+        var qrz = new ServicioDoble(MedioDeConfirmacion.QrzCom);
+        GuardadoEl("EA1AA", "2026-01-01T10:00:00Z");
+        await Cola([qrz]).EncolarAnterioresAsync(MedioDeConfirmacion.QrzCom);
+
+        var otra = Cola([qrz]);
+
+        otra.Elementos.Single().Anterior.Should().BeTrue();
+        otra.CancelarAnteriores(MedioDeConfirmacion.QrzCom).Should().Be(1);
+    }
+
     private sealed class ServicioDoble(MedioDeConfirmacion medio) : IServicioQsl
     {
         public MedioDeConfirmacion Medio => medio;
@@ -302,6 +493,9 @@ public sealed class SubidaAutomaticaPruebas : IDisposable
         public bool PuedeDescargar => false;
         public Exception? Fallo { get; set; }
         public string? Rechazar { get; set; }
+        public string? Parar { get; set; }
+        public Action? AlSubir { get; set; }
+        public List<int> Lotes { get; } = [];
         public int Llamadas { get; private set; }
         public List<Qso> Subidos { get; } = [];
 
@@ -313,6 +507,13 @@ public sealed class SubidaAutomaticaPruebas : IDisposable
             Llamadas++;
             if (Fallo is not null) throw Fallo;
             var motivos = new Dictionary<string, string>();
+            if (Parar is not null)
+            {
+                foreach (var q in qsos) motivos[q.ClaveNatural] = Parar;
+                return Task.FromResult(new ResultadoDeSubida(0, qsos.Count, motivos, TimeSpan.Zero) { Parada = Parar });
+            }
+            Lotes.Add(qsos.Count);
+            AlSubir?.Invoke();
             if (Rechazar is not null)
             {
                 foreach (var q in qsos) motivos[q.ClaveNatural] = Rechazar;

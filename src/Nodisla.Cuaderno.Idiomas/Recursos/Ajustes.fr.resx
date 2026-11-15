@@ -1157,6 +1157,126 @@ Vos QSO et vos paramètres ne sont pas modifiés. Si vous êtes en train d'émet
   <data name="Ajustes.NoSeHanPodidoGuardar" xml:space="preserve">
     <value>Impossible d'enregistrer : {0}</value>
   </data>
+  <data name="Ajustes.Qrz.Clave.AvisoForma" xml:space="preserve">
+    <value>Ceci n'a pas la forme d'une clé d'API (XXXX-XXXX-XXXX-XXXX). Si c'est le mot de passe avec lequel vous entrez sur qrz.com, il va dans le cadre « Compléter la fiche ». Vous pouvez quand même l'enregistrer et appuyer sur « Tester la clé ».</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Borrar.Accesible" xml:space="preserve">
+    <value>Effacer la clé d'API du log QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Donde" xml:space="preserve">
+    <value>Où la trouver : connecté à qrz.com, ouvrez la page « QRZ Logbook API Integration » (qrz.com/docs/logbook30/api). Elle liste vos logs et l'« API Key » de chacun. Elle a la forme XXXX-XXXX-XXXX-XXXX et ce n'est pas le mot de passe du site.</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.GuardadaSinProbar" xml:space="preserve">
+    <value>Clé enregistrée. Appuyez sur « Tester la clé » pour savoir si QRZ l'accepte.</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Guardar.Accesible" xml:space="preserve">
+    <value>Enregistrer la clé d'API du log QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Requisito" xml:space="preserve">
+    <value>QRZ n'accepte cette clé que si le propriétaire du log a un abonnement actif de niveau « XML » ou supérieur.</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Rotulo" xml:space="preserve">
+    <value>Clé d'API du log</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.AvisoForma" xml:space="preserve">
+    <value>Ceci a la forme d'une clé d'API du log, pas d'un mot de passe. La clé va dans le cadre « Envoyer mes QSO vers QRZ » ; ici va le mot de passe avec lequel vous entrez sur qrz.com.</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Borrar.Accesible" xml:space="preserve">
+    <value>Effacer le mot de passe qrz.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Donde" xml:space="preserve">
+    <value>Celui avec lequel vous entrez sur le site QRZ. Ce n'est pas la clé d'API.</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.GuardadaSinProbar" xml:space="preserve">
+    <value>Enregistré. Appuyez sur « Tester l'accès » pour savoir si QRZ l'accepte.</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Guardar.Accesible" xml:space="preserve">
+    <value>Enregistrer le mot de passe qrz.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Rotulo" xml:space="preserve">
+    <value>Mot de passe qrz.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Entrada" xml:space="preserve">
+    <value>QRZ demande une donnée différente pour chaque usage : une clé d'API pour envoyer des QSO vers votre log, et l'identifiant et le mot de passe du site pour consulter les fiches. Avoir l'une ne donne pas l'autre.</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.Activada" xml:space="preserve">
+    <value>En service</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.ConProblemas" xml:space="preserve">
+    <value>À vérifier</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.SinActivar" xml:space="preserve">
+    <value>Non activé</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.SinClave" xml:space="preserve">
+    <value>Clé manquante</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.SinContrasena" xml:space="preserve">
+    <value>Mot de passe manquant</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Activar" xml:space="preserve">
+    <value>Compléter les QSO avec la fiche QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.AvisoDeQrz" xml:space="preserve">
+    <value>QRZ signale : « {0} ».</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Nota" xml:space="preserve">
+    <value>Seuls les champs vides sont remplis : ce que vous saisissez n'est jamais écrasé. Si QRZ ne répond pas, HamQTH est utilisé si son compte figure dans « Comptes et services ».</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Para" xml:space="preserve">
+    <value>Quand vous saisissez un indicatif, son nom, QTH, locator, pays et zones sont récupérés.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.ProbadaSinActivar" xml:space="preserve">
+    <value>Le remplissage n'est pas activé : cochez « Compléter les QSO avec la fiche QRZ ».</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Probar" xml:space="preserve">
+    <value>Tester l'accès</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Probar.Ayuda" xml:space="preserve">
+    <value>Ouvre une session QRZ avec cet identifiant et ce mot de passe. Si QRZ les a déjà refusés, l'essai n'est pas répété tant que l'un des deux ne change pas : chaque échec rapproche le blocage du compte.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Requisito" xml:space="preserve">
+    <value>Sans abonnement XML payant, QRZ ne fournit qu'une partie de la fiche.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Titulo" xml:space="preserve">
+    <value>Compléter la fiche du correspondant avec QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Probando" xml:space="preserve">
+    <value>Interrogation de QRZ…</value>
+  </data>
+  <data name="Ajustes.Qrz.SesionSimulada" xml:space="preserve">
+    <value>Dans cette session les services sont simulés : il n'y a rien à tester auprès de QRZ.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Activar" xml:space="preserve">
+    <value>Envoyer chaque QSO vers QRZ à l'enregistrement</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.HaySinSubir" xml:space="preserve">
+    <value>Votre log contient {0:N0} QSO qui n'ont pas été envoyés à QRZ : vous pouvez les envoyer juste en dessous, avec « Envoyer les QSO antérieurs ».</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Para" xml:space="preserve">
+    <value>Chaque QSO que vous enregistrez s'ajoute tout seul à votre log QRZ.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.ProbadaSinActivar" xml:space="preserve">
+    <value>L'envoi n'est pas activé : cochez « Envoyer chaque QSO vers QRZ à l'enregistrement ».</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Probar" xml:space="preserve">
+    <value>Tester la clé</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Probar.Ayuda" xml:space="preserve">
+    <value>Demande à QRZ l'état du log. N'envoie et ne modifie aucun QSO.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Titulo" xml:space="preserve">
+    <value>Envoyer mes QSO vers QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Titulo" xml:space="preserve">
+    <value>QRZ.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Usuario.Guardar.Accesible" xml:space="preserve">
+    <value>Enregistrer l'identifiant qrz.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Usuario.Rotulo" xml:space="preserve">
+    <value>Identifiant qrz.com</value>
+  </data>
   <data name="Ajustes.Secreto.Borrar.Accesible" xml:space="preserve">
     <value>Effacer l'identifiant enregistré</value>
   </data>
@@ -1197,16 +1317,16 @@ Vos QSO et vos paramètres ne sont pas modifiés. Si vous êtes en train d'émet
     <value>Celui de votre compte ARRL. Il sert à télécharger le rapport des confirmations.</value>
   </data>
   <data name="Ajustes.Secreto.QrzClaveDeCuaderno" xml:space="preserve">
-    <value>Clé du log QRZ</value>
+    <value>Clé d'API du log QRZ</value>
   </data>
   <data name="Ajustes.Secreto.QrzClaveDeCuaderno.Ayuda" xml:space="preserve">
-    <value>Elle est différente du mot de passe du compte : QRZ la fournit pour envoyer les QSO.</value>
+    <value>Pour envoyer des QSO. Elle a la forme XXXX-XXXX-XXXX-XXXX et ce n'est pas le mot de passe du site.</value>
   </data>
   <data name="Ajustes.Secreto.QrzContrasena" xml:space="preserve">
-    <value>Mot de passe QRZ.com</value>
+    <value>Mot de passe du site QRZ.com</value>
   </data>
   <data name="Ajustes.Secreto.QrzContrasena.Ayuda" xml:space="preserve">
-    <value>Pour la recherche d'indicatifs par XML.</value>
+    <value>Pour consulter les fiches. C'est celui avec lequel vous entrez sur qrz.com, pas la clé d'API.</value>
   </data>
   <data name="Ajustes.Secreto.SinGuardar" xml:space="preserve">
     <value>Non enregistré</value>
@@ -1418,6 +1538,48 @@ Vos QSO et vos paramètres ne sont pas modifiés. Si vous êtes en train d'émet
   <data name="Ajustes.Servidor.Tx.Nota" xml:space="preserve">
     <value>Il faut aussi cocher « Autoriser l'émission dans cette session ». Le PTT d'un programme passe par le plan de bande, le ROS, la puissance maximale, le temps maximal et le propriétaire du PTT, et il est relâché si le programme se déconnecte ou se tait.</value>
   </data>
+  <data name="Ajustes.Subidas.AlDiaConAnteriores" xml:space="preserve">
+    <value>{0} : ce que vous enregistrez maintenant part tout seul. Il reste {1:N0} QSO antérieurs non envoyés.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Boton" xml:space="preserve">
+    <value>Envoyer les QSO antérieurs…</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Cancelada" xml:space="preserve">
+    <value>Envoi annulé : {0:N0} QSO restent non envoyés. Ce qui est déjà envoyé le reste.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Cancelar" xml:space="preserve">
+    <value>Annuler l'envoi</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Confirmar" xml:space="preserve">
+    <value>Envoyer {0:N0} QSO</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Descartar" xml:space="preserve">
+    <value>Ne pas envoyer</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Desde" xml:space="preserve">
+    <value>Seulement à partir du jour (UTC), comme 2026-01-31. Vide : tous</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Encolados" xml:space="preserve">
+    <value>{0:N0} QSO mis en file. Ils partent tout seuls, par lots ; inutile de laisser cet écran ouvert.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.EnMarcha" xml:space="preserve">
+    <value>Envoi des QSO antérieurs : {0:N0} sur {1:N0}.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Explicacion" xml:space="preserve">
+    <value>Seul ce qui est enregistré avec l'envoi déjà activé part tout seul : ces {0:N0} datent d'avant. Vous pouvez les envoyer à {1} maintenant.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.FechaNoValida" xml:space="preserve">
+    <value>Cette date n'est pas comprise. Saisissez-la comme 2026-01-31, ou laissez la case vide pour tout envoyer.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Nada" xml:space="preserve">
+    <value>Il n'y a aucun QSO à envoyer depuis cette date.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Resumen" xml:space="preserve">
+    <value>{0:N0} QSO seront envoyés à {1}, du plus ancien au plus récent et par lots. Ce qui y est déjà n'est pas dupliqué, vous pouvez continuer à trafiquer pendant ce temps et annuler quand vous voulez.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Terminada" xml:space="preserve">
+    <value>L'envoi des QSO antérieurs est terminé.</value>
+  </data>
   <data name="Ajustes.Subidas.Cola" xml:space="preserve">
     <value>File d'envoi</value>
   </data>
@@ -1429,6 +1591,9 @@ Vos QSO et vos paramètres ne sont pas modifiés. Si vous êtes en train d'émet
   </data>
   <data name="Ajustes.Subidas.Cola.PendienteCorregido" xml:space="preserve">
     <value>En attente (corrigé)</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.Recortada" xml:space="preserve">
+    <value>{0:N0} affichés sur {1:N0}, ceux en erreur en premier.</value>
   </data>
   <data name="Ajustes.Subidas.Cola.Reintento" xml:space="preserve">
     <value>Nouvelle tentative {0} : {1}</value>
@@ -1449,7 +1614,7 @@ Vos QSO et vos paramètres ne sont pas modifiés. Si vous êtes en train d'émet
     <value>Compléter avec QRZ.com</value>
   </data>
   <data name="Ajustes.Subidas.CuentasEn" xml:space="preserve">
-    <value>Les utilisateurs et mots de passe de QRZ.com, HamQTH, LoTW, eQSL et Club Log se saisissent dans « Comptes et services ».</value>
+    <value>Les identifiants et mots de passe de LoTW, eQSL, Club Log et HamQTH se saisissent dans « Comptes et services ».</value>
   </data>
   <data name="Ajustes.Subidas.CuentasGuardadas" xml:space="preserve">
     <value>Comptes enregistrés. Ils s'appliquent tout de suite, sans redémarrer.</value>
@@ -1476,7 +1641,7 @@ Vos QSO et vos paramètres ne sont pas modifiés. Si vous êtes en train d'émet
     <value>{0} Les QSO sont enregistrés quand même, sans les données de la fiche.</value>
   </data>
   <data name="Ajustes.Subidas.Ficha.SinContrasena" xml:space="preserve">
-    <value>Compléter avec QRZ.com : le mot de passe QRZ.com (ou HamQTH) manque dans Paramètres › Comptes et services. Les QSO sont enregistrés quand même, sans le nom ni le QTH de la fiche.</value>
+    <value>Compléter avec QRZ.com : il manque le mot de passe qrz.com dans Paramètres › Envois et QRZ (ou celui de HamQTH dans Comptes et services). Les QSO sont enregistrés quand même, sans le nom ni le QTH de la fiche.</value>
   </data>
   <data name="Ajustes.Subidas.NadaPendiente" xml:space="preserve">
     <value>Il n'y avait rien en attente.</value>
@@ -1492,6 +1657,24 @@ Vos QSO et vos paramètres ne sont pas modifiés. Si vous êtes en train d'émet
   </data>
   <data name="Ajustes.Subidas.NotaNoModificable" xml:space="preserve">
     <value>Les modifications ne sont pas prises en charge : un QSO déjà envoyé reste tel qu'il a été envoyé.</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.ConError" xml:space="preserve">
+    <value>{0:N0} en erreur</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.Contando" xml:space="preserve">
+    <value>Comptage des QSO du log…</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.CuadernoVacio" xml:space="preserve">
+    <value>Le log est vide : il n'y a encore rien à envoyer.</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.Pendientes" xml:space="preserve">
+    <value>{0:N0} en attente</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.SinSubir" xml:space="preserve">
+    <value>{0:N0} non envoyés</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.Subidos" xml:space="preserve">
+    <value>{0:N0} envoyés</value>
   </data>
   <data name="Ajustes.Subidas.Subidos" xml:space="preserve">
     <value>{0:N0} QSO envoyé(s).</value>
@@ -1509,7 +1692,7 @@ Vos QSO et vos paramètres ne sont pas modifiés. Si vous êtes en train d'émet
     <value>Envoyer maintenant tout ce qui est en attente</value>
   </data>
   <data name="Ajustes.Subidas.Titulo" xml:space="preserve">
-    <value>Envoi automatique</value>
+    <value>Envoi automatique vers LoTW, eQSL et Club Log</value>
   </data>
   <data name="Ajustes.Subidas.UsuarioPorOmision" xml:space="preserve">
     <value>Vide : l'indicatif du profil de station est utilisé.</value>
@@ -1573,6 +1756,9 @@ Vos QSO et vos paramètres ne sont pas modifiés. Si vous êtes en train d'émet
   </data>
   <data name="Ajustes.Tarjeta.Qrz.Descripcion" xml:space="preserve">
     <value>Fiche du correspondant et envoi des QSO.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Qrz.Resumen" xml:space="preserve">
+    <value>Envoi des QSO : {0}. Fiche du correspondant : {1}. Tout ce qui concerne QRZ se règle dans « Envois et QRZ ».</value>
   </data>
   <data name="Ajustes.Tarjeta.VolverAComprobar" xml:space="preserve">
     <value>Vérifier à nouveau</value>

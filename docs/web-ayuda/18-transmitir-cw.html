@@ -50,9 +50,10 @@
 <tr><td><strong>Hamlib</strong> (rigctld)</td><td><code>send_morse</code>; <code>stop_morse</code> para. Depende de que Hamlib sepa hacerlo con su equipo.</td></tr>
 <tr><td>Los dem&#225;s Yaesu, OmniRig</td><td>No: el bot&#243;n queda apagado y se dice por qu&#233;.</td></tr>
 </tbody></table></div>
-<h2 id="antes-de-transmitir-las-cinco-puertas">Antes de transmitir: las cinco puertas</h2>
+<h2 id="antes-de-transmitir-las-seis-puertas">Antes de transmitir: las seis puertas</h2>
 <p>Nada sale al aire sin pasar por todas, en este orden:</p>
 <ol>
+<li><strong>El interruptor CW</strong> no apagado. Apaga la transmisi&#243;n en telegraf&#237;a, independiente de Digital y RTTY; no afecta al decodificador de <a href="17-cw.html">Telegraf&#237;a (CW)</a>, que sigue escuchando.</li>
 <li><strong>Permitir transmitir en esta sesi&#243;n</strong> marcado. Es el mismo pestillo del m&#243;dem digital: empieza cerrado en cada arranque y no se guarda.</li>
 <li><strong>Un equipo que manipule por CAT</strong>, conectado. Si no, la l&#237;nea amarilla dice por qu&#233;.</li>
 <li><strong>El equipo en CW.</strong> Si est&#225; en otro modo, se pregunta antes de cambiarlo; si dice que no, no se transmite.</li>

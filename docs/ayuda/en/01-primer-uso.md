@@ -150,8 +150,10 @@ through the PC, with the modulation source set to USB: see
 **One card per service**, each with its status at the top right (green *Configured*, amber
 *Incomplete*, grey *Not configured*):
 
-1. **QRZ.com** — user name and password (fills in the other station's name, QTH and locator) and
-   the *QRZ logbook key* to upload QSOs (QRZ › Logbook › Settings › API).
+1. **QRZ.com** — its card only shows the status and leads to **Uploads & QRZ**, where everything
+   about QRZ lives in two boxes: the website **user name and password** (they fill in the other
+   station's name, QTH and locator) and the **logbook API key** to upload QSOs (copy it, signed
+   in, from `qrz.com/docs/logbook30/api`). Each one has its own **Test** button.
 2. **LoTW** — first install **TQSL** with your certificate. Enter the **TQSL station location**
    (the name you gave it in TQSL, not your call sign), the LoTW password and the certificate
    passphrase, and press **Save account**. The card says clearly what is missing.

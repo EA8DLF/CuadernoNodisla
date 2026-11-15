@@ -1221,11 +1221,14 @@ Congratulations and 73,
   <data name="Servicios.Qrz.ClaveNoAceptada" xml:space="preserve">
     <value>QRZ.com did not accept the logbook key.</value>
   </data>
+  <data name="Servicios.Qrz.ClaveRechazada" xml:space="preserve">
+    <value>QRZ does not recognise this API key. Copy it again from the table of your logbooks on qrz.com (“API Key” column) and make sure it is not the website password.</value>
+  </data>
   <data name="Servicios.Qrz.ComprobarCuaderno" xml:space="preserve">
     <value>check the QRZ.com logbook</value>
   </data>
   <data name="Servicios.Qrz.CredencialesRechazadas" xml:space="preserve">
-    <value>QRZ.com rejected the username or password. It will not be tried again until you change them in Settings › Accounts &amp; services.</value>
+    <value>QRZ.com rejected the user name or the password. It will not be tried again until you change them in Settings › Uploads &amp; QRZ.</value>
   </data>
   <data name="Servicios.Qrz.Descargando" xml:space="preserve">
     <value>Downloading from the QRZ.com logbook (page {0})…</value>
@@ -1236,6 +1239,18 @@ Congratulations and 73,
   <data name="Servicios.Qrz.Devolvio" xml:space="preserve">
     <value>QRZ.com returned {0} confirmations.</value>
   </data>
+  <data name="Servicios.Qrz.DiceQrz" xml:space="preserve">
+    <value>QRZ says: “{0}”.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.Correcta" xml:space="preserve">
+    <value>Access works: QRZ.com opened a session as {0}.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.SinDatos" xml:space="preserve">
+    <value>The QRZ.com website user name or password is missing.</value>
+  </data>
+  <data name="Servicios.Qrz.Ficha.SinRed" xml:space="preserve">
+    <value>QRZ.com could not be reached ({0}). The user name and password could not be checked: review the connection and try again.</value>
+  </data>
   <data name="Servicios.Qrz.NoDevolvioCuaderno" xml:space="preserve">
     <value>QRZ.com did not return the logbook: {0}</value>
   </data>
@@ -1245,11 +1260,29 @@ Congratulations and 73,
   <data name="Servicios.Qrz.NoSeEntiende" xml:space="preserve">
     <value>QRZ.com replied with something that cannot be understood.</value>
   </data>
+  <data name="Servicios.Qrz.Prueba.Correcta" xml:space="preserve">
+    <value>Valid key: QRZ accepts it.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaConContactos" xml:space="preserve">
+    <value>Valid key: the logbook holds {0:N0} QSOs on QRZ.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaConLibro" xml:space="preserve">
+    <value>Valid key: it opens the logbook of {0}, which holds {1:N0} QSOs on QRZ.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.CorrectaDe" xml:space="preserve">
+    <value>Valid key: it opens the logbook of {0}.</value>
+  </data>
+  <data name="Servicios.Qrz.Prueba.SinRed" xml:space="preserve">
+    <value>QRZ.com could not be reached ({0}). The key could not be checked: review the connection and try again.</value>
+  </data>
   <data name="Servicios.Qrz.RespondioTexto" xml:space="preserve">
     <value>QRZ.com replied “{0}”.</value>
   </data>
   <data name="Servicios.Qrz.SinClaveDeCuaderno" xml:space="preserve">
-    <value>No QRZ.com logbook key is saved. It is generated on the QRZ website and is not the account password.</value>
+    <value>No QRZ logbook API key is saved. Enter it in Settings › Uploads &amp; QRZ; it is not the website password.</value>
+  </data>
+  <data name="Servicios.Qrz.SinSuscripcion" xml:space="preserve">
+    <value>QRZ recognises the key but does not let it use the logbook API. The logbook owner needs an active QRZ subscription at the “XML” level or higher.</value>
   </data>
   <data name="Servicios.Qrz.SubiendoContacto" xml:space="preserve">
     <value>Uploading the QSO with {0}…</value>
@@ -1704,17 +1737,26 @@ Congratulations and 73,
   <data name="Servicios.Subidas.FallidosYPendientes" xml:space="preserve">
     <value>{0}: {1} QSO(s) could not be uploaded and {2} are waiting their turn. Last error: {3}. Use “Upload now” in Settings › Uploads &amp; QRZ.</value>
   </data>
+  <data name="Servicios.Subidas.FaltaClaveDeQrz" xml:space="preserve">
+    <value>Cannot upload to QRZ: the logbook API key is missing in Settings › Uploads &amp; QRZ.</value>
+  </data>
   <data name="Servicios.Subidas.FaltanCredenciales" xml:space="preserve">
     <value>Cannot upload to {0}: the user name or credentials are missing in Settings › Accounts &amp; services.</value>
   </data>
   <data name="Servicios.Subidas.NoSeHaPodidoComprobar" xml:space="preserve">
     <value>Could not check {0}: {1}</value>
   </data>
+  <data name="Servicios.Subidas.Parada" xml:space="preserve">
+    <value>{0}: upload stopped. {1} {2:N0} QSO(s) are waiting; they will go out by themselves once this is fixed.</value>
+  </data>
   <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
     <value>{0}: {1} QSO(s) waiting to be uploaded.</value>
   </data>
   <data name="Servicios.Subidas.PendientesYBloqueo" xml:space="preserve">
     <value>{0}: {1} pending. {2}</value>
+  </data>
+  <data name="Servicios.Subidas.QrzSinConfigurar" xml:space="preserve">
+    <value>QRZ: upload not set up. The logbook API key is missing in Settings › Uploads &amp; QRZ.</value>
   </data>
   <data name="Servicios.Subidas.SinConfigurar" xml:space="preserve">
     <value>{0}: automatic upload not configured (user name or credentials missing in Settings › Accounts &amp; services).</value>
