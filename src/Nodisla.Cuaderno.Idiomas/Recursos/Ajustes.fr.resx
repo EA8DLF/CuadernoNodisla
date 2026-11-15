@@ -1538,6 +1538,9 @@ Vos QSO et vos paramètres ne sont pas modifiés. Si vous êtes en train d'émet
   <data name="Ajustes.Servidor.Tx.Nota" xml:space="preserve">
     <value>Il faut aussi cocher « Autoriser l'émission dans cette session ». Le PTT d'un programme passe par le plan de bande, le ROS, la puissance maximale, le temps maximal et le propriétaire du PTT, et il est relâché si le programme se déconnecte ou se tait.</value>
   </data>
+  <data name="Ajustes.Subidas.AlDiaConAnteriores" xml:space="preserve">
+    <value>{0} : ce que vous enregistrez maintenant part tout seul. Il reste {1:N0} QSO antérieurs non envoyés.</value>
+  </data>
   <data name="Ajustes.Subidas.Anteriores.Boton" xml:space="preserve">
     <value>Envoyer les QSO antérieurs…</value>
   </data>
@@ -1563,7 +1566,7 @@ Vos QSO et vos paramètres ne sont pas modifiés. Si vous êtes en train d'émet
     <value>Envoi des QSO antérieurs : {0:N0} sur {1:N0}.</value>
   </data>
   <data name="Ajustes.Subidas.Anteriores.Explicacion" xml:space="preserve">
-    <value>{0:N0} QSO du log ne sont pas envoyés à {1}. Seul ce qui est enregistré avec l'envoi déjà activé part tout seul ; ceux-ci datent d'avant.</value>
+    <value>Seul ce qui est enregistré avec l'envoi déjà activé part tout seul : ces {0:N0} datent d'avant. Vous pouvez les envoyer à {1} maintenant.</value>
   </data>
   <data name="Ajustes.Subidas.Anteriores.FechaNoValida" xml:space="preserve">
     <value>Cette date n'est pas comprise. Saisissez-la comme 2026-01-31, ou laissez la case vide pour tout envoyer.</value>

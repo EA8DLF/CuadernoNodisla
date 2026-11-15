@@ -352,6 +352,9 @@ public sealed class QrzEnLaConfiguracionPruebas : IDisposable
         qrz.Subida.Recuento!.Subidos.Should().Be(1);
         qrz.Subida.SinSubir.Should().Be(2);
         qrz.Subida.RecuentoTexto.Should().Contain("1 subidos").And.Contain("2 sin subir");
+        qrz.Subida.Estado.Should().NotContain("al día", "con contactos sin subir no se dice que esta al dia")
+            .And.Contain("2");
+        subidas.Pastillas[3].Texto.Should().Be(qrz.Subida.Estado, "la pastilla de la barra dice lo mismo");
         qrz.Subida.HayAnterioresQueOfrecer.Should().BeTrue("activada y con contactos de antes sin subir");
     }
 

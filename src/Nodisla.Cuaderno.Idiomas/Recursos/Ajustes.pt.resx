@@ -1538,6 +1538,9 @@ Os seus contactos e definições não são alterados. Se estiver a transmitir ou
   <data name="Ajustes.Servidor.Tx.Nota" xml:space="preserve">
     <value>Também é preciso marcar «Permitir transmitir nesta sessão». O PTT de um programa passa pelo plano de banda, ROE, potência máxima, tempo máximo e dono do PTT, e é baixado se o programa se desligar ou deixar de comunicar.</value>
   </data>
+  <data name="Ajustes.Subidas.AlDiaConAnteriores" xml:space="preserve">
+    <value>{0}: o que registar agora sai sozinho. Ficam {1:N0} contactos anteriores por enviar.</value>
+  </data>
   <data name="Ajustes.Subidas.Anteriores.Boton" xml:space="preserve">
     <value>Enviar os contactos anteriores…</value>
   </data>
@@ -1563,7 +1566,7 @@ Os seus contactos e definições não são alterados. Se estiver a transmitir ou
     <value>A enviar os anteriores: {0:N0} de {1:N0}.</value>
   </data>
   <data name="Ajustes.Subidas.Anteriores.Explicacion" xml:space="preserve">
-    <value>Há {0:N0} contactos no logbook que não estão enviados para {1}. Só sai sozinho o que se regista com o envio já ativado; estes são de antes.</value>
+    <value>Só sai sozinho o que se regista com o envio já ativado: esses {0:N0} são de antes. Pode enviá-los para {1} agora.</value>
   </data>
   <data name="Ajustes.Subidas.Anteriores.FechaNoValida" xml:space="preserve">
     <value>Essa data não se percebe. Escreva-a como 2026-01-31, ou deixe a caixa vazia para enviar todos.</value>

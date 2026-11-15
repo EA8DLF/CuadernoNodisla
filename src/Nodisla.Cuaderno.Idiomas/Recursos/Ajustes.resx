@@ -1541,6 +1541,9 @@ Sus contactos y ajustes no se tocan. Si está transmitiendo o a mitad de un cont
   <data name="Ajustes.Servidor.Tx.Nota" xml:space="preserve">
     <value>Además hace falta marcar «Permitir transmitir en esta sesión». El PTT de un programa pasa por el plan de banda, la ROE, la potencia máxima, el tiempo máximo y el dueño del PTT, y se baja si el programa se desconecta o deja de hablar.</value>
   </data>
+  <data name="Ajustes.Subidas.AlDiaConAnteriores" xml:space="preserve">
+    <value>{0}: lo que registre ahora se sube solo. Quedan {1:N0} contactos anteriores sin subir.</value>
+  </data>
   <data name="Ajustes.Subidas.Anteriores.Boton" xml:space="preserve">
     <value>Subir los contactos anteriores…</value>
   </data>
@@ -1566,7 +1569,7 @@ Sus contactos y ajustes no se tocan. Si está transmitiendo o a mitad de un cont
     <value>Subiendo los anteriores: {0:N0} de {1:N0}.</value>
   </data>
   <data name="Ajustes.Subidas.Anteriores.Explicacion" xml:space="preserve">
-    <value>Hay {0:N0} contactos en el cuaderno que no están subidos a {1}. Solo sube solo lo que se registra con la subida ya activada; estos son de antes.</value>
+    <value>Solo sube solo lo que se registra con la subida ya activada: esos {0:N0} son de antes. Puede subirlos a {1} ahora.</value>
   </data>
   <data name="Ajustes.Subidas.Anteriores.FechaNoValida" xml:space="preserve">
     <value>Esa fecha no se entiende. Escríbala como 2026-01-31, o deje la casilla vacía para subirlos todos.</value>

@@ -1538,6 +1538,9 @@ I suoi collegamenti e le impostazioni non vengono toccati. Se sta trasmettendo o
   <data name="Ajustes.Servidor.Tx.Nota" xml:space="preserve">
     <value>Serve anche spuntare «Consenti di trasmettere in questa sessione». Il PTT di un programma passa per il piano di banda, il ROS, la potenza massima, il tempo massimo e il padrone del PTT, e si rilascia se il programma si disconnette o smette di comunicare.</value>
   </data>
+  <data name="Ajustes.Subidas.AlDiaConAnteriores" xml:space="preserve">
+    <value>{0}: ciò che registra ora parte da solo. Restano {1:N0} collegamenti precedenti non caricati.</value>
+  </data>
   <data name="Ajustes.Subidas.Anteriores.Boton" xml:space="preserve">
     <value>Caricare i collegamenti precedenti…</value>
   </data>
@@ -1563,7 +1566,7 @@ I suoi collegamenti e le impostazioni non vengono toccati. Se sta trasmettendo o
     <value>Caricamento dei precedenti: {0:N0} di {1:N0}.</value>
   </data>
   <data name="Ajustes.Subidas.Anteriores.Explicacion" xml:space="preserve">
-    <value>Nel log ci sono {0:N0} collegamenti non caricati su {1}. Parte da solo soltanto ciò che si registra con il caricamento già attivo; questi sono di prima.</value>
+    <value>Parte da solo soltanto ciò che si registra con il caricamento già attivo: quei {0:N0} sono di prima. Può caricarli su {1} adesso.</value>
   </data>
   <data name="Ajustes.Subidas.Anteriores.FechaNoValida" xml:space="preserve">
     <value>Quella data non si capisce. La scriva come 2026-01-31, oppure lasci la casella vuota per caricarli tutti.</value>

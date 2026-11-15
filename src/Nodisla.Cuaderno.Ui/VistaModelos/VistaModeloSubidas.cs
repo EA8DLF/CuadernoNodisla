@@ -45,6 +45,7 @@ public sealed partial class FilaDeServicioDeSubida : ObservableObject
     private readonly VistaModeloSubidas? _subidas;
     private bool _cargando;
     private int _totalDeLaTanda;
+    private string _textoDeLaCola = string.Empty;
     private bool _tandaCancelada;
 
     /// <summary>Crea la fila.</summary>
@@ -288,10 +289,23 @@ public sealed partial class FilaDeServicioDeSubida : ObservableObject
     {
         _cargando = true;
         Activado = estado.Activado;
-        Estado = estado.Texto;
+        _textoDeLaCola = estado.Texto;
         Semaforo = estado.Semaforo;
         _cargando = false;
+        PonerEstado();
     }
+
+    /// <summary>
+    /// La cola dice «al dia» en cuanto no tiene nada esperando, pero eso solo habla de lo que
+    /// se registra con la subida activada. Con contactos anteriores sin subir, decir «al dia»
+    /// a secas es justo lo que hace creer que esta todo en el servicio cuando no hay nada.
+    /// </summary>
+    private void PonerEstado() =>
+        Estado = Activado && Semaforo == SemaforoDeSubida.Verde && SinSubir > 0
+            ? Textos.F("Ajustes.Subidas.AlDiaConAnteriores", Nombre, SinSubir)
+            : _textoDeLaCola;
+
+    partial void OnRecuentoChanged(RecuentoDeSubida? value) => PonerEstado();
 
     /// <summary>Pone cuantos contactos anteriores quedan en la cola.</summary>
     internal void CargarAnteriores(int enCola)
@@ -476,9 +490,13 @@ public sealed partial class VistaModeloSubidas : ObservableObject
                 var recuentos = await _cola.RecuentosAsync().ConfigureAwait(false);
                 EnLaInterfaz(() =>
                 {
-                    foreach (var fila in Servicios)
+                    for (var i = 0; i < Servicios.Count; i++)
                     {
+                        var fila = Servicios[i];
                         fila.Recuento = recuentos.FirstOrDefault(r => r.Medio == fila.Medio);
+
+                        // La ayuda emergente de la pastilla dice lo mismo que la fila.
+                        Pastillas[i].Texto = fila.Estado;
                     }
                 });
             }
@@ -654,7 +672,7 @@ public sealed partial class VistaModeloSubidas : ObservableObject
             Servicios[i].Cargar(e);
             var pastilla = Pastillas[i];
             pastilla.Semaforo = e.Semaforo;
-            pastilla.Texto = e.Texto;
+            pastilla.Texto = Servicios[i].Estado;
             var enCola = e.Pendientes + e.Fallidos;
             pastilla.Etiqueta = enCola > 0
                 ? string.Create(Textos.Cultura, $"{e.Nombre} {enCola}")

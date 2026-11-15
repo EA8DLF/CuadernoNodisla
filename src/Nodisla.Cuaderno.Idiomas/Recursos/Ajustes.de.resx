@@ -1538,6 +1538,9 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
   <data name="Ajustes.Servidor.Tx.Nota" xml:space="preserve">
     <value>Zusätzlich muss „Senden in dieser Sitzung erlauben“ angehakt sein. Die PTT eines Programms durchläuft Bandplan, SWR, Höchstleistung, Höchstzeit und PTT-Besitzer und fällt ab, wenn das Programm trennt oder verstummt.</value>
   </data>
+  <data name="Ajustes.Subidas.AlDiaConAnteriores" xml:space="preserve">
+    <value>{0}: Was Sie jetzt loggen, geht von selbst hinaus. {1:N0} frühere Verbindungen sind noch nicht hochgeladen.</value>
+  </data>
   <data name="Ajustes.Subidas.Anteriores.Boton" xml:space="preserve">
     <value>Frühere Verbindungen hochladen…</value>
   </data>
@@ -1563,7 +1566,7 @@ Ihre Verbindungen und Einstellungen bleiben unverändert. Wenn Sie gerade senden
     <value>Frühere Verbindungen werden hochgeladen: {0:N0} von {1:N0}.</value>
   </data>
   <data name="Ajustes.Subidas.Anteriores.Explicacion" xml:space="preserve">
-    <value>{0:N0} Verbindungen im Logbuch sind nicht zu {1} hochgeladen. Von selbst geht nur hinaus, was bei eingeschaltetem Upload geloggt wird; diese sind von vorher.</value>
+    <value>Von selbst geht nur hinaus, was bei eingeschaltetem Upload geloggt wird: Diese {0:N0} sind von vorher. Sie können sie jetzt zu {1} hochladen.</value>
   </data>
   <data name="Ajustes.Subidas.Anteriores.FechaNoValida" xml:space="preserve">
     <value>Dieses Datum ist nicht lesbar. Schreiben Sie es wie 2026-01-31 oder lassen Sie das Feld leer, um alle hochzuladen.</value>

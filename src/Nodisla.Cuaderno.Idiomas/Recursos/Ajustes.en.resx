@@ -1538,6 +1538,9 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   <data name="Ajustes.Servidor.Tx.Nota" xml:space="preserve">
     <value>"Allow transmitting in this session" must also be ticked. A program's PTT goes through the band plan, SWR, maximum power, maximum time and PTT owner checks, and is dropped if the program disconnects or stops talking.</value>
   </data>
+  <data name="Ajustes.Subidas.AlDiaConAnteriores" xml:space="preserve">
+    <value>{0}: what you log now is uploaded by itself. {1:N0} earlier QSOs are still not uploaded.</value>
+  </data>
   <data name="Ajustes.Subidas.Anteriores.Boton" xml:space="preserve">
     <value>Upload the earlier QSOs…</value>
   </data>
@@ -1563,7 +1566,7 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
     <value>Uploading the earlier QSOs: {0:N0} of {1:N0}.</value>
   </data>
   <data name="Ajustes.Subidas.Anteriores.Explicacion" xml:space="preserve">
-    <value>{0:N0} QSOs in the logbook are not uploaded to {1}. Only what is logged with uploading already on goes out by itself; these are from before.</value>
+    <value>Only what is logged with uploading already on goes out by itself: those {0:N0} are from before. You can upload them to {1} now.</value>
   </data>
   <data name="Ajustes.Subidas.Anteriores.FechaNoValida" xml:space="preserve">
     <value>That date cannot be read. Type it like 2026-01-31, or leave the box empty to upload them all.</value>
