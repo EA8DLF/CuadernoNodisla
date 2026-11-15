@@ -218,6 +218,76 @@ public sealed class PanelDelModemEnPantallaPruebas
         }
     });
 
+    [Fact]
+    public Task LaListaEnEsperaSoloSeVeConAlguienYSusBotonesContestanYQuitan() => HiloDeVentana.Ejecutar(async () =>
+    {
+        var errores = new StringBuilder();
+        using var oyente = new OyenteDeEnlaces(errores);
+
+        var modelo = Montar(out var modem, out var reloj, out _, new SincronizadorDeMentira());
+        var (ventana, panel) = Pintar(modelo, 1400, 700);
+        try
+        {
+            await Asentar();
+            var lista = (FrameworkElement)panel.FindName("ListaEnEspera");
+            lista.IsVisible.Should().BeFalse("sin nadie esperando no ocupa sitio");
+
+            // Llamando CQ sin Tx habilitado (se dice que no a la pregunta): no sale nada, y
+            // contestan cuatro. Al primero se le elige; los otros tres quedan en espera.
+            await modelo.EscucharCommand.ExecuteAsync(null);
+            modelo.PermitirTransmitir = true;
+            reloj.Ahora = Mediodia.AddSeconds(5);
+            await modelo.LlamarCqCommand.ExecuteAsync(null);
+
+            var procesada = new TaskCompletionSource();
+            modelo.VentanaProcesada += (_, _) => procesada.TrySetResult();
+            var suya = Mediodia.AddSeconds(30);
+            reloj.Ahora = Mediodia.AddSeconds(50);
+            modem.Soltar(
+                suya,
+                Oido("EA8DLF EA5XYZ IM98", -7, 800, suya),
+                Oido("EA8DLF K1ABC FN42", -14, 1200, suya),
+                Oido("EA8DLF PY2ZZZ GG66", -3, 1500, suya),
+                Oido("EA8DLF JA1XYZ PM95", -18, 1700, suya));
+            await procesada.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            await Asentar();
+
+            lista.IsVisible.Should().BeTrue();
+            var fichas = Todos<Button>(lista).Where(b => b.IsVisible).ToList();
+            fichas.Should().HaveCount(6, "una ficha y una ✕ por cada uno de los tres que esperan");
+            fichas.Should().OnlyContain(b => b.Command != null);
+            Todos<TextBlock>(lista).Select(t => t.Text).Should().ContainInOrder("K1ABC -14", "PY2ZZZ -03", "JA1XYZ -18");
+
+            // Compacta: no se sale del ancho de su columna.
+            var columna = (FrameworkElement)lista.Parent;
+            lista.ActualWidth.Should().BeLessThanOrEqualTo(columna.ActualWidth + 1);
+
+            // La ✕ del primero lo quita.
+            ((IInvokeProvider)new ButtonAutomationPeer(fichas[1])).Invoke();
+            await Asentar();
+            modelo.EnEspera.Select(f => f.Indicativo).Should().Equal("PY2ZZZ", "JA1XYZ");
+
+            // Clic en la ficha del ultimo: se le contesta a el.
+            fichas = Todos<Button>(lista).Where(b => b.IsVisible).ToList();
+            ((IInvokeProvider)new ButtonAutomationPeer(fichas[2])).Invoke();
+            await Asentar();
+            modelo.Corresponsal.Should().Be("JA1XYZ");
+            modelo.EnEspera.Select(f => f.Indicativo).Should().Equal("PY2ZZZ");
+            modem.Emisiones.Should().BeEmpty("sin «Tx habilitado» no se transmite");
+
+            // Detener la vacia y vuelve a esconderse.
+            Pulsar(panel, "Detener");
+            await Asentar();
+            lista.IsVisible.Should().BeFalse();
+
+            errores.ToString().Should().BeEmpty("cada enlace roto es un control o un dato muerto");
+        }
+        finally
+        {
+            ventana.Close();
+        }
+    });
+
     [Theory]
     [InlineData(555, 45, 0)]     // 1366×768: no cabe, se pliega solo
     [InlineData(790, 45, 255)]   // 1920×1000 con la barra en una línea

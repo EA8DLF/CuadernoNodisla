@@ -661,10 +661,10 @@
     <value>Built-in modem decodes</value>
   </data>
   <data name="Digital.Modem.LlamarAlPrimero" xml:space="preserve">
-    <value>Call 1st</value>
+    <value>Answer callers</value>
   </data>
   <data name="Digital.Modem.LlamarAlPrimero.Ayuda" xml:space="preserve">
-    <value>When calling CQ, answer the first station that calls</value>
+    <value>When calling CQ, whoever answers is selected automatically and replied to in your next window. If several call, the first one; the rest go to the "Waiting" list and are answered in turn as each contact ends. Unchecked, you have to pick by hand</value>
   </data>
   <data name="Digital.Modem.LlamarCq" xml:space="preserve">
     <value>Call CQ</value>
@@ -898,7 +898,7 @@
     <value>1 QSO</value>
   </data>
   <data name="Digital.Modem.UnSoloQso.Ayuda" xml:space="preserve">
-    <value>When a contact that came from calling CQ with "Call 1st" completes, stop entirely instead of continuing to call CQ on its own</value>
+    <value>When a contact that came from calling CQ completes and nobody is waiting, stop entirely instead of continuing to call CQ on its own. If someone is waiting, they are answered anyway</value>
   </data>
   <data name="Digital.Modem.Ventana.Ayuda" xml:space="preserve">
     <value>How much of the current period is left before the window closes</value>
@@ -1211,5 +1211,23 @@
   </data>
   <data name="Digital.Modem.Transmision.Tune" xml:space="preserve">
     <value>A tuning tone (Tune) is sounding</value>
+  </data>
+  <data name="Digital.Modem.EnEspera" xml:space="preserve">
+    <value>Waiting</value>
+  </data>
+  <data name="Digital.Modem.EnEspera.Ayuda" xml:space="preserve">
+    <value>They answered your CQ and are waiting their turn, in order of arrival. As each contact ends, the first one is answered automatically. Click one to answer it right away; the ✕ removes it from the list</value>
+  </data>
+  <data name="Digital.Modem.EnEspera.Nombre" xml:space="preserve">
+    <value>Stations waiting for a reply</value>
+  </data>
+  <data name="Digital.Modem.EnEspera.Atender.Nombre" xml:space="preserve">
+    <value>Answer {0} now</value>
+  </data>
+  <data name="Digital.Modem.EnEspera.Quitar.Nombre" xml:space="preserve">
+    <value>Remove {0} from the waiting list</value>
+  </data>
+  <data name="Digital.Modem.Aviso.SiguienteEnEspera" xml:space="preserve">
+    <value>{0} was waiting: answering now.</value>
   </data>
 </root>

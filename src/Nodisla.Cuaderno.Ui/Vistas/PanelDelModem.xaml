@@ -619,6 +619,53 @@
                         </TextBlock.Style>
                     </TextBlock>
 
+                    <!--
+                        ── En espera: los que han contestado al CQ y aún no se les ha atendido ──
+                        Solo se ve cuando hay alguien, y ocupa lo justo: una tira de fichas en el
+                        orden del turno (indicativo y dB). Clic en la ficha, contestarle ya; la
+                        ✕, quitarlo. Se envuelve en varias líneas si no caben en una.
+                    -->
+                    <StackPanel x:Name="ListaEnEspera" Margin="0,0,0,6"
+                                Visibility="{Binding HayEnEspera, Converter={StaticResource BooleanoAVisible}}">
+                        <TextBlock Text="{loc:Texto Digital.Modem.EnEspera}" Style="{StaticResource EtiquetaDeCampo}" Margin="0,0,0,3"
+                                   ToolTip="{loc:Texto Digital.Modem.EnEspera.Ayuda}" />
+                        <ItemsControl ItemsSource="{Binding EnEspera}" AutomationProperties.Name="{loc:Texto Digital.Modem.EnEspera.Nombre}" IsTabStop="False">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,6,4">
+                                        <Button Padding="6,1"
+                                                Command="{Binding DataContext.AtenderAlLlamanteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                AutomationProperties.Name="{loc:Texto Digital.Modem.EnEspera.Atender.Nombre, Valor={Binding Indicativo}}"
+                                                ToolTip="{loc:Texto Digital.Modem.EnEspera.Atender.Nombre, Valor={Binding Indicativo}}">
+                                            <TextBlock Text="{Binding Texto}" TextTrimming="None">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource Mono}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding TrabajadoAntes}" Value="True">
+                                                                <Setter Property="Foreground" Value="{DynamicResource TextoTenue}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Button>
+                                        <Button Content="✕" Padding="4,1" Margin="1,0,0,0"
+                                                Command="{Binding DataContext.QuitarAlLlamanteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                AutomationProperties.Name="{loc:Texto Digital.Modem.EnEspera.Quitar.Nombre, Valor={Binding Indicativo}}"
+                                                ToolTip="{loc:Texto Digital.Modem.EnEspera.Quitar.Nombre, Valor={Binding Indicativo}}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                     <!-- ── Cazadores del pileup (fox) ── -->
                     <Expander Header="{loc:Texto Digital.Modem.Fox.Titulo}" IsExpanded="True" Margin="0,2,0,2"
                               Visibility="{Binding EsFox, Converter={StaticResource BooleanoAVisible}}">

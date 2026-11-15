@@ -460,8 +460,12 @@ public sealed class AjustesDeDigital
     /// <summary>Al contestar a un CQ se empieza por el informe, sin mandar el localizador. Es la opcion de JTDX.</summary>
     public bool SaltarTx1 { get; set; }
 
-    /// <summary>Llamando CQ, se contesta solo al primero que llame («Call 1st»).</summary>
-    public bool LlamarAlPrimero { get; set; }
+    /// <summary>
+    /// Llamando CQ, se elige solo a quien conteste —al primero, si son varios; los demas esperan
+    /// en la cola— y se le contesta («Call 1st»). De fabrica, puesto. A quien ya lo tenga guardado
+    /// quitado no se le cambia: es su eleccion.
+    /// </summary>
+    public bool LlamarAlPrimero { get; set; } = true;
 
     /// <summary>
     /// Llamando CQ con <see cref="LlamarAlPrimero"/>, no elegir automaticamente a quien ya se ha

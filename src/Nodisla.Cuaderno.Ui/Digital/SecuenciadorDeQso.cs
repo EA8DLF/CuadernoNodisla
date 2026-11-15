@@ -20,6 +20,20 @@ public readonly record struct DecisionDelSecuenciador(
     bool ContactoCompleto,
     string? Parada)
 {
+    /// <summary>
+    /// El corresponsal ha cambiado sin pasar por una parada: se ha dejado al anterior (contacto
+    /// acabado, o desaparecido) y se atiende a este, que esperaba en la cola o repite porque no
+    /// copio el cierre. Quien recibe la decision tiene que cerrar lo del anterior <b>antes</b> de
+    /// tomar los datos del nuevo. Nulo si el corresponsal sigue siendo el mismo.
+    /// </summary>
+    public string? PasaA { get; init; }
+
+    /// <summary>
+    /// Con <see cref="PasaA"/>: el contacto que se deja habia terminado de verdad (el otro cerro
+    /// con RR73/RRR/73, o salio el cierre propio), y no es que se abandone a medias.
+    /// </summary>
+    public bool AnteriorTerminado { get; init; }
+
     /// <summary>No hay nada que hacer.</summary>
     public static DecisionDelSecuenciador Nada => new(null, null, false, null);
 }
@@ -62,8 +76,32 @@ public sealed class SecuenciadorDeQso
     /// <summary>Al contestar a un CQ, empezar por el informe (Tx2) en vez de por el localizador (Tx1). Es la opcion de JTDX.</summary>
     public bool SaltarTx1 { get; set; }
 
-    /// <summary>Llamando CQ, contestar solo al primero que llame.</summary>
-    public bool LlamarAlPrimero { get; set; }
+    /// <summary>
+    /// Llamando CQ, elegir solo a quien conteste —al primero, si son varios— y contestarle en la
+    /// siguiente ventana propia. De fabrica, puesto: sin esto hay que elegir a mano a cada uno que
+    /// llama, y se pasa. Quitado, la cola de espera se sigue llenando, pero nadie se elige solo.
+    /// </summary>
+    public bool LlamarAlPrimero { get; set; } = true;
+
+    /// <summary>
+    /// Tx4 va con <c>RRR</c> en vez de <c>RR73</c>. Cambia cuando acaba un contacto: <c>RR73</c>
+    /// es «recibido y adios» y no pide respuesta, asi que el contacto se cierra al emitirlo;
+    /// <c>RRR</c> es solo «recibido», y hay que esperar el 73 del otro.
+    /// </summary>
+    public bool Tx4ConRrr { get; set; }
+
+    /// <summary>
+    /// Al acabar un contacto nacido del CQ, pasar solo al siguiente de la cola. Quien lo apaga es
+    /// la pantalla cuando el contacto que acaba no ha quedado apuntado en el cuaderno: pasar al
+    /// siguiente borraria de la vista los datos que el operador aun tiene que guardar.
+    /// </summary>
+    public bool PasarSoloAlSiguiente { get; set; } = true;
+
+    /// <summary>
+    /// Los que han contestado al CQ y esperan su turno. Solo se usa en operacion
+    /// <see cref="TipoDeOperacion.Normal"/> y en una sesion nacida de llamar CQ.
+    /// </summary>
+    public ColaDeLlamantes Cola { get; } = new();
 
     /// <summary>
     /// Llamando CQ con <see cref="LlamarAlPrimero"/>, no elegir automaticamente a una estacion ya
@@ -86,6 +124,18 @@ public sealed class SecuenciadorDeQso
     /// a un contacto elegido a mano: es la que puede seguir sola de un contacto al siguiente.
     /// </summary>
     private bool _llamandoCqSolo;
+
+    /// <summary>
+    /// Con quienes ya se ha completado contacto desde que se esta en esta banda y modo: si
+    /// vuelven a llamar no se les elige solos ni hacen cola (seria apuntar dos veces lo mismo).
+    /// </summary>
+    private readonly HashSet<string> _completadosEnLaSesion = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// El ultimo contacto que se cerro al emitir el RR73 propio, sin esperar confirmacion. Si no
+    /// lo copio y repite su R+informe mientras se llama CQ, se le repite el RR73 con estos datos.
+    /// </summary>
+    private (string Indicativo, string Grid, int? Enviado, int? Recibido)? _cerradoConRr73;
 
     /// <summary>Emisiones seguidas sin noticias del corresponsal tras las que se para.</summary>
     public int CiclosSinRespuesta { get; set; } = 5;
@@ -141,6 +191,8 @@ public sealed class SecuenciadorDeQso
     public DecisionDelSecuenciador LlamarCq(DateTimeOffset ahora)
     {
         Limpiar();
+        Cola.Vaciar();
+        _cerradoConRr73 = null;
         Activo = true;
         TxActual = 6;
         Paridad = ParidadDeLaSiguiente(ahora, Periodo);
@@ -158,8 +210,20 @@ public sealed class SecuenciadorDeQso
         TxActual = tx;
         if (Paridad < 0) Paridad = ParidadDeLaSiguiente(ahora, Periodo);
         EmisionesSinNoticias = 0;
-        // Es una orden a mano del operador, no la continuacion de un «Llamar CQ» en marcha.
-        _llamandoCqSolo = false;
+        // Es una orden a mano del operador, no la continuacion de un «Llamar CQ» en marcha...
+        // salvo que lo que mande sea precisamente el CQ: mandar el Tx6 a mano es llamar CQ, igual
+        // que con el boton, y quien conteste se atiende igual.
+        if (tx == 6)
+        {
+            if (!_llamandoCqSolo) Cola.Vaciar();
+            _llamandoCqSolo = true;
+        }
+        else
+        {
+            _llamandoCqSolo = false;
+            Cola.Vaciar();
+        }
+
         return new DecisionDelSecuenciador(tx, null, false, null);
     }
 
@@ -179,11 +243,17 @@ public sealed class SecuenciadorDeQso
         var m = oido.Mensaje;
         if (m.Llamante.Length == 0 || m.Clase == ClaseDeMensaje.Otro) return DecisionDelSecuenciador.Nada;
 
+        // Lo que se oye de uno mismo (el propio CQ decodificado) no es una estacion a la que llamar.
+        if (EsMio(m.Llamante)) return DecisionDelSecuenciador.Nada;
+
         Limpiar();
         Activo = true;
         // Es el operador quien ha elegido a mano con el doble clic: no es la continuacion de un
-        // «Llamar CQ», asi que al completarse no sigue llamando CQ solo.
+        // «Llamar CQ», asi que al completarse no sigue llamando CQ solo, y los que esperaban en
+        // la cola del CQ dejan de esperar.
         _llamandoCqSolo = false;
+        Cola.Vaciar();
+        _cerradoConRr73 = null;
         DxCall = m.Llamante;
         DxGrid = m.Locator;
         InformeEnviado = oido.Decibelios;
@@ -250,10 +320,18 @@ public sealed class SecuenciadorDeQso
         ArgumentNullException.ThrowIfNull(oidos);
         UltimaVentana = ventana;
 
+        var esLaPropia = Paridad >= 0 && ParidadDe(ventana, Periodo) == Paridad;
+        if (!esLaPropia)
+        {
+            // Lo que se oye de uno mismo no cuenta: ni llama, ni contesta, ni hace cola.
+            if (oidos.Any(o => EsMio(o.Mensaje.Llamante))) oidos = oidos.Where(o => !EsMio(o.Mensaje.Llamante)).ToList();
+            AtenderALaCola(ventana, oidos);
+        }
+
         if (!Activo) return DecisionDelSecuenciador.Nada;
 
         // La ventana que acaba de cerrar era la propia: aqui no se decide nada.
-        if (Paridad >= 0 && ParidadDe(ventana, Periodo) == Paridad) return DecisionDelSecuenciador.Nada;
+        if (esLaPropia) return DecisionDelSecuenciador.Nada;
 
         var paraMi = oidos.Where(o => VaDirigidoAMi(o.Mensaje)).ToList();
         var delDx = DxCall.Length > 0
@@ -262,8 +340,30 @@ public sealed class SecuenciadorDeQso
 
         var completoAntes = _completado;
         int? tono = null;
+        string? pasaA = null;
 
-        if (TxActual == 6)
+        if (TxActual == 6 && RepiteElQueNoCopioElRr73(paraMi) is { } repite)
+        {
+            // Se le repite el RR73. Ese contacto ya se dio por completo en su momento: no se
+            // vuelve a anunciar, que seria apuntarlo dos veces.
+            Limpiar();
+            DxCall = repite.Indicativo;
+            DxGrid = repite.Grid;
+            InformeEnviado = repite.Enviado;
+            InformeRecibido = repite.Recibido;
+            TxActual = 4;
+            _completado = true;
+            completoAntes = true;
+            pasaA = DxCall;
+        }
+        else if (TxActual == 6 && HayCola)
+        {
+            if (LlamarAlPrimero && Cola.Siguiente(AnsB4) is { } siguiente)
+            {
+                Atender(siguiente);
+            }
+        }
+        else if (TxActual == 6)
         {
             if (LlamarAlPrimero && paraMi.Count > 0)
             {
@@ -327,7 +427,7 @@ public sealed class SecuenciadorDeQso
                         if (Operacion == TipoDeOperacion.Hound || TxActual == 4)
                         {
                             // El fox no espera un 73; y si ya mande RR73 y el contesta RR73, hemos terminado.
-                            return Terminar(Textos.T("Digital.Secuencia.ContactoTerminado"), completoAntes);
+                            return TerminarYSeguir(Textos.T("Digital.Secuencia.ContactoTerminado"), completoAntes);
                         }
 
                         TxActual = 5;
@@ -335,8 +435,7 @@ public sealed class SecuenciadorDeQso
 
                     case ClaseDeMensaje.S73:
                         _completado = true;
-                        if (TxActual == 4) return Terminar(Textos.T("Digital.Secuencia.ContactoTerminado"), completoAntes);
-                        if (TxActual == 5) return Terminar(Textos.T("Digital.Secuencia.ContactoTerminado"), completoAntes);
+                        if (TxActual is 4 or 5) return TerminarYSeguir(Textos.T("Digital.Secuencia.ContactoTerminado"), completoAntes);
                         TxActual = 5;
                         break;
                 }
@@ -351,10 +450,15 @@ public sealed class SecuenciadorDeQso
 
         if (TxActual != 6 && EmisionesSinNoticias >= CiclosSinRespuesta)
         {
-            return Parar(Textos.F("Digital.Secuencia.Desaparecido", DxCall, EmisionesSinNoticias), completoAntes);
+            // Si venia del CQ y hay quien espera, no se deja a los demas colgados por uno que se
+            // ha ido: se pasa al siguiente. Sin nadie esperando se para, como siempre (aqui no se
+            // vuelve a CQ solo: a un abandono lo mira el operador).
+            var veniaDeCqSolo = _llamandoCqSolo;
+            var parada = Parar(Textos.F("Digital.Secuencia.Desaparecido", DxCall, EmisionesSinNoticias), completoAntes);
+            return SeguirSiToca(parada, veniaDeCqSolo, volverACq: false);
         }
 
-        return new DecisionDelSecuenciador(TxActual, tono, _completado && !completoAntes, null);
+        return new DecisionDelSecuenciador(TxActual, tono, _completado && !completoAntes, null) { PasaA = pasaA };
     }
 
     /// <summary>
@@ -375,21 +479,171 @@ public sealed class SecuenciadorDeQso
             var completoAntes = _completado;
             _completado = true;
             var decision = Terminar(Textos.T("Digital.Secuencia.Enviado73"), completoAntes);
-            return SeguirLlamandoCqSiToca(decision, veniaDeCqSolo);
+            return SeguirSiToca(decision, veniaDeCqSolo, volverACq: true);
+        }
+
+        if (tx == 4 && ElRr73PropioCierraElContacto)
+        {
+            // RR73 es «recibido y adios»: no pide respuesta. Emitido, el contacto esta acabado por
+            // este lado, llegue o no el 73 del otro; ni se le espera ni se repite el RR73 a ciegas.
+            // Si no lo copio y repite su R+informe, se le vuelve a mandar (vease Procesar).
+            _cerradoConRr73 = (DxCall, DxGrid, InformeEnviado, InformeRecibido);
+            var decision = Terminar(Textos.T("Digital.Secuencia.ContactoTerminado"), completoAntes: true);
+            return SeguirSiToca(decision, veniaDeCqSolo: true, volverACq: true);
         }
 
         return DecisionDelSecuenciador.Nada;
     }
 
     /// <summary>
-    /// Si el contacto que acaba de cerrarse venia de un «Llamar CQ» con <see cref="LlamarAlPrimero"/>
-    /// y <see cref="UnSoloQso"/> no esta marcado, en vez de pararse del todo se vuelve a Tx6 y se
-    /// sigue llamando CQ solo, lista para el siguiente que conteste. Con <see cref="UnSoloQso"/>
-    /// marcado (de fabrica), o si el contacto venia de una respuesta a mano, se para como siempre.
+    /// El contacto en curso se cierra al emitir el RR73 propio: nacio del CQ, en operacion normal,
+    /// ya esta completo (se recibio su R+informe) y Tx4 es <c>RR73</c> y no <c>RRR</c>.
     /// </summary>
-    private DecisionDelSecuenciador SeguirLlamandoCqSiToca(DecisionDelSecuenciador decision, bool veniaDeCqSolo)
+    /// <remarks>
+    /// Solo se aplica a los contactos nacidos del CQ: el contestado a mano con el doble clic se
+    /// queda como siempre (espera el 73 del otro). Con <c>RRR</c> tambien se espera.
+    /// </remarks>
+    private bool ElRr73PropioCierraElContacto =>
+        TxActual == 4 && _completado && _llamandoCqSolo && !Tx4ConRrr && Operacion == TipoDeOperacion.Normal;
+
+    /// <summary>La cola de espera esta en uso: operacion normal y sesion nacida de llamar CQ.</summary>
+    private bool HayCola => _llamandoCqSolo && Operacion == TipoDeOperacion.Normal;
+
+    /// <summary>
+    /// El operador elige a uno de la lista de espera: se le contesta ya, dejando lo que hubiera a
+    /// medias. La sesion sigue siendo la del CQ (al acabar con el se sigue con la cola), que es
+    /// la diferencia con el doble clic sobre una decodificacion.
+    /// </summary>
+    /// <param name="indicativo">A quien, de los que esperan.</param>
+    /// <param name="ahora">Instante de la accion, para saber si la siguiente ventana ya es la propia.</param>
+    public DecisionDelSecuenciador AtenderDeLaCola(string indicativo, DateTimeOffset ahora)
     {
-        if (!veniaDeCqSolo || UnSoloQso || decision.Parada is null) return decision;
+        if (Cola.Buscar(indicativo) is not { } llamante) return DecisionDelSecuenciador.Nada;
+
+        // Si la secuencia estaba parada del todo y sin paridad, se le contesta en la contraria a
+        // la suya.
+        if (Paridad < 0) Paridad = 1 - ParidadDe(llamante.OidoEn, Periodo);
+
+        // El que se deja: si ya estaba completo, cuenta como hecho aunque no llegara a salir el cierre.
+        if (_completado && DxCall.Length > 0) _completadosEnLaSesion.Add(DxCall);
+
+        Atender(llamante);
+        var yaToca = ParidadDeLaSiguiente(ahora, Periodo) == Paridad;
+        return new DecisionDelSecuenciador(yaToca ? TxActual : null, null, false, null) { PasaA = llamante.Indicativo };
+    }
+
+    /// <summary>
+    /// Cambio de banda o de frecuencia: los que esperaban ya no estan ahi, y lo trabajado en la
+    /// otra banda no cuenta en esta. No para la secuencia: eso lo decide quien la lleva.
+    /// </summary>
+    public void OlvidarLaSesion()
+    {
+        Cola.Vaciar();
+        _completadosEnLaSesion.Clear();
+        _cerradoConRr73 = null;
+    }
+
+    /// <summary>Pone a uno de la cola de corresponsal: Tx2 con su informe, o Tx3 si abrio con el suyo.</summary>
+    private void Atender(LlamanteEnEspera llamante)
+    {
+        Limpiar();
+        Activo = true;
+        _llamandoCqSolo = true;
+        DxCall = llamante.Indicativo;
+        DxGrid = llamante.Localizador;
+        InformeEnviado = llamante.Decibelios;
+
+        if (llamante.AbrioConInforme)
+        {
+            InformeRecibido = llamante.InformeRecibido;
+            IntercambioRecibido = llamante.IntercambioRecibido;
+            TxActual = 3;
+        }
+        else
+        {
+            TxActual = 2;
+        }
+
+        Cola.Quitar(llamante.Indicativo);
+    }
+
+    /// <summary>
+    /// Pone la cola al dia con lo oido en una ventana de los otros: entra quien me llama, sale
+    /// quien se va con otro o llama CQ, y caduca quien lleva demasiado sin oirse.
+    /// </summary>
+    private void AtenderALaCola(DateTimeOffset ventana, IReadOnlyList<MensajeOido> oidos)
+    {
+        var admite = Activo && HayCola;
+        if (!admite && Cola.EnEspera.Count == 0) return;
+
+        foreach (var oido in oidos)
+        {
+            var m = oido.Mensaje;
+            if (m.Llamante.Length == 0) continue;
+
+            if (m.VaDirigidoA(MiIndicativo))
+            {
+                if (!admite) continue;
+                if (m.Clase is not (ClaseDeMensaje.Llamada or ClaseDeMensaje.Informe)) continue;
+                if (string.Equals(m.Llamante, DxCall, StringComparison.Ordinal)) continue;
+                if (_completadosEnLaSesion.Contains(m.Llamante)) continue;
+                Cola.Anotar(oido, ventana);
+            }
+            else if (!VaDirigidoAMi(m))
+            {
+                // Llama CQ, o llama o contesta a otro: ya no me esta esperando.
+                Cola.Quitar(m.Llamante);
+            }
+        }
+
+        Cola.Caducar(ventana, Periodo);
+    }
+
+    /// <summary>
+    /// Llamando CQ, el corresponsal al que se despidio con RR73 repite su R+informe: no lo copio.
+    /// </summary>
+    private (string Indicativo, string Grid, int? Enviado, int? Recibido)? RepiteElQueNoCopioElRr73(List<MensajeOido> paraMi)
+    {
+        if (_cerradoConRr73 is not { } cerrado || !HayCola) return null;
+
+        return paraMi.Any(o => o.Mensaje.Clase == ClaseDeMensaje.InformeConR && o.Mensaje.LoManda(cerrado.Indicativo))
+            ? cerrado
+            : null;
+    }
+
+    /// <summary>Da el contacto por terminado y, si venia del CQ, sigue con la cola o con el CQ.</summary>
+    private DecisionDelSecuenciador TerminarYSeguir(string motivo, bool completoAntes)
+    {
+        var veniaDeCqSolo = _llamandoCqSolo;
+        return SeguirSiToca(Terminar(motivo, completoAntes), veniaDeCqSolo, volverACq: true);
+    }
+
+    /// <summary>
+    /// Lo que pasa tras cerrarse (o abandonarse) un contacto que venia de llamar CQ, en vez de
+    /// pararse del todo.
+    /// </summary>
+    /// <remarks>
+    /// Por este orden: si hay alguien valido esperando en la cola, se pasa directamente a el —sin
+    /// CQ por medio, y diga lo que diga <see cref="UnSoloQso"/>: el que espera manda—; si no, y
+    /// <see cref="UnSoloQso"/> no esta marcado, se vuelve a Tx6 y se sigue llamando CQ; si no, se
+    /// para como siempre. Un contacto contestado a mano se para siempre.
+    /// </remarks>
+    /// <param name="decision">La parada que se iba a devolver.</param>
+    /// <param name="veniaDeCqSolo">Como estaba la sesion justo antes de cerrarse: Parar lo apaga.</param>
+    /// <param name="volverACq">Sin nadie en la cola, se puede volver a llamar CQ (si «1 QSO» no esta marcado).</param>
+    private DecisionDelSecuenciador SeguirSiToca(DecisionDelSecuenciador decision, bool veniaDeCqSolo, bool volverACq)
+    {
+        if (!veniaDeCqSolo || decision.Parada is null) return decision;
+
+        if (Operacion == TipoDeOperacion.Normal && LlamarAlPrimero && PasarSoloAlSiguiente
+            && Cola.Siguiente(AnsB4) is { } siguiente)
+        {
+            var terminado = Terminado;
+            Atender(siguiente);
+            return decision with { Tx = TxActual, Parada = null, PasaA = siguiente.Indicativo, AnteriorTerminado = terminado };
+        }
+
+        if (UnSoloQso || !volverACq) return decision;
 
         Limpiar();
         Activo = true;
@@ -406,6 +660,10 @@ public sealed class SecuenciadorDeQso
     {
         if (!Activo || tx is < 1 or > 6) return;
         TxActual = tx;
+
+        // Marcar el CQ como siguiente es ponerse a llamar CQ: quien conteste se atiende igual
+        // que con el boton.
+        if (tx == 6) _llamandoCqSolo = true;
     }
 
     /// <summary>El operador ha parado a mano.</summary>
@@ -414,6 +672,8 @@ public sealed class SecuenciadorDeQso
         Activo = false;
         TxActual = 0;
         _llamandoCqSolo = false;
+        Cola.Vaciar();
+        _cerradoConRr73 = null;
     }
 
     /// <summary>Cambia de modo: el periodo es otro y la paridad no vale.</summary>
@@ -421,11 +681,19 @@ public sealed class SecuenciadorDeQso
     {
         Periodo = periodo;
         Parar();
+        OlvidarLaSesion();
         Paridad = -1;
     }
 
     private DecisionDelSecuenciador Parar(string motivo, bool completoAntes)
     {
+        // Con quien se ha completado ya no hay nada pendiente en esta sesion: ni cola ni eleccion.
+        if (_completado && DxCall.Length > 0)
+        {
+            _completadosEnLaSesion.Add(DxCall);
+            Cola.Quitar(DxCall);
+        }
+
         Activo = false;
         TxActual = 0;
         _llamandoCqSolo = false;
@@ -450,6 +718,10 @@ public sealed class SecuenciadorDeQso
         _completado = false;
         TxActual = 0;
     }
+
+    /// <summary>Ese indicativo es el propio, con o sin sufijo de operacion.</summary>
+    private bool EsMio(string indicativo) =>
+        indicativo.Length > 0 && MiIndicativo.Length > 0 && MismoIndicativo.Son(indicativo, MiIndicativo);
 
     private bool VaDirigidoAMi(MensajeEstandar m) =>
         m.VaDirigidoA(MiIndicativo) || (m.Segundo?.VaDirigidoA(MiIndicativo) ?? false);
