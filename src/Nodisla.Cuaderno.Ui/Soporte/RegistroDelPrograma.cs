@@ -18,8 +18,12 @@ namespace Nodisla.Cuaderno.Ui.Soporte;
 /// </remarks>
 public static class RegistroDelPrograma
 {
-    /// <summary>Cuantos ficheros de registro se conservan.</summary>
-    public const int FicherosAConservar = 14;
+    /// <summary>Cuantos ficheros de registro se conservan: un mes, a uno por dia.</summary>
+    /// <remarks>
+    /// Eran 14, y en la cuenta entraban tambien los <c>_001</c> de los arranques dobles: una
+    /// averia de hace dos semanas ya no tenia registro que mirar.
+    /// </remarks>
+    public const int FicherosAConservar = 31;
 
     /// <summary>Crea el registro en la carpeta indicada.</summary>
     /// <param name="carpetaDeRegistros">Carpeta de los ficheros <c>cuaderno-AAAAMMDD.log</c>.</param>
