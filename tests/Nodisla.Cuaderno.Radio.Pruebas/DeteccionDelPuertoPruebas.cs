@@ -49,6 +49,20 @@ public class DeteccionDelPuertoPruebas
         /// <summary>Todo lo que la busqueda ha intentado abrir.</summary>
         internal IReadOnlyCollection<(string Puerto, int Baudios)> Abiertos => _abiertos;
 
+        /// <summary>Puertos por los que se ha preguntado con otros protocolos (ICOM...).</summary>
+        internal ConcurrentQueue<string> PreguntadosPorOtros { get; } = new();
+
+        /// <summary>La pregunta de los demas protocolos, de mentira: apunta el puerto y no hay nadie.</summary>
+        internal Task<Modelos.EquipoIdentificado?> Identificar(
+            Modelos.IProveedorDeModelos proveedor,
+            string puerto,
+            IReadOnlyList<int> velocidades,
+            CancellationToken ct)
+        {
+            PreguntadosPorOtros.Enqueue(puerto);
+            return Task.FromResult<Modelos.EquipoIdentificado?>(null);
+        }
+
         internal Task<ResultadoDeSonda> Sondear(string puerto, int baudios, CancellationToken ct)
         {
             _abiertos.Enqueue((puerto, baudios));
@@ -62,9 +76,18 @@ public class DeteccionDelPuertoPruebas
         }
     }
 
-    private static OpcionesDeRadio Ajustes(string? puerto, int baudios) => new()
+    /// <summary>
+    /// Los ajustes de aquel dia: CAT nativo con el modelo dicho (<c>yaesu-ft710</c>).
+    /// </summary>
+    /// <remarks>
+    /// Con el modelo en automatico, si no aparece ningun Yaesu la fabrica sigue con los demas
+    /// protocolos (ICOM por CI-V). En estas pruebas esa pregunta tambien es de mentira
+    /// (<see cref="Radio.Identificar"/>): nada de aqui abre un puerto de la maquina.
+    /// </remarks>
+    private static OpcionesDeRadio Ajustes(string? puerto, int baudios, string? modelo = "yaesu-ft710") => new()
     {
         Via = ViaDeControl.CatNativo,
+        Modelo = modelo,
         Ft710 = { Puerto = puerto, Baudios = baudios },
     };
 
@@ -76,7 +99,7 @@ public class DeteccionDelPuertoPruebas
         var registro = new RegistroDeMentira();
 
         var encontrado = await FabricaDeControlEquipo.BuscarEquipoAsync(
-            Ajustes("COM4", 38400), null, registro, LosDeLaMaquina, radio.Sondear, CancellationToken.None);
+            Ajustes("COM4", 38400), null, registro, LosDeLaMaquina, radio.Sondear, radio.Identificar, CancellationToken.None);
 
         encontrado.Should().BeNull("el equipo no se ha movido: es que su puerto no se puede abrir");
         radio.Abiertos.Should().NotContain(abierto => abierto.Puerto == "COM5", "el Standard es el del control de transmisión");
@@ -86,13 +109,38 @@ public class DeteccionDelPuertoPruebas
     }
 
     [Fact]
+    public async Task En_automatico_los_demas_protocolos_tampoco_abren_el_Standard()
+    {
+        // Sin modelo dicho y sin Yaesu a la vista se pregunta por CI-V: por el Standard, no.
+        var radio = new Radio { Com4Ocupado = true };
+
+        var encontrado = await FabricaDeControlEquipo.BuscarEquipoAsync(
+            Ajustes("COM4", 38400, modelo: null), null, null, LosDeLaMaquina, radio.Sondear, radio.Identificar, CancellationToken.None);
+
+        encontrado.Should().BeNull();
+        radio.Abiertos.Should().NotContain(abierto => abierto.Puerto == "COM5");
+        radio.PreguntadosPorOtros.Should().NotBeEmpty().And.NotContain("COM5");
+    }
+
+    [Fact]
+    public async Task Con_el_modelo_dicho_no_se_pregunta_por_otros_protocolos()
+    {
+        var radio = new Radio { Com4Ocupado = true };
+
+        await FabricaDeControlEquipo.BuscarEquipoAsync(
+            Ajustes("COM4", 38400), null, null, LosDeLaMaquina, radio.Sondear, radio.Identificar, CancellationToken.None);
+
+        radio.PreguntadosPorOtros.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task Con_el_Standard_guardado_se_encuentra_el_Enhanced_sin_abrir_el_Standard()
     {
         // Lo que quedo guardado aquel dia: COM5. La busqueda siguiente tiene que salir de ahi.
         var radio = new Radio();
 
         var encontrado = await FabricaDeControlEquipo.BuscarEquipoAsync(
-            Ajustes("COM5", 4800), null, null, LosDeLaMaquina, radio.Sondear, CancellationToken.None);
+            Ajustes("COM5", 4800), null, null, LosDeLaMaquina, radio.Sondear, radio.Identificar, CancellationToken.None);
 
         encontrado.Should().NotBeNull();
         encontrado!.Puerto.Should().Be("COM4");
@@ -106,7 +154,7 @@ public class DeteccionDelPuertoPruebas
         var radio = new Radio();
 
         var encontrado = await FabricaDeControlEquipo.BuscarEquipoAsync(
-            Ajustes(null, 38400), null, null, LosDeLaMaquina, radio.Sondear, CancellationToken.None);
+            Ajustes(null, 38400), null, null, LosDeLaMaquina, radio.Sondear, radio.Identificar, CancellationToken.None);
 
         encontrado.Should().NotBeNull();
         encontrado!.Puerto.Should().Be("COM4");
@@ -120,7 +168,7 @@ public class DeteccionDelPuertoPruebas
         var radio = new Radio();
 
         var encontrado = await FabricaDeControlEquipo.BuscarEquipoAsync(
-            Ajustes("COM4", 38400), null, null, LosDeLaMaquina, radio.Sondear, CancellationToken.None);
+            Ajustes("COM4", 38400), null, null, LosDeLaMaquina, radio.Sondear, radio.Identificar, CancellationToken.None);
 
         encontrado.Should().NotBeNull();
         encontrado!.Puerto.Should().Be("COM4");
