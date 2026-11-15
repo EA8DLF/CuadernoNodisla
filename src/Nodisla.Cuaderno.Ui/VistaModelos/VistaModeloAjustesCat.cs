@@ -642,11 +642,19 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
         var sinEquipo = equipo.Via != ViaDeControl.Ninguna && montaje.Control.Via == ViaDeControl.Ninguna;
         Resultado = sinEquipo ? ResultadoDePrueba.Fallido : ResultadoDePrueba.Correcto;
 
+        // Siempre se dice por donde queda puesto el CAT nativo, se haya buscado o no: el aviso
+        // sin puerto escondia que lo aplicado era un puerto con la velocidad de otro.
+        var donde = montaje.Donde;
+        if (donde.Length == 0 && equipo.Via == ViaDeControl.CatNativo && !string.IsNullOrWhiteSpace(equipo.Puerto))
+        {
+            donde = " " + Textos.F("Ajustes.Equipo.EnPuerto", equipo.Puerto, equipo.Baudios);
+        }
+
         Parte = equipo.Via switch
         {
             ViaDeControl.Ninguna => Textos.T("Ajustes.Equipo.GuardadoSinEquipo"),
             _ when sinEquipo => Textos.F("Ajustes.Equipo.GuardadoPero", NoApareceElEquipo),
-            _ => Textos.F("Ajustes.Equipo.GuardadoYAplicado", Titulo(_conmutable.Actual.Via), montaje.Donde),
+            _ => Textos.F("Ajustes.Equipo.GuardadoYAplicado", Titulo(_conmutable.Actual.Via), donde),
         };
 
         _registro.LogInformation("Ajustes del equipo aplicados: {Parte}", Parte);
@@ -746,8 +754,11 @@ public sealed partial class VistaModeloAjustesCat : ObservableObject
         DetectarElPuerto = DetectarElPuerto,
         Modelo = Fabricante?.Fabricante is null ? CatalogoDeModelos.Automatico : Modelo?.Modelo.Clave ?? CatalogoDeModelos.Automatico,
         DireccionCiv = byte.TryParse(DireccionCiv.Trim().Replace("0x", string.Empty, StringComparison.OrdinalIgnoreCase), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var civ) ? civ : null,
-        Puerto = Puerto?.Nombre,
-        Baudios = Velocidad?.Baudios ?? 38400,
+        // Un desplegable que se queda sin eleccion no puede colar un valor de partida: se
+        // conserva lo guardado. Antes la velocidad caia a 38400 y podia acabar junto a un
+        // puerto que iba a otra (COM5 a 38400 el 15-11-2026), y el puerto se perdia.
+        Puerto = Puerto?.Nombre ?? _ajustes.Equipo.Puerto,
+        Baudios = Velocidad?.Baudios ?? _ajustes.Equipo.Baudios,
         SondeoMs = SondeoMs,
         EsperaDeOrdenMs = EsperaDeOrdenMs,
         PttPor = PttPor?.Via ?? ViaDePtt.Cat,

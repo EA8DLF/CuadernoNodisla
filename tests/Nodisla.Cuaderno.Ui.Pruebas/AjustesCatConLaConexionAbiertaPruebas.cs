@@ -191,6 +191,60 @@ public sealed class AjustesCatConLaConexionAbiertaPruebas : IDisposable
     }
 
     [Fact]
+    public async Task Si_el_desplegable_de_velocidad_se_queda_vacio_se_guarda_la_que_habia_y_no_38400()
+    {
+        // Lo guardado tras la busqueda mala del 15-11-2026: COM5 a 4800. Si el desplegable se
+        // queda sin eleccion, antes se colaba 38400 —la de partida del formulario— junto al
+        // puerto guardado: COM5 a 38400, que no contesta nadie.
+        var ajustes = Guardado(detectar: false);
+        ajustes.Equipo.Puerto = "COM5";
+        ajustes.Equipo.Baudios = 4800;
+        AjustesDeEquipo? montado = null;
+        var pantalla = new VistaModeloAjustesCat(
+            ajustes,
+            _carpeta,
+            _conmutable,
+            new VigilanteDePapel(),
+            registro: null,
+            (equipo, _, _) =>
+            {
+                montado = equipo;
+                return Task.FromResult(new MontajeDeEquipo(new ControlQueSeConecta(ViaDeControl.CatNativo), string.Empty));
+            },
+            TimeSpan.FromSeconds(30));
+
+        pantalla.Velocidad = null;
+        pantalla.Puerto = null;
+        await pantalla.AplicarCommand.ExecuteAsync(null);
+
+        montado!.Baudios.Should().Be(4800);
+        montado.Puerto.Should().Be("COM5");
+        ajustes.Equipo.Baudios.Should().Be(4800);
+        ajustes.Equipo.Puerto.Should().Be("COM5");
+    }
+
+    [Fact]
+    public async Task Al_aplicar_sin_deteccion_se_dice_el_puerto_y_la_velocidad_que_quedan_puestos()
+    {
+        // El 15-11-2026 el aviso fue «Guardado y aplicado: CAT nativo (Yaesu e ICOM).», sin decir
+        // que lo aplicado era COM5 a 38400.
+        var ajustes = Guardado(detectar: false);
+        var pantalla = new VistaModeloAjustesCat(
+            ajustes,
+            _carpeta,
+            _conmutable,
+            new VigilanteDePapel(),
+            registro: null,
+            (_, _, _) => Task.FromResult(new MontajeDeEquipo(new ControlQueSeConecta(ViaDeControl.CatNativo), string.Empty)),
+            TimeSpan.FromSeconds(30));
+        ElegirCom4(pantalla);
+
+        await pantalla.AplicarCommand.ExecuteAsync(null);
+
+        pantalla.Parte.Should().Contain("COM4").And.Contain("38400");
+    }
+
+    [Fact]
     public async Task Probar_otro_puerto_distinto_del_conectado_si_monta_un_control_aparte()
     {
         var ajustes = Guardado(detectar: false);
