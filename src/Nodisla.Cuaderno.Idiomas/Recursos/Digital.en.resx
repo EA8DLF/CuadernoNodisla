@@ -441,6 +441,12 @@
   <data name="Digital.Modem.Aviso.RelojMal" xml:space="preserve">
     <value>Not transmitting with the clock like this: it would transmit outside the window and disturb others. Set the clock first.</value>
   </data>
+  <data name="Digital.Modem.Aviso.CompletoGuardadoSinSu73" xml:space="preserve">
+    <value>QSO with {0} complete and saved in the log; their 73 did not arrive after {1} transmissions.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.RepiteElRr73" xml:space="preserve">
+    <value>{0} did not copy the RR73: sending it again.</value>
+  </data>
   <data name="Digital.Modem.Aviso.SeGuardaTrasRr73" xml:space="preserve">
     <value>QSO with {0} complete: it will be saved once RR73 goes out.</value>
   </data>
@@ -1130,6 +1136,9 @@
   </data>
   <data name="Digital.Reloj.NoSePudoPonerEnHora" xml:space="preserve">
     <value>Could not set the clock: {0}</value>
+  </data>
+  <data name="Digital.Secuencia.CompletoSinSu73" xml:space="preserve">
+    <value>QSO with {0} complete: their 73 did not arrive after {1} transmissions.</value>
   </data>
   <data name="Digital.Secuencia.ContactoTerminado" xml:space="preserve">
     <value>QSO finished.</value>

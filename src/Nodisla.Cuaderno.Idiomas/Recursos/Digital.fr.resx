@@ -441,6 +441,12 @@
   <data name="Digital.Modem.Aviso.RelojMal" xml:space="preserve">
     <value>Pas d’émission avec l’horloge dans cet état : on émettrait hors fenêtre et on gênerait les autres. Mettez d’abord l’horloge à l’heure.</value>
   </data>
+  <data name="Digital.Modem.Aviso.CompletoGuardadoSinSu73" xml:space="preserve">
+    <value>Contact avec {0} complet et enregistré dans le carnet ; son 73 n’est pas arrivé après {1} émissions.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.RepiteElRr73" xml:space="preserve">
+    <value>{0} n’a pas copié le RR73 : on le lui répète.</value>
+  </data>
   <data name="Digital.Modem.Aviso.SeGuardaTrasRr73" xml:space="preserve">
     <value>Contact avec {0} complet : il sera enregistré à l’envoi du RR73.</value>
   </data>
@@ -1130,6 +1136,9 @@
   </data>
   <data name="Digital.Reloj.NoSePudoPonerEnHora" xml:space="preserve">
     <value>Impossible de mettre l’horloge à l’heure : {0}</value>
+  </data>
+  <data name="Digital.Secuencia.CompletoSinSu73" xml:space="preserve">
+    <value>Contact avec {0} complet : son 73 n’est pas arrivé après {1} émissions.</value>
   </data>
   <data name="Digital.Secuencia.ContactoTerminado" xml:space="preserve">
     <value>Contact terminé.</value>

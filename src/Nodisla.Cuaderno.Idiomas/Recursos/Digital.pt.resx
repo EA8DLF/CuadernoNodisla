@@ -441,6 +441,12 @@
   <data name="Digital.Modem.Aviso.RelojMal" xml:space="preserve">
     <value>Não se transmite com o relógio assim: transmitir-se-ia fora da janela e incomodaria os outros. Acerte primeiro o relógio.</value>
   </data>
+  <data name="Digital.Modem.Aviso.CompletoGuardadoSinSu73" xml:space="preserve">
+    <value>Contacto com {0} completo e guardado no livro; o 73 dele não chegou após {1} transmissões.</value>
+  </data>
+  <data name="Digital.Modem.Aviso.RepiteElRr73" xml:space="preserve">
+    <value>{0} não copiou o RR73: repete-se.</value>
+  </data>
   <data name="Digital.Modem.Aviso.SeGuardaTrasRr73" xml:space="preserve">
     <value>Contacto com {0} completo: guarda-se quando sair o RR73.</value>
   </data>
@@ -1130,6 +1136,9 @@
   </data>
   <data name="Digital.Reloj.NoSePudoPonerEnHora" xml:space="preserve">
     <value>Não foi possível acertar o relógio: {0}</value>
+  </data>
+  <data name="Digital.Secuencia.CompletoSinSu73" xml:space="preserve">
+    <value>Contacto com {0} completo: o 73 dele não chegou após {1} transmissões.</value>
   </data>
   <data name="Digital.Secuencia.ContactoTerminado" xml:space="preserve">
     <value>Contacto terminado.</value>
