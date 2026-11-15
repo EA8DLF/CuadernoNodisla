@@ -168,6 +168,8 @@ public sealed class ControlFt710
             }
         }
 
+        // No ha arrancado: el puerto que se abrio para encenderla no se deja cogido.
+        CerrarSiNoHaySondeo();
         return Textos.T("Servicios.Radio.EncendidoSinRespuesta");
     }
 
@@ -188,6 +190,12 @@ public sealed class ControlFt710
     private bool _pttPedido;
     private bool _desechado;
     private bool _canalAbiertoAlgunaVez;
+
+    /// <summary>
+    /// Mayor que cero mientras se esta conectando (o encendiendo): entonces, y con el sondeo en
+    /// marcha, una consulta puede volver a abrir un canal que se haya roto. Fuera de eso, no.
+    /// </summary>
+    private int _conectando;
     private string? _modoDelEquipo;
     private int _sintoniaPedida;
     private bool _sintonizando;
@@ -326,6 +334,47 @@ public sealed class ControlFt710
     {
         ObjectDisposedException.ThrowIf(_desechado, this);
 
+        // Si es esta llamada la que abre el puerto y la conexion no llega a buen fin, el puerto
+        // se cierra antes de salir. Antes se quedaba abierto (15-11-2026): con el puerto
+        // equivocado guardado, cada «Conectar» fallido dejaba cogido un puerto que no era el
+        // del CAT, y lo que ese puerto hiciera con sus lineas duraba hasta cerrar el programa.
+        var abiertoAqui = !_canal.Abierto;
+        Interlocked.Increment(ref _conectando);
+        try
+        {
+            await ConectarNucleoAsync(ct).ConfigureAwait(false);
+        }
+        catch when (abiertoAqui && CerrarSiNoHaySondeo())
+        {
+            throw;
+        }
+        finally
+        {
+            Interlocked.Decrement(ref _conectando);
+        }
+    }
+
+    /// <summary>
+    /// Cierra el canal si no hay sondeo en marcha. Devuelve siempre falso: se usa como filtro
+    /// de excepcion, para cerrar sin tocar el fallo que va de camino.
+    /// </summary>
+    private bool CerrarSiNoHaySondeo()
+    {
+        lock (_candado)
+        {
+            if (_sondeo is not null) return false;
+        }
+
+        _canal.Cerrar();
+        Volatile.Write(ref _canalAbiertoAlgunaVez, false);
+        _registro.LogInformation(
+            "Cerrado {Canal}: la conexión no ha llegado a buen fin y el puerto no se deja abierto.",
+            _canal.Descripcion);
+        return false;
+    }
+
+    private async Task ConectarNucleoAsync(CancellationToken ct)
+    {
         if (!_canal.Abierto)
         {
             await _canal.AbrirAsync(ct).ConfigureAwait(false);
@@ -2455,6 +2504,17 @@ public sealed class ControlFt710
         // de verdad: cuenta el mismo canal roto tres veces.
         if (!_canal.Abierto)
         {
+            if (!PuedeReabrirElCanal())
+            {
+                // Sin conexion pedida no se abre el puerto por una consulta: quien abre es
+                // «Conectar». Antes, cualquier pregunta de la pantalla a un control recien
+                // puesto â€”o ya desconectadoâ€” abria el puerto por su cuenta (15-11-2026).
+                _registro.LogDebug(
+                    "CAT {Orden}: {Canal} está cerrado y no hay conexión pedida; no se abre.",
+                    orden,
+                    _canal.Descripcion);
+                return null;
+            }
             await _canal.AbrirAsync(ct).ConfigureAwait(false);
             Volatile.Write(ref _canalAbiertoAlgunaVez, true);
             _registro.LogDebug("Se ha vuelto a abrir {Canal} antes de preguntar.", _canal.Descripcion);
@@ -2463,6 +2523,16 @@ public sealed class ControlFt710
         var respuesta = await _canal.PreguntarAsync(orden, ct).ConfigureAwait(false);
         _registro.LogDebug("CAT {Orden} -> {Respuesta}", orden, respuesta ?? "(sin respuesta)");
         return respuesta;
+    }
+
+    /// <summary>Hay una conexion pedida: se esta conectando o el sondeo esta en marcha.</summary>
+    private bool PuedeReabrirElCanal()
+    {
+        if (Volatile.Read(ref _conectando) > 0) return true;
+        lock (_candado)
+        {
+            return _sondeo is not null;
+        }
     }
 
     private async Task MandarAsync(string orden, CancellationToken ct)
