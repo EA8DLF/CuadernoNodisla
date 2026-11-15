@@ -199,7 +199,13 @@ public partial class VentanaPrincipal : Window
         }
         else
         {
-            Log.Error("La ventana sigue sin pintarse ({Estado}) ni siquiera por software.", segunda);
+            // Aviso y no error: se comprueba nada mas volver a mostrar la ventana, cuando el
+            // dibujado por software aun no ha pintado, y no se toma ninguna medida con esto.
+            Log.Write(
+                ComprobacionDeDibujado.NivelTrasPasarASoftware(segunda),
+                "Recién pasada a dibujado por software, la ventana aún no se ve pintada ({Estado}). " +
+                "Suele ser que todavía no le ha dado tiempo; si de verdad se queda en blanco, arrancar con CUADERNO_DIBUJADO=software.",
+                segunda);
         }
     }
 
