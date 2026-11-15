@@ -123,8 +123,14 @@ public sealed class FilaDeDecodificacionPropia
         ArgumentNullException.ThrowIfNull(decodificacion);
 
         Decodificacion = decodificacion;
-        Novedad = novedad ?? NovedadDelIndicativo.Desconocida;
         Mensaje = mensaje ?? InterpreteDeMensajes.Analizar(decodificacion.Texto);
+
+        // Lo que manda uno mismo y vuelve por el receptor (el propio CQ, oido al transmitir o
+        // por un monitor) no es una estacion oida: ni es «nuevo», ni entidad, ni cuadricula, ni
+        // «trabajado antes», lo diga quien lo diga.
+        var suyo = !decodificacion.Llamante.EsVacio ? decodificacion.Llamante.Valor : Mensaje.Llamante;
+        EsPropia = !miIndicativo.EsVacio && MismoIndicativo.Son(suyo, miIndicativo.Valor);
+        Novedad = EsPropia ? NovedadDelIndicativo.Desconocida : novedad ?? NovedadDelIndicativo.Desconocida;
 
         // OJO: «me llaman» NO es «el mensaje va dirigido a alguien». Casi todos los mensajes
         // de FT8 van dirigidos a alguien, y pintarlos todos de color acento dejaria la lista
@@ -210,6 +216,12 @@ public sealed class FilaDeDecodificacionPropia
 
     /// <summary>Es una linea de lo que se emitio, no una decodificacion.</summary>
     public bool EsTx { get; }
+
+    /// <summary>
+    /// Es una decodificacion de la señal propia: el receptor ha oido lo que uno mismo emitia. No
+    /// cuenta como estacion oida ni se le puede contestar.
+    /// </summary>
+    public bool EsPropia { get; }
 
     /// <summary>El indicativo seria nuevo en el cuaderno.</summary>
     public bool EsNuevo => Novedad.IndicativoNuevo;
@@ -1788,6 +1800,12 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
     {
         if (DecodificacionElegida is not { } fila || fila.EsTx) return;
 
+        if (fila.EsPropia)
+        {
+            Aviso = Textos.T("Digital.Modem.Aviso.EsSuPropiaSenal");
+            return;
+        }
+
         var mensaje = fila.Mensaje;
         var suyo = mensaje.Llamante.Length > 0 ? mensaje.Llamante : fila.Indicativo;
         if (suyo.Length == 0)
@@ -2755,6 +2773,15 @@ public sealed partial class VistaModeloModemPropio : ObservableObject
             var locator = !decodificacion.Locator.EsVacio
                 ? decodificacion.Locator
                 : Locator.TryParse(mensaje.Locator, out var l) ? l : Locator.Vacio;
+
+            // La señal propia, oida por el receptor: se enseña en la lista (marcada como propia)
+            // y nada mas. No se mira si es «nueva», no llega a la secuencia —ni se elige ni hace
+            // cola— y no se manda a PSK Reporter como si se hubiera oido a alguien.
+            if (!mi.EsVacio && !llamante.EsVacio && MismoIndicativo.Son(llamante.Valor, mi.Valor))
+            {
+                filas.Add(new FilaDeDecodificacionPropia(decodificacion, null, mi, mensaje, tonoRx));
+                continue;
+            }
 
             var novedad = await _novedad.EvaluarAsync(llamante, locator, banda, modoAdif).ConfigureAwait(false);
             filas.Add(new FilaDeDecodificacionPropia(decodificacion, novedad, mi, mensaje, tonoRx));

@@ -1230,4 +1230,13 @@
   <data name="Digital.Modem.Aviso.SiguienteEnEspera" xml:space="preserve">
     <value>{0} esperava a vez: responde-se-lhe agora.</value>
   </data>
+  <data name="Digital.Modem.Aviso.EsSuPropiaSenal" xml:space="preserve">
+    <value>Essa linha é o seu próprio sinal, ouvido pelo recetor: não há a quem responder.</value>
+  </data>
+  <data name="Digital.Modem.Propia" xml:space="preserve">
+    <value>Próprio</value>
+  </data>
+  <data name="Digital.Modem.Propia.Ayuda" xml:space="preserve">
+    <value>É o seu próprio sinal, ouvido pelo recetor. Não conta como estação ouvida</value>
+  </data>
 </root>
