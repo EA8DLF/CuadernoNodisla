@@ -115,13 +115,11 @@ public partial class PanelDeFonia : UserControl
         if (Modelo?.Mensajes is { } mensajes) mensajes.ConfirmarQueVaATransmitir ??= PreguntarSiTransmite;
 
         // Hay dos paneles montados —en columna junto al frontal y en franja— y solo uno se ve:
-        // el escondido no abre nada.
+        // el escondido no prepara nada. La escucha «al arrancar» ya no se abre desde aqui: la
+        // pide la ventana una sola vez (VentanaPrincipal.AlCargar), este el programa en la
+        // pestana que este.
         if (!IsVisible) return;
-        if (Modelo is { } modelo)
-        {
-            await modelo.EscucharSiSePidioAsync();
-            await PrepararCapturaSiSePideAsync(modelo);
-        }
+        if (Modelo is { } modelo) await PrepararCapturaSiSePideAsync(modelo);
     }
 
     /// <summary>

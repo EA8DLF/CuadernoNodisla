@@ -104,6 +104,11 @@ public partial class VentanaPrincipal : Window
             PonerLaEstacionEnElMapa();
             Operar.EnfocarIndicativo();
 
+            // «Escuchar al arrancar» de la fonia se atiende aqui, al arrancar el programa, y no
+            // al cargarse el panel: el panel de Operar no se carga hasta que se visita su
+            // pestana, y arrancando en otra la escucha no se abria nunca.
+            if (_vistaModelo.Fonia is { } fonia) await fonia.EscucharSiSePidioAsync().ConfigureAwait(true);
+
             // El catalogo de diplomas y las cifras de ajustes se traen al abrir, no al entrar
             // en la pestana: asi la primera visita no se queda mirando un hueco vacio.
             await _vistaModelo.Diplomas.CargarAsync().ConfigureAwait(true);

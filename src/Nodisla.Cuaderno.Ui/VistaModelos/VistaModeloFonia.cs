@@ -37,6 +37,7 @@ public sealed partial class VistaModeloFonia : ObservableObject
     private readonly VistaModeloEquipo _equipo;
     private readonly IControlEquipo? _controlDelEquipo;
     private string _modoComprobado = string.Empty;
+    private bool _arranqueAtendido;
 
     /// <summary>Monta el panel. No abre ningun dispositivo.</summary>
     /// <param name="ajustes">El apartado de ajustes de fonia.</param>
@@ -217,9 +218,16 @@ public sealed partial class VistaModeloFonia : ObservableObject
         }
     }
 
-    /// <summary>Abre la escucha si el operador lo dejo pedido y hay con que.</summary>
+    /// <summary>
+    /// Abre la escucha si el operador lo dejo pedido y hay con que. Solo cuenta la PRIMERA
+    /// llamada: es «al arrancar el programa», no cada vez que el panel vuelve a cargarse al
+    /// entrar en la pestana (eso reabria la escucha que el operador acababa de parar).
+    /// </summary>
     public async Task EscucharSiSePidioAsync()
     {
+        if (_arranqueAtendido) return;
+        _arranqueAtendido = true;
+
         if (!Ajustes.EscucharAlArrancar || _control.Escuchando || !Ajustes.EscuchaConfigurada) return;
         await AbrirEscuchaAsync().ConfigureAwait(true);
         Escuchando = _control.Escuchando;

@@ -153,7 +153,62 @@ public sealed class FoniaEnLaVentanaPruebas
             fonia.Transmitiendo.Should().BeFalse("soltar el boton corta la pasada");
         }));
 
+    /// <summary>
+    /// «Escuchar al arrancar» es al arrancar el PROGRAMA, este en la pestana que este. Antes lo
+    /// hacia el panel al cargarse, y un panel de una pestana que no se ha visitado no se carga:
+    /// arrancando en Configuracion (los arranques del 2026-11-15 a las 12:50 y 12:59) la escucha
+    /// no se abria y en el registro no quedaba ni una linea.
+    /// </summary>
+    [Theory]
+    [InlineData(0)]
+    [InlineData(PestanaDeConfiguracion)]
+    public Task La_escucha_pedida_al_arrancar_se_abre_sola_arranque_donde_arranque(int pestanaInicial) =>
+        HiloDeVentana.Ejecutar(() => ConLaVentana(pestanaInicial, escucharAlArrancar: true, async (_, modelo) =>
+        {
+            var fonia = modelo.Fonia!;
+            fonia.Ajustes.EscuchaConfigurada.Should().BeTrue();
+
+            await EsperarA(() => fonia.Escuchando);
+
+            fonia.Escuchando.Should().BeTrue("la escucha pedida al arrancar se abre sin tener que pasar por Operar");
+        }));
+
+    /// <summary>
+    /// Si el operador para la escucha a mano, cambiar de pestana y volver a Operar no la reabre:
+    /// el panel se vuelve a cargar cada vez que se entra en la pestana, y antes eso contaba como
+    /// «arrancar» otra vez.
+    /// </summary>
+    [Fact]
+    public Task Parar_la_escucha_a_mano_no_se_deshace_al_volver_a_operar() =>
+        HiloDeVentana.Ejecutar(() => ConLaVentana(0, escucharAlArrancar: true, async (_, modelo) =>
+        {
+            var fonia = modelo.Fonia!;
+            await EsperarA(() => fonia.Escuchando);
+            fonia.Escuchando.Should().BeTrue();
+
+            await fonia.AlternarEscuchaAsync();
+            fonia.Escuchando.Should().BeFalse("el operador la ha parado");
+
+            modelo.IndiceDeLaPestana = 2;
+            await Asentar();
+            modelo.IndiceDeLaPestana = 0;
+            await Asentar();
+            await Task.Delay(300);
+            await Asentar();
+
+            fonia.Escuchando.Should().BeFalse("volver a la pestana no es arrancar el programa: lo parado se queda parado");
+        }));
+
     // ── Montaje ──────────────────────────────────────────────────────────
+
+    private static async Task EsperarA(Func<bool> condicion)
+    {
+        for (var i = 0; i < 40 && !condicion(); i++)
+        {
+            await Task.Delay(100);
+            await Asentar();
+        }
+    }
 
     private static PanelDeFonia ElPanelALaVista(Window ventana) =>
         EnVisual<PanelDeFonia>(ventana).Where(p => p.IsVisible).Should().ContainSingle("de las dos copias del panel solo se ve una").Subject;
