@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nodisla.Cuaderno.Ui.Soporte;
 using Nodisla.Cuaderno.Ui.Vistas;
 using Serilog;
 using System.Windows.Interop;
@@ -98,24 +99,12 @@ public partial class App : Application
         // El idioma va lo primero: hasta el cartel de «no se puede abrir el cuaderno» lo usa.
         Idiomas.IdiomaDeLaInterfaz.Arrancar(Ajustes.AjustesDelPrograma.Leer(CarpetaDeDatos).Idioma);
 
-        var carpetaDeRegistros = Path.Combine(CarpetaDeDatos, "registros");
-        Directory.CreateDirectory(carpetaDeRegistros);
+        // El registro es del arranque, no del contenedor: asi sigue abierto mientras se
+        // liberan la radio y el audio al cerrar, y se cierra lo ultimo de todo (OnExit).
+        Log.Logger = Soporte.RegistroDelPrograma.Crear(Path.Combine(CarpetaDeDatos, "registros"));
 
         _anfitrion = Host.CreateDefaultBuilder()
-            .UseSerilog((_, configuracion) => configuracion
-                .MinimumLevel.Information()
-                // El registro de peticiones HTTP escribe la URL entera, y la API XML de QRZ.com
-                // lleva usuario y contrasena en la URL: con esto a Information, la contrasena de
-                // Jose quedaba en claro en el fichero de registro (28-09-2026). A Warning solo
-                // quedan los fallos, sin URL. Entity Framework, igual: escribia cada consulta
-                // SQL y el registro crecia 15 MB al dia.
-                .MinimumLevel.Override("System.Net.Http.HttpClient", Serilog.Events.LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Warning)
-                .WriteTo.Console()
-                .WriteTo.File(
-                    Path.Combine(carpetaDeRegistros, "cuaderno-.log"),
-                    rollingInterval: RollingInterval.Day,
-                    retainedFileCountLimit: 14))
+            .ConElRegistro(Log.Logger)
             .ConfigureServices((_, servicios) => servicios.AnadirCuaderno())
             .Build();
 
@@ -125,6 +114,13 @@ public partial class App : Application
             args.Handled = false;
         };
 
+        // Lo que revienta en un hilo que no es el de interfaz (puerto serie, audio, un
+        // temporizador) no pasa por el aviso de arriba: tumba el proceso sin dejar rastro. El
+        // vigilante de PTT se engancha a este mismo aviso para soltar el PTT; aqui solo se
+        // deja escrito el motivo, sin cerrar el registro, que el vigilante aun puede escribir.
+        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+            Soporte.RedDeFallos.ApuntarFalloSinAtender(Log.Logger, args.ExceptionObject, args.IsTerminating);
+
         // Red de seguridad para las tareas que se disparan y se olvidan (_ = AlgoAsync()): si
         // nadie las espera y fallan, por omision la excepcion desaparece sin dejar ni una linea
         // en el registro hasta que el recolector de basura las recoge. Confirmado en auditoria
@@ -133,7 +129,7 @@ public partial class App : Application
         // VistaModeloModemPropio- pero deja constancia de cualquier otro que se escape.
         TaskScheduler.UnobservedTaskException += (_, args) =>
         {
-            Log.Error(args.Exception, "Tarea sin observar fallida (disparada y olvidada).");
+            Soporte.RedDeFallos.ApuntarTareaOlvidada(Log.Logger, args.Exception);
             args.SetObserved();
         };
 
@@ -310,14 +306,39 @@ public partial class App : Application
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    /// <para>
+    /// El orden importa. Antes se cerraba el registro y <b>despues</b> se liberaban los
+    /// servicios: si el puerto de la radio o la tarjeta de sonido fallaban al soltarse, no
+    /// quedaba ni una linea. Ahora el registro se cierra lo ultimo.
+    /// </para>
+    /// <para>
+    /// La liberacion va con plazo (<see cref="Soporte.CierreConPlazo"/>): si un controlador no
+    /// contesta y no vuelve, se apunta y se termina el proceso, en vez de dejar un proceso sin
+    /// ventana con el puerto COM cogido.
+    /// </para>
+    /// </remarks>
     protected override void OnExit(ExitEventArgs e)
     {
         Log.Information("Cuaderno NODISLA se cierra.");
-        Log.CloseAndFlush();
-        _anfitrion?.Dispose();
+
+        if (_anfitrion is { } anfitrion)
+        {
+            _anfitrion = null;
+            Soporte.CierreConPlazo.Liberar(
+                "los servicios (radio, audio y cuaderno)",
+                anfitrion.Dispose,
+                Soporte.CierreConPlazo.Plazo,
+                () => Soporte.CierreConPlazo.TerminarElProceso(1),
+                Log.Logger);
+        }
+
         base.OnExit(e);
 
-        // Lo ultimo: mientras quede algo por soltar, otra copia no debe poder arrancar.
+        // Mientras quede algo por soltar, otra copia no debe poder arrancar.
         _instancia?.Dispose();
+
+        // Y el registro, lo ultimo de todo.
+        Log.CloseAndFlush();
     }
 }
