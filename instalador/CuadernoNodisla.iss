@@ -17,6 +17,11 @@
 ; GUID fijo del producto: no cambiar entre versiones, para que las
 ; actualizaciones se reconozcan como upgrade del mismo programa.
 AppId={{7F0F8A15-3A0B-4B79-9733-DA6556395EF8}
+; El programa crea este mutex al arrancar y lo tiene hasta que se cierra (instancia unica).
+; Con el, el instalador y el desinstalador esperan a que el programa este cerrado antes de
+; tocar sus ficheros. Tiene que ser el mismo nombre que InstanciaUnica.NombreDelPrograma
+; (src/Nodisla.Cuaderno.Ui/Soporte/InstanciaUnica.cs); hay una prueba que lo comprueba.
+AppMutex=NODISLA.CuadernoNodisla.InstanciaUnica
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} {#MyAppVersion}

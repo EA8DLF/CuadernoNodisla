@@ -1,3 +1,7 @@
+using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -23,6 +27,13 @@ namespace Nodisla.Cuaderno.Servicios.Qrz;
 /// <para>
 /// Los separadores de la consulta son puntos y coma, no ampersands: asi lo documenta QRZ.
 /// </para>
+/// <para>
+/// <b>Un rechazo de credenciales se recuerda.</b> Si QRZ contesta «Username/password
+/// incorrect» no se vuelve a pedir sesion hasta que cambien el usuario o la contrasena, y si
+/// anade «blocked until …» no se pide hasta pasada esa hora. Sin esto cada indicativo
+/// tecleado era otro intento con la misma contrasena mala, hasta que QRZ bloqueaba la cuenta
+/// (visto en los registros de octubre de 2026: decenas de rechazos seguidos y de bloqueos).
+/// </para>
 /// </remarks>
 public sealed class ConsultaQrzCom : IConsultaIndicativo
 {
@@ -32,7 +43,13 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
     private readonly OpcionesQrz _opciones;
     private readonly ILogger _log;
     private readonly SemaphoreSlim _cerrojoDeSesion = new(1, 1);
+    private readonly Func<DateTimeOffset> _ahora;
     private string? _clave;
+
+    // Lo que QRZ ha rechazado: la huella del usuario y la contrasena (no la contrasena) y, si
+    // lo dijo, hasta cuando dura el bloqueo. Solo se tocan con el cerrojo de sesion cogido.
+    private string? _huellaRechazada;
+    private DateTimeOffset? _bloqueadoHasta;
 
     /// <summary>Crea la consulta.</summary>
     /// <param name="fabrica">Fabrica de clientes HTTP.</param>
@@ -40,13 +57,16 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
     /// <param name="opciones">Ajustes de QRZ.com.</param>
     /// <param name="reintentos">Politica de reintentos.</param>
     /// <param name="log">Registro de trazas.</param>
+    /// <param name="ahora">Reloj, sustituible en las pruebas.</param>
     public ConsultaQrzCom(
         IHttpClientFactory fabrica,
         IAlmacenDeCredenciales credenciales,
         OpcionesQrz opciones,
         PoliticaDeReintentos? reintentos = null,
-        ILogger<ConsultaQrzCom>? log = null)
+        ILogger<ConsultaQrzCom>? log = null,
+        Func<DateTimeOffset>? ahora = null)
     {
+        _ahora = ahora ?? (() => DateTimeOffset.UtcNow);
         _fabrica = fabrica ?? throw new ArgumentNullException(nameof(fabrica));
         _credenciales = credenciales ?? throw new ArgumentNullException(nameof(credenciales));
         _opciones = opciones ?? throw new ArgumentNullException(nameof(opciones));
@@ -174,6 +194,9 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
             var contrasena = _credenciales.Leer(ClavesDeCredencial.QrzContrasena)
                 ?? throw new InvalidOperationException(Textos.F("Servicios.SinContrasena", "QRZ.com"));
 
+            var huella = Huella(_opciones.Usuario, contrasena);
+            NoInsistirSiYaLoRechazaron(huella);
+
             var consulta =
                 $"username={Uri.EscapeDataString(_opciones.Usuario)}"
                 + $";password={Uri.EscapeDataString(contrasena)}"
@@ -186,8 +209,12 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
             if (clave is null)
             {
                 var error = LecturaXml.Texto(sesion, "Error") ?? Textos.T("Servicios.SinDetalle");
+                if (EsRechazoDeCredenciales(error)) throw ApuntarRechazo(huella, error);
                 throw new RespuestaDelServicioException(Textos.F("Servicios.SinSesion", "QRZ.com", error));
             }
+
+            _huellaRechazada = null;
+            _bloqueadoHasta = null;
 
             // El aviso de suscripcion no impide consultar, pero el operador debe verlo.
             if (LecturaXml.Texto(sesion, "Message") is { } mensaje)
@@ -203,6 +230,96 @@ public sealed class ConsultaQrzCom : IConsultaIndicativo
             _cerrojoDeSesion.Release();
         }
     }
+
+    /// <summary>Indica si el error de sesion es un rechazo de usuario o contrasena, o un bloqueo.</summary>
+    /// <param name="error">Texto del elemento <c>Error</c> de la sesion.</param>
+    public static bool EsRechazoDeCredenciales(string? error) =>
+        error is not null
+        && (error.Contains("incorrect", StringComparison.OrdinalIgnoreCase)
+            || error.Contains("blocked", StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    /// Saca la hora de «blocked until 2026-10-04 19:20:08 UTC». Nulo si el error no la trae.
+    /// </summary>
+    /// <param name="error">Texto del elemento <c>Error</c> de la sesion.</param>
+    public static DateTimeOffset? BloqueadoHasta(string? error)
+    {
+        if (error is null) return null;
+        var hora = Regex.Match(
+            error, @"blocked until\s+(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2})", RegexOptions.IgnoreCase);
+        return hora.Success
+            && DateTimeOffset.TryParseExact(
+                hora.Groups[1].Value.Replace('T', ' '),
+                "yyyy-MM-dd HH:mm:ss",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+                out var hasta)
+            ? hasta
+            : null;
+    }
+
+    /// <summary>
+    /// Corta antes de llamar a QRZ si ya rechazo estas credenciales o la cuenta sigue bloqueada.
+    /// </summary>
+    private void NoInsistirSiYaLoRechazaron(string huella)
+    {
+        if (_bloqueadoHasta is { } hasta)
+        {
+            // Mientras dure el bloqueo no se pide ni con otra contrasena: QRZ contesta lo
+            // mismo y cada intento puede alargarlo.
+            if (_ahora() < hasta) throw new SesionRechazadaException(TextoDeBloqueo(hasta), hasta);
+
+            // Pasada la hora se deja UN intento: no hay forma de saber si la contrasena era
+            // mala o si solo estaba bloqueada la cuenta. Si vuelve a decir «incorrect» se
+            // queda apuntada otra vez y ya no se insiste.
+            _bloqueadoHasta = null;
+            _huellaRechazada = null;
+        }
+
+        if (_huellaRechazada == huella)
+        {
+            throw new SesionRechazadaException(Textos.T("Servicios.Qrz.CredencialesRechazadas"));
+        }
+    }
+
+    /// <summary>Apunta el rechazo, avisa una vez en el registro y prepara la excepcion.</summary>
+    private SesionRechazadaException ApuntarRechazo(string huella, string error)
+    {
+        _clave = null;
+        _huellaRechazada = huella;
+        _bloqueadoHasta = BloqueadoHasta(error);
+
+        // Dice «blocked» pero no se entiende la hora: una hora de margen antes de reintentar.
+        if (_bloqueadoHasta is null && error.Contains("blocked", StringComparison.OrdinalIgnoreCase))
+        {
+            _bloqueadoHasta = _ahora().AddHours(1);
+        }
+
+        if (_bloqueadoHasta is { } hasta)
+        {
+            _log.LogWarning(
+                "QRZ.com tiene la cuenta bloqueada hasta {Hasta:u} («{Error}»). No se vuelve a pedir sesión hasta entonces.",
+                hasta, error);
+            return new SesionRechazadaException(TextoDeBloqueo(hasta), hasta);
+        }
+
+        _log.LogWarning(
+            "QRZ.com ha rechazado el usuario o la contraseña («{Error}»). No se vuelve a pedir sesión hasta que cambien.",
+            error);
+        return new SesionRechazadaException(Textos.T("Servicios.Qrz.CredencialesRechazadas"));
+    }
+
+    private static string TextoDeBloqueo(DateTimeOffset hasta) =>
+        Textos.F(
+            "Servicios.Qrz.Bloqueado",
+            hasta.UtcDateTime.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture));
+
+    /// <summary>
+    /// Huella del usuario y la contrasena: basta para saber si han cambiado sin tener la
+    /// contrasena rechazada guardada en claro.
+    /// </summary>
+    private static string Huella(string usuario, string contrasena) =>
+        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(usuario + "\n" + contrasena)));
 
     private async Task<XDocument> PedirAsync(string consulta, string descripcion, CancellationToken ct)
     {

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Nodisla.Cuaderno.Idiomas;
+using Nodisla.Cuaderno.Ui.Soporte;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 
 namespace Nodisla.Cuaderno.Ui.Vistas;
@@ -68,10 +69,11 @@ public partial class PanelRtty : UserControl
     }
 
     /// <summary>Intro en la caja de texto a emitir: manda (o encola) lo escrito.</summary>
-    private async void AlTeclearElTextoAEmitir(object sender, KeyEventArgs e)
-    {
-        if (e.Key != Key.Enter || _modelo is null) return;
-        e.Handled = true;
-        await _modelo.EmitirCommand.ExecuteAsync(null);
-    }
+    private async void AlTeclearElTextoAEmitir(object sender, KeyEventArgs e) =>
+        await ManejadorSeguro.EjecutarAsync(async () =>
+        {
+            if (e.Key != Key.Enter || _modelo is null) return;
+            e.Handled = true;
+            await _modelo.EmitirCommand.ExecuteAsync(null);
+        });
 }

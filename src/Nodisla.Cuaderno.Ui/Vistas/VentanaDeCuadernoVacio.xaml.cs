@@ -2,6 +2,7 @@
 using System.Windows;
 using Microsoft.Win32;
 using Nodisla.Cuaderno.Idiomas;
+using Nodisla.Cuaderno.Ui.Soporte;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 
 namespace Nodisla.Cuaderno.Ui.Vistas;
@@ -45,45 +46,47 @@ public partial class VentanaDeCuadernoVacio : Window
     /// equipo. En uso normal la variable no esta puesta y no hace nada: la importacion la pide
     /// el operador con el boton.
     /// </remarks>
-    private async void AlCargar(object sender, RoutedEventArgs e)
-    {
-        if (Environment.GetEnvironmentVariable("CUADERNO_IMPORTAR") is not { Length: > 0 } ruta) return;
-
-        await _modelo.ImportarAsync(ruta).ConfigureAwait(true);
-
-        // Y se cierra: si se quedara abierta, el arranque desatendido se colgaria aqui
-        // esperando un clic que no va a llegar.
-        DialogResult = true;
-        Close();
-    }
-
-    private async void AlPedirImportar(object sender, RoutedEventArgs e)
-    {
-        var dialogo = new OpenFileDialog
+    private async void AlCargar(object sender, RoutedEventArgs e) =>
+        await ManejadorSeguro.EjecutarAsync(async () =>
         {
-            Title = Textos.T("Libro.Vacio.DialogoTitulo"),
-            Filter = Textos.T("Libro.Vacio.DialogoFiltro"),
-            CheckFileExists = true,
-        };
+            if (Environment.GetEnvironmentVariable("CUADERNO_IMPORTAR") is not { Length: > 0 } ruta) return;
 
-        // Se abre donde Log4OM deja sus respaldos: es el sitio mas probable y ahorra buscar.
-        if (Directory.Exists(_modelo.CarpetaDeRespaldos))
-        {
-            dialogo.InitialDirectory = _modelo.CarpetaDeRespaldos;
-        }
+            await _modelo.ImportarAsync(ruta).ConfigureAwait(true);
 
-        if (dialogo.ShowDialog(this) != true) return;
+            // Y se cierra: si se quedara abierta, el arranque desatendido se colgaria aqui
+            // esperando un clic que no va a llegar.
+            DialogResult = true;
+            Close();
+        });
 
-        BotonImportar.IsEnabled = false;
-        try
+    private async void AlPedirImportar(object sender, RoutedEventArgs e) =>
+        await ManejadorSeguro.EjecutarAsync(async () =>
         {
-            await _modelo.ImportarAsync(dialogo.FileName).ConfigureAwait(true);
-        }
-        finally
-        {
-            BotonImportar.IsEnabled = true;
-        }
-    }
+            var dialogo = new OpenFileDialog
+            {
+                Title = Textos.T("Libro.Vacio.DialogoTitulo"),
+                Filter = Textos.T("Libro.Vacio.DialogoFiltro"),
+                CheckFileExists = true,
+            };
+
+            // Se abre donde Log4OM deja sus respaldos: es el sitio mas probable y ahorra buscar.
+            if (Directory.Exists(_modelo.CarpetaDeRespaldos))
+            {
+                dialogo.InitialDirectory = _modelo.CarpetaDeRespaldos;
+            }
+
+            if (dialogo.ShowDialog(this) != true) return;
+
+            BotonImportar.IsEnabled = false;
+            try
+            {
+                await _modelo.ImportarAsync(dialogo.FileName).ConfigureAwait(true);
+            }
+            finally
+            {
+                BotonImportar.IsEnabled = true;
+            }
+        });
 
     private void AlEmpezarDeCero(object sender, RoutedEventArgs e)
     {

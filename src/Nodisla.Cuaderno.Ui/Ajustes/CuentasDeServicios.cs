@@ -33,6 +33,7 @@ public sealed class CuentasDeServicios
     private readonly IHttpClientFactory _fabrica;
     private readonly PoliticaDeReintentos _reintentos;
     private readonly Func<Indicativo> _perfil;
+    private readonly Microsoft.Extensions.Logging.ILoggerFactory? _registros;
     private readonly object _cerrojo = new();
 
     private (OpcionesQrz Opciones, ConsultaQrzCom Consulta, ServicioQrzCuaderno Cuaderno)? _qrz;
@@ -47,13 +48,19 @@ public sealed class CuentasDeServicios
     /// <param name="fabrica">Fabrica de clientes HTTP.</param>
     /// <param name="reintentos">Politica de reintentos.</param>
     /// <param name="perfil">Indicativo del perfil de estacion activo.</param>
+    /// <param name="registros">
+    /// Fabrica de registros. Sin ella QRZ.com no deja constancia de que ha rechazado la
+    /// contrasena, que es justo el aviso que el operador tiene que encontrar.
+    /// </param>
     public CuentasDeServicios(
         AjustesDelPrograma ajustes,
         IAlmacenDeCredenciales credenciales,
         IHttpClientFactory fabrica,
         PoliticaDeReintentos reintentos,
-        Func<Indicativo> perfil)
+        Func<Indicativo> perfil,
+        Microsoft.Extensions.Logging.ILoggerFactory? registros = null)
     {
+        _registros = registros;
         _ajustes = ajustes ?? throw new ArgumentNullException(nameof(ajustes));
         _credenciales = credenciales ?? throw new ArgumentNullException(nameof(credenciales));
         _fabrica = fabrica ?? throw new ArgumentNullException(nameof(fabrica));
@@ -184,7 +191,11 @@ public sealed class CuentasDeServicios
         if (_qrz is { } q && q.Opciones == opciones) return;
         _qrz = (
             opciones,
-            new ConsultaQrzCom(_fabrica, _credenciales, opciones, _reintentos),
+            new ConsultaQrzCom(
+                _fabrica, _credenciales, opciones, _reintentos,
+                _registros is null
+                    ? null
+                    : Microsoft.Extensions.Logging.LoggerFactoryExtensions.CreateLogger<ConsultaQrzCom>(_registros)),
             new ServicioQrzCuaderno(_fabrica, _credenciales, opciones, _reintentos));
     }
 }

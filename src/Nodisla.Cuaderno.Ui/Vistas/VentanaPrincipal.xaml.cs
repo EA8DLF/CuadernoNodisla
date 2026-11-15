@@ -80,6 +80,9 @@ public partial class VentanaPrincipal : Window
         _vistaModelo.Modem.ElegirFicheroWav = PedirUnWav;
         ContentRendered += AlTerminarElPrimerDibujado;
 
+        // Lo que falle en un manejador de las vistas ya no cierra el programa: se ensena aqui.
+        Soporte.ManejadorSeguro.Fallo += AlFallarUnManejador;
+
         // Lo que cambia el alto que piden los bloques obliga a repartir de nuevo.
         _vistaModelo.PropertyChanged += (_, args) =>
         {
@@ -215,7 +218,13 @@ public partial class VentanaPrincipal : Window
         }
         else
         {
-            Log.Error("La ventana sigue sin pintarse ({Estado}) ni siquiera por software.", segunda);
+            // Aviso y no error: se comprueba nada mas volver a mostrar la ventana, cuando el
+            // dibujado por software aun no ha pintado, y no se toma ninguna medida con esto.
+            Log.Write(
+                ComprobacionDeDibujado.NivelTrasPasarASoftware(segunda),
+                "Recién pasada a dibujado por software, la ventana aún no se ve pintada ({Estado}). " +
+                "Suele ser que todavía no le ha dado tiempo; si de verdad se queda en blanco, arrancar con CUADERNO_DIBUJADO=software.",
+                segunda);
         }
     }
 
@@ -229,6 +238,7 @@ public partial class VentanaPrincipal : Window
 
     private void AlCerrar(object sender, EventArgs e)
     {
+        Soporte.ManejadorSeguro.Fallo -= AlFallarUnManejador;
         // La instancia apartada de verificacion no pisa lo que haya dejado el operador.
         if (Environment.GetEnvironmentVariable("CUADERNO_APARTADA") is not { Length: > 0 })
         {
@@ -426,6 +436,55 @@ public partial class VentanaPrincipal : Window
         if (si && dialogo.NoVolverAPreguntar) _vistaModelo.Modem.NoVolverAPreguntarAlTransmitir();
         return si;
     }
+
+    /// <summary>
+    /// Un manejador de las vistas ha fallado (girar el dial con la radio sin contestar, una
+    /// tecla de macro…). Ya esta en el registro; aqui se le dice al operador, sin insistir.
+    /// </summary>
+    /// <remarks>
+    /// La rueda del raton dispara el mismo manejador diez veces por segundo: un cartel por
+    /// fallo seria peor que el fallo. Solo hay uno abierto a la vez, y el mismo mensaje no se
+    /// repite hasta pasado medio minuto. La instancia apartada de verificacion no ensena
+    /// carteles: nadie va a pulsar «Entendido».
+    /// </remarks>
+    private void AlFallarUnManejador(Exception ex, string donde)
+    {
+        if (!Dispatcher.CheckAccess())
+        {
+            Dispatcher.BeginInvoke(() => AlFallarUnManejador(ex, donde));
+            return;
+        }
+
+        if (Environment.GetEnvironmentVariable("CUADERNO_APARTADA") is { Length: > 0 }) return;
+        if (_avisandoDeUnFallo || !IsLoaded) return;
+
+        var ahora = DateTime.UtcNow;
+        if (ex.Message == _ultimoFalloAvisado && ahora - _cuandoSeAvisoElUltimoFallo < TimeSpan.FromSeconds(30)) return;
+        _ultimoFalloAvisado = ex.Message;
+        _cuandoSeAvisoElUltimoFallo = ahora;
+
+        _avisandoDeUnFallo = true;
+        try
+        {
+            var dialogo = new VentanaDeConfirmacion
+            {
+                Owner = this,
+                Titulo = Textos.T("Principal.Fallo.Titulo"),
+                Detalle = ex.Message,
+                TextoDeAceptar = Textos.T("Principal.Fallo.Entendido"),
+                SoloAviso = true,
+            };
+            dialogo.ShowDialog();
+        }
+        finally
+        {
+            _avisandoDeUnFallo = false;
+        }
+    }
+
+    private bool _avisandoDeUnFallo;
+    private string? _ultimoFalloAvisado;
+    private DateTime _cuandoSeAvisoElUltimoFallo;
 
     private void MostrarFallo(Exception ex)
     {

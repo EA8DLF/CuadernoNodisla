@@ -1,5 +1,6 @@
 using System.Windows.Controls;
 using System.Windows.Input;
+using Nodisla.Cuaderno.Ui.Soporte;
 using Nodisla.Cuaderno.Ui.VistaModelos;
 
 namespace Nodisla.Cuaderno.Ui.Vistas.Frontales;
@@ -12,23 +13,25 @@ public partial class DialDelFrontal : UserControl
 
     private VistaModeloEquipo? Equipo => DataContext as VistaModeloEquipo;
 
-    private async void AlGirar(object sender, MouseWheelEventArgs e)
-    {
-        e.Handled = true;
-        if (Equipo is { } equipo) await equipo.GirarDialAsync(e.Delta > 0 ? 1 : -1).ConfigureAwait(true);
-    }
-
-    private async void AlTeclear(object sender, KeyEventArgs e)
-    {
-        var muescas = e.Key switch
+    private async void AlGirar(object sender, MouseWheelEventArgs e) =>
+        await ManejadorSeguro.EjecutarAsync(async () =>
         {
-            Key.Up or Key.Right => 1,
-            Key.Down or Key.Left => -1,
-            _ => 0,
-        };
+            e.Handled = true;
+            if (Equipo is { } equipo) await equipo.GirarDialAsync(e.Delta > 0 ? 1 : -1).ConfigureAwait(true);
+        });
 
-        if (muescas == 0 || Equipo is not { } equipo) return;
-        e.Handled = true;
-        await equipo.GirarDialAsync(muescas).ConfigureAwait(true);
-    }
+    private async void AlTeclear(object sender, KeyEventArgs e) =>
+        await ManejadorSeguro.EjecutarAsync(async () =>
+        {
+            var muescas = e.Key switch
+            {
+                Key.Up or Key.Right => 1,
+                Key.Down or Key.Left => -1,
+                _ => 0,
+            };
+
+            if (muescas == 0 || Equipo is not { } equipo) return;
+            e.Handled = true;
+            await equipo.GirarDialAsync(muescas).ConfigureAwait(true);
+        });
 }

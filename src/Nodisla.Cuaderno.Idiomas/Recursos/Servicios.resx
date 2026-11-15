@@ -1222,11 +1222,17 @@ Enhorabuena y 73,
   <data name="Servicios.Qrz.Acepto" xml:space="preserve">
     <value>QRZ.com aceptó {0} de {1} contactos.</value>
   </data>
+  <data name="Servicios.Qrz.Bloqueado" xml:space="preserve">
+    <value>QRZ.com tiene la cuenta bloqueada hasta {0} UTC por demasiados intentos fallidos. No se volverá a intentar hasta entonces.</value>
+  </data>
   <data name="Servicios.Qrz.ClaveNoAceptada" xml:space="preserve">
     <value>QRZ.com no aceptó la clave del cuaderno.</value>
   </data>
   <data name="Servicios.Qrz.ComprobarCuaderno" xml:space="preserve">
     <value>comprobar el cuaderno de QRZ.com</value>
+  </data>
+  <data name="Servicios.Qrz.CredencialesRechazadas" xml:space="preserve">
+    <value>QRZ.com ha rechazado el usuario o la contraseña. No se volverá a intentar hasta que los cambie en Configuración › Cuentas y servicios.</value>
   </data>
   <data name="Servicios.Qrz.Descargando" xml:space="preserve">
     <value>Descargando del cuaderno de QRZ.com (página {0})…</value>

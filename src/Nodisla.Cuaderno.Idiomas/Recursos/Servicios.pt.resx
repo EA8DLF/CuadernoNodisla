@@ -1215,11 +1215,17 @@ Parabéns e 73,
   <data name="Servicios.Qrz.Acepto" xml:space="preserve">
     <value>O QRZ.com aceitou {0} de {1} contactos.</value>
   </data>
+  <data name="Servicios.Qrz.Bloqueado" xml:space="preserve">
+    <value>O QRZ.com bloqueou a conta até {0} UTC por demasiadas tentativas falhadas. Não se voltará a tentar até lá.</value>
+  </data>
   <data name="Servicios.Qrz.ClaveNoAceptada" xml:space="preserve">
     <value>O QRZ.com não aceitou a chave do logbook.</value>
   </data>
   <data name="Servicios.Qrz.ComprobarCuaderno" xml:space="preserve">
     <value>verificar o logbook do QRZ.com</value>
+  </data>
+  <data name="Servicios.Qrz.CredencialesRechazadas" xml:space="preserve">
+    <value>O QRZ.com rejeitou o utilizador ou a palavra-passe. Não se voltará a tentar até que os altere na configuração.</value>
   </data>
   <data name="Servicios.Qrz.Descargando" xml:space="preserve">
     <value>A descarregar do logbook do QRZ.com (página {0})…</value>

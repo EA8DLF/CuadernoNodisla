@@ -1215,11 +1215,17 @@ Herzlichen Glückwunsch und 73,
   <data name="Servicios.Qrz.Acepto" xml:space="preserve">
     <value>QRZ.com hat {0} von {1} Verbindungen angenommen.</value>
   </data>
+  <data name="Servicios.Qrz.Bloqueado" xml:space="preserve">
+    <value>QRZ.com hat das Konto nach zu vielen Fehlversuchen bis {0} UTC gesperrt. Bis dahin wird es nicht erneut versucht.</value>
+  </data>
   <data name="Servicios.Qrz.ClaveNoAceptada" xml:space="preserve">
     <value>QRZ.com hat den Logbuch-Schlüssel nicht akzeptiert.</value>
   </data>
   <data name="Servicios.Qrz.ComprobarCuaderno" xml:space="preserve">
     <value>QRZ.com-Logbuch prüfen</value>
+  </data>
+  <data name="Servicios.Qrz.CredencialesRechazadas" xml:space="preserve">
+    <value>QRZ.com hat Benutzername oder Passwort abgelehnt. Es wird erst wieder versucht, wenn Sie sie in den Einstellungen ändern.</value>
   </data>
   <data name="Servicios.Qrz.Descargando" xml:space="preserve">
     <value>Download aus dem QRZ.com-Logbuch (Seite {0})…</value>

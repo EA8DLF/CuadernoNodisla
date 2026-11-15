@@ -1215,11 +1215,17 @@ Félicitations et 73,
   <data name="Servicios.Qrz.Acepto" xml:space="preserve">
     <value>QRZ.com a accepté {0} QSO sur {1}.</value>
   </data>
+  <data name="Servicios.Qrz.Bloqueado" xml:space="preserve">
+    <value>QRZ.com a bloqué le compte jusqu'à {0} UTC après trop de tentatives échouées. Aucun nouvel essai avant cette heure.</value>
+  </data>
   <data name="Servicios.Qrz.ClaveNoAceptada" xml:space="preserve">
     <value>QRZ.com n'a pas accepté la clé du log.</value>
   </data>
   <data name="Servicios.Qrz.ComprobarCuaderno" xml:space="preserve">
     <value>vérifier le log QRZ.com</value>
+  </data>
+  <data name="Servicios.Qrz.CredencialesRechazadas" xml:space="preserve">
+    <value>QRZ.com a refusé l'identifiant ou le mot de passe. Aucun nouvel essai tant que vous ne les modifiez pas dans la configuration.</value>
   </data>
   <data name="Servicios.Qrz.Descargando" xml:space="preserve">
     <value>Téléchargement depuis le log QRZ.com (page {0})…</value>

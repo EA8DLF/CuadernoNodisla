@@ -99,6 +99,21 @@ public static class ComprobacionDeDibujado
         }
     }
 
+    /// <summary>
+    /// Con que nivel se apunta el resultado de volver a comprobar tras pasar a software.
+    /// </summary>
+    /// <remarks>
+    /// Nunca como error. La segunda comprobacion se hace nada mas volver a mostrar la ventana,
+    /// antes de que el dibujado por software haya tenido tiempo de pintar, asi que un
+    /// «EnBlanco» ahi no demuestra nada (en los registros, las dos veces que salio la ventana
+    /// se pinto bien despues) y el programa no toma ninguna medida con ese resultado.
+    /// </remarks>
+    /// <param name="segunda">Resultado de la segunda comprobacion.</param>
+    public static Serilog.Events.LogEventLevel NivelTrasPasarASoftware(EstadoDelDibujado segunda) =>
+        segunda == EstadoDelDibujado.Correcto
+            ? Serilog.Events.LogEventLevel.Information
+            : Serilog.Events.LogEventLevel.Warning;
+
     /// <summary>Pasa la aplicacion a dibujado por software y vuelve a crear el destino de dibujo.</summary>
     public static void PasarADibujadoPorSoftware(Window ventana)
     {
