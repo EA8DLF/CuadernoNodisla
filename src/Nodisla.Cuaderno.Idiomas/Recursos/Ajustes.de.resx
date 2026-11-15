@@ -37,7 +37,7 @@
     <value>Download abgebrochen.</value>
   </data>
   <data name="Ajustes.Actualizaciones.Comprobado" xml:space="preserve">
-    <value>Installationsprogramm heruntergeladen und geprüft (SHA-256 korrekt).</value>
+    <value>Installationsprogramm heruntergeladen und geprüft (SHA-256 und NODISLA-Signatur korrekt).</value>
   </data>
   <data name="Ajustes.Actualizaciones.Confirmar.Boton" xml:space="preserve">
     <value>Schließen und installieren</value>

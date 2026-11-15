@@ -18,6 +18,9 @@
   <data name="Servicios.Actualizaciones.DemasiadoGrande" xml:space="preserve">
     <value>O instalador anunciado é demasiado grande.</value>
   </data>
+  <data name="Servicios.Actualizaciones.FirmaNoValida" xml:space="preserve">
+    <value>O instalador descarregado não tem a assinatura da NODISLA (não está assinado, foi alterado ou foi assinado por outra pessoa). Foi apagado e não será instalado. Descarregue-o manualmente a partir da página de versões.</value>
+  </data>
   <data name="Servicios.Actualizaciones.NoCoincide" xml:space="preserve">
     <value>O instalador descarregado não coincide com a soma SHA-256 publicada. Foi apagado e não será instalado.</value>
   </data>

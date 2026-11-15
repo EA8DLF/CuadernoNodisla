@@ -37,7 +37,7 @@
     <value>Téléchargement annulé.</value>
   </data>
   <data name="Ajustes.Actualizaciones.Comprobado" xml:space="preserve">
-    <value>Installateur téléchargé et vérifié (SHA-256 correcte).</value>
+    <value>Installateur téléchargé et vérifié (SHA-256 et signature NODISLA correctes).</value>
   </data>
   <data name="Ajustes.Actualizaciones.Confirmar.Boton" xml:space="preserve">
     <value>Fermer et installer</value>

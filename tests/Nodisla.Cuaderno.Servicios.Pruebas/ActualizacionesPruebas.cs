@@ -224,7 +224,7 @@ public sealed class DescargadorDeInstaladorPruebas : IDisposable
     public async Task Con_la_suma_buena_queda_el_exe_verificado()
     {
         var suma = Convert.ToHexString(SHA256.HashData(Contenido)).ToLowerInvariant();
-        var descargador = new DescargadorDeInstalador(new FabricaFalsa(Red($"{suma}  CuadernoNodisla-Instalador-0.2.0.0.exe\n")), _carpeta);
+        var descargador = new DescargadorDeInstalador(new FabricaFalsa(Red($"{suma}  CuadernoNodisla-Instalador-0.2.0.0.exe\n")), _carpeta, verificador: FirmaDoble.DeNodisla);
 
         var resultado = await descargador.DescargarAsync(Version());
 
@@ -237,7 +237,7 @@ public sealed class DescargadorDeInstaladorPruebas : IDisposable
     public async Task Si_la_suma_no_casa_no_queda_nada_que_instalar()
     {
         var mala = new string('0', 64);
-        var descargador = new DescargadorDeInstalador(new FabricaFalsa(Red(mala)), _carpeta);
+        var descargador = new DescargadorDeInstalador(new FabricaFalsa(Red(mala)), _carpeta, verificador: FirmaDoble.DeNodisla);
 
         var resultado = await descargador.DescargarAsync(Version());
 
@@ -253,7 +253,7 @@ public sealed class DescargadorDeInstaladorPruebas : IDisposable
         var version = ComprobadorDeVersiones.Interpretar(
             ComprobadorDeVersionesPruebas.Publicacion(conSuma: false), RepositorioPublico.CuadernoNodisla)!;
 
-        var resultado = await new DescargadorDeInstalador(new FabricaFalsa(red), _carpeta).DescargarAsync(version);
+        var resultado = await new DescargadorDeInstalador(new FabricaFalsa(red), _carpeta, verificador: FirmaDoble.DeNodisla).DescargarAsync(version);
 
         resultado.Estado.Should().Be(EstadoDeDescarga.Fallida);
         red.Direcciones.Should().BeEmpty();
@@ -264,7 +264,7 @@ public sealed class DescargadorDeInstaladorPruebas : IDisposable
     {
         var red = Red("no es una suma");
 
-        var resultado = await new DescargadorDeInstalador(new FabricaFalsa(red), _carpeta).DescargarAsync(Version());
+        var resultado = await new DescargadorDeInstalador(new FabricaFalsa(red), _carpeta, verificador: FirmaDoble.DeNodisla).DescargarAsync(Version());
 
         resultado.Estado.Should().Be(EstadoDeDescarga.Fallida);
         red.Direcciones.Should().ContainSingle();

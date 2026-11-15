@@ -187,10 +187,15 @@ public static class ExtensionesDeServicio
             instalada,
             RepositorioPublico.CuadernoNodisla,
             p.GetService<Microsoft.Extensions.Logging.ILogger<ComprobadorDeVersiones>>()));
+        // La firma del instalador se mira con WinVerifyTrust y se compara con las huellas fijadas
+        // en el programa: la suma sola no dice de quien es el fichero.
+        servicios.TryAddSingleton<IVerificadorDeFirma, VerificadorDeFirmaAuthenticode>();
         servicios.TryAddSingleton(p => new DescargadorDeInstalador(
             p.GetRequiredService<IHttpClientFactory>(),
             carpetaDeDescargas,
-            p.GetService<Microsoft.Extensions.Logging.ILogger<DescargadorDeInstalador>>()));
+            p.GetService<Microsoft.Extensions.Logging.ILogger<DescargadorDeInstalador>>(),
+            p.GetRequiredService<IVerificadorDeFirma>(),
+            FirmantesDeConfianza.Nodisla));
         return servicios;
     }
 

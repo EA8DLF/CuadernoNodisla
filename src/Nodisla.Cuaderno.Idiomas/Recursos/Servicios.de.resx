@@ -18,6 +18,9 @@
   <data name="Servicios.Actualizaciones.DemasiadoGrande" xml:space="preserve">
     <value>Das angekündigte Installationsprogramm ist zu groß.</value>
   </data>
+  <data name="Servicios.Actualizaciones.FirmaNoValida" xml:space="preserve">
+    <value>Das heruntergeladene Installationsprogramm trägt nicht die Signatur von NODISLA (es ist nicht signiert, wurde verändert oder von jemand anderem signiert). Es wurde gelöscht und wird nicht installiert. Laden Sie es manuell von der Versionsseite herunter.</value>
+  </data>
   <data name="Servicios.Actualizaciones.NoCoincide" xml:space="preserve">
     <value>Das heruntergeladene Installationsprogramm stimmt nicht mit der veröffentlichten SHA-256-Prüfsumme überein. Es wurde gelöscht und wird nicht installiert.</value>
   </data>

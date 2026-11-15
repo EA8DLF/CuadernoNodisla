@@ -18,6 +18,9 @@
   <data name="Servicios.Actualizaciones.DemasiadoGrande" xml:space="preserve">
     <value>L'installateur annoncé est trop volumineux.</value>
   </data>
+  <data name="Servicios.Actualizaciones.FirmaNoValida" xml:space="preserve">
+    <value>L'installateur téléchargé ne porte pas la signature de NODISLA (il n'est pas signé, a été modifié ou a été signé par quelqu'un d'autre). Il a été supprimé et ne sera pas installé. Téléchargez-le manuellement depuis la page des versions.</value>
+  </data>
   <data name="Servicios.Actualizaciones.NoCoincide" xml:space="preserve">
     <value>L'installateur téléchargé ne correspond pas à la somme SHA-256 publiée. Il a été supprimé et ne sera pas installé.</value>
   </data>

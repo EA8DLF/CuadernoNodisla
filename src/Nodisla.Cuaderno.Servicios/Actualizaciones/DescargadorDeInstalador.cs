@@ -9,7 +9,9 @@ namespace Nodisla.Cuaderno.Servicios.Actualizaciones;
 /// <summary>Que salio de descargar el instalador.</summary>
 public enum EstadoDeDescarga
 {
-    /// <summary>Descargado y con la suma SHA-256 correcta: se puede instalar.</summary>
+    /// <summary>
+    /// Descargado, con la suma SHA-256 correcta y firmado por NODISLA: se puede instalar.
+    /// </summary>
     Verificado,
 
     /// <summary>
@@ -17,6 +19,12 @@ public enum EstadoDeDescarga
     /// <b>no se instala</b>.
     /// </summary>
     SumaNoCasa,
+
+    /// <summary>
+    /// La suma casa, pero el instalador no lleva la firma de NODISLA (sin firma, alterado
+    /// despues de firmar o firmado por otro). El fichero ya se ha borrado y <b>no se instala</b>.
+    /// </summary>
+    FirmaNoValida,
 
     /// <summary>No se pudo descargar (red, falta la suma, fichero raro...).</summary>
     Fallida,
@@ -29,18 +37,25 @@ public enum EstadoDeDescarga
 public sealed record ResultadoDeDescarga(EstadoDeDescarga Estado, string? Ruta = null, string? Motivo = null);
 
 /// <summary>
-/// Baja el instalador de una version publicada y comprueba su SHA-256 contra el fichero
-/// <c>.sha256</c> publicado a su lado.
+/// Baja el instalador de una version publicada, comprueba su SHA-256 contra el fichero
+/// <c>.sha256</c> publicado a su lado y que lleva la firma Authenticode de NODISLA.
 /// </summary>
 /// <remarks>
+/// <para>
+/// La suma solo dice que la descarga llego entera: el <c>.sha256</c> vive en la misma release
+/// que el instalador y quien pueda cambiar uno cambia el otro. Lo que dice <b>de quien</b> es
+/// el instalador es la firma: tiene que estar integra y ser de uno de los certificados fijados
+/// dentro del programa (<see cref="FirmantesDeConfianza"/>), que no se pueden cambiar desde
+/// GitHub.
+/// </para>
 /// <para>
 /// La suma se baja <b>antes</b> que el instalador: sin suma no se baja nada. Un instalador que
 /// no se puede comprobar no se ejecuta, por mucho que venga de la pagina buena.
 /// </para>
 /// <para>
 /// El instalador se escribe con extension <c>.parcial</c> y solo se renombra a <c>.exe</c>
-/// cuando la suma casa. Si no casa, se borra: no queda en disco un ejecutable dudoso que
-/// alguien pueda abrir con dos clics.
+/// cuando la suma casa y la firma vale. Si no, se borra: no queda en disco un ejecutable
+/// dudoso que alguien pueda abrir con dos clics.
 /// </para>
 /// </remarks>
 public sealed partial class DescargadorDeInstalador
@@ -51,16 +66,27 @@ public sealed partial class DescargadorDeInstalador
     private readonly IHttpClientFactory _fabrica;
     private readonly string _carpeta;
     private readonly ILogger _log;
+    private readonly IVerificadorDeFirma _verificador;
+    private readonly FirmantesDeConfianza _firmantes;
 
     /// <summary>Crea el descargador.</summary>
     /// <param name="fabrica">Fabrica de clientes HTTP (cliente <see cref="Red.NombresDeClienteHttp.GitHubDescargas"/>).</param>
     /// <param name="carpeta">Carpeta temporal; por omision <c>%TEMP%\CuadernoNodisla-actualizacion</c>.</param>
     /// <param name="log">Registro.</param>
+    /// <param name="verificador">
+    /// Quien mira la firma; por omision, el de verdad (<see cref="VerificadorDeFirmaAuthenticode"/>).
+    /// No hay forma de «no mirar»: las pruebas ponen un doble.
+    /// </param>
+    /// <param name="firmantes">Certificados aceptados; por omision, <see cref="FirmantesDeConfianza.Nodisla"/>.</param>
     public DescargadorDeInstalador(
         IHttpClientFactory fabrica,
         string? carpeta = null,
-        ILogger<DescargadorDeInstalador>? log = null)
+        ILogger<DescargadorDeInstalador>? log = null,
+        IVerificadorDeFirma? verificador = null,
+        FirmantesDeConfianza? firmantes = null)
     {
+        _verificador = verificador ?? new VerificadorDeFirmaAuthenticode();
+        _firmantes = firmantes ?? FirmantesDeConfianza.Nodisla;
         _fabrica = fabrica ?? throw new ArgumentNullException(nameof(fabrica));
         _carpeta = carpeta ?? Path.Combine(Path.GetTempPath(), "CuadernoNodisla-actualizacion");
         _log = (ILogger?)log ?? NullLogger.Instance;
@@ -148,11 +174,26 @@ public sealed partial class DescargadorDeInstalador
                     Motivo: Textos.T("Servicios.Actualizaciones.NoCoincide"));
             }
 
+            // La suma casa: la descarga esta entera. Ahora, de quien es. Se mira sobre el
+            // «.parcial»: hasta que la firma no vale no existe ningun «.exe».
+            var firma = MirarFirma(parcial);
+            if (!_firmantes.Acepta(firma))
+            {
+                BorrarSinFallar(parcial);
+                _log.LogWarning(
+                    "El instalador {Nombre} no lleva la firma de NODISLA: estado {Estado}, firmante {Sujeto}, huella {Huella}, código 0x{Codigo:X8}. Se ha borrado y no se instala.",
+                    nombre, firma.Estado, firma.Sujeto ?? "-", firma.HuellaSha256 ?? "-", firma.Codigo);
+                return new ResultadoDeDescarga(EstadoDeDescarga.FirmaNoValida,
+                    Motivo: Textos.T("Servicios.Actualizaciones.FirmaNoValida"));
+            }
+
             if (File.Exists(final)) File.Delete(final);
             File.Move(parcial, final);
             parcial = null;
             progreso?.Report(1.0);
-            _log.LogInformation("Instalador {Nombre} descargado y verificado en {Ruta}.", nombre, final);
+            _log.LogInformation(
+                "Instalador {Nombre} descargado y verificado en {Ruta} (SHA-256 correcta, firmado por {Sujeto}).",
+                nombre, final, firma.Sujeto);
             return new ResultadoDeDescarga(EstadoDeDescarga.Verificado, final);
         }
         catch (OperationCanceledException) when (cancelacion.IsCancellationRequested)
@@ -189,6 +230,20 @@ public sealed partial class DescargadorDeInstalador
         var limpio = new string(nombre.Select(c => Path.GetInvalidFileNameChars().Contains(c) ? '_' : c).ToArray())
             .Replace("..", "_", StringComparison.Ordinal);
         return string.IsNullOrWhiteSpace(limpio) ? "instalador" : limpio;
+    }
+
+    // Un verificador que lanza no puede acabar en «vale»: cuenta como firma no valida.
+    private ResultadoDeFirma MirarFirma(string ruta)
+    {
+        try
+        {
+            return _verificador.Verificar(ruta) ?? new ResultadoDeFirma(EstadoDeFirma.NoValida);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException and not OutOfMemoryException)
+        {
+            _log.LogWarning(ex, "No se ha podido mirar la firma de {Ruta}.", ruta);
+            return new ResultadoDeFirma(EstadoDeFirma.NoValida);
+        }
     }
 
     private void BorrarSinFallar(string ruta)

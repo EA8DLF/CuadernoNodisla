@@ -50,6 +50,13 @@ public sealed class ActualizacionesYFallosPruebas : IDisposable
         public HttpClient CreateClient(string name) => new(manejador, disposeHandler: false);
     }
 
+    /// <summary>Doble de la firma: por omision, integra y del certificado de NODISLA.</summary>
+    private sealed class Firma(ResultadoDeFirma? resultado) : IVerificadorDeFirma
+    {
+        public ResultadoDeFirma Verificar(string ruta) =>
+            resultado ?? new ResultadoDeFirma(EstadoDeFirma.Integra, FirmantesDeConfianza.CertificadoNodisla2026, "CN=doble");
+    }
+
     private sealed class RelojFijo(DateTimeOffset ahora) : TimeProvider
     {
         public override DateTimeOffset GetUtcNow() => ahora;
@@ -76,9 +83,9 @@ public sealed class ActualizacionesYFallosPruebas : IDisposable
         };
     }
 
-    private VistaModeloActualizaciones Modelo(Red red, AjustesDeActualizaciones ajustes, Apuntes apuntes) => new(
+    private VistaModeloActualizaciones Modelo(Red red, AjustesDeActualizaciones ajustes, Apuntes apuntes, ResultadoDeFirma? firma = null) => new(
         new ComprobadorDeVersiones(new Fabrica(red), VersionSemantica.Analizar("0.1.0.0")),
-        new DescargadorDeInstalador(new Fabrica(red), Path.Combine(_carpeta, "descargas")),
+        new DescargadorDeInstalador(new Fabrica(red), Path.Combine(_carpeta, "descargas"), verificador: new Firma(firma)),
         ajustes,
         _carpeta,
         new RelojFijo(Ahora),
@@ -169,6 +176,30 @@ public sealed class ActualizacionesYFallosPruebas : IDisposable
         apuntes.Confirmaciones.Should().Be(1);
         apuntes.Lanzado.Should().EndWith("CuadernoNodisla-Instalador-0.2.0.0.exe");
         apuntes.Cerrado.Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData(EstadoDeFirma.SinFirma, null)]
+    [InlineData(EstadoDeFirma.NoValida, null)]
+    [InlineData(EstadoDeFirma.Integra, "00000000000000000000000000000000000000000000000000000000000000AA")]
+    public async Task Con_la_suma_buena_pero_sin_la_firma_de_NODISLA_no_se_pregunta_ni_se_instala(EstadoDeFirma estado, string? huella)
+    {
+        var apuntes = new Apuntes();
+        var suma = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData("MZ!"u8.ToArray()));
+        var red = new Red(p => p.RequestUri!.AbsolutePath.EndsWith(".sha256", StringComparison.Ordinal)
+            ? Texto(suma)
+            : p.RequestUri.Host == "api.github.com" ? Texto(Publicacion) : Texto("MZ!"));
+        var modelo = Modelo(red, new AjustesDeActualizaciones(), apuntes, new ResultadoDeFirma(estado, huella));
+        await modelo.BuscarActualizacionesCommand.ExecuteAsync(null);
+
+        await modelo.DescargarEInstalarCommand.ExecuteAsync(null);
+
+        apuntes.Confirmaciones.Should().Be(0);
+        apuntes.Lanzado.Should().BeNull();
+        apuntes.Cerrado.Should().BeFalse();
+        modelo.Estado.Should().Contain("firma de NODISLA");
+        Directory.Exists(Path.Combine(_carpeta, "descargas")).Should().BeTrue();
+        Directory.GetFiles(Path.Combine(_carpeta, "descargas"), "*", SearchOption.AllDirectories).Should().BeEmpty();
     }
 
     [Fact]

@@ -37,7 +37,7 @@
     <value>Descarga cancelada.</value>
   </data>
   <data name="Ajustes.Actualizaciones.Comprobado" xml:space="preserve">
-    <value>Instalador descargado y comprobado (SHA-256 correcta).</value>
+    <value>Instalador descargado y comprobado (SHA-256 y firma de NODISLA correctas).</value>
   </data>
   <data name="Ajustes.Actualizaciones.Confirmar.Boton" xml:space="preserve">
     <value>Cerrar e instalar</value>

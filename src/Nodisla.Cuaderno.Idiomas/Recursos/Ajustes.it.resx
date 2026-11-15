@@ -37,7 +37,7 @@
     <value>Download annullato.</value>
   </data>
   <data name="Ajustes.Actualizaciones.Comprobado" xml:space="preserve">
-    <value>Programma di installazione scaricato e verificato (SHA-256 corretto).</value>
+    <value>Programma di installazione scaricato e verificato (SHA-256 e firma di NODISLA corretti).</value>
   </data>
   <data name="Ajustes.Actualizaciones.Confirmar.Boton" xml:space="preserve">
     <value>Chiudi e installa</value>
