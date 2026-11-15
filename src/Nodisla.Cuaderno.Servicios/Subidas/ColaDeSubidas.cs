@@ -653,9 +653,11 @@ public sealed class ColaDeSubidas : IDisposable
             if (!activado)
             {
                 semaforo = pendientes + fallidos > 0 ? SemaforoDeSubida.Ambar : SemaforoDeSubida.Apagado;
-                texto = servicio is null || !SeguroConfigurado(servicio)
-                    ? Textos.F("Servicios.Subidas.SinConfigurar", nombre)
-                    : Textos.F("Servicios.Subidas.Desactivada", nombre);
+                texto = servicio is not null && SeguroConfigurado(servicio)
+                    ? Textos.F("Servicios.Subidas.Desactivada", nombre)
+                    : medio == MedioDeConfirmacion.QrzCom
+                        ? Textos.T("Servicios.Subidas.QrzSinConfigurar")
+                        : Textos.F("Servicios.Subidas.SinConfigurar", nombre);
                 if (pendientes + fallidos > 0) texto += " " + Textos.F("Servicios.Subidas.EnEspera", pendientes + fallidos);
             }
             else if (bloqueo is not null)
@@ -705,7 +707,10 @@ public sealed class ColaDeSubidas : IDisposable
         {
             if (servicio.PuedeSubir) return null;
             if (servicio is ServicioLotw lotw && lotw.MotivoDeNoPoderSubir is { } motivo) return motivo;
-            return Textos.F("Servicios.Subidas.FaltanCredenciales", NombreCorto(servicio.Medio));
+            // QRZ no tiene usuario ni tarjeta en «Cuentas y servicios»: le falta la clave.
+            return servicio.Medio == MedioDeConfirmacion.QrzCom
+                ? Textos.T("Servicios.Subidas.FaltaClaveDeQrz")
+                : Textos.F("Servicios.Subidas.FaltanCredenciales", NombreCorto(servicio.Medio));
         }
         catch (Exception ex)
         {

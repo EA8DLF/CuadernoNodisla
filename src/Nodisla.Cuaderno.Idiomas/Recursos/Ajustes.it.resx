@@ -1157,6 +1157,126 @@ I suoi collegamenti e le impostazioni non vengono toccati. Se sta trasmettendo o
   <data name="Ajustes.NoSeHanPodidoGuardar" xml:space="preserve">
     <value>Impossibile salvare: {0}</value>
   </data>
+  <data name="Ajustes.Qrz.Clave.AvisoForma" xml:space="preserve">
+    <value>Questo non ha la forma di una chiave API (XXXX-XXXX-XXXX-XXXX). Se è la password con cui entra in qrz.com, va nel riquadro «Compilare la scheda». Può salvarlo comunque e premere «Provare la chiave».</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Borrar.Accesible" xml:space="preserve">
+    <value>Cancellare la chiave API del log di QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Donde" xml:space="preserve">
+    <value>Dove si trova: con la sessione aperta su qrz.com, apra la pagina «QRZ Logbook API Integration» (qrz.com/docs/logbook30/api). Elenca i suoi log e la «API Key» di ciascuno. Ha la forma XXXX-XXXX-XXXX-XXXX e non è la password del sito.</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.GuardadaSinProbar" xml:space="preserve">
+    <value>Chiave salvata. Prema «Provare la chiave» per sapere se QRZ la accetta.</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Guardar.Accesible" xml:space="preserve">
+    <value>Salvare la chiave API del log di QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Requisito" xml:space="preserve">
+    <value>QRZ accetta questa chiave solo se il proprietario del log ha un abbonamento attivo di livello «XML» o superiore.</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Rotulo" xml:space="preserve">
+    <value>Chiave API del log</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.AvisoForma" xml:space="preserve">
+    <value>Questo ha la forma di una chiave API del log, non di una password. La chiave va nel riquadro «Caricare i miei collegamenti su QRZ»; qui va la password con cui entra in qrz.com.</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Borrar.Accesible" xml:space="preserve">
+    <value>Cancellare la password di qrz.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Donde" xml:space="preserve">
+    <value>La stessa con cui entra nel sito di QRZ. Non è la chiave API.</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.GuardadaSinProbar" xml:space="preserve">
+    <value>Salvato. Prema «Provare l'accesso» per sapere se QRZ lo accetta.</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Guardar.Accesible" xml:space="preserve">
+    <value>Salvare la password di qrz.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Rotulo" xml:space="preserve">
+    <value>Password di qrz.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Entrada" xml:space="preserve">
+    <value>QRZ chiede un dato diverso per ogni cosa: una chiave API per caricare i collegamenti nel suo log, e l'utente e la password del sito per consultare le schede. Avere l'uno non dà l'altro.</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.Activada" xml:space="preserve">
+    <value>In funzione</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.ConProblemas" xml:space="preserve">
+    <value>Con problemi</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.SinActivar" xml:space="preserve">
+    <value>Non attivo</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.SinClave" xml:space="preserve">
+    <value>Manca la chiave</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.SinContrasena" xml:space="preserve">
+    <value>Manca la password</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Activar" xml:space="preserve">
+    <value>Compilare i collegamenti con la scheda di QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.AvisoDeQrz" xml:space="preserve">
+    <value>QRZ avvisa: «{0}».</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Nota" xml:space="preserve">
+    <value>Si compila solo ciò che è vuoto: ciò che scrive lei non viene mai sovrascritto. Se QRZ non risponde si usa HamQTH, se il suo account è in «Account e servizi».</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Para" xml:space="preserve">
+    <value>Quando digita un nominativo arrivano nome, QTH, locatore, paese e zone.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.ProbadaSinActivar" xml:space="preserve">
+    <value>La compilazione non è attiva: selezioni «Compilare i collegamenti con la scheda di QRZ».</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Probar" xml:space="preserve">
+    <value>Provare l'accesso</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Probar.Ayuda" xml:space="preserve">
+    <value>Apre una sessione QRZ con questo utente e questa password. Se QRZ li ha già rifiutati non si ripete finché uno dei due non cambia: ogni tentativo fallito avvicina il blocco dell'account.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Requisito" xml:space="preserve">
+    <value>Senza abbonamento XML a pagamento, QRZ fornisce solo una parte della scheda.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Titulo" xml:space="preserve">
+    <value>Compilare la scheda del corrispondente con QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Probando" xml:space="preserve">
+    <value>Si chiede a QRZ…</value>
+  </data>
+  <data name="Ajustes.Qrz.SesionSimulada" xml:space="preserve">
+    <value>In questa sessione i servizi sono simulati: non c'è nulla da provare con QRZ.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Activar" xml:space="preserve">
+    <value>Caricare ogni collegamento su QRZ alla registrazione</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.HaySinSubir" xml:space="preserve">
+    <value>Nel suo log ci sono {0:N0} collegamenti non caricati su QRZ: può caricarli qui sotto, con «Caricare i collegamenti precedenti».</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Para" xml:space="preserve">
+    <value>Ogni collegamento che registra si aggiunge da solo al suo log di QRZ.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.ProbadaSinActivar" xml:space="preserve">
+    <value>Il caricamento non è attivo: selezioni «Caricare ogni collegamento su QRZ alla registrazione».</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Probar" xml:space="preserve">
+    <value>Provare la chiave</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Probar.Ayuda" xml:space="preserve">
+    <value>Chiede a QRZ lo stato del log. Non carica né modifica nessun collegamento.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Titulo" xml:space="preserve">
+    <value>Caricare i miei collegamenti su QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Titulo" xml:space="preserve">
+    <value>QRZ.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Usuario.Guardar.Accesible" xml:space="preserve">
+    <value>Salvare l'utente di qrz.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Usuario.Rotulo" xml:space="preserve">
+    <value>Utente di qrz.com</value>
+  </data>
   <data name="Ajustes.Secreto.Borrar.Accesible" xml:space="preserve">
     <value>Elimina la credenziale salvata</value>
   </data>
@@ -1197,16 +1317,16 @@ I suoi collegamenti e le impostazioni non vengono toccati. Se sta trasmettendo o
     <value>Quella del suo account ARRL. Serve per scaricare il rapporto delle conferme.</value>
   </data>
   <data name="Ajustes.Secreto.QrzClaveDeCuaderno" xml:space="preserve">
-    <value>Chiave del log di QRZ</value>
+    <value>Chiave API del log di QRZ</value>
   </data>
   <data name="Ajustes.Secreto.QrzClaveDeCuaderno.Ayuda" xml:space="preserve">
-    <value>È diversa dalla password dell'account: la fornisce QRZ per caricare i collegamenti.</value>
+    <value>Per caricare i collegamenti. Ha la forma XXXX-XXXX-XXXX-XXXX e non è la password del sito.</value>
   </data>
   <data name="Ajustes.Secreto.QrzContrasena" xml:space="preserve">
-    <value>Password di QRZ.com</value>
+    <value>Password del sito QRZ.com</value>
   </data>
   <data name="Ajustes.Secreto.QrzContrasena.Ayuda" xml:space="preserve">
-    <value>Per la ricerca dei nominativi tramite XML.</value>
+    <value>Per consultare le schede. È la stessa con cui entra in qrz.com, non la chiave API.</value>
   </data>
   <data name="Ajustes.Secreto.SinGuardar" xml:space="preserve">
     <value>Non salvata</value>
@@ -1418,6 +1538,45 @@ I suoi collegamenti e le impostazioni non vengono toccati. Se sta trasmettendo o
   <data name="Ajustes.Servidor.Tx.Nota" xml:space="preserve">
     <value>Serve anche spuntare «Consenti di trasmettere in questa sessione». Il PTT di un programma passa per il piano di banda, il ROS, la potenza massima, il tempo massimo e il padrone del PTT, e si rilascia se il programma si disconnette o smette di comunicare.</value>
   </data>
+  <data name="Ajustes.Subidas.Anteriores.Boton" xml:space="preserve">
+    <value>Caricare i collegamenti precedenti…</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Cancelada" xml:space="preserve">
+    <value>Caricamento annullato: {0:N0} collegamenti restano non caricati. Ciò che è già caricato resta caricato.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Cancelar" xml:space="preserve">
+    <value>Annullare il caricamento</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Confirmar" xml:space="preserve">
+    <value>Caricare {0:N0} collegamenti</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Descartar" xml:space="preserve">
+    <value>Non caricare</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Desde" xml:space="preserve">
+    <value>Solo dal giorno (UTC), come 2026-01-31. Vuoto: tutti</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Encolados" xml:space="preserve">
+    <value>{0:N0} collegamenti messi in coda. Partono da soli, a blocchi; non serve lasciare aperta questa schermata.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.EnMarcha" xml:space="preserve">
+    <value>Caricamento dei precedenti: {0:N0} di {1:N0}.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Explicacion" xml:space="preserve">
+    <value>Nel log ci sono {0:N0} collegamenti non caricati su {1}. Parte da solo soltanto ciò che si registra con il caricamento già attivo; questi sono di prima.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.FechaNoValida" xml:space="preserve">
+    <value>Quella data non si capisce. La scriva come 2026-01-31, oppure lasci la casella vuota per caricarli tutti.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Nada" xml:space="preserve">
+    <value>Non ci sono collegamenti da caricare da quella data.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Resumen" xml:space="preserve">
+    <value>Verranno caricati {0:N0} collegamenti su {1}, dal più vecchio al più recente e a blocchi. Ciò che è già lì non si duplica, può continuare a operare nel frattempo e può annullare quando vuole.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Terminada" xml:space="preserve">
+    <value>Il caricamento dei collegamenti precedenti è terminato.</value>
+  </data>
   <data name="Ajustes.Subidas.Cola" xml:space="preserve">
     <value>Coda dei caricamenti</value>
   </data>
@@ -1429,6 +1588,9 @@ I suoi collegamenti e le impostazioni non vengono toccati. Se sta trasmettendo o
   </data>
   <data name="Ajustes.Subidas.Cola.PendienteCorregido" xml:space="preserve">
     <value>In sospeso (corretto)</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.Recortada" xml:space="preserve">
+    <value>Se ne mostrano {0:N0} di {1:N0}, prima quelli con un errore.</value>
   </data>
   <data name="Ajustes.Subidas.Cola.Reintento" xml:space="preserve">
     <value>Tentativo {0}: {1}</value>
@@ -1449,7 +1611,7 @@ I suoi collegamenti e le impostazioni non vengono toccati. Se sta trasmettendo o
     <value>Completa con QRZ.com</value>
   </data>
   <data name="Ajustes.Subidas.CuentasEn" xml:space="preserve">
-    <value>Utenti e password di QRZ.com, HamQTH, LoTW, eQSL e Club Log si inseriscono in «Account e servizi».</value>
+    <value>Utenti e password di LoTW, eQSL, Club Log e HamQTH si inseriscono in «Account e servizi».</value>
   </data>
   <data name="Ajustes.Subidas.CuentasGuardadas" xml:space="preserve">
     <value>Account salvati. Valgono subito, senza riavviare.</value>
@@ -1476,7 +1638,7 @@ I suoi collegamenti e le impostazioni non vengono toccati. Se sta trasmettendo o
     <value>{0} I collegamenti vengono salvati comunque, senza i dati della scheda.</value>
   </data>
   <data name="Ajustes.Subidas.Ficha.SinContrasena" xml:space="preserve">
-    <value>Completa con QRZ.com: manca la password di QRZ.com (o di HamQTH) in Impostazioni › Account e servizi. I collegamenti vengono salvati comunque, senza nome né QTH della scheda.</value>
+    <value>Completare con QRZ.com: manca la password di qrz.com in Impostazioni › Caricamenti e QRZ (o quella di HamQTH in Account e servizi). I collegamenti si salvano comunque, senza nome né QTH della scheda.</value>
   </data>
   <data name="Ajustes.Subidas.NadaPendiente" xml:space="preserve">
     <value>Non c'era nulla in sospeso.</value>
@@ -1492,6 +1654,24 @@ I suoi collegamenti e le impostazioni non vengono toccati. Se sta trasmettendo o
   </data>
   <data name="Ajustes.Subidas.NotaNoModificable" xml:space="preserve">
     <value>Non ammette modifiche: un collegamento già caricato resta come è stato caricato.</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.ConError" xml:space="preserve">
+    <value>{0:N0} con errore</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.Contando" xml:space="preserve">
+    <value>Si contano i collegamenti del log…</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.CuadernoVacio" xml:space="preserve">
+    <value>Il log è vuoto: non c'è ancora nulla da caricare.</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.Pendientes" xml:space="preserve">
+    <value>{0:N0} in attesa</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.SinSubir" xml:space="preserve">
+    <value>{0:N0} non caricati</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.Subidos" xml:space="preserve">
+    <value>{0:N0} caricati</value>
   </data>
   <data name="Ajustes.Subidas.Subidos" xml:space="preserve">
     <value>{0:N0} collegamento/i caricato/i.</value>
@@ -1509,7 +1689,7 @@ I suoi collegamenti e le impostazioni non vengono toccati. Se sta trasmettendo o
     <value>Carica ora tutto ciò che è in sospeso</value>
   </data>
   <data name="Ajustes.Subidas.Titulo" xml:space="preserve">
-    <value>Caricamento automatico</value>
+    <value>Caricamento automatico su LoTW, eQSL e Club Log</value>
   </data>
   <data name="Ajustes.Subidas.UsuarioPorOmision" xml:space="preserve">
     <value>Vuoto: si usa il nominativo del profilo di stazione.</value>
@@ -1573,6 +1753,9 @@ I suoi collegamenti e le impostazioni non vengono toccati. Se sta trasmettendo o
   </data>
   <data name="Ajustes.Tarjeta.Qrz.Descripcion" xml:space="preserve">
     <value>Scheda del corrispondente e caricamento dei collegamenti.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Qrz.Resumen" xml:space="preserve">
+    <value>Caricamento dei collegamenti: {0}. Scheda del corrispondente: {1}. Tutto ciò che riguarda QRZ si imposta in «Caricamenti e QRZ».</value>
   </data>
   <data name="Ajustes.Tarjeta.VolverAComprobar" xml:space="preserve">
     <value>Ricontrolla</value>

@@ -1264,10 +1264,10 @@ Congratulations and 73,
     <value>Valid key: QRZ accepts it.</value>
   </data>
   <data name="Servicios.Qrz.Prueba.CorrectaConContactos" xml:space="preserve">
-    <value>Valid key: the logbook holds {0:N0} contacts on QRZ.</value>
+    <value>Valid key: the logbook holds {0:N0} QSOs on QRZ.</value>
   </data>
   <data name="Servicios.Qrz.Prueba.CorrectaConLibro" xml:space="preserve">
-    <value>Valid key: it opens the logbook of {0}, which holds {1:N0} contacts on QRZ.</value>
+    <value>Valid key: it opens the logbook of {0}, which holds {1:N0} QSOs on QRZ.</value>
   </data>
   <data name="Servicios.Qrz.Prueba.CorrectaDe" xml:space="preserve">
     <value>Valid key: it opens the logbook of {0}.</value>
@@ -1737,6 +1737,9 @@ Congratulations and 73,
   <data name="Servicios.Subidas.FallidosYPendientes" xml:space="preserve">
     <value>{0}: {1} QSO(s) could not be uploaded and {2} are waiting their turn. Last error: {3}. Use “Upload now” in Settings › Uploads &amp; QRZ.</value>
   </data>
+  <data name="Servicios.Subidas.FaltaClaveDeQrz" xml:space="preserve">
+    <value>Cannot upload to QRZ: the logbook API key is missing in Settings › Uploads &amp; QRZ.</value>
+  </data>
   <data name="Servicios.Subidas.FaltanCredenciales" xml:space="preserve">
     <value>Cannot upload to {0}: the user name or credentials are missing in Settings › Accounts &amp; services.</value>
   </data>
@@ -1744,13 +1747,16 @@ Congratulations and 73,
     <value>Could not check {0}: {1}</value>
   </data>
   <data name="Servicios.Subidas.Parada" xml:space="preserve">
-    <value>{0}: upload stopped. {1} {2:N0} contact(s) are waiting; they will go out by themselves once this is fixed.</value>
+    <value>{0}: upload stopped. {1} {2:N0} QSO(s) are waiting; they will go out by themselves once this is fixed.</value>
   </data>
   <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
     <value>{0}: {1} QSO(s) waiting to be uploaded.</value>
   </data>
   <data name="Servicios.Subidas.PendientesYBloqueo" xml:space="preserve">
     <value>{0}: {1} pending. {2}</value>
+  </data>
+  <data name="Servicios.Subidas.QrzSinConfigurar" xml:space="preserve">
+    <value>QRZ: upload not set up. The logbook API key is missing in Settings › Uploads &amp; QRZ.</value>
   </data>
   <data name="Servicios.Subidas.SinConfigurar" xml:space="preserve">
     <value>{0}: automatic upload not configured (user name or credentials missing in Settings › Accounts &amp; services).</value>

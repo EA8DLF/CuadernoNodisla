@@ -1157,6 +1157,126 @@ Os seus contactos e definições não são alterados. Se estiver a transmitir ou
   <data name="Ajustes.NoSeHanPodidoGuardar" xml:space="preserve">
     <value>Não foi possível guardar: {0}</value>
   </data>
+  <data name="Ajustes.Qrz.Clave.AvisoForma" xml:space="preserve">
+    <value>Isto não tem a forma de uma chave de API (XXXX-XXXX-XXXX-XXXX). Se é a palavra-passe com que entra em qrz.com, vai no quadro «Preencher a ficha». Pode guardar na mesma e carregar em «Testar a chave».</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Borrar.Accesible" xml:space="preserve">
+    <value>Apagar a chave de API do logbook do QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Donde" xml:space="preserve">
+    <value>Onde está: com a sessão iniciada em qrz.com, abra a página «QRZ Logbook API Integration» (qrz.com/docs/logbook30/api). Lista os seus logbooks e a «API Key» de cada um. Tem a forma XXXX-XXXX-XXXX-XXXX e não é a palavra-passe do site.</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.GuardadaSinProbar" xml:space="preserve">
+    <value>Chave guardada. Carregue em «Testar a chave» para saber se o QRZ a aceita.</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Guardar.Accesible" xml:space="preserve">
+    <value>Guardar a chave de API do logbook do QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Requisito" xml:space="preserve">
+    <value>O QRZ só deixa usar esta chave se o dono do logbook tiver uma subscrição ativa de nível «XML» ou superior.</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Rotulo" xml:space="preserve">
+    <value>Chave de API do logbook</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.AvisoForma" xml:space="preserve">
+    <value>Isto tem a forma de uma chave de API do logbook, não de uma palavra-passe. A chave vai no quadro «Enviar os meus contactos para o QRZ»; aqui vai a palavra-passe com que entra em qrz.com.</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Borrar.Accesible" xml:space="preserve">
+    <value>Apagar a palavra-passe de qrz.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Donde" xml:space="preserve">
+    <value>A mesma com que entra no site do QRZ. Não é a chave de API.</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.GuardadaSinProbar" xml:space="preserve">
+    <value>Guardado. Carregue em «Testar o acesso» para saber se o QRZ o aceita.</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Guardar.Accesible" xml:space="preserve">
+    <value>Guardar a palavra-passe de qrz.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Rotulo" xml:space="preserve">
+    <value>Palavra-passe de qrz.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Entrada" xml:space="preserve">
+    <value>O QRZ pede um dado diferente para cada coisa: uma chave de API para enviar contactos para o seu logbook, e o utilizador e a palavra-passe do site para consultar fichas. Ter um não dá o outro.</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.Activada" xml:space="preserve">
+    <value>A funcionar</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.ConProblemas" xml:space="preserve">
+    <value>Com problemas</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.SinActivar" xml:space="preserve">
+    <value>Não ativado</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.SinClave" xml:space="preserve">
+    <value>Falta a chave</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.SinContrasena" xml:space="preserve">
+    <value>Falta a palavra-passe</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Activar" xml:space="preserve">
+    <value>Preencher os contactos com a ficha do QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.AvisoDeQrz" xml:space="preserve">
+    <value>O QRZ avisa: «{0}».</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Nota" xml:space="preserve">
+    <value>Só se preenche o que estiver vazio: nunca se sobrepõe o que escrever. Se o QRZ não responder usa-se o HamQTH, se a conta dele estiver em «Contas e serviços».</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Para" xml:space="preserve">
+    <value>Ao escrever um indicativo trazem-se o nome, QTH, localizador, país e zonas.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.ProbadaSinActivar" xml:space="preserve">
+    <value>O preenchimento não está ativado: marque «Preencher os contactos com a ficha do QRZ».</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Probar" xml:space="preserve">
+    <value>Testar o acesso</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Probar.Ayuda" xml:space="preserve">
+    <value>Abre uma sessão no QRZ com este utilizador e esta palavra-passe. Se o QRZ já os rejeitou, não se repete até um deles mudar: cada tentativa falhada aproxima o bloqueio da conta.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Requisito" xml:space="preserve">
+    <value>Sem subscrição XML paga, o QRZ só fornece parte da ficha.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Titulo" xml:space="preserve">
+    <value>Preencher a ficha do correspondente com o QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Probando" xml:space="preserve">
+    <value>A perguntar ao QRZ…</value>
+  </data>
+  <data name="Ajustes.Qrz.SesionSimulada" xml:space="preserve">
+    <value>Nesta sessão os serviços são simulados: não há nada para testar junto do QRZ.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Activar" xml:space="preserve">
+    <value>Enviar cada contacto para o QRZ ao registá-lo</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.HaySinSubir" xml:space="preserve">
+    <value>No seu logbook há {0:N0} contactos que não foram enviados para o QRZ: pode enviá-los aqui em baixo, com «Enviar os contactos anteriores».</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Para" xml:space="preserve">
+    <value>Cada contacto que registar junta-se sozinho ao seu logbook do QRZ.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.ProbadaSinActivar" xml:space="preserve">
+    <value>O envio não está ativado: marque «Enviar cada contacto para o QRZ ao registá-lo».</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Probar" xml:space="preserve">
+    <value>Testar a chave</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Probar.Ayuda" xml:space="preserve">
+    <value>Pergunta ao QRZ pelo estado do logbook. Não envia nem altera nenhum contacto.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Titulo" xml:space="preserve">
+    <value>Enviar os meus contactos para o QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Titulo" xml:space="preserve">
+    <value>QRZ.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Usuario.Guardar.Accesible" xml:space="preserve">
+    <value>Guardar o utilizador de qrz.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Usuario.Rotulo" xml:space="preserve">
+    <value>Utilizador de qrz.com</value>
+  </data>
   <data name="Ajustes.Secreto.Borrar.Accesible" xml:space="preserve">
     <value>Apagar a credencial guardada</value>
   </data>
@@ -1197,16 +1317,16 @@ Os seus contactos e definições não são alterados. Se estiver a transmitir ou
     <value>A da sua conta da ARRL. Usa-se para descarregar o relatório de confirmações.</value>
   </data>
   <data name="Ajustes.Secreto.QrzClaveDeCuaderno" xml:space="preserve">
-    <value>Chave do logbook do QRZ</value>
+    <value>Chave de API do logbook do QRZ</value>
   </data>
   <data name="Ajustes.Secreto.QrzClaveDeCuaderno.Ayuda" xml:space="preserve">
-    <value>É diferente da palavra-passe da conta: o QRZ fornece-a para enviar contactos.</value>
+    <value>Para enviar contactos. Tem a forma XXXX-XXXX-XXXX-XXXX e não é a palavra-passe do site.</value>
   </data>
   <data name="Ajustes.Secreto.QrzContrasena" xml:space="preserve">
-    <value>Palavra-passe do QRZ.com</value>
+    <value>Palavra-passe do site QRZ.com</value>
   </data>
   <data name="Ajustes.Secreto.QrzContrasena.Ayuda" xml:space="preserve">
-    <value>Para a consulta de indicativos por XML.</value>
+    <value>Para consultar fichas. É a mesma com que entra em qrz.com, não a chave de API.</value>
   </data>
   <data name="Ajustes.Secreto.SinGuardar" xml:space="preserve">
     <value>Não guardada</value>
@@ -1418,6 +1538,45 @@ Os seus contactos e definições não são alterados. Se estiver a transmitir ou
   <data name="Ajustes.Servidor.Tx.Nota" xml:space="preserve">
     <value>Também é preciso marcar «Permitir transmitir nesta sessão». O PTT de um programa passa pelo plano de banda, ROE, potência máxima, tempo máximo e dono do PTT, e é baixado se o programa se desligar ou deixar de comunicar.</value>
   </data>
+  <data name="Ajustes.Subidas.Anteriores.Boton" xml:space="preserve">
+    <value>Enviar os contactos anteriores…</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Cancelada" xml:space="preserve">
+    <value>Envio cancelado: {0:N0} contactos ficam por enviar. O que já foi enviado, enviado está.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Cancelar" xml:space="preserve">
+    <value>Cancelar o envio</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Confirmar" xml:space="preserve">
+    <value>Enviar {0:N0} contactos</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Descartar" xml:space="preserve">
+    <value>Não enviar</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Desde" xml:space="preserve">
+    <value>Só a partir do dia (UTC), como 2026-01-31. Vazio: todos</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Encolados" xml:space="preserve">
+    <value>{0:N0} contactos postos na fila. Saem sozinhos, por lotes; não é preciso deixar este ecrã aberto.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.EnMarcha" xml:space="preserve">
+    <value>A enviar os anteriores: {0:N0} de {1:N0}.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Explicacion" xml:space="preserve">
+    <value>Há {0:N0} contactos no logbook que não estão enviados para {1}. Só sai sozinho o que se regista com o envio já ativado; estes são de antes.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.FechaNoValida" xml:space="preserve">
+    <value>Essa data não se percebe. Escreva-a como 2026-01-31, ou deixe a caixa vazia para enviar todos.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Nada" xml:space="preserve">
+    <value>Não há contactos por enviar desde essa data.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Resumen" xml:space="preserve">
+    <value>Serão enviados {0:N0} contactos para {1}, do mais antigo para o mais recente e por lotes. O que já lá estiver não se duplica, pode continuar a operar entretanto e pode cancelar quando quiser.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Terminada" xml:space="preserve">
+    <value>O envio dos contactos anteriores terminou.</value>
+  </data>
   <data name="Ajustes.Subidas.Cola" xml:space="preserve">
     <value>Fila de envios</value>
   </data>
@@ -1429,6 +1588,9 @@ Os seus contactos e definições não são alterados. Se estiver a transmitir ou
   </data>
   <data name="Ajustes.Subidas.Cola.PendienteCorregido" xml:space="preserve">
     <value>Pendente (corrigido)</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.Recortada" xml:space="preserve">
+    <value>Mostram-se {0:N0} de {1:N0}, com os que têm erro à frente.</value>
   </data>
   <data name="Ajustes.Subidas.Cola.Reintento" xml:space="preserve">
     <value>Nova tentativa {0}: {1}</value>
@@ -1449,7 +1611,7 @@ Os seus contactos e definições não são alterados. Se estiver a transmitir ou
     <value>Completar com o QRZ.com</value>
   </data>
   <data name="Ajustes.Subidas.CuentasEn" xml:space="preserve">
-    <value>Os utilizadores e palavras-passe do QRZ.com, HamQTH, LoTW, eQSL e Club Log configuram-se em «Contas e serviços».</value>
+    <value>Os utilizadores e palavras-passe de LoTW, eQSL, Club Log e HamQTH põem-se em «Contas e serviços».</value>
   </data>
   <data name="Ajustes.Subidas.CuentasGuardadas" xml:space="preserve">
     <value>Contas guardadas. Valem já, sem reiniciar.</value>
@@ -1476,7 +1638,7 @@ Os seus contactos e definições não são alterados. Se estiver a transmitir ou
     <value>{0} Os contactos são guardados na mesma, sem os dados da ficha.</value>
   </data>
   <data name="Ajustes.Subidas.Ficha.SinContrasena" xml:space="preserve">
-    <value>Completar com o QRZ.com: falta a palavra-passe do QRZ.com (ou do HamQTH) em Definições › Contas e serviços. Os contactos são guardados na mesma, sem nome nem QTH da ficha.</value>
+    <value>Completar com o QRZ.com: falta a palavra-passe de qrz.com em Definições › Envios e QRZ (ou a do HamQTH em Contas e serviços). Os contactos guardam-se na mesma, sem nome nem QTH da ficha.</value>
   </data>
   <data name="Ajustes.Subidas.NadaPendiente" xml:space="preserve">
     <value>Não havia nada pendente.</value>
@@ -1492,6 +1654,24 @@ Os seus contactos e definições não são alterados. Se estiver a transmitir ou
   </data>
   <data name="Ajustes.Subidas.NotaNoModificable" xml:space="preserve">
     <value>Não admite alterações: um contacto já enviado fica como foi enviado.</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.ConError" xml:space="preserve">
+    <value>{0:N0} com erro</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.Contando" xml:space="preserve">
+    <value>A contar os contactos do logbook…</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.CuadernoVacio" xml:space="preserve">
+    <value>O logbook está vazio: ainda não há nada para enviar.</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.Pendientes" xml:space="preserve">
+    <value>{0:N0} pendentes</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.SinSubir" xml:space="preserve">
+    <value>{0:N0} por enviar</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.Subidos" xml:space="preserve">
+    <value>{0:N0} enviados</value>
   </data>
   <data name="Ajustes.Subidas.Subidos" xml:space="preserve">
     <value>{0:N0} contacto(s) enviado(s).</value>
@@ -1509,7 +1689,7 @@ Os seus contactos e definições não são alterados. Se estiver a transmitir ou
     <value>Enviar agora tudo o que está pendente</value>
   </data>
   <data name="Ajustes.Subidas.Titulo" xml:space="preserve">
-    <value>Envio automático</value>
+    <value>Envio automático para LoTW, eQSL e Club Log</value>
   </data>
   <data name="Ajustes.Subidas.UsuarioPorOmision" xml:space="preserve">
     <value>Vazio: usa-se o indicativo do perfil de estação.</value>
@@ -1573,6 +1753,9 @@ Os seus contactos e definições não são alterados. Se estiver a transmitir ou
   </data>
   <data name="Ajustes.Tarjeta.Qrz.Descripcion" xml:space="preserve">
     <value>Ficha do correspondente e envio de contactos.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Qrz.Resumen" xml:space="preserve">
+    <value>Enviar contactos: {0}. Ficha do correspondente: {1}. Tudo o que é do QRZ põe-se em «Envios e QRZ».</value>
   </data>
   <data name="Ajustes.Tarjeta.VolverAComprobar" xml:space="preserve">
     <value>Verificar de novo</value>

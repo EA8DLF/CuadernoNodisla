@@ -1264,10 +1264,10 @@ Herzlichen Glückwunsch und 73,
     <value>Schlüssel gültig: QRZ akzeptiert ihn.</value>
   </data>
   <data name="Servicios.Qrz.Prueba.CorrectaConContactos" xml:space="preserve">
-    <value>Schlüssel gültig: Das Logbuch enthält {0:N0} Kontakte bei QRZ.</value>
+    <value>Schlüssel gültig: Das Logbuch enthält {0:N0} Verbindungen bei QRZ.</value>
   </data>
   <data name="Servicios.Qrz.Prueba.CorrectaConLibro" xml:space="preserve">
-    <value>Schlüssel gültig: Er öffnet das Logbuch von {0} mit {1:N0} Kontakten bei QRZ.</value>
+    <value>Schlüssel gültig: Er öffnet das Logbuch von {0} mit {1:N0} Verbindungen bei QRZ.</value>
   </data>
   <data name="Servicios.Qrz.Prueba.CorrectaDe" xml:space="preserve">
     <value>Schlüssel gültig: Er öffnet das Logbuch von {0}.</value>
@@ -1737,6 +1737,9 @@ Herzlichen Glückwunsch und 73,
   <data name="Servicios.Subidas.FallidosYPendientes" xml:space="preserve">
     <value>{0}: {1} Verbindung(en) konnten nicht hochgeladen werden und {2} warten. Letzter Fehler: {3}. Verwenden Sie „Jetzt hochladen“ unter Einstellungen › Uploads und QRZ.</value>
   </data>
+  <data name="Servicios.Subidas.FaltaClaveDeQrz" xml:space="preserve">
+    <value>Upload zu QRZ nicht möglich: Der API-Schlüssel des Logbuchs fehlt unter Einstellungen › Uploads und QRZ.</value>
+  </data>
   <data name="Servicios.Subidas.FaltanCredenciales" xml:space="preserve">
     <value>Upload zu {0} nicht möglich: Benutzername oder Zugangsdaten fehlen unter Einstellungen › Konten und Dienste.</value>
   </data>
@@ -1744,13 +1747,16 @@ Herzlichen Glückwunsch und 73,
     <value>{0} konnte nicht geprüft werden: {1}</value>
   </data>
   <data name="Servicios.Subidas.Parada" xml:space="preserve">
-    <value>{0}: Upload angehalten. {1} {2:N0} Kontakt(e) warten; sie gehen von selbst hinaus, sobald das behoben ist.</value>
+    <value>{0}: Upload angehalten. {1} {2:N0} Verbindung(en) warten; sie gehen von selbst hinaus, sobald das behoben ist.</value>
   </data>
   <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
     <value>{0}: {1} Verbindung(en) warten auf den Upload.</value>
   </data>
   <data name="Servicios.Subidas.PendientesYBloqueo" xml:space="preserve">
     <value>{0}: {1} ausstehend. {2}</value>
+  </data>
+  <data name="Servicios.Subidas.QrzSinConfigurar" xml:space="preserve">
+    <value>QRZ: Upload nicht eingerichtet. Der API-Schlüssel des Logbuchs fehlt unter Einstellungen › Uploads und QRZ.</value>
   </data>
   <data name="Servicios.Subidas.SinConfigurar" xml:space="preserve">
     <value>{0}: automatischer Upload nicht eingerichtet (Benutzername oder Zugangsdaten fehlen unter Einstellungen › Konten und Dienste).</value>

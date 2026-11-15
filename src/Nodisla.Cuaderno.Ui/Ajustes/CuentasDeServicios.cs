@@ -144,6 +144,26 @@ public sealed class CuentasDeServicios
         }
     }
 
+    /// <summary>El cuaderno en linea de QRZ.com con la cuenta de ahora, para probar la clave.</summary>
+    public ServicioQrzCuaderno CuadernoDeQrz()
+    {
+        lock (_cerrojo)
+        {
+            MontarQrz();
+            return _qrz!.Value.Cuaderno;
+        }
+    }
+
+    /// <summary>La consulta de fichas de QRZ.com con la cuenta de ahora, para probar el acceso.</summary>
+    public ConsultaQrzCom ConsultaDeQrz()
+    {
+        lock (_cerrojo)
+        {
+            MontarQrz();
+            return _qrz!.Value.Consulta;
+        }
+    }
+
     /// <summary>La casilla de subida de un servicio. Nulo: lo que digan las credenciales.</summary>
     /// <param name="medio">Servicio.</param>
     public bool? Activado(MedioDeConfirmacion medio) => Activado(Cuentas, medio);
@@ -196,6 +216,10 @@ public sealed class CuentasDeServicios
                 _registros is null
                     ? null
                     : Microsoft.Extensions.Logging.LoggerFactoryExtensions.CreateLogger<ConsultaQrzCom>(_registros)),
-            new ServicioQrzCuaderno(_fabrica, _credenciales, opciones, _reintentos));
+            new ServicioQrzCuaderno(
+                _fabrica, _credenciales, opciones, _reintentos,
+                _registros is null
+                    ? null
+                    : Microsoft.Extensions.Logging.LoggerFactoryExtensions.CreateLogger<ServicioQrzCuaderno>(_registros)));
     }
 }

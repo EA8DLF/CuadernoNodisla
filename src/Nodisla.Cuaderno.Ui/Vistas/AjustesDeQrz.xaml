@@ -1,0 +1,357 @@
+<UserControl x:Class="Nodisla.Cuaderno.Ui.Vistas.AjustesDeQrz"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vistas="clr-namespace:Nodisla.Cuaderno.Ui.Vistas"
+             xmlns:conversores="clr-namespace:Nodisla.Cuaderno.Ui.Conversores"
+             xmlns:loc="clr-namespace:Nodisla.Cuaderno.Ui.Idiomas"
+             Foreground="{DynamicResource Texto}"
+             Focusable="False">
+
+    <!--
+        QRZ.COM, TODO JUNTO Y POR TAREAS.
+
+        QRZ pide dos datos distintos para dos cosas distintas: una clave de API para subir
+        contactos al libro, y el usuario y la contraseña de la web para consultar fichas. Antes
+        las dos casillas estaban pegadas en una tarjeta de «Cuentas y servicios» con rótulos
+        que solo distinguía quien ya lo sabía, y las casillas de activar en otro apartado.
+
+        Ahora hay un recuadro por lo que el operador quiere HACER. Cada uno lleva, de arriba
+        abajo y en el orden en que se usa: qué hace, el dato, de dónde se saca, probarlo (con
+        lo que QRZ ha contestado), activarlo y cómo va. Si se pega el dato de un recuadro en el otro, se avisa al
+        momento.
+
+        Los dos recuadros se ponen lado a lado si caben y uno bajo otro si no.
+    -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanoAVisible" />
+        <conversores:NoEsVacio x:Key="NoEsVacio" />
+        <conversores:AnchoEnLetras x:Key="AnchoEnLetras" />
+
+        <!-- El recuadro de una tarea -->
+        <Style x:Key="Tarea" TargetType="Border">
+            <Setter Property="Margin" Value="0,0,12,12" />
+            <Setter Property="Padding" Value="14,12" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Background" Value="{DynamicResource FondoAlterno}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BordeSuave}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+
+        <Style x:Key="TituloDeTarea" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+        </Style>
+
+        <!-- La chapa del estado: verde en marcha, ámbar a medias, gris sin nada -->
+        <Style x:Key="Chapa" TargetType="Border">
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="7,1" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+        </Style>
+
+        <!-- Lo que QRZ ha contestado a «Probar»: el color dice cómo ha ido antes de leerlo -->
+        <Style x:Key="Respuesta" TargetType="Border">
+            <Setter Property="Margin" Value="0,8,0,0" />
+            <Setter Property="Padding" Value="9,6" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+        </Style>
+
+        <Style x:Key="AvisoDeForma" TargetType="Border">
+            <Setter Property="Margin" Value="0,5,0,0" />
+            <Setter Property="Padding" Value="9,6" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+        </Style>
+
+        <Style x:Key="Casilla" TargetType="PasswordBox">
+            <Setter Property="Padding" Value="6,3" />
+            <Setter Property="Background" Value="{DynamicResource FondoCampo}" />
+            <Setter Property="Foreground" Value="{DynamicResource Texto}" />
+            <Setter Property="CaretBrush" Value="{DynamicResource Texto}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Borde}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel Margin="0,0,0,6">
+        <TextBlock Text="{loc:Texto Ajustes.Qrz.Titulo}" Style="{StaticResource TituloDeSeccion}" />
+        <TextBlock Text="{loc:Texto Ajustes.Qrz.Entrada}"
+                   Style="{StaticResource TextoTenueEstilo}"
+                   MaxWidth="{Binding Path=(TextElement.FontSize), RelativeSource={RelativeSource Self}, Converter={StaticResource AnchoEnLetras}, ConverterParameter=44}"
+                   HorizontalAlignment="Left"
+                   Margin="0,0,0,10" />
+
+        <WrapPanel ItemWidth="{Binding Path=(TextElement.FontSize), RelativeSource={RelativeSource Self}, Converter={StaticResource AnchoEnLetras}, ConverterParameter=33}">
+
+            <!-- ══ Subir mis contactos a QRZ ══ -->
+            <Border Style="{StaticResource Tarea}">
+                <StackPanel>
+                    <DockPanel>
+                        <Border DockPanel.Dock="Right">
+                            <Border.Style>
+                                <Style TargetType="Border" BasedOn="{StaticResource Chapa}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding EstadoDeLaSubida}" Value="Configurado">
+                                            <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding EstadoDeLaSubida}" Value="AMedias">
+                                            <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding EstadoDeLaSubidaTexto}" FontSize="11" />
+                        </Border>
+                        <TextBlock Text="{loc:Texto Ajustes.Qrz.Subir.Titulo}" Style="{StaticResource TituloDeTarea}" />
+                    </DockPanel>
+                    <TextBlock Text="{loc:Texto Ajustes.Qrz.Subir.Para}" Style="{StaticResource TextoTenueEstilo}" Margin="0,2,0,0" />
+
+                    <!-- El dato: la clave de API -->
+                    <DockPanel Margin="0,12,0,2">
+                        <TextBlock DockPanel.Dock="Right"
+                                   Text="{Binding ClaveDeApi.Estado}"
+                                   Style="{StaticResource TextoTenueEstilo}"
+                                   FontSize="11"
+                                   VerticalAlignment="Bottom" />
+                        <TextBlock Text="{loc:Texto Ajustes.Qrz.Clave.Rotulo}" FontWeight="SemiBold" />
+                    </DockPanel>
+                    <DockPanel DataContext="{Binding ClaveDeApi}">
+                        <Button DockPanel.Dock="Right"
+                                Content="{loc:Texto Comun.Borrar}"
+                                Command="{Binding BorrarCommand}"
+                                Margin="5,0,0,0"
+                                Padding="8,2"
+                                AutomationProperties.Name="{loc:Texto Ajustes.Qrz.Clave.Borrar.Accesible}" />
+                        <Button DockPanel.Dock="Right"
+                                Content="{loc:Texto Comun.Guardar}"
+                                Command="{Binding GuardarCommand}"
+                                Margin="5,0,0,0"
+                                Padding="8,2"
+                                AutomationProperties.Name="{loc:Texto Ajustes.Qrz.Clave.Guardar.Accesible}" />
+                        <PasswordBox x:Name="CasillaDeLaClave"
+                                     Style="{StaticResource Casilla}"
+                                     vistas:EnlaceDeSecreto.Activo="True"
+                                     AutomationProperties.Name="{loc:Texto Ajustes.Qrz.Clave.Rotulo}" />
+                    </DockPanel>
+                    <Border Style="{StaticResource AvisoDeForma}"
+                            Visibility="{Binding ClaveDeApi.HayAviso, Converter={StaticResource BooleanoAVisible}}">
+                        <TextBlock Text="{Binding ClaveDeApi.Aviso}" Foreground="{DynamicResource AvisoTexto}" TextWrapping="Wrap" />
+                    </Border>
+                    <TextBlock Text="{loc:Texto Ajustes.Qrz.Clave.Donde}"
+                               Style="{StaticResource TextoTenueEstilo}"
+                               Margin="0,5,0,0" />
+                    <TextBlock Text="{loc:Texto Ajustes.Qrz.Clave.Requisito}"
+                               Style="{StaticResource TextoTenueEstilo}"
+                               Margin="0,4,0,0" />
+
+                    <!-- Probar -->
+                    <Button Content="{loc:Texto Ajustes.Qrz.Subir.Probar}"
+                            Command="{Binding ProbarLaClaveCommand}"
+                            HorizontalAlignment="Left"
+                            Margin="0,12,0,0"
+                            Padding="12,3"
+                            ToolTip="{loc:Texto Ajustes.Qrz.Subir.Probar.Ayuda}" />
+                    <Border Visibility="{Binding PruebaDeLaClave, Converter={StaticResource NoEsVacio}}">
+                        <Border.Style>
+                            <Style TargetType="Border" BasedOn="{StaticResource Respuesta}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding TonoDeLaClave}" Value="Correcto">
+                                        <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding TonoDeLaClave}" Value="Aviso">
+                                        <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding TonoDeLaClave}" Value="Error">
+                                        <Setter Property="Background" Value="{DynamicResource ErrorFondo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorde}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding PruebaDeLaClave}"
+                                   TextWrapping="Wrap"
+                                   AutomationProperties.LiveSetting="Polite"
+                                   AutomationProperties.Name="{Binding PruebaDeLaClave}" />
+                    </Border>
+                    <!-- Activar -->
+                    <CheckBox IsChecked="{Binding Subida.Activado}"
+                              Content="{loc:Texto Ajustes.Qrz.Subir.Activar}"
+                              Margin="0,12,0,0"
+                              FontWeight="SemiBold"
+                              AutomationProperties.Name="{loc:Texto Ajustes.Qrz.Subir.Activar}" />
+                    <TextBlock Text="{Binding Subida.Nota}" Style="{StaticResource TextoTenueEstilo}" Margin="0,1,0,0" />
+
+                    <!-- Cómo va la cola de QRZ: al día, pendientes, parada con su motivo -->
+                    <Border Margin="0,8,0,0" Padding="9,6" CornerRadius="4" BorderThickness="1">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource BordeSuave}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Subida.Semaforo}" Value="Ambar">
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Subida.Semaforo}" Value="Rojo">
+                                        <Setter Property="Background" Value="{DynamicResource ErrorFondo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorde}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Subida.Estado}" TextWrapping="Wrap" />
+                            <vistas:AnterioresDeSubida DataContext="{Binding Subida}" />
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </Border>
+
+            <!-- ══ Rellenar la ficha del corresponsal con QRZ ══ -->
+            <Border Style="{StaticResource Tarea}">
+                <StackPanel>
+                    <DockPanel>
+                        <Border DockPanel.Dock="Right">
+                            <Border.Style>
+                                <Style TargetType="Border" BasedOn="{StaticResource Chapa}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding EstadoDeLaFicha}" Value="Configurado">
+                                            <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding EstadoDeLaFicha}" Value="AMedias">
+                                            <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock Text="{Binding EstadoDeLaFichaTexto}" FontSize="11" />
+                        </Border>
+                        <TextBlock Text="{loc:Texto Ajustes.Qrz.Ficha.Titulo}" Style="{StaticResource TituloDeTarea}" />
+                    </DockPanel>
+                    <TextBlock Text="{loc:Texto Ajustes.Qrz.Ficha.Para}" Style="{StaticResource TextoTenueEstilo}" Margin="0,2,0,0" />
+
+                    <!-- Los datos: usuario y contraseña de la web -->
+                    <TextBlock Text="{loc:Texto Ajustes.Qrz.Usuario.Rotulo}" FontWeight="SemiBold" Margin="0,12,0,2" />
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right"
+                                Content="{loc:Texto Comun.Guardar}"
+                                Command="{Binding GuardarElUsuarioCommand}"
+                                Margin="5,0,0,0"
+                                Padding="8,2"
+                                AutomationProperties.Name="{loc:Texto Ajustes.Qrz.Usuario.Guardar.Accesible}" />
+                        <TextBox Text="{Binding Usuario, UpdateSourceTrigger=PropertyChanged}"
+                                 Padding="6,3"
+                                 AutomationProperties.Name="{loc:Texto Ajustes.Qrz.Usuario.Rotulo}" />
+                    </DockPanel>
+                    <TextBlock Text="{Binding UsuarioPorOmision}" Style="{StaticResource TextoTenueEstilo}" Margin="0,3,0,0" />
+
+                    <DockPanel Margin="0,10,0,2">
+                        <TextBlock DockPanel.Dock="Right"
+                                   Text="{Binding Contrasena.Estado}"
+                                   Style="{StaticResource TextoTenueEstilo}"
+                                   FontSize="11"
+                                   VerticalAlignment="Bottom" />
+                        <TextBlock Text="{loc:Texto Ajustes.Qrz.Contrasena.Rotulo}" FontWeight="SemiBold" />
+                    </DockPanel>
+                    <DockPanel DataContext="{Binding Contrasena}">
+                        <Button DockPanel.Dock="Right"
+                                Content="{loc:Texto Comun.Borrar}"
+                                Command="{Binding BorrarCommand}"
+                                Margin="5,0,0,0"
+                                Padding="8,2"
+                                AutomationProperties.Name="{loc:Texto Ajustes.Qrz.Contrasena.Borrar.Accesible}" />
+                        <Button DockPanel.Dock="Right"
+                                Content="{loc:Texto Comun.Guardar}"
+                                Command="{Binding GuardarCommand}"
+                                Margin="5,0,0,0"
+                                Padding="8,2"
+                                AutomationProperties.Name="{loc:Texto Ajustes.Qrz.Contrasena.Guardar.Accesible}" />
+                        <PasswordBox x:Name="CasillaDeLaContrasena"
+                                     Style="{StaticResource Casilla}"
+                                     vistas:EnlaceDeSecreto.Activo="True"
+                                     AutomationProperties.Name="{loc:Texto Ajustes.Qrz.Contrasena.Rotulo}" />
+                    </DockPanel>
+                    <Border Style="{StaticResource AvisoDeForma}"
+                            Visibility="{Binding Contrasena.HayAviso, Converter={StaticResource BooleanoAVisible}}">
+                        <TextBlock Text="{Binding Contrasena.Aviso}" Foreground="{DynamicResource AvisoTexto}" TextWrapping="Wrap" />
+                    </Border>
+                    <TextBlock Text="{loc:Texto Ajustes.Qrz.Contrasena.Donde}"
+                               Style="{StaticResource TextoTenueEstilo}"
+                               Margin="0,5,0,0" />
+                    <TextBlock Text="{loc:Texto Ajustes.Qrz.Ficha.Requisito}"
+                               Style="{StaticResource TextoTenueEstilo}"
+                               Margin="0,4,0,0" />
+
+                    <!-- Probar -->
+                    <Button Content="{loc:Texto Ajustes.Qrz.Ficha.Probar}"
+                            Command="{Binding ProbarElAccesoCommand}"
+                            HorizontalAlignment="Left"
+                            Margin="0,12,0,0"
+                            Padding="12,3"
+                            ToolTip="{loc:Texto Ajustes.Qrz.Ficha.Probar.Ayuda}" />
+                    <Border Visibility="{Binding PruebaDelAcceso, Converter={StaticResource NoEsVacio}}">
+                        <Border.Style>
+                            <Style TargetType="Border" BasedOn="{StaticResource Respuesta}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding TonoDelAcceso}" Value="Correcto">
+                                        <Setter Property="Background" Value="{DynamicResource CorrectoFondo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource CorrectoBorde}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding TonoDelAcceso}" Value="Aviso">
+                                        <Setter Property="Background" Value="{DynamicResource AvisoFondo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AvisoBorde}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding TonoDelAcceso}" Value="Error">
+                                        <Setter Property="Background" Value="{DynamicResource ErrorFondo}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ErrorBorde}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding PruebaDelAcceso}"
+                                   TextWrapping="Wrap"
+                                   AutomationProperties.LiveSetting="Polite"
+                                   AutomationProperties.Name="{Binding PruebaDelAcceso}" />
+                    </Border>
+                    <!-- Activar -->
+                    <CheckBox IsChecked="{Binding Completar}"
+                              Content="{loc:Texto Ajustes.Qrz.Ficha.Activar}"
+                              Margin="0,12,0,0"
+                              FontWeight="SemiBold"
+                              AutomationProperties.Name="{loc:Texto Ajustes.Subidas.Completar.Accesible}" />
+                    <TextBlock Text="{loc:Texto Ajustes.Qrz.Ficha.Nota}" Style="{StaticResource TextoTenueEstilo}" Margin="0,1,0,0" />
+
+                    <!-- Lo que le pasa a la consulta mientras se opera, si le pasa algo -->
+                    <Border Margin="0,8,0,0"
+                            Padding="9,6"
+                            CornerRadius="4"
+                            BorderThickness="1"
+                            Background="{DynamicResource AvisoFondo}"
+                            BorderBrush="{DynamicResource AvisoBorde}"
+                            Visibility="{Binding ProblemaDeLaFicha, Converter={StaticResource NoEsVacio}}">
+                        <TextBlock Text="{Binding ProblemaDeLaFicha}" Foreground="{DynamicResource AvisoTexto}" TextWrapping="Wrap" />
+                    </Border>
+
+                </StackPanel>
+            </Border>
+        </WrapPanel>
+    </StackPanel>
+</UserControl>

@@ -1264,10 +1264,10 @@ Congratulazioni e 73,
     <value>Chiave valida: QRZ la accetta.</value>
   </data>
   <data name="Servicios.Qrz.Prueba.CorrectaConContactos" xml:space="preserve">
-    <value>Chiave valida: il log ha {0:N0} contatti su QRZ.</value>
+    <value>Chiave valida: il log ha {0:N0} collegamenti su QRZ.</value>
   </data>
   <data name="Servicios.Qrz.Prueba.CorrectaConLibro" xml:space="preserve">
-    <value>Chiave valida: dà accesso al log di {0}, che ha {1:N0} contatti su QRZ.</value>
+    <value>Chiave valida: dà accesso al log di {0}, che ha {1:N0} collegamenti su QRZ.</value>
   </data>
   <data name="Servicios.Qrz.Prueba.CorrectaDe" xml:space="preserve">
     <value>Chiave valida: dà accesso al log di {0}.</value>
@@ -1737,6 +1737,9 @@ Congratulazioni e 73,
   <data name="Servicios.Subidas.FallidosYPendientes" xml:space="preserve">
     <value>{0}: non è stato possibile caricare {1} collegamento/i e {2} attendono il proprio turno. Ultimo errore: {3}. Usi «Carica ora» in Impostazioni › Caricamenti e QRZ.</value>
   </data>
+  <data name="Servicios.Subidas.FaltaClaveDeQrz" xml:space="preserve">
+    <value>Impossibile caricare su QRZ: manca la chiave API del log in Impostazioni › Caricamenti e QRZ.</value>
+  </data>
   <data name="Servicios.Subidas.FaltanCredenciales" xml:space="preserve">
     <value>Impossibile caricare su {0}: mancano l'utente o le credenziali in Impostazioni › Account e servizi.</value>
   </data>
@@ -1744,13 +1747,16 @@ Congratulazioni e 73,
     <value>Impossibile verificare {0}: {1}</value>
   </data>
   <data name="Servicios.Subidas.Parada" xml:space="preserve">
-    <value>{0}: caricamento fermo. {1} Ci sono {2:N0} contatto/i in attesa; partiranno da soli appena sarà risolto.</value>
+    <value>{0}: caricamento fermo. {1} Ci sono {2:N0} collegamento/i in attesa; partiranno da soli appena sarà risolto.</value>
   </data>
   <data name="Servicios.Subidas.Pendientes" xml:space="preserve">
     <value>{0}: {1} collegamento/i da caricare.</value>
   </data>
   <data name="Servicios.Subidas.PendientesYBloqueo" xml:space="preserve">
     <value>{0}: {1} in sospeso. {2}</value>
+  </data>
+  <data name="Servicios.Subidas.QrzSinConfigurar" xml:space="preserve">
+    <value>QRZ: caricamento non configurato. Manca la chiave API del log in Impostazioni › Caricamenti e QRZ.</value>
   </data>
   <data name="Servicios.Subidas.SinConfigurar" xml:space="preserve">
     <value>{0}: caricamento automatico non configurato (mancano utente o credenziali in Impostazioni › Account e servizi).</value>

@@ -1157,6 +1157,126 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   <data name="Ajustes.NoSeHanPodidoGuardar" xml:space="preserve">
     <value>Could not save: {0}</value>
   </data>
+  <data name="Ajustes.Qrz.Clave.AvisoForma" xml:space="preserve">
+    <value>This does not look like an API key (XXXX-XXXX-XXXX-XXXX). If it is the password you sign in to qrz.com with, it belongs in the “Fill in the record” box. You can still save it and press “Test the key”.</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Borrar.Accesible" xml:space="preserve">
+    <value>Delete the QRZ logbook API key</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Donde" xml:space="preserve">
+    <value>Where to find it: signed in to qrz.com, open the “QRZ Logbook API Integration” page (qrz.com/docs/logbook30/api). It lists your logbooks and the “API Key” of each. It looks like XXXX-XXXX-XXXX-XXXX and it is not the website password.</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.GuardadaSinProbar" xml:space="preserve">
+    <value>Key saved. Press “Test the key” to find out whether QRZ accepts it.</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Guardar.Accesible" xml:space="preserve">
+    <value>Save the QRZ logbook API key</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Requisito" xml:space="preserve">
+    <value>QRZ only lets this key work if the logbook owner has an active subscription at the “XML” level or higher.</value>
+  </data>
+  <data name="Ajustes.Qrz.Clave.Rotulo" xml:space="preserve">
+    <value>Logbook API key</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.AvisoForma" xml:space="preserve">
+    <value>This looks like a logbook API key, not a password. The key belongs in the “Upload my QSOs to QRZ” box; the password you sign in to qrz.com with goes here.</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Borrar.Accesible" xml:space="preserve">
+    <value>Delete the qrz.com password</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Donde" xml:space="preserve">
+    <value>The one you sign in to the QRZ website with. It is not the API key.</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.GuardadaSinProbar" xml:space="preserve">
+    <value>Saved. Press “Test the sign-in” to find out whether QRZ accepts it.</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Guardar.Accesible" xml:space="preserve">
+    <value>Save the qrz.com password</value>
+  </data>
+  <data name="Ajustes.Qrz.Contrasena.Rotulo" xml:space="preserve">
+    <value>qrz.com password</value>
+  </data>
+  <data name="Ajustes.Qrz.Entrada" xml:space="preserve">
+    <value>QRZ asks for a different credential for each job: an API key to upload QSOs to your logbook, and the website user name and password to look up call signs. Having one does not give you the other.</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.Activada" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.ConProblemas" xml:space="preserve">
+    <value>Needs attention</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.SinActivar" xml:space="preserve">
+    <value>Not turned on</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.SinClave" xml:space="preserve">
+    <value>Key missing</value>
+  </data>
+  <data name="Ajustes.Qrz.Estado.SinContrasena" xml:space="preserve">
+    <value>Password missing</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Activar" xml:space="preserve">
+    <value>Fill in QSOs from the QRZ record</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.AvisoDeQrz" xml:space="preserve">
+    <value>QRZ notes: “{0}”.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Nota" xml:space="preserve">
+    <value>Only empty fields are filled in: what you type is never overwritten. If QRZ does not answer, HamQTH is used when its account is set under “Accounts &amp; services”.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Para" xml:space="preserve">
+    <value>When you type a call sign, its name, QTH, locator, country and zones are fetched.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.ProbadaSinActivar" xml:space="preserve">
+    <value>Filling in is not turned on: tick “Fill in QSOs from the QRZ record”.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Probar" xml:space="preserve">
+    <value>Test the sign-in</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Probar.Ayuda" xml:space="preserve">
+    <value>Opens a QRZ session with this user name and password. If QRZ already rejected them, it is not repeated until one of them changes: every failed attempt brings the account closer to a lockout.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Requisito" xml:space="preserve">
+    <value>Without a paid XML subscription, QRZ only provides part of the record.</value>
+  </data>
+  <data name="Ajustes.Qrz.Ficha.Titulo" xml:space="preserve">
+    <value>Fill in the other station's record from QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Probando" xml:space="preserve">
+    <value>Asking QRZ…</value>
+  </data>
+  <data name="Ajustes.Qrz.SesionSimulada" xml:space="preserve">
+    <value>Services are simulated in this session: there is nothing to test against QRZ.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Activar" xml:space="preserve">
+    <value>Upload each QSO to QRZ when it is logged</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.HaySinSubir" xml:space="preserve">
+    <value>Your logbook holds {0:N0} QSOs that have not been uploaded to QRZ: you can upload them just below, with “Upload the earlier QSOs”.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Para" xml:space="preserve">
+    <value>Every QSO you log is added to your QRZ logbook by itself.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.ProbadaSinActivar" xml:space="preserve">
+    <value>Uploading is not turned on: tick “Upload each QSO to QRZ when it is logged”.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Probar" xml:space="preserve">
+    <value>Test the key</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Probar.Ayuda" xml:space="preserve">
+    <value>Asks QRZ for the logbook status. It uploads and changes nothing.</value>
+  </data>
+  <data name="Ajustes.Qrz.Subir.Titulo" xml:space="preserve">
+    <value>Upload my QSOs to QRZ</value>
+  </data>
+  <data name="Ajustes.Qrz.Titulo" xml:space="preserve">
+    <value>QRZ.com</value>
+  </data>
+  <data name="Ajustes.Qrz.Usuario.Guardar.Accesible" xml:space="preserve">
+    <value>Save the qrz.com user name</value>
+  </data>
+  <data name="Ajustes.Qrz.Usuario.Rotulo" xml:space="preserve">
+    <value>qrz.com user name</value>
+  </data>
   <data name="Ajustes.Secreto.Borrar.Accesible" xml:space="preserve">
     <value>Delete the saved credential</value>
   </data>
@@ -1197,16 +1317,16 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
     <value>The one for your ARRL account. It is used to download the confirmations report.</value>
   </data>
   <data name="Ajustes.Secreto.QrzClaveDeCuaderno" xml:space="preserve">
-    <value>QRZ logbook key</value>
+    <value>QRZ logbook API key</value>
   </data>
   <data name="Ajustes.Secreto.QrzClaveDeCuaderno.Ayuda" xml:space="preserve">
-    <value>It is not the account password: QRZ issues it for uploading QSOs.</value>
+    <value>For uploading QSOs. It looks like XXXX-XXXX-XXXX-XXXX and it is not the website password.</value>
   </data>
   <data name="Ajustes.Secreto.QrzContrasena" xml:space="preserve">
-    <value>QRZ.com password</value>
+    <value>QRZ.com website password</value>
   </data>
   <data name="Ajustes.Secreto.QrzContrasena.Ayuda" xml:space="preserve">
-    <value>For call sign lookups via XML.</value>
+    <value>For looking up call signs. It is the one you sign in to qrz.com with, not the API key.</value>
   </data>
   <data name="Ajustes.Secreto.SinGuardar" xml:space="preserve">
     <value>Not saved</value>
@@ -1418,6 +1538,45 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   <data name="Ajustes.Servidor.Tx.Nota" xml:space="preserve">
     <value>"Allow transmitting in this session" must also be ticked. A program's PTT goes through the band plan, SWR, maximum power, maximum time and PTT owner checks, and is dropped if the program disconnects or stops talking.</value>
   </data>
+  <data name="Ajustes.Subidas.Anteriores.Boton" xml:space="preserve">
+    <value>Upload the earlier QSOs…</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Cancelada" xml:space="preserve">
+    <value>Upload cancelled: {0:N0} QSOs stay not uploaded. What was already uploaded stays uploaded.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Cancelar" xml:space="preserve">
+    <value>Cancel the upload</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Confirmar" xml:space="preserve">
+    <value>Upload {0:N0} QSOs</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Descartar" xml:space="preserve">
+    <value>Do not upload</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Desde" xml:space="preserve">
+    <value>Only from this day (UTC), like 2026-01-31. Empty: all of them</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Encolados" xml:space="preserve">
+    <value>{0:N0} QSOs queued. They go out by themselves, in batches; this screen does not have to stay open.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.EnMarcha" xml:space="preserve">
+    <value>Uploading the earlier QSOs: {0:N0} of {1:N0}.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Explicacion" xml:space="preserve">
+    <value>{0:N0} QSOs in the logbook are not uploaded to {1}. Only what is logged with uploading already on goes out by itself; these are from before.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.FechaNoValida" xml:space="preserve">
+    <value>That date cannot be read. Type it like 2026-01-31, or leave the box empty to upload them all.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Nada" xml:space="preserve">
+    <value>There are no QSOs left to upload from that date.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Resumen" xml:space="preserve">
+    <value>{0:N0} QSOs will be uploaded to {1}, oldest first and in batches. What is already there is not duplicated, you can keep operating meanwhile and you can cancel at any time.</value>
+  </data>
+  <data name="Ajustes.Subidas.Anteriores.Terminada" xml:space="preserve">
+    <value>The upload of the earlier QSOs has finished.</value>
+  </data>
   <data name="Ajustes.Subidas.Cola" xml:space="preserve">
     <value>Upload queue</value>
   </data>
@@ -1429,6 +1588,9 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   </data>
   <data name="Ajustes.Subidas.Cola.PendienteCorregido" xml:space="preserve">
     <value>Pending (corrected)</value>
+  </data>
+  <data name="Ajustes.Subidas.Cola.Recortada" xml:space="preserve">
+    <value>Showing {0:N0} of {1:N0}, those with an error first.</value>
   </data>
   <data name="Ajustes.Subidas.Cola.Reintento" xml:space="preserve">
     <value>Retry {0}: {1}</value>
@@ -1449,7 +1611,7 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
     <value>Complete with QRZ.com</value>
   </data>
   <data name="Ajustes.Subidas.CuentasEn" xml:space="preserve">
-    <value>User names and passwords for QRZ.com, HamQTH, LoTW, eQSL and Club Log go in “Accounts &amp; services”.</value>
+    <value>The user names and passwords for LoTW, eQSL, Club Log and HamQTH are set under “Accounts &amp; services”.</value>
   </data>
   <data name="Ajustes.Subidas.CuentasGuardadas" xml:space="preserve">
     <value>Accounts saved. They take effect now, without restarting.</value>
@@ -1476,7 +1638,7 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
     <value>{0} QSOs are saved anyway, without the record data.</value>
   </data>
   <data name="Ajustes.Subidas.Ficha.SinContrasena" xml:space="preserve">
-    <value>Complete with QRZ.com: the QRZ.com (or HamQTH) password is missing in Settings › Accounts &amp; services. QSOs are saved anyway, without the name or QTH from the record.</value>
+    <value>Complete from QRZ.com: the qrz.com password is missing in Settings › Uploads &amp; QRZ (or the HamQTH one under Accounts &amp; services). QSOs are saved anyway, without the name or QTH from the record.</value>
   </data>
   <data name="Ajustes.Subidas.NadaPendiente" xml:space="preserve">
     <value>There was nothing pending.</value>
@@ -1492,6 +1654,24 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   </data>
   <data name="Ajustes.Subidas.NotaNoModificable" xml:space="preserve">
     <value>Edits are not supported: a QSO already uploaded stays as it was uploaded.</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.ConError" xml:space="preserve">
+    <value>{0:N0} failed</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.Contando" xml:space="preserve">
+    <value>Counting the QSOs in the logbook…</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.CuadernoVacio" xml:space="preserve">
+    <value>The logbook is empty: there is nothing to upload yet.</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.Pendientes" xml:space="preserve">
+    <value>{0:N0} waiting</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.SinSubir" xml:space="preserve">
+    <value>{0:N0} not uploaded</value>
+  </data>
+  <data name="Ajustes.Subidas.Recuento.Subidos" xml:space="preserve">
+    <value>{0:N0} uploaded</value>
   </data>
   <data name="Ajustes.Subidas.Subidos" xml:space="preserve">
     <value>{0:N0} QSO(s) uploaded.</value>
@@ -1509,7 +1689,7 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
     <value>Upload everything pending now</value>
   </data>
   <data name="Ajustes.Subidas.Titulo" xml:space="preserve">
-    <value>Automatic upload</value>
+    <value>Automatic upload to LoTW, eQSL and Club Log</value>
   </data>
   <data name="Ajustes.Subidas.UsuarioPorOmision" xml:space="preserve">
     <value>Empty: the station profile call sign is used.</value>
@@ -1573,6 +1753,9 @@ Your QSOs and settings are not touched. If you are transmitting or in the middle
   </data>
   <data name="Ajustes.Tarjeta.Qrz.Descripcion" xml:space="preserve">
     <value>Station details lookup and QSO upload.</value>
+  </data>
+  <data name="Ajustes.Tarjeta.Qrz.Resumen" xml:space="preserve">
+    <value>Uploading QSOs: {0}. Other station's record: {1}. Everything about QRZ is set under “Uploads &amp; QRZ”.</value>
   </data>
   <data name="Ajustes.Tarjeta.VolverAComprobar" xml:space="preserve">
     <value>Check again</value>

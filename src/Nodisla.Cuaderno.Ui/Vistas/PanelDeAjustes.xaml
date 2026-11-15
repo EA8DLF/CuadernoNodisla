@@ -55,6 +55,9 @@
         <DataTemplate DataType="{x:Type vistamodelos:VistaModeloSubidas}">
             <vistas:AjustesDeSubidas />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vistamodelos:VistaModeloQrz}">
+            <vistas:AjustesDeQrz />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vistamodelos:VistaModeloCorreoQsl}">
             <vistas:AjustesDeCorreo />
         </DataTemplate>
@@ -281,7 +284,12 @@
             <Border Style="{StaticResource CuerpoDelApartado}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel MaxWidth="900" HorizontalAlignment="Left">
-                        <!-- Subida automática a LoTW, eQSL, Club Log y QRZ, y la ficha de QRZ.com. -->
+                        <!--
+                            Primero QRZ.com entero —subir los contactos y rellenar la ficha,
+                            cada cosa con su dato, su casilla y su prueba—, y debajo la subida
+                            a los demás servicios y la cola.
+                        -->
+                        <ContentControl Content="{Binding Qrz}" Focusable="False" />
                         <ContentControl Content="{Binding Subidas}" Focusable="False" />
                         <TextBlock Text="{loc:Texto Ajustes.Subidas.NoMontada}"
                                    Style="{StaticResource TextoTenueEstilo}"

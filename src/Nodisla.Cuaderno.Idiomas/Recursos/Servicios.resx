@@ -1748,6 +1748,9 @@ Enhorabuena y 73,
   <data name="Servicios.Subidas.FallidosYPendientes" xml:space="preserve">
     <value>{0}: {1} contacto(s) no se han podido subir y {2} esperan turno. Último error: {3}. Use «Subir ahora» en Configuración › Subidas y QRZ.</value>
   </data>
+  <data name="Servicios.Subidas.FaltaClaveDeQrz" xml:space="preserve">
+    <value>No se puede subir a QRZ: falta la clave de API del libro en Configuración › Subidas y QRZ.</value>
+  </data>
   <data name="Servicios.Subidas.FaltanCredenciales" xml:space="preserve">
     <value>No se puede subir a {0}: faltan el usuario o las credenciales en Configuración › Cuentas y servicios.</value>
   </data>
@@ -1762,6 +1765,9 @@ Enhorabuena y 73,
   </data>
   <data name="Servicios.Subidas.PendientesYBloqueo" xml:space="preserve">
     <value>{0}: {1} pendiente(s). {2}</value>
+  </data>
+  <data name="Servicios.Subidas.QrzSinConfigurar" xml:space="preserve">
+    <value>QRZ: subida sin configurar. Falta la clave de API del libro en Configuración › Subidas y QRZ.</value>
   </data>
   <data name="Servicios.Subidas.SinConfigurar" xml:space="preserve">
     <value>{0}: subida automática sin configurar (faltan usuario o credenciales en Configuración › Cuentas y servicios).</value>
