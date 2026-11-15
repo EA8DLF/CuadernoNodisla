@@ -17,6 +17,7 @@ namespace Nodisla.Cuaderno.Ui;
 public partial class App : Application
 {
     private IHost? _anfitrion;
+    private Soporte.InstanciaUnica? _instancia;
 
     /// <summary>Carpeta de datos del programa dentro del perfil del usuario.</summary>
     /// <remarks>
@@ -86,6 +87,14 @@ public partial class App : Application
     /// <inheritdoc />
     protected override void OnStartup(StartupEventArgs e)
     {
+        // Antes que nada, y antes de tocar nada: si ya hay una copia abierta, esta le pide que
+        // se ponga delante y sale. Ni registro, ni ajustes, ni cuaderno, ni puertos.
+        if (!SerLaPrimeraCopia())
+        {
+            Shutdown(0);
+            return;
+        }
+
         // El idioma va lo primero: hasta el cartel de «no se puede abrir el cuaderno» lo usa.
         Idiomas.IdiomaDeLaInterfaz.Arrancar(Ajustes.AjustesDelPrograma.Leer(CarpetaDeDatos).Idioma);
 
@@ -190,6 +199,7 @@ public partial class App : Application
         }
 
         ventana.Show();
+        _instancia?.AlLlamarOtraCopia(() => Dispatcher.BeginInvoke(TraerAlFrente));
         Log.Information(
             "Ventana principal mostrada. Contenido {Contenido}, tamano {Ancho}x{Alto}, recursos {Recursos}, fondo {Fondo}.",
             ventana.Content?.GetType().Name ?? "ninguno",
@@ -197,6 +207,53 @@ public partial class App : Application
             ventana.ActualHeight,
             Resources.MergedDictionaries.Count,
             TryFindResource("FondoVentana")?.ToString() ?? "no encontrado");
+    }
+
+    /// <summary>
+    /// Coge el cerrojo de instancia unica. Falso si ya hay otra copia abierta: entonces se la
+    /// llama para que se ponga delante y esta no debe seguir arrancando.
+    /// </summary>
+    /// <remarks>
+    /// El modo de demostracion no lleva cerrojo y una carpeta de <c>CUADERNO_CARPETA</c> lleva
+    /// el suyo (ver <see cref="Soporte.InstanciaUnica"/>): las capturas de la ayuda y las
+    /// verificaciones siguen arrancando con el programa del operador abierto.
+    /// </remarks>
+    private bool SerLaPrimeraCopia()
+    {
+        var nombre = Soporte.InstanciaUnica.NombreDelCerrojo(
+            Environment.GetEnvironmentVariable("CUADERNO_CARPETA"),
+            ConfiguracionDeServicios.ConPuertosSimulados);
+        if (nombre is null) return true;
+
+        _instancia = Soporte.InstanciaUnica.Tomar(nombre);
+        if (_instancia is not null) return true;
+
+        // Una verificacion apartada no le quita la pantalla a nadie, tampoco asi.
+        if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CUADERNO_APARTADA")))
+        {
+            Soporte.InstanciaUnica.LlamarALaPrimera(nombre);
+        }
+
+        return false;
+    }
+
+    /// <summary>Otra copia ha intentado abrirse: la ventana de esta se pone delante.</summary>
+    private void TraerAlFrente()
+    {
+        if (MainWindow is not { } ventana) return;
+        if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CUADERNO_APARTADA"))) return;
+
+        Log.Information("Se ha intentado abrir otra copia del programa; esta se pone delante.");
+        if (ventana.WindowState == WindowState.Minimized) SystemCommands.RestoreWindow(ventana);
+        ventana.Show();
+        ventana.Activate();
+
+        // Activate no siempre basta si Windows no cede el primer plano: un instante de
+        // «siempre encima» la saca delante sin dejarla fija ahi.
+        var estabaEncima = ventana.Topmost;
+        ventana.Topmost = true;
+        ventana.Topmost = estabaEncima;
+        ventana.Focus();
     }
 
     /// <summary>
@@ -230,5 +287,8 @@ public partial class App : Application
         Log.CloseAndFlush();
         _anfitrion?.Dispose();
         base.OnExit(e);
+
+        // Lo ultimo: mientras quede algo por soltar, otra copia no debe poder arrancar.
+        _instancia?.Dispose();
     }
 }
